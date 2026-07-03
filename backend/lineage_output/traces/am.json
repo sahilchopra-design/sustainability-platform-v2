@@ -1,0 +1,214 @@
+{
+ "domain": "am",
+ "meta": {
+  "ts": "2026-06-30T13:59:08",
+  "module": "api.v1.routes.am",
+  "router_prefix": "/api/v1/am",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "am",
+   "label": "GET /api/v1/am/reference-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.35,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "factor_premia_bps",
+     "sbti_sector_pathways_pct_pa",
+     "icma_uop_categories",
+     "sector_carbon_intensity_tco2e_m",
+     "pathway_targets_c",
+     "transition_spread_factors_bps",
+     "greenium_bps_by_rating",
+     "sources"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "reference_data",
+     "qual": "reference_data",
+     "file": "api/v1/routes/am.py",
+     "line": 301,
+     "args": {},
+     "ret": "{'factor_premia_bps': {'market': 500.0, 'size': 80.0, 'value': 120.0, 'profitability': 150.0, 'investment': 60.0, 'esg_quality': 45.0, 'low_carbon': 30.0}, 'sbti_sector_pathways_pct_pa': {'power_utilities': -7.0, 'steel': -4.0, 'cement': -\u2026",
+     "dur_ms": 0.078,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_am_reference_data",
+       "qual": "get_am_reference_data",
+       "file": "services/am_engine.py",
+       "line": 945,
+       "args": {},
+       "ret": "{'factor_premia_bps': {'market': 500.0, 'size': 80.0, 'value': 120.0, 'profitability': 150.0, 'investment': 60.0, 'esg_quality': 45.0, 'low_carbon': 30.0}, 'sbti_sector_pathways_pct_pa': {'power_utilities': -7.0, 'steel': -4.0, 'cement': -\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/climate-spreads",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/esg-attribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/green-bond-screening",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'bonds'",
+   "dur_ms": 0.217,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "green_bond_screening",
+     "qual": "green_bond_screening",
+     "file": "api/v1/routes/am.py",
+     "line": 228,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/lp-analytics",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/optimise",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'holdings'",
+   "dur_ms": 0.182,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "optimise",
+     "qual": "optimise",
+     "file": "api/v1/routes/am.py",
+     "line": 283,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "am",
+   "label": "POST /api/v1/am/paris-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

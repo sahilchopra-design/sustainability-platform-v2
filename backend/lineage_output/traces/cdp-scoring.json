@@ -1,0 +1,517 @@
+{
+ "domain": "cdp-scoring",
+ "meta": {
+  "ts": "2026-06-30T13:59:41",
+  "module": "api.v1.routes.cdp_scoring",
+  "router_prefix": "/api/v1/cdp",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/activity-groups",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.327,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "activity_groups"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_activity_groups",
+     "qual": "ref_activity_groups",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 118,
+     "args": {},
+     "ret": "{'activity_groups': [{'code': 'AG01', 'name': 'Financial Services', 'sectors': ['Banking', 'Insurance', 'Investment Management']}, {'code': 'AG02', 'name': 'Fossil Fuels', 'sectors': ['Oil & Gas', 'Coal']}, {'code': 'AG03', 'name': 'Power \u2026",
+     "dur_ms": 0.064,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_activity_groups",
+       "qual": "CDPScoringEngine.get_activity_groups",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 988,
+       "args": {},
+       "ret": "[{'code': 'AG01', 'name': 'Financial Services', 'sectors': ['Banking', 'Insurance', 'Investment Management']}, {'code': 'AG02', 'name': 'Fossil Fuels', 'sectors': ['Oil & Gas', 'Coal']}, {'code': 'AG03', 'name': 'Power Generation', 'sector\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/climate-modules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.222,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "climate_modules"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_climate_modules",
+     "qual": "ref_climate_modules",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 94,
+     "args": {},
+     "ret": "{'climate_modules': [{'code': 'C0', 'title': 'Introduction', 'category': 'governance', 'disclosures': 3}, {'code': 'C1', 'title': 'Governance', 'category': 'governance', 'disclosures': 8}, {'code': 'C2', 'title': 'Risks and Opportunities',\u2026",
+     "dur_ms": 0.075,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_climate_modules",
+       "qual": "CDPScoringEngine.get_climate_modules",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 968,
+       "args": {},
+       "ret": "[{'code': 'C0', 'title': 'Introduction', 'category': 'governance', 'disclosures': 3}, {'code': 'C1', 'title': 'Governance', 'category': 'governance', 'disclosures': 8}, {'code': 'C2', 'title': 'Risks and Opportunities', 'category': 'risks_\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.207,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cross_framework_mapping"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 124,
+     "args": {},
+     "ret": "{'cross_framework_mapping': [{'cdp_module': 'C1', 'cdp_title': 'Governance', 'tcfd': 'Governance a) and b)', 'gri': 'GRI 2-9 to 2-21 (Governance)', 'issb_s2': 'IFRS S2 para 5-6 (Governance)', 'sasb': '\u2014'}, {'cdp_module': 'C2', 'cdp_title':\u2026",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_cross_framework_map",
+       "qual": "CDPScoringEngine.get_cross_framework_map",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 993,
+       "args": {},
+       "ret": "[{'cdp_module': 'C1', 'cdp_title': 'Governance', 'tcfd': 'Governance a) and b)', 'gri': 'GRI 2-9 to 2-21 (Governance)', 'issb_s2': 'IFRS S2 para 5-6 (Governance)', 'sasb': '\u2014'}, {'cdp_module': 'C2', 'cdp_title': 'Risks and Opportunities', \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/module-catalog",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.206,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module_catalog"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_module_catalog",
+     "qual": "ref_module_catalog",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 136,
+     "args": {},
+     "ret": "{'module_catalog': [{'questionnaire': 'climate', 'module_code': 'C0', 'module_title': 'Introduction', 'category': 'governance', 'disclosure_count': 3}, {'questionnaire': 'climate', 'module_code': 'C1', 'module_title': 'Governance', 'catego\u2026",
+     "dur_ms": 0.066,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_module_catalog",
+       "qual": "CDPScoringEngine.get_module_catalog",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 1003,
+       "args": {},
+       "ret": "[{'questionnaire': 'climate', 'module_code': 'C0', 'module_title': 'Introduction', 'category': 'governance', 'disclosure_count': 3}, {'questionnaire': 'climate', 'module_code': 'C1', 'module_title': 'Governance', 'category': 'governance', \u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/peer-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.174,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "peer_benchmarks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_peer_benchmarks",
+     "qual": "ref_peer_benchmarks",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 130,
+     "args": {},
+     "ret": "{'peer_benchmarks': [{'activity_group': 'AG01', 'median_score_pct': 58.0, 'median_grade': 'B-', 'avg_disclosure_pct': 72.0, 'avg_scope12_verified_pct': 65.0, 'avg_target_coverage_pct': 55.0}, {'activity_group': 'AG02', 'median_score_pct': \u2026",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_peer_benchmarks",
+       "qual": "CDPScoringEngine.get_peer_benchmarks",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 998,
+       "args": {},
+       "ret": "[{'activity_group': 'AG01', 'median_score_pct': 58.0, 'median_grade': 'B-', 'avg_disclosure_pct': 72.0, 'avg_scope12_verified_pct': 65.0, 'avg_target_coverage_pct': 55.0}, {'activity_group': 'AG02', 'median_score_pct': 52.0, 'median_grade'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/score-bands",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.154,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "score_bands"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_score_bands",
+     "qual": "ref_score_bands",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 112,
+     "args": {},
+     "ret": "{'score_bands': [{'grade': 'A', 'label': 'Leadership', 'min_pct': 80, 'description': 'Best practice environmental stewardship'}, {'grade': 'A-', 'label': 'Leadership', 'min_pct': 70, 'description': 'Implementing current best practices'}, {\u2026",
+     "dur_ms": 0.031,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_score_bands",
+       "qual": "CDPScoringEngine.get_score_bands",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 983,
+       "args": {},
+       "ret": "[{'grade': 'A', 'label': 'Leadership', 'min_pct': 80, 'description': 'Best practice environmental stewardship'}, {'grade': 'A-', 'label': 'Leadership', 'min_pct': 70, 'description': 'Implementing current best practices'}, {'grade': 'B', 'l\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/scoring-methodology",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.167,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scoring_methodology"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_scoring_methodology",
+     "qual": "ref_scoring_methodology",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 106,
+     "args": {},
+     "ret": "{'scoring_methodology': {'disclosure': {'label': 'Disclosure', 'weight': 0.25, 'description': 'Completeness and quality of information provided', 'min_score_for_level': 0}, 'awareness': {'label': 'Awareness', 'weight': 0.25, 'description':\u2026",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_scoring_methodology",
+       "qual": "CDPScoringEngine.get_scoring_methodology",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 978,
+       "args": {},
+       "ret": "{'disclosure': {'label': 'Disclosure', 'weight': 0.25, 'description': 'Completeness and quality of information provided', 'min_score_for_level': 0}, 'awareness': {'label': 'Awareness', 'weight': 0.25, 'description': 'Evidence of understand\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "GET /api/v1/cdp/ref/water-modules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.148,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "water_modules"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "ref_water_modules",
+     "qual": "ref_water_modules",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 100,
+     "args": {},
+     "ret": "{'water_modules': [{'code': 'W0', 'title': 'Introduction', 'category': 'governance', 'disclosures': 3}, {'code': 'W1', 'title': 'Current State', 'category': 'context', 'disclosures': 5}, {'code': 'W2', 'title': 'Business Impacts', 'categor\u2026",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "get_water_modules",
+       "qual": "CDPScoringEngine.get_water_modules",
+       "file": "services/cdp_scoring_engine.py",
+       "line": 973,
+       "args": {},
+       "ret": "[{'code': 'W0', 'title': 'Introduction', 'category': 'governance', 'disclosures': 3}, {'code': 'W1', 'title': 'Current State', 'category': 'context', 'disclosures': 5}, {'code': 'W2', 'title': 'Business Impacts', 'category': 'risks', 'disc\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "POST /api/v1/cdp/assess-climate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.176,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "assess_climate",
+     "qual": "assess_climate",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 54,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "POST /api/v1/cdp/assess-water",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.144,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "assess_water",
+     "qual": "assess_water",
+     "file": "api/v1/routes/cdp_scoring.py",
+     "line": 67,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "cdp-scoring",
+   "label": "POST /api/v1/cdp/compare-peers",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

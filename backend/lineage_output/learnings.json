@@ -1,0 +1,2823 @@
+{
+ "generated": "2026-06-30 14:36:04",
+ "coverage": {
+  "transactions": 2510,
+  "passed": 1310,
+  "failed": 539,
+  "skipped_mutations": 661,
+  "functions_traced": 32719,
+  "sql_statements": 1507,
+  "provenance": {
+   "computed": 2021,
+   "db-empty": 238,
+   "real-db": 231,
+   "mock-sample": 25,
+   "reference-data": 4
+  },
+  "tables_touched": 184
+ },
+ "data_gaps": {
+  "empty_or_no_rows_tables": [
+   "agriculture_entities",
+   "agriculture_risk_assessments",
+   "analysis_runs_pg",
+   "asean_entities",
+   "asean_taxonomy_activities",
+   "boj_scenario_results",
+   "brsr_disclosures",
+   "calculation_parameters",
+   "carbon_calculation",
+   "carbon_portfolio",
+   "carbon_project",
+   "carbon_report",
+   "carbon_scenario",
+   "csrd_data_lineage",
+   "ctp_cbam_liabilities",
+   "ctp_china_esg_disclosures",
+   "ctp_export_products",
+   "ctp_marketplace_listings",
+   "ctp_supplier_requirements",
+   "di_loan_portfolio_rows",
+   "ecl_exposures",
+   "engagement_commitments",
+   "engagement_escalations",
+   "engagement_log",
+   "esrs_e3_water",
+   "esrs_e4_biodiversity",
+   "ets_product_benchmarks",
+   "fi_entities",
+   "file_uploads",
+   "hkma_climate_assessments",
+   "hkma_entities",
+   "hub_consistency_checks",
+   "hub_gap_analyses",
+   "insurance_climate_assessments",
+   "insurance_climate_entities",
+   "iorp_stress_runs",
+   "mapping_templates",
+   "mining_entities",
+   "mining_risk_assessments",
+   "module_refinement_assignments",
+   "org_users",
+   "parameter_change_requests",
+   "pboc_entities",
+   "pboc_green_finance_records",
+   "pcaf_time_series",
+   "pe_deals",
+   "pe_portfolio_companies",
+   "pe_sector_risk_heatmap",
+   "portfolio_analytics",
+   "portfolio_reports",
+   "portfolios",
+   "project_finance_assessments",
+   "reference_data_points",
+   "reference_data_records",
+   "simulation_runs"
+  ],
+  "populated_tables": [
+   "assets_pg",
+   "audit_log",
+   "carbon_emission_factor",
+   "carbon_methodology",
+   "cat_risk_assessments",
+   "cbam_certificate_price",
+   "cbam_country_risk",
+   "cbam_embedded_emissions",
+   "cbam_product_category",
+   "cbam_supplier",
+   "company_profiles",
+   "comparable_sales",
+   "csrd_entity_registry",
+   "csrd_esrs_catalog",
+   "csrd_gap_tracker",
+   "csrd_kpi_values",
+   "csrd_peer_benchmarks",
+   "csrd_report_uploads",
+   "ctp_entities",
+   "ctp_ets_positions",
+   "ctp_ndc_pathways",
+   "ctp_trade_corridors",
+   "custom_scenarios_v2",
+   "data_centre_assessments",
+   "dh_application_kpis",
+   "dh_ca100_assessments",
+   "dh_climate_trace_emissions",
+   "dh_controversy_scores",
+   "dh_country_risk_indices",
+   "dh_crrem_pathways",
+   "dh_data_sources",
+   "dh_gdelt_events",
+   "dh_gdelt_gkg",
+   "dh_gem_coal_plant_units",
+   "dh_gem_coal_plants",
+   "dh_gfw_tree_cover_loss",
+   "dh_grid_emission_factors",
+   "dh_irena_lcoe",
+   "dh_kpi_mappings",
+   "dh_nature_spatial_overlaps",
+   "dh_ngfs_scenario_data",
+   "dh_owid_co2_energy",
+   "dh_reference_data",
+   "dh_sbti_companies",
+   "dh_sec_edgar_filings",
+   "dh_source_fields",
+   "dh_sync_jobs",
+   "dh_violation_tracker",
+   "dh_wdpa_protected_areas",
+   "dh_yfinance_market_data",
+   "di_counterparty_emissions",
+   "di_internal_config",
+   "di_loan_portfolio_uploads",
+   "di_project_finance",
+   "di_real_estate_assets",
+   "di_shipping_fleet",
+   "di_steel_borrowers",
+   "ecl_assessments",
+   "emission_factor_library",
+   "energy_entities",
+   "energy_generation_mix",
+   "energy_transition_pathway",
+   "engagement_entities",
+   "entity_lei",
+   "entity_sanctions",
+   "entity_screening_results",
+   "ep_recarb1_properties",
+   "esrs_e1_energy",
+   "esrs_e1_ghg_emissions",
+   "esrs_s1_workforce",
+   "eu_taxonomy_assessments",
+   "facilitated_emissions_v2",
+   "fossil_fuel_reserve",
+   "gri_esrs_mapping",
+   "gri_standards",
+   "hub_alerts",
+   "hub_comparisons",
+   "hub_favorites",
+   "hub_scenarios",
+   "hub_sources",
+   "hub_sync_logs",
+   "hub_trajectories",
+   "information_schema.columns",
+   "information_schema.constraint_column_usage",
+   "information_schema.key_column_usage",
+   "information_schema.table_constraints",
+   "information_schema.tables",
+   "infrastructure_asset",
+   "insurance_emissions",
+   "module_review_status",
+   "ngfs_data_sources",
+   "ngfs_scenario_parameters",
+   "ngfs_scenario_timeseries",
+   "ngfs_scenarios",
+   "ngfs_scenarios_v2",
+   "organisations",
+   "parameter_customizations",
+   "pcaf_portfolios",
+   "pg_am",
+   "pg_attribute",
+   "pg_class",
+   "pg_index",
+   "pg_namespace",
+   "platform_alerts",
+   "portfolios_pg",
+   "power_plant",
+   "power_plant_assessments",
+   "power_plant_trajectories",
+   "properties",
+   "public",
+   "rbac_access_invites",
+   "rbac_role_presets",
+   "rbac_user_profiles",
+   "ref_flood_zones",
+   "ref_protected_areas",
+   "ref_sea_level_zones",
+   "ref_wildfire_zones",
+   "reference_data_sources",
+   "sbti_targets",
+   "scenario_series",
+   "scenario_versions",
+   "scenarios",
+   "scheduled_reports",
+   "scope3_assessments",
+   "set",
+   "sfdr_pai_disclosures",
+   "users_pg",
+   "valuations",
+   "vw_postgis_status"
+  ],
+  "note": "empty_like = appeared in a query but never returned rows (likely unseeded / no data in this environment)"
+ },
+ "corrections": [
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N: FROM file_uploads \n             ^\n\n[SQL: SELECT file_",
+   "count": 3,
+   "kind": "correction",
+   "endpoints": [
+    "GET /uploads/{upload_id}",
+    "GET /uploads/{upload_id}/errors",
+    "GET /uploads/{upload_id}/preview"
+   ],
+   "domains": [
+    "uploads"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: (psycopg2.errors.UndefinedColumn) column e.country_code does not exist\nLINE N:                 SELECT a.*, e.entity_name, ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/agriculture/assessments/{assessment_id}"
+   ],
+   "domains": [
+    "agriculture"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.AmbiguousColumn) column reference \"X\" is ambiguous\nLINE N:             SELECT column_name, data_type, is_",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/data-preview/tables"
+   ],
+   "domains": [
+    "data-preview"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: (psycopg2.errors.UndefinedColumn) column e.entity_type does not exist\nLINE N:                 SELECT a.*, e.entity_name, e",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/insurance/assessments/{assessment_id}"
+   ],
+   "domains": [
+    "insurance"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Internal server error during L&D assessment.",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "POST /api/v1/loss-damage/assess"
+   ],
+   "domains": [
+    "loss-damage-finance"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: (psycopg2.errors.UndefinedColumn) column e.commodity does not exist\nLINE N:                 SELECT a.*, e.entity_name, e.c",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/mining/assessments/{assessment_id}"
+   ],
+   "domains": [
+    "mining"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: DB query failed: (psycopg2.errors.UndefinedColumn) column b.biodiversity_net_gain_score does not exist\nLINE N:            ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/nature-risk/csrd-entities/biodiversity"
+   ],
+   "domains": [
+    "nature-risk"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: DB query failed: (psycopg2.errors.UndefinedColumn) column w.discharge_high_stress_areas_m3 does not exist\nLINE N:         ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/nature-risk/csrd-entities/water"
+   ],
+   "domains": [
+    "nature-risk"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "AttributeError: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/portfolios"
+   ],
+   "domains": [
+    "nonv1-portfolios"
+   ],
+   "suggested": "Handler divides/operates on None from real data \u2014 guard it."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "HTTPException: N: (psycopg2.errors.UndefinedColumn) column \"X\" does not exist\nLINE N:                 SELECT id, parameter_name, parameter_c",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/parameters/{param_id}"
+   ],
+   "domains": [
+    "parameter-governance"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.SyntaxError) syntax error at or near \"X\"\nLINE N: ... SELECT * FROM eu_taxonomy_assessments WHERE id = :ai",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/eu-taxonomy/assessments/{assessment_id}"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.SyntaxError) syntax error at or near \"X\"\nLINE N:         SELECT * FROM pcaf_portfolios WHERE id = :pid::u",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pcaf/portfolios/{portfolio_id}"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.SyntaxError) syntax error at or near \"X\"\nLINE N: ...    SELECT * FROM sfdr_pai_disclosures WHERE id = :di",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/sfdr/pai-disclosures/{disclosure_id}"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N:                     SELECT * FROM pe_deals\n          ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-deals/db/deals"
+   ],
+   "domains": [
+    "pe-deals"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N: SELECT * FROM pe_deals WHERE deal_id = 'X'did'X'UUID'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-deals/db/deals/{deal_id}"
+   ],
+   "domains": [
+    "pe-deals"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N:                     FROM pe_deals\n                   ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-deals/db/pipeline-summary"
+   ],
+   "domains": [
+    "pe-deals"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N:                     FROM pe_sector_risk_heatmap\n     ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-deals/db/sector-heatmap"
+   ],
+   "domains": [
+    "pe-deals"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N:                     SELECT * FROM pe_portfolio_compan",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-portfolio/db/companies"
+   ],
+   "domains": [
+    "pe-portfolio"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N:                     FROM pe_portfolio_companies\n     ",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/pe-portfolio/db/summary"
+   ],
+   "domains": [
+    "pe-portfolio"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: CRREM pathway engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /api/v1/re/crrem/pathways/{property_type}/{country_iso}"
+   ],
+   "domains": [
+    "re-clvar"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: CLVaR engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "POST /api/v1/re/clvar/calculate"
+   ],
+   "domains": [
+    "re-clvar"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Portfolio CLVaR engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "POST /api/v1/re/clvar/portfolio"
+   ],
+   "domains": [
+    "re-clvar"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: CRREM stranding engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "POST /api/v1/re/crrem/stranding"
+   ],
+   "domains": [
+    "re-clvar"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Full social bond assessment failed",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "POST /api/v1/social-bond/full-assessment"
+   ],
+   "domains": [
+    "social-bond"
+   ],
+   "suggested": "Unhandled handler error on real data \u2014 add guard / fix logic."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "ProgrammingError: (psycopg2.errors.UndefinedTable) relation \"X\" does not exist\nLINE N: FROM mapping_templates ORDER BY mapping_templates.usa",
+   "count": 1,
+   "kind": "correction",
+   "endpoints": [
+    "GET /uploads/templates"
+   ],
+   "domains": [
+    "uploads"
+   ],
+   "suggested": "Real query/schema mismatch \u2014 fix the SQL or migration."
+  }
+ ],
+ "observations": [
+  {
+   "class": "missing key/attr",
+   "signature": "AttributeError: 'X' object has no attribute 'X'",
+   "count": 217,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/agriculture/calculate",
+    "POST /api/v1/ai-risk/assess-nist-rmf",
+    "POST /api/v1/ai-risk/calculate-liability",
+    "POST /api/v1/ai-risk/score-explainability",
+    "POST /api/v1/am/green-bond-screening",
+    "POST /api/v1/am/optimise",
+    "POST /api/v1/analysis/portfolio-upload/create",
+    "POST /api/v1/assurance-readiness/assess"
+   ],
+   "domains": [
+    "agriculture",
+    "ai-risk",
+    "am",
+    "analysis",
+    "assurance-readiness",
+    "attribution-benchmark",
+    "aviation-climate",
+    "banking-risk"
+   ],
+   "suggested": "Likely mock-input shape; verify against real payload."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: 'X' object has no attribute 'X'",
+   "count": 91,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/adaptation-finance/full-assessment",
+    "POST /api/v1/adaptation-finance/portfolio-assessment",
+    "POST /api/v1/avoided-emissions/calculate-activity",
+    "POST /api/v1/avoided-emissions/full-assessment",
+    "POST /api/v1/basel3-liquidity/alm-gap",
+    "POST /api/v1/basel3-liquidity/full-assessment",
+    "POST /api/v1/basel3-liquidity/irrbb-assessment",
+    "POST /api/v1/basel3-liquidity/lcr"
+   ],
+   "domains": [
+    "adaptation-finance",
+    "avoided-emissions",
+    "basel3-liquidity",
+    "carbon-credit-quality",
+    "china-trade",
+    "climate-financial-statements",
+    "climate-risk",
+    "climate-stress-test"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Scenario not found",
+   "count": 13,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/analysis/scenarios/{scenario_id}/consistency-check",
+    "GET /api/v1/data-hub/scenarios/{scenario_id}",
+    "GET /api/v1/data-hub/scenarios/{scenario_id}/trajectories",
+    "GET /api/v1/nature-risk/scenarios/{scenario_id}",
+    "GET /api/v1/stranded-assets/scenarios/{scenario_id}",
+    "GET /api/v1/sub-parameter/interactions/{scenario_id}",
+    "GET /api/v1/sub-parameter/visualization/tornado/{scenario_id}",
+    "GET /api/v1/sub-parameter/visualization/waterfall/{scenario_id}"
+   ],
+   "domains": [
+    "analysis",
+    "data-hub",
+    "nature-risk",
+    "stranded-assets",
+    "sub-parameter"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Portfolio not found",
+   "count": 12,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/analysis/impact",
+    "POST /api/v1/analysis/reports/generate",
+    "GET /api/v1/carbon/portfolios/{portfolio_id}",
+    "GET /api/v1/carbon/portfolios/{portfolio_id}/dashboard",
+    "POST /api/v1/carbon/calculate",
+    "POST /api/v1/carbon/portfolios/{portfolio_id}/scenarios",
+    "POST /api/v1/carbon/projects",
+    "POST /api/v1/carbon/projects/from-calculation"
+   ],
+   "domains": [
+    "analysis",
+    "carbon",
+    "nonv1-analysis",
+    "nonv1-pg",
+    "nonv1-portfolios",
+    "portfolio-pg"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Scenario UUID not found",
+   "count": 7,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/scenarios/{scenario_id}",
+    "GET /api/v1/scenarios/{scenario_id}/versions",
+    "POST /api/v1/scenarios/{scenario_id}/approve",
+    "POST /api/v1/scenarios/{scenario_id}/fork",
+    "POST /api/v1/scenarios/{scenario_id}/preview",
+    "POST /api/v1/scenarios/{scenario_id}/publish",
+    "POST /api/v1/scenarios/{scenario_id}/submit-for-approval"
+   ],
+   "domains": [
+    "scenarios"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: 'X' object has no attribute 'X'",
+   "count": 6,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/cdm-tools/chain/{methodology_code}",
+    "POST /api/v1/crrem/assess",
+    "POST /api/v1/crrem/gresb-score",
+    "POST /api/v1/green-hydrogen/assess",
+    "POST /api/v1/transition-finance/assess",
+    "POST /api/v1/transition-finance/instrument-screen"
+   ],
+   "domains": [
+    "cdm-tools",
+    "crrem-green-buildings",
+    "green-hydrogen",
+    "transition-finance"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "missing key/attr",
+   "signature": "KeyError: 'X'",
+   "count": 6,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/lineage/module-graph",
+    "GET /api/v1/lineage/platform-health",
+    "GET /api/v1/lineage/reference-data",
+    "GET /api/v1/lineage/reference-data-gaps",
+    "GET /api/v1/lineage/reference-data-inventory",
+    "GET /api/v1/social-bond/ref/sdg-mapping"
+   ],
+   "domains": [
+    "data-lineage",
+    "social-bond"
+   ],
+   "suggested": "Likely mock-input shape; verify against real payload."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Portfolio UUID not found",
+   "count": 6,
+   "kind": "observation",
+   "endpoints": [
+    "GET /portfolios/{portfolio_id}",
+    "GET /portfolios/{portfolio_id}/holdings",
+    "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/analytics",
+    "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/dashboard",
+    "POST /api/v1/portfolio-analytics/portfolios/{portfolio_id}/scenarios/compare",
+    "GET /api/v1/exports/portfolio-analytics/{portfolio_id}"
+   ],
+   "domains": [
+    "nonv1-portfolios",
+    "portfolio-analytics",
+    "universal-exports"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "ImportError: cannot import name 'X' from 'X' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
+   "count": 5,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/climate-risk/assessments",
+    "GET /api/v1/climate-risk/assessments/{run_id}",
+    "GET /api/v1/climate-risk/assessments/{run_id}/drill-down",
+    "POST /api/v1/climate-risk/assessments/run",
+    "POST /api/v1/climate-risk/integrated/assess"
+   ],
+   "domains": [
+    "climate-risk"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Assessment not found",
+   "count": 5,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ecl/assessments/{assessment_id}",
+    "GET /api/v1/sector/energy/plant-decarbonisation/assessments/{assessment_id}",
+    "GET /api/v1/sector/insurance/cat-risk/assessments/{assessment_id}",
+    "GET /api/v1/sector/technology/data-center/assessments/{assessment_id}",
+    "GET /api/v1/supply-chain/scope3/assessments/{assessment_id}"
+   ],
+   "domains": [
+    "ecl-climate",
+    "sector-assessments",
+    "supply-chain"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Custom scenario not found",
+   "count": 5,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/scenario-builder/custom/{cs_id}",
+    "POST /api/v1/scenario-builder/custom/{cs_id}/fork",
+    "POST /api/v1/scenario-builder/simulate",
+    "GET /api/v1/sub-parameter/custom-scenario/{cs_id}/key-drivers",
+    "POST /api/v1/sub-parameter/custom-scenario/{cs_id}/analysis"
+   ],
+   "domains": [
+    "scenario-builder-v2",
+    "sub-parameter"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Report not found",
+   "count": 4,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/analysis/reports/download/{filename}",
+    "GET /api/v1/carbon/reports/{report_id}/download",
+    "GET /api/csrd/reports/{report_id}",
+    "GET /api/csrd/reports/{report_id}"
+   ],
+   "domains": [
+    "analysis",
+    "carbon",
+    "csrd-reports",
+    "nonv1-csrd"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Comparison not found",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/analysis/comparisons/{comp_id}",
+    "GET /api/v1/analysis/comparisons/{comp_id}/data",
+    "GET /api/v1/data-hub/comparisons/{comparison_id}"
+   ],
+   "domains": [
+    "analysis",
+    "data-hub"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Base scenario not found",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/analysis/custom-scenarios",
+    "POST /api/v1/scenario-builder/customize",
+    "POST /api/v1/scenario-builder/preview"
+   ],
+   "domains": [
+    "analysis",
+    "scenario-builder-v2"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Tool not found: UUID",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/cdm-tools/{tool_code}",
+    "GET /api/v1/cdm-tools/{tool_code}/defaults",
+    "POST /api/v1/cdm-tools/{tool_code}/calculate"
+   ],
+   "domains": [
+    "cdm-tools"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "InvalidRequestError: When initializing mapper Mapper[Portfolio(portfolios)], expression 'X' failed to locate a name ('X'). If this is a clas",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "GET /counterparties/{counterparty_id}",
+    "GET /exports/portfolios/{portfolio_id}/report",
+    "GET /portfolios/{portfolio_id}"
+   ],
+   "domains": [
+    "counterparties",
+    "exports",
+    "portfolios"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Entity 'X' not found",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-data/{entity_id}",
+    "GET /api/v1/entity-data/{entity_id}/portfolio-asset",
+    "GET /api/v1/entity-data/{entity_id}/sector"
+   ],
+   "domains": [
+    "entity-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: LEI must be exactly N characters",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-resolution/cross-module/entity/{lei}",
+    "GET /api/v1/entity360/by-lei/{lei}",
+    "GET /api/v1/gar/auto-calculate/by-lei/{lei}"
+   ],
+   "domains": [
+    "entity-resolution",
+    "entity360",
+    "gar"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "HTTPException: N: float() argument must be a string or a real number, not 'X'",
+   "count": 3,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/loss-damage/ld-gap-analysis",
+    "POST /api/v1/maritime/fleet-assessment",
+    "POST /api/v1/sovereign-debt-climate/crdc-assessment"
+   ],
+   "domains": [
+    "loss-damage",
+    "maritime",
+    "sovereign-debt-climate"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"X\" violates foreign key constraint \"X\"\nDETAIL:  Key (base_s",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/analysis/comparisons",
+    "POST /api/v1/data-hub/comparisons"
+   ],
+   "domains": [
+    "analysis",
+    "data-hub"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Portfolio 'X' not found",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/analyst-portfolios/{portfolio_id}",
+    "GET /api/v1/analyst-portfolios/{portfolio_id}/gap-assessment"
+   ],
+   "domains": [
+    "analyst-portfolios"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Methodology 'X' not found",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/methodology-inputs/{methodology_code}",
+    "GET /api/v1/dcm/methodologies/{code}"
+   ],
+   "domains": [
+    "carbon",
+    "dcm"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Activity not found: UUID",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/cdm-tools/activities/{activity_id}",
+    "GET /api/v1/cdm-tools/activities/{activity_id}/inputs"
+   ],
+   "domains": [
+    "cdm-tools"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Data point 'X' not found in catalog",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/csrd/catalog/{indicator_code}",
+    "GET /api/csrd/catalog/{indicator_code}"
+   ],
+   "domains": [
+    "csrd-reports",
+    "nonv1-csrd"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No GRI mapping found for ESRS 'X'",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/csrd/gri/mapping/esrs/{indicator_code}",
+    "GET /api/csrd/gri/mapping/esrs/{indicator_code}"
+   ],
+   "domains": [
+    "csrd-reports",
+    "nonv1-csrd"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"X\"\nLINE N:                        LE",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/energy-data/coal-plants/nearby",
+    "GET /api/v1/nature-data/wdpa/nearby"
+   ],
+   "domains": [
+    "energy-data",
+    "nature-data"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "HTTPException: N: unsupported operand type(s) for *: 'X' and 'X'",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/nature-capital-accounting/ncp-assess",
+    "POST /api/v1/net-zero-targets/assess"
+   ],
+   "domains": [
+    "nature-capital-accounting",
+    "net-zero-targets"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Institution 'X' not found",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/peer-benchmark/institution/{slug}",
+    "GET /api/v1/peer-benchmark/institution/{slug}/top-gaps"
+   ],
+   "domains": [
+    "peer-benchmark"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Property not found",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/valuation/properties/{property_id}",
+    "POST /api/v1/valuation/comprehensive"
+   ],
+   "domains": [
+    "real-estate-valuation"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "TypeError: unsupported operand type(s) for *: 'X' and 'X'",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/valuation/cost/replacement",
+    "POST /api/v1/valuation/income/direct-capitalization"
+   ],
+   "domains": [
+    "real-estate-valuation"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: 'X' is not a valid AssetClass",
+   "count": 2,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/valuation/calculate",
+    "POST /api/v1/valuation/sensitivity"
+   ],
+   "domains": [
+    "unified-valuation"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Comparison or base scenario not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/analysis/comparisons/{comp_id}/gap-analysis"
+   ],
+   "domains": [
+    "analysis"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Audit entry not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/audit-log/{entry_id}"
+   ],
+   "domains": [
+    "audit-log"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "HTTPException: N: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/biodiversity-credits/assess"
+   ],
+   "domains": [
+    "biodiversity-credits"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "HTTPException: N: 'X' object is not iterable",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/blue-economy/screen-bond"
+   ],
+   "domains": [
+    "blue-economy"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: CA100 company not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ca100/companies/{company_id}"
+   ],
+   "domains": [
+    "ca100"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Calculation not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/calculations/{calculation_id}"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Grid emission factor not found for country 'X'. Contact support to add this country.",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/data/grid-emission-factor"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Methodology 'X' not found. Use /methodology-list to see available methodologies.",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/methodology-details/{methodology_code}"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"X\" violates foreign key constraint \"X\"\nDETAIL:  Key (portfo",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/portfolios/{portfolio_id}/scenarios"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Project not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/carbon/projects/{project_id}"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: {'X': 'X', 'X': ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', ",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/carbon/calculate/methodology"
+   ],
+   "domains": [
+    "carbon"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Product not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/cbam/products/{pid}"
+   ],
+   "domains": [
+    "cbam"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Supplier not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/cbam/suppliers/{sid}"
+   ],
+   "domains": [
+    "cbam"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No tool mapping for methodology: UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/cdm-tools/for-methodology/{methodology_code}"
+   ],
+   "domains": [
+    "cdm-tools"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Profile 'X' not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/company-profiles/{profile_id}"
+   ],
+   "domains": [
+    "company-profiles"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Provide at least N comma-separated ISO3 codes",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/country-risk/compare"
+   ],
+   "domains": [
+    "country-risk"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No data for country 550E8400-E29B-41D4-A716-N",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/country-risk/country/{country_iso3}"
+   ],
+   "domains": [
+    "country-risk"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Unknown index 'X'. Available: ['X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/country-risk/rankings/{index_name}"
+   ],
+   "domains": [
+    "country-risk"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Mineral 'X' not found in IEA or EU CRM Act databases.",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/critical-minerals/ref/mineral-profile/{mineral_name}"
+   ],
+   "domains": [
+    "critical-minerals"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Source not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/data-hub/sources/{source_id}"
+   ],
+   "domains": [
+    "data-hub"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"X\"\nLINE N: ...ECT * FROM di_loan_portfolio_ro",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/data-intake/portfolio/{upload_id}/rows"
+   ],
+   "domains": [
+    "data-intake"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"X\"\nLINE N: SELECT * FROM di_project_finance W",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/data-intake/project-finance/{project_id}"
+   ],
+   "domains": [
+    "data-intake"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Table 'X' not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/data-preview/tables/{table_name}/preview"
+   ],
+   "domains": [
+    "data-preview"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Calculation error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/dcm/calculate"
+   ],
+   "domains": [
+    "dcm"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: EAD calculation failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/ead/calculate"
+   ],
+   "domains": [
+    "ead"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Batch EAD calculation failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/ead/calculate-batch"
+   ],
+   "domains": [
+    "ead"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: LEI must be a N-character alphanumeric string",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/emissions/by-lei/{lei}"
+   ],
+   "domains": [
+    "emissions-data"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No OWID data for country 550E8400-E29B-41D4-A716-N",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/emissions/owid/{iso3}"
+   ],
+   "domains": [
+    "emissions-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: GEM ID UUID not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/energy-data/coal-plants/{gem_id}"
+   ],
+   "domains": [
+    "energy-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"X\"\nLINE N: SELECT * FROM engagement_entities ",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/engagement/entities/{entity_id}"
+   ],
+   "domains": [
+    "engagement"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Entity 'X' not found or has no GHG data",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-data/{entity_id}/carbon"
+   ],
+   "domains": [
+    "entity-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Entity 'X' not found or is not a Financial Institution entity",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-data/{entity_id}/ecl"
+   ],
+   "domains": [
+    "entity-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Entity 'X' not found or has no biodiversity data",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-data/{entity_id}/nature"
+   ],
+   "domains": [
+    "entity-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Entity 'X' not found or is not an Energy entity",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-data/{entity_id}/stranded"
+   ],
+   "domains": [
+    "entity-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: LEI not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-resolution/lei/{lei}"
+   ],
+   "domains": [
+    "entity-resolution"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Sanctions entity not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-resolution/sanctions/{sanction_id}"
+   ],
+   "domains": [
+    "entity-resolution"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Screening result not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/entity-resolution/screening-results/{result_id}"
+   ],
+   "domains": [
+    "entity-resolution"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Invalid metric 'X'. Valid: ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/financial-data/edgar/compare"
+   ],
+   "domains": [
+    "financial-data"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: GAR calculation failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/gar/calculate"
+   ],
+   "domains": [
+    "gar"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Batch scoring failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/gar/counterparty/batch"
+   ],
+   "domains": [
+    "gar"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Climate scoring failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/gar/counterparty/score"
+   ],
+   "domains": [
+    "gar"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No controversy data for UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/gdelt/controversy/entity/{entity_name}"
+   ],
+   "domains": [
+    "gdelt-controversy"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Asset type 'X' not found. Available: ['X', 'X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/glidepaths/crrem/{country}/{asset_type}"
+   ],
+   "domains": [
+    "glidepath-serve"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Unknown source_id: UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ingestion/ingesters/{source_id}"
+   ],
+   "domains": [
+    "ingestion"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Sync job not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ingestion/jobs/{job_id}"
+   ],
+   "domains": [
+    "ingestion"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: KPI not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ingestion/kpis/{kpi_id}"
+   ],
+   "domains": [
+    "ingestion"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Data source not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/ingestion/sources/{source_id}"
+   ],
+   "domains": [
+    "ingestion"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Downturn LGD failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/lgd-vintage/downturn"
+   ],
+   "domains": [
+    "lgd-vintage"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Vintage analysis failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/lgd-vintage/vintage"
+   ],
+   "domains": [
+    "lgd-vintage"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No GFW data for UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/nature-data/gfw/{iso3}"
+   ],
+   "domains": [
+    "nature-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "SQL / schema",
+   "signature": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"X\"\nLINE N: ...CT * FROM dh_wdpa_protected_are",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/nature-data/wdpa/{wdpa_id}"
+   ],
+   "domains": [
+    "nature-data"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Location not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/nature-risk/water-risk/locations/{location_id}/risk-report"
+   ],
+   "domains": [
+    "nature-risk"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: No valid scenarios found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/nature-risk/leap-assessments/calculate"
+   ],
+   "domains": [
+    "nature-risk"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No scenarios found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/ngfs-scenarios/compare"
+   ],
+   "domains": [
+    "ngfs-v2"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "calc / None-handling",
+   "signature": "TypeError: 'X' object is not subscriptable",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/admin/refinement/mine"
+   ],
+   "domains": [
+    "nonv1-admin"
+   ],
+   "suggested": "Mock None propagated; harness input issue."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Analysis run not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/analysis/runs/{run_id}"
+   ],
+   "domains": [
+    "nonv1-analysis"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Invite not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/auth/invite/{token}"
+   ],
+   "domains": [
+    "nonv1-auth"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Organisation not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/organisations/{org_id}"
+   ],
+   "domains": [
+    "organisations"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Index 'X' not found. Available: ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/pcaf/advanced/indices/{index_key}"
+   ],
+   "domains": [
+    "pcaf-advanced"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Portfolio must contain at least N fund or direct holding",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/pcaf/advanced/portfolio"
+   ],
+   "domains": [
+    "pcaf-advanced"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: EU Taxonomy engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/eu-taxonomy/alignment"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: PCAF engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/pcaf/financed-emissions"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: SFDR PAI engine error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/sfdr/pai"
+   ],
+   "domains": [
+    "pcaf-regulatory"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "missing key/attr",
+   "signature": "HTTPException: N: Portfolio detail error: AttributeError: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}"
+   ],
+   "domains": [
+    "portfolio-analytics"
+   ],
+   "suggested": "Likely mock-input shape; verify against real payload."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Report UUID not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/portfolio-analytics/reports/{report_id}"
+   ],
+   "domains": [
+    "portfolio-analytics"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "InvalidRequestError: One or more mappers failed to initialize - can'X'Mapper[Portfolio(portfolios)]'X'FileUpload'X'FileUpload'X'db.models_sq",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /portfolios/{portfolio_id}/holdings"
+   ],
+   "domains": [
+    "portfolios"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No saved assessment found for power plant UUID. Run a new calculation.",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/project-finance/{power_plant_id}"
+   ],
+   "domains": [
+    "project-finance"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: User not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/admin/rbac/module-access/{user_id}"
+   ],
+   "domains": [
+    "rbac-admin"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No CRREM pathway for TEST_property_type/TEST_scenario",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/reference-data/crrem/pathway"
+   ],
+   "domains": [
+    "reference-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No grid EF data for UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/reference-data/grid-ef/{iso3}"
+   ],
+   "domains": [
+    "reference-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No LCOE data for UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/reference-data/irena-lcoe/trend/{technology}"
+   ],
+   "domains": [
+    "reference-data"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: Unknown regulation 'X'. Valid: ['X', 'X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/regulatory-penalties/regulation-penalty"
+   ],
+   "domains": [
+    "regulatory-penalties"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "input validation",
+   "signature": "ValidationError: N validation error for ScenarioBuildRequest\nmodifications\n  List should have at least N item after validation, not N [type=",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/scenarios/batch-create"
+   ],
+   "domains": [
+    "scenario-analysis"
+   ],
+   "suggested": "Harness mock input; tighten mockgen, not the handler."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Template 'X' not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/scenarios/templates/apply"
+   ],
+   "domains": [
+    "scenario-analysis"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Simulation not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/scenario-builder/simulations/{sim_id}"
+   ],
+   "domains": [
+    "scenario-builder-v2"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No trajectory data for base scenario",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/scenario-builder/calculate-impacts"
+   ],
+   "domains": [
+    "scenario-builder-v2"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "ModuleNotFoundError: No module named 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/scenarios/{scenario_id}/preview/{portfolio_id}"
+   ],
+   "domains": [
+    "scenarios"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: SFDR Article UUID not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/sfdr-product-reporting/ref/rts-sections/{article}"
+   ],
+   "domains": [
+    "sfdr-product-reporting"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Assessment error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/sovereign-swf/assess"
+   ],
+   "domains": [
+    "sovereign-swf"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Screening error: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/sovereign-swf/exclusion-screen"
+   ],
+   "domains": [
+    "sovereign-swf"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Power plant not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/stranded-assets/power-plants/{plant_id}"
+   ],
+   "domains": [
+    "stranded-assets"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Reserve not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/stranded-assets/reserves/{reserve_id}"
+   ],
+   "domains": [
+    "stranded-assets"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Pathway not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/stranded-assets/transition-pathways/{pathway_id}"
+   ],
+   "domains": [
+    "stranded-assets"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: PD backtest failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/stress-testing/backtest"
+   ],
+   "domains": [
+    "stress-testing"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "server 500",
+   "signature": "HTTPException: N: Stress test failed: 'X' object has no attribute 'X'",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/stress-testing/run"
+   ],
+   "domains": [
+    "stress-testing"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: SBTi target not found",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/supply-chain/scope3/sbti-targets/{target_id}"
+   ],
+   "domains": [
+    "supply-chain"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: activities_by_category must not be empty.",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/supply-chain/scope3/calculate"
+   ],
+   "domains": [
+    "supply-chain"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "other",
+   "signature": "HTTPException: N: target_year must be after base_year",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "POST /api/v1/supply-chain/scope3/sbti-target"
+   ],
+   "domains": [
+    "supply-chain"
+   ],
+   "suggested": "Expected/known-gap; verify before acting."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: Unknown asset class: UUID. Valid: ['X', 'X', 'X', 'X', 'X', 'X', 'X']",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/valuation/schema/{asset_class}"
+   ],
+   "domains": [
+    "unified-valuation"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  },
+  {
+   "class": "404 / empty-data",
+   "signature": "HTTPException: N: No violations for UUID",
+   "count": 1,
+   "kind": "observation",
+   "endpoints": [
+    "GET /api/v1/violations/company/{company_name}"
+   ],
+   "domains": [
+    "violations"
+   ],
+   "suggested": "Seed the underlying table; not a code bug."
+  }
+ ],
+ "corrections_summary": {
+  "total_failures": 539,
+  "corrections": 27,
+  "observations": 512,
+  "distinct_correction_signatures": 25
+ },
+ "failure_taxonomy": {
+  "by_class": {
+   "missing key/attr": 224,
+   "404 / empty-data": 132,
+   "server 500": 111,
+   "other": 31,
+   "SQL / schema": 29,
+   "calc / None-handling": 11,
+   "input validation": 1
+  },
+  "by_domain_top": {
+   "carbon": 14,
+   "sub-parameter": 11,
+   "analysis": 10,
+   "basel3-liquidity": 9,
+   "cdm-tools": 8,
+   "insurance-risk": 8,
+   "scenario-builder-v2": 8,
+   "scenarios": 8,
+   "banking-risk": 7,
+   "climate-risk": 7,
+   "entity-data": 7,
+   "forced-labour": 7,
+   "portfolio-analytics": 7,
+   "regulatory-capital-optimizer": 7,
+   "technology": 7
+  },
+  "examples": [
+   {
+    "endpoint": "POST /api/v1/adaptation-finance/full-assessment",
+    "domain": "adaptation-finance",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/adaptation-finance/portfolio-assessment",
+    "domain": "adaptation-finance",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "GET /api/v1/agriculture/assessments/{assessment_id}",
+    "domain": "agriculture",
+    "class": "SQL / schema",
+    "error": "HTTPException: 500: (psycopg2.errors.UndefinedColumn) column e.country_code does not exist\nLINE 2:                 SELECT a.*, e.entity_name, e.country_code, e."
+   },
+   {
+    "endpoint": "POST /api/v1/agriculture/calculate",
+    "domain": "agriculture",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_name'"
+   },
+   {
+    "endpoint": "POST /api/v1/ai-risk/assess-nist-rmf",
+    "domain": "ai-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/ai-risk/calculate-liability",
+    "domain": "ai-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/ai-risk/score-explainability",
+    "domain": "ai-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/am/green-bond-screening",
+    "domain": "am",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'bonds'"
+   },
+   {
+    "endpoint": "POST /api/v1/am/optimise",
+    "domain": "am",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'holdings'"
+   },
+   {
+    "endpoint": "GET /api/v1/analysis/comparisons/{comp_id}",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Comparison not found"
+   },
+   {
+    "endpoint": "GET /api/v1/analysis/comparisons/{comp_id}/data",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Comparison not found"
+   },
+   {
+    "endpoint": "GET /api/v1/analysis/reports/download/{filename}",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Report not found"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/comparisons",
+    "domain": "analysis",
+    "class": "SQL / schema",
+    "error": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/comparisons/{comp_id}/gap-analysis",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Comparison or base scenario not found"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/custom-scenarios",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Base scenario not found"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/impact",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Portfolio not found"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/portfolio-upload/create",
+    "domain": "analysis",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'get'"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/reports/generate",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Portfolio not found"
+   },
+   {
+    "endpoint": "POST /api/v1/analysis/scenarios/{scenario_id}/consistency-check",
+    "domain": "analysis",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Scenario not found"
+   },
+   {
+    "endpoint": "GET /api/v1/analyst-portfolios/{portfolio_id}",
+    "domain": "analyst-portfolios",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Portfolio '550e8400-e29b-41d4-a716-446655440001' not found"
+   },
+   {
+    "endpoint": "GET /api/v1/analyst-portfolios/{portfolio_id}/gap-assessment",
+    "domain": "analyst-portfolios",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Portfolio '550e8400-e29b-41d4-a716-446655440001' not found"
+   },
+   {
+    "endpoint": "POST /api/v1/assurance-readiness/assess",
+    "domain": "assurance-readiness",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity'"
+   },
+   {
+    "endpoint": "POST /api/v1/assurance-readiness/assess/batch",
+    "domain": "assurance-readiness",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'assessments'"
+   },
+   {
+    "endpoint": "POST /api/v1/attribution/benchmark-report",
+    "domain": "attribution-benchmark",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'fund'"
+   },
+   {
+    "endpoint": "GET /api/v1/audit-log/{entry_id}",
+    "domain": "audit-log",
+    "class": "404 / empty-data",
+    "error": "HTTPException: 404: Audit entry not found"
+   },
+   {
+    "endpoint": "POST /api/v1/aviation-climate/full-assessment",
+    "domain": "aviation-climate",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/avoided-emissions/calculate-activity",
+    "domain": "avoided-emissions",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/avoided-emissions/full-assessment",
+    "domain": "avoided-emissions",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/aml-risk",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'counterparty_countries'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/capital-adequacy",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'cet1_capital_eur'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/comprehensive",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'entity_name'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/credit-risk",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'total_exposure_eur'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/liquidity-risk",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'hqla_holdings'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/market-risk",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'trading_book_eur'"
+   },
+   {
+    "endpoint": "POST /api/v1/banking-risk/operational-risk",
+    "domain": "banking-risk",
+    "class": "missing key/attr",
+    "error": "AttributeError: 'str' object has no attribute 'gross_income_year1_eur'"
+   },
+   {
+    "endpoint": "POST /api/v1/basel3-liquidity/alm-gap",
+    "domain": "basel3-liquidity",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'"
+   },
+   {
+    "endpoint": "POST /api/v1/basel3-liquidity/full-assessment",
+    "domain": "basel3-liquidity",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'"
+   },
+   {
+    "endpoint": "POST /api/v1/basel3-liquidity/irrbb-assessment",
+    "domain": "basel3-liquidity",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'"
+   },
+   {
+    "endpoint": "POST /api/v1/basel3-liquidity/lcr",
+    "domain": "basel3-liquidity",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   },
+   {
+    "endpoint": "POST /api/v1/basel3-liquidity/lcr-assessment",
+    "domain": "basel3-liquidity",
+    "class": "server 500",
+    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'"
+   }
+  ]
+ },
+ "not_touching_real_data": {
+  "count": 1083,
+  "endpoints": [
+   "GET /api/v1/adaptation-finance/ref/gfma-categories",
+   "GET /api/v1/adaptation-finance/ref/hazard-risk-profiles",
+   "GET /api/v1/adaptation-finance/ref/mdb-facilities",
+   "GET /api/v1/adaptation-finance/ref/nap-profiles",
+   "GET /api/v1/agriculture-engine/reference-data",
+   "GET /api/v1/agriculture/assessments",
+   "GET /api/v1/agriculture/reference-data",
+   "GET /api/v1/ai-governance/ref/bias-metrics",
+   "GET /api/v1/ai-governance/ref/eu-ai-act-tiers",
+   "GET /api/v1/ai-governance/ref/nist-rmf-functions",
+   "GET /api/v1/ai-governance/ref/oecd-principles",
+   "POST /api/v1/ai-governance/assess",
+   "POST /api/v1/ai-governance/bias-assessment",
+   "POST /api/v1/ai-governance/energy-footprint",
+   "POST /api/v1/ai-governance/model-card",
+   "POST /api/v1/ai-governance/nist-rmf",
+   "GET /api/v1/ai-risk/ref/annex3-categories",
+   "GET /api/v1/ai-risk/ref/bias-metrics",
+   "GET /api/v1/ai-risk/ref/enforcement-timeline",
+   "GET /api/v1/ai-risk/ref/nist-functions",
+   "GET /api/v1/ai-risk/ref/prohibited-practices",
+   "GET /api/v1/am/reference-data",
+   "GET /api/v1/analysis/comparisons/{comp_id}/gap-analysis",
+   "GET /api/v1/analysis/scenarios/{scenario_id}/consistency-check",
+   "POST /api/v1/analysis/compare",
+   "POST /api/v1/analysis/portfolio-upload/parse",
+   "GET /api/v1/analyst-portfolios/",
+   "GET /api/v1/asia-regulatory/asean/focus-areas",
+   "GET /api/v1/asia-regulatory/asean/member-state/{country_code}",
+   "GET /api/v1/asia-regulatory/asean/member-states",
+   "GET /api/v1/asia-regulatory/asean/{entity_id}/taxonomy",
+   "GET /api/v1/asia-regulatory/boj/sector-impact/{sector}",
+   "GET /api/v1/asia-regulatory/boj/{entity_id}/scenarios",
+   "GET /api/v1/asia-regulatory/brsr/top-1000",
+   "GET /api/v1/asia-regulatory/brsr/{entity_id}",
+   "GET /api/v1/asia-regulatory/brsr/{entity_id}/scorecard",
+   "GET /api/v1/asia-regulatory/cbi/certified-bonds",
+   "GET /api/v1/asia-regulatory/cbi/market-overview",
+   "GET /api/v1/asia-regulatory/cbi/pricing-report",
+   "GET /api/v1/asia-regulatory/cbi/sector-criteria",
+   "GET /api/v1/asia-regulatory/hkma/sector-benchmark",
+   "GET /api/v1/asia-regulatory/hkma/{entity_id}",
+   "GET /api/v1/asia-regulatory/pboc/catalogue",
+   "GET /api/v1/asia-regulatory/pboc/categories",
+   "GET /api/v1/asia-regulatory/pboc/{entity_id}/green-finance",
+   "POST /api/v1/asia-regulatory/hkma/{entity_id}/stress-test",
+   "GET /api/v1/assurance-readiness/ref/criteria",
+   "GET /api/v1/assurance-readiness/ref/csrd-timeline",
+   "GET /api/v1/assurance-readiness/ref/standards",
+   "GET /api/v1/attribution/pai-indicators",
+   "GET /api/v1/aviation-climate/ref/aircraft-intensity",
+   "GET /api/v1/aviation-climate/ref/corsia-phases",
+   "GET /api/v1/aviation-climate/ref/iata-nzc-pathway",
+   "GET /api/v1/aviation-climate/ref/saf-mandates",
+   "GET /api/v1/avoided-emissions/ref/article6-criteria",
+   "GET /api/v1/avoided-emissions/ref/baseline-factors",
+   "GET /api/v1/avoided-emissions/ref/categories",
+   "GET /api/v1/banking-risk/lgd-collateral-types",
+   "GET /api/v1/banking-risk/pd-term-structures",
+   "GET /api/v1/banking-risk/risk-weights"
+  ],
+  "note": "passed but no real-db/reference source \u2014 pure compute OR still on sample/seed fallbacks (candidates to wire to data)"
+ },
+ "hotspots": {
+  "slowest_ms": [
+   {
+    "endpoint": "GET /api/v1/emissions/climate-trace",
+    "dur_ms": 15436.796,
+    "domain": "emissions-data"
+   },
+   {
+    "endpoint": "GET /api/v1/ecl/assessments/{assessment_id}",
+    "dur_ms": 14489.78,
+    "domain": "ecl-climate"
+   },
+   {
+    "endpoint": "POST /api/v1/peer-benchmark/compute",
+    "dur_ms": 13585.998,
+    "domain": "peer-benchmark"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/datapoint-mappings",
+    "dur_ms": 12344.172,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/tables/{table_name}/preview",
+    "dur_ms": 10994.2,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "GET /api/v1/scenario-builder/base-scenarios",
+    "dur_ms": 10428.94,
+    "domain": "scenario-builder-v2"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/relationships",
+    "dur_ms": 10385.431,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "POST /api/v1/data-hub/scenarios/search",
+    "dur_ms": 8681.611,
+    "domain": "data-hub"
+   },
+   {
+    "endpoint": "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/analytics",
+    "dur_ms": 7791.747,
+    "domain": "portfolio-analytics"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/tables",
+    "dur_ms": 6181.712,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "GET /api/v1/engagement/entities/{entity_id}",
+    "dur_ms": 5671.433,
+    "domain": "engagement"
+   },
+   {
+    "endpoint": "GET /api/v1/ecl/assessments",
+    "dur_ms": 5204.029,
+    "domain": "ecl-climate"
+   }
+  ],
+  "deepest_calltrees": [
+   {
+    "endpoint": "GET /api/v1/data-preview/datapoint-mappings",
+    "functions": 4000,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/comparison",
+    "functions": 4000,
+    "domain": "peer-benchmark"
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/heatmap",
+    "functions": 4000,
+    "domain": "peer-benchmark"
+   },
+   {
+    "endpoint": "POST /api/v1/peer-benchmark/compute",
+    "functions": 3116,
+    "domain": "peer-benchmark"
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/institutions",
+    "functions": 2921,
+    "domain": "peer-benchmark"
+   },
+   {
+    "endpoint": "POST /api/v1/stranded-assets/portfolio-analysis",
+    "functions": 1260,
+    "domain": "stranded-assets"
+   },
+   {
+    "endpoint": "GET /api/v1/project-finance/demo/sample",
+    "functions": 1056,
+    "domain": "project-finance"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/relationships",
+    "functions": 700,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "GET /api/v1/physical-risk-pricing/ref/country-profiles",
+    "functions": 572,
+    "domain": "physical-risk-pricing"
+   },
+   {
+    "endpoint": "GET /api/v1/data-preview/modules",
+    "functions": 567,
+    "domain": "data-preview"
+   },
+   {
+    "endpoint": "POST /api/v1/geothermal/assess",
+    "functions": 547,
+    "domain": "geothermal"
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/regional-averages",
+    "functions": 482,
+    "domain": "peer-benchmark"
+   }
+  ],
+  "trace_truncated": [
+   {
+    "endpoint": "GET /api/v1/data-preview/datapoint-mappings",
+    "caps": [
+     "nodes"
+    ]
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/comparison",
+    "caps": [
+     "nodes"
+    ]
+   },
+   {
+    "endpoint": "GET /api/v1/peer-benchmark/heatmap",
+    "caps": [
+     "nodes"
+    ]
+   }
+  ]
+ },
+ "core_source_tables": {
+  "csrd_entity_registry": 26,
+  "hub_scenarios": 22,
+  "portfolios_pg": 19,
+  "dh_sbti_companies": 19,
+  "dh_ngfs_scenario_data": 16,
+  "scenarios": 15,
+  "dh_yfinance_market_data": 14,
+  "dh_ca100_assessments": 13,
+  "dh_country_risk_indices": 13,
+  "assets_pg": 13,
+  "dh_sec_edgar_filings": 11,
+  "csrd_kpi_values": 11,
+  "csrd_esrs_catalog": 10,
+  "dh_crrem_pathways": 10,
+  "hub_comparisons": 9,
+  "ctp_entities": 9,
+  "ngfs_scenarios_v2": 9,
+  "hub_trajectories": 8,
+  "entity_sanctions": 8,
+  "dh_owid_co2_energy": 8,
+  "entity_lei": 8,
+  "dh_climate_trace_emissions": 8,
+  "hub_sources": 8,
+  "dh_violation_tracker": 8,
+  "carbon_portfolio": 7
+ },
+ "reference_data_tables": [
+  "reference_data_points",
+  "reference_data_records",
+  "reference_data_sources"
+ ],
+ "enhancement_backlog": [
+  {
+   "area": "data",
+   "priority": "P1",
+   "title": "Seed 55 empty tables",
+   "detail": "Detail/by-id and dashboard endpoints 404 or read NaN because these tables have no rows. Seed representative reference rows so lineage exercises real data end-to-end."
+  },
+  {
+   "area": "harness",
+   "priority": "P1",
+   "title": "Write-path coverage: 661 mutation endpoints untested",
+   "detail": "Run with --allow-writes against a disposable Supabase branch DB (create_branch) so POST/PUT/DELETE lineage is captured without touching production."
+  },
+  {
+   "area": "harness",
+   "priority": "P1",
+   "title": "Smarter mock inputs (schema-example + real-row hydration)",
+   "detail": "Compute endpoints fail on naive mocks (None into arithmetic). Use pydantic field examples/constraints and hydrate request bodies from real list-endpoint rows."
+  },
+  {
+   "area": "harness",
+   "priority": "P2",
+   "title": "Contract assertions per transaction",
+   "detail": "Beyond 'did it run', assert output schema validity, no NaN/Inf in numeric KPIs, and lineage completeness (every output field traces to a source). Turns lineage into a regression gate."
+  },
+  {
+   "area": "harness",
+   "priority": "P2",
+   "title": "Frontend lineage layer",
+   "detail": "Drive the 816 React routes headless; capture network \u2192 rendered KPIs and stitch to the backend lineage for true source\u2192screen lineage."
+  },
+  {
+   "area": "harness",
+   "priority": "P3",
+   "title": "Deep-trace mode for 3 capped endpoints",
+   "detail": "Some call trees hit node/depth caps (e.g. portfolio analysis). Offer an opt-in uncapped trace for those flows."
+  },
+  {
+   "area": "ops",
+   "priority": "P0",
+   "title": "Pin fastapi/starlette (route-registration regression)",
+   "detail": "Installed fastapi 0.137.1 / starlette 0.52.1 drifted from pinned 0.110.1 / 0.37.2 and silently break include_router. Restore pins; add a CI smoke test asserting /api/v1 route count > N."
+  },
+  {
+   "area": "ops",
+   "priority": "P2",
+   "title": "Run the sweep in CI nightly",
+   "detail": "Read-only sweep + dashboard artifact on each main build; diff pass/fail and provenance vs the prior run to catch data/logic drift."
+  }
+ ]
+}

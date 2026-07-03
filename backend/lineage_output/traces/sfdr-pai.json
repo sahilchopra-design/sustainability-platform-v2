@@ -1,0 +1,4310 @@
+{
+ "domain": "sfdr-pai",
+ "meta": {
+  "ts": "2026-06-30T14:05:07",
+  "module": "api.v1.routes.sfdr_pai",
+  "router_prefix": "/api/v1/sfdr-pai",
+  "endpoints": 15
+ },
+ "transactions": [
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/additional-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 78.817,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "add_env_1",
+     "add_env_2",
+     "add_env_3",
+     "add_env_4",
+     "add_env_5",
+     "add_env_6",
+     "add_env_7",
+     "add_env_8",
+     "add_env_9",
+     "add_env_10",
+     "add_env_11",
+     "add_env_12",
+     "add_env_13",
+     "add_env_14",
+     "add_env_15",
+     "add_env_re_1",
+     "add_env_re_2",
+     "add_env_re_3",
+     "add_env_re_4",
+     "add_env_re_5",
+     "add_soc_1",
+     "add_soc_2",
+     "add_soc_3",
+     "add_soc_4",
+     "add_soc_5"
+    ],
+    "n_keys": 37
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_additional_indicators",
+     "qual": "ref_additional_indicators",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 195,
+     "args": {},
+     "ret": "{'add_env_1': {'id': 'add_env_1', 'table': 2, 'name': 'Emissions of inorganic pollutants', 'metric': 'Tonnes of inorganic pollutant equivalents per million EUR invested', 'unit': 'tonnes / EUR million invested', 'category': 'environmental'\u2026",
+     "dur_ms": 76.533,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 76.359,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/__init__.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 4.483,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 5,
+           "name": "PAICalculationResult",
+           "qual": "PAICalculationResult",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1051,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.018,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 6,
+           "name": "PAIStatementResult",
+           "qual": "PAIStatementResult",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1068,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.018,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 7,
+           "name": "DNSHAssessmentResult",
+           "qual": "DNSHAssessmentResult",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1086,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.015,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 8,
+           "name": "EntityClassificationResult",
+           "qual": "EntityClassificationResult",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1099,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.026,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 9,
+           "name": "SFDRPAIEngine",
+           "qual": "SFDRPAIEngine",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1118,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.016,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 10,
+       "name": "get_additional_indicators",
+       "qual": "SFDRPAIEngine.get_additional_indicators",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2021,
+       "args": {},
+       "ret": "{'add_env_1': {'id': 'add_env_1', 'table': 2, 'name': 'Emissions of inorganic pollutants', 'metric': 'Tonnes of inorganic pollutant equivalents per million EUR invested', 'unit': 'tonnes / EUR million invested', 'category': 'environmental'\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/calculation-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.696,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_1",
+     "pai_2",
+     "pai_3",
+     "pai_4",
+     "pai_5",
+     "pai_6",
+     "pai_7",
+     "pai_8",
+     "pai_9",
+     "pai_10",
+     "pai_11",
+     "pai_12",
+     "pai_13",
+     "pai_14",
+     "pai_15",
+     "pai_16",
+     "pai_17",
+     "pai_18"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_calculation_methods",
+     "qual": "ref_calculation_methods",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 200,
+     "args": {},
+     "ret": "{'pai_1': {'formula': 'attributed_emissions_i = (investment_value_i / evic_i) x scope_k_emissions_i; total = SUM(attributed_i)', 'required_data_fields': ['investment_value_eur', 'evic_eur', 'scope_1_tco2e', 'scope_2_tco2e', 'scope_3_tco2e'\u2026",
+     "dur_ms": 0.097,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "get_calculation_methods",
+       "qual": "SFDRPAIEngine.get_calculation_methods",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2026,
+       "args": {},
+       "ret": "{'pai_1': {'formula': 'attributed_emissions_i = (investment_value_i / evic_i) x scope_k_emissions_i; total = SUM(attributed_i)', 'required_data_fields': ['investment_value_eur', 'evic_eur', 'scope_1_tco2e', 'scope_2_tco2e', 'scope_3_tco2e'\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/disclosure-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.493,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 7,
+    "item0_keys": [
+     "section",
+     "title",
+     "description"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "ref_disclosure_requirements",
+     "qual": "ref_disclosure_requirements",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 210,
+     "args": {},
+     "ret": "[{'section': 'summary', 'title': 'Summary', 'description': 'Overview of PAI consideration and entity classification.'}, {'section': 'pai_description', 'title': 'Description of principal adverse impacts on sustainability factors', 'descript\u2026",
+     "dur_ms": 0.063,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "get_disclosure_requirements",
+       "qual": "SFDRPAIEngine.get_disclosure_requirements",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2036,
+       "args": {},
+       "ret": "[{'section': 'summary', 'title': 'Summary', 'description': 'Overview of PAI consideration and entity classification.'}, {'section': 'pai_description', 'title': 'Description of principal adverse impacts on sustainability factors', 'descript\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/entity-classifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.6,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "article_6",
+     "article_8",
+     "article_9"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "ref_entity_classifications",
+     "qual": "ref_entity_classifications",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 205,
+     "args": {},
+     "ret": "{'article_6': {'label': 'Article 6 \u2014 No sustainability claims', 'description': 'Financial products that do not promote environmental or social characteristics and do not have sustainable investment as an objective. Must disclose how sustai\u2026",
+     "dur_ms": 0.105,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "get_entity_classifications",
+       "qual": "SFDRPAIEngine.get_entity_classifications",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2031,
+       "args": {},
+       "ret": "{'article_6': {'label': 'Article 6 \u2014 No sustainability claims', 'description': 'Financial products that do not promote environmental or social characteristics and do not have sustainable investment as an objective. Must disclose how sustai\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/mandatory-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 5.915,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_1",
+     "pai_2",
+     "pai_3",
+     "pai_4",
+     "pai_5",
+     "pai_6",
+     "pai_7",
+     "pai_8",
+     "pai_9",
+     "pai_10",
+     "pai_11",
+     "pai_12",
+     "pai_13",
+     "pai_14",
+     "pai_15",
+     "pai_16",
+     "pai_17",
+     "pai_18"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "ref_mandatory_indicators",
+     "qual": "ref_mandatory_indicators",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 190,
+     "args": {},
+     "ret": "{'pai_1': {'id': 'pai_1', 'name': 'GHG emissions', 'metric': 'Scope 1, Scope 2, Scope 3, and Total GHG emissions', 'unit': 'tCO2e', 'description': 'Scope 1 GHG emissions generated by investee companies; Scope 2 GHG emissions generated by i\u2026",
+     "dur_ms": 0.116,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "get_mandatory_indicators",
+       "qual": "SFDRPAIEngine.get_mandatory_indicators",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2016,
+       "args": {},
+       "ret": "{'pai_1': {'id': 'pai_1', 'name': 'GHG emissions', 'metric': 'Scope 1, Scope 2, Scope 3, and Total GHG emissions', 'unit': 'tCO2e', 'description': 'Scope 1 GHG emissions generated by investee companies; Scope 2 GHG emissions generated by i\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "GET /api/v1/sfdr-pai/ref/sector-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.804,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financials",
+     "energy",
+     "industrials",
+     "technology",
+     "utilities",
+     "real_estate",
+     "healthcare",
+     "consumer_staples"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "ref_sector_benchmarks",
+     "qual": "ref_sector_benchmarks",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 215,
+     "args": {},
+     "ret": "{'financials': {'pai_1_total_tco2e_per_m': 28.5, 'pai_2_carbon_footprint': 35.2, 'pai_3_ghg_intensity': 42.1, 'pai_4_fossil_fuel_pct': 5.8, 'pai_13_female_board_pct': 34.2, 'pai_14_controversial_weapons_pct': 0.1}, 'energy': {'pai_1_total_\u2026",
+     "dur_ms": 0.085,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 24,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "get_sector_benchmarks",
+       "qual": "SFDRPAIEngine.get_sector_benchmarks",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 2041,
+       "args": {},
+       "ret": "{'financials': {'pai_1_total_tco2e_per_m': 28.5, 'pai_2_carbon_footprint': 35.2, 'pai_3_ghg_intensity': 42.1, 'pai_4_fossil_fuel_pct': 5.8, 'pai_13_female_board_pct': 34.2, 'pai_14_controversial_weapons_pct': 0.1}, 'energy': {'pai_1_total_\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/benchmark",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.035,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<BenchmarkRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "peer_group",
+     "benchmarks_available",
+     "note",
+     "results"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "benchmark_against_peers",
+     "qual": "benchmark_against_peers",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 167,
+     "args": {
+      "req": "BenchmarkRequest(pai_values='TEST_req_pai_values', peer_group='all')"
+     },
+     "ret": "{'peer_group': 'all', 'benchmarks_available': False, 'note': \"No benchmarks available for peer group 'all'.\", 'results': []}",
+     "dur_ms": 0.066,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 27,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "benchmark_against_peers",
+       "qual": "SFDRPAIEngine.benchmark_against_peers",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1746,
+       "args": {
+        "pai_values": "'TEST_req_pai_values'",
+        "peer_group": "'all'"
+       },
+       "ret": "{'peer_group': 'all', 'benchmarks_available': False, 'note': \"No benchmarks available for peer group 'all'.\", 'results': []}",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/calculate",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 13.188,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CalculatePAIRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "PAICalculationResult",
+    "repr": "PAICalculationResult(indicator_id='TEST_req_pai_indicator_id', indicator_name='Unknown', value=0.0, unit='', category='', asset_class='', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "calculate_pai",
+     "qual": "calculate_pai",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 93,
+     "args": {
+      "req": "CalculatePAIRequest(portfolio_holdings=[Holding(name='', isin='', sector='', country='', weight=0.0, market_value=0.0, scope1_emissions=0.0, scope2_emissions=0.0, scope3_emissions=0.0, revenue=0.0, employees=0, energy_consumption_gwh=0.0, \u2026"
+     },
+     "ret": "PAICalculationResult(indicator_id='TEST_req_pai_indicator_id', indicator_name='Unknown', value=0.0, unit='', category='', asset_class='', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0, estimation_method='\u2026",
+     "dur_ms": 0.292,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "calculate_pai",
+       "qual": "SFDRPAIEngine.calculate_pai",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1129,
+       "args": {
+        "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+        "pai_indicator_id": "'TEST_req_pai_indicator_id'"
+       },
+       "ret": "PAICalculationResult(indicator_id='TEST_req_pai_indicator_id', indicator_name='Unknown', value=0.0, unit='', category='', asset_class='', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0, estimation_method='\u2026",
+       "dur_ms": 0.022,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/calculate-additional",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.025,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CalculateAdditionalPAIsRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [],
+    "n_keys": 0
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 32,
+     "name": "calculate_additional",
+     "qual": "calculate_additional",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 115,
+     "args": {
+      "req": "CalculateAdditionalPAIsRequest(portfolio_holdings=[Holding(name='', isin='', sector='', country='', weight=0.0, market_value=0.0, scope1_emissions=0.0, scope2_emissions=0.0, scope3_emissions=0.0, revenue=0.0, employees=0, energy_consumptio\u2026"
+     },
+     "ret": "{}",
+     "dur_ms": 0.17,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 33,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "calculate_additional_pais",
+       "qual": "SFDRPAIEngine.calculate_additional_pais",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1236,
+       "args": {
+        "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+        "selected_indicators": "[]"
+       },
+       "ret": "{}",
+       "dur_ms": 0.045,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.calculate_additional_pais.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1252,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406557520>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.calculate_additional_pais.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1252,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406557520>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/calculate-all",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.984,
+   "node_count": 57,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CalculateAllPAIsRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_1",
+     "pai_2",
+     "pai_3",
+     "pai_4",
+     "pai_5",
+     "pai_6",
+     "pai_7",
+     "pai_8",
+     "pai_9",
+     "pai_10",
+     "pai_11",
+     "pai_12",
+     "pai_13",
+     "pai_14",
+     "pai_15",
+     "pai_16",
+     "pai_17",
+     "pai_18"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "calculate_all_mandatory",
+     "qual": "calculate_all_mandatory",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 104,
+     "args": {
+      "req": "CalculateAllPAIsRequest(portfolio_holdings=[Holding(name='', isin='', sector='', country='', weight=0.0, market_value=0.0, scope1_emissions=0.0, scope2_emissions=0.0, scope3_emissions=0.0, revenue=0.0, employees=0, energy_consumption_gwh=0\u2026"
+     },
+     "ret": "{'pai_1': PAICalculationResult(indicator_id='pai_1', indicator_name='GHG emissions', value=0.0, unit='tCO2e', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0\u2026",
+     "dur_ms": 1.425,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "calculate_all_mandatory_pais",
+       "qual": "SFDRPAIEngine.calculate_all_mandatory_pais",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1220,
+       "args": {
+        "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026"
+       },
+       "ret": "{'pai_1': PAICalculationResult(indicator_id='pai_1', indicator_name='GHG emissions', value=0.0, unit='tCO2e', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0\u2026",
+       "dur_ms": 1.283,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 40,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_1'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_1', indicator_name='GHG emissions', value=0.0, unit='tCO2e', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0, estimati\u2026",
+         "dur_ms": 0.049,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 41,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065577F0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065577F0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 43,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_2'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_2', indicator_name='Carbon footprint', value=0.0, unit='tCO2e / EUR million invested', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, \u2026",
+         "dur_ms": 0.045,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 44,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557760>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 45,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557760>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 46,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_3'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_3', indicator_name='GHG intensity of investee companies', value=0.0, unit='tCO2e / EUR million revenue', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, ho\u2026",
+         "dur_ms": 0.036,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 47,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557A30>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 48,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557A30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 49,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_4'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_4', indicator_name='Exposure to companies active in the fossil fuel sector', value=0.0, unit='%', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_\u2026",
+         "dur_ms": 0.035,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 50,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557BE0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 51,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557BE0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 52,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_5'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_5', indicator_name='Share of non-renewable energy consumption and production', value=0.0, unit='%', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holding\u2026",
+         "dur_ms": 0.043,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 53,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557BB0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 54,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406557BB0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 55,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_6'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_6', indicator_name='Energy consumption intensity per high impact climate sector', value=0.0, unit='GWh / EUR million revenue', category='environmental', asset_class='company', data_quality_score=0.0, \u2026",
+         "dur_ms": 0.071,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 56,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065577C0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065577C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 58,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_7'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_7', indicator_name='Activities negatively affecting biodiversity-sensitive areas', value=0.0, unit='%', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, hol\u2026",
+         "dur_ms": 0.039,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 59,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065574F0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 60,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065574F0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 61,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_8'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_8', indicator_name='Emissions to water', value=0.0, unit='tonnes / EUR million invested', category='environmental', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=\u2026",
+         "dur_ms": 0.033,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 62,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588100>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 63,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588100>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 64,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_9'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_9', indicator_name='Hazardous waste and radioactive waste ratio', value=0.0, unit='tonnes / EUR million invested', category='environmental', asset_class='company', data_quality_score=0.0, coverage_rat\u2026",
+         "dur_ms": 0.139,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 65,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588220>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 66,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588220>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 67,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_10'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_10', indicator_name='Violations of UN Global Compact principles and OECD Guidelines', value=0.0, unit='%', category='social', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holding\u2026",
+         "dur_ms": 0.035,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 68,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065883A0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 69,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065883A0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 70,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_11'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_11', indicator_name='Lack of processes and compliance mechanisms to monitor UNGC and OECD compliance', value=0.0, unit='%', category='social', asset_class='company', data_quality_score=0.0, coverage_r\u2026",
+         "dur_ms": 0.038,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 71,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588430>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588430>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 73,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_12'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_12', indicator_name='Unadjusted gender pay gap', value=0.0, unit='%', category='social', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0, estima\u2026",
+         "dur_ms": 0.034,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 74,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065884C0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 75,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065884C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 76,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_13'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_13', indicator_name='Board gender diversity', value=0.0, unit='%', category='social', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0, estimatio\u2026",
+         "dur_ms": 0.035,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 77,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588550>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 78,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588550>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 79,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_14'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_14', indicator_name='Exposure to controversial weapons', value=0.0, unit='%', category='social', asset_class='company', data_quality_score=0.0, coverage_ratio=0.0, holdings_covered=0, holdings_total=0\u2026",
+         "dur_ms": 0.041,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 80,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065885E0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 81,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065885E0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 82,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_15'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_15', indicator_name='GHG intensity of investee countries', value=0.0, unit='tCO2e / EUR million GDP', category='environmental', asset_class='sovereign', data_quality_score=0.0, coverage_ratio=0.0, hol\u2026",
+         "dur_ms": 0.035,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 83,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588670>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 84,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588670>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 85,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_16'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_16', indicator_name='Investee countries subject to social violations', value=0.0, unit='count / share %', category='social', asset_class='sovereign', data_quality_score=0.0, coverage_ratio=0.0, holdin\u2026",
+         "dur_ms": 0.034,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 86,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588730>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 87,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588730>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 88,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_17'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_17', indicator_name='Exposure to fossil fuels through real estate assets', value=0.0, unit='%', category='environmental', asset_class='real_estate', data_quality_score=0.0, coverage_ratio=0.0, holding\u2026",
+         "dur_ms": 0.039,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 89,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065887C0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 90,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x00000294065887C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 91,
+         "name": "calculate_pai",
+         "qual": "SFDRPAIEngine.calculate_pai",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1129,
+         "args": {
+          "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026",
+          "pai_indicator_id": "'pai_18'"
+         },
+         "ret": "PAICalculationResult(indicator_id='pai_18', indicator_name='Exposure to energy-inefficient real estate assets', value=0.0, unit='%', category='environmental', asset_class='real_estate', data_quality_score=0.0, coverage_ratio=0.0, holdings_\u2026",
+         "dur_ms": 0.034,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 92,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588850>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 93,
+           "name": "<genexpr>",
+           "qual": "SFDRPAIEngine.calculate_pai.<locals>.<genexpr>",
+           "file": "services/sfdr_pai_engine.py",
+           "line": 1159,
+           "args": {
+            ".0": "<list_iterator object at 0x0000029406588850>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/classify-entity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/compare-periods",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/data-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.756,
+   "node_count": 160,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CalculateAllPAIsRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_1",
+     "pai_2",
+     "pai_3",
+     "pai_4",
+     "pai_5",
+     "pai_6",
+     "pai_7",
+     "pai_8",
+     "pai_9",
+     "pai_10",
+     "pai_11",
+     "pai_12",
+     "pai_13",
+     "pai_14",
+     "pai_15",
+     "pai_16",
+     "pai_17",
+     "pai_18"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 94,
+     "name": "assess_data_coverage",
+     "qual": "assess_data_coverage",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 177,
+     "args": {
+      "req": "CalculateAllPAIsRequest(portfolio_holdings=[Holding(name='', isin='', sector='', country='', weight=0.0, market_value=0.0, scope1_emissions=0.0, scope2_emissions=0.0, scope3_emissions=0.0, revenue=0.0, employees=0, energy_consumption_gwh=0\u2026"
+     },
+     "ret": "{'pai_1': {'indicator_id': 'pai_1', 'indicator_name': 'GHG emissions', 'required_fields': ['investment_value_eur', 'evic_eur', 'scope_1_tco2e', 'scope_2_tco2e', 'scope_3_tco2e'], 'field_coverage': {'investment_value_eur': {'holdings_with_d\u2026",
+     "dur_ms": 2.784,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 95,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "assess_data_coverage",
+       "qual": "SFDRPAIEngine.assess_data_coverage",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1590,
+       "args": {
+        "portfolio_holdings": "[{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable\u2026"
+       },
+       "ret": "{'pai_1': {'indicator_id': 'pai_1', 'indicator_name': 'GHG emissions', 'required_fields': ['investment_value_eur', 'evic_eur', 'scope_1_tco2e', 'scope_2_tco2e', 'scope_3_tco2e'], 'field_coverage': {'investment_value_eur': {'holdings_with_d\u2026",
+       "dur_ms": 2.53,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 97,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588940>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588940>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588940>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 100,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588940>"
+         },
+         "ret": "None",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588940>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 114,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 115,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 116,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 117,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 118,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 119,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 120,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 121,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 122,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 123,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 124,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 125,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 126,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 127,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 128,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x00000294065882E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 131,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 132,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 133,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 134,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 135,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 136,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 137,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 138,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 139,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 140,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 141,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 142,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 143,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 144,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 145,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 146,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588A00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 147,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 148,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 149,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 150,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 151,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 152,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 153,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588970>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 154,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588970>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 155,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588970>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 156,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 157,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 158,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 159,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 160,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 161,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 162,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 163,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 164,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 165,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 166,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 167,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 168,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 169,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 170,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 171,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 172,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 173,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 174,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 175,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 176,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 177,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 178,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 179,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 180,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 181,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 182,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 183,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 184,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 185,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 186,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589000>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 187,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589000>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 188,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589000>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 189,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 190,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 191,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 192,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 193,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 194,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 195,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 196,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406588C70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 197,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 198,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 199,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 200,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 201,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 202,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 203,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 204,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 205,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 206,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 207,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 208,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 209,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 210,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 211,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 212,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 213,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 214,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 215,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 216,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 217,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589AB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 218,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589AB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 219,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589AB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 220,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589AB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 221,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589AB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 222,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 223,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 224,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 225,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 226,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 227,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 228,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 229,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 230,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 231,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 232,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 233,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 234,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 235,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 236,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 237,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 238,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 239,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589D50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 240,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 241,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 242,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 243,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 244,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589F00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 245,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589F00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 246,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589F00>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 247,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589F00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 248,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1609,
+         "args": {
+          ".0": "<list_iterator object at 0x0000029406589F00>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 249,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 250,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 251,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 252,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 253,
+         "name": "<genexpr>",
+         "qual": "SFDRPAIEngine.assess_data_coverage.<locals>.<genexpr>",
+         "file": "services/sfdr_pai_engine.py",
+         "line": 1618,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000002940660FE70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/dnsh",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.167,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<DNSHRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "DNSHAssessmentResult",
+    "repr": "DNSHAssessmentResult(holding_id='unknown', holding_name='', taxonomy_objective='TEST_req_taxonomy_objective', relevant_pais=[], pai_assessments=[], overall_pass=True, dnsh_score=100.0, notes=[\"No PAI "
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 254,
+     "name": "assess_dnsh",
+     "qual": "assess_dnsh",
+     "file": "api/v1/routes/sfdr_pai.py",
+     "line": 126,
+     "args": {
+      "req": "DNSHRequest(holding=Holding(name='', isin='', sector='', country='', weight=0.0, market_value=0.0, scope1_emissions=0.0, scope2_emissions=0.0, scope3_emissions=0.0, revenue=0.0, employees=0, energy_consumption_gwh=0.0, renewable_share=0.0,\u2026"
+     },
+     "ret": "DNSHAssessmentResult(holding_id='unknown', holding_name='', taxonomy_objective='TEST_req_taxonomy_objective', relevant_pais=[], pai_assessments=[], overall_pass=True, dnsh_score=100.0, notes=[\"No PAI indicators mapped to objective 'TEST_re\u2026",
+     "dur_ms": 0.183,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 255,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/sfdr_pai.py",
+       "line": 17,
+       "args": {},
+       "ret": "<services.sfdr_pai_engine.SFDRPAIEngine object at 0x0000029406435A90>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 256,
+       "name": "assess_do_no_significant_harm",
+       "qual": "SFDRPAIEngine.assess_do_no_significant_harm",
+       "file": "services/sfdr_pai_engine.py",
+       "line": 1296,
+       "args": {
+        "holding": "{'name': '', 'isin': '', 'sector': '', 'country': '', 'weight': 0.0, 'market_value': 0.0, 'scope1_emissions': 0.0, 'scope2_emissions': 0.0, 'scope3_emissions': 0.0, 'revenue': 0.0, 'employees': 0, 'energy_consumption_gwh': 0.0, 'renewable_\u2026",
+        "taxonomy_objective": "'TEST_req_taxonomy_objective'"
+       },
+       "ret": "DNSHAssessmentResult(holding_id='unknown', holding_name='', taxonomy_objective='TEST_req_taxonomy_objective', relevant_pais=[], pai_assessments=[], overall_pass=True, dnsh_score=100.0, notes=[\"No PAI indicators mapped to objective 'TEST_re\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-pai",
+   "label": "POST /api/v1/sfdr-pai/pai-statement",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

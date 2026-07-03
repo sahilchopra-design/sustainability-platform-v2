@@ -1,0 +1,1036 @@
+{
+ "domain": "scope3-categories",
+ "meta": {
+  "ts": "2026-06-30T14:05:02",
+  "module": "api.v1.routes.scope3_categories",
+  "router_prefix": "/api/v1/scope3-categories",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/calculation-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.272,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "spend_based",
+     "average_data",
+     "supplier_specific",
+     "hybrid",
+     "pcaf_standard"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_calculation_methods",
+     "qual": "ref_calculation_methods",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 57,
+     "args": {},
+     "ret": "{'spend_based': {'dqs': 4, 'description': 'EEIO spend-based using supplier spend'}, 'average_data': {'dqs': 3, 'description': 'Industry-average emission factors'}, 'supplier_specific': {'dqs': 1, 'description': 'Primary supplier-specific d\u2026",
+     "dur_ms": 0.046,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "ref_calculation_methods",
+       "qual": "Scope3CategoriesEngine.ref_calculation_methods",
+       "file": "services/scope3_categories_engine.py",
+       "line": 215,
+       "args": {},
+       "ret": "{'spend_based': {'dqs': 4, 'description': 'EEIO spend-based using supplier spend'}, 'average_data': {'dqs': 3, 'description': 'Industry-average emission factors'}, 'supplier_specific': {'dqs': 1, 'description': 'Primary supplier-specific d\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.256,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10",
+     "C11",
+     "C12",
+     "C13",
+     "C14",
+     "C15"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_categories",
+     "qual": "ref_categories",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 52,
+     "args": {},
+     "ret": "{'C1': {'name': 'Purchased goods & services', 'stream': 'upstream', 'typical_pct': 0.3}, 'C2': {'name': 'Capital goods', 'stream': 'upstream', 'typical_pct': 0.05}, 'C3': {'name': 'Fuel & energy-related activities', 'stream': 'upstream', '\u2026",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "ref_categories",
+       "qual": "Scope3CategoriesEngine.ref_categories",
+       "file": "services/scope3_categories_engine.py",
+       "line": 212,
+       "args": {},
+       "ret": "{'C1': {'name': 'Purchased goods & services', 'stream': 'upstream', 'typical_pct': 0.3}, 'C2': {'name': 'Capital goods', 'stream': 'upstream', 'typical_pct': 0.05}, 'C3': {'name': 'Fuel & energy-related activities', 'stream': 'upstream', '\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/flag-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.128,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "flag_sectors",
+     "note",
+     "coverage_rule"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_flag_sectors",
+     "qual": "ref_flag_sectors",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 80,
+     "args": {},
+     "ret": "{'flag_sectors': ['agriculture', 'forestry', 'land_use', 'food_beverage', 'consumer_goods_agri', 'paper', 'real_estate_agri'], 'note': 'SBTi FLAG (Forest, Land, Agriculture) sectors must set separate FLAG targets', 'coverage_rule': '>=40% \u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/ghg-protocol-scope3",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.112,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standard",
+     "categories",
+     "upstream",
+     "downstream",
+     "mandatory_for_sbti"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_ghg_protocol_scope3",
+     "qual": "ref_ghg_protocol_scope3",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 90,
+     "args": {},
+     "ret": "{'standard': 'GHG Protocol Corporate Value Chain (Scope 3) Standard 2011', 'categories': 15, 'upstream': [1, 2, 3, 4, 5, 6, 7, 8], 'downstream': [9, 10, 11, 12, 13, 14, 15], 'mandatory_for_sbti': 'All 15 categories must be screened; materi\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/pcaf-c15",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.109,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "category",
+     "name",
+     "standard",
+     "asset_classes",
+     "attribution_formula",
+     "dqs_range"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_pcaf_c15",
+     "qual": "ref_pcaf_c15",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 67,
+     "args": {},
+     "ret": "{'category': 'C15', 'name': 'Investments', 'standard': 'PCAF Global GHG Accounting and Reporting Standard Part C', 'asset_classes': ['listed_equity', 'corporate_bonds', 'project_finance', 'real_estate', 'sovereign_bonds', 'loans'], 'attrib\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "GET /api/v1/scope3-categories/ref/sbti-coverage-rule",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.123,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "threshold_pct",
+     "description",
+     "flag_note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_sbti_coverage_rule",
+     "qual": "ref_sbti_coverage_rule",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 62,
+     "args": {},
+     "ret": "{'threshold_pct': 40.0, 'description': 'SBTi near-term Scope 3 target: cover >=40% of total Scope 3 by mass', 'flag_note': 'FLAG sectors must set separate forest, land, agriculture targets'}",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "ref_sbti_coverage_rule",
+       "qual": "Scope3CategoriesEngine.ref_sbti_coverage_rule",
+       "file": "services/scope3_categories_engine.py",
+       "line": 218,
+       "args": {},
+       "ret": "{'threshold_pct': 40.0, 'description': 'SBTi near-term Scope 3 target: cover >=40% of total Scope 3 by mass', 'flag_note': 'FLAG sectors must set separate forest, land, agriculture targets'}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "POST /api/v1/scope3-categories/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.102,
+   "node_count": 41,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<AssessRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "assessment"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 26,
+     "args": {
+      "req": "AssessRequest(entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', nace_code='TEST_req_nace_code', revenue_bn=1.0, headcount=0, sector_type='non_flag', portfolio_aum_bn=None)"
+     },
+     "ret": "{'status': 'ok', 'assessment': {'assessment_id': 'S3CAT-TEST_REQ-2024', 'entity_id': 'TEST_req_entity_id', 'entity_name': 'TEST_req_entity_name', 'nace_code': 'TEST_req_nace_code', 'revenue_bn': 1.0, 'headcount': 0, 'material_categories': \u2026",
+     "dur_ms": 1.788,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "assess",
+       "qual": "Scope3CategoriesEngine.assess",
+       "file": "services/scope3_categories_engine.py",
+       "line": 99,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "entity_name": "'TEST_req_entity_name'",
+        "nace_code": "'TEST_req_nace_code'",
+        "revenue_bn": "1.0",
+        "headcount": "0",
+        "sector_type": "'non_flag'",
+        "portfolio_aum_bn": "None"
+       },
+       "ret": "Scope3Assessment(assessment_id='S3CAT-TEST_REQ-2024', entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', nace_code='TEST_req_nace_code', revenue_bn=1.0, headcount=0, material_categories=['C1', 'C2', 'C10', 'C11', 'C12', 'C\u2026",
+       "dur_ms": 1.142,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "45125.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "20395.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "18260.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "63447.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "14049.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "31688.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 150,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "45125.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "20395.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "5174.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "10415.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "2275.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "9249.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "9233.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "3929.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "11406.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "18260.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "63447.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "14049.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "3913.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "5338.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "31688.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 155,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "45125.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "61185.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "20696.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "41660.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "2275.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "9249.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "36932.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "3929.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "11406.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "18260.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "63447.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "28098.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "15652.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "5338.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "126752.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "Scope3CategoriesEngine.assess.<locals>.<genexpr>",
+         "file": "services/scope3_categories_engine.py",
+         "line": 157,
+         "args": {
+          ".0": "<list_iterator object at 0x000001B83ACDCF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scope3-categories",
+   "label": "POST /api/v1/scope3-categories/materiality-screen",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.319,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<MaterialityRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10",
+     "C11",
+     "C12",
+     "C13",
+     "C14",
+     "C15"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 51,
+     "name": "materiality_screen",
+     "qual": "materiality_screen",
+     "file": "api/v1/routes/scope3_categories.py",
+     "line": 44,
+     "args": {
+      "req": "MaterialityRequest(nace_code='TEST_req_nace_code', revenue_bn=1.0)"
+     },
+     "ret": "{'C1': {'name': 'Purchased goods & services', 'likely_material': True, 'relative_significance': 'high'}, 'C2': {'name': 'Capital goods', 'likely_material': False, 'relative_significance': 'low'}, 'C3': {'name': 'Fuel & energy-related activ\u2026",
+     "dur_ms": 0.095,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 52,
+       "name": "screen_materiality",
+       "qual": "Scope3CategoriesEngine.screen_materiality",
+       "file": "services/scope3_categories_engine.py",
+       "line": 197,
+       "args": {
+        "nace_code": "'TEST_req_nace_code'",
+        "revenue_bn": "1.0"
+       },
+       "ret": "{'C1': {'name': 'Purchased goods & services', 'likely_material': True, 'relative_significance': 'high'}, 'C2': {'name': 'Capital goods', 'likely_material': False, 'relative_significance': 'low'}, 'C3': {'name': 'Fuel & energy-related activ\u2026",
+       "dur_ms": 0.055,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

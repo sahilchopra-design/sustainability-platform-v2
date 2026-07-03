@@ -1,0 +1,144 @@
+{
+ "domain": "sat-coal-checker",
+ "meta": {
+  "ts": "2026-06-30T14:04:43",
+  "module": "api.v1.routes.sat_coal_checker",
+  "router_prefix": "/api/v1/sat-coal",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "sat-coal-checker",
+   "label": "GET /api/v1/sat-coal/gem-summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 727.592,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_reference_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT entity_name, kpi_name, value FROM dh_reference_data WHERE source_name = 'GEM Coal Plant Tracker' ORDER BY entity_name, kpi_name\"",
+     "tables": [
+      "dh_reference_data"
+     ],
+     "rowcount": 1120,
+     "dur_ms": 171.126,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "message"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_gem_summary",
+     "qual": "get_gem_summary",
+     "file": "api/v1/routes/sat_coal_checker.py",
+     "line": 254,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025DD73D0710>"
+     },
+     "ret": "{'message': 'No GEM coal data loaded'}",
+     "dur_ms": 697.583,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_get_gem_coal_summary",
+       "qual": "_get_gem_coal_summary",
+       "file": "api/v1/routes/sat_coal_checker.py",
+       "line": 429,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025DD73D0710>"
+       },
+       "ret": "None",
+       "dur_ms": 697.414,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sat-coal-checker",
+   "label": "GET /api/v1/sat-coal/thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.339,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "revenue_thresholds",
+     "phase_out_deadlines",
+     "pipeline_risk_categories",
+     "criteria"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_thresholds",
+     "qual": "get_thresholds",
+     "file": "api/v1/routes/sat_coal_checker.py",
+     "line": 232,
+     "args": {},
+     "ret": "{'revenue_thresholds': {'exclusion': 25.0, 'watchlist': 10.0, 'acceptable': 5.0}, 'phase_out_deadlines': {'OECD': 2030, 'non_OECD': 2040, 'IEA_NZE_no_new': 2021}, 'pipeline_risk_categories': {'announced': 'HIGH -- New capacity announced', \u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sat-coal-checker",
+   "label": "POST /api/v1/sat-coal/check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

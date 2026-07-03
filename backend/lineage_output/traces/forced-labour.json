@@ -1,0 +1,627 @@
+{
+ "domain": "forced-labour",
+ "meta": {
+  "ts": "2026-06-30T14:02:12",
+  "module": "api.v1.routes.forced_labour",
+  "router_prefix": "/api/v1/forced-labour",
+  "endpoints": 15
+ },
+ "transactions": [
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/country-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.326,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "country_risk"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_country_risk",
+     "qual": "ref_country_risk",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 278,
+     "args": {},
+     "ret": "{'country_risk': {'tier_1_systemic': ['CN', 'BY', 'KP', 'ER', 'UZ', 'TM', 'MM', 'LY', 'QA', 'AE', 'SA', 'OM', 'IN', 'PK'], 'tier_2_elevated': ['BD', 'KH', 'VN', 'TH', 'GH', 'CI', 'NG', 'MR', 'ML', 'BF', 'BR', 'BO', 'CO', 'PY', 'PE', 'ID', \u2026",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_eu_flr_country_risk",
+       "qual": "ForcedLabourEngine.get_eu_flr_country_risk",
+       "file": "services/forced_labour_engine.py",
+       "line": 649,
+       "args": {},
+       "ret": "{'tier_1_systemic': ['CN', 'BY', 'KP', 'ER', 'UZ', 'TM', 'MM', 'LY', 'QA', 'AE', 'SA', 'OM', 'IN', 'PK'], 'tier_2_elevated': ['BD', 'KH', 'VN', 'TH', 'GH', 'CI', 'NG', 'MR', 'ML', 'BF', 'BR', 'BO', 'CO', 'PY', 'PE', 'ID', 'PH', 'NP', 'LK',\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/high-risk-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.206,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "high_risk_countries",
+     "eu_flr_country_list",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_high_risk_countries",
+     "qual": "ref_high_risk_countries",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 299,
+     "args": {},
+     "ret": "{'high_risk_countries': {'CN': 0.85, 'MM': 0.9, 'UZ': 0.8, 'TM': 0.85, 'KP': 0.95, 'IN': 0.55, 'BD': 0.6, 'PK': 0.65, 'VN': 0.5, 'ID': 0.45, 'BR': 0.4, 'NG': 0.6, 'ET': 0.7, 'ML': 0.65, 'BF': 0.6, 'CG': 0.7, 'CD': 0.8, 'ER': 0.9, 'LY': 0.7\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/high-risk-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.17,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "high_risk_sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_high_risk_sectors",
+     "qual": "ref_high_risk_sectors",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 309,
+     "args": {},
+     "ret": "{'high_risk_sectors': {'apparel_textiles': {'description': 'Garment, textile, and footwear manufacturing', 'supply_chain_vulnerability': 'high', 'high_risk_regions': ['South Asia', 'Southeast Asia', 'Central Asia'], 'eu_flr_priority': True\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/ilo-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.164,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ilo_indicators"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_ilo_indicators",
+     "qual": "ref_ilo_indicators",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 272,
+     "args": {},
+     "ret": "{'ilo_indicators': {'abuse_of_vulnerability': {'description': 'Exploitation of workers in vulnerable situations', 'ilo_reference': 'ILO Indicator 1', 'weight': 0.1, 'examples': ['migrant workers in irregular status', 'debt bondage recruitm\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/risk-levels",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.145,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eu_flr_risk_levels"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_risk_levels",
+     "qual": "ref_risk_levels",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 285,
+     "args": {},
+     "ret": "{'eu_flr_risk_levels': {'critical': {'import_ban_threshold': 0.85, 'art7_trigger': True, 'description': 'Import prohibition applies \u2014 risk points >= 7'}, 'high': {'import_ban_threshold': 0.65, 'art7_trigger': True, 'description': 'Investig\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "GET /api/v1/forced-labour/ref/uk-msa-areas",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.139,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "uk_msa_areas"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_uk_msa_areas",
+     "qual": "ref_uk_msa_areas",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 292,
+     "args": {},
+     "ret": "{'uk_msa_areas': {'organisation_structure': {'description': 'Organisation structure, business and supply chains', 'max_score': 5, 'criteria': ['org_chart_published', 'supply_chain_tiers_mapped', 'key_suppliers_identified', 'geographic_risk\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/compliance-programme",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.37,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "assess_compliance_programme",
+     "qual": "assess_compliance_programme",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 197,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.074,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/eu-flr-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.234,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "assess_eu_flr",
+     "qual": "assess_eu_flr",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 147,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.014,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/eu-flr-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'suppliers'",
+   "dur_ms": 0.227,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 245,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.05,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.014,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/ilo-screening",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.217,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "screen_ilo_indicators",
+     "qual": "screen_ilo_indicators",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 124,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/lksg-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.182,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_lksg",
+     "qual": "assess_lksg",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 340,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/supplier-network",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/supplier-screening",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'suppliers'",
+   "dur_ms": 0.184,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "screen_supplier_network",
+     "qual": "screen_supplier_network",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 224,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "forced-labour",
+   "label": "POST /api/v1/forced-labour/uk-msa-scoring",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.178,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "assess_uk_msa",
+     "qual": "assess_uk_msa",
+     "file": "api/v1/routes/forced_labour.py",
+     "line": 175,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.035,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "__init__",
+       "qual": "ForcedLabourEngine.__init__",
+       "file": "services/forced_labour_engine.py",
+       "line": 270,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

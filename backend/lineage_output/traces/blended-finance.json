@@ -1,0 +1,292 @@
+{
+ "domain": "blended-finance",
+ "meta": {
+  "ts": "2026-06-30T13:59:29",
+  "module": "api.v1.routes.blended_finance",
+  "router_prefix": "/api/v1/blended-finance",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "blended-finance",
+   "label": "GET /api/v1/blended-finance/ref/convergence-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.186,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "convergence_benchmarks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_convergence_benchmarks",
+     "qual": "get_convergence_benchmarks",
+     "file": "api/v1/routes/blended_finance.py",
+     "line": 187,
+     "args": {},
+     "ret": "{'convergence_benchmarks': {'infrastructure': {'mean_ratio': 5.5, 'median_ratio': 4.8, 'p25': 3.2, 'p75': 7.1}, 'climate': {'mean_ratio': 4.2, 'median_ratio': 3.9, 'p25': 2.5, 'p75': 5.8}, 'agriculture': {'mean_ratio': 3.1, 'median_ratio':\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blended-finance",
+   "label": "GET /api/v1/blended-finance/ref/dac-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 22.757,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dac_sector_codes"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_dac_sectors",
+     "qual": "get_dac_sectors",
+     "file": "api/v1/routes/blended_finance.py",
+     "line": 181,
+     "args": {},
+     "ret": "{'dac_sector_codes': {'agriculture': '31110', 'energy': '23110', 'infrastructure': '21010', 'health': '12110', 'education': '11110', 'water': '14010', 'climate': '41010', 'financial_inclusion': '24030'}}",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blended-finance",
+   "label": "GET /api/v1/blended-finance/ref/ep-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.487,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ep4_categories",
+     "note"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_ep_categories",
+     "qual": "get_ep_categories",
+     "file": "api/v1/routes/blended_finance.py",
+     "line": 193,
+     "args": {},
+     "ret": "{'ep4_categories': {'A': 'Significant adverse E&S impacts \u2014 diverse, irreversible or unprecedented', 'B': 'Limited adverse E&S impacts \u2014 few, site-specific, largely reversible', 'C': 'Minimal or no adverse E&S impacts'}, 'note': 'EP4 appli\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blended-finance",
+   "label": "GET /api/v1/blended-finance/ref/instruments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.66,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "instruments"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_instruments",
+     "qual": "get_instruments",
+     "file": "api/v1/routes/blended_finance.py",
+     "line": 165,
+     "args": {},
+     "ret": "{'instruments': {'guarantees': {'description': 'Risk guarantee covering private investor losses', 'concessional_share_pct_range': [5.0, 20.0], 'oda_eligible': True, 'risk_mitigant': 'credit_default'}, 'first_loss': {'description': 'First-l\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blended-finance",
+   "label": "GET /api/v1/blended-finance/ref/mdb-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.206,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mdb_profiles"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_mdb_profiles",
+     "qual": "get_mdb_profiles",
+     "file": "api/v1/routes/blended_finance.py",
+     "line": 159,
+     "args": {},
+     "ret": "{'mdb_profiles': {'IFC': {'full_name': 'International Finance Corporation', 'group': 'World Bank Group', 'focus_sectors': ['infrastructure', 'manufacturing', 'agribusiness', 'financial_markets'], 'min_project_size_usd': 10000000, 'max_proj\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blended-finance",
+   "label": "POST /api/v1/blended-finance/concessional-layers",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blended-finance",
+   "label": "POST /api/v1/blended-finance/dfi-standards",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blended-finance",
+   "label": "POST /api/v1/blended-finance/mobilisation-metrics",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blended-finance",
+   "label": "POST /api/v1/blended-finance/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blended-finance",
+   "label": "POST /api/v1/blended-finance/structure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

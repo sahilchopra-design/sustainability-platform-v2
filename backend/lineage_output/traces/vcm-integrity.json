@@ -1,0 +1,348 @@
+{
+ "domain": "vcm-integrity",
+ "meta": {
+  "ts": "2026-06-30T14:05:45",
+  "module": "api.v1.routes.vcm_integrity",
+  "router_prefix": "/api/v1/vcm-integrity",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "vcm-integrity",
+   "label": "GET /api/v1/vcm-integrity/ref/corsia-programmes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.354,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "body",
+     "current_cycle",
+     "programmes",
+     "total_programmes",
+     "usage_note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_corsia_programmes",
+     "qual": "ref_corsia_programmes",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 319,
+     "args": {},
+     "ret": "{'framework': 'CORSIA (Carbon Offsetting and Reduction Scheme for International Aviation)', 'body': 'ICAO (International Civil Aviation Organization)', 'current_cycle': '2024-2026', 'programmes': [{'programme': 'Verra VCS', 'body': 'Verra'\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "GET /api/v1/vcm-integrity/ref/icvcm-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.316,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "body",
+     "total_criteria",
+     "pillars",
+     "criteria",
+     "ccp_label_rule"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_icvcm_criteria",
+     "qual": "ref_icvcm_criteria",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 234,
+     "args": {},
+     "ret": "{'framework': 'ICVCM Core Carbon Principles Assessment Framework v2.0, 2023', 'body': 'Integrity Council for the Voluntary Carbon Market (ICVCM)', 'total_criteria': 10, 'pillars': ['Governance', 'Emissions Impact', 'Sustainable Development\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "GET /api/v1/vcm-integrity/ref/oxford-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.194,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "published",
+     "body",
+     "publication",
+     "principles",
+     "composite_scoring"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_oxford_principles",
+     "qual": "ref_oxford_principles",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 285,
+     "args": {},
+     "ret": "{'framework': 'Oxford Offsetting Principles', 'published': 'September 2020', 'body': 'Smith School of Enterprise and the Environment, University of Oxford', 'publication': 'The Oxford Principles for Net Zero Aligned Carbon Offsetting', 'pr\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "GET /api/v1/vcm-integrity/ref/price-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.418,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "benchmarks_by_project_type",
+     "benchmarks_by_storage_class",
+     "ccp_premium_note",
+     "currency",
+     "price_basis",
+     "vintage_note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_price_benchmarks",
+     "qual": "ref_price_benchmarks",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 307,
+     "args": {},
+     "ret": "{'benchmarks_by_project_type': {'geological_removal_daccs': {'project_type': 'Direct Air Capture + Geological Storage (DACCS)', 'storage_class': 'geological_removal', 'price_low_usd_t': 200, 'price_mid_usd_t': 350, 'price_high_usd_t': 500,\u2026",
+     "dur_ms": 0.186,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_vcm_benchmarks",
+       "qual": "get_vcm_benchmarks",
+       "file": "services/vcm_integrity_engine.py",
+       "line": 1406,
+       "args": {},
+       "ret": "{'benchmarks_by_project_type': {'geological_removal_daccs': {'project_type': 'Direct Air Capture + Geological Storage (DACCS)', 'storage_class': 'geological_removal', 'price_low_usd_t': 200, 'price_mid_usd_t': 350, 'price_high_usd_t': 500,\u2026",
+       "dur_ms": 0.039,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "GET /api/v1/vcm-integrity/ref/vcmi-claims",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.224,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "body",
+     "tier_hierarchy",
+     "claim_tiers",
+     "general_requirements",
+     "high_integrity_credit_definition"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_vcmi_claims",
+     "qual": "ref_vcmi_claims",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 257,
+     "args": {},
+     "ret": "{'framework': 'VCMI Claims Code of Practice v1.1, 2023', 'body': 'Voluntary Carbon Markets Integrity Initiative (VCMI)', 'tier_hierarchy': ['no_claim', 'silver', 'gold', 'platinum'], 'claim_tiers': {'no_claim': {'tier': 'no_claim', 'label'\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "POST /api/v1/vcm-integrity/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'project_id'",
+   "dur_ms": 0.242,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_credit",
+     "qual": "assess_credit",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 100,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "POST /api/v1/vcm-integrity/batch-assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'credits'",
+   "dur_ms": 0.204,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "batch_assess",
+     "qual": "batch_assess",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 157,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-integrity",
+   "label": "POST /api/v1/vcm-integrity/registry-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'registry_name'",
+   "dur_ms": 0.22,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "registry_screen",
+     "qual": "registry_screen",
+     "file": "api/v1/routes/vcm_integrity.py",
+     "line": 135,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

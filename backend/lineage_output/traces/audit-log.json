@@ -1,0 +1,259 @@
+{
+ "domain": "audit-log",
+ "meta": {
+  "ts": "2026-06-30T13:59:20",
+  "module": "api.v1.routes.audit_log",
+  "router_prefix": "/api/v1/audit-log",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "audit-log",
+   "label": "GET /api/v1/audit-log/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4176.476,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "audit_log"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, a.timestamp, a.org_id, a.user_id, a.user_email, a.user_role, a.action_class, a.action, a.http_method, a.endpoint, a.http_status, a.duration_ms, a.entity_type, a.entity_id, a.ip_address::text, a.status, a.error_message FROM audit_log a WHERE a.timestamp >= %(cutoff)s ORDER BY a.timestamp DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 0,
+     "dur_ms": 219.036,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(*) FROM audit_log a WHERE a.timestamp >= %(cutoff)s'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.496,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "user_id": "None (default)",
+    "user_email": "None (default)",
+    "action_class": "None (default)",
+    "entity_type": "None (default)",
+    "entity_id": "None (default)",
+    "http_status_min": "None (default)",
+    "since_hours": "24 (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "limit",
+     "offset",
+     "entries"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_audit_entries",
+     "qual": "list_audit_entries",
+     "file": "api/v1/routes/audit_log.py",
+     "line": 25,
+     "args": {
+      "user_id": "None",
+      "user_email": "None",
+      "action_class": "None",
+      "entity_type": "None",
+      "entity_id": "None",
+      "http_status_min": "None",
+      "since_hours": "24",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EE966C0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666ED2B920>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'limit': 50, 'offset': 0, 'entries': []}",
+     "dur_ms": 4140.889,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "audit-log",
+   "label": "GET /api/v1/audit-log/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 532.854,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "audit_log"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT action_class, count(*) AS cnt FROM audit_log WHERE timestamp >= %(cutoff)s AND action_class IS NOT NULL GROUP BY action_class ORDER BY cnt DESC'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 0,
+     "dur_ms": 68.394,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT user_email, count(*) AS cnt FROM audit_log WHERE timestamp >= %(cutoff)s AND user_email IS NOT NULL GROUP BY user_email ORDER BY cnt DESC LIMIT 10'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.273,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(*) FROM audit_log WHERE timestamp >= %(cutoff)s AND http_status >= 400'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 1,
+     "dur_ms": 145.866,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(*) FROM audit_log WHERE timestamp >= %(cutoff)s'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 1,
+     "dur_ms": 39.064,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "since_hours": "24 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "since_hours",
+     "total_entries",
+     "error_count",
+     "by_action_class",
+     "top_users"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "audit_stats",
+     "qual": "audit_stats",
+     "file": "api/v1/routes/audit_log.py",
+     "line": 120,
+     "args": {
+      "since_hours": "24",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EE963C0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666EE8FBA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'since_hours': 24, 'total_entries': 0, 'error_count': 0, 'by_action_class': [], 'top_users': []}",
+     "dur_ms": 495.948,
+     "sql": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "audit-log",
+   "label": "GET /api/v1/audit-log/{entry_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Audit entry not found",
+   "dur_ms": 776.306,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "audit_log"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM audit_log WHERE id = %(eid)s LIMIT 1'",
+     "tables": [
+      "audit_log"
+     ],
+     "rowcount": 0,
+     "dur_ms": 96.009,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entry_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_audit_entry",
+     "qual": "get_audit_entry",
+     "file": "api/v1/routes/audit_log.py",
+     "line": 167,
+     "args": {
+      "entry_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EFC08F0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666EFAC900>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 739.744,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

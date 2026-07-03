@@ -1,0 +1,2701 @@
+{
+ "domain": "csrd-reports",
+ "meta": {
+  "ts": "2026-06-30T14:00:24",
+  "module": "api.v1.routes.csrd_reports",
+  "router_prefix": "/api/csrd",
+  "endpoints": 19
+ },
+ "transactions": [
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/catalog",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2054.205,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_esrs_catalog"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM csrd_esrs_catalog WHERE 1=1'",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 1,
+     "dur_ms": 79.562,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT indicator_code, standard_code, disclosure_requirement, data_point_code, paragraph_ref, topic, sub_topic, indicator_name, disclosure_type, is_mandatory, module_mapping, reporting_area, related_ar, dr_full_name, conditional_or_alternative, is_voluntary, sfdr_pillar3_benchmark, phase_in_less_750, phase_in_all_undertakings, esrs_phase_in, smei_exemption, unit_of_measure, gri_disclosure_ref FR\u2026",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 50,
+     "dur_ms": 523.878,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "standard": "None (default)",
+    "module": "None (default)",
+    "dr": "None (default)",
+    "disclosure_type": "None (default)",
+    "reporting_area": "None (default)",
+    "search": "None (default)",
+    "mandatory_only": "False (default)",
+    "with_ar": "False (default)",
+    "page": "1 (default)",
+    "page_size": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "page",
+     "page_size",
+     "items"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_catalog",
+     "qual": "list_catalog",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 554,
+     "args": {
+      "standard": "None",
+      "module": "None",
+      "dr": "None",
+      "disclosure_type": "None",
+      "reporting_area": "None",
+      "search": "None",
+      "mandatory_only": "False",
+      "with_ar": "False",
+      "page": "1",
+      "page_size": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134BFF473B0>"
+     },
+     "ret": "{'total': 1184, 'page': 1, 'page_size': 50, 'items': [{'indicator_code': 'E1-1_01', 'standard_code': 'E1', 'disclosure_requirement': 'E1-1', 'data_point_code': 'E1-1_01', 'paragraph_ref': '14', 'topic': 'Climate Change', 'sub_topic': 'Envi\u2026",
+     "dur_ms": 2003.184,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/catalog/summary/modules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 633.534,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_esrs_catalog"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT module_mapping, COUNT(*) as total, COUNT(*) FILTER (WHERE disclosure_type = 'quantitative') as quantitative, COUNT(*) FILTER (WHERE is_mandatory = true) as mandatory, array_agg(DISTINCT standard_code ORDER BY standard_code) as standards FROM csrd_esrs_catalog GROUP BY module_mapping ORDER BY COUNT(*) DESC\"",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 10,
+     "dur_ms": 253.033,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "modules"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "catalog_summary_by_module",
+     "qual": "catalog_summary_by_module",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 709,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C01FEFF0>"
+     },
+     "ret": "{'modules': [{'module': 'regulatory_csrd', 'total_data_points': 219, 'quantitative': 20, 'mandatory': 137, 'standards': ['ESRS 2']}, {'module': 'climate_risk', 'total_data_points': 214, 'quantitative': 66, 'mandatory': 136, 'standards': ['\u2026",
+     "dur_ms": 477.73,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/catalog/summary/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 846.361,
+   "node_count": 13,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_esrs_catalog"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT standard_code, COUNT(*) as total, COUNT(*) FILTER (WHERE disclosure_type = 'quantitative') as quantitative, COUNT(*) FILTER (WHERE disclosure_type = 'qualitative') as qualitative, COUNT(*) FILTER (WHERE is_mandatory = true) as mandatory, COUNT(*) FILTER (WHERE dr_full_name IS NOT NULL) as with_dr_name, COUNT(*) FILTER (WHERE ar_text IS NOT NULL) as with_ar_text, COUNT(*) FILTER (WHERE rel\u2026",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 11,
+     "dur_ms": 76.826,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standards",
+     "total_data_points"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "catalog_summary_by_standard",
+     "qual": "catalog_summary_by_standard",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 665,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C01FF140>"
+     },
+     "ret": "{'standards': [{'standard_code': 'E1', 'total_data_points': 214, 'quantitative': 66, 'qualitative': 145, 'mandatory': 136, 'with_dr_name': 214, 'with_ar_text': 69, 'with_ar_ref': 69, 'unique_disclosure_requirements': 12, 'module_mapping': \u2026",
+     "dur_ms": 812.142,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "214",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "69",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "48",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "122",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "64",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "219",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "53",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "196",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "67",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "66",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "66",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "catalog_summary_by_standard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 705,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0384CA0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/catalog/{indicator_code}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Data point '550e8400-e29b-41d4-a716-446655440001' not found in catalog",
+   "dur_ms": 337.47,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_esrs_catalog"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT indicator_code, standard_code, disclosure_requirement, data_point_code, paragraph_ref, topic, sub_topic, indicator_name, indicator_description, disclosure_type, is_mandatory, is_sector_specific, applicable_sectors, esrs_phase_in, smei_exemption, unit_of_measure, preferred_unit, allowed_units, calculation_method, reference_standard, xbrl_tag, gri_equivalent, tcfd_pillar, issb_equivalent, b\u2026",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 0,
+     "dur_ms": 82.214,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "indicator_code": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "get_catalog_item",
+     "qual": "get_catalog_item",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 740,
+     "args": {
+      "indicator_code": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C01FF020>"
+     },
+     "ret": "None",
+     "dur_ms": 300.917,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/entities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 389.364,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso, created_at FROM csrd_entity_registry ORDER BY legal_name LIMIT %(lim)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 15,
+     "dur_ms": 103.018,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)",
+    "limit": "100 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 15,
+    "item0_keys": [
+     "id",
+     "legal_name",
+     "primary_sector",
+     "country_iso",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "list_entities",
+     "qual": "list_entities",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 264,
+     "args": {
+      "sector": "None",
+      "limit": "100",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0384E90>"
+     },
+     "ret": "[{'id': 'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b', 'legal_name': 'BlackRock Inc.', 'primary_sector': 'financial_institution', 'country_iso': 'USA', 'created_at': '2026-04-27T02:23:42.387165+00:00'}, {'id': 'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5\u2026",
+     "dur_ms": 355.312,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/entities/{entity_id}/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 432.351,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_data_lineage",
+    "csrd_entity_registry",
+    "csrd_gap_tracker",
+    "csrd_kpi_values"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso, is_in_scope_csrd, csrd_first_reporting_year FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(eid)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.023,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "\"SELECT SPLIT_PART(indicator_code, '-', 1) AS esrs_standard, reporting_year, COUNT(*) AS kpi_count, AVG(data_quality_score) AS avg_dq, SUM(CASE WHEN is_assured THEN 1 ELSE 0 END) AS assured_count FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s GROUP BY esrs_standard, reporting_year ORDER BY esrs_standard, reporting_year DESC\"",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 3,
+     "dur_ms": 30.549,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT gap_status, COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) LIKE %(eid)s GROUP BY gap_status'",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.877,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT indicator_code, reporting_year, source_document_url, source_extraction_date, output_value, output_unit, tool_name FROM csrd_data_lineage WHERE CAST(entity_registry_id AS text) LIKE %(eid)s ORDER BY source_extraction_date DESC LIMIT 20'",
+     "tables": [
+      "csrd_data_lineage"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.017,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity",
+     "kpi_by_standard",
+     "gap_summary",
+     "kpis_disclosed",
+     "kpi_count",
+     "gaps_open",
+     "gap_count",
+     "disclosure_coverage_score_pct",
+     "recent_lineage"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "get_entity_dashboard",
+     "qual": "get_entity_dashboard",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 383,
+     "args": {
+      "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0385730>"
+     },
+     "ret": "{'entity': {'id': 'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b', 'legal_name': 'BlackRock Inc.', 'primary_sector': 'financial_institution', 'country_iso': 'USA', 'is_in_scope_csrd': True, 'csrd_first_reporting_year': 2024}, 'kpi_by_standard': [{'\u2026",
+     "dur_ms": 401.597,
+     "sql": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "get_entity_dashboard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 459,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0386440>"
+       },
+       "ret": "4",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "get_entity_dashboard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 459,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0386440>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "get_entity_dashboard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 459,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0386440>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "get_entity_dashboard.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 459,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C0386440>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/entities/{entity_id}/gaps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 295.907,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_gap_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, indicator_code, reporting_year_target, gap_status, gap_description, priority, regulatory_risk_flag, assessment_date, gap_category FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) LIKE %(eid)s ORDER BY priority, indicator_code'",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.247,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "year": "None (default)",
+    "gap_status": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "get_entity_gaps",
+     "qual": "get_entity_gaps",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 341,
+     "args": {
+      "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "year": "None",
+      "gap_status": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0384F50>"
+     },
+     "ret": "[]",
+     "dur_ms": 264.496,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/entities/{entity_id}/kpis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 303.321,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_kpi_values"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT indicator_code, reporting_year, numeric_value, text_value, unit, data_quality_score, status, report_page_reference, extraction_method, created_at, updated_at, is_assured, assurance_level, coverage_pct FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s ORDER BY indicator_code, reporting_year DESC'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 68.674,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "year": "None (default)",
+    "standard": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 7,
+    "item0_keys": [
+     "indicator_code",
+     "reporting_year",
+     "numeric_value",
+     "text_value",
+     "unit",
+     "data_quality_score",
+     "status",
+     "report_page_reference",
+     "extraction_method",
+     "created_at",
+     "updated_at",
+     "is_assured",
+     "assurance_level",
+     "coverage_pct"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_entity_kpis",
+     "qual": "get_entity_kpis",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 291,
+     "args": {
+      "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "year": "None",
+      "standard": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C03850A0>"
+     },
+     "ret": "[{'indicator_code': 'E1-1', 'reporting_year': 2024, 'numeric_value': 75468.25, 'text_value': None, 'unit': 'tCO2e', 'data_quality_score': 4, 'status': 'draft', 'report_page_reference': None, 'extraction_method': None, 'created_at': '2026-0\u2026",
+     "dur_ms": 273.738,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/entities/{entity_id}/lineage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 285.956,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_data_lineage"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, kpi_value_id, indicator_code, reporting_year, source_document_url, source_extraction_date, raw_value, raw_unit, transformation_applied, output_value, output_unit, tool_name, tool_version, calculated_by FROM csrd_data_lineage WHERE entity_registry_id = %(eid)s ORDER BY source_extraction_date DESC LIMIT %(lim)s'",
+     "tables": [
+      "csrd_data_lineage"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.029,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "indicator_code": "None (default)",
+    "year": "None (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "get_entity_lineage",
+     "qual": "get_entity_lineage",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 500,
+     "args": {
+      "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "indicator_code": "None",
+      "year": "None",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0385760>"
+     },
+     "ret": "[]",
+     "dur_ms": 254.777,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/gri/mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 389.969,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "gri_esrs_mapping"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM gri_esrs_mapping WHERE 1=1'",
+     "tables": [
+      "gri_esrs_mapping"
+     ],
+     "rowcount": 1,
+     "dur_ms": 99.473,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT esrs_indicator_code, esrs_standard, esrs_dr, esrs_paragraph, esrs_dp_name, gri_standard, gri_disclosure, gri_sub_item, gri_dp_name, mapping_notes, mapping_quality FROM gri_esrs_mapping WHERE 1=1 ORDER BY esrs_standard, esrs_dr, esrs_paragraph LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "gri_esrs_mapping"
+     ],
+     "rowcount": 50,
+     "dur_ms": 63.58,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "esrs_standard": "None (default)",
+    "gri_standard": "None (default)",
+    "esrs_dr": "None (default)",
+    "gri_disclosure": "None (default)",
+    "search": "None (default)",
+    "page": "1 (default)",
+    "page_size": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "page",
+     "page_size",
+     "items"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "list_gri_esrs_mapping",
+     "qual": "list_gri_esrs_mapping",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 931,
+     "args": {
+      "esrs_standard": "None",
+      "gri_standard": "None",
+      "esrs_dr": "None",
+      "gri_disclosure": "None",
+      "search": "None",
+      "page": "1",
+      "page_size": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0386900>"
+     },
+     "ret": "{'total': 649, 'page': 1, 'page_size': 50, 'items': [{'esrs_indicator_code': 'E1.MDR-P_01-06', 'esrs_standard': 'E1', 'esrs_dr': 'E1-2', 'esrs_paragraph': '24', 'esrs_dp_name': 'Policies in place to manage its material impacts, risks and o\u2026",
+     "dur_ms": 362.039,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/gri/mapping/esrs/{indicator_code}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No GRI mapping found for ESRS 'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+   "dur_ms": 303.278,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "gri_esrs_mapping"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT esrs_indicator_code, esrs_standard, esrs_dr, esrs_paragraph, esrs_dp_name, gri_standard, gri_disclosure, gri_sub_item, gri_dp_name, mapping_notes, mapping_quality FROM gri_esrs_mapping WHERE esrs_indicator_code = %(code)s ORDER BY gri_standard, gri_disclosure'",
+     "tables": [
+      "gri_esrs_mapping"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.169,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "indicator_code": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "get_gri_for_esrs",
+     "qual": "get_gri_for_esrs",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 1057,
+     "args": {
+      "indicator_code": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0386B40>"
+     },
+     "ret": "None",
+     "dur_ms": 271.455,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/gri/mapping/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 353.736,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_esrs_catalog",
+    "gri_esrs_mapping"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT m.esrs_standard, COUNT(*) as total_mappings, COUNT(DISTINCT m.gri_standard) as gri_standards_used, COUNT(DISTINCT m.gri_disclosure) as gri_disclosures_used, COUNT(DISTINCT m.esrs_dr) as esrs_drs_mapped FROM gri_esrs_mapping m GROUP BY m.esrs_standard ORDER BY m.esrs_standard'",
+     "tables": [
+      "gri_esrs_mapping"
+     ],
+     "rowcount": 11,
+     "dur_ms": 72.866,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT standard_code, COUNT(*) as total_dps, COUNT(*) FILTER (WHERE gri_disclosure_ref IS NOT NULL) as gri_linked FROM csrd_esrs_catalog GROUP BY standard_code ORDER BY standard_code'",
+     "tables": [
+      "csrd_esrs_catalog"
+     ],
+     "rowcount": 11,
+     "dur_ms": 35.8,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mapping_by_esrs",
+     "catalog_coverage"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28,
+     "name": "gri_mapping_summary",
+     "qual": "gri_mapping_summary",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 1008,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0387500>"
+     },
+     "ret": "{'mapping_by_esrs': [{'esrs_standard': 'E1', 'total_mappings': 70, 'gri_standards_used': 6, 'gri_disclosures_used': 14, 'esrs_drs_mapped': 9}, {'esrs_standard': 'E2', 'total_mappings': 17, 'gri_standards_used': 5, 'gri_disclosures_used': 4\u2026",
+     "dur_ms": 322.222,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/gri/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 480.292,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "gri_standards"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM gri_standards WHERE is_abstract = false'",
+     "tables": [
+      "gri_standards"
+     ],
+     "rowcount": 1,
+     "dur_ms": 171.666,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT element_id, element_name, standard_code, disclosure_code, disclosure_name, label, verbose_label, documentation, data_type, period_type, is_abstract, topic_area FROM gri_standards WHERE is_abstract = false ORDER BY standard_code, disclosure_code, element_name LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "gri_standards"
+     ],
+     "rowcount": 50,
+     "dur_ms": 71.238,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "standard": "None (default)",
+    "disclosure": "None (default)",
+    "topic": "None (default)",
+    "search": "None (default)",
+    "concrete_only": "True (default)",
+    "page": "1 (default)",
+    "page_size": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "page",
+     "page_size",
+     "items"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "list_gri_standards",
+     "qual": "list_gri_standards",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 823,
+     "args": {
+      "standard": "None",
+      "disclosure": "None",
+      "topic": "None",
+      "search": "None",
+      "concrete_only": "True",
+      "page": "1",
+      "page_size": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0386900>"
+     },
+     "ret": "{'total': 1143, 'page': 1, 'page_size': 50, 'items': [{'element_id': 'gri_DescriptionOfGoalsOfOffsetTextBlock', 'element_name': 'DescriptionOfGoalsOfOffsetTextBlock', 'standard_code': 'GRI 101', 'disclosure_code': '101-2', 'disclosure_name\u2026",
+     "dur_ms": 447.225,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/gri/standards/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 312.262,
+   "node_count": 73,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "gri_standards"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT standard_code, topic_area, COUNT(*) as total, COUNT(*) FILTER (WHERE is_abstract = false) as concrete, COUNT(DISTINCT disclosure_code) as disclosures FROM gri_standards GROUP BY standard_code, topic_area ORDER BY standard_code'",
+     "tables": [
+      "gri_standards"
+     ],
+     "rowcount": 35,
+     "dur_ms": 67.991,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standards",
+     "total_elements",
+     "total_concrete"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 30,
+     "name": "gri_standards_summary",
+     "qual": "gri_standards_summary",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 900,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0387530>"
+     },
+     "ret": "{'standards': [{'standard_code': 'GRI 101', 'topic_area': 'Environmental', 'total_elements': 173, 'concrete_data_points': 102, 'unique_disclosures': 9}, {'standard_code': 'GRI 2', 'topic_area': 'General', 'total_elements': 115, 'concrete_d\u2026",
+     "dur_ms": 281.828,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 31,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "173",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "115",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "55",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "16",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "44",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "47",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "77",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "20",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "20",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "37",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "40",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "64",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "63",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "52",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "66",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "22",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "57",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "17",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "1186",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "12",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 926,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "102",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "71",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "36",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "9",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "30",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "33",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "70",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "7",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "12",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "24",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "39",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 82,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "26",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 84,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "34",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 85,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "41",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "24",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "550",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "<genexpr>",
+       "qual": "gri_standards_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 927,
+       "args": {
+        ".0": "<list_iterator object at 0x00000134C03AB910>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/reports",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 678.942,
+   "node_count": 13,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_report_uploads"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT csrd_report_uploads.id AS csrd_report_uploads_id, csrd_report_uploads.filename AS csrd_report_uploads_filename, csrd_report_uploads.file_path AS csrd_report_uploads_file_path, csrd_report_uploads.file_size_bytes AS csrd_report_uploads_file_size_bytes, csrd_report_uploads.entity_name_override AS csrd_report_uploads_entity_name_override, csrd_report_uploads.reporting_year_override AS csrd_r\u2026",
+     "tables": [
+      "csrd_report_uploads"
+     ],
+     "rowcount": 12,
+     "dur_ms": 109.411,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status_filter": "None (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 12,
+    "item0_keys": [
+     "id",
+     "filename",
+     "file_size_bytes",
+     "status",
+     "entity_name_detected",
+     "reporting_year_detected",
+     "kpis_extracted",
+     "kpis_updated",
+     "gaps_found",
+     "lineage_entries",
+     "error_message",
+     "primary_sector",
+     "country_iso",
+     "entity_registry_id",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 103,
+     "name": "list_reports",
+     "qual": "list_reports",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 184,
+     "args": {
+      "status_filter": "None",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C0387440>"
+     },
+     "ret": "[{'id': 'e83b251f-ba6c-49b8-a32f-49b044517f2e', 'filename': 'Rabobank_Annual Report 2024.pdf', 'file_size_bytes': 8457205, 'status': 'completed', 'entity_name_detected': 'Rabobank', 'reporting_year_detected': 2024, 'kpis_extracted': 7, 'kp\u2026",
+     "dur_ms": 645.252,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 104,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781B20>"
+       },
+       "ret": "{'id': 'e83b251f-ba6c-49b8-a32f-49b044517f2e', 'filename': 'Rabobank_Annual Report 2024.pdf', 'file_size_bytes': 8457205, 'status': 'completed', 'entity_name_detected': 'Rabobank', 'reporting_year_detected': 2024, 'kpis_extracted': 7, 'kpi\u2026",
+       "dur_ms": 0.041,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 105,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781B50>"
+       },
+       "ret": "{'id': 'b3587319-f671-4d5e-967a-e59589ca263f', 'filename': 'BNP_Paribas_2024.pdf', 'file_size_bytes': 17225487, 'status': 'completed', 'entity_name_detected': 'BNP Paribas', 'reporting_year_detected': 2024, 'kpis_extracted': 11, 'kpis_upda\u2026",
+       "dur_ms": 0.023,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 106,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781B80>"
+       },
+       "ret": "{'id': '4234df4e-b2ce-4c4b-afd6-4a1c96ff4fc0', 'filename': 'ABN_AMRO___Integrated_Annual_Report_2024.pdf', 'file_size_bytes': 19980146, 'status': 'completed', 'entity_name_detected': 'ABN AMRO', 'reporting_year_detected': 2024, 'kpis_extra\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 107,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781BB0>"
+       },
+       "ret": "{'id': '3f8e9f1d-156b-443d-b857-c36089f41575', 'filename': '2024 ING Groep NV annual report (1).pdf', 'file_size_bytes': 29170505, 'status': 'completed', 'entity_name_detected': 'ING Group', 'reporting_year_detected': 2024, 'kpis_extracted\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 108,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781BE0>"
+       },
+       "ret": "{'id': '00ae4006-4828-4972-83b9-7da733080901', 'filename': 'orsted.pdf', 'file_size_bytes': 8528321, 'status': 'completed', 'entity_name_detected': '\u00d8rsted', 'reporting_year_detected': 2025, 'kpis_extracted': 10, 'kpis_updated': 0, 'gaps_f\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 109,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781C10>"
+       },
+       "ret": "{'id': '2eb3bdc2-0dbf-442c-8b9c-7ffe5e4abb1a', 'filename': 'RWE.pdf', 'file_size_bytes': 2851710, 'status': 'completed', 'entity_name_detected': 'RWE Group', 'reporting_year_detected': 2024, 'kpis_extracted': 15, 'kpis_updated': 0, 'gaps_f\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 110,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781C40>"
+       },
+       "ret": "{'id': 'd08b4348-de80-404c-ad01-4c8f1553b890', 'filename': 'ENGIE.pdf', 'file_size_bytes': 8480631, 'status': 'completed', 'entity_name_detected': 'ENGIE', 'reporting_year_detected': 2024, 'kpis_extracted': 14, 'kpis_updated': 0, 'gaps_fou\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 111,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781C70>"
+       },
+       "ret": "{'id': '04c5022e-2505-400c-a9ae-04237bc84bad', 'filename': 'EDP.pdf', 'file_size_bytes': 33514079, 'status': 'completed', 'entity_name_detected': 'EDP Energias de Portugal', 'reporting_year_detected': 2024, 'kpis_extracted': 10, 'kpis_upda\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 112,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781CA0>"
+       },
+       "ret": "{'id': 'd570661c-5e3e-4142-b9b5-63be479b889d', 'filename': 'orsted.pdf', 'file_size_bytes': 8528321, 'status': 'uploaded', 'entity_name_detected': None, 'reporting_year_detected': None, 'kpis_extracted': 0, 'kpis_updated': 0, 'gaps_found':\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 113,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781CD0>"
+       },
+       "ret": "{'id': 'e2cc38f0-1b22-4a83-b53d-558db57053ef', 'filename': 'RWE.pdf', 'file_size_bytes': 2851710, 'status': 'uploaded', 'entity_name_detected': None, 'reporting_year_detected': None, 'kpis_extracted': 0, 'kpis_updated': 0, 'gaps_found': 0,\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 114,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781D30>"
+       },
+       "ret": "{'id': '47a18443-ed3a-4ad2-b617-dae9050423c8', 'filename': 'ENGIE.pdf', 'file_size_bytes': 8480631, 'status': 'uploaded', 'entity_name_detected': None, 'reporting_year_detected': None, 'kpis_extracted': 0, 'kpis_updated': 0, 'gaps_found': \u2026",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 115,
+       "name": "_report_to_summary",
+       "qual": "_report_to_summary",
+       "file": "api/v1/routes/csrd_reports.py",
+       "line": 82,
+       "args": {
+        "r": "<db.models.csrd_models.CsrdReportUpload object at 0x00000134C0781D90>"
+       },
+       "ret": "{'id': '6a8aaf96-9d08-409d-8c2c-cfb0207bb211', 'filename': 'EDP.pdf', 'file_size_bytes': 33514079, 'status': 'uploaded', 'entity_name_detected': None, 'reporting_year_detected': None, 'kpis_extracted': 0, 'kpis_updated': 0, 'gaps_found': 0\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "GET /api/csrd/reports/{report_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Report not found",
+   "dur_ms": 332.112,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_report_uploads"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT csrd_report_uploads.id AS csrd_report_uploads_id, csrd_report_uploads.filename AS csrd_report_uploads_filename, csrd_report_uploads.file_path AS csrd_report_uploads_file_path, csrd_report_uploads.file_size_bytes AS csrd_report_uploads_file_size_bytes, csrd_report_uploads.entity_name_override AS csrd_report_uploads_entity_name_override, csrd_report_uploads.reporting_year_override AS csrd_r\u2026",
+     "tables": [
+      "csrd_report_uploads"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.532,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "report_id": "b19b39ab-88c4-436f-8f41-3d0ca9af1e1b (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 116,
+     "name": "get_report",
+     "qual": "get_report",
+     "file": "api/v1/routes/csrd_reports.py",
+     "line": 198,
+     "args": {
+      "report_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000134C03AB8C0>"
+     },
+     "ret": "None",
+     "dur_ms": 298.817,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "POST /api/csrd/ingest/bulk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "POST /api/csrd/reports/upload",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "csrd-reports",
+   "label": "POST /api/csrd/reports/{report_id}/reprocess",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,347 @@
+{
+ "domain": "sovereign-debt-climate",
+ "meta": {
+  "ts": "2026-06-30T14:05:15",
+  "module": "api.v1.routes.sovereign_debt_climate",
+  "router_prefix": "/api/v1/sovereign-debt-climate",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "GET /api/v1/sovereign-debt-climate/ref/crdc-triggers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 5.003,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "trigger_types",
+     "total_triggers",
+     "standard",
+     "precedents"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_crdc_triggers",
+     "qual": "ref_crdc_triggers",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 225,
+     "args": {},
+     "ret": "{'trigger_types': {'cyclone_wind_speed': {'description': 'Tropical cyclone maximum sustained wind speed', 'unit': 'km/h', 'typical_threshold': 119, 'deferred_period_months': 24, 'source': 'WMO / National Met Services', 'basis_risk': 'low'}\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "GET /api/v1/sovereign-debt-climate/ref/dfn-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.371,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "total_frameworks",
+     "largest_deal_to_date",
+     "total_dfn_market_2023_bn_usd",
+     "key_actors",
+     "carbon_credit_standards"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_dfn_frameworks",
+     "qual": "ref_dfn_frameworks",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 265,
+     "args": {},
+     "ret": "{'frameworks': {'bilateral': {'description': 'Creditor government to debtor swap with conservation earmark', 'precedents': ['Seychelles 2016 (TNC/NatWest)', 'Belize 2021 (TNC)'], 'discount_range_pct': [15, 40], 'conservation_commitment_min\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "GET /api/v1/sovereign-debt-climate/ref/imf-rst-eligible",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.78,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eligible_countries",
+     "total_eligible",
+     "access_limit_pct_quota",
+     "standard",
+     "rst_total_capacity_bn_sdr",
+     "note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_imf_rst_eligible",
+     "qual": "ref_imf_rst_eligible",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 240,
+     "args": {},
+     "ret": "{'eligible_countries': {'BHS': {'access_limit_pct_quota': 150, 'reform_area': 'climate_resilience', 'approved': True}, 'BRB': {'access_limit_pct_quota': 150, 'reform_area': 'climate_resilience', 'approved': True}, 'CRI': {'access_limit_pct\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "GET /api/v1/sovereign-debt-climate/ref/paris-club",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.703,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "categories",
+     "climate_mou",
+     "g7_commitment",
+     "cdpc_adoption_target_pct",
+     "note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_paris_club",
+     "qual": "ref_paris_club",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 253,
+     "args": {},
+     "ret": "{'categories': {'poorest': {'description': 'IDA-eligible, HIPC countries \u2014 most concessional treatment', 'per_capita_gni_threshold_usd': 1135, 'debt_service_relief_pct': 90, 'climate_conditionality': 'NDC_update + NbS_commitment', 'cutoff_\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "GET /api/v1/sovereign-debt-climate/ref/sids-list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.019,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sids",
+     "total_sids",
+     "source",
+     "regions",
+     "note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_sids_list",
+     "qual": "ref_sids_list",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 213,
+     "args": {},
+     "ret": "{'sids': {'ATG': {'name': 'Antigua and Barbuda', 'vulnerability_score': 0.78, 'region': 'Caribbean', 'gdp_usd_bn': 1.7}, 'BHS': {'name': 'Bahamas', 'vulnerability_score': 0.71, 'region': 'Caribbean', 'gdp_usd_bn': 12.0}, 'BRB': {'name': 'B\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "POST /api/v1/sovereign-debt-climate/crdc-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: float() argument must be a string or a real number, not 'NoneType'",
+   "dur_ms": 2.323,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<CRDCRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "crdc_assessment_endpoint",
+     "qual": "crdc_assessment_endpoint",
+     "file": "api/v1/routes/sovereign_debt_climate.py",
+     "line": 61,
+     "args": {
+      "request": "CRDCRequest(country_iso='TEST_request_country_iso', country_name=None, is_sids=False, is_ldc=False, debt_amount_usd=None, trigger_type='cyclone_wind_speed', trigger_threshold=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.129,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "assess_crdc_eligibility",
+       "qual": "assess_crdc_eligibility",
+       "file": "services/sovereign_debt_climate_engine.py",
+       "line": 282,
+       "args": {
+        "country_data": "{'country_iso': 'TEST_request_country_iso', 'country_name': None, 'is_sids': False, 'is_ldc': False}",
+        "debt_terms": "{'debt_amount_usd': None, 'trigger_type': 'cyclone_wind_speed', 'trigger_threshold': None}"
+       },
+       "ret": "None",
+       "dur_ms": 0.052,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "POST /api/v1/sovereign-debt-climate/debt-for-nature",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "POST /api/v1/sovereign-debt-climate/imf-rst",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "POST /api/v1/sovereign-debt-climate/sids-vulnerability",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sovereign-debt-climate",
+   "label": "POST /api/v1/sovereign-debt-climate/sovereign-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

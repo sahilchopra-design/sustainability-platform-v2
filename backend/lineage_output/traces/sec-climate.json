@@ -1,0 +1,431 @@
+{
+ "domain": "sec-climate",
+ "meta": {
+  "ts": "2026-06-30T14:05:02",
+  "module": "api.v1.routes.sec_climate",
+  "router_prefix": "/api/v1/sec-climate",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/attestation",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.271,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "attestation"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_attestation",
+     "qual": "ref_attestation",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 239,
+     "args": {},
+     "ret": "{'attestation': {'limited_assurance': {'standard': 'AICPA AT-C 105/210 or PCAOB equivalent', 'level': 'limited', 'description': 'Limited assurance on Scope 1 & 2 GHG emissions'}, 'reasonable_assurance': {'standard': 'AICPA AT-C 105/205 or \u2026",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_attestation_requirements",
+       "qual": "SECClimateEngine.get_attestation_requirements",
+       "file": "services/sec_climate_engine.py",
+       "line": 855,
+       "args": {},
+       "ret": "{'limited_assurance': {'standard': 'AICPA AT-C 105/210 or PCAOB equivalent', 'level': 'limited', 'description': 'Limited assurance on Scope 1 & 2 GHG emissions'}, 'reasonable_assurance': {'standard': 'AICPA AT-C 105/205 or PCAOB equivalent\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.16,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cross_framework"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 251,
+     "args": {},
+     "ret": "{'cross_framework': [{'sec_item': 'Item 1501 (Governance)', 'tcfd': 'Governance (a)(b)', 'issb_s2': 'IFRS S2 para 5-6', 'csrd_esrs': 'ESRS 2 GOV-1, GOV-2'}, {'sec_item': 'Item 1502 (Strategy)', 'tcfd': 'Strategy (a)(b)(c)', 'issb_s2': 'IFR\u2026",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_cross_framework_map",
+       "qual": "SECClimateEngine.get_cross_framework_map",
+       "file": "services/sec_climate_engine.py",
+       "line": 863,
+       "args": {},
+       "ret": "[{'sec_item': 'Item 1501 (Governance)', 'tcfd': 'Governance (a)(b)', 'issb_s2': 'IFRS S2 para 5-6', 'csrd_esrs': 'ESRS 2 GOV-1, GOV-2'}, {'sec_item': 'Item 1502 (Strategy)', 'tcfd': 'Strategy (a)(b)(c)', 'issb_s2': 'IFRS S2 para 8-15', 'cs\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/filer-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.156,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "filer_categories"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_filer_categories",
+     "qual": "ref_filer_categories",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 221,
+     "args": {},
+     "ret": "{'filer_categories': {'large_accelerated_filer': {'label': 'Large Accelerated Filer (LAF)', 'public_float_min_usd': 700000000, 'ghg_disclosure_start_fy': 2025, 'limited_assurance_fy': 2027, 'reasonable_assurance_fy': 2029, 'climate_risk_di\u2026",
+     "dur_ms": 0.038,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_filer_categories",
+       "qual": "SECClimateEngine.get_filer_categories",
+       "file": "services/sec_climate_engine.py",
+       "line": 843,
+       "args": {},
+       "ret": "{'large_accelerated_filer': {'label': 'Large Accelerated Filer (LAF)', 'public_float_min_usd': 700000000, 'ghg_disclosure_start_fy': 2025, 'limited_assurance_fy': 2027, 'reasonable_assurance_fy': 2029, 'climate_risk_disclosure_required': T\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/reg-sk-items",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.184,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "reg_sk_items"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_reg_sk",
+     "qual": "ref_reg_sk",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 227,
+     "args": {},
+     "ret": "{'reg_sk_items': [{'item': '1501', 'title': 'Governance', 'description': 'Board oversight and management role in climate-related risk governance', 'sub_items': ['1501(a) Board oversight of climate risks', '1501(b) Management role in assess\u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_reg_sk_items",
+       "qual": "SECClimateEngine.get_reg_sk_items",
+       "file": "services/sec_climate_engine.py",
+       "line": 847,
+       "args": {},
+       "ret": "[{'item': '1501', 'title': 'Governance', 'description': 'Board oversight and management role in climate-related risk governance', 'sub_items': ['1501(a) Board oversight of climate risks', '1501(b) Management role in assessing/managing clim\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/reg-sx-items",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.135,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "reg_sx_items"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_reg_sx",
+     "qual": "ref_reg_sx",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 233,
+     "args": {},
+     "ret": "{'reg_sx_items': [{'item': '14-02(a)', 'title': 'Severe weather events & natural conditions', 'description': 'Expenditures and losses from severe weather events if material (>1% pre-tax income or equity)', 'threshold_pct': 1.0}, {'item': '\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_reg_sx_items",
+       "qual": "SECClimateEngine.get_reg_sx_items",
+       "file": "services/sec_climate_engine.py",
+       "line": 851,
+       "args": {},
+       "ret": "[{'item': '14-02(a)', 'title': 'Severe weather events & natural conditions', 'description': 'Expenditures and losses from severe weather events if material (>1% pre-tax income or equity)', 'threshold_pct': 1.0}, {'item': '14-02(b)', 'title\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "GET /api/v1/sec-climate/ref/safe-harbor",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.126,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "safe_harbor"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_safe_harbor",
+     "qual": "ref_safe_harbor",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 245,
+     "args": {},
+     "ret": "{'safe_harbor': {'forward_looking': True, 'covered_items': ['Transition plans', 'Climate targets and goals (Item 1504)', 'Scenario analysis (Item 1502(c))', 'Internal carbon price (Item 1502(d))'], 'not_covered': ['Historical GHG emissions\u2026",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_safe_harbor",
+       "qual": "SECClimateEngine.get_safe_harbor",
+       "file": "services/sec_climate_engine.py",
+       "line": 859,
+       "args": {},
+       "ret": "{'forward_looking': True, 'covered_items': ['Transition plans', 'Climate targets and goals (Item 1504)', 'Scenario analysis (Item 1502(c))', 'Internal carbon price (Item 1502(d))'], 'not_covered': ['Historical GHG emissions (Item 1505)', '\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "POST /api/v1/sec-climate/filer-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'registrant_name'",
+   "dur_ms": 0.218,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "filer_assessment",
+     "qual": "filer_assessment",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 107,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sec-climate",
+   "label": "POST /api/v1/sec-climate/financial-effects",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sec-climate",
+   "label": "POST /api/v1/sec-climate/ghg-disclosure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sec-climate",
+   "label": "POST /api/v1/sec-climate/materiality",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'physical_risks'",
+   "dur_ms": 0.141,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "materiality_assessment",
+     "qual": "materiality_assessment",
+     "file": "api/v1/routes/sec_climate.py",
+     "line": 199,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

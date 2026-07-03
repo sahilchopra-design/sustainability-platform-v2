@@ -1,0 +1,311 @@
+{
+ "domain": "prudential-climate-risk",
+ "meta": {
+  "ts": "2026-06-30T14:04:14",
+  "module": "api.v1.routes.prudential_climate_risk",
+  "router_prefix": "/api/v1/prudential-climate-risk",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "prudential-climate-risk",
+   "label": "GET /api/v1/prudential-climate-risk/ref/boe-bes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.447,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_boe_bes",
+     "qual": "ref_boe_bes",
+     "file": "api/v1/routes/prudential_climate_risk.py",
+     "line": 227,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'rounds': {'BES_2021': {'publication_date': '2022-05', 'time_horizon_years': 30, 'scenarios': ['early_action', 'late_action', 'no_additional_action'], 'llt_scenario': {'name': 'late_action', 'temp_pathway_c':\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "GET /api/v1/prudential-climate-risk/ref/icaap-thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.381,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_icaap_thresholds",
+     "qual": "ref_icaap_thresholds",
+     "file": "api/v1/routes/prudential_climate_risk.py",
+     "line": 252,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'icaap_guidance': {'ss319_thresholds': {'material': '>5% CET1 depletion or >10% RWA impact', 'potentially_material': '1-5% CET1 depletion or 3-10% RWA impact', 'immaterial': '<1% CET1 depletion or <3% RWA imp\u2026",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "GET /api/v1/prudential-climate-risk/ref/ngfs-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.304,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ngfs_scenarios",
+     "qual": "ref_ngfs_scenarios",
+     "file": "api/v1/routes/prudential_climate_risk.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'version': 'NGFS Phase IV (June 2023)', 'scenarios_count': 6, 'scenarios': {'net_zero_2050': {'category': 'orderly', 'description': 'Net zero GHG emissions globally by 2050; Paris 1.5\u00b0C goal achieved', '2030_\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "GET /api/v1/prudential-climate-risk/ref/sector-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.231,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_sector_risk",
+     "qual": "ref_sector_risk",
+     "file": "api/v1/routes/prudential_climate_risk.py",
+     "line": 239,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'transition_risk': {'fossil_fuels': {'rating': 'high', 'pd_uplift_orderly_bps': 85, 'pd_uplift_disorderly_bps': 210}, 'utilities': {'rating': 'high', 'pd_uplift_orderly_bps': 60, 'pd_uplift_disorderly_bps': 1\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/boe-bes",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/capital-overlays",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/ecb-dfast",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.292,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/prudential_climate_risk.py",
+     "line": 195,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/icaap-overlay",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/ngfs-v4",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "prudential-climate-risk",
+   "label": "POST /api/v1/prudential-climate-risk/sarp431",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

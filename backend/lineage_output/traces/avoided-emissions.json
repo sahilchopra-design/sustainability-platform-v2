@@ -1,0 +1,331 @@
+{
+ "domain": "avoided-emissions",
+ "meta": {
+  "ts": "2026-06-30T13:59:23",
+  "module": "api.v1.routes.avoided_emissions",
+  "router_prefix": "/api/v1/avoided-emissions",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "avoided-emissions",
+   "label": "GET /api/v1/avoided-emissions/ref/article6-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.295,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "corresponding_adjustment",
+     "authorization",
+     "participation",
+     "sustainable_development",
+     "real_permanent_additional"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_article6_criteria",
+     "qual": "ref_article6_criteria",
+     "file": "api/v1/routes/avoided_emissions.py",
+     "line": 181,
+     "args": {},
+     "ret": "{'corresponding_adjustment': 'Host country must apply corresponding adjustment', 'authorization': 'Host country authorization of activity required', 'participation': 'Voluntary cooperation between parties', 'sustainable_development': 'Cont\u2026",
+     "dur_ms": 0.038,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_article6_criteria",
+       "qual": "AvoidedEmissionsEngine.get_article6_criteria",
+       "file": "services/avoided_emissions_engine.py",
+       "line": 437,
+       "args": {},
+       "ret": "{'corresponding_adjustment': 'Host country must apply corresponding adjustment', 'authorization': 'Host country authorization of activity required', 'participation': 'Voluntary cooperation between parties', 'sustainable_development': 'Cont\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "GET /api/v1/avoided-emissions/ref/baseline-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.15,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "coal_electricity_kwh",
+     "grid_average_eu_kwh",
+     "grid_average_us_kwh",
+     "natural_gas_m3",
+     "diesel_litre",
+     "petrol_litre",
+     "steel_tonne_bof",
+     "cement_tonne_opc",
+     "aluminium_tonne_primary",
+     "beef_kg",
+     "chicken_kg",
+     "plastic_pet_kg",
+     "paper_tonne",
+     "aviation_pkm",
+     "car_petrol_km"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_baseline_factors",
+     "qual": "ref_baseline_factors",
+     "file": "api/v1/routes/avoided_emissions.py",
+     "line": 175,
+     "args": {},
+     "ret": "{'coal_electricity_kwh': 0.82, 'grid_average_eu_kwh': 0.276, 'grid_average_us_kwh': 0.386, 'natural_gas_m3': 2.204, 'diesel_litre': 2.64, 'petrol_litre': 2.31, 'steel_tonne_bof': 2.2, 'cement_tonne_opc': 0.83, 'aluminium_tonne_primary': 11\u2026",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_baseline_factors",
+       "qual": "AvoidedEmissionsEngine.get_baseline_factors",
+       "file": "services/avoided_emissions_engine.py",
+       "line": 433,
+       "args": {},
+       "ret": "{'coal_electricity_kwh': 0.82, 'grid_average_eu_kwh': 0.276, 'grid_average_us_kwh': 0.386, 'natural_gas_m3': 2.204, 'diesel_litre': 2.64, 'petrol_litre': 2.31, 'steel_tonne_bof': 2.2, 'cement_tonne_opc': 0.83, 'aluminium_tonne_primary': 11\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "GET /api/v1/avoided-emissions/ref/categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.149,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "enabled",
+     "substitution",
+     "facilitated"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_categories",
+     "qual": "ref_categories",
+     "file": "api/v1/routes/avoided_emissions.py",
+     "line": 169,
+     "args": {},
+     "ret": "{'enabled': {'description': 'Products/services that enable others to reduce emissions', 'examples': ['solar_panels', 'EVs', 'insulation', 'efficiency_software', 'smart_meters'], 'additionality_standard': 'Technology comparison method \u2014 com\u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_avoided_emission_categories",
+       "qual": "AvoidedEmissionsEngine.get_avoided_emission_categories",
+       "file": "services/avoided_emissions_engine.py",
+       "line": 429,
+       "args": {},
+       "ret": "{'enabled': {'description': 'Products/services that enable others to reduce emissions', 'examples': ['solar_panels', 'EVs', 'insulation', 'efficiency_software', 'smart_meters'], 'additionality_standard': 'Technology comparison method \u2014 com\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/additionality-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/article6-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/bvcm-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/calculate-activity",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.175,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "calculate_activity",
+     "qual": "calculate_activity",
+     "file": "api/v1/routes/avoided_emissions.py",
+     "line": 79,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.139,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/avoided_emissions.py",
+     "line": 149,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "avoided-emissions",
+   "label": "POST /api/v1/avoided-emissions/portfolio-aggregate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

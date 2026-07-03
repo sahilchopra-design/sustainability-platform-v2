@@ -1,0 +1,182 @@
+{
+ "domain": "epc-retrofit",
+ "meta": {
+  "ts": "2026-06-30T14:01:49",
+  "module": "api.v1.routes.epc_retrofit",
+  "router_prefix": "/api/v1/epc-retrofit",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "epc-retrofit",
+   "label": "GET /api/v1/epc-retrofit/energy-prices",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.226,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "energy_prices_eur_kwh",
+     "grid_emission_factors_kgco2_kwh"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_energy_prices",
+     "qual": "get_energy_prices",
+     "file": "api/v1/routes/epc_retrofit.py",
+     "line": 264,
+     "args": {},
+     "ret": "{'energy_prices_eur_kwh': {'NL': 0.18, 'GB': 0.22, 'FR': 0.14, 'DE': 0.2, 'US': 0.12, 'EU': 0.16}, 'grid_emission_factors_kgco2_kwh': {'NL': 0.38, 'GB': 0.21, 'FR': 0.06, 'DE': 0.35, 'US': 0.4, 'EU': 0.25}}",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "epc-retrofit",
+   "label": "GET /api/v1/epc-retrofit/measure-catalogue",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.165,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "measures",
+     "total_measures"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_measure_catalogue",
+     "qual": "get_measure_catalogue",
+     "file": "api/v1/routes/epc_retrofit.py",
+     "line": 233,
+     "args": {},
+     "ret": "{'measures': [{'measure_id': 'LED', 'name': 'LED Lighting Upgrade', 'category': 'lighting', 'capex_eur_m2': 8.0, 'energy_saving_kwh_m2': 12.0, 'carbon_saving_pct': 5.0, 'typical_lifetime_years': 15, 'epc_improvement_steps': 0, 'applicabili\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "epc-retrofit",
+   "label": "GET /api/v1/epc-retrofit/meps-timelines",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.134,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "timelines",
+     "countries"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_meps_timelines",
+     "qual": "get_meps_timelines",
+     "file": "api/v1/routes/epc_retrofit.py",
+     "line": 255,
+     "args": {},
+     "ret": "{'timelines': {'NL': [{'year': 2023, 'minimum_epc': 'C', 'scope': 'office > 100m2', 'penalty_eur_m2': 0}, {'year': 2030, 'minimum_epc': 'A', 'scope': 'office all', 'penalty_eur_m2': 25.0}, {'year': 2050, 'minimum_epc': 'A+', 'scope': 'all \u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "epc-retrofit",
+   "label": "POST /api/v1/epc-retrofit/retrofit-plan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "epc-retrofit",
+   "label": "POST /api/v1/epc-retrofit/transition-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'properties'",
+   "dur_ms": 0.158,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "assess_transition_risk",
+     "qual": "assess_transition_risk",
+     "file": "api/v1/routes/epc_retrofit.py",
+     "line": 188,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

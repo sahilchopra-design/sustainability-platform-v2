@@ -1,0 +1,393 @@
+{
+ "domain": "em-climate-risk",
+ "meta": {
+  "ts": "2026-06-30T14:01:09",
+  "module": "api.v1.routes.em_climate_risk",
+  "router_prefix": "/api/v1/em-climate-risk",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "em-climate-risk",
+   "label": "GET /api/v1/em-climate-risk/ref/concessional-windows",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.708,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "facility_count",
+     "data"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_concessional_windows",
+     "qual": "ref_concessional_windows",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 326,
+     "args": {},
+     "ret": "{'status': 'success', 'facility_count': 8, 'data': {'GCF': {'name': 'Green Climate Fund', 'manager': 'GCF Secretariat / Accredited Entities', 'focus_areas': ['Climate adaptation and resilience', 'Renewable energy and energy efficiency', 'S\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "GET /api/v1/em-climate-risk/ref/country-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 15.419,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "country_count",
+     "data_sources",
+     "data"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_country_profiles",
+     "qual": "ref_country_profiles",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 301,
+     "args": {},
+     "ret": "{'status': 'success', 'country_count': 54, 'data_sources': ['ND-GAIN Country Index 2024', 'IEA World Energy Outlook 2024', 'UNFCCC NDC Registry 2025', 'GCF Portfolio Dashboard 2024', 'PCAF GEMS Database', 'BloombergNEF EM Green Finance 202\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "GET /api/v1/em-climate-risk/ref/gems-multipliers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 16.137,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "methodology",
+     "region_count",
+     "data"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_gems_multipliers",
+     "qual": "ref_gems_multipliers",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 359,
+     "args": {},
+     "ret": "{'status': 'success', 'methodology': 'PCAF GEMS Database; IPCC AR6 WG2 regional damage function uplift', 'region_count': 6, 'data': {'Sub-Saharan Africa': 38.0, 'South Asia': 45.0, 'East Asia Pacific': 32.0, 'Latin America': 25.0, 'MENA': \u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "GET /api/v1/em-climate-risk/ref/ifc-ps6-thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 14.898,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "standard",
+     "tier_count",
+     "data"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ifc_ps6_thresholds",
+     "qual": "ref_ifc_ps6_thresholds",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 374,
+     "args": {},
+     "ret": "{'status': 'success', 'standard': 'IFC Performance Standard 6 \u2014 Biodiversity Conservation and Sustainable Management (2012)', 'tier_count': 3, 'data': {'critical_habitat': {'tier': 1, 'description': 'Habitat of significant importance to cr\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "GET /api/v1/em-climate-risk/ref/ndc-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 26.377,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "tier_count",
+     "standard",
+     "data"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_ndc_tiers",
+     "qual": "ref_ndc_tiers",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 342,
+     "args": {},
+     "ret": "{'status': 'success', 'tier_count': 4, 'standard': 'UNFCCC NDC Registry \u2014 Paris Agreement Article 4; Climate Action Tracker methodology', 'data': {'highly_ambitious': {'score_range': [80, 100], 'tier': 'Highly Ambitious', 'description': 'N\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 1.766,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 168,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "_req_to_entity",
+       "qual": "_req_to_entity",
+       "file": "api/v1/routes/em_climate_risk.py",
+       "line": 159,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/concessional-finance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/country-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/green-finance-market",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/ifc-ps6",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/ndc-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "em-climate-risk",
+   "label": "POST /api/v1/em-climate-risk/portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.394,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "portfolio_assessment",
+     "qual": "portfolio_assessment",
+     "file": "api/v1/routes/em_climate_risk.py",
+     "line": 275,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

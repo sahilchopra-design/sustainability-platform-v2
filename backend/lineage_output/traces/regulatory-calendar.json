@@ -1,0 +1,2413 @@
+{
+ "domain": "regulatory-calendar",
+ "meta": {
+  "ts": "2026-06-30T14:04:30",
+  "module": "api.v1.routes.regulatory_calendar",
+  "router_prefix": "/api/v1/regulatory-calendar",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/alerts",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'ObligationAlert' object has no attribute 'get'",
+   "dur_ms": 2.522,
+   "node_count": 35,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "days_ahead": "90 (default)",
+    "frameworks": "None (default)",
+    "urgency": "None (default)",
+    "include_rescinded": "False (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_alerts",
+     "qual": "get_alerts",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 107,
+     "args": {
+      "days_ahead": "90",
+      "frameworks": "None",
+      "urgency": "None",
+      "include_rescinded": "False"
+     },
+     "ret": "None",
+     "dur_ms": 1.901,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_upcoming_alerts",
+       "qual": "RegulatoryObligationCalendar.get_upcoming_alerts",
+       "file": "services/regulatory_obligation_calendar.py",
+       "line": 620,
+       "args": {
+        "days_ahead": "90",
+        "frameworks": "None",
+        "jurisdictions": "None",
+        "entity_types": "None"
+       },
+       "ret": "[ObligationAlert(obligation=RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to produc\u2026",
+       "dur_ms": 1.774,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "filter",
+         "qual": "RegulatoryObligationCalendar.filter",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 601,
+         "args": {
+          "frameworks": "None",
+          "jurisdictions": "None",
+          "entity_types": "None",
+          "include_rescinded": "False"
+         },
+         "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
+         "dur_ms": 1.387,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 4,
+           "name": "get_all",
+           "qual": "RegulatoryObligationCalendar.get_all",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 595,
+           "args": {
+            "include_rescinded": "False"
+           },
+           "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
+           "dur_ms": 1.216,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 5,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
+             },
+             "ret": "'2025-01-31'",
+             "dur_ms": 0.016,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 6,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSRD-002', framework='CSRD', short_name='CSRD FY2025 \u2014 Large Non-PIEs + Listed SMEs', description='Large non-listed companies (>250 employees OR >EUR 50m turnover OR >EUR 25m balance sheet \u2014 2 of 3 crite\u2026"
+             },
+             "ret": "'2026-01-31'",
+             "dur_ms": 0.008,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 7,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSRD-003', framework='CSRD', short_name='CSRD FY2028 \u2014 Non-EU Companies (Art. 40a)', description='Non-EU parent companies with EU turnover >EUR 150m must publish a group sustainability report (or equival\u2026"
+             },
+             "ret": "'2029-01-31'",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 8,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSRD-004', framework='CSRD', short_name='ESRS Limited Assurance \u2014 Year 1', description='External limited assurance on CSRD sustainability reports required from the same year as the first CSRD report obli\u2026"
+             },
+             "ret": "'2025-12-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 9,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='SFDR-001', framework='SFDR', short_name='SFDR PAI Statement \u2014 Annual (30 June)', description='Financial market participants (FMPs) with >500 employees must publish their annual Principal Adverse Impact (\u2026"
+             },
+             "ret": "'2025-06-30'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 10,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='SFDR-002', framework='SFDR', short_name='SFDR Article 8/9 Periodic Reports', description='Art. 8 (ESG characteristics) and Art. 9 (sustainable investment) funds must include sustainability disclosures in\u2026"
+             },
+             "ret": "'2025-12-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 11,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product categories following SFDR \u2026"
+             },
+             "ret": "'2026-06-30'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 12,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='TAXONOMY-001', framework='EU Taxonomy', short_name='EU Taxonomy Art. 8 KPI Disclosure \u2014 Full', description='Large EU companies subject to CSRD must disclose full EU Taxonomy KPIs: turnover, capex, and op\u2026"
+             },
+             "ret": "'2025-06-30'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 13,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='TAXONOMY-002', framework='EU Taxonomy', short_name='Bank GAR/BTAR Pillar 3 Disclosure', description='Credit institutions must disclose Green Asset Ratio (GAR) and Banking Book Taxonomy Alignment Ratio (B\u2026"
+             },
+             "ret": "'2025-12-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 14,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ETS-001', framework='EU ETS', short_name='ETS Annual Emissions Report Submission', description='ETS operators must submit verified annual emissions report to national competent authority by 31 March each\u2026"
+             },
+             "ret": "'2025-03-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 15,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ETS-002', framework='EU ETS', short_name='ETS Allowance Surrender Deadline', description='ETS operators must surrender allowances equal to verified emissions by 30 April.', deadline='2025-04-30', recurre\u2026"
+             },
+             "ret": "'2025-04-30'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 16,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to t\u2026"
+             },
+             "ret": "'2025-01-01'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 17,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ETS2-002', framework='ETS2', short_name='ETS2 Registry Registration', description='Regulated entities must open an ETS2 registry account before trading begins.', deadline='2026-12-31', recurrence='one_ti\u2026"
+             },
+             "ret": "'2026-12-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 18,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ETS2-003', framework='ETS2', short_name='ETS2 First Surrender Deadline', description='First ETS2 allowance surrender for emissions in 2027.', deadline='2028-05-31', recurrence='annual', entity_scope=['ET\u2026"
+             },
+             "ret": "'2028-05-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 19,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CBAM-001', framework='CBAM', short_name='CBAM Quarterly Embedded Emissions Report', description='CBAM declarants must file quarterly reports on embedded emissions in imported CBAM goods (steel, cement, a\u2026"
+             },
+             "ret": "'2025-07-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 20,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CBAM-002', framework='CBAM', short_name='CBAM Annual Declaration + Certificate Surrender', description='CBAM authorised declarants must submit annual CBAM declaration and surrender CBAM certificates equa\u2026"
+             },
+             "ret": "'2026-05-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 21,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ISSB-001', framework='ISSB', short_name='IFRS S1/S2 Mandatory Reporting \u2014 Australia (AASB)', description='Australian entities (large listed) must report under IFRS S1/S2 as adopted by AASB from FY2025 un\u2026"
+             },
+             "ret": "'2026-03-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 22,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='ISSB-002', framework='ISSB', short_name='IFRS S1/S2 \u2014 UK Sustainability Disclosure Standards', description='UK-endorsed SDS (based on ISSB S1/S2) expected mandatory for UK listed premium segment from FY2\u2026"
+             },
+             "ret": "'2027-03-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 23,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='BRSR-001', framework='BRSR', short_name='BRSR Full Disclosure \u2014 Top 1000 Listed Entities', description='Top 1000 NSE/BSE listed entities must file BRSR with annual report.', deadline='2025-09-30', recurr\u2026"
+             },
+             "ret": "'2025-09-30'",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 24,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='BRSR-002', framework='BRSR', short_name='BRSR Core \u2014 Reasonable Assurance (Top 150)', description='Top 150 NSE/BSE listed entities must obtain reasonable assurance on BRSR Core (9 ESG attributes) from FY\u2026"
+             },
+             "ret": "'2025-09-30'",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 25,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='EUDR-001', framework='EUDR', short_name='EUDR Due Diligence Statement (DDS) \u2014 Large Operators', description='Large operators and traders placing deforestation-linked commodities (cattle, cocoa, coffee, p\u2026"
+             },
+             "ret": "'2025-12-30'",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 26,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeline.', deadline='2026-06-30'\u2026"
+             },
+             "ret": "'2026-06-30'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 27,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSDDD-001', framework='CSDDD', short_name='CSDDD Group 1 \u2014 Large EU Companies (>1000 employees, >EUR 450m)', description='EU companies with >1000 employees AND >EUR 450m turnover must comply with CSDDD d\u2026"
+             },
+             "ret": "'2027-07-26'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 28,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='CSDDD-002', framework='CSDDD', short_name='CSDDD Climate Transition Plan (Art. 22)', description='CSDDD entities must adopt and implement a climate transition plan aligned with the Paris Agreement (1.5\u00b0C\u2026"
+             },
+             "ret": "'2027-07-26'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 29,
+             "name": "<lambda>",
+             "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+             "file": "services/regulatory_obligation_calendar.py",
+             "line": 599,
+             "args": {
+              "o": "RegulatoryObligation(obligation_id='EIOPA-001', framework='EIOPA ORSA', short_name='Solvency II ORSA Climate Scenario Analysis', description='Insurers must integrate climate risk scenarios into their ORSA (Own Risk and Solvency Assessment)\u2026"
+             },
+             "ret": "'2025-12-31'",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": 30,
+         "name": "_compute_urgency",
+         "qual": "RegulatoryObligationCalendar._compute_urgency",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 690,
+         "args": {
+          "days_until": "0"
+         },
+         "ret": "'critical'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "_build_message",
+         "qual": "RegulatoryObligationCalendar._build_message",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 700,
+         "args": {
+          "o": "RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product categories following SFDR \u2026",
+          "days_until": "0",
+          "urgency": "'critical'"
+         },
+         "ret": "'[CRITICAL] SFDR: SFDR Product Classification Review \u2014 deadline 2026-06-30 (TODAY). Penalty: Mandatory re-classification; product prospectus amendments....'",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_compute_urgency",
+         "qual": "RegulatoryObligationCalendar._compute_urgency",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 690,
+         "args": {
+          "days_until": "0"
+         },
+         "ret": "'critical'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_build_message",
+         "qual": "RegulatoryObligationCalendar._build_message",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 700,
+         "args": {
+          "o": "RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeline.', deadline='2026-06-30'\u2026",
+          "days_until": "0",
+          "urgency": "'critical'"
+         },
+         "ret": "'[CRITICAL] EUDR: EUDR DDS \u2014 SMEs (Small Operators/Traders) \u2014 deadline 2026-06-30 (TODAY). Penalty: Same as EUDR-001 (proportionate to size)....'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<lambda>",
+         "qual": "RegulatoryObligationCalendar.get_upcoming_alerts.<locals>.<lambda>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 650,
+         "args": {
+          "a": "ObligationAlert(obligation=RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product\u2026"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<lambda>",
+         "qual": "RegulatoryObligationCalendar.get_upcoming_alerts.<locals>.<lambda>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 650,
+         "args": {
+          "a": "ObligationAlert(obligation=RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeli\u2026"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/frameworks",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'RegulatoryObligationCalendar' object has no attribute '_obligations'",
+   "dur_ms": 0.2,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 36,
+     "name": "list_frameworks",
+     "qual": "list_frameworks",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 181,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/module-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.333,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module_count",
+     "coverage",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "get_module_coverage",
+     "qual": "get_module_coverage",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 161,
+     "args": {},
+     "ret": "{'module_count': 17, 'coverage': {'cbam_calculator': ['CBAM-001', 'CBAM-002'], 'csddd_engine': ['CSDDD-001', 'CSDDD-002'], 'csrd_auto_populate': ['CSDDD-002', 'CSRD-001', 'CSRD-002', 'CSRD-003', 'CSRD-004'], 'csrd_extractor': ['CSRD-002'],\u2026",
+     "dur_ms": 0.148,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "get_platform_module_coverage",
+       "qual": "RegulatoryObligationCalendar.get_platform_module_coverage",
+       "file": "services/regulatory_obligation_calendar.py",
+       "line": 655,
+       "args": {},
+       "ret": "{'cbam_calculator': ['CBAM-001', 'CBAM-002'], 'csddd_engine': ['CSDDD-001', 'CSDDD-002'], 'csrd_auto_populate': ['CSDDD-002', 'CSRD-001', 'CSRD-002', 'CSRD-003', 'CSRD-004'], 'csrd_extractor': ['CSRD-002'], 'ecl_gar_pillar3_orchestrator': \u2026",
+       "dur_ms": 0.101,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/obligations",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'list' object has no attribute '_obligations'",
+   "dur_ms": 1.545,
+   "node_count": 28,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "frameworks": "None (default)",
+    "jurisdictions": "None (default)",
+    "entity_type": "None (default)",
+    "include_rescinded": "False (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "list_obligations",
+     "qual": "list_obligations",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 58,
+     "args": {
+      "frameworks": "None",
+      "jurisdictions": "None",
+      "entity_type": "None",
+      "include_rescinded": "False"
+     },
+     "ret": "None",
+     "dur_ms": 0.942,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "filter",
+       "qual": "RegulatoryObligationCalendar.filter",
+       "file": "services/regulatory_obligation_calendar.py",
+       "line": 601,
+       "args": {
+        "frameworks": "None",
+        "jurisdictions": "None",
+        "entity_types": "None",
+        "include_rescinded": "False"
+       },
+       "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
+       "dur_ms": 0.785,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 41,
+         "name": "get_all",
+         "qual": "RegulatoryObligationCalendar.get_all",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 595,
+         "args": {
+          "include_rescinded": "False"
+         },
+         "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
+         "dur_ms": 0.586,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 42,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
+           },
+           "ret": "'2025-01-31'",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 43,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-002', framework='CSRD', short_name='CSRD FY2025 \u2014 Large Non-PIEs + Listed SMEs', description='Large non-listed companies (>250 employees OR >EUR 50m turnover OR >EUR 25m balance sheet \u2014 2 of 3 crite\u2026"
+           },
+           "ret": "'2026-01-31'",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 44,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-003', framework='CSRD', short_name='CSRD FY2028 \u2014 Non-EU Companies (Art. 40a)', description='Non-EU parent companies with EU turnover >EUR 150m must publish a group sustainability report (or equival\u2026"
+           },
+           "ret": "'2029-01-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 45,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-004', framework='CSRD', short_name='ESRS Limited Assurance \u2014 Year 1', description='External limited assurance on CSRD sustainability reports required from the same year as the first CSRD report obli\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 46,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-001', framework='SFDR', short_name='SFDR PAI Statement \u2014 Annual (30 June)', description='Financial market participants (FMPs) with >500 employees must publish their annual Principal Adverse Impact (\u2026"
+           },
+           "ret": "'2025-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 47,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-002', framework='SFDR', short_name='SFDR Article 8/9 Periodic Reports', description='Art. 8 (ESG characteristics) and Art. 9 (sustainable investment) funds must include sustainability disclosures in\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 48,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product categories following SFDR \u2026"
+           },
+           "ret": "'2026-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 49,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='TAXONOMY-001', framework='EU Taxonomy', short_name='EU Taxonomy Art. 8 KPI Disclosure \u2014 Full', description='Large EU companies subject to CSRD must disclose full EU Taxonomy KPIs: turnover, capex, and op\u2026"
+           },
+           "ret": "'2025-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 50,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='TAXONOMY-002', framework='EU Taxonomy', short_name='Bank GAR/BTAR Pillar 3 Disclosure', description='Credit institutions must disclose Green Asset Ratio (GAR) and Banking Book Taxonomy Alignment Ratio (B\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 51,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS-001', framework='EU ETS', short_name='ETS Annual Emissions Report Submission', description='ETS operators must submit verified annual emissions report to national competent authority by 31 March each\u2026"
+           },
+           "ret": "'2025-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 52,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS-002', framework='EU ETS', short_name='ETS Allowance Surrender Deadline', description='ETS operators must surrender allowances equal to verified emissions by 30 April.', deadline='2025-04-30', recurre\u2026"
+           },
+           "ret": "'2025-04-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 53,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to t\u2026"
+           },
+           "ret": "'2025-01-01'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 54,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-002', framework='ETS2', short_name='ETS2 Registry Registration', description='Regulated entities must open an ETS2 registry account before trading begins.', deadline='2026-12-31', recurrence='one_ti\u2026"
+           },
+           "ret": "'2026-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 55,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-003', framework='ETS2', short_name='ETS2 First Surrender Deadline', description='First ETS2 allowance surrender for emissions in 2027.', deadline='2028-05-31', recurrence='annual', entity_scope=['ET\u2026"
+           },
+           "ret": "'2028-05-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 56,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CBAM-001', framework='CBAM', short_name='CBAM Quarterly Embedded Emissions Report', description='CBAM declarants must file quarterly reports on embedded emissions in imported CBAM goods (steel, cement, a\u2026"
+           },
+           "ret": "'2025-07-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CBAM-002', framework='CBAM', short_name='CBAM Annual Declaration + Certificate Surrender', description='CBAM authorised declarants must submit annual CBAM declaration and surrender CBAM certificates equa\u2026"
+           },
+           "ret": "'2026-05-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 58,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ISSB-001', framework='ISSB', short_name='IFRS S1/S2 Mandatory Reporting \u2014 Australia (AASB)', description='Australian entities (large listed) must report under IFRS S1/S2 as adopted by AASB from FY2025 un\u2026"
+           },
+           "ret": "'2026-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 59,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ISSB-002', framework='ISSB', short_name='IFRS S1/S2 \u2014 UK Sustainability Disclosure Standards', description='UK-endorsed SDS (based on ISSB S1/S2) expected mandatory for UK listed premium segment from FY2\u2026"
+           },
+           "ret": "'2027-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 60,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='BRSR-001', framework='BRSR', short_name='BRSR Full Disclosure \u2014 Top 1000 Listed Entities', description='Top 1000 NSE/BSE listed entities must file BRSR with annual report.', deadline='2025-09-30', recurr\u2026"
+           },
+           "ret": "'2025-09-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 61,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='BRSR-002', framework='BRSR', short_name='BRSR Core \u2014 Reasonable Assurance (Top 150)', description='Top 150 NSE/BSE listed entities must obtain reasonable assurance on BRSR Core (9 ESG attributes) from FY\u2026"
+           },
+           "ret": "'2025-09-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 62,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EUDR-001', framework='EUDR', short_name='EUDR Due Diligence Statement (DDS) \u2014 Large Operators', description='Large operators and traders placing deforestation-linked commodities (cattle, cocoa, coffee, p\u2026"
+           },
+           "ret": "'2025-12-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 63,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeline.', deadline='2026-06-30'\u2026"
+           },
+           "ret": "'2026-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 64,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSDDD-001', framework='CSDDD', short_name='CSDDD Group 1 \u2014 Large EU Companies (>1000 employees, >EUR 450m)', description='EU companies with >1000 employees AND >EUR 450m turnover must comply with CSDDD d\u2026"
+           },
+           "ret": "'2027-07-26'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 65,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSDDD-002', framework='CSDDD', short_name='CSDDD Climate Transition Plan (Art. 22)', description='CSDDD entities must adopt and implement a climate transition plan aligned with the Paris Agreement (1.5\u00b0C\u2026"
+           },
+           "ret": "'2027-07-26'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 66,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EIOPA-001', framework='EIOPA ORSA', short_name='Solvency II ORSA Climate Scenario Analysis', description='Insurers must integrate climate risk scenarios into their ORSA (Own Risk and Solvency Assessment)\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/obligations/{obligation_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'RegulatoryObligationCalendar' object has no attribute '_obligations'",
+   "dur_ms": 0.288,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "obligation_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 67,
+     "name": "get_obligation",
+     "qual": "get_obligation",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 204,
+     "args": {
+      "obligation_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-calendar",
+   "label": "GET /api/v1/regulatory-calendar/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.818,
+   "node_count": 82,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_obligations",
+     "rescinded_obligations",
+     "by_framework",
+     "by_urgency",
+     "overdue_obligation_ids",
+     "frameworks_covered",
+     "jurisdictions_covered",
+     "reference_date"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 68,
+     "name": "get_summary",
+     "qual": "get_summary",
+     "file": "api/v1/routes/regulatory_calendar.py",
+     "line": 152,
+     "args": {},
+     "ret": "{'total_obligations': 25, 'rescinded_obligations': 1, 'by_framework': {'ETS2': 3, 'CSRD': 4, 'EU ETS': 2, 'SFDR': 3, 'EU Taxonomy': 2, 'CBAM': 2, 'BRSR': 2, 'EUDR': 2, 'EIOPA ORSA': 1, 'ISSB': 2, 'CSDDD': 2}, 'by_urgency': {'critical': 6, \u2026",
+     "dur_ms": 1.661,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 69,
+       "name": "get_summary",
+       "qual": "RegulatoryObligationCalendar.get_summary",
+       "file": "services/regulatory_obligation_calendar.py",
+       "line": 663,
+       "args": {},
+       "ret": "{'total_obligations': 25, 'rescinded_obligations': 1, 'by_framework': {'ETS2': 3, 'CSRD': 4, 'EU ETS': 2, 'SFDR': 3, 'EU Taxonomy': 2, 'CBAM': 2, 'BRSR': 2, 'EUDR': 2, 'EIOPA ORSA': 1, 'ISSB': 2, 'CSDDD': 2}, 'by_urgency': {'critical': 6, \u2026",
+       "dur_ms": 1.624,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 70,
+         "name": "get_all",
+         "qual": "RegulatoryObligationCalendar.get_all",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 595,
+         "args": {
+          "include_rescinded": "False"
+         },
+         "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
+         "dur_ms": 0.566,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 71,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
+           },
+           "ret": "'2025-01-31'",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-002', framework='CSRD', short_name='CSRD FY2025 \u2014 Large Non-PIEs + Listed SMEs', description='Large non-listed companies (>250 employees OR >EUR 50m turnover OR >EUR 25m balance sheet \u2014 2 of 3 crite\u2026"
+           },
+           "ret": "'2026-01-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 73,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-003', framework='CSRD', short_name='CSRD FY2028 \u2014 Non-EU Companies (Art. 40a)', description='Non-EU parent companies with EU turnover >EUR 150m must publish a group sustainability report (or equival\u2026"
+           },
+           "ret": "'2029-01-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 74,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSRD-004', framework='CSRD', short_name='ESRS Limited Assurance \u2014 Year 1', description='External limited assurance on CSRD sustainability reports required from the same year as the first CSRD report obli\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 75,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-001', framework='SFDR', short_name='SFDR PAI Statement \u2014 Annual (30 June)', description='Financial market participants (FMPs) with >500 employees must publish their annual Principal Adverse Impact (\u2026"
+           },
+           "ret": "'2025-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 76,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-002', framework='SFDR', short_name='SFDR Article 8/9 Periodic Reports', description='Art. 8 (ESG characteristics) and Art. 9 (sustainable investment) funds must include sustainability disclosures in\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 77,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product categories following SFDR \u2026"
+           },
+           "ret": "'2026-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 78,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='TAXONOMY-001', framework='EU Taxonomy', short_name='EU Taxonomy Art. 8 KPI Disclosure \u2014 Full', description='Large EU companies subject to CSRD must disclose full EU Taxonomy KPIs: turnover, capex, and op\u2026"
+           },
+           "ret": "'2025-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 79,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='TAXONOMY-002', framework='EU Taxonomy', short_name='Bank GAR/BTAR Pillar 3 Disclosure', description='Credit institutions must disclose Green Asset Ratio (GAR) and Banking Book Taxonomy Alignment Ratio (B\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 80,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS-001', framework='EU ETS', short_name='ETS Annual Emissions Report Submission', description='ETS operators must submit verified annual emissions report to national competent authority by 31 March each\u2026"
+           },
+           "ret": "'2025-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 81,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS-002', framework='EU ETS', short_name='ETS Allowance Surrender Deadline', description='ETS operators must surrender allowances equal to verified emissions by 30 April.', deadline='2025-04-30', recurre\u2026"
+           },
+           "ret": "'2025-04-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 82,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to t\u2026"
+           },
+           "ret": "'2025-01-01'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 83,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-002', framework='ETS2', short_name='ETS2 Registry Registration', description='Regulated entities must open an ETS2 registry account before trading begins.', deadline='2026-12-31', recurrence='one_ti\u2026"
+           },
+           "ret": "'2026-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 84,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ETS2-003', framework='ETS2', short_name='ETS2 First Surrender Deadline', description='First ETS2 allowance surrender for emissions in 2027.', deadline='2028-05-31', recurrence='annual', entity_scope=['ET\u2026"
+           },
+           "ret": "'2028-05-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 85,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CBAM-001', framework='CBAM', short_name='CBAM Quarterly Embedded Emissions Report', description='CBAM declarants must file quarterly reports on embedded emissions in imported CBAM goods (steel, cement, a\u2026"
+           },
+           "ret": "'2025-07-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 86,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CBAM-002', framework='CBAM', short_name='CBAM Annual Declaration + Certificate Surrender', description='CBAM authorised declarants must submit annual CBAM declaration and surrender CBAM certificates equa\u2026"
+           },
+           "ret": "'2026-05-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 87,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ISSB-001', framework='ISSB', short_name='IFRS S1/S2 Mandatory Reporting \u2014 Australia (AASB)', description='Australian entities (large listed) must report under IFRS S1/S2 as adopted by AASB from FY2025 un\u2026"
+           },
+           "ret": "'2026-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 88,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='ISSB-002', framework='ISSB', short_name='IFRS S1/S2 \u2014 UK Sustainability Disclosure Standards', description='UK-endorsed SDS (based on ISSB S1/S2) expected mandatory for UK listed premium segment from FY2\u2026"
+           },
+           "ret": "'2027-03-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 89,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='BRSR-001', framework='BRSR', short_name='BRSR Full Disclosure \u2014 Top 1000 Listed Entities', description='Top 1000 NSE/BSE listed entities must file BRSR with annual report.', deadline='2025-09-30', recurr\u2026"
+           },
+           "ret": "'2025-09-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 90,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='BRSR-002', framework='BRSR', short_name='BRSR Core \u2014 Reasonable Assurance (Top 150)', description='Top 150 NSE/BSE listed entities must obtain reasonable assurance on BRSR Core (9 ESG attributes) from FY\u2026"
+           },
+           "ret": "'2025-09-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 91,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EUDR-001', framework='EUDR', short_name='EUDR Due Diligence Statement (DDS) \u2014 Large Operators', description='Large operators and traders placing deforestation-linked commodities (cattle, cocoa, coffee, p\u2026"
+           },
+           "ret": "'2025-12-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 92,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeline.', deadline='2026-06-30'\u2026"
+           },
+           "ret": "'2026-06-30'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 93,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSDDD-001', framework='CSDDD', short_name='CSDDD Group 1 \u2014 Large EU Companies (>1000 employees, >EUR 450m)', description='EU companies with >1000 employees AND >EUR 450m turnover must comply with CSDDD d\u2026"
+           },
+           "ret": "'2027-07-26'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 94,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='CSDDD-002', framework='CSDDD', short_name='CSDDD Climate Transition Plan (Art. 22)', description='CSDDD entities must adopt and implement a climate transition plan aligned with the Paris Agreement (1.5\u00b0C\u2026"
+           },
+           "ret": "'2027-07-26'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 95,
+           "name": "<lambda>",
+           "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
+           "file": "services/regulatory_obligation_calendar.py",
+           "line": 599,
+           "args": {
+            "o": "RegulatoryObligation(obligation_id='EIOPA-001', framework='EIOPA ORSA', short_name='Solvency II ORSA Climate Scenario Analysis', description='Insurers must integrate climate risk scenarios into their ORSA (Own Risk and Solvency Assessment)\u2026"
+           },
+           "ret": "'2025-12-31'",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 96,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 679,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001BF115C4860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 679,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001BF115C4860>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'ETS2'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSRD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 100,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU ETS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU ETS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'SFDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU Taxonomy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CBAM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'BRSR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'BRSR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EUDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSRD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'SFDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU Taxonomy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EIOPA ORSA'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSRD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'ISSB'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 114,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CBAM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 115,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'SFDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 116,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EUDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 117,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'ETS2'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 118,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'ISSB'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 119,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSDDD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 120,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSDDD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 121,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'ETS2'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 122,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'CSRD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 123,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 683,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 124,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 125,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 126,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 127,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 128,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 131,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'IN'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 132,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'IN'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 133,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 134,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 135,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 136,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 137,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 138,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 139,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'AU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 140,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 141,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 142,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 143,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 144,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'UK'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 145,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 146,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 147,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 148,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 149,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

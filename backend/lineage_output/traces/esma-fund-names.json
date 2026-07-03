@@ -1,0 +1,377 @@
+{
+ "domain": "esma-fund-names",
+ "meta": {
+  "ts": "2026-06-30T14:01:54",
+  "module": "api.v1.routes.esma_fund_names",
+  "router_prefix": "/api/v1/esma-fund-names",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "esma-fund-names",
+   "label": "GET /api/v1/esma-fund-names/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.351,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sfdr_art8_art9",
+     "eu_taxonomy",
+     "mifid_spt",
+     "priips_kid",
+     "paris_aligned_benchmark"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 172,
+     "args": {},
+     "ret": "{'sfdr_art8_art9': 'Fund names using ESG terms must comply with SFDR Art 8/9 minimum thresholds; SFDR classification does NOT automatically satisfy name guidelines', 'eu_taxonomy': \"For 'sustainable' terms: minimum taxonomy-aligned % shoul\u2026",
+     "dur_ms": 0.055,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cross_framework",
+       "qual": "ESMAFundNamesEngine.get_cross_framework",
+       "file": "services/esma_fund_names_engine.py",
+       "line": 527,
+       "args": {},
+       "ret": "{'sfdr_art8_art9': 'Fund names using ESG terms must comply with SFDR Art 8/9 minimum thresholds; SFDR classification does NOT automatically satisfy name guidelines', 'eu_taxonomy': \"For 'sustainable' terms: minimum taxonomy-aligned % shoul\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "GET /api/v1/esma-fund-names/ref/pab-exclusions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.242,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "controversial_weapons",
+     "ungc_violations",
+     "tobacco_production",
+     "fossil_fuel_exploration",
+     "high_ghg_intensity"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_pab_exclusions",
+     "qual": "ref_pab_exclusions",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 158,
+     "args": {},
+     "ret": "{'controversial_weapons': {'description': 'Companies involved in controversial weapons (cluster munitions, anti-personnel mines, biological/chemical weapons)', 'article': 'Art 12(1)(a) PAB Delegated Regulation'}, 'ungc_violations': {'descr\u2026",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_pab_exclusions",
+       "qual": "ESMAFundNamesEngine.get_pab_exclusions",
+       "file": "services/esma_fund_names_engine.py",
+       "line": 521,
+       "args": {},
+       "ret": "{'controversial_weapons': {'description': 'Companies involved in controversial weapons (cluster munitions, anti-personnel mines, biological/chemical weapons)', 'article': 'Art 12(1)(a) PAB Delegated Regulation'}, 'ungc_violations': {'descr\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "GET /api/v1/esma-fund-names/ref/sfdr-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.185,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "art_8",
+     "art_9"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_sfdr_requirements",
+     "qual": "ref_sfdr_requirements",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 165,
+     "args": {},
+     "ret": "{'art_8': {'min_threshold_pct': 80.0, 'pai_exclusions': True, 'dnsh': False, 'note': 'Art 8 products must meet 80% ESG investment threshold'}, 'art_9': {'min_threshold_pct': 80.0, 'pai_exclusions': True, 'dnsh': True, 'note': 'Art 9 produc\u2026",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_sfdr_requirements",
+       "qual": "ESMAFundNamesEngine.get_sfdr_requirements",
+       "file": "services/esma_fund_names_engine.py",
+       "line": 524,
+       "args": {},
+       "ret": "{'art_8': {'min_threshold_pct': 80.0, 'pai_exclusions': True, 'dnsh': False, 'note': 'Art 8 products must meet 80% ESG investment threshold'}, 'art_9': {'min_threshold_pct': 80.0, 'pai_exclusions': True, 'dnsh': True, 'note': 'Art 9 produc\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "GET /api/v1/esma-fund-names/ref/term-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.21,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "environmental",
+     "social",
+     "governance",
+     "impact",
+     "transition",
+     "sustainable_focus"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_term_categories",
+     "qual": "ref_term_categories",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 151,
+     "args": {},
+     "ret": "{'environmental': {'terms': ['environmental', 'climate', 'green', 'ESG', 'sustainable', 'sustainability', 'natural', 'nature', 'ecology', 'ecological', 'biodiversity', 'low-carbon', 'net-zero', 'transition', 'Paris-aligned', 'Paris-alignme\u2026",
+     "dur_ms": 0.055,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_term_categories",
+       "qual": "ESMAFundNamesEngine.get_term_categories",
+       "file": "services/esma_fund_names_engine.py",
+       "line": 518,
+       "args": {},
+       "ret": "{'environmental': {'terms': ['environmental', 'climate', 'green', 'ESG', 'sustainable', 'sustainability', 'natural', 'nature', 'ecology', 'ecological', 'biodiversity', 'low-carbon', 'net-zero', 'transition', 'Paris-aligned', 'Paris-alignme\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "GET /api/v1/esma-fund-names/ref/timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.191,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "date",
+     "event",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_timeline",
+     "qual": "ref_timeline",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 179,
+     "args": {},
+     "ret": "[{'date': '2024-05-14', 'event': 'ESMA Final Report published (ESMA/2024/249)', 'article': 'All'}, {'date': '2024-08-21', 'event': 'Entered into force (OJ publication)', 'article': 'Art 1'}, {'date': '2024-11-21', 'event': 'Application dat\u2026",
+     "dur_ms": 0.035,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_timeline",
+       "qual": "ESMAFundNamesEngine.get_timeline",
+       "file": "services/esma_fund_names_engine.py",
+       "line": 530,
+       "args": {},
+       "ret": "[{'date': '2024-05-14', 'event': 'ESMA Final Report published (ESMA/2024/249)', 'article': 'All'}, {'date': '2024-08-21', 'event': 'Entered into force (OJ publication)', 'article': 'Art 1'}, {'date': '2024-11-21', 'event': 'Application dat\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "POST /api/v1/esma-fund-names/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund_id'",
+   "dur_ms": 0.232,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_fund_name",
+     "qual": "assess_fund_name",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 81,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "POST /api/v1/esma-fund-names/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund_id'",
+   "dur_ms": 0.175,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/esma_fund_names.py",
+     "line": 106,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esma-fund-names",
+   "label": "POST /api/v1/esma-fund-names/detect-terms",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

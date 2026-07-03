@@ -1,0 +1,130 @@
+{
+ "domain": "dme-greenwashing",
+ "meta": {
+  "ts": "2026-06-30T14:00:52",
+  "module": "api.v1.routes.dme_greenwashing",
+  "router_prefix": "/api/v1/dme-greenwashing",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "dme-greenwashing",
+   "label": "GET /api/v1/dme-greenwashing/ref/config-defaults",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.441,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ema_alpha",
+     "cusum_k_factor",
+     "cusum_h",
+     "warning_threshold",
+     "critical_threshold"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_config_defaults",
+     "qual": "get_config_defaults",
+     "file": "api/v1/routes/dme_greenwashing.py",
+     "line": 26,
+     "args": {},
+     "ret": "{'ema_alpha': 0.08, 'cusum_k_factor': 0.5, 'cusum_h': 5.0, 'warning_threshold': 2.0, 'critical_threshold': 3.0}",
+     "dur_ms": 0.075,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dme-greenwashing",
+   "label": "GET /api/v1/dme-greenwashing/ref/methodology",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.318,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "credibility_weighting",
+     "detection_conditions",
+     "cusum",
+     "risk_levels_quick_scan"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_methodology",
+     "qual": "get_methodology",
+     "file": "api/v1/routes/dme_greenwashing.py",
+     "line": 32,
+     "args": {},
+     "ret": "{'credibility_weighting': {'formula': 'W = RawScore \u00d7 QualityWeight \u00d7 Freshness', 'quality_weight': '1 - (PCAF - 1) \u00d7 0.2', 'freshness': 'exp(-ln(2)/36 \u00d7 age_months)'}, 'detection_conditions': {'condition_1': 'V_divergence > 1\u03c3 (velocity e\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dme-greenwashing",
+   "label": "POST /api/v1/dme-greenwashing/detect",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-greenwashing",
+   "label": "POST /api/v1/dme-greenwashing/quick-scan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

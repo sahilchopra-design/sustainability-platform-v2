@@ -1,0 +1,1492 @@
+{
+ "domain": "esg-data-quality-assurance",
+ "meta": {
+  "ts": "2026-06-30T14:01:52",
+  "module": "api.v1.routes.esg_data_quality_assurance",
+  "router_prefix": "/api/v1/esg-data-quality",
+  "endpoints": 14
+ },
+ "transactions": [
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/audit/firm-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.304,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "firm": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "firms",
+     "comparison",
+     "selection_guidance",
+     "standards_matrix",
+     "sprint"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_big4_firm_methodologies",
+     "qual": "get_big4_firm_methodologies",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 1149,
+     "args": {
+      "firm": "None"
+     },
+     "ret": "{'firms': ['Deloitte', 'PwC', 'EY', 'KPMG'], 'comparison': {'Deloitte': {'firm': 'Deloitte', 'brand_name': 'Deloitte ESG Assurance', 'methodology': 'CLEAR\u2122 (Climate, Leadership, ESG Assurance & Reporting)', 'primary_standards': ['ISSA 5000\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/audit/work-program",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.195,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "standard": "'ISSA_5000' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standard",
+     "full_name",
+     "applicability",
+     "output",
+     "phases",
+     "total_phases"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_audit_work_program",
+     "qual": "get_audit_work_program",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 1069,
+     "args": {
+      "standard": "'ISSA_5000'"
+     },
+     "ret": "{'standard': 'ISSA 5000', 'full_name': 'International Standard on Sustainability Assurance 5000 (IAASB, 2024)', 'applicability': 'CSRD-mandatory for EU PIEs (phased from FY2024); best practice globally', 'output': 'Signed ISSA 5000 assuran\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/brsr/{cin}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1232.242,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "cin": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "reporting_year": "2025 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error",
+     "cin"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "assess_brsr_company",
+     "qual": "assess_brsr_company",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 52,
+     "args": {
+      "cin": "'550e8400-e29b-41d4-a716-446655440001'",
+      "reporting_year": "2025"
+     },
+     "ret": "{'error': 'Failed to fetch BRSR data: HTTP Error 401: Unauthorized', 'cin': '550e8400-e29b-41d4-a716-446655440001'}",
+     "dur_ms": 1232.064,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/ref/assurance-standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.327,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standards",
+     "comparison_matrix",
+     "csrd_phasing",
+     "cost_comparison_usd"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_assurance_standards",
+     "qual": "ref_assurance_standards",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 532,
+     "args": {},
+     "ret": "{'standards': {'ISAE_3000': {'name': 'ISAE 3000 (Revised) \u2014 International Standard on Assurance Engagements', 'issuer': 'IAASB (International Auditing and Assurance Standards Board)', 'effective_date': '2015-12-15', 'applicable_frameworks'\u2026",
+     "dur_ms": 0.115,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_assurance_standards",
+       "qual": "get_assurance_standards",
+       "file": "services/esg_data_quality_assurance_engine.py",
+       "line": 1330,
+       "args": {},
+       "ret": "{'standards': {'ISAE_3000': {'name': 'ISAE 3000 (Revised) \u2014 International Standard on Assurance Engagements', 'issuer': 'IAASB (International Auditing and Assurance Standards Board)', 'effective_date': '2015-12-15', 'applicable_frameworks'\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/ref/bcbs239-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.427,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "principles",
+     "categories",
+     "maturity_scale",
+     "source",
+     "esg_application_note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_bcbs239_principles",
+     "qual": "ref_bcbs239_principles",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 474,
+     "args": {},
+     "ret": "{'count': 14, 'principles': {'P1': {'id': 'P1', 'name': 'Governance', 'category': 'Governance', 'category_weight': 0.25, 'principle_weight': 0.4, 'description': 'Board and senior management must have strong governance frameworks for risk d\u2026",
+     "dur_ms": 0.18,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_bcbs239_principles",
+       "qual": "get_bcbs239_principles",
+       "file": "services/esg_data_quality_assurance_engine.py",
+       "line": 1304,
+       "args": {},
+       "ret": "{'count': 14, 'principles': {'P1': {'id': 'P1', 'name': 'Governance', 'category': 'Governance', 'category_weight': 0.25, 'principle_weight': 0.4, 'description': 'Board and senior management must have strong governance frameworks for risk d\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/ref/dqs-definitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.226,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dqs_definitions",
+     "scale",
+     "weighted_dqs_formula",
+     "pcaf_target",
+     "sbti_requirement",
+     "source"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_dqs_definitions",
+     "qual": "ref_dqs_definitions",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 553,
+     "args": {},
+     "ret": "{'dqs_definitions': {'corporate_bonds': {'1': {'label': 'Verified primary data', 'description': 'Company-reported, independently verified GHG data (ISAE3410 or equivalent)', 'confidence': 0.95}, '2': {'label': 'Reported primary data', 'des\u2026",
+     "dur_ms": 0.07,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_dqs_definitions",
+       "qual": "get_dqs_definitions",
+       "file": "services/esg_data_quality_assurance_engine.py",
+       "line": 1356,
+       "args": {},
+       "ret": "{'dqs_definitions': {'corporate_bonds': {'1': {'label': 'Verified primary data', 'description': 'Company-reported, independently verified GHG data (ISAE3410 or equivalent)', 'confidence': 0.95}, '2': {'label': 'Reported primary data', 'des\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/ref/provider-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.218,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors",
+     "providers",
+     "data_types",
+     "coverage_data",
+     "usage",
+     "metadata"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_provider_coverage",
+     "qual": "ref_provider_coverage",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 495,
+     "args": {},
+     "ret": "{'sectors': ['Financials', 'Energy', 'Materials', 'Industrials', 'Consumer_Discretionary', 'Consumer_Staples', 'Health_Care', 'Information_Technology', 'Utilities', 'Real_Estate', 'Communication_Services'], 'providers': ['CDP', 'MSCI', 'Bl\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "GET /api/v1/esg-data-quality/score/{entity_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.373,
+   "node_count": 64,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "framework": "'CSRD' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "overall_dqs",
+     "quality_tier",
+     "bcbs239_score",
+     "meets_quality_gate",
+     "framework"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "get_quality_score",
+     "qual": "get_quality_score",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 168,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "framework": "'CSRD'"
+     },
+     "ret": "{'entity_id': '550e8400-e29b-41d4-a716-446655440001', 'overall_dqs': 3.7, 'quality_tier': 'poor', 'bcbs239_score': 1.0, 'meets_quality_gate': False, 'framework': 'CSRD'}",
+     "dur_ms": 1.219,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "assess_data_quality",
+       "qual": "assess_data_quality",
+       "file": "services/esg_data_quality_assurance_engine.py",
+       "line": 860,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "framework": "'CSRD'",
+        "reporting_year": "2025",
+        "disclosed_fields": "['ghg_scope1', 'ghg_scope2']",
+        "assurance_level": "'none'"
+       },
+       "ret": "{'entity_id': '550e8400-e29b-41d4-a716-446655440001', 'framework': 'CSRD', 'reporting_year': 2025, 'assurance_level': 'none', 'disclosed_field_count': 2, 'bcbs239_overall_score': 1.0, 'bcbs239_category_scores': {'Governance': 1.0, 'Data Ar\u2026",
+       "dur_ms": 1.1,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 13,
+         "name": "_bcbs239_category_score",
+         "qual": "_bcbs239_category_score",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 827,
+         "args": {
+          "principles_used": "['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'P11', 'P12', 'P13', 'P14']",
+          "maturity_scores": "{'P1': 1, 'P2': 1, 'P3': 1, 'P4': 1, 'P5': 1, 'P6': 1, 'P7': 1, 'P8': 1, 'P9': 1, 'P10': 1, 'P11': 1, 'P12': 1, 'P13': 1, 'P14': 1}"
+         },
+         "ret": "{'Governance': 1.0, 'Data Architecture': 1.0, 'Accuracy & Integrity': 1.0, 'Management Reporting': 1.0}",
+         "dur_ms": 0.588,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 14,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.4",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.4",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 21,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 22,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 23,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 24,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.2",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 26,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 27,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 28,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 29,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 30,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.2",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 31,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 32,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 33,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 34,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 35,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.2",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 36,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 37,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 38,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 39,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.25",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 40,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.2",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 41,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 43,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 44,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 45,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 839,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 46,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 47,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.35",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 48,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "0.3",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 49,
+           "name": "<genexpr>",
+           "qual": "_bcbs239_category_score.<locals>.<genexpr>",
+           "file": "services/esg_data_quality_assurance_engine.py",
+           "line": 840,
+           "args": {
+            ".0": "<list_iterator object at 0x00000254F84EAA40>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 902,
+         "args": {
+          ".0": "<dict_itemiterator object at 0x00000254F851DA30>"
+         },
+         "ret": "0.25",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 902,
+         "args": {
+          ".0": "<dict_itemiterator object at 0x00000254F851DA30>"
+         },
+         "ret": "0.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 902,
+         "args": {
+          ".0": "<dict_itemiterator object at 0x00000254F851DA30>"
+         },
+         "ret": "0.25",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 902,
+         "args": {
+          ".0": "<dict_itemiterator object at 0x00000254F851DA30>"
+         },
+         "ret": "0.2",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 902,
+         "args": {
+          ".0": "<dict_itemiterator object at 0x00000254F851DA30>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 907,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "True",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 907,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 908,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "False",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 908,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "True",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 908,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 909,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 909,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<genexpr>",
+         "qual": "assess_data_quality.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 909,
+         "args": {
+          ".0": "<list_iterator object at 0x00000254F88640D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "_field_dqs",
+         "qual": "assess_data_quality.<locals>._field_dqs",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 911,
+         "args": {
+          "disclosed": "True",
+          "assur": "'none'"
+         },
+         "ret": "3",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "_field_dqs",
+         "qual": "assess_data_quality.<locals>._field_dqs",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 911,
+         "args": {
+          "disclosed": "True",
+          "assur": "'none'"
+         },
+         "ret": "3",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 65,
+         "name": "_field_dqs",
+         "qual": "assess_data_quality.<locals>._field_dqs",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 911,
+         "args": {
+          "disclosed": "False",
+          "assur": "'none'"
+         },
+         "ret": "5",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "_overall_dqs",
+         "qual": "_overall_dqs",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 844,
+         "args": {
+          "scope_coverage": "{'scope1': 3, 'scope2': 3, 'scope3': 5}"
+         },
+         "ret": "3.7",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'scope_3_cat15_financed_emissions', 'gap_risk': 'very_high', 'remediation_priority': 'P0', 'materiality_weight': 0.95, 'notes': 'PCAF Part A mandatory for banks; SBTi FI requires C15 coverage \u226567%'}"
+         },
+         "ret": "0.95",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'scope_3_categories_1_to_14', 'gap_risk': 'high', 'remediation_priority': 'P1', 'materiality_weight': 0.85, 'notes': 'SBTi requires \u226540% of Scope 3 covered for near-term target'}"
+         },
+         "ret": "0.85",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'biodiversity_impact_metrics', 'gap_risk': 'very_high', 'remediation_priority': 'P0', 'materiality_weight': 0.8, 'notes': 'ESRS E4 mandatory for material sectors; MSA.km\u00b2 not widely disclosed'}"
+         },
+         "ret": "0.8",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'pay_equity_ratio', 'gap_risk': 'high', 'remediation_priority': 'P1', 'materiality_weight': 0.75, 'notes': 'EU Pay Transparency Directive 2023/970 effective 2026'}"
+         },
+         "ret": "0.75",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'water_stress_withdrawal', 'gap_risk': 'high', 'remediation_priority': 'P1', 'materiality_weight': 0.72, 'notes': 'WRI Aqueduct required for baseline water stress mapping'}"
+         },
+         "ret": "0.72",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 72,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'board_independence', 'gap_risk': 'low', 'remediation_priority': 'P3', 'materiality_weight': 0.65, 'notes': 'High disclosure rate; data quality risk from inconsistent definitions'}"
+         },
+         "ret": "0.65",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 73,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'taxonomy_eligible_revenue', 'gap_risk': 'very_high', 'remediation_priority': 'P0', 'materiality_weight': 0.88, 'notes': 'DNSH technical screening criteria apply; phased in 2022-2024'}"
+         },
+         "ret": "0.88",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "<lambda>",
+         "qual": "assess_data_quality.<locals>.<lambda>",
+         "file": "services/esg_data_quality_assurance_engine.py",
+         "line": 943,
+         "args": {
+          "x": "{'field': 'ghg_scope1_verified', 'gap_risk': 'moderate', 'remediation_priority': 'P2', 'materiality_weight': 0.9, 'notes': 'Disclosure rate high but verification rate low (ISAE 3410 limited ~35% of reporters)'}"
+         },
+         "ret": "0.9",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.157,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 75,
+     "name": "assess_esg_data_quality",
+     "qual": "assess_esg_data_quality",
+     "file": "api/v1/routes/esg_data_quality_assurance.py",
+     "line": 367,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/audit/checklist",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/audit/prepare",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/impute",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/recommend-assurance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-data-quality-assurance",
+   "label": "POST /api/v1/esg-data-quality/verify-datapoint",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

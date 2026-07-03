@@ -1,0 +1,1167 @@
+{
+ "domain": "double-materiality",
+ "meta": {
+  "ts": "2026-06-30T14:00:58",
+  "module": "api.v1.routes.double_materiality",
+  "router_prefix": "/api/v1/double-materiality",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/assurance-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.399,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assurance_criteria",
+     "limited_assurance_overall_threshold_pct",
+     "reasonable_assurance_overall_threshold_pct",
+     "standards"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_assurance_criteria",
+     "qual": "ref_assurance_criteria",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 288,
+     "args": {},
+     "ret": "{'assurance_criteria': [{'id': 'documentation_completeness', 'label': 'Documentation Completeness', 'weight': 0.25, 'limited_threshold': 60, 'reasonable_threshold': 85, 'description': 'All material topics supported by documented assessment\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/csrd-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.228,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "csrd_waves",
+     "total_waves",
+     "directive",
+     "esrs_set",
+     "assurance"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_csrd_timeline",
+     "qual": "ref_csrd_timeline",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 248,
+     "args": {},
+     "ret": "{'csrd_waves': [{'wave': 1, 'label': 'Wave 1 \u2014 Large PIEs > 500 employees', 'directive_reference': 'CSRD Art 5(1)(a) amending NFRD Art 19a', 'reporting_year': 2024, 'financial_year': 'FY 2024', 'publication_deadline': '2025-06-30', 'scope'\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/esrs-topics",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.902,
+   "node_count": 49,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esrs_topics",
+     "total_topics",
+     "total_sub_topics",
+     "mandatory_sub_topics_total"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_esrs_topics",
+     "qual": "ref_esrs_topics",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 177,
+     "args": {},
+     "ret": "{'esrs_topics': [{'topic': 'E1', 'name': 'Climate Change', 'pillar': 'Environmental', 'standard': 'ESRS E1', 'sub_topic_count': 6, 'mandatory_sub_topics': 4, 'sub_topics': [{'code': 'E1.1', 'name': 'Climate change adaptation', 'dp_referenc\u2026",
+     "dur_ms": 1.522,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/double_materiality.py",
+       "line": 47,
+       "args": {},
+       "ret": "<services.double_materiality_engine.DoubleMaterialityEngine object at 0x0000028CD6481070>",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "get_esrs_topic_metadata",
+       "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata",
+       "file": "services/double_materiality_engine.py",
+       "line": 1309,
+       "args": {},
+       "ret": "{'esrs_topics': [{'topic': 'E1', 'name': 'Climate Change', 'pillar': 'Environmental', 'standard': 'ESRS E1', 'sub_topic_count': 6, 'mandatory_sub_topics': 4, 'sub_topics': [{'code': 'E1.1', 'name': 'Climate change adaptation', 'dp_referenc\u2026",
+       "dur_ms": 1.093,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1320,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD6582A20>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "6",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "6",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "9",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "4",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1326,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "DoubleMaterialityEngine.get_esrs_topic_metadata.<locals>.<genexpr>",
+         "file": "services/double_materiality_engine.py",
+         "line": 1327,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000028CD65829D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/iro-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "iro_types",
+     "total_iro_types",
+     "esrs_ref"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 52,
+     "name": "ref_iro_types",
+     "qual": "ref_iro_types",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 224,
+     "args": {},
+     "ret": "{'iro_types': [{'iro_type': 'actual_negative_impact', 'label': 'Actual Negative Impact', 'esrs_ref': 'ESRS 1 AR 3 (a)', 'description': 'A negative impact the undertaking is causing or contributing to in the present, or has caused in the pa\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/nace-materiality",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.344,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nace_materiality_matrix",
+     "total_nace_codes",
+     "signal_definitions"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 53,
+     "name": "ref_nace_materiality",
+     "qual": "ref_nace_materiality",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 196,
+     "args": {},
+     "ret": "{'nace_materiality_matrix': [{'nace_code': 'A', 'topic_signals': {'E1': 'high', 'E2': 'high', 'E3': 'high', 'E4': 'high', 'E5': 'medium', 'S1': 'high', 'S2': 'high', 'S3': 'high', 'S4': 'low', 'G1': 'medium'}}, {'nace_code': 'B', 'topic_si\u2026",
+     "dur_ms": 0.038,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/omission-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.169,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "omission_criteria",
+     "esrs_ref",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 54,
+     "name": "ref_omission_criteria",
+     "qual": "ref_omission_criteria",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 303,
+     "args": {},
+     "ret": "{'omission_criteria': [{'criterion_key': 'not_applicable', 'label': 'Not applicable \u2014 no relevant activities', 'esrs_ref': 'ESRS 1 para 29', 'requires_justification': True, 'requires_nace_evidence': True, 'description': 'The undertaking do\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "GET /api/v1/double-materiality/ref/stakeholder-groups",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.159,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "stakeholder_groups",
+     "total_groups",
+     "esrs_ref"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 55,
+     "name": "ref_stakeholder_groups",
+     "qual": "ref_stakeholder_groups",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 274,
+     "args": {},
+     "ret": "{'stakeholder_groups': [{'id': 'investors', 'label': 'Investors and Lenders', 'engagement_method': 'Annual investor presentations, ESG roadshows, direct dialogue', 'frequency': 'quarterly', 'esrs_ref': 'ESRS 1 para 20'}, {'id': 'employees'\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "POST /api/v1/double-materiality/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.252,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 56,
+     "name": "assess_double_materiality",
+     "qual": "assess_double_materiality",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 58,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 57,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/double_materiality.py",
+       "line": 47,
+       "args": {},
+       "ret": "<services.double_materiality_engine.DoubleMaterialityEngine object at 0x0000028CD6481070>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "POST /api/v1/double-materiality/check-omissions",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "double-materiality",
+   "label": "POST /api/v1/double-materiality/completeness",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.231,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 58,
+     "name": "calculate_completeness",
+     "qual": "calculate_completeness",
+     "file": "api/v1/routes/double_materiality.py",
+     "line": 153,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 59,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/double_materiality.py",
+       "line": 47,
+       "args": {},
+       "ret": "<services.double_materiality_engine.DoubleMaterialityEngine object at 0x0000028CD6481070>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "double-materiality",
+   "label": "POST /api/v1/double-materiality/identify-iros",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "double-materiality",
+   "label": "POST /api/v1/double-materiality/materiality-matrix",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

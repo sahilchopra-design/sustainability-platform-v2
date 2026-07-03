@@ -1,0 +1,399 @@
+{
+ "domain": "ca100",
+ "meta": {
+  "ts": "2026-06-30T13:59:33",
+  "module": "api.v1.routes.ca100",
+  "router_prefix": "/api/v1/ca100",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "ca100",
+   "label": "GET /api/v1/ca100/companies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1070.495,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_ca100_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_ca100_assessments'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 1,
+     "dur_ms": 79.5,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT id, company_name, isin, hq_location, hq_region, sector_cluster, sector, overall_assessment, assessment_year FROM dh_ca100_assessments ORDER BY company_name LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 50,
+     "dur_ms": 39.652,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "q": "None (default)",
+    "sector_cluster": "None (default)",
+    "sector": "None (default)",
+    "hq_region": "None (default)",
+    "overall_assessment": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "limit",
+     "offset",
+     "companies"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_ca100_companies",
+     "qual": "list_ca100_companies",
+     "file": "api/v1/routes/ca100.py",
+     "line": 87,
+     "args": {
+      "q": "None",
+      "sector_cluster": "None",
+      "sector": "None",
+      "hq_region": "None",
+      "overall_assessment": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023D15507590>"
+     },
+     "ret": "{'total': 169, 'limit': 50, 'offset': 0, 'companies': [{'id': '962c6e69e264dae54dac8ce8', 'company_name': 'A.P. Moller (Maersk)', 'isin': 'DK0010244425', 'hq_location': 'Denmark', 'hq_region': 'Europe', 'sector_cluster': 'Transport', 'sect\u2026",
+     "dur_ms": 1038.644,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ca100",
+   "label": "GET /api/v1/ca100/companies/{company_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: CA100 company not found",
+   "dur_ms": 316.871,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_ca100_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, company_name, isin, hq_location, hq_region, sector_cluster, sector, secondary_sector, scope3_category, indicator_1_score, indicator_2_score, indicator_3_score, indicator_4_score, indicator_5_score, indicator_6_score, indicator_7_score, indicator_8_score, indicator_9_score, indicator_10_score, overall_assessment, assessment_year, raw_record, ingested_at FROM dh_ca100_assessments WHERE \u2026",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.546,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "company_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_ca100_company",
+     "qual": "get_ca100_company",
+     "file": "api/v1/routes/ca100.py",
+     "line": 159,
+     "args": {
+      "company_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023D17D41A90>"
+     },
+     "ret": "None",
+     "dur_ms": 280.987,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ca100",
+   "label": "GET /api/v1/ca100/filters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 404.895,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_ca100_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT DISTINCT sector_cluster FROM dh_ca100_assessments WHERE sector_cluster IS NOT NULL ORDER BY 1'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 4,
+     "dur_ms": 63.518,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT DISTINCT sector FROM dh_ca100_assessments WHERE sector IS NOT NULL ORDER BY 1'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 17,
+     "dur_ms": 30.26,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT DISTINCT hq_region FROM dh_ca100_assessments WHERE hq_region IS NOT NULL ORDER BY 1'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 8,
+     "dur_ms": 32.949,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT DISTINCT overall_assessment FROM dh_ca100_assessments WHERE overall_assessment IS NOT NULL ORDER BY 1'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.745,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_clusters",
+     "sectors",
+     "hq_regions",
+     "overall_assessments"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ca100_filter_options",
+     "qual": "ca100_filter_options",
+     "file": "api/v1/routes/ca100.py",
+     "line": 242,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023D17D41910>"
+     },
+     "ret": "{'sector_clusters': ['Consumer Goods and Services', 'Energy', 'Industrials', 'Transport'], 'sectors': ['Airlines', 'Autos', 'Cement', 'Chemicals', 'Coal Mining', 'Diversified Mining', 'Electric Utilities', 'Food Producers', 'Household and \u2026",
+     "dur_ms": 376.778,
+     "sql": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ca100",
+   "label": "GET /api/v1/ca100/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 570.266,
+   "node_count": 7,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_ca100_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT sector_cluster, sector, COUNT(*) as cnt, overall_assessment FROM dh_ca100_assessments GROUP BY sector_cluster, sector, overall_assessment ORDER BY sector_cluster, sector, overall_assessment'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 18,
+     "dur_ms": 62.701,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_companies",
+     "sector_clusters"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ca100_sector_summary",
+     "qual": "ca100_sector_summary",
+     "file": "api/v1/routes/ca100.py",
+     "line": 207,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023D17E373E0>"
+     },
+     "ret": "{'total_companies': 169, 'sector_clusters': [{'sector_cluster': 'Consumer Goods and Services', 'company_count': 13, 'sectors': {'Food Producers': 4, 'Household and Consumer Products': 4, 'Retailers': 5}, 'assessment_distribution': {'Not As\u2026",
+     "dur_ms": 287.866,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "13",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "74",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "52",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "25",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "ca100_sector_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/ca100.py",
+       "line": 234,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000023D17E6AA20>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

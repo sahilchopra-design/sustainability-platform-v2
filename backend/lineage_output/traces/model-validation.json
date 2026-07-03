@@ -1,0 +1,967 @@
+{
+ "domain": "model-validation",
+ "meta": {
+  "ts": "2026-06-30T14:03:10",
+  "module": "api.v1.routes.model_validation",
+  "router_prefix": "/api/v1/model-validation",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.505,
+   "node_count": 36,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_models",
+     "models_by_state",
+     "models_by_tier",
+     "models_by_category",
+     "overdue_validations",
+     "recent_findings",
+     "bcbs239_compliance_pct",
+     "eba_gl_2023_04_compliant"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_dashboard",
+     "qual": "get_dashboard",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 112,
+     "args": {},
+     "ret": "{'total_models': 17, 'models_by_state': {'MONITORING': 17}, 'models_by_tier': {'1': 5, '2': 9, '3': 3}, 'models_by_category': {'credit_risk': 4, 'climate_risk': 4, 'valuation': 2, 'emissions': 2, 'market_risk': 2, 'regulatory': 2, 'esg': 1\u2026",
+     "dur_ms": 1.098,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "ModelValidationFramework.__init__",
+       "file": "services/model_validation_framework.py",
+       "line": 411,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "get_validation_dashboard",
+       "qual": "ModelValidationFramework.get_validation_dashboard",
+       "file": "services/model_validation_framework.py",
+       "line": 759,
+       "args": {},
+       "ret": "ValidationDashboard(total_models=17, models_by_state={'MONITORING': 17}, models_by_tier={'1': 5, '2': 9, '3': 3}, models_by_category={'credit_risk': 4, 'climate_risk': 4, 'valuation': 2, 'emissions': 2, 'market_risk': 2, 'regulatory': 2, '\u2026",
+       "dur_ms": 0.973,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 4,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 785,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "ModelValidationFramework.get_validation_dashboard.<locals>.<genexpr>",
+         "file": "services/model_validation_framework.py",
+         "line": 793,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x000001A12B6E03B0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/inventory",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.904,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "category": "None (default)",
+    "risk_tier": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "models"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "get_inventory",
+     "qual": "get_inventory",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 101,
+     "args": {
+      "category": "None",
+      "risk_tier": "None"
+     },
+     "ret": "{'models': [{'model_id': 'ecl_pd_model', 'label': 'PD Estimation Model (TTC & PIT)', 'category': 'credit_risk', 'model_type': 'statistical', 'risk_tier': 1, 'regulatory_framework': ['IFRS 9', 'Basel III IRB', 'EBA GL/2017/16'], 'validation\u2026",
+     "dur_ms": 0.435,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "__init__",
+       "qual": "ModelValidationFramework.__init__",
+       "file": "services/model_validation_framework.py",
+       "line": 411,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "get_model_inventory",
+       "qual": "ModelValidationFramework.get_model_inventory",
+       "file": "services/model_validation_framework.py",
+       "line": 566,
+       "args": {
+        "category": "None",
+        "risk_tier": "None"
+       },
+       "ret": "[ModelInventoryEntry(model_id='ecl_pd_model', label='PD Estimation Model (TTC & PIT)', category='credit_risk', model_type='statistical', risk_tier=1, regulatory_framework=['IFRS 9', 'Basel III IRB', 'EBA GL/2017/16'], validation_frequency=\u2026",
+       "dur_ms": 0.158,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/ref/catalog",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.469,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "catalog"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40,
+     "name": "ref_catalog",
+     "qual": "ref_catalog",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 124,
+     "args": {},
+     "ret": "{'catalog': {'ecl_pd_model': {'label': 'PD Estimation Model (TTC & PIT)', 'category': 'credit_risk', 'model_type': 'statistical', 'risk_tier': 1, 'regulatory_framework': ['IFRS 9', 'Basel III IRB', 'EBA GL/2017/16'], 'validation_frequency'\u2026",
+     "dur_ms": 0.167,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 41,
+       "name": "get_model_inventory_catalog",
+       "qual": "ModelValidationFramework.get_model_inventory_catalog",
+       "file": "services/model_validation_framework.py",
+       "line": 969,
+       "args": {},
+       "ret": "{'ecl_pd_model': {'label': 'PD Estimation Model (TTC & PIT)', 'category': 'credit_risk', 'model_type': 'statistical', 'risk_tier': 1, 'regulatory_framework': ['IFRS 9', 'Basel III IRB', 'EBA GL/2017/16'], 'validation_frequency': 'annual', \u2026",
+       "dur_ms": 0.041,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/ref/lifecycle-states",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.217,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "lifecycle_states"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42,
+     "name": "ref_lifecycle_states",
+     "qual": "ref_lifecycle_states",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 130,
+     "args": {},
+     "ret": "{'lifecycle_states': ['DEVELOPMENT', 'VALIDATION', 'APPROVED', 'MONITORING', 'UNDER_REVIEW', 'RETIRED']}",
+     "dur_ms": 0.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 43,
+       "name": "get_lifecycle_states",
+       "qual": "ModelValidationFramework.get_lifecycle_states",
+       "file": "services/model_validation_framework.py",
+       "line": 974,
+       "args": {},
+       "ret": "['DEVELOPMENT', 'VALIDATION', 'APPROVED', 'MONITORING', 'UNDER_REVIEW', 'RETIRED']",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/ref/lifecycle-transitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.206,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "transitions"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 44,
+     "name": "ref_lifecycle_transitions",
+     "qual": "ref_lifecycle_transitions",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 136,
+     "args": {},
+     "ret": "{'transitions': {'DEVELOPMENT': ['VALIDATION'], 'VALIDATION': ['APPROVED', 'DEVELOPMENT'], 'APPROVED': ['MONITORING'], 'MONITORING': ['UNDER_REVIEW', 'RETIRED'], 'UNDER_REVIEW': ['VALIDATION', 'MONITORING', 'RETIRED'], 'RETIRED': []}}",
+     "dur_ms": 0.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 45,
+       "name": "get_lifecycle_transitions",
+       "qual": "ModelValidationFramework.get_lifecycle_transitions",
+       "file": "services/model_validation_framework.py",
+       "line": 979,
+       "args": {},
+       "ret": "{'DEVELOPMENT': ['VALIDATION'], 'VALIDATION': ['APPROVED', 'DEVELOPMENT'], 'APPROVED': ['MONITORING'], 'MONITORING': ['UNDER_REVIEW', 'RETIRED'], 'UNDER_REVIEW': ['VALIDATION', 'MONITORING', 'RETIRED'], 'RETIRED': []}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/ref/regulatory-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.261,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulatory_frameworks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 46,
+     "name": "ref_regulatory_frameworks",
+     "qual": "ref_regulatory_frameworks",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 148,
+     "args": {},
+     "ret": "{'regulatory_frameworks': [{'code': 'BCBS_239', 'name': 'BCBS 239 Risk Data Aggregation', 'year': 2013, 'scope': 'All quantitative models producing risk data', 'key_requirements': ['Data completeness', 'Data accuracy', 'Timeliness', 'Adapt\u2026",
+     "dur_ms": 0.059,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 47,
+       "name": "get_regulatory_frameworks",
+       "qual": "ModelValidationFramework.get_regulatory_frameworks",
+       "file": "services/model_validation_framework.py",
+       "line": 989,
+       "args": {},
+       "ret": "[{'code': 'BCBS_239', 'name': 'BCBS 239 Risk Data Aggregation', 'year': 2013, 'scope': 'All quantitative models producing risk data', 'key_requirements': ['Data completeness', 'Data accuracy', 'Timeliness', 'Adaptability', 'Governance']}, \u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "GET /api/v1/model-validation/ref/validation-tests",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.249,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "validation_tests"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 48,
+     "name": "ref_validation_tests",
+     "qual": "ref_validation_tests",
+     "file": "api/v1/routes/model_validation.py",
+     "line": 142,
+     "args": {},
+     "ret": "{'validation_tests': {'rmse': {'label': 'Root Mean Squared Error', 'category': 'accuracy', 'threshold_green': 0.05, 'threshold_amber': 0.1}, 'mae': {'label': 'Mean Absolute Error', 'category': 'accuracy', 'threshold_green': 0.03, 'threshol\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 49,
+       "name": "get_validation_tests",
+       "qual": "ModelValidationFramework.get_validation_tests",
+       "file": "services/model_validation_framework.py",
+       "line": 984,
+       "args": {},
+       "ret": "{'rmse': {'label': 'Root Mean Squared Error', 'category': 'accuracy', 'threshold_green': 0.05, 'threshold_amber': 0.1}, 'mae': {'label': 'Mean Absolute Error', 'category': 'accuracy', 'threshold_green': 0.03, 'threshold_amber': 0.07}, 'map\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "model-validation",
+   "label": "POST /api/v1/model-validation/backtest",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "model-validation",
+   "label": "POST /api/v1/model-validation/compare-models",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "model-validation",
+   "label": "POST /api/v1/model-validation/transition-lifecycle",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

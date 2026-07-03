@@ -1,0 +1,2820 @@
+{
+ "domain": "portfolio-reporting",
+ "meta": {
+  "ts": "2026-06-30T14:04:11",
+  "module": "api.v1.routes.portfolio_reporting",
+  "router_prefix": "/api",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "portfolio-reporting",
+   "label": "GET /api/eu-taxonomy/portfolio-alignment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1636.694,
+   "node_count": 31,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_entity_registry",
+    "csrd_kpi_values"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id FROM csrd_entity_registry'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 15,
+     "dur_ms": 66.869,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.981,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 35.301,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 41.432,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 32.117,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.548,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 30.248,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.954,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 31.912,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.803,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.905,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.244,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.299,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.345,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 32.834,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.052,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 31.407,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.44,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 37.091,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.451,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 35.589,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.266,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 36.128,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.344,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 33.139,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 39.346,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 34.892,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.949,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 31.767,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry WHERE CAST(id AS text) LIKE %(prefix)s LIMIT 1'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.919,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 30.283,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_ids": "None (default)",
+    "sector": "None (default)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_taxonomy_alignment_pct",
+     "portfolio_capex_alignment_pct",
+     "benchmark_pct",
+     "vs_benchmark_pp",
+     "by_entity",
+     "data_coverage_pct"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "eu_taxonomy_portfolio_alignment",
+     "qual": "eu_taxonomy_portfolio_alignment",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 699,
+     "args": {
+      "entity_ids": "None",
+      "sector": "None",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>"
+     },
+     "ret": "TaxonomyAlignmentResponse(portfolio_taxonomy_alignment_pct=15.5, portfolio_capex_alignment_pct=58.6, benchmark_pct=22.0, vs_benchmark_pp=-6.47, by_entity=[{'entity_id': '2800ea84-9325-4f2e-88de-1ed6cc5d93b5', 'legal_name': 'HSBC Holdings p\u2026",
+     "dur_ms": 1600.819,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'2800ea84-9325-4f2e-88de-1ed6cc5d93b5'"
+       },
+       "ret": "{'id': '2800ea84-9325-4f2e-88de-1ed6cc5d93b5', 'legal_name': 'HSBC Holdings plc', 'primary_sector': 'financial_institution', 'country_iso': 'GBR'}",
+       "dur_ms": 36.822,
+       "sql": [
+        1
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'2800ea84-9325-4f2e-88de-1ed6cc5d93b5'"
+       },
+       "ret": "{'E1-1': {'numeric': 16308.03, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22855.33, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 133432.33, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 289.\u2026",
+       "dur_ms": 36.1,
+       "sql": [
+        2
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5f'"
+       },
+       "ret": "{'id': 'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5f', 'legal_name': 'Deutsche Bank AG', 'primary_sector': 'financial_institution', 'country_iso': 'DEU'}",
+       "dur_ms": 42.586,
+       "sql": [
+        3
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5f'"
+       },
+       "ret": "{'E1-1': {'numeric': 21655.44, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 20684.05, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 485526.28, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 489.\u2026",
+       "dur_ms": 33.145,
+       "sql": [
+        4
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d8e7f94d-0349-4d54-ae77-2f132d17568a'"
+       },
+       "ret": "{'id': 'd8e7f94d-0349-4d54-ae77-2f132d17568a', 'legal_name': 'Zurich Insurance Group AG', 'primary_sector': 'financial_institution', 'country_iso': 'CHE'}",
+       "dur_ms": 31.42,
+       "sql": [
+        5
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d8e7f94d-0349-4d54-ae77-2f132d17568a'"
+       },
+       "ret": "{'E1-1': {'numeric': 72833.45, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 3440.26, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 368439.0, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 378.8,\u2026",
+       "dur_ms": 30.801,
+       "sql": [
+        6
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'"
+       },
+       "ret": "{'id': 'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b', 'legal_name': 'BlackRock Inc.', 'primary_sector': 'financial_institution', 'country_iso': 'USA'}",
+       "dur_ms": 34.573,
+       "sql": [
+        7
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'"
+       },
+       "ret": "{'E1-1': {'numeric': 75468.25, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 13788.35, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 412633.95, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 561.\u2026",
+       "dur_ms": 32.536,
+       "sql": [
+        8
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'f52ba28f-963a-40bd-894f-20e1b2cb3e3b'"
+       },
+       "ret": "{'id': 'f52ba28f-963a-40bd-894f-20e1b2cb3e3b', 'legal_name': 'Shell plc', 'primary_sector': 'energy_developer', 'country_iso': 'GBR'}",
+       "dur_ms": 32.205,
+       "sql": [
+        9
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'f52ba28f-963a-40bd-894f-20e1b2cb3e3b'"
+       },
+       "ret": "{'E1-1': {'numeric': 64109.11, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 6454.32, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 53110.57, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 172.52\u2026",
+       "dur_ms": 30.303,
+       "sql": [
+        10
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'ee02c0f8-0aaa-4aae-a094-6f4964946574'"
+       },
+       "ret": "{'id': 'ee02c0f8-0aaa-4aae-a094-6f4964946574', 'legal_name': 'TotalEnergies SE', 'primary_sector': 'energy_developer', 'country_iso': 'FRA'}",
+       "dur_ms": 32.657,
+       "sql": [
+        11
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'ee02c0f8-0aaa-4aae-a094-6f4964946574'"
+       },
+       "ret": "{'E1-1': {'numeric': 26956.58, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-2': {'numeric': 8778.63, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 486172.43, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 443.7\u2026",
+       "dur_ms": 29.689,
+       "sql": [
+        12
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'a3736b97-77ef-40bd-ae2c-3226d05a83a2'"
+       },
+       "ret": "{'id': 'a3736b97-77ef-40bd-ae2c-3226d05a83a2', 'legal_name': 'Equinor ASA', 'primary_sector': 'energy_developer', 'country_iso': 'NOR'}",
+       "dur_ms": 30.769,
+       "sql": [
+        13
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'a3736b97-77ef-40bd-ae2c-3226d05a83a2'"
+       },
+       "ret": "{'E1-1': {'numeric': 72571.62, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 19992.41, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 399060.7, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 41.13\u2026",
+       "dur_ms": 33.242,
+       "sql": [
+        14
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'f4d3544c-fc90-42e6-9f00-8923cfd74468'"
+       },
+       "ret": "{'id': 'f4d3544c-fc90-42e6-9f00-8923cfd74468', 'legal_name': 'Enel SpA', 'primary_sector': 'energy_developer', 'country_iso': 'ITA'}",
+       "dur_ms": 32.555,
+       "sql": [
+        15
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'f4d3544c-fc90-42e6-9f00-8923cfd74468'"
+       },
+       "ret": "{'E1-1': {'numeric': 61710.48, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 5545.29, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 255827.63, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 491.7\u2026",
+       "dur_ms": 32.094,
+       "sql": [
+        16
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d01e9ba4-de29-4a11-8bee-dae95333ef08'"
+       },
+       "ret": "{'id': 'd01e9ba4-de29-4a11-8bee-dae95333ef08', 'legal_name': 'Iberdrola SA', 'primary_sector': 'energy_developer', 'country_iso': 'ESP'}",
+       "dur_ms": 35.947,
+       "sql": [
+        17
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d01e9ba4-de29-4a11-8bee-dae95333ef08'"
+       },
+       "ret": "{'E1-1': {'numeric': 71393.78, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 6754.03, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 427350.58, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 618.4\u2026",
+       "dur_ms": 37.555,
+       "sql": [
+        18
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'33a46ab1-273a-4094-94b6-e2f2e7e91c86'"
+       },
+       "ret": "{'id': '33a46ab1-273a-4094-94b6-e2f2e7e91c86', 'legal_name': 'Vestas Wind Systems A/S', 'primary_sector': 'supply_chain', 'country_iso': 'DNK'}",
+       "dur_ms": 30.869,
+       "sql": [
+        19
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'33a46ab1-273a-4094-94b6-e2f2e7e91c86'"
+       },
+       "ret": "{'E1-1': {'numeric': 48676.49, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 23891.63, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 473910.72, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 203.\u2026",
+       "dur_ms": 36.316,
+       "sql": [
+        20
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'a1a26c2e-58ce-4c13-ae7b-c839a0e8c890'"
+       },
+       "ret": "{'id': 'a1a26c2e-58ce-4c13-ae7b-c839a0e8c890', 'legal_name': 'SAP SE', 'primary_sector': 'technology', 'country_iso': 'DEU'}",
+       "dur_ms": 33.034,
+       "sql": [
+        21
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'a1a26c2e-58ce-4c13-ae7b-c839a0e8c890'"
+       },
+       "ret": "{'E1-1': {'numeric': 52539.77, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 9589.01, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 8504.64, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 500.2, \u2026",
+       "dur_ms": 36.984,
+       "sql": [
+        22
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'6ef6a4f6-40e6-4df2-9d74-828ca8e7bb27'"
+       },
+       "ret": "{'id': '6ef6a4f6-40e6-4df2-9d74-828ca8e7bb27', 'legal_name': 'Siemens AG', 'primary_sector': 'supply_chain', 'country_iso': 'DEU'}",
+       "dur_ms": 32.881,
+       "sql": [
+        23
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'6ef6a4f6-40e6-4df2-9d74-828ca8e7bb27'"
+       },
+       "ret": "{'E1-1': {'numeric': 31980.04, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 4873.86, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 312829.2, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 80.25,\u2026",
+       "dur_ms": 33.628,
+       "sql": [
+        24
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'2087e3f1-a424-4f99-963d-f05f517cb583'"
+       },
+       "ret": "{'id': '2087e3f1-a424-4f99-963d-f05f517cb583', 'legal_name': 'Rio Tinto Group', 'primary_sector': 'mining', 'country_iso': 'GBR'}",
+       "dur_ms": 40.032,
+       "sql": [
+        25
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'2087e3f1-a424-4f99-963d-f05f517cb583'"
+       },
+       "ret": "{'E1-1': {'numeric': 45017.55, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 14355.15, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 307594.61, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 411.\u2026",
+       "dur_ms": 35.328,
+       "sql": [
+        26
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'5616f868-52db-4342-8b01-10fc60a8948b'"
+       },
+       "ret": "{'id': '5616f868-52db-4342-8b01-10fc60a8948b', 'legal_name': 'Glencore plc', 'primary_sector': 'mining', 'country_iso': 'CHE'}",
+       "dur_ms": 32.391,
+       "sql": [
+        27
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'5616f868-52db-4342-8b01-10fc60a8948b'"
+       },
+       "ret": "{'E1-1': {'numeric': 20543.93, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 12878.77, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 271004.68, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 508.\u2026",
+       "dur_ms": 32.238,
+       "sql": [
+        28
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "_resolve_entity",
+       "qual": "_resolve_entity",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 143,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d5032f15-ad66-4bfa-84bb-9e4ef0605710'"
+       },
+       "ret": "{'id': 'd5032f15-ad66-4bfa-84bb-9e4ef0605710', 'legal_name': 'Vonovia SE', 'primary_sector': 'real_estate', 'country_iso': 'DEU'}",
+       "dur_ms": 30.377,
+       "sql": [
+        29
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F33F1FA0>",
+        "entity_id": "'d5032f15-ad66-4bfa-84bb-9e4ef0605710'"
+       },
+       "ret": "{'E1-1': {'numeric': 3863.73, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22073.47, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 143540.15, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 463.7\u2026",
+       "dur_ms": 30.759,
+       "sql": [
+        30
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "GET /api/reports/sfdr-rts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1742.315,
+   "node_count": 72,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_entity_registry",
+    "csrd_gap_tracker",
+    "csrd_kpi_values"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, primary_sector, country_iso FROM csrd_entity_registry ORDER BY legal_name'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 15,
+     "dur_ms": 60.96,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 54.005,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.481,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.222,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 31.277,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.877,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.737,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 31.338,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.0,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.674,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 28.599,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.026,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.106,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.061,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.208,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.354,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.943,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 27.75,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.972,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.276,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.727,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.054,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 32.303,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.066,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.207,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 32.985,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.845,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.223,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 28.078,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.439,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.493,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 31,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 30.291,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 32,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 37.312,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 33,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.606,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 34,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.848,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 35,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.874,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 36,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.092,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 37,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 29.27,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 38,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.915,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 39,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.438,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 40,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 28.042,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 41,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.656,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 42,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.901,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 43,
+     "sql": "'SELECT indicator_code, numeric_value, text_value, unit, data_quality_score FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) LIKE %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 7,
+     "dur_ms": 32.788,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 44,
+     "sql": "'SELECT COUNT(*) FROM csrd_kpi_values WHERE CAST(entity_registry_id AS text) = %(eid)s'",
+     "tables": [
+      "csrd_kpi_values"
+     ],
+     "rowcount": 1,
+     "dur_ms": 65.153,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 45,
+     "sql": "\"SELECT COUNT(*) FROM csrd_gap_tracker WHERE CAST(entity_registry_id AS text) = %(eid)s AND gap_status != 'closed'\"",
+     "tables": [
+      "csrd_gap_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.313,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund": "None (default)",
+    "year": "None (default)",
+    "sector": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fund_id",
+     "reporting_year",
+     "generated_at",
+     "entity_count",
+     "sfdr_classification",
+     "outputs",
+     "filing_notes"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 32,
+     "name": "sfdr_rts_report",
+     "qual": "sfdr_rts_report",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 882,
+     "args": {
+      "fund": "None",
+      "year": "None",
+      "sector": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>"
+     },
+     "ret": "{'fund_id': 'PORTFOLIO', 'reporting_year': 2026, 'generated_at': '2026-06-30', 'entity_count': 15, 'sfdr_classification': 'Article 8', 'outputs': {'pai_statement': {'pai_1_ghg_intensity_scope12': {'value': 0.0, 'unit': 'tCO2e/MEUR', 'cover\u2026",
+     "dur_ms": 1711.69,
+     "sql": [
+      0,
+      2,
+      3,
+      5,
+      6,
+      8,
+      9,
+      11,
+      12,
+      14,
+      15,
+      17,
+      18,
+      20,
+      21,
+      23,
+      24,
+      26,
+      27,
+      29,
+      30,
+      32,
+      33,
+      35,
+      36,
+      38,
+      39,
+      41,
+      42,
+      44,
+      45
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 33,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'"
+       },
+       "ret": "{'E1-1': {'numeric': 75468.25, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 13788.35, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 412633.95, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 561.\u2026",
+       "dur_ms": 54.72,
+       "sql": [
+        1
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'b19b39ab-88c4-436f-8f41-3d0ca9af1e1b'",
+        "sector": "'financial_institution'",
+        "kpis": "{'E1-1': {'numeric': 75468.25, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 13788.35, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 412633.95, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 561.\u2026"
+       },
+       "ret": "(2.05, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5f'"
+       },
+       "ret": "{'E1-1': {'numeric': 21655.44, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 20684.05, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 485526.28, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 489.\u2026",
+       "dur_ms": 31.81,
+       "sql": [
+        4
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'e0d9325f-35c3-4c38-b9de-5f3cdcd44e5f'",
+        "sector": "'financial_institution'",
+        "kpis": "{'E1-1': {'numeric': 21655.44, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 20684.05, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 485526.28, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 489.\u2026"
+       },
+       "ret": "(2.05, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'f4d3544c-fc90-42e6-9f00-8923cfd74468'"
+       },
+       "ret": "{'E1-1': {'numeric': 61710.48, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 5545.29, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 255827.63, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 491.7\u2026",
+       "dur_ms": 31.776,
+       "sql": [
+        7
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'f4d3544c-fc90-42e6-9f00-8923cfd74468'",
+        "sector": "'energy_developer'",
+        "kpis": "{'E1-1': {'numeric': 61710.48, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 5545.29, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 255827.63, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 491.7\u2026"
+       },
+       "ret": "(1.8, 'sector_default')",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'a3736b97-77ef-40bd-ae2c-3226d05a83a2'"
+       },
+       "ret": "{'E1-1': {'numeric': 72571.62, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 19992.41, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 399060.7, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 41.13\u2026",
+       "dur_ms": 29.038,
+       "sql": [
+        10
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'a3736b97-77ef-40bd-ae2c-3226d05a83a2'",
+        "sector": "'energy_developer'",
+        "kpis": "{'E1-1': {'numeric': 72571.62, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 19992.41, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 399060.7, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 41.13\u2026"
+       },
+       "ret": "(1.8, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'5616f868-52db-4342-8b01-10fc60a8948b'"
+       },
+       "ret": "{'E1-1': {'numeric': 20543.93, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 12878.77, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 271004.68, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 508.\u2026",
+       "dur_ms": 29.596,
+       "sql": [
+        13
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'5616f868-52db-4342-8b01-10fc60a8948b'",
+        "sector": "'mining'",
+        "kpis": "{'E1-1': {'numeric': 20543.93, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 12878.77, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 271004.68, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 508.\u2026"
+       },
+       "ret": "(2.3, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'2800ea84-9325-4f2e-88de-1ed6cc5d93b5'"
+       },
+       "ret": "{'E1-1': {'numeric': 16308.03, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22855.33, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 133432.33, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 289.\u2026",
+       "dur_ms": 30.821,
+       "sql": [
+        16
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'2800ea84-9325-4f2e-88de-1ed6cc5d93b5'",
+        "sector": "'financial_institution'",
+        "kpis": "{'E1-1': {'numeric': 16308.03, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22855.33, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-3': {'numeric': 133432.33, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 289.\u2026"
+       },
+       "ret": "(2.05, 'sector_default')",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'d01e9ba4-de29-4a11-8bee-dae95333ef08'"
+       },
+       "ret": "{'E1-1': {'numeric': 71393.78, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 6754.03, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 427350.58, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 618.4\u2026",
+       "dur_ms": 30.112,
+       "sql": [
+        19
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'d01e9ba4-de29-4a11-8bee-dae95333ef08'",
+        "sector": "'energy_developer'",
+        "kpis": "{'E1-1': {'numeric': 71393.78, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 6754.03, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 427350.58, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 618.4\u2026"
+       },
+       "ret": "(1.8, 'sector_default')",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'2087e3f1-a424-4f99-963d-f05f517cb583'"
+       },
+       "ret": "{'E1-1': {'numeric': 45017.55, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 14355.15, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 307594.61, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 411.\u2026",
+       "dur_ms": 32.808,
+       "sql": [
+        22
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'2087e3f1-a424-4f99-963d-f05f517cb583'",
+        "sector": "'mining'",
+        "kpis": "{'E1-1': {'numeric': 45017.55, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 14355.15, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 307594.61, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 411.\u2026"
+       },
+       "ret": "(2.3, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'a1a26c2e-58ce-4c13-ae7b-c839a0e8c890'"
+       },
+       "ret": "{'E1-1': {'numeric': 52539.77, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 9589.01, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 8504.64, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 500.2, \u2026",
+       "dur_ms": 33.615,
+       "sql": [
+        25
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'a1a26c2e-58ce-4c13-ae7b-c839a0e8c890'",
+        "sector": "'technology'",
+        "kpis": "{'E1-1': {'numeric': 52539.77, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 9589.01, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 8504.64, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 500.2, \u2026"
+       },
+       "ret": "(1.95, 'sector_default')",
+       "dur_ms": 0.014,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'f52ba28f-963a-40bd-894f-20e1b2cb3e3b'"
+       },
+       "ret": "{'E1-1': {'numeric': 64109.11, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 6454.32, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 53110.57, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 172.52\u2026",
+       "dur_ms": 28.775,
+       "sql": [
+        28
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'f52ba28f-963a-40bd-894f-20e1b2cb3e3b'",
+        "sector": "'energy_developer'",
+        "kpis": "{'E1-1': {'numeric': 64109.11, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-2': {'numeric': 6454.32, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-3': {'numeric': 53110.57, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-4': {'numeric': 172.52\u2026"
+       },
+       "ret": "(1.8, 'sector_default')",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'6ef6a4f6-40e6-4df2-9d74-828ca8e7bb27'"
+       },
+       "ret": "{'E1-1': {'numeric': 31980.04, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 4873.86, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 312829.2, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 80.25,\u2026",
+       "dur_ms": 30.884,
+       "sql": [
+        31
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'6ef6a4f6-40e6-4df2-9d74-828ca8e7bb27'",
+        "sector": "'supply_chain'",
+        "kpis": "{'E1-1': {'numeric': 31980.04, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 4873.86, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 312829.2, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 80.25,\u2026"
+       },
+       "ret": "(2.1, 'sector_default')",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'ee02c0f8-0aaa-4aae-a094-6f4964946574'"
+       },
+       "ret": "{'E1-1': {'numeric': 26956.58, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-2': {'numeric': 8778.63, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 486172.43, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 443.7\u2026",
+       "dur_ms": 30.356,
+       "sql": [
+        34
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'ee02c0f8-0aaa-4aae-a094-6f4964946574'",
+        "sector": "'energy_developer'",
+        "kpis": "{'E1-1': {'numeric': 26956.58, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-2': {'numeric': 8778.63, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 486172.43, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 443.7\u2026"
+       },
+       "ret": "(1.8, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'33a46ab1-273a-4094-94b6-e2f2e7e91c86'"
+       },
+       "ret": "{'E1-1': {'numeric': 48676.49, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 23891.63, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 473910.72, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 203.\u2026",
+       "dur_ms": 29.772,
+       "sql": [
+        37
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'33a46ab1-273a-4094-94b6-e2f2e7e91c86'",
+        "sector": "'supply_chain'",
+        "kpis": "{'E1-1': {'numeric': 48676.49, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 23891.63, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 473910.72, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-4': {'numeric': 203.\u2026"
+       },
+       "ret": "(2.1, 'sector_default')",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'d5032f15-ad66-4bfa-84bb-9e4ef0605710'"
+       },
+       "ret": "{'E1-1': {'numeric': 3863.73, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22073.47, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 143540.15, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 463.7\u2026",
+       "dur_ms": 28.59,
+       "sql": [
+        40
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'d5032f15-ad66-4bfa-84bb-9e4ef0605710'",
+        "sector": "'real_estate'",
+        "kpis": "{'E1-1': {'numeric': 3863.73, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-2': {'numeric': 22073.47, 'text': None, 'unit': 'tCO2e', 'dq': 4}, 'E1-3': {'numeric': 143540.15, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-4': {'numeric': 463.7\u2026"
+       },
+       "ret": "(2.15, 'sector_default')",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "_get_kpis",
+       "qual": "_get_kpis",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 165,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>",
+        "entity_id": "'d8e7f94d-0349-4d54-ae77-2f132d17568a'"
+       },
+       "ret": "{'E1-1': {'numeric': 72833.45, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 3440.26, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 368439.0, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 378.8,\u2026",
+       "dur_ms": 33.31,
+       "sql": [
+        43
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "_itr_score",
+       "qual": "_itr_score",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 236,
+       "args": {
+        "entity_id": "'d8e7f94d-0349-4d54-ae77-2f132d17568a'",
+        "sector": "'financial_institution'",
+        "kpis": "{'E1-1': {'numeric': 72833.45, 'text': None, 'unit': 'tCO2e', 'dq': 5}, 'E1-2': {'numeric': 3440.26, 'text': None, 'unit': 'tCO2e', 'dq': 3}, 'E1-3': {'numeric': 368439.0, 'text': None, 'unit': 'tCO2e', 'dq': 2}, 'E1-4': {'numeric': 378.8,\u2026"
+       },
+       "ret": "(2.05, 'sector_default')",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 974,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 978,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 981,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 986,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 990,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 82,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 996,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 997,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 84,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1001,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 85,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1005,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1006,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1012,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.05",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.05",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.05",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.95",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.15",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "2.05",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 103,
+       "name": "<genexpr>",
+       "qual": "sfdr_rts_report.<locals>.<genexpr>",
+       "file": "api/v1/routes/portfolio_reporting.py",
+       "line": 1031,
+       "args": {
+        ".0": "<list_iterator object at 0x00000234F36268C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "POST /api/csrd/portfolio-materiality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "POST /api/ecl/portfolio-stress",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'scenario'",
+   "dur_ms": 0.607,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 104,
+     "name": "ecl_portfolio_stress",
+     "qual": "ecl_portfolio_stress",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 589,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F30E0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "POST /api/paris-alignment/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "POST /api/pcaf/financed-emissions",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.466,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 105,
+     "name": "calculate_financed_emissions",
+     "qual": "calculate_financed_emissions",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 406,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000234F34F3110>"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-reporting",
+   "label": "POST /api/sfdr/pai/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,621 @@
+{
+ "domain": "basel-capital",
+ "meta": {
+  "ts": "2026-06-30T13:59:25",
+  "module": "api.v1.routes.basel_capital",
+  "router_prefix": "/api/v1/basel-capital",
+  "endpoints": 15
+ },
+ "transactions": [
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/capital-buffers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.296,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "capital_buffers"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_capital_buffers",
+     "qual": "ref_capital_buffers",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 185,
+     "args": {},
+     "ret": "{'capital_buffers': {'conservation_buffer_pct': 2.5, 'countercyclical_buffer_range': (0.0, 2.5), 'systemic_risk_buffer_range': (0.0, 5.0), 'gsib_buckets': {1: 1.0, 2: 1.5, 3: 2.0, 4: 2.5, 5: 3.5}, 'dsib_range': (0.0, 3.0), 'mda_trigger': '\u2026",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_capital_buffers",
+       "qual": "BaselCapitalEngine.get_capital_buffers",
+       "file": "services/basel_capital_engine.py",
+       "line": 1660,
+       "args": {},
+       "ret": "{'conservation_buffer_pct': 2.5, 'countercyclical_buffer_range': (0.0, 2.5), 'systemic_risk_buffer_range': (0.0, 5.0), 'gsib_buckets': {1: 1.0, 2: 1.5, 3: 2.0, 4: 2.5, 5: 3.5}, 'dsib_range': (0.0, 3.0), 'mda_trigger': 'Maximum Distributabl\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/capital-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.173,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "capital_requirements"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_capital_requirements",
+     "qual": "ref_capital_requirements",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 179,
+     "args": {},
+     "ret": "{'capital_requirements': {'cet1_minimum_pct': 4.5, 'tier1_minimum_pct': 6.0, 'total_capital_minimum_pct': 8.0, 'capital_conservation_buffer_pct': 2.5, 'countercyclical_buffer_default_pct': 0.0, 'leverage_ratio_minimum_pct': 3.0, 'fully_loa\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_capital_requirements",
+       "qual": "BaselCapitalEngine.get_capital_requirements",
+       "file": "services/basel_capital_engine.py",
+       "line": 1655,
+       "args": {},
+       "ret": "{'cet1_minimum_pct': 4.5, 'tier1_minimum_pct': 6.0, 'total_capital_minimum_pct': 8.0, 'capital_conservation_buffer_pct': 2.5, 'countercyclical_buffer_default_pct': 0.0, 'leverage_ratio_minimum_pct': 3.0, 'fully_loaded_cet1_pct': 7.0, 'full\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/climate-adjustments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.145,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "climate_adjustments"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_climate_adjustments",
+     "qual": "ref_climate_adjustments",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'climate_adjustments': {'transition_risk_multiplier': {'A': 1.08, 'B': 1.25, 'C': 1.15, 'D': 1.25, 'E': 1.05, 'F': 1.1, 'G': 1.02, 'H': 1.18, 'I': 1.02, 'J': 0.98, 'K': 1.0, 'L': 1.08, 'M': 0.98, 'N': 1.0, 'O': 1.0, 'P': 1.0, 'Q': 1.0, 'R\u2026",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_climate_adjustments",
+       "qual": "BaselCapitalEngine.get_climate_adjustments",
+       "file": "services/basel_capital_engine.py",
+       "line": 1675,
+       "args": {},
+       "ret": "{'transition_risk_multiplier': {'A': 1.08, 'B': 1.25, 'C': 1.15, 'D': 1.25, 'E': 1.05, 'F': 1.1, 'G': 1.02, 'H': 1.18, 'I': 1.02, 'J': 0.98, 'K': 1.0, 'L': 1.08, 'M': 0.98, 'N': 1.0, 'O': 1.0, 'P': 1.0, 'Q': 1.0, 'R': 1.0, 'S': 1.0, 'T': 1\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/exposure-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.164,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "exposure_classes"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_exposure_classes",
+     "qual": "ref_exposure_classes",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 161,
+     "args": {},
+     "ret": "{'exposure_classes': [{'class_id': 'central_governments', 'label': 'Central governments or central banks', 'crr_article': 'Art. 114', 'standard_risk_weight': 0.0, 'description': 'Exposures to central governments and central banks. 0% for O\u2026",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_exposure_classes",
+       "qual": "BaselCapitalEngine.get_exposure_classes",
+       "file": "services/basel_capital_engine.py",
+       "line": 1640,
+       "args": {},
+       "ret": "[{'class_id': 'central_governments', 'label': 'Central governments or central banks', 'crr_article': 'Art. 114', 'standard_risk_weight': 0.0, 'description': 'Exposures to central governments and central banks. 0% for OECD sovereigns with C\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/irb-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.136,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "irb_parameters"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_irb_parameters",
+     "qual": "ref_irb_parameters",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 173,
+     "args": {},
+     "ret": "{'irb_parameters': {'description': 'Internal Ratings Based approach parameters per CRR Art. 153', 'asset_correlation_formula': 'R = 0.12 * (1 - EXP(-50*PD)) / (1 - EXP(-50)) + 0.24 * (1 - (1 - EXP(-50*PD)) / (1 - EXP(-50)))', 'maturity_adj\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_irb_parameters",
+       "qual": "BaselCapitalEngine.get_irb_parameters",
+       "file": "services/basel_capital_engine.py",
+       "line": 1650,
+       "args": {},
+       "ret": "{'description': 'Internal Ratings Based approach parameters per CRR Art. 153', 'asset_correlation_formula': 'R = 0.12 * (1 - EXP(-50*PD)) / (1 - EXP(-50)) + 0.24 * (1 - (1 - EXP(-50*PD)) / (1 - EXP(-50)))', 'maturity_adjustment_formula': '\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/lcr-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.143,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "lcr_parameters"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_lcr_parameters",
+     "qual": "ref_lcr_parameters",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 191,
+     "args": {},
+     "ret": "{'lcr_parameters': {'hqla_classification': {'level_1': {'description': 'Central bank reserves, sovereign bonds (CQS 1), cash', 'haircut_pct': 0.0, 'cap_pct': None, 'examples': ['central_bank_reserves', 'sovereign_bonds_cqs1', 'cash']}, 'le\u2026",
+     "dur_ms": 0.035,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_lcr_parameters",
+       "qual": "BaselCapitalEngine.get_lcr_parameters",
+       "file": "services/basel_capital_engine.py",
+       "line": 1665,
+       "args": {},
+       "ret": "{'hqla_classification': {'level_1': {'description': 'Central bank reserves, sovereign bonds (CQS 1), cash', 'haircut_pct': 0.0, 'cap_pct': None, 'examples': ['central_bank_reserves', 'sovereign_bonds_cqs1', 'cash']}, 'level_2a': {'descript\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/nsfr-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.133,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nsfr_parameters"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_nsfr_parameters",
+     "qual": "ref_nsfr_parameters",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 197,
+     "args": {},
+     "ret": "{'nsfr_parameters': {'asf_factors': {'capital_instruments': 1.0, 'retail_deposits_stable': 0.95, 'retail_deposits_less_stable': 0.9, 'wholesale_deposits_operational': 0.5, 'wholesale_deposits_non_operational': 0.5, 'wholesale_funding_gt1yr\u2026",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_nsfr_parameters",
+       "qual": "BaselCapitalEngine.get_nsfr_parameters",
+       "file": "services/basel_capital_engine.py",
+       "line": 1670,
+       "args": {},
+       "ret": "{'asf_factors': {'capital_instruments': 1.0, 'retail_deposits_stable': 0.95, 'retail_deposits_less_stable': 0.9, 'wholesale_deposits_operational': 0.5, 'wholesale_deposits_non_operational': 0.5, 'wholesale_funding_gt1yr': 1.0, 'other_liabi\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/operational-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.127,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "operational_risk"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "ref_operational_risk",
+     "qual": "ref_operational_risk",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 215,
+     "args": {},
+     "ret": "{'operational_risk': {'description': 'Standardised Measurement Approach (SMA) per BCBS d563 / CRR III', 'bic_components': {'interest_lease_dividend': 'ILDC = min(abs(interest_income - interest_expense), 2.25% * interest_earning_assets) + d\u2026",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "get_operational_risk_parameters",
+       "qual": "BaselCapitalEngine.get_operational_risk_parameters",
+       "file": "services/basel_capital_engine.py",
+       "line": 1685,
+       "args": {},
+       "ret": "{'description': 'Standardised Measurement Approach (SMA) per BCBS d563 / CRR III', 'bic_components': {'interest_lease_dividend': 'ILDC = min(abs(interest_income - interest_expense), 2.25% * interest_earning_assets) + dividend_income', 'ser\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/regulatory-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.166,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulatory_frameworks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "ref_regulatory_frameworks",
+     "qual": "ref_regulatory_frameworks",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 209,
+     "args": {},
+     "ret": "{'regulatory_frameworks': [{'code': 'CRR', 'full_name': 'Capital Requirements Regulation', 'reference': 'EU 575/2013', 'scope': 'Pillar 1 \u2014 prudential requirements'}, {'code': 'CRR_II', 'full_name': 'CRR II Amendments', 'reference': 'EU 20\u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "get_regulatory_frameworks",
+       "qual": "BaselCapitalEngine.get_regulatory_frameworks",
+       "file": "services/basel_capital_engine.py",
+       "line": 1680,
+       "args": {},
+       "ret": "[{'code': 'CRR', 'full_name': 'Capital Requirements Regulation', 'reference': 'EU 575/2013', 'scope': 'Pillar 1 \u2014 prudential requirements'}, {'code': 'CRR_II', 'full_name': 'CRR II Amendments', 'reference': 'EU 2019/876', 'scope': 'NSFR, T\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "GET /api/v1/basel-capital/ref/sa-risk-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.154,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sa_risk_weights"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "ref_sa_risk_weights",
+     "qual": "ref_sa_risk_weights",
+     "file": "api/v1/routes/basel_capital.py",
+     "line": 167,
+     "args": {},
+     "ret": "{'sa_risk_weights': {'central_governments': {1: 0.0, 2: 0.2, 3: 0.5, 4: 1.0, 5: 1.0, 6: 1.5, 0: 1.0}, 'regional_governments': {1: 0.0, 2: 0.2, 3: 0.5, 4: 1.0, 5: 1.0, 6: 1.5, 0: 1.0}, 'public_sector_entities': {1: 0.2, 2: 0.2, 3: 0.5, 4: 1\u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "get_sa_risk_weights",
+       "qual": "BaselCapitalEngine.get_sa_risk_weights",
+       "file": "services/basel_capital_engine.py",
+       "line": 1645,
+       "args": {},
+       "ret": "{'central_governments': {1: 0.0, 2: 0.2, 3: 0.5, 4: 1.0, 5: 1.0, 6: 1.5, 0: 1.0}, 'regional_governments': {1: 0.0, 2: 0.2, 3: 0.5, 4: 1.0, 5: 1.0, 6: 1.5, 0: 1.0}, 'public_sector_entities': {1: 0.2, 2: 0.2, 3: 0.5, 4: 1.0, 5: 1.0, 6: 1.5, \u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel-capital",
+   "label": "POST /api/v1/basel-capital/capital-adequacy",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "basel-capital",
+   "label": "POST /api/v1/basel-capital/capital-requirement",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "basel-capital",
+   "label": "POST /api/v1/basel-capital/liquidity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "basel-capital",
+   "label": "POST /api/v1/basel-capital/risk-weight-irb",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "basel-capital",
+   "label": "POST /api/v1/basel-capital/risk-weight-sa",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

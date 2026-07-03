@@ -1,0 +1,224 @@
+{
+ "domain": "mining",
+ "meta": {
+  "ts": "2026-07-01T10:02:46",
+  "endpoints": 4,
+  "module": "api.v1.routes.mining",
+  "router_prefix": "/api/v1/mining"
+ },
+ "transactions": [
+  {
+   "domain": "mining",
+   "label": "GET /api/v1/mining/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 552.869,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "mining_entities",
+    "mining_risk_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, e.entity_name, e.primary_commodity AS commodity, a.scenario, a.horizon_year, a.overall_risk_score, a.overall_risk_category, a.stranded_asset_risk_pct, a.assessed_at FROM mining_risk_assessments a JOIN mining_entities e ON e.id = a.entity_id ORDER BY a.assessed_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "mining_entities",
+      "mining_risk_assessments"
+     ],
+     "rowcount": null,
+     "dur_ms": 56.285,
+     "is_reference": false,
+     "error": "UndefinedColumn('column a.overall_risk_score does not exist\\nLINE 3:                        a.overall_risk_score, a.overall_risk_...\\n                               ^\\n')"
+    }
+   ],
+   "inputs": {
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_assessments",
+     "qual": "list_assessments",
+     "file": "api/v1/routes/mining.py",
+     "line": 254,
+     "args": {
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2C68AF00>"
+     },
+     "ret": "[]",
+     "dur_ms": 521.271,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mining",
+   "label": "GET /api/v1/mining/assessments/{assessment_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Assessment not found",
+   "dur_ms": 324.712,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "mining_entities",
+    "mining_risk_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.*, e.entity_name, e.primary_commodity AS commodity, e.country_iso AS country_code, e.mine_type FROM mining_risk_assessments a JOIN mining_entities e ON e.id = a.entity_id WHERE a.id = %(aid)s'",
+     "tables": [
+      "mining_entities",
+      "mining_risk_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 67.042,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_assessment",
+     "qual": "get_assessment",
+     "file": "api/v1/routes/mining.py",
+     "line": 279,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2B003320>"
+     },
+     "ret": "None",
+     "dur_ms": 294.477,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mining",
+   "label": "GET /api/v1/mining/reference-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.23,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "critical_minerals_hhi",
+     "transition_demand_sensitivity",
+     "water_intensity_benchmarks",
+     "carbon_price_by_scenario",
+     "gistm_consequence_classes",
+     "sources"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "reference_data",
+     "qual": "reference_data",
+     "file": "api/v1/routes/mining.py",
+     "line": 248,
+     "args": {},
+     "ret": "{'critical_minerals_hhi': {'lithium': 0.52, 'cobalt': 0.72, 'nickel': 0.28, 'manganese': 0.3, 'graphite': 0.7, 'rare_earth': 0.85, 'platinum_group': 0.55, 'tungsten': 0.75, 'indium': 0.68, 'gallium': 0.8, 'germanium': 0.7, 'copper': 0.15, \u2026",
+     "dur_ms": 0.068,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_reference_data",
+       "qual": "get_reference_data",
+       "file": "services/mining_risk_calculator.py",
+       "line": 369,
+       "args": {},
+       "ret": "{'critical_minerals_hhi': {'lithium': 0.52, 'cobalt': 0.72, 'nickel': 0.28, 'manganese': 0.3, 'graphite': 0.7, 'rare_earth': 0.85, 'platinum_group': 0.55, 'tungsten': 0.75, 'indium': 0.68, 'gallium': 0.8, 'germanium': 0.7, 'copper': 0.15, \u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mining",
+   "label": "POST /api/v1/mining/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.218,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "calculate_mining",
+     "qual": "calculate_mining",
+     "file": "api/v1/routes/mining.py",
+     "line": 104,
+     "args": {
+      "req": "'TEST_req'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2C6B1D60>"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

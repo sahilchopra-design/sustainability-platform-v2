@@ -1,0 +1,245 @@
+{
+ "domain": "supply-chain-workflow",
+ "meta": {
+  "ts": "2026-06-30T14:05:28",
+  "module": "api.v1.routes.supply_chain_workflow",
+  "router_prefix": "/api/v1/supply-chain-workflow",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "supply-chain-workflow",
+   "label": "GET /api/v1/supply-chain-workflow/ref/country-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.276,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "high_risk",
+     "low_risk",
+     "standard_risk",
+     "reference",
+     "note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_country_tiers",
+     "qual": "ref_country_tiers",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 221,
+     "args": {},
+     "ret": "{'high_risk': ['ARG', 'BOL', 'BRA', 'CMR', 'COD', 'COG', 'GHA', 'GIN', 'GUY', 'IDN', 'MMR', 'NGA', 'PNG', 'PRY', 'SUR'], 'low_risk': ['AUS', 'AUT', 'BEL', 'CAN', 'CHE', 'DEU', 'FIN', 'FRA', 'GBR', 'NLD', 'NOR', 'NZL', 'SWE'], 'standard_ris\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain-workflow",
+   "label": "GET /api/v1/supply-chain-workflow/ref/esrs-e4-disclosures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.145,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "disclosure_count",
+     "disclosures",
+     "reference"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_esrs_e4",
+     "qual": "ref_esrs_e4",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 194,
+     "args": {},
+     "ret": "{'disclosure_count': 8, 'disclosures': [{'id': 'E4-1', 'description': 'Transition plan and consideration of biodiversity'}, {'id': 'E4-2', 'description': 'Policies related to biodiversity and ecosystems'}, {'id': 'E4-3', 'description': 'Ac\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain-workflow",
+   "label": "GET /api/v1/supply-chain-workflow/ref/eudr-commodities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.12,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "commodity_count",
+     "commodities",
+     "reference"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_eudr_commodities",
+     "qual": "ref_eudr_commodities",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 209,
+     "args": {},
+     "ret": "{'commodity_count': 7, 'commodities': ['cattle', 'cocoa', 'coffee', 'oil_palm', 'rubber', 'soy', 'wood'], 'reference': 'EUDR Regulation (EU) 2023/1115, Annex I'}",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain-workflow",
+   "label": "GET /api/v1/supply-chain-workflow/ref/regulatory-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.147,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mapping_count",
+     "regulatory_mapping",
+     "reference"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_regulatory_mapping",
+     "qual": "ref_regulatory_mapping",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 179,
+     "args": {},
+     "ret": "{'mapping_count': 6, 'regulatory_mapping': {'EUDR_Art_3': {'obligation': 'No deforestation: commodities must not contribute to deforestation/forest degradation', 'csddd_link': 'CSDDD Art.6 ENV-01/ENV-02', 'esrs_link': 'ESRS E4-7 ecosystems\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain-workflow",
+   "label": "POST /api/v1/supply-chain-workflow/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.164,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 137,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain-workflow",
+   "label": "POST /api/v1/supply-chain-workflow/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'assessments'",
+   "dur_ms": 0.134,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/supply_chain_workflow.py",
+     "line": 155,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

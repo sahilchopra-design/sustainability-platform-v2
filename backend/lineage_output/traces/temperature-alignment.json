@@ -1,0 +1,478 @@
+{
+ "domain": "temperature-alignment",
+ "meta": {
+  "ts": "2026-06-30T14:05:32",
+  "module": "api.v1.routes.temperature_alignment",
+  "router_prefix": "/api/v1/temperature-alignment",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/asset-class-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.461,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_class_methods",
+     "total_asset_classes",
+     "pcaf_standard",
+     "sbti_standard"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_asset_class_methods",
+     "qual": "ref_asset_class_methods",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 332,
+     "args": {},
+     "ret": "{'asset_class_methods': [{'asset_class': 'listed_equity', 'label': 'Listed Equity', 'pcaf_method': 'WACI or Sectoral Decarbonization Approach (SDA)', 'sbti_method': 'Portfolio coverage approach or Temperature Rating method', 'attribution_f\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/itr-table",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "itr_table",
+     "total_anchors",
+     "waci_unit",
+     "temperature_unit",
+     "methodology",
+     "key_thresholds",
+     "engagement_thresholds"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_itr_table",
+     "qual": "ref_itr_table",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 304,
+     "args": {},
+     "ret": "{'itr_table': [{'waci_tco2_per_mn_usd': 0, 'temperature_c': 1.1}, {'waci_tco2_per_mn_usd': 25, 'temperature_c': 1.3}, {'waci_tco2_per_mn_usd': 50, 'temperature_c': 1.5}, {'waci_tco2_per_mn_usd': 100, 'temperature_c': 1.7}, {'waci_tco2_per_\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/pcaf-dqs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.334,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pcaf_dqs",
+     "source",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_pcaf_dqs",
+     "qual": "ref_pcaf_dqs",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 359,
+     "args": {},
+     "ret": "{'pcaf_dqs': [{'score': 1, 'label': 'Verified company-specific data', 'confidence_weight': 1.0, 'description': 'Audited or third-party verified GHG inventory at company level'}, {'score': 2, 'label': 'Unverified company-specific data', 'co\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/sbti-fi-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.345,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sbti_fi_criteria",
+     "total_criteria",
+     "standard",
+     "validation_body",
+     "eligible_asset_classes"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_sbti_fi_criteria",
+     "qual": "ref_sbti_fi_criteria",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 249,
+     "args": {},
+     "ret": "{'sbti_fi_criteria': [{'criterion_id': 'NZ-1', 'label': 'Long-term Net-Zero S1+S2 Absolute Contraction', 'description': 'Reduce absolute Scope 1+2 financed emissions by >= 90% from base year to net-zero target year (no later than 2050).', \u2026",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/sector-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.732,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_pathways",
+     "sda_benchmarks",
+     "total_sectors",
+     "source",
+     "methodology"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_sector_pathways",
+     "qual": "ref_sector_pathways",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 275,
+     "args": {},
+     "ret": "{'sector_pathways': [{'sector': 'power', 'label': 'Power Generation', 'nace_codes': ['D35.1', 'D35.11', 'D35.12'], 'metric': 'Capacity (GW renewable share %)', 'metric_unit': '% renewable of total installed capacity', 'nze_trajectory': {20\u2026",
+     "dur_ms": 0.153,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "GET /api/v1/temperature-alignment/ref/sector-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.333,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_profiles",
+     "total_profiles",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_sector_profiles",
+     "qual": "ref_sector_profiles",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 381,
+     "args": {},
+     "ret": "{'sector_profiles': [{'sector_key': 'power', 'label': 'Power Generation', 'nace': ['D35'], 'scope_focus': 'S1', 'benchmark_key': 'power_kwh', 'high_carbon': True}, {'sector_key': 'automotive', 'label': 'Automotive', 'nace': ['C29'], 'scope\u2026",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "POST /api/v1/temperature-alignment/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'portfolio_name'",
+   "dur_ms": 0.681,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_temperature_alignment",
+     "qual": "assess_temperature_alignment",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 59,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.083,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/temperature_alignment.py",
+       "line": 48,
+       "args": {},
+       "ret": "<services.temperature_alignment_engine.TemperatureAlignmentEngine object at 0x00000139C9053020>",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "POST /api/v1/temperature-alignment/itr",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'waci'",
+   "dur_ms": 0.263,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "calculate_itr",
+     "qual": "calculate_itr",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 152,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/temperature_alignment.py",
+       "line": 48,
+       "args": {},
+       "ret": "<services.temperature_alignment_engine.TemperatureAlignmentEngine object at 0x00000139C9053020>",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "POST /api/v1/temperature-alignment/sbti-fi",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'portfolio_waci'",
+   "dur_ms": 0.22,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_sbti_fi",
+     "qual": "assess_sbti_fi",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 192,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.031,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/temperature_alignment.py",
+       "line": 48,
+       "args": {},
+       "ret": "<services.temperature_alignment_engine.TemperatureAlignmentEngine object at 0x00000139C9053020>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "POST /api/v1/temperature-alignment/sector-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "temperature-alignment",
+   "label": "POST /api/v1/temperature-alignment/waci",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'holdings'",
+   "dur_ms": 0.224,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "calculate_waci",
+     "qual": "calculate_waci",
+     "file": "api/v1/routes/temperature_alignment.py",
+     "line": 102,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/temperature_alignment.py",
+       "line": 48,
+       "args": {},
+       "ret": "<services.temperature_alignment_engine.TemperatureAlignmentEngine object at 0x00000139C9053020>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

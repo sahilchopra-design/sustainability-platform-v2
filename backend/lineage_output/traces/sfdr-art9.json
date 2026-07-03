@@ -1,0 +1,275 @@
+{
+ "domain": "sfdr-art9",
+ "meta": {
+  "ts": "2026-06-30T14:05:05",
+  "module": "api.v1.routes.sfdr_art9",
+  "router_prefix": "/api/v1/sfdr-art9",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "sfdr-art9",
+   "label": "GET /api/v1/sfdr-art9/ref/art9-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.325,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "level_2_rts",
+     "effective_date",
+     "key_distinction",
+     "requirements",
+     "compliance_tiers"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_art9_requirements",
+     "qual": "ref_art9_requirements",
+     "file": "api/v1/routes/sfdr_art9.py",
+     "line": 207,
+     "args": {},
+     "ret": "{'regulation': 'SFDR Regulation (EU) 2019/2088 Article 9', 'level_2_rts': 'Commission Delegated Regulation (EU) 2022/1288', 'effective_date': '10 March 2021 (SFDR); 1 January 2023 (RTS Level 2)', 'key_distinction': \"Art 9 ('dark green') fu\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "GET /api/v1/sfdr-art9/ref/dnsh-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.16,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "delegated_acts",
+     "dnsh_principle",
+     "objectives",
+     "sfdr_linkage"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_dnsh_criteria",
+     "qual": "ref_dnsh_criteria",
+     "file": "api/v1/routes/sfdr_art9.py",
+     "line": 176,
+     "args": {},
+     "ret": "{'regulation': 'EU Taxonomy Regulation (EU) 2020/852 Art 17', 'delegated_acts': ['Commission Delegated Regulation (EU) 2021/4987 (Climate + Environment)', 'Commission Delegated Regulation (EU) 2023/2486 (Environment \u2014 DNSH update)'], 'dnsh\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "GET /api/v1/sfdr-art9/ref/esma-qa-2023",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.141,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "document",
+     "reference",
+     "last_updated",
+     "applicable_to",
+     "key_qa_items",
+     "regulatory_status",
+     "greenwashing_risk_note"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_esma_qa_2023",
+     "qual": "ref_esma_qa_2023",
+     "file": "api/v1/routes/sfdr_art9.py",
+     "line": 238,
+     "args": {},
+     "ret": "{'document': 'ESMA Questions and Answers on the Application of the SFDR', 'reference': 'ESMA34-45-1272', 'last_updated': '2023', 'applicable_to': 'All financial market participants and financial advisers under SFDR', 'key_qa_items': [{'qa_\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "GET /api/v1/sfdr-art9/ref/pai-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.188,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "reporting_frequency",
+     "entity_level_pai_threshold",
+     "mandatory_pai_count",
+     "optional_pai_count",
+     "mandatory_pai",
+     "optional_pai",
+     "data_quality_note"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_pai_indicators",
+     "qual": "ref_pai_indicators",
+     "file": "api/v1/routes/sfdr_art9.py",
+     "line": 149,
+     "args": {},
+     "ret": "{'regulation': 'SFDR Commission Delegated Regulation (EU) 2022/1288 \u2014 Annex I Table 1', 'reporting_frequency': 'Annual (reference period 1 Jan \u2013 31 Dec; published by 30 June)', 'entity_level_pai_threshold': 'Financial market participants w\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "POST /api/v1/sfdr-art9/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund_strategy'",
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_art9",
+     "qual": "assess_art9",
+     "file": "api/v1/routes/sfdr_art9.py",
+     "line": 33,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "POST /api/v1/sfdr-art9/dnsh-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "POST /api/v1/sfdr-art9/pai-aggregate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-art9",
+   "label": "POST /api/v1/sfdr-art9/portfolio-holdings",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

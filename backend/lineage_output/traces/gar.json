@@ -1,0 +1,791 @@
+{
+ "domain": "gar",
+ "meta": {
+  "ts": "2026-06-30T14:02:18",
+  "module": "api.v1.routes.gar",
+  "router_prefix": "/api/v1/gar",
+  "endpoints": 13
+ },
+ "transactions": [
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/alignment-classifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.472,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "classifications"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_alignment_classifications",
+     "qual": "get_alignment_classifications",
+     "file": "api/v1/routes/gar.py",
+     "line": 379,
+     "args": {},
+     "ret": "{'classifications': [{'code': 'TAXONOMY_ALIGNED', 'description': 'Meets SC, DNSH, and MSS criteria'}, {'code': 'TAXONOMY_ELIGIBLE', 'description': 'Eligible activity but not fully aligned'}, {'code': 'NOT_ELIGIBLE', 'description': 'Not a t\u2026",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_alignment_classifications",
+       "qual": "GARCalculator.get_alignment_classifications",
+       "file": "services/gar_calculator.py",
+       "line": 558,
+       "args": {},
+       "ret": "[{'code': 'TAXONOMY_ALIGNED', 'description': 'Meets SC, DNSH, and MSS criteria'}, {'code': 'TAXONOMY_ELIGIBLE', 'description': 'Eligible activity but not fully aligned'}, {'code': 'NOT_ELIGIBLE', 'description': 'Not a taxonomy-eligible eco\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/auto-calculate/by-lei/{lei}",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: LEI must be exactly 20 characters",
+   "dur_ms": 7.133,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lei": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "reporting_year": "2024 (default)",
+    "persist": "True (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "auto_calculate_gar_by_lei",
+     "qual": "auto_calculate_gar_by_lei",
+     "file": "api/v1/routes/gar.py",
+     "line": 486,
+     "args": {
+      "lei": "'550e8400-e29b-41d4-a716-446655440001'",
+      "reporting_year": "2024",
+      "persist": "True"
+     },
+     "ret": "None",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/auto-calculate/{entity_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2247.766,
+   "node_count": 8,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "fi_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, lei, institution_type, total_assets_meur FROM fi_entities WHERE id = %(eid)s'",
+     "tables": [
+      "fi_entities"
+     ],
+     "rowcount": null,
+     "dur_ms": 507.242,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"total_assets_meur\" does not exist\\nLINE 2: ...    SELECT id, legal_name, lei, institution_type, total_asse...\\n                                                             ^\\\u2026"
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "reporting_year": "2024 (default)",
+    "persist": "True (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "auto_calculate_gar",
+     "qual": "auto_calculate_gar",
+     "file": "api/v1/routes/gar.py",
+     "line": 461,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "reporting_year": "2024",
+      "persist": "True"
+     },
+     "ret": "{'error': 'Entity 550e8400-e29b-41d4-a716-446655440001 not found in fi_entities'}",
+     "dur_ms": 2244.826,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "_get_gar_db_service",
+       "qual": "_get_gar_db_service",
+       "file": "api/v1/routes/gar.py",
+       "line": 454,
+       "args": {},
+       "ret": "<services.gar_db_service.GARDBService object at 0x000002B51F6CC1A0>",
+       "dur_ms": 35.539,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/gar_db_service.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.202,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 7,
+           "name": "GARDBService",
+           "qual": "GARDBService",
+           "file": "services/gar_db_service.py",
+           "line": 99,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.01,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 8,
+         "name": "__init__",
+         "qual": "GARDBService.__init__",
+         "file": "services/gar_db_service.py",
+         "line": 107,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.035,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 9,
+           "name": "__init__",
+           "qual": "GARCalculator.__init__",
+           "file": "services/gar_calculator.py",
+           "line": 286,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 10,
+       "name": "calculate_gar_for_entity",
+       "qual": "GARDBService.calculate_gar_for_entity",
+       "file": "services/gar_db_service.py",
+       "line": 115,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "reporting_year": "2024",
+        "persist": "True"
+       },
+       "ret": "{'error': 'Entity 550e8400-e29b-41d4-a716-446655440001 not found in fi_entities'}",
+       "dur_ms": 2209.189,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11,
+         "name": "_get_entity",
+         "qual": "GARDBService._get_entity",
+         "file": "services/gar_db_service.py",
+         "line": 197,
+         "args": {
+          "conn": "<sqlalchemy.engine.base.Connection object at 0x000002B51F6CF4D0>",
+          "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "None",
+         "dur_ms": 509.691,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/counterparty/rating-scale",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "rating_scale"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_rating_scale",
+     "qual": "get_rating_scale",
+     "file": "api/v1/routes/gar.py",
+     "line": 437,
+     "args": {},
+     "ret": "{'rating_scale': [{'min': 90, 'max': 100, 'rating': 'A+', 'label': 'Excellent climate posture'}, {'min': 80, 'max': 89, 'rating': 'A', 'label': 'Strong climate posture'}, {'min': 70, 'max': 79, 'rating': 'B+', 'label': 'Good climate postur\u2026",
+     "dur_ms": 0.088,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13,
+       "name": "get_rating_scale",
+       "qual": "CounterpartyClimateScorer.get_rating_scale",
+       "file": "services/counterparty_climate_scorer.py",
+       "line": 508,
+       "args": {},
+       "ret": "[{'min': 90, 'max': 100, 'rating': 'A+', 'label': 'Excellent climate posture'}, {'min': 80, 'max': 89, 'rating': 'A', 'label': 'Strong climate posture'}, {'min': 70, 'max': 79, 'rating': 'B+', 'label': 'Good climate posture'}, {'min': 60, \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/counterparty/sector-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.458,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_risk_levels"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "get_sector_risk",
+     "qual": "get_sector_risk",
+     "file": "api/v1/routes/gar.py",
+     "line": 431,
+     "args": {},
+     "ret": "{'sector_risk_levels': {'Oil & Gas': 'very_high', 'Coal Mining': 'very_high', 'Power Generation': 'high', 'Steel': 'high', 'Cement': 'high', 'Airlines': 'high', 'Shipping': 'high', 'Chemicals': 'medium', 'Automotive': 'medium', 'Metals & M\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "get_sector_risk_levels",
+       "qual": "CounterpartyClimateScorer.get_sector_risk_levels",
+       "file": "services/counterparty_climate_scorer.py",
+       "line": 513,
+       "args": {},
+       "ret": "{'Oil & Gas': 'very_high', 'Coal Mining': 'very_high', 'Power Generation': 'high', 'Steel': 'high', 'Cement': 'high', 'Airlines': 'high', 'Shipping': 'high', 'Chemicals': 'medium', 'Automotive': 'medium', 'Metals & Mining': 'medium', 'Agri\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/counterparty/weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.299,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "weights"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "get_scoring_weights",
+     "qual": "get_scoring_weights",
+     "file": "api/v1/routes/gar.py",
+     "line": 443,
+     "args": {},
+     "ret": "{'weights': {'transition_risk': 0.4, 'physical_risk': 0.3, 'alignment': 0.2, 'data_quality': 0.1}}",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "get_default_weights",
+       "qual": "CounterpartyClimateScorer.get_default_weights",
+       "file": "services/counterparty_climate_scorer.py",
+       "line": 518,
+       "args": {},
+       "ret": "{'transition_risk': 0.4, 'physical_risk': 0.3, 'alignment': 0.2, 'data_quality': 0.1}",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/excluded-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.343,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "excluded_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "get_excluded_types",
+     "qual": "get_excluded_types",
+     "file": "api/v1/routes/gar.py",
+     "line": 367,
+     "args": {},
+     "ret": "{'excluded_types': ['CENTRAL_BANK', 'HEDGING_DERIVATIVE', 'INTERBANK', 'SOVEREIGN']}",
+     "dur_ms": 0.059,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "get_excluded_asset_types",
+       "qual": "GARCalculator.get_excluded_asset_types",
+       "file": "services/gar_calculator.py",
+       "line": 539,
+       "args": {},
+       "ret": "['CENTRAL_BANK', 'HEDGING_DERIVATIVE', 'INTERBANK', 'SOVEREIGN']",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/kpi-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.417,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "kpi_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "get_kpi_types",
+     "qual": "get_kpi_types",
+     "file": "api/v1/routes/gar.py",
+     "line": 373,
+     "args": {},
+     "ret": "{'kpi_types': [{'code': 'TURNOVER', 'description': 'Revenue / turnover-based alignment'}, {'code': 'CAPEX', 'description': 'Capital expenditure-based alignment'}, {'code': 'OPEX', 'description': 'Operating expenditure-based alignment'}]}",
+     "dur_ms": 0.062,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "get_kpi_types",
+       "qual": "GARCalculator.get_kpi_types",
+       "file": "services/gar_calculator.py",
+       "line": 549,
+       "args": {},
+       "ret": "[{'code': 'TURNOVER', 'description': 'Revenue / turnover-based alignment'}, {'code': 'CAPEX', 'description': 'Capital expenditure-based alignment'}, {'code': 'OPEX', 'description': 'Operating expenditure-based alignment'}]",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/nace-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.6,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "nace_code": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nace_mapping"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "get_nace_mapping",
+     "qual": "get_nace_mapping",
+     "file": "api/v1/routes/gar.py",
+     "line": 348,
+     "args": {
+      "nace_code": "None"
+     },
+     "ret": "{'nace_mapping': {'D35.11': ['CLIMATE_MITIGATION', 'CLIMATE_ADAPTATION'], 'D35.30': ['CLIMATE_MITIGATION'], 'C20.11': ['CLIMATE_MITIGATION', 'POLLUTION'], 'C20.13': ['CLIMATE_MITIGATION', 'CIRCULAR_ECONOMY'], 'C22.11': ['CIRCULAR_ECONOMY']\u2026",
+     "dur_ms": 0.125,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 23,
+       "name": "get_nace_taxonomy_map",
+       "qual": "GARCalculator.get_nace_taxonomy_map",
+       "file": "services/gar_calculator.py",
+       "line": 544,
+       "args": {},
+       "ret": "{'D35.11': ['CLIMATE_MITIGATION', 'CLIMATE_ADAPTATION'], 'D35.30': ['CLIMATE_MITIGATION'], 'C20.11': ['CLIMATE_MITIGATION', 'POLLUTION'], 'C20.13': ['CLIMATE_MITIGATION', 'CIRCULAR_ECONOMY'], 'C22.11': ['CIRCULAR_ECONOMY'], 'C23.51': ['CLI\u2026",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "GET /api/v1/gar/objectives",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.641,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "objectives"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_objectives",
+     "qual": "get_objectives",
+     "file": "api/v1/routes/gar.py",
+     "line": 342,
+     "args": {},
+     "ret": "{'objectives': [{'code': 'CLIMATE_MITIGATION', 'description': 'Climate change mitigation (Art. 10)'}, {'code': 'CLIMATE_ADAPTATION', 'description': 'Climate change adaptation (Art. 11)'}, {'code': 'WATER', 'description': 'Sustainable use o\u2026",
+     "dur_ms": 0.165,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 25,
+       "name": "get_taxonomy_objectives",
+       "qual": "GARCalculator.get_taxonomy_objectives",
+       "file": "services/gar_calculator.py",
+       "line": 531,
+       "args": {},
+       "ret": "[{'code': 'CLIMATE_MITIGATION', 'description': 'Climate change mitigation (Art. 10)'}, {'code': 'CLIMATE_ADAPTATION', 'description': 'Climate change adaptation (Art. 11)'}, {'code': 'WATER', 'description': 'Sustainable use of water and mar\u2026",
+       "dur_ms": 0.1,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "POST /api/v1/gar/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: GAR calculation failed: 'str' object has no attribute 'exposures'",
+   "dur_ms": 2.756,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "calculate_gar",
+     "qual": "calculate_gar",
+     "file": "api/v1/routes/gar.py",
+     "line": 271,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.409,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 27,
+       "name": "__init__",
+       "qual": "GARCalculator.__init__",
+       "file": "services/gar_calculator.py",
+       "line": 286,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "POST /api/v1/gar/counterparty/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Batch scoring failed: 'str' object has no attribute 'custom_weights'",
+   "dur_ms": 2.54,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28,
+     "name": "score_counterparty_batch",
+     "qual": "score_counterparty_batch",
+     "file": "api/v1/routes/gar.py",
+     "line": 410,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.255,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gar",
+   "label": "POST /api/v1/gar/counterparty/score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Climate scoring failed: 'str' object has no attribute 'counterparty_id'",
+   "dur_ms": 6.893,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "score_counterparty",
+     "qual": "score_counterparty",
+     "file": "api/v1/routes/gar.py",
+     "line": 390,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.413,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "__init__",
+       "qual": "CounterpartyClimateScorer.__init__",
+       "file": "services/counterparty_climate_scorer.py",
+       "line": 190,
+       "args": {
+        "weights": "None"
+       },
+       "ret": "None",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_to_counterparty_input",
+       "qual": "_to_counterparty_input",
+       "file": "api/v1/routes/gar.py",
+       "line": 216,
+       "args": {
+        "m": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

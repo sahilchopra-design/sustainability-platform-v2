@@ -1,0 +1,1342 @@
+{
+ "domain": "sector-assessments",
+ "meta": {
+  "ts": "2026-06-30T14:05:06",
+  "module": "api.v1.routes.sector_assessments",
+  "router_prefix": "/api/v1",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/energy/plant-decarbonisation/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 639.005,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "power_plant_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, plant_name, assessment_date, current_ci_gco2_kwh, iea_nze_2030_threshold_gco2_kwh, implied_stranding_year, transition_capex_required_gbp, status, created_at FROM power_plant_assessments WHERE 1=1 ORDER BY created_at DESC LIMIT 50'",
+     "tables": [
+      "power_plant_assessments"
+     ],
+     "rowcount": 14,
+     "dur_ms": 105.175,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assessments",
+     "total_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_plant_assessments",
+     "qual": "list_plant_assessments",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 1094,
+     "args": {
+      "status": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D3440>"
+     },
+     "ret": "{'assessments': [{'assessment_id': '4c72633c-0cb8-4f61-982f-f114d1aa68a8', 'plant_name': 'RWE Neurath Coal Phase-out', 'assessment_date': '2025-12-31', 'current_ci_gco2_kwh': 1042.0, 'iea_nze_2030_target': 100.0, 'implied_stranding_year': \u2026",
+     "dur_ms": 605.276,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/energy/plant-decarbonisation/assessments/{assessment_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Assessment not found",
+   "dur_ms": 303.307,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "power_plant_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, plant_name, assessment_date, current_ci_gco2_kwh, iea_nze_2030_threshold_gco2_kwh, iea_nze_2040_threshold_gco2_kwh, iea_nze_2050_threshold_gco2_kwh, implied_stranding_year, transition_capex_required_gbp, recommended_actions, validation_summary, status, created_at FROM power_plant_assessments WHERE id = %(aid)s'",
+     "tables": [
+      "power_plant_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.185,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_plant_assessment",
+     "qual": "get_plant_assessment",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 1141,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000207432526F0>"
+     },
+     "ret": "None",
+     "dur_ms": 270.376,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/insurance/cat-risk/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 294.092,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "cat_risk_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, property_reference, peril, property_value_gbp, aal_gbp, pml_gbp, risk_score, risk_category, status, created_at FROM cat_risk_assessments WHERE 1=1 ORDER BY created_at DESC LIMIT 50'",
+     "tables": [
+      "cat_risk_assessments"
+     ],
+     "rowcount": 50,
+     "dur_ms": 77.145,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "peril": "None (default)",
+    "risk_category": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assessments",
+     "total_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "list_cat_risk_assessments",
+     "qual": "list_cat_risk_assessments",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 985,
+     "args": {
+      "status": "None",
+      "peril": "None",
+      "risk_category": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D3650>"
+     },
+     "ret": "{'assessments': [{'assessment_id': 'efe85cfc-5983-41fb-9d0a-dff8559a1523', 'property_reference': 'CAT-003', 'peril': 'flood', 'property_value_gbp': 62000000.0, 'aal_gbp': 1860000.0, 'pml_gbp': 0, 'risk_score': None, 'risk_category': None, \u2026",
+     "dur_ms": 264.218,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/insurance/cat-risk/assessments/{assessment_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Assessment not found",
+   "dur_ms": 310.63,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "cat_risk_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, property_reference, assessment_date, peril, property_value_gbp, aal_gbp, aal_pct_of_value, pml_gbp, return_period_curve, risk_score, risk_category, validation_summary, status, created_at FROM cat_risk_assessments WHERE id = %(aid)s'",
+     "tables": [
+      "cat_risk_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.896,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_cat_risk_assessment",
+     "qual": "get_cat_risk_assessment",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 1039,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D2F30>"
+     },
+     "ret": "None",
+     "dur_ms": 277.652,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/technology/data-center/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 342.42,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "data_centre_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, facility_name, assessment_year, pue, renewable_energy_pct, efficiency_score, efficiency_rating, annual_co2e_tco2e, status, created_at FROM data_centre_assessments WHERE 1=1 ORDER BY created_at DESC LIMIT 50'",
+     "tables": [
+      "data_centre_assessments"
+     ],
+     "rowcount": 9,
+     "dur_ms": 67.574,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "assessment_year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assessments",
+     "total_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_dc_assessments",
+     "qual": "list_dc_assessments",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 890,
+     "args": {
+      "status": "None",
+      "assessment_year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513320>"
+     },
+     "ret": "{'assessments': [{'assessment_id': '76a5e566-468f-4618-97a8-339e70c5786a', 'facility_name': 'Microsoft Azure West Europe', 'assessment_year': 2024, 'pue': 1.099, 'renewable_energy_pct': 97.8, 'efficiency_score': 94.2, 'efficiency_rating': \u2026",
+     "dur_ms": 313.483,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "GET /api/v1/sector/technology/data-center/assessments/{assessment_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Assessment not found",
+   "dur_ms": 273.355,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "data_centre_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, facility_name, assessment_year, total_it_load_mw, annual_energy_consumption_mwh, pue, wue, renewable_energy_pct, grid_emission_factor_kgco2e_kwh, carbon_intensity_kgco2e_kwh_it, annual_co2e_tco2e, efficiency_score, efficiency_rating, improvement_targets, recommended_actions, validation_summary, status, created_at FROM data_centre_assessments WHERE id = %(aid)s'",
+     "tables": [
+      "data_centre_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 57.821,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_dc_assessment",
+     "qual": "get_dc_assessment",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 940,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513A40>"
+     },
+     "ret": "None",
+     "dur_ms": 245.262,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "POST /api/v1/sector/energy/plant-decarbonisation",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 494.085,
+   "node_count": 32,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "power_plant_assessments",
+    "power_plant_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"INSERT INTO power_plant_assessments (plant_name, assessment_date, current_ci_gco2_kwh, iea_nze_2030_threshold_gco2_kwh, iea_nze_2050_threshold_gco2_kwh, implied_stranding_year, transition_capex_required_gbp, recommended_actions, validation_summary, status) VALUES (%(name)s, CURRENT_DATE, %(ci)s, %(nze_2030)s, %(nze_2050)s, %(stranding_yr)s, %(capex)s, CAST(%(recommended)s AS jsonb), CAST(%(valid\u2026",
+     "tables": [
+      "power_plant_assessments"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.194,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 40.18,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.347,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.235,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.248,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.005,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'INSERT INTO power_plant_trajectories (assessment_id, year, baseline_ci_gco2_kwh, target_ci_gco2_kwh, nze_benchmark_ci_gco2_kwh, is_aligned_with_nze) VALUES (%(aid)s, %(yr)s, %(baseline)s, %(target)s, %(nze)s, %(aligned)s)'",
+     "tables": [
+      "power_plant_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.99,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "request": "<PlantDecarbRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "plant_id",
+     "plant_type",
+     "country_iso",
+     "current_emission_intensity_gco2_kwh",
+     "iea_nze_2030_target_gco2_kwh",
+     "iea_nze_2050_target_gco2_kwh",
+     "gap_to_pathway_today_pct",
+     "stranding_year",
+     "years_to_stranding",
+     "paris_aligned",
+     "decarbonisation_roadmap",
+     "total_estimated_capex_gbp_million",
+     "validation_summary",
+     "assessment_id"
+    ],
+    "n_keys": 14
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_plant_decarbonisation",
+     "qual": "assess_plant_decarbonisation",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 777,
+     "args": {
+      "request": "PlantDecarbRequest(plant_id='TEST_request_plant_id', plant_name=None, plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', installed_capacity_mw=1.0, current_load_factor_pct=1.0, current_emission_intensity_gco2_kwh\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513590>"
+     },
+     "ret": "PlantDecarbResponse(plant_id='TEST_request_plant_id', plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', current_emission_intensity_gco2_kwh=1.0, iea_nze_2030_target_gco2_kwh=138.0, iea_nze_2050_target_gco2_kwh=0\u2026",
+     "dur_ms": 493.565,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2030"
+       },
+       "ret": "138.0",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2050"
+       },
+       "ret": "0",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2025"
+       },
+       "ret": "340.0",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2025"
+       },
+       "ret": "340.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2026"
+       },
+       "ret": "299.6",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2027"
+       },
+       "ret": "259.2",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2028"
+       },
+       "ret": "218.8",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2029"
+       },
+       "ret": "178.39999999999998",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2030"
+       },
+       "ret": "138.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2031"
+       },
+       "ret": "122.4",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2032"
+       },
+       "ret": "106.8",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2033"
+       },
+       "ret": "91.2",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2034"
+       },
+       "ret": "75.6",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2035"
+       },
+       "ret": "60.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2036"
+       },
+       "ret": "53.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2037"
+       },
+       "ret": "46.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2038"
+       },
+       "ret": "39.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2039"
+       },
+       "ret": "32.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2040"
+       },
+       "ret": "25.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2041"
+       },
+       "ret": "22.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2042"
+       },
+       "ret": "19.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2043"
+       },
+       "ret": "16.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2044"
+       },
+       "ret": "13.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2025"
+       },
+       "ret": "340.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2030"
+       },
+       "ret": "138.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2035"
+       },
+       "ret": "60.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2040"
+       },
+       "ret": "25.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2045"
+       },
+       "ret": "10.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "_interpolate_nze",
+       "qual": "_interpolate_nze",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 267,
+       "args": {
+        "year": "2050"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "_build_validation_summary",
+       "qual": "_build_validation_summary",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 170,
+       "args": {
+        "warnings": "[]",
+        "missing": "[]"
+       },
+       "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "_persist_plant_assessment",
+       "qual": "_persist_plant_assessment",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 461,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513590>",
+        "req": "PlantDecarbRequest(plant_id='TEST_request_plant_id', plant_name=None, plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', installed_capacity_mw=1.0, current_load_factor_pct=1.0, current_emission_intensity_gco2_kwh\u2026",
+        "plant_name": "'TEST_request_plant_id'",
+        "intensity": "1.0",
+        "nze_2030": "138.0",
+        "nze_2050": "0",
+        "gap_today_pct": "-99.70588235294117",
+        "paris_aligned": "True",
+        "stranding_year": "2044",
+        "roadmap": "[RoadmapStep(year=2025, iea_nze_pathway_gco2_kwh=340.0, plant_projected_gco2_kwh=1.0, gap_gco2_kwh=0.0, recommended_action=None, estimated_capex_gbp_million=None), RoadmapStep(year=2030, iea_nze_pathway_gco2_kwh=138.0, plant_projected_gco2\u2026",
+        "total_capex": "None",
+        "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
+       },
+       "ret": "'5d142a8d-fd82-4e81-a283-607f1a5a4986'",
+       "dur_ms": 492.689,
+       "sql": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "POST /api/v1/sector/insurance/cat-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 462.408,
+   "node_count": 8,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "cat_risk_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"INSERT INTO cat_risk_assessments (property_reference, assessment_date, peril, property_value_gbp, aal_gbp, aal_pct_of_value, pml_gbp, return_period_curve, risk_score, risk_category, validation_summary, status) VALUES (%(ref)s, CURRENT_DATE, %(peril)s, %(value)s, %(aal)s, %(aal_pct)s, %(pml)s, CAST(%(rp_curve)s AS jsonb), %(risk_score)s, %(risk_cat)s, CAST(%(validation)s AS jsonb), 'draft') RETUR\u2026",
+     "tables": [
+      "cat_risk_assessments"
+     ],
+     "rowcount": null,
+     "dur_ms": 69.148,
+     "is_reference": false,
+     "error": "CheckViolation('new row for relation \"cat_risk_assessments\" violates check constraint \"ck_cat_risk_assessments_peril\"\\nDETAIL:  Failing row contains (ba335534-47a8-4295-882f-b032ae2b0c71, null, TEST_\u2026"
+    }
+   ],
+   "inputs": {
+    "request": "<CATRiskRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "property_id",
+     "peril",
+     "climate_scenario",
+     "climate_horizon_year",
+     "annual_average_loss_gbp",
+     "climate_adjusted_aal_gbp",
+     "aal_uplift_pct",
+     "pml_estimates",
+     "insurability_score",
+     "insurability_label",
+     "key_risk_drivers",
+     "validation_summary",
+     "assessment_id"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "assess_cat_risk",
+     "qual": "assess_cat_risk",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 664,
+     "args": {
+      "request": "CATRiskRequest(property_id='TEST_request_property_id', property_reference=None, latitude=1.0, longitude=1.0, country_iso='TEST_request_country_iso', peril='TEST_request_peril', property_value_gbp=1.0, construction_type=None, year_built=Non\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000020741C30FE0>"
+     },
+     "ret": "CATRiskResponse(property_id='TEST_request_property_id', peril='TEST_request_peril', climate_scenario='RCP4.5', climate_horizon_year=2050, annual_average_loss_gbp=0.0, climate_adjusted_aal_gbp=0.0, aal_uplift_pct=0.0, pml_estimates=[PMLEsti\u2026",
+     "dur_ms": 461.827,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "_build_validation_summary",
+       "qual": "_build_validation_summary",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 170,
+       "args": {
+        "warnings": "[]",
+        "missing": "[]"
+       },
+       "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "_persist_cat_risk_assessment",
+       "qual": "_persist_cat_risk_assessment",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 374,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000020741C30FE0>",
+        "req": "CATRiskRequest(property_id='TEST_request_property_id', property_reference=None, latitude=1.0, longitude=1.0, country_iso='TEST_request_country_iso', peril='TEST_request_peril', property_value_gbp=1.0, construction_type=None, year_built=Non\u2026",
+        "aal": "0.0",
+        "climate_aal": "0.0",
+        "aal_uplift_pct": "0.0",
+        "pml_estimates": "[PMLEstimate(return_period_years=50, pml_gbp=0.27, pml_pct_of_value=26.88, climate_adjusted_pml_gbp=0.27, climate_uplift_pct=0.0), PMLEstimate(return_period_years=100, pml_gbp=0.36, pml_pct_of_value=35.97, climate_adjusted_pml_gbp=0.36, cl\u2026",
+        "risk_score": "80.0",
+        "risk_category": "'Medium'",
+        "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
+       },
+       "ret": "None",
+       "dur_ms": 461.589,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 400,
+         "args": {
+          ".0": "<list_iterator object at 0x0000020741D306A0>"
+         },
+         "ret": "0.27",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 400,
+         "args": {
+          ".0": "<list_iterator object at 0x0000020741D306A0>"
+         },
+         "ret": "0.36",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 400,
+         "args": {
+          ".0": "<list_iterator object at 0x0000020741D306A0>"
+         },
+         "ret": "0.46",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 400,
+         "args": {
+          ".0": "<list_iterator object at 0x0000020741D306A0>"
+         },
+         "ret": "0.49",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 400,
+         "args": {
+          ".0": "<list_iterator object at 0x0000020741D306A0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sector-assessments",
+   "label": "POST /api/v1/sector/technology/data-center",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 313.817,
+   "node_count": 7,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "data_centre_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"INSERT INTO data_centre_assessments (facility_name, assessment_year, total_it_load_mw, annual_energy_consumption_mwh, pue, wue, renewable_energy_pct, has_renewable_ppa, grid_emission_factor_kgco2e_kwh, carbon_intensity_kgco2e_kwh_it, annual_co2e_tco2e, efficiency_score, efficiency_rating, improvement_targets, recommended_actions, validation_summary, status) VALUES (%(name)s, %(yr)s, %(it_load)s,\u2026",
+     "tables": [
+      "data_centre_assessments"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.536,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "request": "<DataCenterRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "facility_id",
+     "overall_efficiency_score",
+     "carbon_intensity_kgco2_per_mwh_it",
+     "annual_co2e_tonnes",
+     "renewable_coverage_pct",
+     "efficiency_benchmarks",
+     "improvement_targets",
+     "validation_summary",
+     "assessment_id"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 47,
+     "name": "assess_data_center",
+     "qual": "assess_data_center",
+     "file": "api/v1/routes/sector_assessments.py",
+     "line": 545,
+     "args": {
+      "request": "DataCenterRequest(facility_id='TEST_request_facility_id', facility_name=None, assessment_year=None, location=None, grid_region='TEST_request_grid_region', pue=1.0, wue=None, total_it_load_mw=1.0, annual_energy_consumption_mwh=1.0, renewabl\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743371A60>"
+     },
+     "ret": "DataCenterResponse(facility_id='TEST_request_facility_id', overall_efficiency_score=50.0, carbon_intensity_kgco2_per_mwh_it=350.0, annual_co2e_tonnes=0.35, renewable_coverage_pct=0.0, efficiency_benchmarks=[EfficiencyBenchmark(metric='PUE'\u2026",
+     "dur_ms": 313.347,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "assess_data_center.<locals>.<genexpr>",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 595,
+       "args": {
+        ".0": "<list_iterator object at 0x000002073EA04460>"
+       },
+       "ret": "100.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "assess_data_center.<locals>.<genexpr>",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 595,
+       "args": {
+        ".0": "<list_iterator object at 0x000002073EA04460>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<genexpr>",
+       "qual": "assess_data_center.<locals>.<genexpr>",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 595,
+       "args": {
+        ".0": "<list_iterator object at 0x000002073EA04460>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "_build_validation_summary",
+       "qual": "_build_validation_summary",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 170,
+       "args": {
+        "warnings": "[]",
+        "missing": "[]"
+       },
+       "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "_persist_dc_assessment",
+       "qual": "_persist_dc_assessment",
+       "file": "api/v1/routes/sector_assessments.py",
+       "line": 300,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000020743371A60>",
+        "facility_name": "'TEST_request_facility_id'",
+        "assessment_year": "2026",
+        "req": "DataCenterRequest(facility_id='TEST_request_facility_id', facility_name=None, assessment_year=None, location=None, grid_region='TEST_request_grid_region', pue=1.0, wue=None, total_it_load_mw=1.0, annual_energy_consumption_mwh=1.0, renewabl\u2026",
+        "resp_data": "{'overall_efficiency_score': 50.0, 'carbon_intensity_kgco2_per_mwh_it': 350.0, 'annual_co2e_tonnes': 0.35}",
+        "benchmarks": "[EfficiencyBenchmark(metric='PUE', current_value=1.0, industry_average=1.58, best_in_class=1.1, score_0_to_100=100.0, gap_to_best_in_class=-0.1), EfficiencyBenchmark(metric='Renewable Energy %', current_value=0.0, industry_average=40.0, be\u2026",
+        "targets": "[ImprovementTarget(measure='Renewable energy PPA or on-site solar/wind', potential_reduction_pct=90.0, estimated_cost_gbp=5.0, payback_years=7.0, priority='high'), ImprovementTarget(measure='Negotiate long-term Renewable Energy PPA (10-15y\u2026",
+        "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
+       },
+       "ret": "'934f202d-bda9-448e-9080-e89cb3f03e19'",
+       "dur_ms": 312.855,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 53,
+         "name": "_efficiency_rating",
+         "qual": "_efficiency_rating",
+         "file": "api/v1/routes/sector_assessments.py",
+         "line": 282,
+         "args": {
+          "score": "50.0"
+         },
+         "ret": "'C'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

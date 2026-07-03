@@ -1,0 +1,416 @@
+{
+ "domain": "eu-gbs",
+ "meta": {
+  "ts": "2026-06-30T14:01:58",
+  "module": "api.v1.routes.eu_gbs",
+  "router_prefix": "/api/v1/eu-gbs",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "eu-gbs",
+   "label": "GET /api/v1/eu-gbs/ref/bond-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.974,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "senior_unsecured",
+     "covered_bond",
+     "sovereign",
+     "high_yield",
+     "green_loan_linked",
+     "standard_green_bond"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_bond_types",
+     "qual": "ref_bond_types",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 257,
+     "args": {},
+     "ret": "{'senior_unsecured': {'name': 'Senior Unsecured Green Bond', 'art': 'Art 3', 'taxonomy_requirement': 'full'}, 'covered_bond': {'name': 'EU Green Covered Bond', 'art': 'Art 3 + CBDB Directive', 'taxonomy_requirement': 'full'}, 'sovereign': \u2026",
+     "dur_ms": 0.173,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_bond_types",
+       "qual": "EUGBSEngine.get_bond_types",
+       "file": "services/eu_gbs_engine.py",
+       "line": 593,
+       "args": {},
+       "ret": "{'senior_unsecured': {'name': 'Senior Unsecured Green Bond', 'art': 'Art 3', 'taxonomy_requirement': 'full'}, 'covered_bond': {'name': 'EU Green Covered Bond', 'art': 'Art 3 + CBDB Directive', 'taxonomy_requirement': 'full'}, 'sovereign': \u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "GET /api/v1/eu-gbs/ref/er-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.556,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "registration",
+     "independence",
+     "methodology",
+     "scope",
+     "report"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_er_requirements",
+     "qual": "ref_er_requirements",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 273,
+     "args": {},
+     "ret": "{'registration': 'Must be registered with ESMA under Art 22 Regulation 2023/2631', 'independence': 'No conflict of interest with issuer (Art 23)', 'methodology': 'Publicly available, transparent methodology (Art 24)', 'scope': 'Pre-issuanc\u2026",
+     "dur_ms": 0.113,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_er_requirements",
+       "qual": "EUGBSEngine.get_er_requirements",
+       "file": "services/eu_gbs_engine.py",
+       "line": 599,
+       "args": {},
+       "ret": "{'registration': 'Must be registered with ESMA under Art 22 Regulation 2023/2631', 'independence': 'No conflict of interest with issuer (Art 23)', 'methodology': 'Publicly available, transparent methodology (Art 24)', 'scope': 'Pre-issuanc\u2026",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "GET /api/v1/eu-gbs/ref/standards-comparison",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.555,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eugbs",
+     "icma_gbp",
+     "climate_bonds_standard",
+     "_analysis"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_standards_comparison",
+     "qual": "ref_standards_comparison",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 281,
+     "args": {},
+     "ret": "{'eugbs': {'name': 'EU Green Bond Standard', 'regulator': 'European Commission', 'mandatory_taxonomy_alignment': True, 'external_review': 'Mandatory (ESMA-registered ER)', 'post_issuance_reporting': 'Mandatory', 'sovereign_article': 'Art 2\u2026",
+     "dur_ms": 0.17,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "compare_standards",
+       "qual": "EUGBSEngine.compare_standards",
+       "file": "services/eu_gbs_engine.py",
+       "line": 562,
+       "args": {},
+       "ret": "{'eugbs': {'name': 'EU Green Bond Standard', 'regulator': 'European Commission', 'mandatory_taxonomy_alignment': True, 'external_review': 'Mandatory (ESMA-registered ER)', 'post_issuance_reporting': 'Mandatory', 'sovereign_article': 'Art 2\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "GET /api/v1/eu-gbs/ref/taxonomy-objectives",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.367,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "CCM",
+     "CCA",
+     "WMR",
+     "CE",
+     "PPE",
+     "BIO"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_taxonomy_objectives",
+     "qual": "ref_taxonomy_objectives",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 265,
+     "args": {},
+     "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'delegated_act': '2021/2139'}, 'CCA': {'id': 'CCA', 'name': 'Climate Change Adaptation', 'delegated_act': '2021/2139'}, 'WMR': {'id': 'WMR', 'name': 'Water & Marine Resources', 'de\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_taxonomy_objectives",
+       "qual": "EUGBSEngine.get_taxonomy_objectives",
+       "file": "services/eu_gbs_engine.py",
+       "line": 596,
+       "args": {},
+       "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'delegated_act': '2021/2139'}, 'CCA': {'id': 'CCA', 'name': 'Climate Change Adaptation', 'delegated_act': '2021/2139'}, 'WMR': {'id': 'WMR', 'name': 'Water & Marine Resources', 'de\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "GET /api/v1/eu-gbs/ref/timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.258,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "date",
+     "event",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_timeline",
+     "qual": "ref_timeline",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 289,
+     "args": {},
+     "ret": "[{'date': '2023-10-04', 'event': 'Regulation (EU) 2023/2631 published in OJEU', 'article': 'All'}, {'date': '2024-12-21', 'event': 'Regulation enters into force', 'article': 'Art 28'}, {'date': '2025-12-21', 'event': 'ESMA External Reviewe\u2026",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_timeline",
+       "qual": "EUGBSEngine.get_timeline",
+       "file": "services/eu_gbs_engine.py",
+       "line": 602,
+       "args": {},
+       "ret": "[{'date': '2023-10-04', 'event': 'Regulation (EU) 2023/2631 published in OJEU', 'article': 'All'}, {'date': '2024-12-21', 'event': 'Regulation enters into force', 'article': 'Art 28'}, {'date': '2025-12-21', 'event': 'ESMA External Reviewe\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "POST /api/v1/eu-gbs/allocation-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "POST /api/v1/eu-gbs/assess-issuance",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'bond_id'",
+   "dur_ms": 0.489,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_issuance",
+     "qual": "assess_issuance",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 121,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.021,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "POST /api/v1/eu-gbs/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'bond_id'",
+   "dur_ms": 0.572,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "requests": "'TEST_requests' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/eu_gbs.py",
+     "line": 222,
+     "args": {
+      "requests": "'TEST_requests'"
+     },
+     "ret": "None",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "POST /api/v1/eu-gbs/generate-factsheet",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "eu-gbs",
+   "label": "POST /api/v1/eu-gbs/impact-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,1444 @@
+{
+ "domain": "universal-exports",
+ "meta": {
+  "ts": "2026-06-30T14:05:46",
+  "module": "api.v1.routes.universal_exports",
+  "router_prefix": "/api/v1/exports",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "universal-exports",
+   "label": "GET /api/v1/exports/bulk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.798,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "exports"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_available_exports",
+     "qual": "get_available_exports",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 389,
+     "args": {},
+     "ret": "{'exports': [{'module': 'portfolio_analytics', 'endpoint': '/api/v1/exports/portfolio-analytics/{portfolio_id}', 'methods': ['GET'], 'formats': ['pdf', 'excel'], 'description': 'Export portfolio analytics report with properties and risk me\u2026",
+     "dur_ms": 0.127,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "GET /api/v1/exports/portfolio-analytics/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 1682.804,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, a.company_name, a.company_sector, a.asset_type, a.exposure, a.market_value, a.evic_eur, a.scope1_tco2e, a.scope2_tco2e, a.scope3_tco2e, a.pcaf_dqs, a.attribution_factor, a.annual_revenue_eur, a.entity_lei, a.isin, a.sbti_aligned, a.net_zero_committed, a.transition_plan_status, a.pcaf_asset_class, p.name AS portfolio_name FROM assets_pg a JOIN portfolios_pg p ON p.id = a.portfolio_id\u2026",
+     "tables": [
+      "assets_pg",
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 67.745,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT id, name, description, created_at FROM portfolios_pg WHERE id = %(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 455.516,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "format": "'pdf' (default)",
+    "report_type": "'executive' (default)",
+    "include_property_details": "True (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "export_portfolio_analytics",
+     "qual": "export_portfolio_analytics",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 47,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "format": "'pdf'",
+      "report_type": "'executive'",
+      "include_property_details": "True"
+     },
+     "ret": "None",
+     "dur_ms": 1680.002,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "generate_report",
+       "qual": "_ReportSubEngine.generate_report",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 664,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "report_type": "<ReportType.EXECUTIVE: 'executive'>",
+        "include_property_details": "True"
+       },
+       "ret": "None",
+       "dur_ms": 1679.91,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 4,
+         "name": "run_pcaf_calculation",
+         "qual": "run_pcaf_calculation",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 209,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+         "dur_ms": 614.521,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 5,
+           "name": "_get_db_engine",
+           "qual": "_get_db_engine",
+           "file": "services/portfolio_analytics_engine.py",
+           "line": 100,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 6,
+         "name": "get_portfolio",
+         "qual": "get_portfolio",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 622,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "None",
+         "dur_ms": 1065.175,
+         "sql": [
+          1
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 7,
+           "name": "_get_db_engine",
+           "qual": "_get_db_engine",
+           "file": "services/portfolio_analytics_engine.py",
+           "line": 100,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.012,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "GET /api/v1/exports/portfolio-analytics/{portfolio_id}/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 544.969,
+   "node_count": 14,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, a.company_name, a.company_sector, a.asset_type, a.exposure, a.market_value, a.evic_eur, a.scope1_tco2e, a.scope2_tco2e, a.scope3_tco2e, a.pcaf_dqs, a.attribution_factor, a.annual_revenue_eur, a.entity_lei, a.isin, a.sbti_aligned, a.net_zero_committed, a.transition_plan_status, a.pcaf_asset_class, p.name AS portfolio_name FROM assets_pg a JOIN portfolios_pg p ON p.id = a.portfolio_id\u2026",
+     "tables": [
+      "assets_pg",
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 58.87,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "format": "'pdf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FA8D640>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "export_portfolio_dashboard",
+     "qual": "export_portfolio_dashboard",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 98,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "format": "'pdf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FA8D640>",
+     "dur_ms": 542.595,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_dashboard",
+       "qual": "PortfolioAggregationEngine.get_dashboard",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 693,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'pcaf': {'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}}",
+       "dur_ms": 532.986,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "run_pcaf_calculation",
+         "qual": "run_pcaf_calculation",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 209,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+         "dur_ms": 532.926,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 11,
+           "name": "_get_db_engine",
+           "qual": "_get_db_engine",
+           "file": "services/portfolio_analytics_engine.py",
+           "line": 100,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 12,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'pcaf': {'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}}"
+       },
+       "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'pcaf': {'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}}",
+       "dur_ms": 0.211,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 13,
+         "name": "_serialize_data",
+         "qual": "_serialize_data",
+         "file": "api/v1/routes/universal_exports.py",
+         "line": 28,
+         "args": {
+          "data": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "'550e8400-e29b-41d4-a716-446655440001'",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "_serialize_data",
+         "qual": "_serialize_data",
+         "file": "api/v1/routes/universal_exports.py",
+         "line": 28,
+         "args": {
+          "data": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}"
+         },
+         "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+         "dur_ms": 0.135,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 15,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "None"
+           },
+           "ret": "None",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "False"
+           },
+           "ret": "False",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "None"
+           },
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "'No assets found. Add assets to compute PCAF metrics.'"
+           },
+           "ret": "'No assets found. Add assets to compute PCAF metrics.'",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "0"
+           },
+           "ret": "0",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 20,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'portfolio_analytics'",
+        "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'pcaf': {'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}}",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FB74CC0>",
+       "dur_ms": 9.117,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 21,
+         "name": "generate_portfolio_analytics_pdf",
+         "qual": "ExportService.generate_portfolio_analytics_pdf",
+         "file": "services/export_service.py",
+         "line": 99,
+         "args": {
+          "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'pcaf': {'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}}"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FB74CC0>",
+         "dur_ms": 9.067,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "GET /api/v1/exports/scenario-analysis/{portfolio_id}/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1767.734,
+   "node_count": 17,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, a.company_name, a.company_sector, a.asset_type, a.exposure, a.market_value, a.evic_eur, a.scope1_tco2e, a.scope2_tco2e, a.scope3_tco2e, a.pcaf_dqs, a.attribution_factor, a.annual_revenue_eur, a.entity_lei, a.isin, a.sbti_aligned, a.net_zero_committed, a.transition_plan_status, a.pcaf_asset_class, p.name AS portfolio_name FROM assets_pg a JOIN portfolios_pg p ON p.id = a.portfolio_id\u2026",
+     "tables": [
+      "assets_pg",
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 325.911,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "scenario_ids": "'TEST_scenario_ids' (mock-required)",
+    "format": "'pdf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FB515E0>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "export_portfolio_scenarios",
+     "qual": "export_portfolio_scenarios",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 248,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "scenario_ids": "'TEST_scenario_ids'",
+      "format": "'pdf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FB515E0>",
+     "dur_ms": 1763.578,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 23,
+       "name": "compare_scenarios",
+       "qual": "PortfolioAggregationEngine.compare_scenarios",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 697,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "scenario_ids": "['TEST_scenario_ids']"
+       },
+       "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'scenario_ids': ['TEST_scenario_ids'], 'comparison': [{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metr\u2026",
+       "dur_ms": 1757.611,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 24,
+         "name": "run_pcaf_calculation",
+         "qual": "run_pcaf_calculation",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 209,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+         "dur_ms": 1757.542,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 25,
+           "name": "_get_db_engine",
+           "qual": "_get_db_engine",
+           "file": "services/portfolio_analytics_engine.py",
+           "line": 100,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 26,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'scenario_ids': ['TEST_scenario_ids'], 'comparison': [{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metr\u2026"
+       },
+       "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'scenario_ids': ['TEST_scenario_ids'], 'comparison': [{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metr\u2026",
+       "dur_ms": 0.617,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 27,
+         "name": "_serialize_data",
+         "qual": "_serialize_data",
+         "file": "api/v1/routes/universal_exports.py",
+         "line": 28,
+         "args": {
+          "data": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "'550e8400-e29b-41d4-a716-446655440001'",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "_serialize_data",
+         "qual": "_serialize_data",
+         "file": "api/v1/routes/universal_exports.py",
+         "line": 28,
+         "args": {
+          "data": "['TEST_scenario_ids']"
+         },
+         "ret": "['TEST_scenario_ids']",
+         "dur_ms": 0.027,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 29,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "'TEST_scenario_ids'"
+           },
+           "ret": "'TEST_scenario_ids'",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 30,
+         "name": "_serialize_data",
+         "qual": "_serialize_data",
+         "file": "api/v1/routes/universal_exports.py",
+         "line": 28,
+         "args": {
+          "data": "[{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}]"
+         },
+         "ret": "[{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}]",
+         "dur_ms": 0.386,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 31,
+           "name": "_serialize_data",
+           "qual": "_serialize_data",
+           "file": "api/v1/routes/universal_exports.py",
+           "line": 28,
+           "args": {
+            "data": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}"
+           },
+           "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+           "dur_ms": 0.216,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 32,
+             "name": "_serialize_data",
+             "qual": "_serialize_data",
+             "file": "api/v1/routes/universal_exports.py",
+             "line": 28,
+             "args": {
+              "data": "None"
+             },
+             "ret": "None",
+             "dur_ms": 0.012,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 33,
+             "name": "_serialize_data",
+             "qual": "_serialize_data",
+             "file": "api/v1/routes/universal_exports.py",
+             "line": 28,
+             "args": {
+              "data": "False"
+             },
+             "ret": "False",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 34,
+             "name": "_serialize_data",
+             "qual": "_serialize_data",
+             "file": "api/v1/routes/universal_exports.py",
+             "line": 28,
+             "args": {
+              "data": "None"
+             },
+             "ret": "None",
+             "dur_ms": 0.005,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 35,
+             "name": "_serialize_data",
+             "qual": "_serialize_data",
+             "file": "api/v1/routes/universal_exports.py",
+             "line": 28,
+             "args": {
+              "data": "'No assets found. Add assets to compute PCAF metrics.'"
+             },
+             "ret": "'No assets found. Add assets to compute PCAF metrics.'",
+             "dur_ms": 0.008,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 36,
+             "name": "_serialize_data",
+             "qual": "_serialize_data",
+             "file": "api/v1/routes/universal_exports.py",
+             "line": 28,
+             "args": {
+              "data": "0"
+             },
+             "ret": "0",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 37,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'scenario_analysis'",
+        "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'scenario_ids': ['TEST_scenario_ids'], 'comparison': [{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metr\u2026",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FB88630>",
+       "dur_ms": 5.064,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 38,
+         "name": "generate_scenario_analysis_pdf",
+         "qual": "ExportService.generate_scenario_analysis_pdf",
+         "file": "services/export_service.py",
+         "line": 366,
+         "args": {
+          "data": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'scenario_ids': ['TEST_scenario_ids'], 'comparison': [{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metr\u2026"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FB88630>",
+         "dur_ms": 4.999,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "GET /api/v1/exports/sustainability/certifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 65.082,
+   "node_count": 12,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "format": "'excel' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FF0D940>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "export_sustainability_certifications",
+     "qual": "export_sustainability_certifications",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 154,
+     "args": {
+      "format": "'excel'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FF0D940>",
+     "dur_ms": 61.937,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 49.762,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 41,
+         "name": "__init__",
+         "qual": "SustainabilityEngine.__init__",
+         "file": "services/sustainability_calculator.py",
+         "line": 940,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 42,
+       "name": "get_sample_certifications",
+       "qual": "get_sample_certifications",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 45,
+       "args": {},
+       "ret": "[{'id': 'cc0e8400-e29b-41d4-a716-446655440001', 'certification_type': 'leed', 'property_id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_sector': 'office', 'region': 'north_america', 'certifi\u2026",
+       "dur_ms": 0.046,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "450000000.0",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "85000000.0",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "175000000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "2500000000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "280000000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "export_sustainability_certifications.<locals>.<genexpr>",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 168,
+       "args": {
+        ".0": "<list_iterator object at 0x000002C07FB53AF0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'portfolio_analytics'",
+        "data": "{'executive_summary': {'portfolio_name': 'Sustainability Certifications', 'total_value': 3490000000.0, 'property_count': 5, 'avg_risk_score': 0, 'stranded_assets': 0}, 'property_details': [{'name': 'Downtown Office Tower', 'type': 'leed', \u2026",
+        "format": "'excel'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF0BD80>",
+       "dur_ms": 8.869,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 50,
+         "name": "generate_portfolio_analytics_excel",
+         "qual": "ExportService.generate_portfolio_analytics_excel",
+         "file": "services/export_service.py",
+         "line": 453,
+         "args": {
+          "data": "{'executive_summary': {'portfolio_name': 'Sustainability Certifications', 'total_value': 3490000000.0, 'property_count': 5, 'avg_risk_score': 0, 'stranded_assets': 0}, 'property_details': [{'name': 'Downtown Office Tower', 'type': 'leed', \u2026"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF0BD80>",
+         "dur_ms": 8.81,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/carbon/calculation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/nature-risk/assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 11.168,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "assessment_data": "{} (mock)",
+    "format": "'pdf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07F45FA70>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 51,
+     "name": "export_nature_risk_assessment",
+     "qual": "export_nature_risk_assessment",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 280,
+     "args": {
+      "assessment_data": "{}",
+      "format": "'pdf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07F45FA70>",
+     "dur_ms": 7.878,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 52,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{}"
+       },
+       "ret": "{}",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'sustainability'",
+        "data": "{'assessment_type': 'nature_risk'}",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF26200>",
+       "dur_ms": 7.773,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 54,
+         "name": "generate_sustainability_pdf",
+         "qual": "ExportService.generate_sustainability_pdf",
+         "file": "services/export_service.py",
+         "line": 213,
+         "args": {
+          "data": "{'assessment_type': 'nature_risk'}"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF26200>",
+         "dur_ms": 7.684,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/scenario-analysis/comparison",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 8.233,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "comparison_data": "{} (mock)",
+    "format": "'pdf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FB53D10>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 55,
+     "name": "export_scenario_comparison",
+     "qual": "export_scenario_comparison",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 226,
+     "args": {
+      "comparison_data": "{}",
+      "format": "'pdf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FB53D10>",
+     "dur_ms": 5.065,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 56,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{}"
+       },
+       "ret": "{}",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'scenario_analysis'",
+        "data": "{}",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF26020>",
+       "dur_ms": 4.947,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 58,
+         "name": "generate_scenario_analysis_pdf",
+         "qual": "ExportService.generate_scenario_analysis_pdf",
+         "file": "services/export_service.py",
+         "line": 366,
+         "args": {
+          "data": "{}"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF26020>",
+         "dur_ms": 4.903,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/stranded-assets/analysis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 10.332,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "analysis_data": "{} (mock)",
+    "format": "'pdf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FF0E630>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 59,
+     "name": "export_stranded_asset_analysis",
+     "qual": "export_stranded_asset_analysis",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 202,
+     "args": {
+      "analysis_data": "{}",
+      "format": "'pdf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FF0E630>",
+     "dur_ms": 7.185,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 60,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{}"
+       },
+       "ret": "{}",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'stranded_assets'",
+        "data": "{}",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF1D080>",
+       "dur_ms": 6.837,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 62,
+         "name": "generate_stranded_assets_pdf",
+         "qual": "ExportService.generate_stranded_assets_pdf",
+         "file": "services/export_service.py",
+         "line": 303,
+         "args": {
+          "data": "{}"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF1D080>",
+         "dur_ms": 6.775,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/sustainability/assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 36.348,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "assessment_data": "{} (mock)",
+    "format": "'pdf' (default)",
+    "assessment_type": "'gresb' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FF0E990>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 63,
+     "name": "export_sustainability_assessment",
+     "qual": "export_sustainability_assessment",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 124,
+     "args": {
+      "assessment_data": "{}",
+      "format": "'pdf'",
+      "assessment_type": "'gresb'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FF0E990>",
+     "dur_ms": 9.036,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 64,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{}"
+       },
+       "ret": "{}",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'sustainability'",
+        "data": "{'assessment_type': 'gresb'}",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF26340>",
+       "dur_ms": 8.91,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 66,
+         "name": "generate_sustainability_pdf",
+         "qual": "ExportService.generate_sustainability_pdf",
+         "file": "services/export_service.py",
+         "line": 213,
+         "args": {
+          "data": "{'assessment_type': 'gresb'}"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF26340>",
+         "dur_ms": 8.854,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "universal-exports",
+   "label": "POST /api/v1/exports/valuation/analysis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 15.921,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "valuation_data": "{} (mock)",
+    "format": "'pdf' (default)",
+    "valuation_type": "'dcf' (default)"
+   },
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x000002C07FF0FD10>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 67,
+     "name": "export_valuation_analysis",
+     "qual": "export_valuation_analysis",
+     "file": "api/v1/routes/universal_exports.py",
+     "line": 307,
+     "args": {
+      "valuation_data": "{}",
+      "format": "'pdf'",
+      "valuation_type": "'dcf'"
+     },
+     "ret": "<starlette.responses.StreamingResponse object at 0x000002C07FF0FD10>",
+     "dur_ms": 12.322,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 68,
+       "name": "_serialize_data",
+       "qual": "_serialize_data",
+       "file": "api/v1/routes/universal_exports.py",
+       "line": 28,
+       "args": {
+        "data": "{}"
+       },
+       "ret": "{}",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "export",
+       "qual": "ExportService.export",
+       "file": "services/export_service.py",
+       "line": 713,
+       "args": {
+        "module": "'portfolio_analytics'",
+        "data": "{'executive_summary': {'portfolio_name': 'Valuation Analysis', 'total_value': 0, 'property_count': 1, 'avg_risk_score': 0, 'stranded_assets': 0, 'key_findings': ['Valuation Method: Dcf', '']}, 'portfolio_overview': {'portfolio_type': 'sing\u2026",
+        "format": "'pdf'"
+       },
+       "ret": "<_io.BytesIO object at 0x000002C07FF272E0>",
+       "dur_ms": 12.047,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 70,
+         "name": "generate_portfolio_analytics_pdf",
+         "qual": "ExportService.generate_portfolio_analytics_pdf",
+         "file": "services/export_service.py",
+         "line": 99,
+         "args": {
+          "data": "{'executive_summary': {'portfolio_name': 'Valuation Analysis', 'total_value': 0, 'property_count': 1, 'avg_risk_score': 0, 'stranded_assets': 0, 'key_findings': ['Valuation Method: Dcf', '']}, 'portfolio_overview': {'portfolio_type': 'sing\u2026"
+         },
+         "ret": "<_io.BytesIO object at 0x000002C07FF272E0>",
+         "dur_ms": 11.921,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

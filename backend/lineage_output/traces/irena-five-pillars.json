@@ -1,0 +1,1312 @@
+{
+ "domain": "irena-five-pillars",
+ "meta": {
+  "ts": "2026-06-30T14:02:57",
+  "module": "api.v1.routes.irena_five_pillars",
+  "router_prefix": "/api/v1/irena-five-pillars",
+  "endpoints": 2
+ },
+ "transactions": [
+  {
+   "domain": "irena-five-pillars",
+   "label": "GET /api/v1/irena-five-pillars/framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.284,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pillars"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_framework",
+     "qual": "get_framework",
+     "file": "api/v1/routes/irena_five_pillars.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'pillars': [{'id': 'infrastructure', 'name': 'Physical Infrastructure', 'weight': 0.25, 'criteria': [{'id': 'grid_capacity', 'label': 'Grid Capacity & Reliability', 'max': 10}, {'id': 'storage_deployment', 'label': 'Energy Storage Deploym\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "irena-five-pillars",
+   "label": "POST /api/v1/irena-five-pillars/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3436.468,
+   "node_count": 80,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_country_risk_indices"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT country_iso3, country_name FROM dh_country_risk_indices WHERE country_iso2 = %(iso2)s LIMIT 1'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 0,
+     "dur_ms": 1007.709,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "req": "<FivePillarsRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_name",
+     "entity_type",
+     "country_iso2",
+     "assessment_year",
+     "pillar_results",
+     "overall_score",
+     "overall_max",
+     "overall_pct",
+     "overall_rating",
+     "transition_readiness",
+     "gap_analysis",
+     "recommendations",
+     "country_benchmarks"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "assess_five_pillars",
+     "qual": "assess_five_pillars",
+     "file": "api/v1/routes/irena_five_pillars.py",
+     "line": 169,
+     "args": {
+      "req": "FivePillarsRequest(entity_name='Country / Organisation', entity_type='country', country_iso2='DE', assessment_year=2025, pillar_scores=[PillarScoreInput(pillar_id='TEST_req_pillar_scores_pillar_id', scores={})], notes=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023721FED7C0>"
+     },
+     "ret": "FivePillarsResponse(entity_name='Country / Organisation', entity_type='country', country_iso2='DE', assessment_year=2025, pillar_results=[PillarResult(id='infrastructure', name='Physical Infrastructure', weight=0.25, criteria=[CriterionRes\u2026",
+     "dur_ms": 3408.373,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "50",
+       "dur_ms": 0.198,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x00000237220622C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "50",
+       "dur_ms": 0.186,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "10",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "10",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x0000023722062080>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "50",
+       "dur_ms": 0.224,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EE60>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "50",
+       "dur_ms": 0.176,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "10",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214EFB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "50",
+       "dur_ms": 0.171,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "assess_five_pillars.<locals>.<genexpr>.<genexpr>",
+         "file": "api/v1/routes/irena_five_pillars.py",
+         "line": 224,
+         "args": {
+          ".0": "<list_iterator object at 0x000002372214F100>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 224,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "assess_five_pillars.<locals>.<genexpr>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 225,
+       "args": {
+        ".0": "<list_iterator object at 0x0000023720A69480>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Physical Infrastructure', 'criterion': 'Grid Capacity & Reliability', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Physical Infrastructure', 'criterion': 'Energy Storage Deployment', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Physical Infrastructure', 'criterion': 'Cross-border Interconnectors', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Physical Infrastructure', 'criterion': 'EV Charging Infrastructure', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Physical Infrastructure', 'criterion': 'Smart Grid & Digitalisation', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Policy & Regulation', 'criterion': 'Renewable Energy Target (NDC)', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Policy & Regulation', 'criterion': 'Carbon Pricing Mechanism', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Policy & Regulation', 'criterion': 'Fossil Fuel Subsidy Reform', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Policy & Regulation', 'criterion': 'Permitting & Grid Access', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Policy & Regulation', 'criterion': 'RE Auction Framework', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Financing & Investment', 'criterion': 'RE Investment Volume', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Financing & Investment', 'criterion': 'Green Bond Market', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Financing & Investment', 'criterion': 'Blended Finance Availability', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Financing & Investment', 'criterion': 'Risk Mitigation Instruments', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Financing & Investment', 'criterion': 'Private Sector Participation', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Human Capital & Institutional Capacity', 'criterion': 'RE Workforce & Skills', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Human Capital & Institutional Capacity', 'criterion': 'Energy R&D Spending', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Human Capital & Institutional Capacity', 'criterion': 'Institutional Capacity', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Human Capital & Institutional Capacity', 'criterion': 'Just Transition Planning', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Human Capital & Institutional Capacity', 'criterion': 'Gender & Inclusion in Energy', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Technology & Innovation', 'criterion': 'RE Share in Generation (%)', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Technology & Innovation', 'criterion': 'Energy Efficiency Progress', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Technology & Innovation', 'criterion': 'Green Hydrogen Readiness', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Technology & Innovation', 'criterion': 'Sector Electrification Rate', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 228,
+       "args": {
+        "g": "{'pillar': 'Technology & Innovation', 'criterion': 'Innovation Ecosystem', 'score': 0, 'max': 10, 'pct': 0.0, 'gap_to_50pct': 5.0}"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 232,
+       "args": {
+        "p": "PillarResult(id='infrastructure', name='Physical Infrastructure', weight=0.25, criteria=[CriterionResult(id='grid_capacity', label='Grid Capacity & Reliability', score=0.0, max_score=10.0, pct=0.0), CriterionResult(id='storage_deployment',\u2026"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 232,
+       "args": {
+        "p": "PillarResult(id='policy', name='Policy & Regulation', weight=0.25, criteria=[CriterionResult(id='re_target', label='Renewable Energy Target (NDC)', score=0.0, max_score=10.0, pct=0.0), CriterionResult(id='carbon_pricing', label='Carbon Pri\u2026"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 232,
+       "args": {
+        "p": "PillarResult(id='financing', name='Financing & Investment', weight=0.2, criteria=[CriterionResult(id='re_investment_flow', label='RE Investment Volume', score=0.0, max_score=10.0, pct=0.0), CriterionResult(id='green_bond_market', label='Gr\u2026"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 232,
+       "args": {
+        "p": "PillarResult(id='human_capital', name='Human Capital & Institutional Capacity', weight=0.15, criteria=[CriterionResult(id='workforce_skills', label='RE Workforce & Skills', score=0.0, max_score=10.0, pct=0.0), CriterionResult(id='rd_spendi\u2026"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "<lambda>",
+       "qual": "assess_five_pillars.<locals>.<lambda>",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 232,
+       "args": {
+        "p": "PillarResult(id='technology', name='Technology & Innovation', weight=0.15, criteria=[CriterionResult(id='re_share_generation', label='RE Share in Generation (%)', score=0.0, max_score=10.0, pct=0.0), CriterionResult(id='efficiency_improvem\u2026"
+       },
+       "ret": "0.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "_rating",
+       "qual": "_rating",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 143,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Early Stage'",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "_readiness",
+       "qual": "_readiness",
+       "file": "api/v1/routes/irena_five_pillars.py",
+       "line": 153,
+       "args": {
+        "pct": "0.0"
+       },
+       "ret": "'Significant Gaps'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

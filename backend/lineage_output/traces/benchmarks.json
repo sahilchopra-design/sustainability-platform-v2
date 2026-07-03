@@ -1,0 +1,340 @@
+{
+ "domain": "benchmarks",
+ "meta": {
+  "ts": "2026-06-30T13:59:29",
+  "module": "api.v1.routes.benchmarks",
+  "router_prefix": "/api/v1/benchmarks",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "benchmarks",
+   "label": "GET /api/v1/benchmarks/sector/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1371.393,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(dh_yfinance_market_data.id) AS companies, sum(dh_yfinance_market_data.market_cap) AS total_market_cap, avg(dh_yfinance_market_data.market_cap) AS avg_market_cap, avg(dh_yfinance_market_data.pe_ratio) AS avg_pe, avg(dh_yfinance_market_data.pb_ratio) AS avg_pb, avg(dh_yfinance_market_data.ev_to_ebitda) AS avg_ev_ebitda, avg(dh_yfinance_market_data.dividend_yield) AS avg_div_yield, avg\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 587.756,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT DISTINCT dh_yfinance_market_data.sector FROM dh_yfinance_market_data WHERE dh_yfinance_market_data.sector IS NOT NULL'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.654,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "companies",
+     "message",
+     "available_sectors"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_sector_benchmark",
+     "qual": "get_sector_benchmark",
+     "file": "api/v1/routes/benchmarks.py",
+     "line": 31,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001D1367F82F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D134FC9F80>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'companies': 0, 'message': \"No market data found for sector '550e8400-e29b-41d4-a716-446655440001'\", 'available_sectors': []}",
+     "dur_ms": 1340.481,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_get_available_sectors",
+       "qual": "_get_available_sectors",
+       "file": "api/v1/routes/benchmarks.py",
+       "line": 262,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001D1367F82F0>"
+       },
+       "ret": "[]",
+       "dur_ms": 36.298,
+       "sql": [
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "benchmarks",
+   "label": "GET /api/v1/benchmarks/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 319.874,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_yfinance_market_data.sector AS dh_yfinance_market_data_sector, count(dh_yfinance_market_data.id) AS companies, sum(dh_yfinance_market_data.market_cap) AS total_market_cap, avg(dh_yfinance_market_data.pe_ratio) AS avg_pe, avg(dh_yfinance_market_data.pb_ratio) AS avg_pb, avg(dh_yfinance_market_data.beta) AS avg_beta, avg(dh_yfinance_market_data.esg_score) AS avg_esg_score, sum(dh_yfinanc\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.926,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors",
+     "total_sectors"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "list_sector_benchmarks",
+     "qual": "list_sector_benchmarks",
+     "file": "api/v1/routes/benchmarks.py",
+     "line": 122,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001D1369C1CD0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D136897D80>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sectors': [], 'total_sectors': 0}",
+     "dur_ms": 285.918,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "benchmarks",
+   "label": "GET /api/v1/benchmarks/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 888.15,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_sbti_companies",
+    "dh_sec_edgar_filings",
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(DISTINCT dh_yfinance_market_data.sector) AS count_1 FROM dh_yfinance_market_data WHERE dh_yfinance_market_data.sector IS NOT NULL'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 63.646,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(dh_yfinance_market_data.id) AS count_1 FROM dh_yfinance_market_data'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.249,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(DISTINCT dh_sec_edgar_filings.ticker) AS count_1 FROM dh_sec_edgar_filings'",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 49.558,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(dh_sbti_companies.id) AS count_1 FROM dh_sbti_companies'",
+     "tables": [
+      "dh_sbti_companies"
+     ],
+     "rowcount": 1,
+     "dur_ms": 184.892,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "market_data",
+     "edgar",
+     "sbti"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "benchmark_stats",
+     "qual": "benchmark_stats",
+     "file": "api/v1/routes/benchmarks.py",
+     "line": 232,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001D136E3A5A0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D1369B8EA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'market_data': {'sectors': 0, 'companies': 0}, 'edgar': {'companies_with_filings': 0}, 'sbti': {'companies_with_targets': 14034}}",
+     "dur_ms": 791.823,
+     "sql": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "benchmarks",
+   "label": "GET /api/v1/benchmarks/waci",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1144.504,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_sec_edgar_filings",
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_yfinance_market_data.id AS dh_yfinance_market_data_id, dh_yfinance_market_data.source_id AS dh_yfinance_market_data_source_id, dh_yfinance_market_data.ticker AS dh_yfinance_market_data_ticker, dh_yfinance_market_data.company_name AS dh_yfinance_market_data_company_name, dh_yfinance_market_data.exchange AS dh_yfinance_market_data_exchange, dh_yfinance_market_data.currency AS dh_yfinance\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 78.173,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_sec_edgar_filings.id AS dh_sec_edgar_filings_id, dh_sec_edgar_filings.source_id AS dh_sec_edgar_filings_source_id, dh_sec_edgar_filings.cik AS dh_sec_edgar_filings_cik, dh_sec_edgar_filings.ticker AS dh_sec_edgar_filings_ticker, dh_sec_edgar_filings.company_name AS dh_sec_edgar_filings_company_name, dh_sec_edgar_filings.entity_type AS dh_sec_edgar_filings_entity_type, dh_sec_edgar_fili\u2026",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 38.283,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "tickers": "'TEST_tickers' (mock-required)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "tickers",
+     "total_evic",
+     "companies",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "calculate_waci",
+     "qual": "calculate_waci",
+     "file": "api/v1/routes/benchmarks.py",
+     "line": 164,
+     "args": {
+      "tickers": "'TEST_tickers'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001D136E3B170>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D1369B8AE0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'tickers': ['TEST_TICKERS'], 'total_evic': 0.0, 'companies': [{'ticker': 'TEST_TICKERS', 'company_name': None, 'evic': None, 'market_cap': None, 'revenue': None, 'sector': None, 'weight': None, 'carbon_intensity_proxy': None}], 'note': 'W\u2026",
+     "dur_ms": 1113.345,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

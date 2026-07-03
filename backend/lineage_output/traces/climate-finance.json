@@ -1,0 +1,1273 @@
+{
+ "domain": "climate-finance",
+ "meta": {
+  "ts": "2026-06-30T13:59:49",
+  "module": "api.v1.routes.climate_finance",
+  "router_prefix": "/api/v1/climate-finance",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "climate-finance",
+   "label": "GET /api/v1/climate-finance/ref/cpi-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 6.848,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "data_year",
+     "key_findings",
+     "data",
+     "ipcc_pathways"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_cpi_data",
+     "qual": "get_cpi_data",
+     "file": "api/v1/routes/climate_finance.py",
+     "line": 187,
+     "args": {},
+     "ret": "{'source': 'Climate Policy Initiative \u2014 Global Landscape of Climate Finance 2023', 'data_year': 2023, 'key_findings': {'total_climate_finance_usd_bn': 1265, 'annual_need_2030_usd_bn': 4300, 'annual_gap_usd_bn': 3035, 'adaptation_underfundi\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-finance",
+   "label": "GET /api/v1/climate-finance/ref/mdb-institutions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.299,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "total_mdb_climate_finance_usd_bn",
+     "institutions_count",
+     "institutions",
+     "mobilisation_multipliers"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_mdb_institutions",
+     "qual": "get_mdb_institutions",
+     "file": "api/v1/routes/climate_finance.py",
+     "line": 207,
+     "args": {},
+     "ret": "{'framework': 'MDB Joint Report on Climate Finance 2023', 'total_mdb_climate_finance_usd_bn': 106.7, 'institutions_count': 8, 'institutions': [{'name': 'World Bank Group', 'code': 'WBG', 'total_finance_usd_bn': 85, 'climate_share_pct': 35,\u2026",
+     "dur_ms": 0.313,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "29.75",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "9.68",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "44.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "4.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "6.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "6.75",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "4.56",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "2.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "get_mdb_institutions.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 213,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C7074F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-finance",
+   "label": "GET /api/v1/climate-finance/ref/ncqg-structure",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.65,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "cop_decision",
+     "legal_basis",
+     "structure",
+     "predecessor_100bn_tracking"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_ncqg_structure",
+     "qual": "get_ncqg_structure",
+     "file": "api/v1/routes/climate_finance.py",
+     "line": 223,
+     "args": {},
+     "ret": "{'framework': 'UNFCCC New Collective Quantified Goal on Climate Finance (NCQG)', 'cop_decision': 'COP29 Baku November 2024', 'legal_basis': 'UNFCCC Articles 4.3, 4.4, 9 and Paris Agreement Article 9', 'structure': {'headline_goal_usd_bn_pe\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-finance",
+   "label": "GET /api/v1/climate-finance/ref/oecd-markers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.711,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "methodology",
+     "marker_values",
+     "markers_count",
+     "markers"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_oecd_markers",
+     "qual": "get_oecd_markers",
+     "file": "api/v1/routes/climate_finance.py",
+     "line": 152,
+     "args": {},
+     "ret": "{'framework': 'OECD Development Assistance Committee (DAC) \u2014 Creditor Reporting System (CRS)', 'methodology': 'Rio Marker methodology \u2014 counting rules: principal objective = 100%, significant objective = 50%', 'marker_values': {'0': 'Not t\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-finance",
+   "label": "GET /api/v1/climate-finance/ref/recipient-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.978,
+   "node_count": 56,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_countries",
+     "income_group_breakdown",
+     "v20_members",
+     "climate_vulnerable",
+     "countries"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "get_recipient_countries",
+     "qual": "get_recipient_countries",
+     "file": "api/v1/routes/climate_finance.py",
+     "line": 168,
+     "args": {},
+     "ret": "{'total_countries': 40, 'income_group_breakdown': {'lower_middle': 22, 'low': 9, 'upper_middle': 9}, 'v20_members': 18, 'climate_vulnerable': 35, 'countries': [{'iso': 'BD', 'country': 'Bangladesh', 'income_group': 'lower_middle', 'climate\u2026",
+     "dur_ms": 1.304,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 181,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<genexpr>",
+       "qual": "get_recipient_countries.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_finance.py",
+       "line": 182,
+       "args": {
+        ".0": "<list_iterator object at 0x0000017E9C82AF20>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-finance",
+   "label": "POST /api/v1/climate-finance/article21c-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "climate-finance",
+   "label": "POST /api/v1/climate-finance/mobilisation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "climate-finance",
+   "label": "POST /api/v1/climate-finance/ncqg-contribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "climate-finance",
+   "label": "POST /api/v1/climate-finance/report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "climate-finance",
+   "label": "POST /api/v1/climate-finance/track",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

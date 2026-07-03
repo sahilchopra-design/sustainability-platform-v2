@@ -1,0 +1,532 @@
+{
+ "domain": "re-clvar",
+ "meta": {
+  "ts": "2026-06-30T14:04:18",
+  "module": "api.v1.routes.re_clvar",
+  "router_prefix": "/api/v1",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "re-clvar",
+   "label": "GET /api/v1/re/crrem/pathways/{property_type}/{country_iso}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: CRREM pathway engine error: 'CRREMStrandingEngine' object has no attribute 'get_pathway'",
+   "dur_ms": 412.768,
+   "node_count": 16,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "property_type": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "country_iso": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_crrem_pathways",
+     "qual": "get_crrem_pathways",
+     "file": "api/v1/routes/re_clvar.py",
+     "line": 299,
+     "args": {
+      "property_type": "'550e8400-e29b-41d4-a716-446655440001'",
+      "country_iso": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 409.412,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/__init__.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/crrem_stranding_engine.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 346.859,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 4,
+         "name": "AssetEnergyProfile",
+         "qual": "AssetEnergyProfile",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 132,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.019,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "StrandingAnalysisResult",
+         "qual": "StrandingAnalysisResult",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 149,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.029,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "CRREMStrandingEngine",
+         "qual": "CRREMStrandingEngine",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 184,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.24,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "AssetEnergyProfile",
+         "qual": "AssetEnergyProfile",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 746,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.011,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "StrandingAnalysisResult",
+         "qual": "StrandingAnalysisResult",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 763,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.024,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "CRREMStrandingEngine",
+         "qual": "CRREMStrandingEngine",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 798,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.013,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "AssetEnergyProfile",
+         "qual": "AssetEnergyProfile",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 844,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "StrandingAnalysisResult",
+         "qual": "StrandingAnalysisResult",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 861,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.034,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "CRREMStrandingEngine",
+         "qual": "CRREMStrandingEngine",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 896,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "AssetEnergyProfile",
+         "qual": "AssetEnergyProfile",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 942,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "StrandingAnalysisResult",
+         "qual": "StrandingAnalysisResult",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 959,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.023,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "CRREMStrandingEngine",
+         "qual": "CRREMStrandingEngine",
+         "file": "services/crrem_stranding_engine.py",
+         "line": 994,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 16,
+       "name": "__init__",
+       "qual": "CRREMStrandingEngine.__init__",
+       "file": "services/crrem_stranding_engine.py",
+       "line": 1031,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.054,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "re-clvar",
+   "label": "POST /api/v1/re/clvar/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: CLVaR engine error: 'RECLVaREngine' object has no attribute 'calculate'",
+   "dur_ms": 81.879,
+   "node_count": 11,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<PropertyCLVaRRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "calculate_re_clvar",
+     "qual": "calculate_re_clvar",
+     "file": "api/v1/routes/re_clvar.py",
+     "line": 159,
+     "args": {
+      "request": "PropertyCLVaRRequest(property_info=PropertyInfo(property_id='TEST_request_property_info_property_id', address=None, property_type='TEST_request_property_info_property_type', country_iso='TEST_request_property_info_country_iso', gross_inter\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 77.417,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/re_clvar_engine.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 7.764,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 19,
+         "name": "ClimateScenario",
+         "qual": "ClimateScenario",
+         "file": "services/re_clvar_engine.py",
+         "line": 22,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.101,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "PropertyType",
+         "qual": "PropertyType",
+         "file": "services/re_clvar_engine.py",
+         "line": 29,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.233,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "HazardType",
+         "qual": "HazardType",
+         "file": "services/re_clvar_engine.py",
+         "line": 40,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.136,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "PhysicalRiskInputs",
+         "qual": "PhysicalRiskInputs",
+         "file": "services/re_clvar_engine.py",
+         "line": 50,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "TransitionRiskInputs",
+         "qual": "TransitionRiskInputs",
+         "file": "services/re_clvar_engine.py",
+         "line": 62,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.016,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "PropertyValuationInputs",
+         "qual": "PropertyValuationInputs",
+         "file": "services/re_clvar_engine.py",
+         "line": 74,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.023,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "CLVaRResult",
+         "qual": "CLVaRResult",
+         "file": "services/re_clvar_engine.py",
+         "line": 86,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.138,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "RECLVaREngine",
+         "qual": "RECLVaREngine",
+         "file": "services/re_clvar_engine.py",
+         "line": 113,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.49,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 27,
+       "name": "__init__",
+       "qual": "RECLVaREngine.__init__",
+       "file": "services/re_clvar_engine.py",
+       "line": 157,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.049,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "re-clvar",
+   "label": "POST /api/v1/re/clvar/portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Portfolio CLVaR engine error: 'RECLVaREngine' object has no attribute 'calculate'",
+   "dur_ms": 7.558,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<PortfolioCLVaRRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28,
+     "name": "calculate_portfolio_clvar",
+     "qual": "calculate_portfolio_clvar",
+     "file": "api/v1/routes/re_clvar.py",
+     "line": 247,
+     "args": {
+      "request": "PortfolioCLVaRRequest(properties=[PropertyCLVaRRequest(property_info=PropertyInfo(property_id='TEST_request_properties_property_info_property_id', address=None, property_type='TEST_request_properties_property_info_property_type', country_i\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 4.743,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 29,
+       "name": "__init__",
+       "qual": "RECLVaREngine.__init__",
+       "file": "services/re_clvar_engine.py",
+       "line": 157,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "re-clvar",
+   "label": "POST /api/v1/re/crrem/roadmap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "re-clvar",
+   "label": "POST /api/v1/re/crrem/stranding",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: CRREM stranding engine error: 'CRREMStrandingEngine' object has no attribute 'assess_stranding'",
+   "dur_ms": 12.518,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<CRREMRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 30,
+     "name": "assess_crrem_stranding",
+     "qual": "assess_crrem_stranding",
+     "file": "api/v1/routes/re_clvar.py",
+     "line": 191,
+     "args": {
+      "request": "CRREMRequest(property_info=PropertyInfo(property_id='TEST_request_property_info_property_id', address=None, property_type='TEST_request_property_info_property_type', country_iso='TEST_request_property_info_country_iso', gross_internal_area\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 4.907,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 31,
+       "name": "__init__",
+       "qual": "CRREMStrandingEngine.__init__",
+       "file": "services/crrem_stranding_engine.py",
+       "line": 1031,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.021,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

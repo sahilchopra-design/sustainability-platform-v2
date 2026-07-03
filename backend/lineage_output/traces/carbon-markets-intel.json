@@ -1,0 +1,329 @@
+{
+ "domain": "carbon-markets-intel",
+ "meta": {
+  "ts": "2026-06-30T13:59:35",
+  "module": "api.v1.routes.carbon_markets_intel",
+  "router_prefix": "/api/v1/carbon-markets-intel",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "carbon-markets-intel",
+   "label": "GET /api/v1/carbon-markets-intel/ref/corsia-schemes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.264,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_corsia_schemes",
+     "qual": "ref_corsia_schemes",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 239,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'program': 'CORSIA Phase 2 (2024-2026) \u2014 ICAO Carbon Offsetting and Reduction Scheme', 'approved_schemes': ['American Carbon Registry (ACR)', 'Architecture for REDD+ Transactions (ART TREES)', 'Climate Action\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "GET /api/v1/carbon-markets-intel/ref/icvcm-ccps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.143,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_icvcm_ccps",
+     "qual": "ref_icvcm_ccps",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 221,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'standard': 'ICVCM Core Carbon Principles v2.0 (2023)', 'total_ccps': 10, 'ccps': [{'id': 'CCP01', 'name': 'Effective Governance', 'category': 'governance', 'weight': 0.12}, {'id': 'CCP02', 'name': 'Tracking'\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "GET /api/v1/carbon-markets-intel/ref/price-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.13,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_price_benchmarks",
+     "qual": "ref_price_benchmarks",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 258,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'benchmarks': {'nature_based': {'vintage_2023': 18, 'vintage_2020': 12, 'vintage_2015': 8}, 'renewables': {'vintage_2023': 4, 'vintage_2020': 3, 'vintage_2015': 2}, 'cookstoves': {'vintage_2023': 8, 'vintage_\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "GET /api/v1/carbon-markets-intel/ref/vcmi-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.122,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_vcmi_criteria",
+     "qual": "ref_vcmi_criteria",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 208,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'standard': 'VCMI Claims Code of Practice v1.0 (2023)', 'claim_levels': {'gold': {'label': 'VCMI Gold', 'criteria': ['abatement_>90pct', 'sbti_1.5c_aligned', 'near_term_target_validated', 'all_scopes_covered'\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/article6",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/corsia-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/credit-pricing",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.163,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 193,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/icvcm-ccp",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/portfolio-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.16,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "portfolio_analysis",
+     "qual": "portfolio_analysis",
+     "file": "api/v1/routes/carbon_markets_intel.py",
+     "line": 182,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-markets-intel",
+   "label": "POST /api/v1/carbon-markets-intel/vcmi-claim",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

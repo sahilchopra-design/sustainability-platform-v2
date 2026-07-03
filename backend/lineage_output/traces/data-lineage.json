@@ -1,0 +1,2622 @@
+{
+ "domain": "data-lineage",
+ "meta": {
+  "ts": "2026-06-30T14:00:40",
+  "module": "api.v1.routes.data_lineage",
+  "router_prefix": "/api/v1/lineage",
+  "endpoints": 16
+ },
+ "transactions": [
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/audit-events",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.467,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "limit": "100 (default)",
+    "severity": "None (default)"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "audit_events",
+     "qual": "audit_events",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 277,
+     "args": {
+      "limit": "100",
+      "severity": "None"
+     },
+     "ret": "[]",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_audit_events",
+       "qual": "LineageOrchestrator.get_audit_events",
+       "file": "services/lineage_orchestrator.py",
+       "line": 786,
+       "args": {
+        "limit": "100",
+        "severity": "None"
+       },
+       "ret": "[]",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/bridge-health",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.634,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_bridges",
+     "wired_bridges",
+     "broken_bridges",
+     "total_field_mappings",
+     "bridges",
+     "recommendations"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "bridge_health",
+     "qual": "bridge_health",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 231,
+     "args": {},
+     "ret": "{'total_bridges': 5, 'wired_bridges': 1, 'broken_bridges': 4, 'total_field_mappings': 127, 'bridges': [{'bridge_id': 'pcaf_ecl_bridge', 'name': 'PCAF \u2192 ECL Climate Bridge', 'source_modules': ['pcaf_waci_engine'], 'target_modules': ['ecl_cl\u2026",
+     "dur_ms": 1.429,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "check_bridge_health",
+       "qual": "LineageOrchestrator.check_bridge_health",
+       "file": "services/lineage_orchestrator.py",
+       "line": 401,
+       "args": {},
+       "ret": "BridgeHealthReport(total_bridges=5, wired_bridges=1, broken_bridges=4, total_field_mappings=127, bridges=[{'bridge_id': 'pcaf_ecl_bridge', 'name': 'PCAF \u2192 ECL Climate Bridge', 'source_modules': ['pcaf_waci_engine'], 'target_modules': ['ecl\u2026",
+       "dur_ms": 1.312,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 5,
+         "name": "get_dependencies",
+         "qual": "DataLineageEngine.get_dependencies",
+         "file": "services/data_lineage_service.py",
+         "line": 2724,
+         "args": {},
+         "ret": "[{'source': 'carbon_calculator', 'target': 'csrd_auto_populate', 'field_map': {'scope1_total_tco2e': 'E1-6_GHG_scope1', 'scope2_location_tco2e': 'E1-6_GHG_scope2_lb', 'scope2_market_tco2e': 'E1-6_GHG_scope2_mb', 'scope3_total_tco2e': 'E1-6\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/dependencies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.922,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 228,
+    "item0_keys": [
+     "source",
+     "target",
+     "field_map",
+     "description"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "module_dependencies",
+     "qual": "module_dependencies",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 168,
+     "args": {},
+     "ret": "[{'source': 'carbon_calculator', 'target': 'csrd_auto_populate', 'field_map': {'scope1_total_tco2e': 'E1-6_GHG_scope1', 'scope2_location_tco2e': 'E1-6_GHG_scope2_lb', 'scope2_market_tco2e': 'E1-6_GHG_scope2_mb', 'scope3_total_tco2e': 'E1-6\u2026",
+     "dur_ms": 0.419,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_dependencies",
+       "qual": "DataLineageEngine.get_dependencies",
+       "file": "services/data_lineage_service.py",
+       "line": 2724,
+       "args": {},
+       "ret": "[{'source': 'carbon_calculator', 'target': 'csrd_auto_populate', 'field_map': {'scope1_total_tco2e': 'E1-6_GHG_scope1', 'scope2_location_tco2e': 'E1-6_GHG_scope2_lb', 'scope2_market_tco2e': 'E1-6_GHG_scope2_mb', 'scope3_total_tco2e': 'E1-6\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/gaps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.838,
+   "node_count": 123,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_edges",
+     "complete_edges",
+     "broken_edges",
+     "completeness_pct",
+     "gaps",
+     "critical_gaps",
+     "reference_data_missing",
+     "recommendations"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "find_gaps",
+     "qual": "find_gaps",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 142,
+     "args": {},
+     "ret": "{'total_edges': 228, 'complete_edges': 140, 'broken_edges': 88, 'completeness_pct': 61.4, 'gaps': [{'source_module': 'scenario_analysis_engine', 'target_module': 'insurance_risk_engine', 'missing_fields': ['warming_trajectory_c'], 'severit\u2026",
+     "dur_ms": 4.509,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "find_gaps",
+       "qual": "DataLineageEngine.find_gaps",
+       "file": "services/data_lineage_service.py",
+       "line": 2470,
+       "args": {},
+       "ret": "PlatformGapAnalysis(total_edges=228, complete_edges=140, broken_edges=88, completeness_pct=61.4, gaps=[LineageGap(source_module='scenario_analysis_engine', target_module='insurance_risk_engine', missing_fields=['warming_trajectory_c'], sev\u2026",
+       "dur_ms": 1.021,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_ser_gap_analysis",
+       "qual": "_ser_gap_analysis",
+       "file": "api/v1/routes/data_lineage.py",
+       "line": 104,
+       "args": {
+        "ga": "PlatformGapAnalysis(total_edges=228, complete_edges=140, broken_edges=88, completeness_pct=61.4, gaps=[LineageGap(source_module='scenario_analysis_engine', target_module='insurance_risk_engine', missing_fields=['warming_trajectory_c'], sev\u2026"
+       },
+       "ret": "{'total_edges': 228, 'complete_edges': 140, 'broken_edges': 88, 'completeness_pct': 61.4, 'gaps': [{'source_module': 'scenario_analysis_engine', 'target_module': 'insurance_risk_engine', 'missing_fields': ['warming_trajectory_c'], 'severit\u2026",
+       "dur_ms": 2.804,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='insurance_risk_engine', missing_fields=['warming_trajectory_c'], severity='medium', remediation='Ensure scenario_analysis_engine produces: warming_trajectory_c', reference\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'insurance_risk_engine', 'missing_fields': ['warming_trajectory_c'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: warming_trajectory_c', 'ref\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='banking_risk_engine', missing_fields=['warming_trajectory_c'], severity='medium', remediation='Ensure scenario_analysis_engine produces: warming_trajectory_c', reference_d\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'banking_risk_engine', 'missing_fields': ['warming_trajectory_c'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: warming_trajectory_c', 'refer\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='climate_physical_risk_engine', missing_fields=['warming_trajectory_c'], severity='medium', remediation='Ensure scenario_analysis_engine produces: warming_trajectory_c', re\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'climate_physical_risk_engine', 'missing_fields': ['warming_trajectory_c'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: warming_trajectory_c\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='stranded_asset_calculator', target_module='climate_transition_risk_engine', missing_fields=['reserve_impairment_value'], severity='medium', remediation='Ensure stranded_asset_calculator produces: reserve_impairmen\u2026"
+         },
+         "ret": "{'source_module': 'stranded_asset_calculator', 'target_module': 'climate_transition_risk_engine', 'missing_fields': ['reserve_impairment_value'], 'severity': 'medium', 'remediation': 'Ensure stranded_asset_calculator produces: reserve_impa\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cbam_calculator', target_module='climate_transition_risk_engine', missing_fields=['cbam_liability_eur'], severity='medium', remediation='Ensure cbam_calculator produces: cbam_liability_eur', reference_data_needed=\u2026"
+         },
+         "ret": "{'source_module': 'cbam_calculator', 'target_module': 'climate_transition_risk_engine', 'missing_fields': ['cbam_liability_eur'], 'severity': 'medium', 'remediation': 'Ensure cbam_calculator produces: cbam_liability_eur', 'reference_data_n\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='agriculture_disease_outbreak', missing_fields=['warming_trajectory_c'], severity='medium', remediation='Ensure scenario_analysis_engine produces: warming_trajectory_c', re\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'agriculture_disease_outbreak', 'missing_fields': ['warming_trajectory_c'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: warming_trajectory_c\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='ecl_climate_engine', target_module='factor_overlay_engine', missing_fields=['pd_climate_adjusted', 'lgd_climate_adjusted'], severity='medium', remediation='Ensure ecl_climate_engine produces: pd_climate_adjusted, \u2026"
+         },
+         "ret": "{'source_module': 'ecl_climate_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['pd_climate_adjusted', 'lgd_climate_adjusted'], 'severity': 'medium', 'remediation': 'Ensure ecl_climate_engine produces: pd_climate_adjus\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='factor_overlay_engine', missing_fields=['scenario_nim', 'duration_gap'], severity='medium', remediation='Ensure scenario_analysis_engine produces: scenario_nim, duration_g\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['scenario_nim', 'duration_gap'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: scenario_nim, durat\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_auto_populate', target_module='factor_overlay_engine', missing_fields=['gap_count', 'pillar_gaps'], severity='medium', remediation='Ensure csrd_auto_populate produces: gap_count, pillar_gaps', reference_data_\u2026"
+         },
+         "ret": "{'source_module': 'csrd_auto_populate', 'target_module': 'factor_overlay_engine', 'missing_fields': ['gap_count', 'pillar_gaps'], 'severity': 'medium', 'remediation': 'Ensure csrd_auto_populate produces: gap_count, pillar_gaps', 'reference\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='insurance_risk_engine', target_module='factor_overlay_engine', missing_fields=['base_premium', 'loss_ratio'], severity='medium', remediation='Ensure insurance_risk_engine produces: base_premium, loss_ratio', refer\u2026"
+         },
+         "ret": "{'source_module': 'insurance_risk_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['base_premium', 'loss_ratio'], 'severity': 'medium', 'remediation': 'Ensure insurance_risk_engine produces: base_premium, loss_ratio', \u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='portfolio_analytics', target_module='factor_overlay_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'portfolio_analytics', 'target_module': 'factor_overlay_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pe_deal_engine', target_module='factor_overlay_engine', missing_fields=['ev_ebitda'], severity='medium', remediation='Ensure pe_deal_engine produces: ev_ebitda', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'pe_deal_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['ev_ebitda'], 'severity': 'medium', 'remediation': 'Ensure pe_deal_engine produces: ev_ebitda', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='real_estate_valuation_engine', target_module='factor_overlay_engine', missing_fields=['market_value', 'noi'], severity='medium', remediation='Ensure real_estate_valuation_engine produces: market_value, noi', refer\u2026"
+         },
+         "ret": "{'source_module': 'real_estate_valuation_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['market_value', 'noi'], 'severity': 'medium', 'remediation': 'Ensure real_estate_valuation_engine produces: market_value, noi', \u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='agriculture_risk_calculator', target_module='factor_overlay_engine', missing_fields=['loan_value'], severity='medium', remediation='Ensure agriculture_risk_calculator produces: loan_value', reference_data_needed=[\u2026"
+         },
+         "ret": "{'source_module': 'agriculture_risk_calculator', 'target_module': 'factor_overlay_engine', 'missing_fields': ['loan_value'], 'severity': 'medium', 'remediation': 'Ensure agriculture_risk_calculator produces: loan_value', 'reference_data_ne\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='china_trade_engine', target_module='factor_overlay_engine', missing_fields=['trade_value'], severity='medium', remediation='Ensure china_trade_engine produces: trade_value', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'china_trade_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['trade_value'], 'severity': 'medium', 'remediation': 'Ensure china_trade_engine produces: trade_value', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='residential_re_engine', target_module='csrd_auto_populate', missing_fields=['energy_intensity_kwh_m2'], severity='medium', remediation='Ensure residential_re_engine produces: energy_intensity_kwh_m2', reference_da\u2026"
+         },
+         "ret": "{'source_module': 'residential_re_engine', 'target_module': 'csrd_auto_populate', 'missing_fields': ['energy_intensity_kwh_m2'], 'severity': 'medium', 'remediation': 'Ensure residential_re_engine produces: energy_intensity_kwh_m2', 'refere\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='epc_transition_engine', target_module='residential_re_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'epc_transition_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'epc_transition_engine', 'target_module': 'residential_re_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'epc_transition_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='rics_esg_engine', target_module='factor_overlay_engine', missing_fields=['green_premium_pct', 'brown_discount_pct'], severity='medium', remediation='Ensure rics_esg_engine produces: green_premium_pct, brown_discou\u2026"
+         },
+         "ret": "{'source_module': 'rics_esg_engine', 'target_module': 'factor_overlay_engine', 'missing_fields': ['green_premium_pct', 'brown_discount_pct'], 'severity': 'medium', 'remediation': 'Ensure rics_esg_engine produces: green_premium_pct, brown_d\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='green_premium_engine', target_module='rics_esg_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'green_premium_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'green_premium_engine', 'target_module': 'rics_esg_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'green_premium_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_risk_calculator', target_module='nature_re_integration_engine', missing_fields=['overall_score', 'overall_risk_rating', 'baseline_risk_score'], severity='high', remediation='Ensure nature_risk_calculator pr\u2026"
+         },
+         "ret": "{'source_module': 'nature_risk_calculator', 'target_module': 'nature_re_integration_engine', 'missing_fields': ['overall_score', 'overall_risk_rating', 'baseline_risk_score'], 'severity': 'high', 'remediation': 'Ensure nature_risk_calculat\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_re_integration_engine', target_module='re_clvar_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 're_clvar_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'nature_re_integration_engine', 'target_module': 're_clvar_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 're_clvar_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='spatial_hazard_service', target_module='re_clvar_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 're_clvar_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'spatial_hazard_service', 'target_module': 're_clvar_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 're_clvar_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='carbon_calculator', target_module='regulatory_report_compiler', missing_fields=['scope1_tco2e', 'scope2_tco2e', 'scope3_tco2e', 'ghg_intensity'], severity='high', remediation='Ensure carbon_calculator produces: sc\u2026"
+         },
+         "ret": "{'source_module': 'carbon_calculator', 'target_module': 'regulatory_report_compiler', 'missing_fields': ['scope1_tco2e', 'scope2_tco2e', 'scope3_tco2e', 'ghg_intensity'], 'severity': 'high', 'remediation': 'Ensure carbon_calculator produce\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='regulatory_report_compiler', missing_fields=['scenario_results'], severity='medium', remediation='Ensure scenario_analysis_engine produces: scenario_results', reference_da\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'regulatory_report_compiler', 'missing_fields': ['scenario_results'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: scenario_results', 'refere\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_engine', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'pcaf_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'pcaf_engine', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'pcaf_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_kpi_store', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_kpi_store'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_kpi_store', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_kpi_store'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='disclosure_completeness', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'disclosure_completeness'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'disclosure_completeness', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'disclosure_completeness'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cbam_calculator', target_module='eu_ets_engine', missing_fields=['cbam_sector', 'carbon_intensity'], severity='medium', remediation='Ensure cbam_calculator produces: cbam_sector, carbon_intensity', reference_data_\u2026"
+         },
+         "ret": "{'source_module': 'cbam_calculator', 'target_module': 'eu_ets_engine', 'missing_fields': ['cbam_sector', 'carbon_intensity'], 'severity': 'medium', 'remediation': 'Ensure cbam_calculator produces: cbam_sector, carbon_intensity', 'reference\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='eu_ets_engine', target_module='climate_transition_risk_engine', missing_fields=['carbon_price_eur'], severity='medium', remediation='Ensure eu_ets_engine produces: carbon_price_eur', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'eu_ets_engine', 'target_module': 'climate_transition_risk_engine', 'missing_fields': ['carbon_price_eur'], 'severity': 'medium', 'remediation': 'Ensure eu_ets_engine produces: carbon_price_eur', 'reference_data_needed': \u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='agriculture_risk_calculator', target_module='eudr_engine', missing_fields=['eudr_commodities', 'country_code'], severity='medium', remediation='Ensure agriculture_risk_calculator produces: eudr_commodities, countr\u2026"
+         },
+         "ret": "{'source_module': 'agriculture_risk_calculator', 'target_module': 'eudr_engine', 'missing_fields': ['eudr_commodities', 'country_code'], 'severity': 'medium', 'remediation': 'Ensure agriculture_risk_calculator produces: eudr_commodities, c\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_risk_calculator', target_module='eudr_engine', missing_fields=['biodiversity_impact_score', 'protected_area_overlaps'], severity='medium', remediation='Ensure nature_risk_calculator produces: biodiversity_i\u2026"
+         },
+         "ret": "{'source_module': 'nature_risk_calculator', 'target_module': 'eudr_engine', 'missing_fields': ['biodiversity_impact_score', 'protected_area_overlaps'], 'severity': 'medium', 'remediation': 'Ensure nature_risk_calculator produces: biodivers\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='supply_chain_scope3_engine', target_module='eudr_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'supply_chain_scope3_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'supply_chain_scope3_engine', 'target_module': 'eudr_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'supply_chain_scope3_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='eudr_engine', target_module='csddd_engine', missing_fields=['commodities_assessed'], severity='medium', remediation='Ensure eudr_engine produces: commodities_assessed', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'eudr_engine', 'target_module': 'csddd_engine', 'missing_fields': ['commodities_assessed'], 'severity': 'medium', 'remediation': 'Ensure eudr_engine produces: commodities_assessed', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='supply_chain_scope3_engine', target_module='csddd_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'supply_chain_scope3_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'supply_chain_scope3_engine', 'target_module': 'csddd_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'supply_chain_scope3_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='climate_transition_risk_engine', target_module='csddd_engine', missing_fields=['transition_risk_score', 'nace_sector'], severity='medium', remediation='Ensure climate_transition_risk_engine produces: transition_ri\u2026"
+         },
+         "ret": "{'source_module': 'climate_transition_risk_engine', 'target_module': 'csddd_engine', 'missing_fields': ['transition_risk_score', 'nace_sector'], 'severity': 'medium', 'remediation': 'Ensure climate_transition_risk_engine produces: transiti\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='climate_transition_risk_engine', target_module='sovereign_climate_risk_engine', missing_fields=['transition_readiness'], severity='medium', remediation='Ensure climate_transition_risk_engine produces: transition_r\u2026"
+         },
+         "ret": "{'source_module': 'climate_transition_risk_engine', 'target_module': 'sovereign_climate_risk_engine', 'missing_fields': ['transition_readiness'], 'severity': 'medium', 'remediation': 'Ensure climate_transition_risk_engine produces: transit\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sovereign_climate_risk_engine', target_module='portfolio_analytics_engine_v2', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics_engine_v2'\", reference_data_ne\u2026"
+         },
+         "ret": "{'source_module': 'sovereign_climate_risk_engine', 'target_module': 'portfolio_analytics_engine_v2', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics_engine_v2'\", 'reference_d\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='climate_transition_risk_engine', target_module='sec_climate_engine', missing_fields=['transition_risk_score', 'regulatory_risk_score'], severity='medium', remediation='Ensure climate_transition_risk_engine produce\u2026"
+         },
+         "ret": "{'source_module': 'climate_transition_risk_engine', 'target_module': 'sec_climate_engine', 'missing_fields': ['transition_risk_score', 'regulatory_risk_score'], 'severity': 'medium', 'remediation': 'Ensure climate_transition_risk_engine pr\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sec_climate_engine', target_module='entity360', missing_fields=['filer_category'], severity='medium', remediation='Ensure sec_climate_engine produces: filer_category', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sec_climate_engine', 'target_module': 'entity360', 'missing_fields': ['filer_category'], 'severity': 'medium', 'remediation': 'Ensure sec_climate_engine produces: filer_category', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sasb_industry_engine', target_module='entity360', missing_fields=['sasb_industry_code'], severity='medium', remediation='Ensure sasb_industry_engine produces: sasb_industry_code', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sasb_industry_engine', 'target_module': 'entity360', 'missing_fields': ['sasb_industry_code'], 'severity': 'medium', 'remediation': 'Ensure sasb_industry_engine produces: sasb_industry_code', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sasb_industry_engine', target_module='peer_benchmark_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'peer_benchmark_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sasb_industry_engine', 'target_module': 'peer_benchmark_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'peer_benchmark_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='ecl_climate_engine', target_module='model_validation_framework', missing_fields=['pd_pit', 'lgd_downturn'], severity='medium', remediation='Ensure ecl_climate_engine produces: pd_pit, lgd_downturn', reference_data\u2026"
+         },
+         "ret": "{'source_module': 'ecl_climate_engine', 'target_module': 'model_validation_framework', 'missing_fields': ['pd_pit', 'lgd_downturn'], 'severity': 'medium', 'remediation': 'Ensure ecl_climate_engine produces: pd_pit, lgd_downturn', 'referenc\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='climate_transition_risk_engine', target_module='model_validation_framework', missing_fields=['transition_risk_score'], severity='medium', remediation='Ensure climate_transition_risk_engine produces: transition_ris\u2026"
+         },
+         "ret": "{'source_module': 'climate_transition_risk_engine', 'target_module': 'model_validation_framework', 'missing_fields': ['transition_risk_score'], 'severity': 'medium', 'remediation': 'Ensure climate_transition_risk_engine produces: transitio\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_risk_calculator', target_module='tnfd_assessment_engine', missing_fields=['leap_scores'], severity='medium', remediation='Ensure nature_risk_calculator produces: leap_scores', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'nature_risk_calculator', 'target_module': 'tnfd_assessment_engine', 'missing_fields': ['leap_scores'], 'severity': 'medium', 'remediation': 'Ensure nature_risk_calculator produces: leap_scores', 'reference_data_needed': \u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cdp_scoring_engine', target_module='entity360', missing_fields=['activity_group'], severity='medium', remediation='Ensure cdp_scoring_engine produces: activity_group', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'cdp_scoring_engine', 'target_module': 'entity360', 'missing_fields': ['activity_group'], 'severity': 'medium', 'remediation': 'Ensure cdp_scoring_engine produces: activity_group', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cdp_scoring_engine', target_module='peer_benchmark_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'peer_benchmark_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'cdp_scoring_engine', 'target_module': 'peer_benchmark_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'peer_benchmark_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_waci_engine', target_module='pcaf_quality_engine', missing_fields=['attribution_factor', 'waci_tco2e_per_meur'], severity='medium', remediation='Ensure pcaf_waci_engine produces: attribution_factor, waci_tco2\u2026"
+         },
+         "ret": "{'source_module': 'pcaf_waci_engine', 'target_module': 'pcaf_quality_engine', 'missing_fields': ['attribution_factor', 'waci_tco2e_per_meur'], 'severity': 'medium', 'remediation': 'Ensure pcaf_waci_engine produces: attribution_factor, waci\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_quality_engine', target_module='sfdr_report_generator', missing_fields=['total_financed_emissions_tco2'], severity='medium', remediation='Ensure pcaf_quality_engine produces: total_financed_emissions_tco2', r\u2026"
+         },
+         "ret": "{'source_module': 'pcaf_quality_engine', 'target_module': 'sfdr_report_generator', 'missing_fields': ['total_financed_emissions_tco2'], 'severity': 'medium', 'remediation': 'Ensure pcaf_quality_engine produces: total_financed_emissions_tco\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_quality_engine', target_module='regulatory_report_compiler', missing_fields=['cross_framework_disclosures'], severity='medium', remediation='Ensure pcaf_quality_engine produces: cross_framework_disclosures', \u2026"
+         },
+         "ret": "{'source_module': 'pcaf_quality_engine', 'target_module': 'regulatory_report_compiler', 'missing_fields': ['cross_framework_disclosures'], 'severity': 'medium', 'remediation': 'Ensure pcaf_quality_engine produces: cross_framework_disclosur\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='ecl_climate_engine', target_module='basel_capital_engine', missing_fields=['pd_through_the_cycle', 'lgd_downturn', 'ead_ccf'], severity='high', remediation='Ensure ecl_climate_engine produces: pd_through_the_cycle\u2026"
+         },
+         "ret": "{'source_module': 'ecl_climate_engine', 'target_module': 'basel_capital_engine', 'missing_fields': ['pd_through_the_cycle', 'lgd_downturn', 'ead_ccf'], 'severity': 'high', 'remediation': 'Ensure ecl_climate_engine produces: pd_through_the_\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='basel_capital_engine', missing_fields=['scenario_results', 'stress_multipliers'], severity='medium', remediation='Ensure scenario_analysis_engine produces: scenario_result\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'basel_capital_engine', 'missing_fields': ['scenario_results', 'stress_multipliers'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: scenario_r\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='eu_taxonomy_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'eu_taxonomy_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='scenario_analysis_engine', target_module='transition_plan_engine', missing_fields=['scenario_results', 'ngfs_scenarios'], severity='medium', remediation='Ensure scenario_analysis_engine produces: scenario_results,\u2026"
+         },
+         "ret": "{'source_module': 'scenario_analysis_engine', 'target_module': 'transition_plan_engine', 'missing_fields': ['scenario_results', 'ngfs_scenarios'], 'severity': 'medium', 'remediation': 'Ensure scenario_analysis_engine produces: scenario_res\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csddd_engine', target_module='transition_plan_engine', missing_fields=['climate_transition_plan', 'dd_compliance_score'], severity='medium', remediation='Ensure csddd_engine produces: climate_transition_plan, dd_c\u2026"
+         },
+         "ret": "{'source_module': 'csddd_engine', 'target_module': 'transition_plan_engine', 'missing_fields': ['climate_transition_plan', 'dd_compliance_score'], 'severity': 'medium', 'remediation': 'Ensure csddd_engine produces: climate_transition_plan,\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 65,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='transition_plan_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'transition_plan_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cdp_scoring_engine', target_module='transition_plan_engine', missing_fields=['module_scores.C4'], severity='medium', remediation='Ensure cdp_scoring_engine produces: module_scores.C4', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'cdp_scoring_engine', 'target_module': 'transition_plan_engine', 'missing_fields': ['module_scores.C4'], 'severity': 'medium', 'remediation': 'Ensure cdp_scoring_engine produces: module_scores.C4', 'reference_data_needed'\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='double_materiality_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'double_materiality_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='gri_standards_engine', target_module='double_materiality_engine', missing_fields=['topics_reported', 'sdg_coverage'], severity='medium', remediation='Ensure gri_standards_engine produces: topics_reported, sdg_cove\u2026"
+         },
+         "ret": "{'source_module': 'gri_standards_engine', 'target_module': 'double_materiality_engine', 'missing_fields': ['topics_reported', 'sdg_coverage'], 'severity': 'medium', 'remediation': 'Ensure gri_standards_engine produces: topics_reported, sdg\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='double_materiality_engine', target_module='csrd_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'double_materiality_engine', 'target_module': 'csrd_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_waci_engine', target_module='sfdr_pai_engine', missing_fields=['financed_emissions', 'data_quality_score'], severity='medium', remediation='Ensure pcaf_waci_engine produces: financed_emissions, data_quality_s\u2026"
+         },
+         "ret": "{'source_module': 'pcaf_waci_engine', 'target_module': 'sfdr_pai_engine', 'missing_fields': ['financed_emissions', 'data_quality_score'], 'severity': 'medium', 'remediation': 'Ensure pcaf_waci_engine produces: financed_emissions, data_qual\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_risk_engine', target_module='sfdr_pai_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'nature_risk_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'nature_risk_engine', 'target_module': 'sfdr_pai_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'nature_risk_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 72,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='eu_taxonomy_engine', target_module='sfdr_pai_engine', missing_fields=['taxonomy_alignment', 'dnsh_assessment'], severity='medium', remediation='Ensure eu_taxonomy_engine produces: taxonomy_alignment, dnsh_assessme\u2026"
+         },
+         "ret": "{'source_module': 'eu_taxonomy_engine', 'target_module': 'sfdr_pai_engine', 'missing_fields': ['taxonomy_alignment', 'dnsh_assessment'], 'severity': 'medium', 'remediation': 'Ensure eu_taxonomy_engine produces: taxonomy_alignment, dnsh_ass\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 73,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_velocity_engine', target_module='portfolio_health_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_health_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_velocity_engine', 'target_module': 'portfolio_health_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_health_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_greenwashing_engine', target_module='entity360_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'entity360_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_greenwashing_engine', 'target_module': 'entity360_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'entity360_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 75,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_nlp_pulse_engine', target_module='entity360_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'entity360_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_nlp_pulse_engine', 'target_module': 'entity360_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'entity360_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 76,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='gdelt_controversy', target_module='dme_nlp_pulse_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'gdelt_controversy'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'gdelt_controversy', 'target_module': 'dme_nlp_pulse_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'gdelt_controversy'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 77,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_policy_tracker_engine', target_module='carbon_prices', missing_fields=[], severity='critical', remediation=\"Register module signature for 'carbon_prices'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_policy_tracker_engine', 'target_module': 'carbon_prices', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'carbon_prices'\", 'reference_data_needed': []}",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_contagion_engine', target_module='stress_test_runner', missing_fields=[], severity='critical', remediation=\"Register module signature for 'stress_test_runner'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_contagion_engine', 'target_module': 'stress_test_runner', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'stress_test_runner'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 79,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_alert_engine', target_module='portfolio_health_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_health_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_alert_engine', 'target_module': 'portfolio_health_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_health_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 80,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_waci_engine', target_module='dme_dmi_engine', missing_fields=['pcaf_dqs'], severity='medium', remediation='Ensure pcaf_waci_engine produces: pcaf_dqs', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'pcaf_waci_engine', 'target_module': 'dme_dmi_engine', 'missing_fields': ['pcaf_dqs'], 'severity': 'medium', 'remediation': 'Ensure pcaf_waci_engine produces: pcaf_dqs', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 81,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_factor_registry', target_module='dme_velocity_engine', missing_fields=['ewma_alpha'], severity='medium', remediation='Ensure dme_factor_registry produces: ewma_alpha', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_factor_registry', 'target_module': 'dme_velocity_engine', 'missing_fields': ['ewma_alpha'], 'severity': 'medium', 'remediation': 'Ensure dme_factor_registry produces: ewma_alpha', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 82,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_factor_registry', target_module='dme_dmi_engine', missing_fields=['pcaf_dq'], severity='medium', remediation='Ensure dme_factor_registry produces: pcaf_dq', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_factor_registry', 'target_module': 'dme_dmi_engine', 'missing_fields': ['pcaf_dq'], 'severity': 'medium', 'remediation': 'Ensure dme_factor_registry produces: pcaf_dq', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_nlp_pulse_engine', target_module='sentiment_analysis_engine', missing_fields=['pulse_score', 'source_tier'], severity='medium', remediation='Ensure dme_nlp_pulse_engine produces: pulse_score, source_tier', ref\u2026"
+         },
+         "ret": "{'source_module': 'dme_nlp_pulse_engine', 'target_module': 'sentiment_analysis_engine', 'missing_fields': ['pulse_score', 'source_tier'], 'severity': 'medium', 'remediation': 'Ensure dme_nlp_pulse_engine produces: pulse_score, source_tier'\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 84,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_greenwashing_engine', target_module='sentiment_analysis_engine', missing_fields=['divergence_flag', 'cusum_signal'], severity='medium', remediation='Ensure dme_greenwashing_engine produces: divergence_flag, cu\u2026"
+         },
+         "ret": "{'source_module': 'dme_greenwashing_engine', 'target_module': 'sentiment_analysis_engine', 'missing_fields': ['divergence_flag', 'cusum_signal'], 'severity': 'medium', 'remediation': 'Ensure dme_greenwashing_engine produces: divergence_fla\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 85,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='gdelt_controversy', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'gdelt_controversy'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'gdelt_controversy', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'gdelt_controversy'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='company_profiles', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'company_profiles'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'company_profiles', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'company_profiles'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='engagement_tracker', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'engagement_tracker'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'engagement_tracker', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'engagement_tracker'\", 'reference_data_needed': []}",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='factor_overlay_engine', target_module='sentiment_analysis_engine', missing_fields=['esg_factor_scores'], severity='medium', remediation='Ensure factor_overlay_engine produces: esg_factor_scores', reference_data_ne\u2026"
+         },
+         "ret": "{'source_module': 'factor_overlay_engine', 'target_module': 'sentiment_analysis_engine', 'missing_fields': ['esg_factor_scores'], 'severity': 'medium', 'remediation': 'Ensure factor_overlay_engine produces: esg_factor_scores', 'reference_d\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='ecl_calculator', missing_fields=[], severity='critical', remediation=\"Register module signature for 'ecl_calculator'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'ecl_calculator', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'ecl_calculator'\", 'reference_data_needed': []}",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='portfolio_analytics', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'portfolio_analytics', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics'\", 'reference_data_needed': []}",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='dme_dmi_engine', missing_fields=['velocity_signal'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: velocity_signal', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'dme_dmi_engine', 'missing_fields': ['velocity_signal'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: velocity_signal', 'reference_data_nee\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='dme_alert_engine', missing_fields=['z_score'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: z_score', reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'dme_alert_engine', 'missing_fields': ['z_score'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: z_score', 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='dme_greenwashing_engine', missing_fields=['media_sentiment', 'ngo_sentiment'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: media_sentiment,\u2026"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'dme_greenwashing_engine', 'missing_fields': ['media_sentiment', 'ngo_sentiment'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: media_senti\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='sovereign_climate_risk_engine', missing_fields=['country_sentiment_adjustment'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: country_sentim\u2026"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'sovereign_climate_risk_engine', 'missing_fields': ['country_sentiment_adjustment'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: country_s\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='double_materiality_engine', missing_fields=['stakeholder_salience', 'esg_materiality'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: stakeho\u2026"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'double_materiality_engine', 'missing_fields': ['stakeholder_salience', 'esg_materiality'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: st\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 96,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='dme_contagion_engine', missing_fields=['sentiment_intensity'], severity='medium', remediation='Ensure sentiment_analysis_engine produces: sentiment_intensity', reference_\u2026"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'dme_contagion_engine', 'missing_fields': ['sentiment_intensity'], 'severity': 'medium', 'remediation': 'Ensure sentiment_analysis_engine produces: sentiment_intensity', 'refe\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='pe_deal_pipeline', missing_fields=[], severity='critical', remediation=\"Register module signature for 'pe_deal_pipeline'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'pe_deal_pipeline', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'pe_deal_pipeline'\", 'reference_data_needed': []}",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='real_estate_valuation', missing_fields=[], severity='critical', remediation=\"Register module signature for 'real_estate_valuation'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'real_estate_valuation', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'real_estate_valuation'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='portfolio_analytics', target_module='factor_overlay_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'portfolio_analytics', 'target_module': 'factor_overlay_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 100,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='epc_transition_engine', target_module='residential_re_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'epc_transition_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'epc_transition_engine', 'target_module': 'residential_re_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'epc_transition_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='green_premium_engine', target_module='rics_esg_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'green_premium_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'green_premium_engine', 'target_module': 'rics_esg_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'green_premium_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_re_integration_engine', target_module='re_clvar_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 're_clvar_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'nature_re_integration_engine', 'target_module': 're_clvar_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 're_clvar_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='spatial_hazard_service', target_module='re_clvar_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 're_clvar_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'spatial_hazard_service', 'target_module': 're_clvar_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 're_clvar_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='pcaf_engine', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'pcaf_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'pcaf_engine', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'pcaf_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_kpi_store', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_kpi_store'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_kpi_store', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_kpi_store'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='disclosure_completeness', target_module='regulatory_report_compiler', missing_fields=[], severity='critical', remediation=\"Register module signature for 'disclosure_completeness'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'disclosure_completeness', 'target_module': 'regulatory_report_compiler', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'disclosure_completeness'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='supply_chain_scope3_engine', target_module='eudr_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'supply_chain_scope3_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'supply_chain_scope3_engine', 'target_module': 'eudr_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'supply_chain_scope3_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='supply_chain_scope3_engine', target_module='csddd_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'supply_chain_scope3_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'supply_chain_scope3_engine', 'target_module': 'csddd_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'supply_chain_scope3_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sovereign_climate_risk_engine', target_module='portfolio_analytics_engine_v2', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics_engine_v2'\", reference_data_ne\u2026"
+         },
+         "ret": "{'source_module': 'sovereign_climate_risk_engine', 'target_module': 'portfolio_analytics_engine_v2', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics_engine_v2'\", 'reference_d\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sasb_industry_engine', target_module='peer_benchmark_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'peer_benchmark_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sasb_industry_engine', 'target_module': 'peer_benchmark_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'peer_benchmark_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='cdp_scoring_engine', target_module='peer_benchmark_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'peer_benchmark_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'cdp_scoring_engine', 'target_module': 'peer_benchmark_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'peer_benchmark_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='eu_taxonomy_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'eu_taxonomy_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='transition_plan_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'transition_plan_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 114,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='csrd_engine', target_module='double_materiality_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'csrd_engine', 'target_module': 'double_materiality_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 115,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='double_materiality_engine', target_module='csrd_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'csrd_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'double_materiality_engine', 'target_module': 'csrd_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'csrd_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 116,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='nature_risk_engine', target_module='sfdr_pai_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'nature_risk_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'nature_risk_engine', 'target_module': 'sfdr_pai_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'nature_risk_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 117,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_velocity_engine', target_module='portfolio_health_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_health_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_velocity_engine', 'target_module': 'portfolio_health_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_health_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 118,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_greenwashing_engine', target_module='entity360_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'entity360_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_greenwashing_engine', 'target_module': 'entity360_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'entity360_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 119,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_nlp_pulse_engine', target_module='entity360_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'entity360_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_nlp_pulse_engine', 'target_module': 'entity360_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'entity360_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 120,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='gdelt_controversy', target_module='dme_nlp_pulse_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'gdelt_controversy'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'gdelt_controversy', 'target_module': 'dme_nlp_pulse_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'gdelt_controversy'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 121,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_policy_tracker_engine', target_module='carbon_prices', missing_fields=[], severity='critical', remediation=\"Register module signature for 'carbon_prices'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_policy_tracker_engine', 'target_module': 'carbon_prices', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'carbon_prices'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 122,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_contagion_engine', target_module='stress_test_runner', missing_fields=[], severity='critical', remediation=\"Register module signature for 'stress_test_runner'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_contagion_engine', 'target_module': 'stress_test_runner', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'stress_test_runner'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 123,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='dme_alert_engine', target_module='portfolio_health_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_health_engine'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'dme_alert_engine', 'target_module': 'portfolio_health_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_health_engine'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 124,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='gdelt_controversy', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'gdelt_controversy'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'gdelt_controversy', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'gdelt_controversy'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 125,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='company_profiles', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'company_profiles'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'company_profiles', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'company_profiles'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 126,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='engagement_tracker', target_module='sentiment_analysis_engine', missing_fields=[], severity='critical', remediation=\"Register module signature for 'engagement_tracker'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'engagement_tracker', 'target_module': 'sentiment_analysis_engine', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'engagement_tracker'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 127,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='ecl_calculator', missing_fields=[], severity='critical', remediation=\"Register module signature for 'ecl_calculator'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'ecl_calculator', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'ecl_calculator'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 128,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='portfolio_analytics', missing_fields=[], severity='critical', remediation=\"Register module signature for 'portfolio_analytics'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'portfolio_analytics', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'portfolio_analytics'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='pe_deal_pipeline', missing_fields=[], severity='critical', remediation=\"Register module signature for 'pe_deal_pipeline'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'pe_deal_pipeline', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'pe_deal_pipeline'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "_ser_gap",
+         "qual": "_ser_gap",
+         "file": "api/v1/routes/data_lineage.py",
+         "line": 56,
+         "args": {
+          "g": "LineageGap(source_module='sentiment_analysis_engine', target_module='real_estate_valuation', missing_fields=[], severity='critical', remediation=\"Register module signature for 'real_estate_valuation'\", reference_data_needed=[])"
+         },
+         "ret": "{'source_module': 'sentiment_analysis_engine', 'target_module': 'real_estate_valuation', 'missing_fields': [], 'severity': 'critical', 'remediation': \"Register module signature for 'real_estate_valuation'\", 'reference_data_needed': []}",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/module-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.864,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_modules",
+     "total_categories",
+     "categories"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 131,
+     "name": "module_coverage",
+     "qual": "module_coverage",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 267,
+     "args": {},
+     "ret": "{'total_modules': 73, 'total_categories': 30, 'categories': {'agriculture': {'count': 4, 'modules': [{'module_id': 'agriculture_risk_calculator', 'label': 'Agriculture Risk Calculator', 'inputs': 5, 'outputs': 5, 'reference_data': 3}, {'mo\u2026",
+     "dur_ms": 0.595,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 132,
+       "name": "get_module_coverage",
+       "qual": "LineageOrchestrator.get_module_coverage",
+       "file": "services/lineage_orchestrator.py",
+       "line": 728,
+       "args": {},
+       "ret": "{'total_modules': 73, 'total_categories': 30, 'categories': {'agriculture': {'count': 4, 'modules': [{'module_id': 'agriculture_risk_calculator', 'label': 'Agriculture Risk Calculator', 'inputs': 5, 'outputs': 5, 'reference_data': 3}, {'mo\u2026",
+       "dur_ms": 0.409,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/module-graph",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'label'",
+   "dur_ms": 0.358,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 133,
+     "name": "module_graph",
+     "qual": "module_graph",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 148,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.203,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 134,
+       "name": "get_module_graph",
+       "qual": "DataLineageEngine.get_module_graph",
+       "file": "services/data_lineage_service.py",
+       "line": 2576,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.174,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/platform-health",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'label'",
+   "dur_ms": 0.328,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 135,
+     "name": "platform_health",
+     "qual": "platform_health",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 192,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.21,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 136,
+       "name": "get_platform_health",
+       "qual": "LineageOrchestrator.get_platform_health",
+       "file": "services/lineage_orchestrator.py",
+       "line": 545,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.185,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 137,
+         "name": "get_module_graph",
+         "qual": "DataLineageEngine.get_module_graph",
+         "file": "services/data_lineage_service.py",
+         "line": 2576,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.166,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/reference-data",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'category'",
+   "dur_ms": 0.375,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 138,
+     "name": "reference_data",
+     "qual": "reference_data",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 173,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.254,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 139,
+       "name": "get_all_reference_data",
+       "qual": "DataLineageEngine.get_all_reference_data",
+       "file": "services/data_lineage_service.py",
+       "line": 2710,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.232,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/reference-data-gaps",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'category'",
+   "dur_ms": 0.338,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 140,
+     "name": "reference_data_gaps",
+     "qual": "reference_data_gaps",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 213,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.22,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 141,
+       "name": "analyse_reference_data_gaps",
+       "qual": "LineageOrchestrator.analyse_reference_data_gaps",
+       "file": "services/lineage_orchestrator.py",
+       "line": 333,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.197,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 142,
+         "name": "get_all_reference_data",
+         "qual": "DataLineageEngine.get_all_reference_data",
+         "file": "services/data_lineage_service.py",
+         "line": 2710,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.18,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/reference-data-inventory",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'category'",
+   "dur_ms": 0.333,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 143,
+     "name": "reference_data_inventory",
+     "qual": "reference_data_inventory",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 272,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.22,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 144,
+       "name": "get_reference_data_inventory",
+       "qual": "LineageOrchestrator.get_reference_data_inventory",
+       "file": "services/lineage_orchestrator.py",
+       "line": 821,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.199,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 145,
+         "name": "get_all_reference_data",
+         "qual": "DataLineageEngine.get_all_reference_data",
+         "file": "services/data_lineage_service.py",
+         "line": 2710,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.184,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/regulatory-lineage/{framework}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.175,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "framework": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error",
+     "supported"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 146,
+     "name": "regulatory_lineage",
+     "qual": "regulatory_lineage",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 262,
+     "args": {
+      "framework": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'error': 'Unknown framework: 550e8400-e29b-41d4-a716-446655440001', 'supported': ['CSRD', 'SFDR', 'EU_TAXONOMY', 'ISSB', 'CBAM']}",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 147,
+       "name": "trace_regulatory_lineage",
+       "qual": "LineageOrchestrator.trace_regulatory_lineage",
+       "file": "services/lineage_orchestrator.py",
+       "line": 660,
+       "args": {
+        "disclosure_framework": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'error': 'Unknown framework: 550e8400-e29b-41d4-a716-446655440001', 'supported': ['CSRD', 'SFDR', 'EU_TAXONOMY', 'ISSB', 'CBAM']}",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "GET /api/v1/lineage/signatures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.852,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "carbon_calculator",
+     "carbon_calculator_v2",
+     "supply_chain_scope3",
+     "pd_calculator",
+     "lgd_calculator",
+     "ead_calculator",
+     "ecl_climate_engine",
+     "pcaf_waci_engine",
+     "pcaf_ecl_bridge",
+     "scenario_analysis_engine",
+     "nature_risk_calculator",
+     "stranded_asset_calculator",
+     "csrd_auto_populate",
+     "gar_calculator",
+     "sfdr_report_generator",
+     "real_estate_valuation_engine",
+     "crrem_stranding_engine",
+     "entity360",
+     "pe_deal_engine",
+     "project_finance_engine",
+     "china_trade_engine",
+     "insurance_climate_risk",
+     "mining_risk_calculator",
+     "agriculture_risk_calculator",
+     "sustainability_calculator"
+    ],
+    "n_keys": 73
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 148,
+     "name": "module_signatures",
+     "qual": "module_signatures",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'carbon_calculator': {'label': 'Carbon Calculator v1', 'category': 'emissions', 'inputs': ['activity_data_kwh', 'fuel_type', 'fleet_km', 'refrigerant_kg', 'electricity_kwh', 'grid_region', 'scope3_categories'], 'outputs': ['scope1_total_t\u2026",
+     "dur_ms": 0.369,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 149,
+       "name": "get_module_signatures",
+       "qual": "DataLineageEngine.get_module_signatures",
+       "file": "services/data_lineage_service.py",
+       "line": 2720,
+       "args": {},
+       "ret": "{'carbon_calculator': {'label': 'Carbon Calculator v1', 'category': 'emissions', 'inputs': ['activity_data_kwh', 'fuel_type', 'fleet_km', 'refrigerant_kg', 'electricity_kwh', 'grid_region', 'scope3_categories'], 'outputs': ['scope1_total_t\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "POST /api/v1/lineage/dqs-quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-lineage",
+   "label": "POST /api/v1/lineage/impact-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'module_id'",
+   "dur_ms": 0.176,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 150,
+     "name": "impact_analysis",
+     "qual": "impact_analysis",
+     "file": "api/v1/routes/data_lineage.py",
+     "line": 244,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-lineage",
+   "label": "POST /api/v1/lineage/quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-lineage",
+   "label": "POST /api/v1/lineage/trace",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,373 @@
+{
+ "domain": "factor-overlays",
+ "meta": {
+  "ts": "2026-06-30T14:02:06",
+  "module": "api.v1.routes.factor_overlays",
+  "router_prefix": "/api/v1/factor-overlays",
+  "endpoints": 15
+ },
+ "transactions": [
+  {
+   "domain": "factor-overlays",
+   "label": "GET /api/v1/factor-overlays/available-overlays",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.698,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 12,
+    "item0_keys": [
+     "id",
+     "label",
+     "module",
+     "fi_type",
+     "lob"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "available_overlays",
+     "qual": "available_overlays",
+     "file": "api/v1/routes/factor_overlays.py",
+     "line": 325,
+     "args": {},
+     "ret": "[{'id': 'ecl_credit', 'label': 'Bank Credit \u2014 Climate-adjusted ECL', 'module': 'ecl_climate_engine', 'fi_type': 'Bank', 'lob': 'Credit'}, {'id': 'alm_treasury', 'label': 'Bank Treasury \u2014 ALM ESG/Macro', 'module': 'scenario_analysis_engine'\u2026",
+     "dur_ms": 0.137,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_available_overlays",
+       "qual": "FactorOverlayEngine.get_available_overlays",
+       "file": "services/factor_overlay_engine.py",
+       "line": 1345,
+       "args": {},
+       "ret": "[{'id': 'ecl_credit', 'label': 'Bank Credit \u2014 Climate-adjusted ECL', 'module': 'ecl_climate_engine', 'fi_type': 'Bank', 'lob': 'Credit'}, {'id': 'alm_treasury', 'label': 'Bank Treasury \u2014 ALM ESG/Macro', 'module': 'scenario_analysis_engine'\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "GET /api/v1/factor-overlays/factor-registries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.408,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esg_registries",
+     "geopolitical_registries",
+     "technology_registries"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "factor_registries",
+     "qual": "factor_registries",
+     "file": "api/v1/routes/factor_overlays.py",
+     "line": 330,
+     "args": {},
+     "ret": "{'esg_registries': {'ESG_TRANSITION_PD_MULTIPLIER': {'sectors': 21, 'source': 'PRI IPR 2024'}, 'GREEN_BOND_PREMIUM_BPS': {'tiers': 7, 'source': 'CBI 2024'}, 'BIODIVERSITY_NATCAT_AMPLIFIER': {'biomes': 10, 'source': 'IPBES 2024'}, 'ESG_ALPH\u2026",
+     "dur_ms": 0.162,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_factor_registries",
+       "qual": "FactorOverlayEngine.get_factor_registries",
+       "file": "services/factor_overlay_engine.py",
+       "line": 1374,
+       "args": {},
+       "ret": "{'esg_registries': {'ESG_TRANSITION_PD_MULTIPLIER': {'sectors': 21, 'source': 'PRI IPR 2024'}, 'GREEN_BOND_PREMIUM_BPS': {'tiers': 7, 'source': 'CBI 2024'}, 'BIODIVERSITY_NATCAT_AMPLIFIER': {'biomes': 10, 'source': 'IPBES 2024'}, 'ESG_ALPH\u2026",
+       "dur_ms": 0.03,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/agriculture-finance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/alm-treasury",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/ecl-credit",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/energy-strategy",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/factor-summary",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/insurance-actuarial",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/insurance-uw",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/pe-deal",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/portfolio-management",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/real-estate-valuation",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.289,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "real_estate_valuation",
+     "qual": "real_estate_valuation",
+     "file": "api/v1/routes/factor_overlays.py",
+     "line": 269,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/regulatory-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/risk-management",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "factor-overlays",
+   "label": "POST /api/v1/factor-overlays/trade-advisory",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

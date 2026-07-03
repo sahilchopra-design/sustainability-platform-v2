@@ -1,0 +1,347 @@
+{
+ "domain": "infrastructure-finance",
+ "meta": {
+  "ts": "2026-06-30T14:02:46",
+  "module": "api.v1.routes.infrastructure_finance",
+  "router_prefix": "/api/v1/infrastructure-finance",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "infrastructure-finance",
+   "label": "GET /api/v1/infrastructure-finance/ref/blended-structures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.46,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_blended_structures",
+     "qual": "ref_blended_structures",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 382,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'structures': {'first_loss': {'description': 'Junior equity or debt tranche absorbs first losses to de-risk senior tranches', 'typical_components': ['grant', 'junior_equity', 'concessional_debt'], 'crowding_i\u2026",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "GET /api/v1/infrastructure-finance/ref/ep-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.25,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_ep_principles",
+     "qual": "ref_ep_principles",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 350,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'principles': [{'id': 1, 'name': 'Review and Categorisation', 'weight': 0.1, 'description': 'Categorise project as A, B or C based on potential E&S impacts'}, {'id': 2, 'name': 'Environmental and Social Asses\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "GET /api/v1/infrastructure-finance/ref/ifc-ps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.192,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ifc_ps",
+     "qual": "ref_ifc_ps",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 363,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'PS1': {'name': 'Assessment and Management of E&S Risks and Impacts', 'description': 'Establish, maintain and improve ESMS; assess and manage E&S risks', 'key_requirements': ['ESIA', 'ESMS', 'stakeholder enga\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "GET /api/v1/infrastructure-finance/ref/paris-alignment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.256,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_paris_alignment",
+     "qual": "ref_paris_alignment",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 369,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'criteria': {'mitigation': {'weight': 0.4, 'sub_criteria': [{'name': 'sector_benchmark_alignment', 'description': 'GHG intensity vs IFC/SBTi sector benchmark'}, {'name': 'emissions_trajectory', 'description':\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/blended-finance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/climate-label",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/dscr-stress",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.245,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "dscr_stress",
+     "qual": "dscr_stress",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 263,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/equator-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.192,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/infrastructure_finance.py",
+     "line": 337,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/ifc-ps",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/oecd",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "infrastructure-finance",
+   "label": "POST /api/v1/infrastructure-finance/paris-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,1494 @@
+{
+ "domain": "data-intake",
+ "meta": {
+  "ts": "2026-06-30T14:00:41",
+  "module": "api.v1.routes.data_intake",
+  "router_prefix": "/api/v1/data-intake",
+  "endpoints": 26
+ },
+ "transactions": [
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/counterparty",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 913.916,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_counterparty_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, counterparty_id, counterparty_name, reporting_year, scope1_tco2e, scope2_market_tco2e, scope3_total_tco2e, pcaf_dqs, data_source_type, assurance_level, created_at FROM di_counterparty_emissions ORDER BY created_at DESC LIMIT 500'",
+     "tables": [
+      "di_counterparty_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 68.989,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_counterparty_emissions",
+     "qual": "list_counterparty_emissions",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 383,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10C0DD90>"
+     },
+     "ret": "[]",
+     "dur_ms": 880.75,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/internal-config",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1264.794,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "di_internal_config"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT config_key, config_value, display_name, description, config_group, data_type, updated_by, updated_at FROM di_internal_config ORDER BY config_group, config_key'",
+     "tables": [
+      "di_internal_config"
+     ],
+     "rowcount": 8,
+     "dur_ms": 338.563,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": [
+     "config_key",
+     "config_value",
+     "display_name",
+     "description",
+     "config_group",
+     "data_type",
+     "updated_by",
+     "updated_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_all_config",
+     "qual": "get_all_config",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 949,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D0F76F8C0>"
+     },
+     "ret": "[{'config_key': 'carbon_price_usd_tco2', 'config_value': '85', 'display_name': 'Carbon Price (USD/tCO2)', 'description': 'Internal carbon price used for transition risk estimates', 'config_group': 'emissions', 'data_type': 'number', 'updat\u2026",
+     "dur_ms": 931.152,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/pcaf-summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 321.829,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_counterparty_emissions",
+    "di_loan_portfolio_rows"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT r.counterparty_id, r.counterparty_name, r.sector_gics, r.outstanding_amount, r.pcaf_dqs, r.reported_emissions_tco2e, r.stage_ifrs9 FROM di_loan_portfolio_rows r WHERE r.is_valid = TRUE ORDER BY r.counterparty_id, r.id DESC'",
+     "tables": [
+      "di_loan_portfolio_rows"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.953,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT counterparty_id, reporting_year, scope1_tco2e, scope2_market_tco2e, scope3_total_tco2e, pcaf_dqs, data_source_type FROM di_counterparty_emissions ORDER BY counterparty_id, pcaf_dqs ASC, reporting_year DESC'",
+     "tables": [
+      "di_counterparty_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.824,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data_year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "summary",
+     "dqs_distribution",
+     "sector_breakdown"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_pcaf_summary",
+     "qual": "get_pcaf_summary",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 979,
+     "args": {
+      "data_year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10C7B200>"
+     },
+     "ret": "{'summary': {'total_loans': 0, 'unique_counterparties': 0, 'total_outstanding_usd': 0, 'total_financed_emissions_tco2e': 0.0, 'waci_tco2e_per_musd': None, 'weighted_avg_dqs': None, 'data_year': None}, 'dqs_distribution': {'counts': {1: 0, \u2026",
+     "dur_ms": 291.618,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "get_pcaf_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 1043,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10DE5F60>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/portfolio",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1000.875,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_loan_portfolio_uploads"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, upload_name, filename, status, total_rows, valid_rows, error_rows, uploaded_by, notes, created_at FROM di_loan_portfolio_uploads ORDER BY created_at DESC LIMIT 100'",
+     "tables": [
+      "di_loan_portfolio_uploads"
+     ],
+     "rowcount": 0,
+     "dur_ms": 720.371,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_portfolio_uploads",
+     "qual": "list_portfolio_uploads",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 225,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10C7BBF0>"
+     },
+     "ret": "[]",
+     "dur_ms": 926.422,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/portfolio/template",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.353,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x0000022D10C7B470>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "download_portfolio_template",
+     "qual": "download_portfolio_template",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 206,
+     "args": {},
+     "ret": "<starlette.responses.StreamingResponse object at 0x0000022D10C7B470>",
+     "dur_ms": 0.131,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/portfolio/{upload_id}/rows",
+   "status": "failed",
+   "http_status": 500,
+   "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\nLINE 1: ...ECT * FROM di_loan_portfolio_rows WHERE upload_id='550e8400-...\n                                                             ^\n\n[SQL: SELECT * FROM di_loan_portfolio_rows WHERE upload_id=%(id)s ORDER BY id LIMIT 500]\n[parameters: {'id': '550e8400-e29b-41d4",
+   "dur_ms": 909.639,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_loan_portfolio_rows"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM di_loan_portfolio_rows WHERE upload_id=%(id)s ORDER BY id LIMIT 500'",
+     "tables": [
+      "di_loan_portfolio_rows"
+     ],
+     "rowcount": null,
+     "dur_ms": 61.363,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\\nLINE 1: ...ECT * FROM di_loan_portfolio_rows WHERE upload_id=\\'550e8400-...\\n                \u2026"
+    }
+   ],
+   "inputs": {
+    "upload_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_portfolio_rows",
+     "qual": "get_portfolio_rows",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 344,
+     "args": {
+      "upload_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE5B50>"
+     },
+     "ret": "None",
+     "dur_ms": 875.844,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/project-finance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 612.543,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_project_finance"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, project_ref, project_name, project_type, country_iso2, capacity_mw, total_capex_musd, status, paris_alignment_status, preliminary_dscr, preliminary_lcoe_usd_mwh, preliminary_equity_irr_pct, created_at FROM di_project_finance ORDER BY created_at DESC LIMIT 200'",
+     "tables": [
+      "di_project_finance"
+     ],
+     "rowcount": 0,
+     "dur_ms": 80.206,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "list_projects",
+     "qual": "list_projects",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 846,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE5B20>"
+     },
+     "ret": "[]",
+     "dur_ms": 323.288,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/project-finance/{project_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\nLINE 1: SELECT * FROM di_project_finance WHERE id='550e8400-e29b-41d...\n                                                  ^\n\n[SQL: SELECT * FROM di_project_finance WHERE id=%(id)s]\n[parameters: {'id': '550e8400-e29b-41d4-a716-446655440001'}]\n(Background on this error",
+   "dur_ms": 2123.199,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_project_finance"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM di_project_finance WHERE id=%(id)s'",
+     "tables": [
+      "di_project_finance"
+     ],
+     "rowcount": null,
+     "dur_ms": 69.447,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\\nLINE 1: SELECT * FROM di_project_finance WHERE id=\\'550e8400-e29b-41d...\\n                   \u2026"
+    }
+   ],
+   "inputs": {
+    "project_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_project",
+     "qual": "get_project",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 923,
+     "args": {
+      "project_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6360>"
+     },
+     "ret": "None",
+     "dur_ms": 2090.973,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/real-estate",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1224.462,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_real_estate_assets"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM di_real_estate_assets ORDER BY created_at DESC LIMIT 1000'",
+     "tables": [
+      "di_real_estate_assets"
+     ],
+     "rowcount": 0,
+     "dur_ms": 332.588,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "list_real_estate_assets",
+     "qual": "list_real_estate_assets",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 482,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6390>"
+     },
+     "ret": "[]",
+     "dur_ms": 1182.272,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/real-estate/template",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.317,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x0000022D10DE6960>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "download_real_estate_template",
+     "qual": "download_real_estate_template",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 464,
+     "args": {},
+     "ret": "<starlette.responses.StreamingResponse object at 0x0000022D10DE6960>",
+     "dur_ms": 0.065,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/shipping-analytics",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1843.005,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_shipping_fleet"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT vessel_imo, vessel_name, vessel_type, dwt_tonnes, gross_tonnage, propulsion_type, annual_co2_tco2e, annual_distance_nm, cii_rating, cii_score, eexi_value, build_year, data_year FROM di_shipping_fleet ORDER BY vessel_imo'",
+     "tables": [
+      "di_shipping_fleet"
+     ],
+     "rowcount": 0,
+     "dur_ms": 274.295,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "summary",
+     "cii_distribution",
+     "fleet_co2_tco2e",
+     "vessels"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_shipping_analytics",
+     "qual": "get_shipping_analytics",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 1139,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE67B0>"
+     },
+     "ret": "{'summary': {'vessel_count': 0}, 'cii_distribution': {}, 'fleet_co2_tco2e': 0, 'vessels': []}",
+     "dur_ms": 1805.282,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/shipping-fleet",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 438.981,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_shipping_fleet"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM di_shipping_fleet ORDER BY vessel_imo LIMIT 2000'",
+     "tables": [
+      "di_shipping_fleet"
+     ],
+     "rowcount": 0,
+     "dur_ms": 72.004,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "list_fleet",
+     "qual": "list_fleet",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 582,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6A80>"
+     },
+     "ret": "[]",
+     "dur_ms": 404.974,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/shipping-fleet/template",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.221,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "StreamingResponse",
+    "repr": "<starlette.responses.StreamingResponse object at 0x0000022D10DE6390>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "download_fleet_template",
+     "qual": "download_fleet_template",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 564,
+     "args": {},
+     "ret": "<starlette.responses.StreamingResponse object at 0x0000022D10DE6390>",
+     "dur_ms": 0.048,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1677.977,
+   "node_count": 9,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_application_kpis",
+    "dh_ca100_assessments",
+    "dh_controversy_scores",
+    "dh_country_risk_indices",
+    "dh_crrem_pathways",
+    "dh_gdelt_events",
+    "dh_grid_emission_factors",
+    "dh_irena_lcoe",
+    "dh_reference_data",
+    "dh_sbti_companies",
+    "dh_violation_tracker",
+    "di_counterparty_emissions",
+    "di_internal_config",
+    "di_loan_portfolio_uploads",
+    "di_project_finance",
+    "di_real_estate_assets",
+    "di_shipping_fleet",
+    "di_steel_borrowers"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM di_loan_portfolio_uploads'",
+     "tables": [
+      "di_loan_portfolio_uploads"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.155,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM di_counterparty_emissions'",
+     "tables": [
+      "di_counterparty_emissions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.484,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) FROM di_real_estate_assets'",
+     "tables": [
+      "di_real_estate_assets"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.95,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(*) FROM di_shipping_fleet'",
+     "tables": [
+      "di_shipping_fleet"
+     ],
+     "rowcount": 1,
+     "dur_ms": 170.79,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(*) FROM di_steel_borrowers'",
+     "tables": [
+      "di_steel_borrowers"
+     ],
+     "rowcount": 1,
+     "dur_ms": 160.059,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT COUNT(*) FROM di_project_finance'",
+     "tables": [
+      "di_project_finance"
+     ],
+     "rowcount": 1,
+     "dur_ms": 417.506,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT COUNT(*) FROM di_internal_config'",
+     "tables": [
+      "di_internal_config"
+     ],
+     "rowcount": 1,
+     "dur_ms": 56.929,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT COUNT(*) FROM dh_sbti_companies'",
+     "tables": [
+      "dh_sbti_companies"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.548,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT COUNT(*) FROM dh_ca100_assessments'",
+     "tables": [
+      "dh_ca100_assessments"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.643,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT COUNT(*) FROM dh_country_risk_indices'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.344,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT COUNT(*) FROM dh_reference_data'",
+     "tables": [
+      "dh_reference_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.231,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT COUNT(*) FROM dh_crrem_pathways'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 1,
+     "dur_ms": 53.113,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT COUNT(*) FROM dh_irena_lcoe'",
+     "tables": [
+      "dh_irena_lcoe"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.118,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT COUNT(*) FROM dh_grid_emission_factors'",
+     "tables": [
+      "dh_grid_emission_factors"
+     ],
+     "rowcount": 1,
+     "dur_ms": 45.762,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT COUNT(*) FROM dh_controversy_scores'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 49.367,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT COUNT(*) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 40.971,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 42.314,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT COUNT(*) FROM dh_application_kpis'",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.919,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT index_name, COUNT(*) FROM dh_country_risk_indices GROUP BY index_name ORDER BY index_name'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 4,
+     "dur_ms": 30.474,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "modules",
+     "data_hub",
+     "country_risk_breakdown",
+     "summary"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "get_data_intake_status",
+     "qual": "get_data_intake_status",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 37,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6BD0>"
+     },
+     "ret": "{'modules': [{'id': 'loan_portfolio', 'label': 'Loan Portfolio', 'route': '/data-intake/portfolio', 'count': 0, 'unit': 'uploads', 'status': 'empty', 'priority': 'P0'}, {'id': 'counterparty', 'label': 'Counterparty Emissions', 'route': '/d\u2026",
+     "dur_ms": 1646.341,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "get_data_intake_status.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 167,
+       "args": {
+        ".0": "<list_iterator object at 0x0000022D10E2C310>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/steel-analytics",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1190.938,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_steel_borrowers"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT borrower_id, borrower_name, country_iso2, crude_steel_production_mt, bf_bof_share_pct, eaf_share_pct, dri_share_pct, blended_co2_intensity_tco2_tcs, total_co2_tco2e, sbti_committed, data_year FROM di_steel_borrowers ORDER BY borrower_name'",
+     "tables": [
+      "di_steel_borrowers"
+     ],
+     "rowcount": 0,
+     "dur_ms": 873.724,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "summary",
+     "borrowers"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_steel_analytics",
+     "qual": "get_steel_analytics",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 1229,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6C90>"
+     },
+     "ret": "{'summary': {'borrower_count': 0}, 'borrowers': []}",
+     "dur_ms": 1086.742,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "GET /api/v1/data-intake/steel-borrowers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 337.186,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "di_steel_borrowers"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM di_steel_borrowers ORDER BY borrower_name LIMIT 500'",
+     "tables": [
+      "di_steel_borrowers"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.162,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "list_steel_borrowers",
+     "qual": "list_steel_borrowers",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 679,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10DE6F00>"
+     },
+     "ret": "[]",
+     "dur_ms": 303.519,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/counterparty",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "DELETE /api/v1/data-intake/counterparty/{record_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "PUT /api/v1/data-intake/internal-config/{key}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/portfolio/upload",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/project-finance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 287.535,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "di_project_finance"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO di_project_finance (project_ref, project_name, project_type, country_iso2, capacity_mw, total_capex_musd, debt_musd, equity_musd, annual_revenue_musd, annual_opex_musd, annual_debt_service_musd, project_life_yrs, capacity_factor_pct, include_carbon_credits, carbon_credit_price_usd, annual_co2_avoided_tco2e, discount_rate_pct, equator_principles_category, paris_alignment_status, preli\u2026",
+     "tables": [
+      "di_project_finance"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.275,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "payload": "<ProjectFinanceIn (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "id",
+     "project_ref",
+     "status",
+     "preliminary_dscr",
+     "preliminary_lcoe_usd_mwh",
+     "preliminary_equity_irr_pct"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "create_project_finance",
+     "qual": "create_project_finance",
+     "file": "api/v1/routes/data_intake.py",
+     "line": 857,
+     "args": {
+      "payload": "ProjectFinanceIn(project_ref=None, project_name='TEST_payload_project_name', project_type=None, country_iso2=None, capacity_mw=None, total_capex_musd=None, debt_musd=None, equity_musd=None, annual_revenue_musd=None, annual_opex_musd=None, \u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022D10E2C500>"
+     },
+     "ret": "{'id': 1, 'project_ref': 'PF-84154225', 'status': 'ok', 'preliminary_dscr': None, 'preliminary_lcoe_usd_mwh': None, 'preliminary_equity_irr_pct': None}",
+     "dur_ms": 286.872,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 27,
+       "name": "_compute_project_metrics",
+       "qual": "_compute_project_metrics",
+       "file": "api/v1/routes/data_intake.py",
+       "line": 792,
+       "args": {
+        "p": "ProjectFinanceIn(project_ref=None, project_name='TEST_payload_project_name', project_type=None, country_iso2=None, capacity_mw=None, total_capex_musd=None, debt_musd=None, equity_musd=None, annual_revenue_musd=None, annual_opex_musd=None, \u2026"
+       },
+       "ret": "(None, None, None)",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-intake",
+   "label": "DELETE /api/v1/data-intake/project-finance/{project_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/real-estate/upload",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/shipping-fleet/upload",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "POST /api/v1/data-intake/steel-borrowers",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-intake",
+   "label": "DELETE /api/v1/data-intake/steel-borrowers/{borrower_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

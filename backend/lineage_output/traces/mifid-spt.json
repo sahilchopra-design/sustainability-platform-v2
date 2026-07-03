@@ -1,0 +1,375 @@
+{
+ "domain": "mifid-spt",
+ "meta": {
+  "ts": "2026-06-30T14:03:09",
+  "module": "api.v1.routes.mifid_spt",
+  "router_prefix": "/api/v1/mifid-spt",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "mifid-spt",
+   "label": "GET /api/v1/mifid-spt/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.016,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sfdr_art_8_9",
+     "eu_taxonomy",
+     "pai_sfdr_rts",
+     "csrd_esrs_e1",
+     "eba_esg_risk"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'sfdr_art_8_9': 'SFDR sustainable investment % maps to Category B', 'eu_taxonomy': 'Taxonomy-aligned % maps to Category A', 'pai_sfdr_rts': 'PAI consideration maps to Category C', 'csrd_esrs_e1': 'CSRD climate disclosure informs taxonomy \u2026",
+     "dur_ms": 0.123,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cross_framework",
+       "qual": "MiFIDSPTEngine.get_cross_framework",
+       "file": "services/mifid_spt_engine.py",
+       "line": 480,
+       "args": {},
+       "ret": "{'sfdr_art_8_9': 'SFDR sustainable investment % maps to Category B', 'eu_taxonomy': 'Taxonomy-aligned % maps to Category A', 'pai_sfdr_rts': 'PAI consideration maps to Category C', 'csrd_esrs_e1': 'CSRD climate disclosure informs taxonomy \u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "GET /api/v1/mifid-spt/ref/preference-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.864,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "category_a",
+     "category_b",
+     "category_c"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_preference_categories",
+     "qual": "ref_preference_categories",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 186,
+     "args": {},
+     "ret": "{'category_a': {'id': 'category_a', 'name': 'EU Taxonomy-Aligned', 'description': 'Minimum % of investments to be taxonomy-aligned per Regulation (EU) 2020/852', 'article': 'Art 2(7)(a) MiFID II + Art 2(1) EU Taxonomy Regulation', 'metric'\u2026",
+     "dur_ms": 0.161,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_preference_categories",
+       "qual": "MiFIDSPTEngine.get_preference_categories",
+       "file": "services/mifid_spt_engine.py",
+       "line": 474,
+       "args": {},
+       "ret": "{'category_a': {'id': 'category_a', 'name': 'EU Taxonomy-Aligned', 'description': 'Minimum % of investments to be taxonomy-aligned per Regulation (EU) 2020/852', 'article': 'Art 2(7)(a) MiFID II + Art 2(1) EU Taxonomy Regulation', 'metric'\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "GET /api/v1/mifid-spt/ref/product-esg-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.47,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "article_9",
+     "article_8_with_commitment",
+     "article_8_without_commitment",
+     "article_6"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_product_esg_types",
+     "qual": "ref_product_esg_types",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 194,
+     "args": {},
+     "ret": "{'article_9': {'sfdr_article': 'art_9', 'min_sustainable_pct': 100, 'pais_considered': True, 'typical_taxonomy_pct': 15}, 'article_8_with_commitment': {'sfdr_article': 'art_8', 'min_sustainable_pct': 10, 'pais_considered': True, 'typical_t\u2026",
+     "dur_ms": 0.084,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_product_esg_types",
+       "qual": "MiFIDSPTEngine.get_product_esg_types",
+       "file": "services/mifid_spt_engine.py",
+       "line": 483,
+       "args": {},
+       "ret": "{'article_9': {'sfdr_article': 'art_9', 'min_sustainable_pct': 100, 'pais_considered': True, 'typical_taxonomy_pct': 15}, 'article_8_with_commitment': {'sfdr_article': 'art_8', 'min_sustainable_pct': 10, 'pais_considered': True, 'typical_t\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "GET /api/v1/mifid-spt/ref/suitability-process",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.008,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "step",
+     "name",
+     "description",
+     "mandatory"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_suitability_process",
+     "qual": "ref_suitability_process",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 202,
+     "args": {},
+     "ret": "[{'step': 1, 'name': 'Collect client preferences', 'description': 'Gather client preferences across all 3 categories (A/B/C)', 'mandatory': True}, {'step': 2, 'name': 'Screen product universe', 'description': 'Filter products meeting minim\u2026",
+     "dur_ms": 0.174,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_suitability_process",
+       "qual": "MiFIDSPTEngine.get_suitability_process",
+       "file": "services/mifid_spt_engine.py",
+       "line": 477,
+       "args": {},
+       "ret": "[{'step': 1, 'name': 'Collect client preferences', 'description': 'Gather client preferences across all 3 categories (A/B/C)', 'mandatory': True}, {'step': 2, 'name': 'Screen product universe', 'description': 'Filter products meeting minim\u2026",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "GET /api/v1/mifid-spt/ref/timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.438,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "date",
+     "event",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_timeline",
+     "qual": "ref_timeline",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 218,
+     "args": {},
+     "ret": "[{'date': '2021-07-02', 'event': 'Delegated Regulation 2021/1253 published in OJEU', 'article': 'All'}, {'date': '2022-08-02', 'event': 'Application date \u2014 sustainability preferences integration into suitability process', 'article': 'Art 2\u2026",
+     "dur_ms": 0.101,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_timeline",
+       "qual": "MiFIDSPTEngine.get_timeline",
+       "file": "services/mifid_spt_engine.py",
+       "line": 486,
+       "args": {},
+       "ret": "[{'date': '2021-07-02', 'event': 'Delegated Regulation 2021/1253 published in OJEU', 'article': 'All'}, {'date': '2022-08-02', 'event': 'Application date \u2014 sustainability preferences integration into suitability process', 'article': 'Art 2\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "POST /api/v1/mifid-spt/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'client'",
+   "dur_ms": 0.559,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 97,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "POST /api/v1/mifid-spt/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'client'",
+   "dur_ms": 0.327,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "requests": "'TEST_requests' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/mifid_spt.py",
+     "line": 129,
+     "args": {
+      "requests": "'TEST_requests'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mifid-spt",
+   "label": "POST /api/v1/mifid-spt/suitability-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

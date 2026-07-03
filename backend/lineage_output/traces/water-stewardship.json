@@ -1,0 +1,821 @@
+{
+ "domain": "water-stewardship",
+ "meta": {
+  "ts": "2026-06-30T14:05:49",
+  "module": "api.v1.routes.water_stewardship",
+  "router_prefix": "/api/v1/water-risk",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "water-stewardship",
+   "label": "GET /api/v1/water-risk/ref/aqueduct-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.016,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "basin_benchmarks",
+     "indicator_definitions",
+     "risk_tier_thresholds",
+     "indicator_count",
+     "basin_count"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_aqueduct_benchmarks",
+     "qual": "get_aqueduct_benchmarks",
+     "file": "api/v1/routes/water_stewardship.py",
+     "line": 161,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'WRI AQUEDUCT 4.0 (2023) \u2014 https://www.wri.org/aqueduct', 'basin_benchmarks': {'Indus': {'baseline_water_stress': 4.8, 'groundwater_depletion': 28.0, 'riverine_flood_risk': 28.0, 'region': 'South Asia', 'cou\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-stewardship",
+   "label": "GET /api/v1/water-risk/ref/aws-standard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.732,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "standard_version",
+     "effective_date",
+     "pillar_count",
+     "pillar_weight_each_pct",
+     "certification_tiers",
+     "pillar_criteria",
+     "ceo_water_mandate",
+     "un_sdg_alignment"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_aws_standard",
+     "qual": "get_aws_standard",
+     "file": "api/v1/routes/water_stewardship.py",
+     "line": 197,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'Alliance for Water Stewardship Standard v2.0 (2022) \u2014 https://a4ws.org', 'standard_version': 'AWS Standard v2.0', 'effective_date': '2022-01-01', 'pillar_count': 5, 'pillar_weight_each_pct': 20, 'certificat\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-stewardship",
+   "label": "GET /api/v1/water-risk/ref/cdp-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.642,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "pillar_count",
+     "a_list_composite_minimum",
+     "data_verification_bonus",
+     "scoring_criteria",
+     "grade_thresholds",
+     "tnfd_e3_metrics"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_cdp_criteria",
+     "qual": "get_cdp_criteria",
+     "file": "api/v1/routes/water_stewardship.py",
+     "line": 178,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'CDP Water Security Questionnaire 2024 \u2014 https://www.cdp.net/en/water', 'pillar_count': 4, 'a_list_composite_minimum': 0.8, 'data_verification_bonus': '4% uplift applied to composite when third-party verifie\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-stewardship",
+   "label": "GET /api/v1/water-risk/ref/stewardship-bond",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.533,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "framework",
+     "eligible_category_count",
+     "bond_eligibility_minimum_score",
+     "key_standards"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_stewardship_bond_framework",
+     "qual": "get_stewardship_bond_framework",
+     "file": "api/v1/routes/water_stewardship.py",
+     "line": 218,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'ICMA Green Bond Principles 2021; EU Taxonomy Regulation 2020/852 (Delegated Act)', 'framework': {'icma_alignment': 'ICMA Green Bond Principles 2021 \u2014 Water and Wastewater Management Use of Proceeds Category\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-stewardship",
+   "label": "POST /api/v1/water-risk/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.105,
+   "node_count": 33,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<WaterRiskAssessRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "entity_id",
+     "entity_name",
+     "sector",
+     "basin_name",
+     "aqueduct",
+     "tnfd_e3",
+     "cdp_water_security",
+     "aws_standard_v2",
+     "ceo_water_mandate",
+     "financial_exposure",
+     "stewardship_bond",
+     "overall",
+     "key_findings",
+     "recommendations",
+     "standards_applied"
+    ],
+    "n_keys": 16
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_water_risk_endpoint",
+     "qual": "assess_water_risk_endpoint",
+     "file": "api/v1/routes/water_stewardship.py",
+     "line": 33,
+     "args": {
+      "request": "WaterRiskAssessRequest(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='industrial', basin_name=None, baseline_water_stress=None, interannual_variability=None, seasonal_variability=None, groundwater_depletion=None,\u2026"
+     },
+     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'aqueduct': {'indicator_scores': {'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 's\u2026",
+     "dur_ms": 1.27,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "assess_water_risk",
+       "qual": "assess_water_risk",
+       "file": "services/water_stewardship_engine.py",
+       "line": 653,
+       "args": {
+        "request_data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'baseline_water_stress': None, 'interannual_variability': None, 'seasonal_variability': None, 'groundwater_depletion': Non\u2026"
+       },
+       "ret": "WaterRiskResult(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='industrial', basin_name=None, aqueduct_indicator_scores={'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 'seasonal_variability': 12.\u2026",
+       "dur_ms": 1.007,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "_aqueduct_composite",
+         "qual": "_aqueduct_composite",
+         "file": "services/water_stewardship_engine.py",
+         "line": 592,
+         "args": {
+          "data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'baseline_water_stress': None, 'interannual_variability': None, 'seasonal_variability': None, 'groundwater_depletion': Non\u2026",
+          "eid": "'TEST_request_entity_id'"
+         },
+         "ret": "{'indicator_scores': {'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 'seasonal_variability': 12.05, 'groundwater_depletion': 38.66, 'riverine_flood_risk': 24.78, 'coastal_eutrophication': 73.1}, 'composite': 33.67}",
+         "dur_ms": 0.341,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 8,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_bws'",
+            "lo": "0.5",
+            "hi": "3.8"
+           },
+           "ret": "2.162",
+           "dur_ms": 0.012,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 9,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_iav'",
+            "lo": "0.2",
+            "hi": "1.5"
+           },
+           "ret": "0.306",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 10,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_sav'",
+            "lo": "0.2",
+            "hi": "1.6"
+           },
+           "ret": "0.241",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_gwd'",
+            "lo": "0.0",
+            "hi": "22.0"
+           },
+           "ret": "11.598",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_rfr'",
+            "lo": "2.0",
+            "hi": "45.0"
+           },
+           "ret": "24.783",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/water_stewardship_engine.py",
+           "line": 580,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'aq_ceu'",
+            "lo": "0.5",
+            "hi": "4.5"
+           },
+           "ret": "3.655",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 14,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "2.162",
+            "lo": "0.0",
+            "hi": "5.0"
+           },
+           "ret": "43.24",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "0.306",
+            "lo": "0.0",
+            "hi": "2.0"
+           },
+           "ret": "15.3",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "0.241",
+            "lo": "0.0",
+            "hi": "2.0"
+           },
+           "ret": "12.05",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "11.598",
+            "lo": "0.0",
+            "hi": "30.0"
+           },
+           "ret": "38.66",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "24.783",
+            "lo": "0.0",
+            "hi": "100.0"
+           },
+           "ret": "24.78",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "3.655",
+            "lo": "0.0",
+            "hi": "5.0"
+           },
+           "ret": "73.1",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 20,
+         "name": "_tier",
+         "qual": "_tier",
+         "file": "services/water_stewardship_engine.py",
+         "line": 614,
+         "args": {
+          "score": "33.67"
+         },
+         "ret": "'medium'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'wdraw'",
+          "lo": "50.0",
+          "hi": "2000.0"
+         },
+         "ret": "1997.46",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'crat'",
+          "lo": "0.35",
+          "hi": "0.68"
+         },
+         "ret": "0.611",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'recyc'",
+          "lo": "5.0",
+          "hi": "40.0"
+         },
+         "ret": "26.912",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'strs'",
+          "lo": "10.0",
+          "hi": "85.0"
+         },
+         "ret": "72.42",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "_tnfd_disclosure_score",
+         "qual": "_tnfd_disclosure_score",
+         "file": "services/water_stewardship_engine.py",
+         "line": 638,
+         "args": {
+          "data": "{'water_withdrawal_ml_yr': 1997.46, 'water_consumption_ml_yr': 1220.4, 'water_discharge_ml_yr': 777.1, 'water_stressed_ops_pct': 72.42, 'recycled_water_pct': 26.912}"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'cdp_g'",
+          "lo": "0.38",
+          "hi": "0.96"
+         },
+         "ret": "0.796",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'cdp_r'",
+          "lo": "0.38",
+          "hi": "0.96"
+         },
+         "ret": "0.6",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'cdp_t'",
+          "lo": "0.28",
+          "hi": "0.92"
+         },
+         "ret": "0.454",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'cdp_p'",
+          "lo": "0.32",
+          "hi": "0.92"
+         },
+         "ret": "0.619",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "_cdp_grade",
+         "qual": "_cdp_grade",
+         "file": "services/water_stewardship_engine.py",
+         "line": 624,
+         "args": {
+          "composite": "0.61725"
+         },
+         "ret": "'C'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'aws_wb'",
+          "lo": "0.38",
+          "hi": "0.96"
+         },
+         "ret": "0.79",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'aws_gv'",
+          "lo": "0.38",
+          "hi": "0.96"
+         },
+         "ret": "0.428",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'aws_sw'",
+          "lo": "0.38",
+          "hi": "0.92"
+         },
+         "ret": "0.77",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'aws_en'",
+          "lo": "0.3",
+          "hi": "0.92"
+         },
+         "ret": "0.712",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'aws_so'",
+          "lo": "0.3",
+          "hi": "0.92"
+         },
+         "ret": "0.339",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/water_stewardship_engine.py",
+         "line": 580,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'cwm_ns'",
+          "lo": "0.08",
+          "hi": "0.38"
+         },
+         "ret": "0.086",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "_tier",
+         "qual": "_tier",
+         "file": "services/water_stewardship_engine.py",
+         "line": 614,
+         "args": {
+          "score": "20.2"
+         },
+         "ret": "'medium'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "water-stewardship",
+   "label": "POST /api/v1/water-risk/stewardship-target",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

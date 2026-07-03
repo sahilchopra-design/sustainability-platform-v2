@@ -1,0 +1,1193 @@
+{
+ "domain": "pe-reporting",
+ "meta": {
+  "ts": "2026-06-30T14:03:45",
+  "module": "api.v1.routes.pe_reporting",
+  "router_prefix": "/api/v1/pe/reporting",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "pe-reporting",
+   "label": "GET /api/v1/pe/reporting/impact-dimensions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.813,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dimensions"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_impact_dimensions",
+     "qual": "get_impact_dimensions",
+     "file": "api/v1/routes/pe_reporting.py",
+     "line": 384,
+     "args": {},
+     "ret": "{'dimensions': ['what', 'who', 'how_much', 'contribution', 'risk']}",
+     "dur_ms": 0.065,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_impact_dimensions",
+       "qual": "PEImpactFramework.get_impact_dimensions",
+       "file": "services/pe_impact_framework.py",
+       "line": 315,
+       "args": {},
+       "ret": "['what', 'who', 'how_much', 'contribution', 'risk']",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "GET /api/v1/pe/reporting/pai-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.279,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_indicators"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_pai_indicators",
+     "qual": "get_pai_indicators",
+     "file": "api/v1/routes/pe_reporting.py",
+     "line": 366,
+     "args": {},
+     "ret": "{'pai_indicators': [{'pai_id': 'PAI_1', 'name': 'GHG Emissions (Scope 1+2+3)', 'unit': 'tCO2e', 'category': 'climate', 'mandatory': True}, {'pai_id': 'PAI_2', 'name': 'Carbon Footprint', 'unit': 'tCO2e/EUR M invested', 'category': 'climate\u2026",
+     "dur_ms": 0.074,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_pai_indicators",
+       "qual": "PEReportingEngine.get_pai_indicators",
+       "file": "services/pe_reporting_engine.py",
+       "line": 204,
+       "args": {},
+       "ret": "[{'pai_id': 'PAI_1', 'name': 'GHG Emissions (Scope 1+2+3)', 'unit': 'tCO2e', 'category': 'climate', 'mandatory': True}, {'pai_id': 'PAI_2', 'name': 'Carbon Footprint', 'unit': 'tCO2e/EUR M invested', 'category': 'climate', 'mandatory': Tru\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "GET /api/v1/pe/reporting/sdg-definitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.213,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sdgs"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_sdg_definitions",
+     "qual": "get_sdg_definitions",
+     "file": "api/v1/routes/pe_reporting.py",
+     "line": 372,
+     "args": {},
+     "ret": "{'sdgs': [{'sdg_number': 1, 'name': 'No Poverty', 'category': 'social'}, {'sdg_number': 2, 'name': 'Zero Hunger', 'category': 'social'}, {'sdg_number': 3, 'name': 'Good Health and Well-Being', 'category': 'social'}, {'sdg_number': 4, 'name\u2026",
+     "dur_ms": 0.078,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_sdg_definitions",
+       "qual": "PEImpactFramework.get_sdg_definitions",
+       "file": "services/pe_impact_framework.py",
+       "line": 311,
+       "args": {},
+       "ret": "{1: {'name': 'No Poverty', 'category': 'social'}, 2: {'name': 'Zero Hunger', 'category': 'social'}, 3: {'name': 'Good Health and Well-Being', 'category': 'social'}, 4: {'name': 'Quality Education', 'category': 'social'}, 5: {'name': 'Gende\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "POST /api/v1/pe/reporting/compute-irr",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 9.718,
+   "node_count": 58,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<IRRCashflowRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "irr_pct",
+     "cashflow_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "compute_irr",
+     "qual": "compute_irr",
+     "file": "api/v1/routes/pe_reporting.py",
+     "line": 358,
+     "args": {
+      "req": "IRRCashflowRequest(cashflows=[CashflowRequest(period=1, amount_eur=1.0)])"
+     },
+     "ret": "{'irr_pct': 134277343650.0, 'cashflow_count': 1}",
+     "dur_ms": 2.764,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "compute_irr",
+       "qual": "PEIRRSensitivityEngine.compute_irr",
+       "file": "services/pe_irr_sensitivity.py",
+       "line": 192,
+       "args": {
+        "cashflows": "[DealCashflow(period=1, amount_eur=1.0)]"
+       },
+       "ret": "134277343650.0",
+       "dur_ms": 2.677,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.9764540896763105",
+         "dur_ms": 0.018,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-0.22192138401734327",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.6529942057256105",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-0.029681554805709564",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.43668354428478123",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-0.003969850402588919",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.29202788658318946",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-0.0005309597937876171",
+         "dur_ms": 0.014,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.1952908179352621",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-7.101484288554984e-05",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.1305988411451221",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-9.49809753782706e-06",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.08733670885695623",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-1.270352128828454e-06",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.05840557731663789",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-1.6990713401203747e-07",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.03905816358705242",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-2.272474972337595e-08",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.026119768229024416",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-3.039391212104659e-09",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.017467341771391247",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-4.0651268122510533e-10",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.011681115463327578",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-5.437028288385199e-11",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.007811632717410483",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-7.2719199114803035e-12",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "0.0052239536458048835",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 202,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "-9.72605187873491e-13",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "<genexpr>",
+         "qual": "PEIRRSensitivityEngine.compute_irr.<locals>.<genexpr>",
+         "file": "services/pe_irr_sensitivity.py",
+         "line": 203,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E08DFD8340>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "POST /api/v1/pe/reporting/fund-impact",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.405,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<FundImpactRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fund_id",
+     "fund_name",
+     "fund_strategy",
+     "sfdr_classification",
+     "total_companies",
+     "fund_impact_score",
+     "fund_impact_rating",
+     "high_impact_count",
+     "medium_impact_count",
+     "low_impact_count",
+     "total_jobs_created",
+     "total_beneficiaries",
+     "total_co2_avoided_tonnes",
+     "total_renewable_mwh",
+     "additionality_score",
+     "impact_summary",
+     "company_scores",
+     "sdg_contributions"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 65,
+     "name": "assess_fund_impact",
+     "qual": "assess_fund_impact",
+     "file": "api/v1/routes/pe_reporting.py",
+     "line": 336,
+     "args": {
+      "req": "FundImpactRequest(fund_id='TEST_req_fund_id', fund_name='TEST_req_fund_name', fund_strategy='impact', sfdr_classification='art9', companies=[])"
+     },
+     "ret": "{'fund_id': 'TEST_req_fund_id', 'fund_name': 'TEST_req_fund_name', 'fund_strategy': 'impact', 'sfdr_classification': 'art9', 'total_companies': 0, 'fund_impact_score': 0, 'fund_impact_rating': 'neutral', 'high_impact_count': 0, 'medium_imp\u2026",
+     "dur_ms": 0.17,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 66,
+       "name": "assess_fund_impact",
+       "qual": "PEImpactFramework.assess_fund_impact",
+       "file": "services/pe_impact_framework.py",
+       "line": 207,
+       "args": {
+        "inp": "FundImpactInput(fund_id='TEST_req_fund_id', fund_name='TEST_req_fund_name', fund_strategy='impact', sfdr_classification='art9', companies=[])"
+       },
+       "ret": "FundImpactReport(fund_id='TEST_req_fund_id', fund_name='TEST_req_fund_name', fund_strategy='impact', sfdr_classification='art9', total_companies=0, company_scores=[], sdg_contributions=[], fund_impact_score=0, fund_impact_rating='neutral',\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "_serialise_impact_report",
+       "qual": "_serialise_impact_report",
+       "file": "api/v1/routes/pe_reporting.py",
+       "line": 220,
+       "args": {
+        "r": "FundImpactReport(fund_id='TEST_req_fund_id', fund_name='TEST_req_fund_name', fund_strategy='impact', sfdr_classification='art9', total_companies=0, company_scores=[], sdg_contributions=[], fund_impact_score=0, fund_impact_rating='neutral',\u2026"
+       },
+       "ret": "{'fund_id': 'TEST_req_fund_id', 'fund_name': 'TEST_req_fund_name', 'fund_strategy': 'impact', 'sfdr_classification': 'art9', 'total_companies': 0, 'fund_impact_score': 0, 'fund_impact_rating': 'neutral', 'high_impact_count': 0, 'medium_imp\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "POST /api/v1/pe/reporting/irr-sensitivity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-reporting",
+   "label": "POST /api/v1/pe/reporting/lp-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

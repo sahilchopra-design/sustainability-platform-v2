@@ -1,0 +1,501 @@
+{
+ "domain": "xbrl-export",
+ "meta": {
+  "ts": "2026-06-30T14:05:50",
+  "module": "api.v1.routes.xbrl_export",
+  "router_prefix": "/api/v1/xbrl",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/concept-mappings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.358,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esrs:GrossScope1GHGEmissions",
+     "esrs:GrossScope2GHGEmissionsLocationBased",
+     "esrs:GrossScope2GHGEmissionsMarketBased",
+     "esrs:TotalScope3GHGEmissions",
+     "esrs:TotalGHGEmissions",
+     "esrs:GHGIntensityPerNetRevenue",
+     "esrs:TotalEnergyConsumption",
+     "esrs:ShareOfRenewableEnergy",
+     "esrs:InternalCarbonPrice",
+     "esrs:FinancialEffectsTransitionRisks",
+     "esrs:FinancialEffectsPhysicalRisks",
+     "esrs:PollutantsEmittedToAir",
+     "esrs:TotalWaterConsumption",
+     "esrs:TotalLandUseChange",
+     "esrs:TotalWasteGenerated",
+     "ifrs-s2:AbsoluteGrossScope1GHGEmissions",
+     "ifrs-s2:AbsoluteGrossScope2GHGEmissions",
+     "ifrs-full:Revenue",
+     "ifrs-full:ProfitLoss",
+     "ifrs-full:Assets",
+     "ifrs-full:Equity",
+     "us-gaap:Revenues",
+     "us-gaap:NetIncomeLoss",
+     "us-gaap:Assets",
+     "us-gaap:StockholdersEquity"
+    ],
+    "n_keys": 25
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_concept_mappings",
+     "qual": "ref_concept_mappings",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 223,
+     "args": {},
+     "ret": "{'esrs:GrossScope1GHGEmissions': {'dp_id': 'E1-6_scope1_gross', 'esrs': 'E1', 'dr': 'E1-6', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e'}, 'esrs:GrossScope2GHGEmissionsLocationBased': {'dp_id': 'E1-6_scope2_location', 'esrs': 'E\u2026",
+     "dur_ms": 0.079,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_concept_mappings",
+       "qual": "XBRLIngestionEngine.get_concept_mappings",
+       "file": "services/xbrl_ingestion_engine.py",
+       "line": 510,
+       "args": {},
+       "ret": "{'esrs:GrossScope1GHGEmissions': {'dp_id': 'E1-6_scope1_gross', 'esrs': 'E1', 'dr': 'E1-6', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e'}, 'esrs:GrossScope2GHGEmissionsLocationBased': {'dp_id': 'E1-6_scope2_location', 'esrs': 'E\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/csrd-xbrl-bridge",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.234,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "bridge_map",
+     "total_mappings",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_csrd_xbrl_bridge",
+     "qual": "ref_csrd_xbrl_bridge",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 332,
+     "args": {},
+     "ret": "{'bridge_map': {'E1-6_GHG_scope1': 'E1-6_scope1_gross', 'E1-6_GHG_scope2_lb': 'E1-6_scope2_location', 'E1-6_GHG_scope2_mb': 'E1-6_scope2_market', 'E1-6_GHG_scope3_total': 'E1-6_scope3_total', 'E1-6_GHG_intensity_revenue': 'E1-6_ghg_intensi\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/ingestion-stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.263,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "supported_schemas",
+     "mapped_concepts",
+     "export_taxonomy_concepts",
+     "validation_rules"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ingestion_stats",
+     "qual": "ref_ingestion_stats",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'supported_schemas': 6, 'mapped_concepts': 25, 'export_taxonomy_concepts': 17, 'validation_rules': 7}",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_mapped_concept_count",
+       "qual": "XBRLIngestionEngine.get_mapped_concept_count",
+       "file": "services/xbrl_ingestion_engine.py",
+       "line": 513,
+       "args": {},
+       "ret": "25",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/supported-schemas",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.284,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esrs_2024",
+     "ifrs_s1s2_2024",
+     "ifrs_full_2024",
+     "us_gaap_2024",
+     "gri_2024",
+     "esef_lei"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_supported_schemas",
+     "qual": "ref_supported_schemas",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 218,
+     "args": {},
+     "ret": "{'esrs_2024': {'label': 'EFRAG ESRS XBRL Taxonomy 2024', 'namespace': 'http://xbrl.efrag.org/taxonomy/esrs/2024', 'prefix': 'esrs', 'report_types': ['CSRD Annual Report', 'ESRS Sustainability Statement'], 'region': 'EU', 'standards': ['E1'\u2026",
+     "dur_ms": 0.074,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_supported_schemas",
+       "qual": "XBRLIngestionEngine.get_supported_schemas",
+       "file": "services/xbrl_ingestion_engine.py",
+       "line": 507,
+       "args": {},
+       "ret": "{'esrs_2024': {'label': 'EFRAG ESRS XBRL Taxonomy 2024', 'namespace': 'http://xbrl.efrag.org/taxonomy/esrs/2024', 'prefix': 'esrs', 'report_types': ['CSRD Annual Report', 'ESRS Sustainability Statement'], 'region': 'EU', 'standards': ['E1'\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/supported-standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.138,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 6,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_supported_standards",
+     "qual": "ref_supported_standards",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 213,
+     "args": {},
+     "ret": "['E1', 'E2', 'E3', 'E4', 'E5', 'S2']",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_supported_standards",
+       "qual": "XBRLExportEngine.get_supported_standards",
+       "file": "services/xbrl_export_engine.py",
+       "line": 611,
+       "args": {},
+       "ret": "['E1', 'E2', 'E3', 'E4', 'E5', 'S2']",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/taxonomy",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "E1-6_scope1_gross",
+     "E1-6_scope2_location",
+     "E1-6_scope2_market",
+     "E1-6_scope3_total",
+     "E1-6_total_ghg",
+     "E1-6_ghg_intensity_revenue",
+     "E1-5_energy_consumption_total",
+     "E1-5_renewable_share",
+     "E1-9_internal_carbon_price",
+     "E1-9_transition_risk_amount",
+     "E1-9_physical_risk_amount",
+     "E2-4_pollutants_air",
+     "E3-4_water_consumption",
+     "E4-5_land_use_change",
+     "E5-5_waste_generated",
+     "S2_scope1_ghg",
+     "S2_scope2_ghg"
+    ],
+    "n_keys": 17
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_taxonomy",
+     "qual": "ref_taxonomy",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'E1-6_scope1_gross': {'concept': 'esrs:GrossScope1GHGEmissions', 'esrs': 'E1', 'dr': 'E1-6', 'paragraph': '44(a)', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e', 'xbrl_unit': 'xbrli:pure', 'data_type': 'decimalItemType', 'balanc\u2026",
+     "dur_ms": 0.079,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_taxonomy",
+       "qual": "XBRLExportEngine.get_taxonomy",
+       "file": "services/xbrl_export_engine.py",
+       "line": 605,
+       "args": {},
+       "ret": "{'E1-6_scope1_gross': {'concept': 'esrs:GrossScope1GHGEmissions', 'esrs': 'E1', 'dr': 'E1-6', 'paragraph': '44(a)', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e', 'xbrl_unit': 'xbrli:pure', 'data_type': 'decimalItemType', 'balanc\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "GET /api/v1/xbrl/ref/validation-rules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.147,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 7,
+    "item0_keys": [
+     "id",
+     "desc",
+     "field"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "ref_validation_rules",
+     "qual": "ref_validation_rules",
+     "file": "api/v1/routes/xbrl_export.py",
+     "line": 208,
+     "args": {},
+     "ret": "[{'id': 'ESEF-001', 'desc': 'Entity identifier must be a valid LEI', 'field': 'entity_lei'}, {'id': 'ESEF-002', 'desc': 'Period start must precede period end', 'field': 'period'}, {'id': 'ESEF-003', 'desc': 'Monetary items must specify cur\u2026",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13,
+       "name": "get_validation_rules",
+       "qual": "XBRLExportEngine.get_validation_rules",
+       "file": "services/xbrl_export_engine.py",
+       "line": 608,
+       "args": {},
+       "ret": "[{'id': 'ESEF-001', 'desc': 'Entity identifier must be a valid LEI', 'field': 'entity_lei'}, {'id': 'ESEF-002', 'desc': 'Period start must precede period end', 'field': 'period'}, {'id': 'ESEF-003', 'desc': 'Monetary items must specify cur\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "POST /api/v1/xbrl/export",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "POST /api/v1/xbrl/ingest",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "POST /api/v1/xbrl/ingest/ixbrl",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "POST /api/v1/xbrl/ingest/xbrl-xml",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "xbrl-export",
+   "label": "POST /api/v1/xbrl/pipeline/csrd-to-xbrl",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

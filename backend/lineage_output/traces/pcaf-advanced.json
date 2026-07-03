@@ -1,0 +1,1738 @@
+{
+ "domain": "pcaf-advanced",
+ "meta": {
+  "ts": "2026-06-30T14:03:34",
+  "module": "api.v1.routes.pcaf_advanced",
+  "router_prefix": "/api/v1/pcaf/advanced",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/gics-sub-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.49,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "unit",
+     "source",
+     "sub_sectors"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_gics_sub_sectors",
+     "qual": "list_gics_sub_sectors",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1414,
+     "args": {},
+     "ret": "{'count': 53, 'unit': 'tCO2e / EUR M revenue (Scope 1, 2, 3)', 'source': 'MSCI ESG Research 2024 / S&P Trucost / EXIOBASE 3.8 / CDP 2023', 'sub_sectors': {'101010_Oil_Gas_Drilling': {'s1': 420, 's2': 80, 's3': 2200}, '101020_Oil_Gas_E_P': \u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/indices",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.161,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "source",
+     "indices"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_indices",
+     "qual": "list_indices",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1326,
+     "args": {},
+     "ret": "{'count': 8, 'source': 'MSCI ESG Research / S&P Trucost / Bloomberg ESG / PCAF Index Tracker 2024', 'indices': {'MSCI_WORLD': {'name': 'MSCI World', 'constituents': 1509, 'carbon_footprint_tco2e_meur': 68.2, 'waci_tco2e_meur': 145.3, 'impl\u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/indices/{index_key}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Index '550e8400-e29b-41d4-a716-446655440001' not found. Available: ['MSCI_WORLD', 'SP500', 'STOXX_EUROPE_600', 'MSCI_EM', 'BLOOMBERG_GLOBAL_AGG', 'MSCI_ACWI_IMI', 'FTSE_ALL_WORLD', 'MSCI_WORLD_PAB']",
+   "dur_ms": 0.178,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "index_key": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_index_profile",
+     "qual": "get_index_profile",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1351,
+     "args": {
+      "index_key": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/nace-gics-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.14,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mapping"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "list_nace_gics_mapping",
+     "qual": "list_nace_gics_mapping",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1453,
+     "args": {},
+     "ret": "{'source': 'Eurostat / MSCI GICS / PCAF Standard guidance', 'mapping': {'A': 'Consumer Staples', 'B': 'Energy', 'C': 'Materials', 'D': 'Utilities', 'E': 'Utilities', 'F': 'Industrials', 'G': 'Consumer Discretionary', 'H': 'Industrials', 'I\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/nze-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.117,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "unit",
+     "pathways"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_nze_pathways",
+     "qual": "list_nze_pathways",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1443,
+     "args": {},
+     "ret": "{'source': 'IEA World Energy Outlook 2023, Net Zero Emissions by 2050 Scenario', 'unit': 'tCO2e / EUR M revenue', 'pathways': {'Energy': {2020: 650, 2025: 520, 2030: 340, 2035: 180, 2040: 80, 2050: 10}, 'Utilities': {2020: 500, 2025: 400, \u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "GET /api/v1/pcaf/advanced/sovereign-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.381,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries",
+     "source",
+     "data"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_sovereign_coverage",
+     "qual": "list_sovereign_coverage",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1425,
+     "args": {},
+     "ret": "{'countries': 122, 'source': 'EDGAR v8.0 / Global Carbon Budget 2023 / UNFCCC CRF / IMF WEO Apr 2024 / World Bank WDI', 'data': {'AE': {'emissions_mtco2e': 190, 'gdp_ppp_usd_tn': 0.84, 'intensity_tco2e_per_usdm_gdp': 226190.48}, 'AL': {'em\u2026",
+     "dur_ms": 0.167,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "POST /api/v1/pcaf/advanced/compare-to-index",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "POST /api/v1/pcaf/advanced/fund",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 117.833,
+   "node_count": 56,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<FundInput (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fund_id",
+     "fund_name",
+     "fund_type",
+     "total_nav_eur",
+     "holdings_count",
+     "coverage_by_mv_pct",
+     "financed_scope1_tco2e",
+     "financed_scope2_tco2e",
+     "financed_scope3_tco2e",
+     "financed_total_tco2e",
+     "carbon_footprint_tco2e_per_meur",
+     "waci_tco2e_per_meur",
+     "implied_temperature_c",
+     "weighted_dqs",
+     "data_completeness_pct",
+     "benchmark_index",
+     "benchmark_carbon_footprint",
+     "benchmark_waci",
+     "benchmark_temp_c",
+     "carbon_footprint_vs_benchmark_pct",
+     "waci_vs_benchmark_pct",
+     "active_carbon_share",
+     "top_5_emitters_pct",
+     "top_10_emitters_pct",
+     "fossil_fuel_exposure_pct"
+    ],
+    "n_keys": 38
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_fund",
+     "qual": "assess_fund",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1090,
+     "args": {
+      "req": "FundInput(fund_id=None, fund_isin=None, fund_name='TEST_req_fund_name', fund_type='equity_fund', total_nav_eur=1.0, expense_ratio_pct=0, benchmark_index=None, holdings=[SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=Non\u2026"
+     },
+     "ret": "FundResult(fund_id=None, fund_name='TEST_req_fund_name', fund_type='equity_fund', total_nav_eur=1.0, holdings_count=1, coverage_by_mv_pct=100.0, financed_scope1_tco2e=60.0, financed_scope2_tco2e=40.0, financed_scope3_tco2e=350.0, financed_\u2026",
+     "dur_ms": 117.39,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "assess_fund.<locals>.<genexpr>",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 1100,
+       "args": {
+        ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+       },
+       "ret": "1.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "assess_fund.<locals>.<genexpr>",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 1100,
+       "args": {
+        ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_assess_security",
+       "qual": "_assess_security",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 779,
+       "args": {
+        "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026",
+        "total_mv": "1.0",
+        "year": "2024"
+       },
+       "ret": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026",
+       "dur_ms": 116.613,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11,
+         "name": "_auto_dqs",
+         "qual": "_auto_dqs",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 695,
+         "args": {
+          "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026"
+         },
+         "ret": "5",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "_get_sector_ef",
+         "qual": "_get_sector_ef",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 708,
+         "args": {
+          "sector": "'Default'",
+          "gics_sub": "None"
+         },
+         "ret": "{'s1': 60.0, 's2': 40.0, 's3': 350.0}",
+         "dur_ms": 116.34,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 13,
+           "name": "<module>",
+           "qual": "<module>",
+           "file": "api/v1/routes/pcaf_asset_classes.py",
+           "line": 1,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 114.11,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 14,
+             "name": "DataGap",
+             "qual": "DataGap",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 284,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.014,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 15,
+             "name": "AssetEmissionResult",
+             "qual": "AssetEmissionResult",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 292,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.087,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 16,
+             "name": "RegulatoryDisclosure",
+             "qual": "RegulatoryDisclosure",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 327,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.024,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 17,
+             "name": "PortfolioSummary",
+             "qual": "PortfolioSummary",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 344,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.116,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 18,
+             "name": "ListedEquityAsset",
+             "qual": "ListedEquityAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 393,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.708,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 19,
+             "name": "ListedEquityRequest",
+             "qual": "ListedEquityRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 427,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.345,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 20,
+             "name": "BusinessLoanAsset",
+             "qual": "BusinessLoanAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 601,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.38,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 21,
+             "name": "BusinessLoanRequest",
+             "qual": "BusinessLoanRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 619,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.118,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 22,
+             "name": "ProjectFinanceAsset",
+             "qual": "ProjectFinanceAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 754,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.539,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 23,
+             "name": "ProjectFinanceRequest",
+             "qual": "ProjectFinanceRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 771,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.118,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 24,
+             "name": "CREAsset",
+             "qual": "CREAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 897,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.506,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 25,
+             "name": "CRERequest",
+             "qual": "CRERequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 915,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.155,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 26,
+             "name": "MortgageAsset",
+             "qual": "MortgageAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1036,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.433,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 27,
+             "name": "MortgageRequest",
+             "qual": "MortgageRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1052,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.111,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 28,
+             "name": "VehicleLoanAsset",
+             "qual": "VehicleLoanAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1169,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.345,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 29,
+             "name": "VehicleLoanRequest",
+             "qual": "VehicleLoanRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1186,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.149,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 30,
+             "name": "SovereignBondAsset",
+             "qual": "SovereignBondAsset",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1293,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.283,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 31,
+             "name": "SovereignBondRequest",
+             "qual": "SovereignBondRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1305,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.131,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 32,
+             "name": "MultiAssetSummary",
+             "qual": "MultiAssetSummary",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1418,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.068,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 33,
+             "name": "MultiAssetRequest",
+             "qual": "MultiAssetRequest",
+             "file": "api/v1/routes/pcaf_asset_classes.py",
+             "line": 1436,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.553,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": 34,
+         "name": "_nze_alignment",
+         "qual": "_nze_alignment",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 718,
+         "args": {
+          "sector": "'Default'",
+          "intensity": "450000000.0",
+          "year": "2024"
+         },
+         "ret": "(4.5, 'diverging')",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "_transition_risk_score",
+         "qual": "_transition_risk_score",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 747,
+         "args": {
+          "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026",
+          "intensity": "450000000.0"
+         },
+         "ret": "(40, 'medium')",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 36,
+       "name": "_aggregate_securities",
+       "qual": "_aggregate_securities",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 910,
+       "args": {
+        "securities": "[SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, finan\u2026",
+        "total_mv": "1.0",
+        "benchmark_key": "None"
+       },
+       "ret": "{'total_s1': 60.0, 'total_s2': 40.0, 'total_s3': 350.0, 'total_fin': 450.0, 'cf': 450000000.0, 'waci': 450000000.0, 'implied_temp': 4.5, 'w_dqs': 5.0, 'avg_comp': 0.0, 'top5_pct': 100.0, 'top10_pct': 100.0, 'fossil_pct': 0.0, 'green_pct': \u2026",
+       "dur_ms": 0.498,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 919,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "60.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 919,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 920,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "40.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 920,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 921,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "350.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 921,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 935,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "5.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 935,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 939,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 939,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 942,
+         "args": {
+          "x": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 943,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 943,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 944,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 944,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 947,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 951,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 957,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 957,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 963,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 967,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "_waci_to_temp",
+         "qual": "_waci_to_temp",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 684,
+         "args": {
+          "waci": "450000000.0"
+         },
+         "ret": "4.5",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 1013,
+         "args": {
+          "x": "('Default', 450.0)"
+         },
+         "ret": "-450.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 1014,
+         "args": {
+          "x": "('XX', 450.0)"
+         },
+         "ret": "-450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "POST /api/v1/pcaf/advanced/portfolio",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Portfolio must contain at least 1 fund or direct holding",
+   "dur_ms": 0.235,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<PortfolioInput (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 63,
+     "name": "assess_portfolio",
+     "qual": "assess_portfolio",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1169,
+     "args": {
+      "req": "PortfolioInput(portfolio_id=None, portfolio_name='TEST_req_portfolio_name', reporting_year=2024, reporting_date=None, base_currency='EUR', benchmark_index=None, funds=None, direct_holdings=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-advanced",
+   "label": "POST /api/v1/pcaf/advanced/securities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.054,
+   "node_count": 35,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<SecurityBatchRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "reporting_year",
+     "total_securities",
+     "total_mv_eur",
+     "financed_total_tco2e",
+     "carbon_footprint_tco2e_per_meur",
+     "waci_tco2e_per_meur",
+     "implied_temperature_c",
+     "weighted_dqs",
+     "benchmark_index",
+     "benchmark_carbon_footprint",
+     "carbon_footprint_vs_benchmark_pct",
+     "results",
+     "methodology"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 64,
+     "name": "assess_securities",
+     "qual": "assess_securities",
+     "file": "api/v1/routes/pcaf_advanced.py",
+     "line": 1050,
+     "args": {
+      "req": "SecurityBatchRequest(securities=[SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value\u2026"
+     },
+     "ret": "SecurityBatchResponse(reporting_year=2024, total_securities=1, total_mv_eur=1.0, financed_total_tco2e=450.0, carbon_footprint_tco2e_per_meur=450000000.0, waci_tco2e_per_meur=450000000.0, implied_temperature_c=4.5, weighted_dqs=5.0, benchma\u2026",
+     "dur_ms": 0.768,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "assess_securities.<locals>.<genexpr>",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 1058,
+       "args": {
+        ".0": "<list_iterator object at 0x000001FE5C8C0AC0>"
+       },
+       "ret": "1.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "assess_securities.<locals>.<genexpr>",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 1058,
+       "args": {
+        ".0": "<list_iterator object at 0x000001FE5C8C0AC0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "_assess_security",
+       "qual": "_assess_security",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 779,
+       "args": {
+        "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026",
+        "total_mv": "1.0",
+        "year": "2024"
+       },
+       "ret": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026",
+       "dur_ms": 0.157,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 68,
+         "name": "_auto_dqs",
+         "qual": "_auto_dqs",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 695,
+         "args": {
+          "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "_get_sector_ef",
+         "qual": "_get_sector_ef",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 708,
+         "args": {
+          "sector": "'Default'",
+          "gics_sub": "None"
+         },
+         "ret": "{'s1': 60.0, 's2': 40.0, 's3': 350.0}",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "_nze_alignment",
+         "qual": "_nze_alignment",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 718,
+         "args": {
+          "sector": "'Default'",
+          "intensity": "450000000.0",
+          "year": "2024"
+         },
+         "ret": "(4.5, 'diverging')",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "_transition_risk_score",
+         "qual": "_transition_risk_score",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 747,
+         "args": {
+          "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026",
+          "intensity": "450000000.0"
+         },
+         "ret": "(40, 'medium')",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 72,
+       "name": "_aggregate_securities",
+       "qual": "_aggregate_securities",
+       "file": "api/v1/routes/pcaf_advanced.py",
+       "line": 910,
+       "args": {
+        "securities": "[SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, finan\u2026",
+        "total_mv": "1.0",
+        "benchmark_key": "None"
+       },
+       "ret": "{'total_s1': 60.0, 'total_s2': 40.0, 'total_s3': 350.0, 'total_fin': 450.0, 'cf': 450000000.0, 'waci': 450000000.0, 'implied_temp': 4.5, 'w_dqs': 5.0, 'avg_comp': 0.0, 'top5_pct': 100.0, 'top10_pct': 100.0, 'fossil_pct': 0.0, 'green_pct': \u2026",
+       "dur_ms": 0.442,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 73,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 919,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "60.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 919,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 75,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 920,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "40.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 76,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 920,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 77,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 921,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "350.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 921,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 79,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 935,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "5.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 80,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 935,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 81,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 939,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 82,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 939,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 942,
+         "args": {
+          "x": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 84,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 943,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 85,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 943,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 944,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 944,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 947,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 951,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 957,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 957,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 963,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 967,
+         "args": {
+          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 96,
+         "name": "_waci_to_temp",
+         "qual": "_waci_to_temp",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 684,
+         "args": {
+          "waci": "450000000.0"
+         },
+         "ret": "4.5",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 1013,
+         "args": {
+          "x": "('Default', 450.0)"
+         },
+         "ret": "-450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<lambda>",
+         "qual": "_aggregate_securities.<locals>.<lambda>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 1014,
+         "args": {
+          "x": "('XX', 450.0)"
+         },
+         "ret": "-450.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

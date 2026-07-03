@@ -1,0 +1,1989 @@
+{
+ "domain": "sustainability",
+ "meta": {
+  "ts": "2026-06-30T14:05:30",
+  "module": "api.v1.routes.sustainability",
+  "router_prefix": "/api/v1/sustainability",
+  "endpoints": 15
+ },
+ "transactions": [
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.585,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "certification_type": "None (default)",
+    "property_sector": "None (default)",
+    "region": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_benchmarks",
+     "qual": "list_benchmarks",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 497,
+     "args": {
+      "certification_type": "None",
+      "property_sector": "None",
+      "region": "None"
+     },
+     "ret": "BenchmarkListResponse(items=[CertificationBenchmarkData(certification_type=<CertificationType.LEED: 'leed'>, property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'>, avg_rent_premium_percent=Decima\u2026",
+     "dur_ms": 0.356,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_benchmark_data",
+       "qual": "get_benchmark_data",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 161,
+       "args": {},
+       "ret": "[{'certification_type': 'leed', 'property_sector': 'office', 'region': 'north_america', 'avg_rent_premium_percent': Decimal('8.5'), 'rent_premium_range_low': Decimal('4.0'), 'rent_premium_range_high': Decimal('15.0'), 'avg_value_premium_pe\u2026",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/breeam/weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.37,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scheme",
+     "weights",
+     "rating_thresholds"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_breeam_weights",
+     "qual": "get_breeam_weights",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 450,
+     "args": {},
+     "ret": "{'scheme': 'new_construction', 'weights': {'management': 0.12, 'health_wellbeing': 0.15, 'energy': 0.19, 'transport': 0.08, 'water': 0.06, 'materials': 0.125, 'waste': 0.075, 'land_use_ecology': 0.1, 'pollution': 0.1, 'innovation': 0.1}, '\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/certifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.644,
+   "node_count": 2,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "certification_type": "None (default)",
+    "property_sector": "None (default)",
+    "region": "None (default)",
+    "page": "1 (default)",
+    "page_size": "20 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total",
+     "page",
+     "page_size"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "list_certifications",
+     "qual": "list_certifications",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 289,
+     "args": {
+      "certification_type": "None",
+      "property_sector": "None",
+      "region": "None",
+      "page": "1",
+      "page_size": "20"
+     },
+     "ret": "CertificationListResponse(items=[CertificationResponse(certification_type=<CertificationType.LEED: 'leed'>, property_id=UUID('aa0e8400-e29b-41d4-a716-446655440001'), property_name='Downtown Office Tower', property_sector=<PropertySector.OF\u2026",
+     "dur_ms": 0.257,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_sample_certifications",
+       "qual": "get_sample_certifications",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 45,
+       "args": {},
+       "ret": "[{'id': 'cc0e8400-e29b-41d4-a716-446655440001', 'certification_type': 'leed', 'property_id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_sector': 'office', 'region': 'north_america', 'certifi\u2026",
+       "dur_ms": 0.032,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/certifications/{certification_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.355,
+   "node_count": 4,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "certification_id": "cc0e8400-e29b-41d4-a716-446655440001 (real id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "certification_type",
+     "property_id",
+     "property_name",
+     "property_sector",
+     "region",
+     "certification_level",
+     "score",
+     "certification_date",
+     "expiration_date",
+     "version",
+     "gross_floor_area_m2",
+     "year_built",
+     "current_value",
+     "noi",
+     "id",
+     "value_premium_percent",
+     "rent_premium_percent",
+     "estimated_value_impact",
+     "created_at",
+     "updated_at"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_certification",
+     "qual": "get_certification",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 320,
+     "args": {
+      "certification_id": "'cc0e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "CertificationResponse(certification_type=<CertificationType.LEED: 'leed'>, property_id=UUID('aa0e8400-e29b-41d4-a716-446655440001'), property_name='Downtown Office Tower', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.N\u2026",
+     "dur_ms": 0.164,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_sample_certifications",
+       "qual": "get_sample_certifications",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 45,
+       "args": {},
+       "ret": "[{'id': 'cc0e8400-e29b-41d4-a716-446655440001', 'certification_type': 'leed', 'property_id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_sector': 'office', 'region': 'north_america', 'certifi\u2026",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "get_certification.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 324,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517D0C0>"
+       },
+       "ret": "{'id': 'cc0e8400-e29b-41d4-a716-446655440001', 'certification_type': 'leed', 'property_id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_sector': 'office', 'region': 'north_america', 'certific\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "get_certification.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 324,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517D0C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.496,
+   "node_count": 14,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_certified_properties",
+     "total_uncertified_properties",
+     "certification_coverage_percent",
+     "by_certification_type",
+     "by_level",
+     "total_certified_value",
+     "avg_value_premium_captured",
+     "potential_value_uplift",
+     "avg_gresb_score",
+     "avg_leed_points",
+     "avg_breeam_score",
+     "certifications_this_year",
+     "certifications_expiring_soon"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_dashboard_kpis",
+     "qual": "get_dashboard_kpis",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 237,
+     "args": {},
+     "ret": "SustainabilityDashboardKPIs(total_certified_properties=5, total_uncertified_properties=2, certification_coverage_percent=Decimal('71.4'), by_certification_type={'leed': 2, 'breeam': 1, 'energy_star': 1, 'gresb': 1}, by_level={'gold': 1, 'v\u2026",
+     "dur_ms": 0.385,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_sample_certifications",
+       "qual": "get_sample_certifications",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 45,
+       "args": {},
+       "ret": "[{'id': 'cc0e8400-e29b-41d4-a716-446655440001', 'certification_type': 'leed', 'property_id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_sector': 'office', 'region': 'north_america', 'certifi\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "450000000.0",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "85000000.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "175000000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "2500000000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "280000000.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 253,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "68850000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "9775000.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "10500000.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "235000000.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "64120000.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "get_dashboard_kpis.<locals>.<genexpr>",
+       "file": "api/v1/routes/sustainability.py",
+       "line": 254,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E81517CDC0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/enums",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.24,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "certification_types",
+     "leed_levels",
+     "breeam_levels",
+     "gresb_ratings",
+     "property_sectors",
+     "regions"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_enum_values",
+     "qual": "get_enum_values",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 653,
+     "args": {},
+     "ret": "{'certification_types': ['gresb', 'leed', 'breeam', 'energy_star', 'well', 'fitwel', 'green_globes', 'nabers', 'casbee', 'hqe'], 'leed_levels': ['certified', 'silver', 'gold', 'platinum'], 'breeam_levels': ['pass', 'good', 'very_good', 'ex\u2026",
+     "dur_ms": 0.128,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/gresb/benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.761,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "region": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "benchmarks",
+     "total",
+     "year"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "get_gresb_benchmarks",
+     "qual": "get_gresb_benchmarks",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 364,
+     "args": {
+      "region": "None"
+     },
+     "ret": "{'benchmarks': [{'region': 'north_america', 'peer_avg_score': 72.0, 'top_quartile_threshold': 82.0, 'bottom_quartile_threshold': 60.0, 'num_peers': 450}, {'region': 'europe', 'peer_avg_score': 76.0, 'top_quartile_threshold': 86.0, 'bottom_\u2026",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "GET /api/v1/sustainability/leed/thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.316,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "levels",
+     "max_points",
+     "categories"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "get_leed_thresholds",
+     "qual": "get_leed_thresholds",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 406,
+     "args": {},
+     "ret": "{'levels': {'certified': {'min_points': 40, 'max_points': 49}, 'silver': {'min_points': 50, 'max_points': 59}, 'gold': {'min_points': 60, 'max_points': 79}, 'platinum': {'min_points': 80, 'max_points': 110}}, 'max_points': 110, 'categories\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/breeam/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.23,
+   "node_count": 26,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<BREEAMAssessmentRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "weighted_score",
+     "rating",
+     "category_weighted_scores",
+     "points_to_next_level",
+     "estimated_rent_premium_percent",
+     "estimated_value_premium_percent",
+     "estimated_value_impact",
+     "highest_performing",
+     "improvement_priorities",
+     "percentile_rank",
+     "regional_avg_score"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "calculate_breeam_assessment",
+     "qual": "calculate_breeam_assessment",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 433,
+     "args": {
+      "request": "BREEAMAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.EUROPE: 'europe'>, breeam_scheme='new_construction', category_scores=BREEAMCategoryScor\u2026"
+     },
+     "ret": "BREEAMAssessmentResult(weighted_score=Decimal('0.0'), rating=<BREEAMLevel.PASS: 'pass'>, category_weighted_scores={'management': Decimal('0.0'), 'health_wellbeing': Decimal('0.0'), 'energy': Decimal('0.0'), 'transport': Decimal('0.0'), 'wa\u2026",
+     "dur_ms": 0.652,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 28,
+       "name": "calculate_breeam",
+       "qual": "SustainabilityEngine.calculate_breeam",
+       "file": "services/sustainability_calculator.py",
+       "line": 953,
+       "args": {
+        "request": "BREEAMAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.EUROPE: 'europe'>, breeam_scheme='new_construction', category_scores=BREEAMCategoryScor\u2026"
+       },
+       "ret": "BREEAMAssessmentResult(weighted_score=Decimal('0.0'), rating=<BREEAMLevel.PASS: 'pass'>, category_weighted_scores={'management': Decimal('0.0'), 'health_wellbeing': Decimal('0.0'), 'energy': Decimal('0.0'), 'transport': Decimal('0.0'), 'wa\u2026",
+       "dur_ms": 0.589,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 29,
+         "name": "calculate_assessment",
+         "qual": "BREEAMCalculator.calculate_assessment",
+         "file": "services/sustainability_calculator.py",
+         "line": 496,
+         "args": {
+          "request": "BREEAMAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.EUROPE: 'europe'>, breeam_scheme='new_construction', category_scores=BREEAMCategoryScor\u2026"
+         },
+         "ret": "BREEAMAssessmentResult(weighted_score=Decimal('0.0'), rating=<BREEAMLevel.PASS: 'pass'>, category_weighted_scores={'management': Decimal('0.0'), 'health_wellbeing': Decimal('0.0'), 'energy': Decimal('0.0'), 'transport': Decimal('0.0'), 'wa\u2026",
+         "dur_ms": 0.517,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 30,
+           "name": "_get_rating",
+           "qual": "BREEAMCalculator._get_rating",
+           "file": "services/sustainability_calculator.py",
+           "line": 563,
+           "args": {
+            "score": "Decimal('0.000')"
+           },
+           "ret": "<BREEAMLevel.PASS: 'pass'>",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 31,
+           "name": "_points_to_next_level",
+           "qual": "BREEAMCalculator._points_to_next_level",
+           "file": "services/sustainability_calculator.py",
+           "line": 577,
+           "args": {
+            "current": "Decimal('0.000')",
+            "level": "<BREEAMLevel.PASS: 'pass'>"
+           },
+           "ret": "Decimal('45.0')",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 32,
+           "name": "_identify_highest_performing",
+           "qual": "BREEAMCalculator._identify_highest_performing",
+           "file": "services/sustainability_calculator.py",
+           "line": 590,
+           "args": {
+            "scores": "BREEAMCategoryScore(management=0, health_wellbeing=0, energy=0, transport=0, water=0, materials=0, waste=0, land_use_ecology=0, pollution=0, innovation=0)"
+           },
+           "ret": "['management', 'health_wellbeing', 'energy']",
+           "dur_ms": 0.126,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 33,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('management', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 34,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('health_wellbeing', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 35,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('energy', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 36,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('transport', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 37,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('water', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 38,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('materials', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 39,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('waste', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 40,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('land_use_ecology', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 41,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_highest_performing.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 603,
+             "args": {
+              "x": "('pollution', 0)"
+             },
+             "ret": "0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 42,
+           "name": "_identify_improvements",
+           "qual": "BREEAMCalculator._identify_improvements",
+           "file": "services/sustainability_calculator.py",
+           "line": 606,
+           "args": {
+            "scores": "BREEAMCategoryScore(management=0, health_wellbeing=0, energy=0, transport=0, water=0, materials=0, waste=0, land_use_ecology=0, pollution=0, innovation=0)",
+            "weights": "BREEAMWeights(management=Decimal('0.12'), health_wellbeing=Decimal('0.15'), energy=Decimal('0.19'), transport=Decimal('0.08'), water=Decimal('0.06'), materials=Decimal('0.125'), waste=Decimal('0.075'), land_use_ecology=Decimal('0.10'), pol\u2026"
+           },
+           "ret": "[{'category': 'Energy', 'current_score': 0.0, 'target_score': 80, 'weight': 0.19, 'potential_weighted_gain': 15.2, 'priority': 'high'}, {'category': 'Health Wellbeing', 'current_score': 0.0, 'target_score': 80, 'weight': 0.15, 'potential_w\u2026",
+           "dur_ms": 0.183,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 43,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Management', 'current_score': 0.0, 'target_score': 80, 'weight': 0.12, 'potential_weighted_gain': 9.6, 'priority': 'high'}"
+             },
+             "ret": "9.6",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 44,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Health Wellbeing', 'current_score': 0.0, 'target_score': 80, 'weight': 0.15, 'potential_weighted_gain': 12.0, 'priority': 'high'}"
+             },
+             "ret": "12.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 45,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Energy', 'current_score': 0.0, 'target_score': 80, 'weight': 0.19, 'potential_weighted_gain': 15.2, 'priority': 'high'}"
+             },
+             "ret": "15.2",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 46,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Transport', 'current_score': 0.0, 'target_score': 80, 'weight': 0.08, 'potential_weighted_gain': 6.4, 'priority': 'high'}"
+             },
+             "ret": "6.4",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 47,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Water', 'current_score': 0.0, 'target_score': 80, 'weight': 0.06, 'potential_weighted_gain': 4.8, 'priority': 'medium'}"
+             },
+             "ret": "4.8",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 48,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Materials', 'current_score': 0.0, 'target_score': 80, 'weight': 0.125, 'potential_weighted_gain': 10.0, 'priority': 'high'}"
+             },
+             "ret": "10.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 49,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Waste', 'current_score': 0.0, 'target_score': 80, 'weight': 0.075, 'potential_weighted_gain': 6.0, 'priority': 'high'}"
+             },
+             "ret": "6.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 50,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Land Use Ecology', 'current_score': 0.0, 'target_score': 80, 'weight': 0.1, 'potential_weighted_gain': 8.0, 'priority': 'high'}"
+             },
+             "ret": "8.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 51,
+             "name": "<lambda>",
+             "qual": "BREEAMCalculator._identify_improvements.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 634,
+             "args": {
+              "x": "{'category': 'Pollution', 'current_score': 0.0, 'target_score': 80, 'weight': 0.1, 'potential_weighted_gain': 8.0, 'priority': 'high'}"
+             },
+             "ret": "8.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 52,
+           "name": "_calculate_percentile",
+           "qual": "BREEAMCalculator._calculate_percentile",
+           "file": "services/sustainability_calculator.py",
+           "line": 636,
+           "args": {
+            "score": "Decimal('0.000')",
+            "regional_avg": "Decimal('76')"
+           },
+           "ret": "5",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/certifications",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/compare",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/gresb/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 76.447,
+   "node_count": 15,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<GRESBAssessmentRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_score",
+     "star_rating",
+     "component_scores",
+     "management_score",
+     "performance_score",
+     "benchmark",
+     "percentile_rank",
+     "estimated_rent_premium_percent",
+     "estimated_value_premium_percent",
+     "estimated_value_impact",
+     "cap_rate_compression_bps",
+     "score_to_next_star",
+     "improvement_recommendations",
+     "priority_areas",
+     "yoy_score_change",
+     "yoy_rating_change"
+    ],
+    "n_keys": 16
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 53,
+     "name": "calculate_gresb_assessment",
+     "qual": "calculate_gresb_assessment",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 348,
+     "args": {
+      "request": "GRESBAssessmentRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', entity_type='standing_investments', region=<Region.NORTH_AMERICA: 'north_america'>, sector_allocation={}, component_scores=GRESBComponentScore(manageme\u2026"
+     },
+     "ret": "GRESBAssessmentResult(total_score=Decimal('0'), star_rating=<GRESBRating.ONE_STAR: '1_star'>, component_scores=GRESBComponentScore(management=0, policy=0, risk_management=0, stakeholder_engagement=0, performance_indicators=0), management_s\u2026",
+     "dur_ms": 0.789,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 54,
+       "name": "calculate_gresb",
+       "qual": "SustainabilityEngine.calculate_gresb",
+       "file": "services/sustainability_calculator.py",
+       "line": 947,
+       "args": {
+        "request": "GRESBAssessmentRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', entity_type='standing_investments', region=<Region.NORTH_AMERICA: 'north_america'>, sector_allocation={}, component_scores=GRESBComponentScore(manageme\u2026"
+       },
+       "ret": "GRESBAssessmentResult(total_score=Decimal('0'), star_rating=<GRESBRating.ONE_STAR: '1_star'>, component_scores=GRESBComponentScore(management=0, policy=0, risk_management=0, stakeholder_engagement=0, performance_indicators=0), management_s\u2026",
+       "dur_ms": 0.697,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 55,
+         "name": "calculate_assessment",
+         "qual": "GRESBCalculator.calculate_assessment",
+         "file": "services/sustainability_calculator.py",
+         "line": 160,
+         "args": {
+          "request": "GRESBAssessmentRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', entity_type='standing_investments', region=<Region.NORTH_AMERICA: 'north_america'>, sector_allocation={}, component_scores=GRESBComponentScore(manageme\u2026"
+         },
+         "ret": "GRESBAssessmentResult(total_score=Decimal('0'), star_rating=<GRESBRating.ONE_STAR: '1_star'>, component_scores=GRESBComponentScore(management=0, policy=0, risk_management=0, stakeholder_engagement=0, performance_indicators=0), management_s\u2026",
+         "dur_ms": 0.582,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 56,
+           "name": "_get_star_rating",
+           "qual": "GRESBCalculator._get_star_rating",
+           "file": "services/sustainability_calculator.py",
+           "line": 235,
+           "args": {
+            "score": "0"
+           },
+           "ret": "<GRESBRating.ONE_STAR: '1_star'>",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "_calculate_percentile",
+           "qual": "GRESBCalculator._calculate_percentile",
+           "file": "services/sustainability_calculator.py",
+           "line": 249,
+           "args": {
+            "score": "0",
+            "benchmark": "{'peer_avg_score': Decimal('72'), 'top_quartile_threshold': Decimal('82'), 'bottom_quartile_threshold': Decimal('60'), 'num_peers': 450}"
+           },
+           "ret": "1",
+           "dur_ms": 0.015,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 58,
+           "name": "_calculate_gresb_rent_premium",
+           "qual": "GRESBCalculator._calculate_gresb_rent_premium",
+           "file": "services/sustainability_calculator.py",
+           "line": 269,
+           "args": {
+            "rating": "<GRESBRating.ONE_STAR: '1_star'>",
+            "region": "<Region.NORTH_AMERICA: 'north_america'>"
+           },
+           "ret": "Decimal('0.50')",
+           "dur_ms": 0.021,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 59,
+           "name": "_calculate_gresb_cap_compression",
+           "qual": "GRESBCalculator._calculate_gresb_cap_compression",
+           "file": "services/sustainability_calculator.py",
+           "line": 281,
+           "args": {
+            "rating": "<GRESBRating.ONE_STAR: '1_star'>"
+           },
+           "ret": "Decimal('5')",
+           "dur_ms": 0.018,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 60,
+           "name": "_score_to_next_star",
+           "qual": "GRESBCalculator._score_to_next_star",
+           "file": "services/sustainability_calculator.py",
+           "line": 292,
+           "args": {
+            "current_score": "0",
+            "current_rating": "<GRESBRating.ONE_STAR: '1_star'>"
+           },
+           "ret": "Decimal('20')",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 61,
+           "name": "_generate_gresb_recommendations",
+           "qual": "GRESBCalculator._generate_gresb_recommendations",
+           "file": "services/sustainability_calculator.py",
+           "line": 307,
+           "args": {
+            "scores": "GRESBComponentScore(management=0, policy=0, risk_management=0, stakeholder_engagement=0, performance_indicators=0)",
+            "total": "0"
+           },
+           "ret": "['Strengthen management systems including sustainability policies and governance structures', 'Enhance ESG policy coverage including climate risk and biodiversity commitments', 'Improve risk assessment processes including physical and tran\u2026",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 62,
+           "name": "_identify_priority_areas",
+           "qual": "GRESBCalculator._identify_priority_areas",
+           "file": "services/sustainability_calculator.py",
+           "line": 328,
+           "args": {
+            "scores": "GRESBComponentScore(management=0, policy=0, risk_management=0, stakeholder_engagement=0, performance_indicators=0)"
+           },
+           "ret": "[{'area': 'Management', 'current_score': 0.0, 'max_score': 30, 'potential_improvement': 30.0, 'priority': 'high'}, {'area': 'Performance Indicators', 'current_score': 0.0, 'max_score': 30, 'potential_improvement': 30.0, 'priority': 'high'}\u2026",
+           "dur_ms": 0.103,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 63,
+             "name": "<lambda>",
+             "qual": "GRESBCalculator._identify_priority_areas.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 348,
+             "args": {
+              "x": "{'area': 'Management', 'current_score': 0.0, 'max_score': 30, 'potential_improvement': 30.0, 'priority': 'high'}"
+             },
+             "ret": "30.0",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 64,
+             "name": "<lambda>",
+             "qual": "GRESBCalculator._identify_priority_areas.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 348,
+             "args": {
+              "x": "{'area': 'Policy', 'current_score': 0.0, 'max_score': 12, 'potential_improvement': 12.0, 'priority': 'high'}"
+             },
+             "ret": "12.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 65,
+             "name": "<lambda>",
+             "qual": "GRESBCalculator._identify_priority_areas.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 348,
+             "args": {
+              "x": "{'area': 'Risk Management', 'current_score': 0.0, 'max_score': 14, 'potential_improvement': 14.0, 'priority': 'high'}"
+             },
+             "ret": "14.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 66,
+             "name": "<lambda>",
+             "qual": "GRESBCalculator._identify_priority_areas.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 348,
+             "args": {
+              "x": "{'area': 'Stakeholder Engagement', 'current_score': 0.0, 'max_score': 14, 'potential_improvement': 14.0, 'priority': 'high'}"
+             },
+             "ret": "14.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 67,
+             "name": "<lambda>",
+             "qual": "GRESBCalculator._identify_priority_areas.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 348,
+             "args": {
+              "x": "{'area': 'Performance Indicators', 'current_score': 0.0, 'max_score': 30, 'potential_improvement': 30.0, 'priority': 'high'}"
+             },
+             "ret": "30.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/leed/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.775,
+   "node_count": 16,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<LEEDAssessmentRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_points",
+     "certification_level",
+     "category_breakdown",
+     "points_to_next_level",
+     "max_achievable_points",
+     "estimated_rent_premium_percent",
+     "estimated_value_premium_percent",
+     "estimated_value_impact",
+     "estimated_rent_premium",
+     "strongest_categories",
+     "weakest_categories",
+     "improvement_potential",
+     "market_avg_points",
+     "percentile_in_market"
+    ],
+    "n_keys": 14
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 68,
+     "name": "calculate_leed_assessment",
+     "qual": "calculate_leed_assessment",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 385,
+     "args": {
+      "request": "LEEDAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'>, leed_version='v4.1', project_type='bd+c', category_score\u2026"
+     },
+     "ret": "LEEDAssessmentResult(total_points=0, certification_level=<LEEDLevel.CERTIFIED: 'certified'>, category_breakdown=LEEDCategoryScore(integrative_process=0, location_transportation=0, sustainable_sites=0, water_efficiency=0, energy_atmosphere=\u2026",
+     "dur_ms": 0.882,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 69,
+       "name": "calculate_leed",
+       "qual": "SustainabilityEngine.calculate_leed",
+       "file": "services/sustainability_calculator.py",
+       "line": 950,
+       "args": {
+        "request": "LEEDAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'>, leed_version='v4.1', project_type='bd+c', category_score\u2026"
+       },
+       "ret": "LEEDAssessmentResult(total_points=0, certification_level=<LEEDLevel.CERTIFIED: 'certified'>, category_breakdown=LEEDCategoryScore(integrative_process=0, location_transportation=0, sustainable_sites=0, water_efficiency=0, energy_atmosphere=\u2026",
+       "dur_ms": 0.81,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 70,
+         "name": "calculate_assessment",
+         "qual": "LEEDCalculator.calculate_assessment",
+         "file": "services/sustainability_calculator.py",
+         "line": 354,
+         "args": {
+          "request": "LEEDAssessmentRequest(property_id=None, property_name='TEST_request_property_name', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'>, leed_version='v4.1', project_type='bd+c', category_score\u2026"
+         },
+         "ret": "LEEDAssessmentResult(total_points=0, certification_level=<LEEDLevel.CERTIFIED: 'certified'>, category_breakdown=LEEDCategoryScore(integrative_process=0, location_transportation=0, sustainable_sites=0, water_efficiency=0, energy_atmosphere=\u2026",
+         "dur_ms": 0.627,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 71,
+           "name": "_get_certification_level",
+           "qual": "LEEDCalculator._get_certification_level",
+           "file": "services/sustainability_calculator.py",
+           "line": 416,
+           "args": {
+            "points": "0"
+           },
+           "ret": "<LEEDLevel.CERTIFIED: 'certified'>",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "_points_to_next_level",
+           "qual": "LEEDCalculator._points_to_next_level",
+           "file": "services/sustainability_calculator.py",
+           "line": 427,
+           "args": {
+            "current": "0",
+            "level": "<LEEDLevel.CERTIFIED: 'certified'>"
+           },
+           "ret": "50",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 73,
+           "name": "_analyze_categories",
+           "qual": "LEEDCalculator._analyze_categories",
+           "file": "services/sustainability_calculator.py",
+           "line": 439,
+           "args": {
+            "scores": "LEEDCategoryScore(integrative_process=0, location_transportation=0, sustainable_sites=0, water_efficiency=0, energy_atmosphere=0, materials_resources=0, indoor_environmental_quality=0, innovation=0, regional_priority=0)"
+           },
+           "ret": "{'strongest': ['energy_atmosphere', 'location_transportation', 'indoor_environmental_quality'], 'weakest': ['innovation', 'regional_priority', 'integrative_process'], 'potential': {'energy_atmosphere': 33, 'location_transportation': 16, 'i\u2026",
+           "dur_ms": 0.426,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 74,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('energy_atmosphere', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 75,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('location_transportation', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 76,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('indoor_environmental_quality', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 77,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('materials_resources', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 78,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('water_efficiency', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.01,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 79,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('sustainable_sites', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 80,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('innovation', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 81,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('regional_priority', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 82,
+             "name": "<lambda>",
+             "qual": "LEEDCalculator._analyze_categories.<locals>.<lambda>",
+             "file": "services/sustainability_calculator.py",
+             "line": 458,
+             "args": {
+              "x": "('integrative_process', 0.0)"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 83,
+           "name": "_calculate_market_percentile",
+           "qual": "LEEDCalculator._calculate_market_percentile",
+           "file": "services/sustainability_calculator.py",
+           "line": 476,
+           "args": {
+            "points": "0"
+           },
+           "ret": "15",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/portfolio/analyze",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.715,
+   "node_count": 9,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<PortfolioSustainabilityRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_name",
+     "total_assets",
+     "certified_assets",
+     "certified_percentage",
+     "uncertified_assets",
+     "certifications_by_type",
+     "avg_scores_by_type",
+     "total_estimated_value_premium",
+     "avg_value_premium_percent",
+     "total_estimated_rent_premium",
+     "portfolio_sustainability_score",
+     "portfolio_rating",
+     "uncertified_value",
+     "potential_value_uplift",
+     "recommendations"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 84,
+     "name": "analyze_portfolio_sustainability",
+     "qual": "analyze_portfolio_sustainability",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 521,
+     "args": {
+      "request": "PortfolioSustainabilityRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', assets=[{}], total_aum=Decimal('1.0'))"
+     },
+     "ret": "PortfolioSustainabilityResult(portfolio_name='TEST_request_portfolio_name', total_assets=1, certified_assets=0, certified_percentage=Decimal('0.0'), uncertified_assets=1, certifications_by_type={}, avg_scores_by_type={}, total_estimated_va\u2026",
+     "dur_ms": 0.268,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 85,
+       "name": "analyze_portfolio",
+       "qual": "SustainabilityEngine.analyze_portfolio",
+       "file": "services/sustainability_calculator.py",
+       "line": 959,
+       "args": {
+        "request": "PortfolioSustainabilityRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', assets=[{}], total_aum=Decimal('1.0'))"
+       },
+       "ret": "PortfolioSustainabilityResult(portfolio_name='TEST_request_portfolio_name', total_assets=1, certified_assets=0, certified_percentage=Decimal('0.0'), uncertified_assets=1, certifications_by_type={}, avg_scores_by_type={}, total_estimated_va\u2026",
+       "dur_ms": 0.23,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 86,
+         "name": "analyze_portfolio",
+         "qual": "PortfolioSustainabilityCalculator.analyze_portfolio",
+         "file": "services/sustainability_calculator.py",
+         "line": 794,
+         "args": {
+          "request": "PortfolioSustainabilityRequest(portfolio_id=None, portfolio_name='TEST_request_portfolio_name', assets=[{}], total_aum=Decimal('1.0'))"
+         },
+         "ret": "PortfolioSustainabilityResult(portfolio_name='TEST_request_portfolio_name', total_assets=1, certified_assets=0, certified_percentage=Decimal('0.0'), uncertified_assets=1, certifications_by_type={}, avg_scores_by_type={}, total_estimated_va\u2026",
+         "dur_ms": 0.176,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 87,
+           "name": "<genexpr>",
+           "qual": "PortfolioSustainabilityCalculator.analyze_portfolio.<locals>.<genexpr>",
+           "file": "services/sustainability_calculator.py",
+           "line": 848,
+           "args": {
+            ".0": "<list_iterator object at 0x000001E81517DAB0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 88,
+           "name": "<genexpr>",
+           "qual": "PortfolioSustainabilityCalculator.analyze_portfolio.<locals>.<genexpr>",
+           "file": "services/sustainability_calculator.py",
+           "line": 849,
+           "args": {
+            ".0": "<list_iterator object at 0x000001E81517DAB0>"
+           },
+           "ret": "Decimal('0')",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 89,
+           "name": "<genexpr>",
+           "qual": "PortfolioSustainabilityCalculator.analyze_portfolio.<locals>.<genexpr>",
+           "file": "services/sustainability_calculator.py",
+           "line": 849,
+           "args": {
+            ".0": "<list_iterator object at 0x000001E81517DAB0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 90,
+           "name": "_generate_recommendations",
+           "qual": "PortfolioSustainabilityCalculator._generate_recommendations",
+           "file": "services/sustainability_calculator.py",
+           "line": 901,
+           "args": {
+            "coverage": "0.0",
+            "score": "0.0",
+            "by_type": "{}",
+            "uncertified": "[{}]"
+           },
+           "ret": "['Certification coverage is low (0%). Prioritize certifying high-value uncertified assets.', 'Consider GRESB participation for portfolio-level ESG benchmarking and investor reporting.', '$0.0M in uncertified assets represent significant va\u2026",
+           "dur_ms": 0.047,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 91,
+             "name": "<genexpr>",
+             "qual": "PortfolioSustainabilityCalculator._generate_recommendations.<locals>.<genexpr>",
+             "file": "services/sustainability_calculator.py",
+             "line": 923,
+             "args": {
+              ".0": "<list_iterator object at 0x000001E81517DED0>"
+             },
+             "ret": "0.0",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 92,
+             "name": "<genexpr>",
+             "qual": "PortfolioSustainabilityCalculator._generate_recommendations.<locals>.<genexpr>",
+             "file": "services/sustainability_calculator.py",
+             "line": 923,
+             "args": {
+              ".0": "<list_iterator object at 0x000001E81517DED0>"
+             },
+             "ret": "None",
+             "dur_ms": 0.001,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sustainability",
+   "label": "POST /api/v1/sustainability/value-impact",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.487,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<CertificationValueImpactRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "certification_type",
+     "certification_level",
+     "rent_premium_percent",
+     "rent_premium_range",
+     "value_premium_percent",
+     "value_premium_range",
+     "estimated_rent_premium_psf",
+     "estimated_annual_rent_increase",
+     "estimated_value_increase",
+     "cap_rate_compression_bps",
+     "estimated_operating_cost_savings_percent",
+     "estimated_annual_cost_savings",
+     "source_studies",
+     "data_reliability",
+     "regional_adjustment"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 93,
+     "name": "calculate_value_impact",
+     "qual": "calculate_value_impact",
+     "file": "api/v1/routes/sustainability.py",
+     "line": 479,
+     "args": {
+      "request": "CertificationValueImpactRequest(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'\u2026"
+     },
+     "ret": "CertificationValueImpactResult(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', rent_premium_percent=Decimal('4.00'), rent_premium_range={'low': Decimal('2.00'), 'mid': Decimal(\u2026",
+     "dur_ms": 0.249,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 94,
+       "name": "calculate_value_impact",
+       "qual": "SustainabilityEngine.calculate_value_impact",
+       "file": "services/sustainability_calculator.py",
+       "line": 956,
+       "args": {
+        "request": "CertificationValueImpactRequest(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'\u2026"
+       },
+       "ret": "CertificationValueImpactResult(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', rent_premium_percent=Decimal('4.00'), rent_premium_range={'low': Decimal('2.00'), 'mid': Decimal(\u2026",
+       "dur_ms": 0.205,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 95,
+         "name": "calculate_value_impact",
+         "qual": "ValueImpactCalculator.calculate_value_impact",
+         "file": "services/sustainability_calculator.py",
+         "line": 657,
+         "args": {
+          "request": "CertificationValueImpactRequest(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', property_sector=<PropertySector.OFFICE: 'office'>, region=<Region.NORTH_AMERICA: 'north_america'\u2026"
+         },
+         "ret": "CertificationValueImpactResult(certification_type=<CertificationType.GRESB: 'gresb'>, certification_level='TEST_request_certification_level', rent_premium_percent=Decimal('4.00'), rent_premium_range={'low': Decimal('2.00'), 'mid': Decimal(\u2026",
+         "dur_ms": 0.149,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 96,
+           "name": "_get_cap_rate_compression",
+           "qual": "ValueImpactCalculator._get_cap_rate_compression",
+           "file": "services/sustainability_calculator.py",
+           "line": 749,
+           "args": {
+            "cert_type": "<CertificationType.GRESB: 'gresb'>",
+            "level": "'TEST_request_certification_level'"
+           },
+           "ret": "Decimal('25')",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 97,
+           "name": "_get_source_studies",
+           "qual": "ValueImpactCalculator._get_source_studies",
+           "file": "services/sustainability_calculator.py",
+           "line": 765,
+           "args": {
+            "cert_type": "<CertificationType.GRESB: 'gresb'>"
+           },
+           "ret": "['Eichholtz, Kok, Quigley (2010) - Energy Efficiency & Economic Value', 'Fuerst & McAllister (2011) - Green Building Premiums in the UK', 'GRESB Foundation Research (2023)', 'UNEP FI - Sustainable Real Estate Investment']",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

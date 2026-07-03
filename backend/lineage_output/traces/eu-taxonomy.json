@@ -1,0 +1,639 @@
+{
+ "domain": "eu-taxonomy",
+ "meta": {
+  "ts": "2026-06-30T14:01:58",
+  "module": "api.v1.routes.eu_taxonomy",
+  "router_prefix": "/api/v1/eu-taxonomy",
+  "endpoints": 13
+ },
+ "transactions": [
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.508,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cross_framework_map"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 148,
+     "args": {},
+     "ret": "{'cross_framework_map': [{'taxonomy_element': 'Turnover KPI', 'csrd_esrs': 'ESRS 2 SBM-1, ESRS E1-1', 'sfdr': 'Article 5(1) / Article 6 SFDR RTS Annex III', 'issb': 'IFRS S2 para 29(a)', 'gri': 'GRI 201-1', 'cdp': 'C-FS14.1', 'tcfd': 'Metr\u2026",
+     "dur_ms": 0.097,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cross_framework_map",
+       "qual": "EUTaxonomyEngine.get_cross_framework_map",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1139,
+       "args": {},
+       "ret": "[{'taxonomy_element': 'Turnover KPI', 'csrd_esrs': 'ESRS 2 SBM-1, ESRS E1-1', 'sfdr': 'Article 5(1) / Article 6 SFDR RTS Annex III', 'issb': 'IFRS S2 para 29(a)', 'gri': 'GRI 201-1', 'cdp': 'C-FS14.1', 'tcfd': 'Metrics & Targets (b)'}, {'t\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/dnsh-matrix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.382,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dnsh_matrix"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_dnsh_matrix",
+     "qual": "ref_dnsh_matrix",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 118,
+     "args": {},
+     "ret": "{'dnsh_matrix': {'CCM': {'CCA': 'Climate risk assessment per RCP 8.5/4.5; physical risk adaptation measures', 'WTR': 'Water Framework Directive compliance; no deterioration of water status; Environmental Impact Assessment', 'CE': 'Waste hi\u2026",
+     "dur_ms": 0.084,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_dnsh_matrix",
+       "qual": "EUTaxonomyEngine.get_dnsh_matrix",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1114,
+       "args": {},
+       "ret": "{'CCM': {'CCA': 'Climate risk assessment per RCP 8.5/4.5; physical risk adaptation measures', 'WTR': 'Water Framework Directive compliance; no deterioration of water status; Environmental Impact Assessment', 'CE': 'Waste hierarchy complian\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/enabling-activities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.676,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "enabling_activities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_enabling_activities",
+     "qual": "ref_enabling_activities",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 142,
+     "args": {},
+     "ret": "{'enabling_activities': [{'nace_code': 'C3.1', 'name': 'Manufacture of renewable energy technologies', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'q\u2026",
+     "dur_ms": 0.299,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_enabling_activities",
+       "qual": "EUTaxonomyEngine.get_enabling_activities",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1134,
+       "args": {},
+       "ret": "[{'nace_code': 'C3.1', 'name': 'Manufacture of renewable energy technologies', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria':\u2026",
+       "dur_ms": 0.106,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/financial-kpis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.378,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financial_kpi_definitions"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_financial_kpis",
+     "qual": "ref_financial_kpis",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 154,
+     "args": {},
+     "ret": "{'financial_kpi_definitions': {'gar': {'name': 'Green Asset Ratio (GAR)', 'applicable_to': 'Credit institutions (CRR)', 'numerator': 'Taxonomy-aligned exposures in banking book', 'denominator': 'Total covered assets (excluding central bank\u2026",
+     "dur_ms": 0.066,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_financial_kpi_definitions",
+       "qual": "EUTaxonomyEngine.get_financial_kpi_definitions",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1144,
+       "args": {},
+       "ret": "{'gar': {'name': 'Green Asset Ratio (GAR)', 'applicable_to': 'Credit institutions (CRR)', 'numerator': 'Taxonomy-aligned exposures in banking book', 'denominator': 'Total covered assets (excluding central bank exposures, sovereign, trading\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/kpi-definitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.71,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "kpi_definitions"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_kpi_definitions",
+     "qual": "ref_kpi_definitions",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 130,
+     "args": {},
+     "ret": "{'kpi_definitions': {'turnover': {'name': 'Turnover KPI', 'article': 'Article 8(2)(a)', 'numerator': 'Revenue from taxonomy-aligned activities', 'denominator': 'Total net revenue per IAS 1.82(a)', 'notes': 'Revenue from products/services a\u2026",
+     "dur_ms": 0.096,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_kpi_definitions",
+       "qual": "EUTaxonomyEngine.get_kpi_definitions",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "{'turnover': {'name': 'Turnover KPI', 'article': 'Article 8(2)(a)', 'numerator': 'Revenue from taxonomy-aligned activities', 'denominator': 'Total net revenue per IAS 1.82(a)', 'notes': 'Revenue from products/services associated with taxon\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/minimum-safeguards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.458,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "minimum_safeguards"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_minimum_safeguards",
+     "qual": "ref_minimum_safeguards",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 124,
+     "args": {},
+     "ret": "{'minimum_safeguards': {'frameworks': [{'name': 'OECD Guidelines for Multinational Enterprises on Responsible Business Conduct', 'version': '2023 update', 'requirements': ['Human rights due diligence', 'Anti-corruption policies', 'Environm\u2026",
+     "dur_ms": 0.133,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_minimum_safeguards",
+       "qual": "EUTaxonomyEngine.get_minimum_safeguards",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1119,
+       "args": {},
+       "ret": "{'frameworks': [{'name': 'OECD Guidelines for Multinational Enterprises on Responsible Business Conduct', 'version': '2023 update', 'requirements': ['Human rights due diligence', 'Anti-corruption policies', 'Environmental responsibility', \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/nace-activities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.492,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nace_activities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_nace_activities",
+     "qual": "ref_nace_activities",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 112,
+     "args": {},
+     "ret": "{'nace_activities': [{'nace_code': 'A1', 'name': 'Afforestation', 'sector': 'Forestry', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM', 'CCA'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria': 'Forest ma\u2026",
+     "dur_ms": 0.673,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_nace_activities",
+       "qual": "EUTaxonomyEngine.get_nace_activities",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1101,
+       "args": {},
+       "ret": "[{'nace_code': 'A1', 'name': 'Afforestation', 'sector': 'Forestry', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM', 'CCA'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria': 'Forest management plan, net c\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/objectives",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.325,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "environmental_objectives"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "ref_objectives",
+     "qual": "ref_objectives",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 106,
+     "args": {},
+     "ret": "{'environmental_objectives': {'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'article': 'Article 10', 'description': 'Substantial contribution to climate change mitigation through GHG avoidance/reduction or enhancement of GHG re\u2026",
+     "dur_ms": 0.064,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "get_environmental_objectives",
+       "qual": "EUTaxonomyEngine.get_environmental_objectives",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1096,
+       "args": {},
+       "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'article': 'Article 10', 'description': 'Substantial contribution to climate change mitigation through GHG avoidance/reduction or enhancement of GHG removals', 'delegated_act': 'Cl\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/sector-thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.552,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_thresholds"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "ref_sector_thresholds",
+     "qual": "ref_sector_thresholds",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 160,
+     "args": {},
+     "ret": "{'sector_thresholds': {'electricity_generation': {'threshold': 100, 'unit': 'gCO2e/kWh', 'basis': 'lifecycle', 'article': 'Climate DA Annex I Section 4.1-4.8'}, 'cement': {'threshold': 0.498, 'unit': 'tCO2/t clinker', 'basis': 'direct', 'a\u2026",
+     "dur_ms": 0.115,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "get_sector_thresholds",
+       "qual": "EUTaxonomyEngine.get_sector_thresholds",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1149,
+       "args": {},
+       "ret": "{'electricity_generation': {'threshold': 100, 'unit': 'gCO2e/kWh', 'basis': 'lifecycle', 'article': 'Climate DA Annex I Section 4.1-4.8'}, 'cement': {'threshold': 0.498, 'unit': 'tCO2/t clinker', 'basis': 'direct', 'article': 'Climate DA A\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "GET /api/v1/eu-taxonomy/ref/transitional-activities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.671,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "transitional_activities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "ref_transitional_activities",
+     "qual": "ref_transitional_activities",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 136,
+     "args": {},
+     "ret": "{'transitional_activities': [{'nace_code': 'C23.5.1', 'name': 'Manufacture of cement', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'quantitative', 't\u2026",
+     "dur_ms": 0.247,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "get_transitional_activities",
+       "qual": "EUTaxonomyEngine.get_transitional_activities",
+       "file": "services/eu_taxonomy_engine.py",
+       "line": 1129,
+       "args": {},
+       "ret": "[{'nace_code': 'C23.5.1', 'name': 'Manufacture of cement', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'quantitative', 'threshold': 0.498, 'unit': 't\u2026",
+       "dur_ms": 0.061,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "POST /api/v1/eu-taxonomy/assess-activity",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'nace_code'",
+   "dur_ms": 0.496,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "assess_activity",
+     "qual": "assess_activity",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 57,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.129,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "POST /api/v1/eu-taxonomy/assess-entity",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.55,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "assess_entity",
+     "qual": "assess_entity",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 69,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy",
+   "label": "POST /api/v1/eu-taxonomy/assess-portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'portfolio_id'",
+   "dur_ms": 0.308,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "assess_portfolio",
+     "qual": "assess_portfolio",
+     "file": "api/v1/routes/eu_taxonomy.py",
+     "line": 86,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

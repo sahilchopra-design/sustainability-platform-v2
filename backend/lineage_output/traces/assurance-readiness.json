@@ -1,0 +1,416 @@
+{
+ "domain": "assurance-readiness",
+ "meta": {
+  "ts": "2026-06-30T13:59:10",
+  "module": "api.v1.routes.assurance_readiness",
+  "router_prefix": "/api/v1/assurance-readiness",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "assurance-readiness",
+   "label": "GET /api/v1/assurance-readiness/ref/criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.588,
+   "node_count": 15,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_criteria",
+     "blocking_criteria",
+     "domains",
+     "reference"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_criteria",
+     "qual": "ref_criteria",
+     "file": "api/v1/routes/assurance_readiness.py",
+     "line": 223,
+     "args": {},
+     "ret": "{'total_criteria': 26, 'blocking_criteria': 13, 'domains': [{'domain_id': 'D1_data_governance', 'domain_label': 'D1', 'criteria': [{'criterion_id': 'D1-1', 'title': 'Data lineage documented for all material sustainability KPIs', 'standards\u2026",
+     "dur_ms": 0.295,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "ref_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/assurance_readiness.py",
+       "line": 240,
+       "args": {
+        ".0": "<list_iterator object at 0x0000020DF6DAF8E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "assurance-readiness",
+   "label": "GET /api/v1/assurance-readiness/ref/csrd-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.165,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assurance_requirement",
+     "long_term_trajectory",
+     "waves",
+     "assurance_provider_eligibility",
+     "reference"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "ref_csrd_timeline",
+     "qual": "ref_csrd_timeline",
+     "file": "api/v1/routes/assurance_readiness.py",
+     "line": 270,
+     "args": {},
+     "ret": "{'assurance_requirement': 'Limited assurance on ESRS sustainability statement (Art 26a CSRD)', 'long_term_trajectory': 'Reasonable assurance after Commission review (earliest FY2028+)', 'waves': {'wave_1': {'label': 'Existing NFRD entities\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "assurance-readiness",
+   "label": "GET /api/v1/assurance-readiness/ref/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.147,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "standards"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "ref_standards",
+     "qual": "ref_standards",
+     "file": "api/v1/routes/assurance_readiness.py",
+     "line": 256,
+     "args": {},
+     "ret": "{'count': 6, 'standards': [{'standard_id': 'ISAE3000', 'title': 'ISAE 3000 (Revised) \u2014 General Sustainability Assurance', 'issuer': 'IAASB / IFAC', 'scope': 'All sustainability disclosures not covered by specific standards', 'assurance_lev\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "assurance-readiness",
+   "label": "POST /api/v1/assurance-readiness/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity'",
+   "dur_ms": 0.147,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/assurance_readiness.py",
+     "line": 177,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "assurance-readiness",
+   "label": "POST /api/v1/assurance-readiness/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'assessments'",
+   "dur_ms": 0.123,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/assurance_readiness.py",
+     "line": 197,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

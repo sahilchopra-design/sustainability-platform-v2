@@ -1,0 +1,578 @@
+{
+ "domain": "energy-data",
+ "meta": {
+  "ts": "2026-06-30T14:01:34",
+  "module": "api.v1.routes.energy_data",
+  "router_prefix": "/api/v1/energy-data",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4156.659,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, gem_id, plant_name, country, country_iso3, subnational, owner, parent_company, latitude, longitude, status, capacity_mw, num_units, year_opened, year_retired, planned_retire_year, coal_type, combustion_technology, annual_co2_mt FROM dh_gem_coal_plants ORDER BY capacity_mw DESC NULLS LAST LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 0,
+     "dur_ms": 761.286,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_gem_coal_plants'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 562.915,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "status": "None (default)",
+    "parent_company": "None (default)",
+    "coal_type": "None (default)",
+    "min_capacity_mw": "None (default)",
+    "search": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "search_coal_plants",
+     "qual": "search_coal_plants",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 31,
+     "args": {
+      "country": "None",
+      "status": "None",
+      "parent_company": "None",
+      "coal_type": "None",
+      "min_capacity_mw": "None",
+      "search": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE4F9E71A0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE510AF9C0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [], 'total': 0}",
+     "dur_ms": 4087.281,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 625.333,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT country_iso3 AS iso3, country AS name, COUNT(*) AS plants, SUM(capacity_mw) AS total_capacity_mw, SUM(annual_co2_mt) AS total_co2_mt, COUNT(*) FILTER (WHERE status = 'Operating') AS operating, COUNT(*) FILTER (WHERE status IN ('Announced', 'Pre-permit', 'Permitted')) AS pipeline FROM dh_gem_coal_plants WHERE country_iso3 IS NOT NULL GROUP BY country_iso3, country ORDER BY total_capacity_m\u2026",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 0,
+     "dur_ms": 344.861,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "coal_plant_countries",
+     "qual": "coal_plant_countries",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 88,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51202840>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE512DEFC0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': []}",
+     "dur_ms": 592.871,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants/nearby",
+   "status": "failed",
+   "http_status": 500,
+   "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"TEST_lat\"\nLINE 6:                        LEAST(1.0, cos(radians('TEST_lat')) *...\n                                                      ^\n\n[SQL: \n        SELECT * FROM (\n            SELECT id, gem_id, plant_name, country_iso3, status, capacity_mw,\n                   annual_co2_mt, latitude, long",
+   "dur_ms": 1631.987,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ( SELECT id, gem_id, plant_name, country_iso3, status, capacity_mw, annual_co2_mt, latitude, longitude, (6371 * acos( LEAST(1.0, cos(radians(%(lat)s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%(lng)s)) + sin(radians(%(lat)s)) * sin(radians(latitude))) )) AS distance_km FROM dh_gem_coal_plants WHERE latitude IS NOT NULL AND longitude IS NOT NULL ) sub WHERE sub.di\u2026",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": null,
+     "dur_ms": 449.836,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type double precision: \"TEST_lat\"\\nLINE 6:                        LEAST(1.0, cos(radians(\\'TEST_lat\\')) *...\\n                                     \u2026"
+    }
+   ],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lng": "'TEST_lng' (mock-required)",
+    "radius_km": "100 (default)",
+    "limit": "20 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "coal_plants_nearby",
+     "qual": "coal_plants_nearby",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 131,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lng": "'TEST_lng'",
+      "radius_km": "100",
+      "limit": "20",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51202990>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324E00>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1587.824,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants/owners",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 868.751,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT parent_company, COUNT(*) AS plants, SUM(capacity_mw) AS total_capacity_mw, SUM(annual_co2_mt) AS total_co2_mt, COUNT(*) FILTER (WHERE status = 'Operating') AS operating, COUNT(*) FILTER (WHERE planned_retire_year IS NOT NULL) AS with_retire_date FROM dh_gem_coal_plants WHERE parent_company IS NOT NULL GROUP BY parent_company ORDER BY total_capacity_mw DESC NULLS LAST LIMIT %(limit)s\"",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 0,
+     "dur_ms": 71.674,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "limit": "30 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "owners"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "coal_plant_owners",
+     "qual": "coal_plant_owners",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 109,
+     "args": {
+      "limit": "30",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE5133FA70>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324860>, use_cache=True, scope=None)"
+     },
+     "ret": "{'owners': []}",
+     "dur_ms": 836.461,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants/pipeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 323.004,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT id, gem_id, plant_name, country, country_iso3, status, capacity_mw, coal_type, combustion_technology, owner, parent_company, latitude, longitude FROM dh_gem_coal_plants WHERE status IN ('Announced', 'Pre-permit', 'Permitted', 'Construction') ORDER BY capacity_mw DESC NULLS LAST\"",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.61,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pipeline",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "coal_plant_pipeline",
+     "qual": "coal_plant_pipeline",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 161,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368440>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324F40>, use_cache=True, scope=None)"
+     },
+     "ret": "{'pipeline': [], 'total': 0}",
+     "dur_ms": 289.337,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-plants/{gem_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: GEM ID 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 792.876,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM dh_gem_coal_plants WHERE gem_id = %(gem_id)s'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 0,
+     "dur_ms": 57.357,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "gem_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_coal_plant",
+     "qual": "get_coal_plant",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 179,
+     "args": {
+      "gem_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE513686E0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325440>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 763.655,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/coal-units/{plant_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 315.993,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plant_units"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM dh_gem_coal_plant_units WHERE plant_id = CAST(%(plant_id)s AS uuid) ORDER BY capacity_mw DESC NULLS LAST'",
+     "tables": [
+      "dh_gem_coal_plant_units"
+     ],
+     "rowcount": 0,
+     "dur_ms": 65.23,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "plant_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "units",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "coal_plant_units",
+     "qual": "coal_plant_units",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 197,
+     "args": {
+      "plant_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368980>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325800>, use_cache=True, scope=None)"
+     },
+     "ret": "{'units': [], 'total': 0}",
+     "dur_ms": 279.474,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-data",
+   "label": "GET /api/v1/energy-data/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 491.223,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gem_coal_plant_units",
+    "dh_gem_coal_plants"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_gem_coal_plants'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.015,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_gem_coal_plants'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 27.346,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COALESCE(SUM(capacity_mw), 0) FROM dh_gem_coal_plants'",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 41.511,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "\"SELECT COUNT(*) FROM dh_gem_coal_plants WHERE status = 'Operating'\"",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.292,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "\"SELECT COUNT(*) FROM dh_gem_coal_plants WHERE status IN ('Announced','Pre-permit','Permitted','Construction')\"",
+     "tables": [
+      "dh_gem_coal_plants"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.145,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT COUNT(*) FROM dh_gem_coal_plant_units'",
+     "tables": [
+      "dh_gem_coal_plant_units"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.782,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "coal_plants",
+     "coal_units"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "energy_data_stats",
+     "qual": "energy_data_stats",
+     "file": "api/v1/routes/energy_data.py",
+     "line": 214,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368D10>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325A80>, use_cache=True, scope=None)"
+     },
+     "ret": "{'coal_plants': {'total': 0, 'countries': 0, 'total_capacity_mw': 0.0, 'operating': 0, 'pipeline': 0}, 'coal_units': {'total': 0}}",
+     "dur_ms": 463.005,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

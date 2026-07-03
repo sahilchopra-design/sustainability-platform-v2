@@ -1,0 +1,450 @@
+{
+ "domain": "priips-kid",
+ "meta": {
+  "ts": "2026-06-30T14:04:13",
+  "module": "api.v1.routes.priips_kid",
+  "router_prefix": "/api/v1/priips-kid",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "priips-kid",
+   "label": "GET /api/v1/priips-kid/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.459,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sfdr_overlap",
+     "eu_taxonomy",
+     "mifid_spt",
+     "uk_priips",
+     "ucits_kiid"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 242,
+     "args": {},
+     "ret": "{'sfdr_overlap': 'KID ESG inserts mirror pre-contractual SFDR Annex II (Art 8) / Annex III (Art 9) disclosures', 'eu_taxonomy': 'Taxonomy alignment % in KID must match pre-contractual disclosure', 'mifid_spt': 'KID ESG classification feeds\u2026",
+     "dur_ms": 0.068,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cross_framework",
+       "qual": "PRIIPSKIDEngine.get_cross_framework",
+       "file": "services/priips_kid_engine.py",
+       "line": 514,
+       "args": {},
+       "ret": "{'sfdr_overlap': 'KID ESG inserts mirror pre-contractual SFDR Annex II (Art 8) / Annex III (Art 9) disclosures', 'eu_taxonomy': 'Taxonomy alignment % in KID must match pre-contractual disclosure', 'mifid_spt': 'KID ESG classification feeds\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "GET /api/v1/priips-kid/ref/esg-insert-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.406,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sustainability_risk",
+     "pai_consideration",
+     "art8_esg_characteristics",
+     "art9_sustainable_investment",
+     "taxonomy_alignment"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_esg_insert_types",
+     "qual": "ref_esg_insert_types",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 234,
+     "args": {},
+     "ret": "{'sustainability_risk': {'name': 'Sustainability Risk Statement', 'required_for': ['art6', 'art8', 'art8_pai', 'art8_taxonomy', 'art9'], 'sfdr_article': 'Art 3 SFDR', 'description': 'Statement on integration of sustainability risks into in\u2026",
+     "dur_ms": 0.146,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_esg_insert_types",
+       "qual": "PRIIPSKIDEngine.get_esg_insert_types",
+       "file": "services/priips_kid_engine.py",
+       "line": 511,
+       "args": {},
+       "ret": "{'sustainability_risk': {'name': 'Sustainability Risk Statement', 'required_for': ['art6', 'art8', 'art8_pai', 'art8_taxonomy', 'art9'], 'sfdr_article': 'Art 3 SFDR', 'description': 'Statement on integration of sustainability risks into in\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "GET /api/v1/priips-kid/ref/kid-sections",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.448,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "section_1_product",
+     "section_2_risk",
+     "section_3_costs",
+     "section_4_holding_period",
+     "section_5_complaints",
+     "section_6_other_info"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_kid_sections",
+     "qual": "ref_kid_sections",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 218,
+     "args": {},
+     "ret": "{'section_1_product': {'name': 'What is this product?', 'mandatory_fields': ['product_name', 'product_type', 'manufacturer', 'isin', 'competent_authority', 'investment_objective', 'target_investor_profile', 'insurance_element']}, 'section_\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_kid_sections",
+       "qual": "PRIIPSKIDEngine.get_kid_sections",
+       "file": "services/priips_kid_engine.py",
+       "line": 505,
+       "args": {},
+       "ret": "{'section_1_product': {'name': 'What is this product?', 'mandatory_fields': ['product_name', 'product_type', 'manufacturer', 'isin', 'competent_authority', 'investment_objective', 'target_investor_profile', 'insurance_element']}, 'section_\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "GET /api/v1/priips-kid/ref/sri-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.526,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_sri_classes",
+     "qual": "ref_sri_classes",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 226,
+     "args": {},
+     "ret": "{1: {'class': 1, 'vol_range': [0, 0.005], 'description': 'Very low market risk'}, 2: {'class': 2, 'vol_range': [0.005, 0.12], 'description': 'Low market risk'}, 3: {'class': 3, 'vol_range': [0.12, 0.2], 'description': 'Low to medium market\u2026",
+     "dur_ms": 0.074,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_sri_classes",
+       "qual": "PRIIPSKIDEngine.get_sri_classes",
+       "file": "services/priips_kid_engine.py",
+       "line": 508,
+       "args": {},
+       "ret": "{1: {'class': 1, 'vol_range': [0, 0.005], 'description': 'Very low market risk'}, 2: {'class': 2, 'vol_range': [0.005, 0.12], 'description': 'Low market risk'}, 3: {'class': 3, 'vol_range': [0.12, 0.2], 'description': 'Low to medium market\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "GET /api/v1/priips-kid/ref/timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.294,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 6,
+    "item0_keys": [
+     "date",
+     "event",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_timeline",
+     "qual": "ref_timeline",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 250,
+     "args": {},
+     "ret": "[{'date': '2014-11-26', 'event': 'PRIIPs Regulation (EU) 1286/2014 published in OJEU', 'article': 'All'}, {'date': '2017-01-01', 'event': 'PRIIPs KID mandatory application date for non-UCITS retail PRIIPs', 'article': 'Art 32'}, {'date': '\u2026",
+     "dur_ms": 0.058,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_timeline",
+       "qual": "PRIIPSKIDEngine.get_timeline",
+       "file": "services/priips_kid_engine.py",
+       "line": 517,
+       "args": {},
+       "ret": "[{'date': '2014-11-26', 'event': 'PRIIPs Regulation (EU) 1286/2014 published in OJEU', 'article': 'All'}, {'date': '2017-01-01', 'event': 'PRIIPs KID mandatory application date for non-UCITS retail PRIIPs', 'article': 'Art 32'}, {'date': '\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "POST /api/v1/priips-kid/assess-sri",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'product_id'",
+   "dur_ms": 0.484,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_sri",
+     "qual": "assess_sri",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 149,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_build_product_input",
+       "qual": "_build_product_input",
+       "file": "api/v1/routes/priips_kid.py",
+       "line": 105,
+       "args": {
+        "model": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "POST /api/v1/priips-kid/calculate-scenarios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'product_id'",
+   "dur_ms": 0.311,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "calculate_scenarios",
+     "qual": "calculate_scenarios",
+     "file": "api/v1/routes/priips_kid.py",
+     "line": 163,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.038,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_build_product_input",
+       "qual": "_build_product_input",
+       "file": "api/v1/routes/priips_kid.py",
+       "line": 105,
+       "args": {
+        "model": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "priips-kid",
+   "label": "POST /api/v1/priips-kid/esg-inserts",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "priips-kid",
+   "label": "POST /api/v1/priips-kid/generate-kid",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "priips-kid",
+   "label": "POST /api/v1/priips-kid/generate-kid/batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

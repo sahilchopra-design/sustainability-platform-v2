@@ -1,0 +1,507 @@
+{
+ "domain": "iorp-pension",
+ "meta": {
+  "ts": "2026-06-30T14:02:56",
+  "module": "api.v1.routes.iorp_pension",
+  "router_prefix": "/api/v1/iorp-pension",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/history",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3406.605,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "iorp_stress_runs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, fund_id, fund_name, iorp_type, member_count, pre_stress_funding_ratio_pct, worst_case_scenario_id, worst_case_funding_ratio_drop_pct, ora_compliance_status, ora_items_met, ora_items_gap, sfdr_classification, scenarios_run, assessment_date, created_at FROM iorp_stress_runs WHERE (%(fund_id)s IS NULL OR fund_id = %(fund_id)s) ORDER BY created_at DESC LIMIT %(limit)s'",
+     "tables": [
+      "iorp_stress_runs"
+     ],
+     "rowcount": 0,
+     "dur_ms": 118.301,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund_id": "None (default)",
+    "limit": "20 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "runs"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "run_history",
+     "qual": "run_history",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 509,
+     "args": {
+      "fund_id": "None",
+      "limit": "20",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001811DD494C0>"
+     },
+     "ret": "{'count': 0, 'runs': []}",
+     "dur_ms": 3378.446,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/ref/frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.225,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "primary_directive",
+     "stress_test",
+     "related_frameworks"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_frameworks",
+     "qual": "ref_frameworks",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 474,
+     "args": {},
+     "ret": "{'primary_directive': {'id': 'IORP II', 'name': 'IORP II Directive (EU) 2016/2341', 'scope': 'Institutions for Occupational Retirement Provision with >15 members', 'esg_articles': ['Art 19(1)(b) \u2014 ESG in investment policy', 'Art 28 \u2014 Own R\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/ref/fund-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.132,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "fund_types"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_fund_types",
+     "qual": "ref_fund_types",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 443,
+     "args": {},
+     "ret": "{'count': 4, 'fund_types': [{'fund_type_id': 'defined_benefit', 'label': 'Defined Benefit (DB)', 'sponsor_covenant_factor': 1.0, 'liability_sensitivity_duration_y': 20.0, 'typical_equity_pct': 40, 'typical_bonds_pct': 50, 'typical_alts_pct\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/ref/ora-checklist",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.311,
+   "node_count": 9,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_items",
+     "blocking_items",
+     "items",
+     "reference"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ora_checklist",
+     "qual": "ref_ora_checklist",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 429,
+     "args": {},
+     "ret": "{'total_items': 12, 'blocking_items': 7, 'items': [{'item_id': 'ORA-01', 'title': 'Governance framework for climate risk identified', 'article': 'Art 28(1)(a)', 'blocking': True, 'flag': 'has_governance_framework'}, {'item_id': 'ORA-02', '\u2026",
+     "dur_ms": 0.14,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "ref_ora_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/iorp_pension.py",
+       "line": 434,
+       "args": {
+        ".0": "<list_iterator object at 0x000001811DE46B00>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/ref/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.168,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "framework",
+     "scenarios"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_scenarios",
+     "qual": "ref_scenarios",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 414,
+     "args": {},
+     "ret": "{'count': 4, 'framework': 'NGFS Phase 5 + EIOPA IORP II Climate Stress Test 2022', 'scenarios': [{'scenario_id': 'net_zero_2050', 'label': 'Net Zero 2050 (Orderly)', 'ngfs_phase': 5, 'equity_shock_pct': -12.0, 'corp_bond_spread_bps': 45, '\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "GET /api/v1/iorp-pension/ref/sfdr-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.466,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "applicable_to",
+     "pai_reporting_threshold",
+     "classifications",
+     "reference"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "ref_sfdr_classes",
+     "qual": "ref_sfdr_classes",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 457,
+     "args": {},
+     "ret": "{'regulation': 'SFDR (EU) 2019/2088', 'applicable_to': 'Pension funds as Financial Market Participants (FMPs)', 'pai_reporting_threshold': 'FMPs with >500 employees \u2014 mandatory from 2023-06-30', 'classifications': [{'classification': 'art_\u2026",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "POST /api/v1/iorp-pension/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund'",
+   "dur_ms": 0.575,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 341,
+     "args": {
+      "req": "'TEST_req'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001811DF7EC30>"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "POST /api/v1/iorp-pension/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'funds'",
+   "dur_ms": 0.341,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 380,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "iorp-pension",
+   "label": "POST /api/v1/iorp-pension/assess/scenario",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund'",
+   "dur_ms": 0.274,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "assess_scenario",
+     "qual": "assess_scenario",
+     "file": "api/v1/routes/iorp_pension.py",
+     "line": 365,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

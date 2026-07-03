@@ -1,0 +1,2086 @@
+{
+ "domain": "portfolio-analytics",
+ "meta": {
+  "ts": "2026-06-30T14:04:10",
+  "module": "api.v1.routes.portfolio_analytics",
+  "router_prefix": "/api/v1/portfolio-analytics",
+  "endpoints": 17
+ },
+ "transactions": [
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/enums",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 7.102,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_types",
+     "investment_strategies",
+     "report_types",
+     "report_formats"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_enum_values",
+     "qual": "get_enum_values",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 473,
+     "args": {},
+     "ret": "{'portfolio_types': ['fund', 'reit', 'separate_account', 'index', 'pension', 'insurance'], 'investment_strategies': ['core', 'core_plus', 'value_add', 'opportunistic', 'debt'], 'report_types': ['valuation', 'climate_risk', 'sustainability'\u2026",
+     "dur_ms": 0.339,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/portfolios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'state'",
+   "dur_ms": 3.788,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "page": "1 (default)",
+    "page_size": "20 (default)",
+    "portfolio_type": "None (default)",
+    "strategy": "None (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_all_portfolios",
+     "qual": "list_all_portfolios",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 39,
+     "args": {
+      "request": "'TEST_request'",
+      "page": "1",
+      "page_size": "20",
+      "portfolio_type": "None",
+      "strategy": "None"
+     },
+     "ret": "None",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Portfolio detail error: AttributeError: 'str' object has no attribute 'state'",
+   "dur_ms": 37.324,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_portfolio_by_id",
+     "qual": "get_portfolio_by_id",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 140,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 34.898,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/analytics",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 7791.747,
+   "node_count": 22,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "information_schema.tables",
+    "portfolio_analytics",
+    "portfolios",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT 1'",
+     "tables": [],
+     "rowcount": 1,
+     "dur_ms": 340.995,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 763.178,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.799,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 72.561,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": null,
+     "dur_ms": 95.64,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"org_id\" does not exist\\nLINE 1: SELECT id, name, org_id, description, created_at FROM portfo...\\n                         ^\\n')"
+    },
+    {
+     "id": 5,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 100.138,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolio_analytics"
+     ],
+     "rowcount": 0,
+     "dur_ms": 75.139,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "scenario_id": "None (default)",
+    "time_horizon": "10 (default)",
+    "as_of_date": "None (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_portfolio_analytics",
+     "qual": "get_portfolio_analytics",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 346,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "scenario_id": "None",
+      "time_horizon": "10",
+      "as_of_date": "None"
+     },
+     "ret": "None",
+     "dur_ms": 7789.682,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_analytics",
+       "qual": "PortfolioAggregationEngine.get_analytics",
+       "file": "services/portfolio_analytics_engine_v2.py",
+       "line": 1936,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "scenario_id": "None",
+        "time_horizon": "10",
+        "as_of_date": "None"
+       },
+       "ret": "None",
+       "dur_ms": 7789.633,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "calculate_analytics",
+         "qual": "PortfolioAnalyticsEngine.calculate_analytics",
+         "file": "services/portfolio_analytics_engine_v2.py",
+         "line": 1043,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+          "scenario_id": "None",
+          "time_horizon": "10",
+          "as_of_date": "None"
+         },
+         "ret": "None",
+         "dur_ms": 7789.562,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 7,
+           "name": "get_portfolio",
+           "qual": "get_portfolio",
+           "file": "services/portfolio_analytics_engine_v2.py",
+           "line": 138,
+           "args": {
+            "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+            "org_id": "None"
+           },
+           "ret": "None",
+           "dur_ms": 7789.527,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 8,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios_pg'"
+             },
+             "ret": "True",
+             "dur_ms": 5930.571,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 9,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios_pg'}"
+               },
+               "ret": "True",
+               "dur_ms": 5930.542,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 10,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios_pg'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 5930.422,
+                 "sql": [
+                  1
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 11,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 3787.322,
+                   "sql": [
+                    0
+                   ],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 12,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 316.825,
+             "sql": [
+              2
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 13,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.004,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 14,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios'"
+             },
+             "ret": "True",
+             "dur_ms": 382.211,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 15,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios'}"
+               },
+               "ret": "True",
+               "dur_ms": 382.177,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 16,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 382.121,
+                 "sql": [
+                  3
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 17,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.001,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 18,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 392.776,
+             "sql": [
+              4
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 19,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 20,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolio_analytics'"
+             },
+             "ret": "True",
+             "dur_ms": 410.065,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 21,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolio_analytics'}"
+               },
+               "ret": "True",
+               "dur_ms": 409.989,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 22,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolio_analytics'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 409.917,
+                 "sql": [
+                  5
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 23,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.003,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 24,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 356.653,
+             "sql": [
+              6
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 25,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.001,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/dashboard",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 5129.396,
+   "node_count": 22,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "information_schema.tables",
+    "portfolio_analytics",
+    "portfolios",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.114,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 320.543,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.934,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": null,
+     "dur_ms": 68.257,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"org_id\" does not exist\\nLINE 1: SELECT id, name, org_id, description, created_at FROM portfo...\\n                         ^\\n')"
+    },
+    {
+     "id": 4,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 197.636,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolio_analytics"
+     ],
+     "rowcount": 0,
+     "dur_ms": 524.028,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "scenario_id": "None (default)",
+    "time_horizon": "10 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "get_portfolio_dashboard",
+     "qual": "get_portfolio_dashboard",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 400,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "scenario_id": "None",
+      "time_horizon": "10"
+     },
+     "ret": "None",
+     "dur_ms": 5126.806,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 27,
+       "name": "get_dashboard",
+       "qual": "PortfolioAggregationEngine.get_dashboard",
+       "file": "services/portfolio_analytics_engine_v2.py",
+       "line": 1955,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "scenario_id": "None",
+        "time_horizon": "10"
+       },
+       "ret": "None",
+       "dur_ms": 5126.761,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 28,
+         "name": "get_dashboard",
+         "qual": "PortfolioDashboardEngine.get_dashboard",
+         "file": "services/portfolio_analytics_engine_v2.py",
+         "line": 1422,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+          "scenario_id": "None",
+          "time_horizon": "10"
+         },
+         "ret": "None",
+         "dur_ms": 5126.721,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 29,
+           "name": "get_portfolio",
+           "qual": "get_portfolio",
+           "file": "services/portfolio_analytics_engine_v2.py",
+           "line": 138,
+           "args": {
+            "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+            "org_id": "None"
+           },
+           "ret": "None",
+           "dur_ms": 5126.696,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 30,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios_pg'"
+             },
+             "ret": "True",
+             "dur_ms": 289.409,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 31,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios_pg'}"
+               },
+               "ret": "True",
+               "dur_ms": 289.389,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 32,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios_pg'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 289.348,
+                 "sql": [
+                  0
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 33,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.002,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 34,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 1395.182,
+             "sql": [
+              1
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 35,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 36,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios'"
+             },
+             "ret": "True",
+             "dur_ms": 631.628,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 37,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios'}"
+               },
+               "ret": "True",
+               "dur_ms": 631.495,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 38,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 631.439,
+                 "sql": [
+                  2
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 39,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.002,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 40,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 603.218,
+             "sql": [
+              3
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 41,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 42,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolio_analytics'"
+             },
+             "ret": "True",
+             "dur_ms": 680.384,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 43,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolio_analytics'}"
+               },
+               "ret": "True",
+               "dur_ms": 680.318,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 44,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolio_analytics'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 680.245,
+                 "sql": [
+                  4
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 45,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.004,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 46,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 1526.286,
+             "sql": [
+              5
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 47,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/portfolios/{portfolio_id}/holdings",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'state'",
+   "dur_ms": 4.714,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 48,
+     "name": "list_holdings",
+     "qual": "list_holdings",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 240,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.028,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/reports/{report_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Report 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 638.576,
+   "node_count": 8,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "information_schema.tables",
+    "portfolio_reports"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 68.033,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT content FROM portfolio_reports WHERE id = %(rid)s LIMIT 1'",
+     "tables": [
+      "portfolio_reports"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.316,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "report_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 49,
+     "name": "get_report_by_id",
+     "qual": "get_report_by_id",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 460,
+     "args": {
+      "report_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 636.162,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 50,
+       "name": "get_report",
+       "qual": "get_report",
+       "file": "services/portfolio_analytics_engine_v2.py",
+       "line": 671,
+       "args": {
+        "report_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 636.085,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 51,
+         "name": "_table_exists",
+         "qual": "_table_exists",
+         "file": "services/portfolio_analytics_engine_v2.py",
+         "line": 122,
+         "args": {
+          "t": "'portfolio_reports'"
+         },
+         "ret": "True",
+         "dur_ms": 300.413,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 52,
+           "name": "_exec_scalar",
+           "qual": "_exec_scalar",
+           "file": "services/portfolio_analytics_engine_v2.py",
+           "line": 103,
+           "args": {
+            "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+            "params": "{'t': 'portfolio_reports'}"
+           },
+           "ret": "True",
+           "dur_ms": 300.363,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 53,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+              "params": "{'t': 'portfolio_reports'}"
+             },
+             "ret": "[(True,)]",
+             "dur_ms": 300.232,
+             "sql": [
+              0
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 54,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.004,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": 55,
+         "name": "_exec",
+         "qual": "_exec",
+         "file": "services/portfolio_analytics_engine_v2.py",
+         "line": 90,
+         "args": {
+          "query": "'SELECT content FROM portfolio_reports WHERE id = :rid LIMIT 1'",
+          "params": "{'rid': '550e8400-e29b-41d4-a716-446655440001'}"
+         },
+         "ret": "[]",
+         "dur_ms": 335.556,
+         "sql": [
+          1
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 56,
+           "name": "_get_db_engine",
+           "qual": "_get_db_engine",
+           "file": "services/portfolio_analytics_engine_v2.py",
+           "line": 76,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/{portfolio_id}/pcaf-results",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 600.126,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.id, a.company_name, a.company_sector, a.asset_type, a.exposure, a.market_value, a.evic_eur, a.scope1_tco2e, a.scope2_tco2e, a.scope3_tco2e, a.pcaf_dqs, a.attribution_factor, a.annual_revenue_eur, a.entity_lei, a.isin, a.sbti_aligned, a.net_zero_committed, a.transition_plan_status, a.pcaf_asset_class, p.name AS portfolio_name FROM assets_pg a JOIN portfolios_pg p ON p.id = a.portfolio_id\u2026",
+     "tables": [
+      "assets_pg",
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 59.334,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error",
+     "data_available",
+     "portfolio_summary",
+     "message",
+     "investee_count"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 57,
+     "name": "get_pcaf_results",
+     "qual": "get_pcaf_results",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 540,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+     "dur_ms": 598.534,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 58,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.141,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 59,
+         "name": "_ReportSubEngine",
+         "qual": "_ReportSubEngine",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 661,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "PortfolioAggregationEngine",
+         "qual": "PortfolioAggregationEngine",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 684,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 61,
+       "name": "run_pcaf_calculation",
+       "qual": "run_pcaf_calculation",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 209,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'error': None, 'data_available': False, 'portfolio_summary': None, 'message': 'No assets found. Add assets to compute PCAF metrics.', 'investee_count': 0}",
+       "dur_ms": 595.446,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 62,
+         "name": "_get_db_engine",
+         "qual": "_get_db_engine",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 100,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "GET /api/v1/portfolio-analytics/{portfolio_id}/waci-history",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1508.601,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pcaf_time_series"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT reporting_year, actual_value AS waci, glidepath_value AS glidepath, dqs_score FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND metric_type = 'waci' AND sector = 'portfolio' ORDER BY reporting_year ASC LIMIT %(lim)s\"",
+     "tables": [
+      "pcaf_time_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.697,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "years": "10 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "history",
+     "periods"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 63,
+     "name": "get_waci_history",
+     "qual": "get_waci_history",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 578,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "years": "10"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'history': [], 'periods': 0}",
+     "dur_ms": 1505.789,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 64,
+       "name": "get_waci_history",
+       "qual": "get_waci_history",
+       "file": "services/portfolio_analytics_engine.py",
+       "line": 585,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "years": "10"
+       },
+       "ret": "[]",
+       "dur_ms": 1505.705,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 65,
+         "name": "_get_db_engine",
+         "qual": "_get_db_engine",
+         "file": "services/portfolio_analytics_engine.py",
+         "line": 100,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "PATCH /api/v1/portfolio-analytics/portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/portfolios/{portfolio_id}/holdings",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "DELETE /api/v1/portfolio-analytics/portfolios/{portfolio_id}/holdings/{property_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/portfolios/{portfolio_id}/reports/generate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/portfolios/{portfolio_id}/scenarios/compare",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 1882.633,
+   "node_count": 22,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "information_schema.tables",
+    "portfolio_analytics",
+    "portfolios",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 68.348,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 67.185,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.32,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": null,
+     "dur_ms": 65.827,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"org_id\" does not exist\\nLINE 1: SELECT id, name, org_id, description, created_at FROM portfo...\\n                         ^\\n')"
+    },
+    {
+     "id": 4,
+     "sql": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=%(t)s)\"",
+     "tables": [
+      "information_schema.tables"
+     ],
+     "rowcount": 1,
+     "dur_ms": 59.895,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=%(pid)s LIMIT 1'",
+     "tables": [
+      "portfolio_analytics"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.652,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "data": "<ScenarioComparisonRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 66,
+     "name": "compare_scenarios",
+     "qual": "compare_scenarios",
+     "file": "api/v1/routes/portfolio_analytics.py",
+     "line": 374,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "data": "ScenarioComparisonRequest(scenario_ids=['TEST_data_scenario_ids'], time_horizon=10)",
+      "_user": "Depends(dependency=<function get_current_user at 0x000001ACCB2C7880>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1879.372,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 67,
+       "name": "compare_scenarios",
+       "qual": "PortfolioAggregationEngine.compare_scenarios",
+       "file": "services/portfolio_analytics_engine_v2.py",
+       "line": 1947,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "scenario_ids": "['TEST_data_scenario_ids']",
+        "time_horizon": "10"
+       },
+       "ret": "None",
+       "dur_ms": 1879.297,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 68,
+         "name": "compare_scenarios",
+         "qual": "PortfolioAnalyticsEngine.compare_scenarios",
+         "file": "services/portfolio_analytics_engine_v2.py",
+         "line": 1330,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+          "scenario_ids": "['TEST_data_scenario_ids']",
+          "time_horizon": "10"
+         },
+         "ret": "None",
+         "dur_ms": 1879.264,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 69,
+           "name": "get_portfolio",
+           "qual": "get_portfolio",
+           "file": "services/portfolio_analytics_engine_v2.py",
+           "line": 138,
+           "args": {
+            "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+            "org_id": "None"
+           },
+           "ret": "None",
+           "dur_ms": 1879.238,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 70,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios_pg'"
+             },
+             "ret": "True",
+             "dur_ms": 306.294,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 71,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios_pg'}"
+               },
+               "ret": "True",
+               "dur_ms": 306.238,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 72,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios_pg'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 306.189,
+                 "sql": [
+                  0
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 73,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.002,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 74,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at, updated_at FROM portfolios_pg WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 333.984,
+             "sql": [
+              1
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 75,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 76,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolios'"
+             },
+             "ret": "True",
+             "dur_ms": 317.281,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 77,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolios'}"
+               },
+               "ret": "True",
+               "dur_ms": 317.243,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 78,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolios'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 317.19,
+                 "sql": [
+                  2
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 79,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.001,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 80,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, org_id, description, created_at FROM portfolios WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 327.702,
+             "sql": [
+              3
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 81,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 82,
+             "name": "_table_exists",
+             "qual": "_table_exists",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 122,
+             "args": {
+              "t": "'portfolio_analytics'"
+             },
+             "ret": "True",
+             "dur_ms": 294.776,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 83,
+               "name": "_exec_scalar",
+               "qual": "_exec_scalar",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 103,
+               "args": {
+                "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                "params": "{'t': 'portfolio_analytics'}"
+               },
+               "ret": "True",
+               "dur_ms": 294.734,
+               "sql": [],
+               "error": null,
+               "children": [
+                {
+                 "id": 84,
+                 "name": "_exec",
+                 "qual": "_exec",
+                 "file": "services/portfolio_analytics_engine_v2.py",
+                 "line": 90,
+                 "args": {
+                  "query": "\"SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name=:t)\"",
+                  "params": "{'t': 'portfolio_analytics'}"
+                 },
+                 "ret": "[(True,)]",
+                 "dur_ms": 294.604,
+                 "sql": [
+                  4
+                 ],
+                 "error": null,
+                 "children": [
+                  {
+                   "id": 85,
+                   "name": "_get_db_engine",
+                   "qual": "_get_db_engine",
+                   "file": "services/portfolio_analytics_engine_v2.py",
+                   "line": 76,
+                   "args": {},
+                   "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+                   "dur_ms": 0.001,
+                   "sql": [],
+                   "error": null,
+                   "children": []
+                  }
+                 ]
+                }
+               ]
+              }
+             ]
+            },
+            {
+             "id": 86,
+             "name": "_exec",
+             "qual": "_exec",
+             "file": "services/portfolio_analytics_engine_v2.py",
+             "line": 90,
+             "args": {
+              "query": "'SELECT id, name, description, portfolio_type, investment_strategy, target_return, aum, currency, inception_date, owner_id, created_at, updated_at FROM portfolio_analytics WHERE id=:pid LIMIT 1'",
+              "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+             },
+             "ret": "[]",
+             "dur_ms": 298.82,
+             "sql": [
+              5
+             ],
+             "error": null,
+             "children": [
+              {
+               "id": 87,
+               "name": "_get_db_engine",
+               "qual": "_get_db_engine",
+               "file": "services/portfolio_analytics_engine_v2.py",
+               "line": 76,
+               "args": {},
+               "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/seed-sample-data",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-analytics",
+   "label": "POST /api/v1/portfolio-analytics/{portfolio_id}/pcaf-run",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

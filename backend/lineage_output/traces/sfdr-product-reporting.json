@@ -1,0 +1,350 @@
+{
+ "domain": "sfdr-product-reporting",
+ "meta": {
+  "ts": "2026-06-30T14:05:08",
+  "module": "api.v1.routes.sfdr_product_reporting",
+  "router_prefix": "/api/v1/sfdr-product-reporting",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/dnsh-objectives",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.266,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "objectives",
+     "rule"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_dnsh_objectives",
+     "qual": "ref_dnsh_objectives",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 93,
+     "args": {},
+     "ret": "{'objectives': [{'id': 1, 'name': 'Climate change mitigation'}, {'id': 2, 'name': 'Climate change adaptation'}, {'id': 3, 'name': 'Sustainable use of water and marine resources'}, {'id': 4, 'name': 'Transition to circular economy'}, {'id':\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/pai-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.176,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "PAI-1",
+     "PAI-2",
+     "PAI-3",
+     "PAI-4",
+     "PAI-5",
+     "PAI-6",
+     "PAI-7",
+     "PAI-8",
+     "PAI-9",
+     "PAI-10",
+     "PAI-11",
+     "PAI-12",
+     "PAI-13",
+     "PAI-14"
+    ],
+    "n_keys": 14
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_pai_indicators",
+     "qual": "ref_pai_indicators",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 57,
+     "args": {},
+     "ret": "{'PAI-1': {'name': 'GHG Emissions', 'unit': 'tCO2eq/EUR M invested', 'threshold': None}, 'PAI-2': {'name': 'Carbon Footprint', 'unit': 'tCO2eq/EUR M invested', 'threshold': None}, 'PAI-3': {'name': 'GHG Intensity of Investee Companies', 'u\u2026",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "ref_pai_indicators",
+       "qual": "SFDRProductReportingEngine.ref_pai_indicators",
+       "file": "services/sfdr_product_reporting_engine.py",
+       "line": 227,
+       "args": {},
+       "ret": "{'PAI-1': {'name': 'GHG Emissions', 'unit': 'tCO2eq/EUR M invested', 'threshold': None}, 'PAI-2': {'name': 'Carbon Footprint', 'unit': 'tCO2eq/EUR M invested', 'threshold': None}, 'PAI-3': {'name': 'GHG Intensity of Investee Companies', 'u\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/reporting-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.116,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "applies_from",
+     "periodic_report_deadline",
+     "article_8_annex",
+     "article_9_annex",
+     "pai_statement_deadline",
+     "website_disclosure"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_reporting_timeline",
+     "qual": "ref_reporting_timeline",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 80,
+     "args": {},
+     "ret": "{'regulation': 'SFDR RTS 2022/1288 (Commission Delegated Regulation)', 'applies_from': '2023-01-01', 'periodic_report_deadline': '4 months after financial year end', 'article_8_annex': 'Annex III', 'article_9_annex': 'Annex V', 'pai_statem\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/rts-sections/{article}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: SFDR Article 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 0.169,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "article": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_rts_sections",
+     "qual": "ref_rts_sections",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 72,
+     "args": {
+      "article": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "ref_sfdr_articles",
+       "qual": "SFDRProductReportingEngine.ref_sfdr_articles",
+       "file": "services/sfdr_product_reporting_engine.py",
+       "line": 230,
+       "args": {},
+       "ret": "{'8': {'name': 'Article 8 \u2014 Environmental/Social Characteristics', 'mandatory_sections': ['summary', 'no_significant_harm', 'environmental_social_characteristics', 'investment_strategy', 'proportion_investments', 'monitoring', 'due_diligen\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/sfdr-articles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.133,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "8",
+     "9"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_sfdr_articles",
+     "qual": "ref_sfdr_articles",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 62,
+     "args": {},
+     "ret": "{'8': {'name': 'Article 8 \u2014 Environmental/Social Characteristics', 'mandatory_sections': ['summary', 'no_significant_harm', 'environmental_social_characteristics', 'investment_strategy', 'proportion_investments', 'monitoring', 'due_diligen\u2026",
+     "dur_ms": 0.025,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "ref_sfdr_articles",
+       "qual": "SFDRProductReportingEngine.ref_sfdr_articles",
+       "file": "services/sfdr_product_reporting_engine.py",
+       "line": 230,
+       "args": {},
+       "ret": "{'8': {'name': 'Article 8 \u2014 Environmental/Social Characteristics', 'mandatory_sections': ['summary', 'no_significant_harm', 'environmental_social_characteristics', 'investment_strategy', 'proportion_investments', 'monitoring', 'due_diligen\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "GET /api/v1/sfdr-product-reporting/ref/sustainable-investment-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.119,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "criteria"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_sustainable_investment_criteria",
+     "qual": "ref_sustainable_investment_criteria",
+     "file": "api/v1/routes/sfdr_product_reporting.py",
+     "line": 67,
+     "args": {},
+     "ret": "{'criteria': ['dnsh_verified', 'social_good_contribution', 'governance_screening', 'additionality']}",
+     "dur_ms": 0.021,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "ref_sustainable_investment_criteria",
+       "qual": "SFDRProductReportingEngine.ref_sustainable_investment_criteria",
+       "file": "services/sfdr_product_reporting_engine.py",
+       "line": 233,
+       "args": {},
+       "ret": "['dnsh_verified', 'social_good_contribution', 'governance_screening', 'additionality']",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "POST /api/v1/sfdr-product-reporting/generate-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-product-reporting",
+   "label": "POST /api/v1/sfdr-product-reporting/verify-sustainable-investment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

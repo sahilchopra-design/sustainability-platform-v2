@@ -1,0 +1,1175 @@
+{
+ "domain": "portfolio-health",
+ "meta": {
+  "ts": "2026-06-30T14:04:06",
+  "module": "api.v1.routes.portfolio_health",
+  "router_prefix": "/api/v1/portfolio-health",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "portfolio-health",
+   "label": "GET /api/v1/portfolio-health/{portfolio_id}/alerts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3132.605,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "platform_alerts"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, alert_type, severity, title, message, metric_value, threshold, module_link, is_read, is_resolved, created_at FROM platform_alerts WHERE portfolio_id = %(pid)s ORDER BY created_at DESC LIMIT %(lim)s'",
+     "tables": [
+      "platform_alerts"
+     ],
+     "rowcount": 0,
+     "dur_ms": 215.362,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "unread_only": "False (default)",
+    "limit": "50 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "alerts",
+     "total"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_alerts",
+     "qual": "get_alerts",
+     "file": "api/v1/routes/portfolio_health.py",
+     "line": 98,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "unread_only": "False",
+      "limit": "50"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'alerts': [], 'total': 0}",
+     "dur_ms": 3132.187,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_portfolio_alerts",
+       "qual": "get_portfolio_alerts",
+       "file": "services/alert_engine.py",
+       "line": 368,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "unread_only": "False",
+        "limit": "50"
+       },
+       "ret": "[]",
+       "dur_ms": 3132.113,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "_get_engine",
+         "qual": "_get_engine",
+         "file": "services/alert_engine.py",
+         "line": 57,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "GET /api/v1/portfolio-health/{portfolio_id}/history",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2944.139,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pcaf_time_series"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT reporting_year, AVG(CASE WHEN metric_type = 'waci' THEN CASE WHEN glidepath_value > 0 THEN GREATEST(0, 100 - ((actual_value - glidepath_value) / glidepath_value * 100)) ELSE 50 END END) AS climate_score FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND actual_value IS NOT NULL GROUP BY reporting_year ORDER BY reporting_year ASC LIMIT %(w)s\"",
+     "tables": [
+      "pcaf_time_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 875.981,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "weeks": "12 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "history",
+     "periods"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_score_history_endpoint",
+     "qual": "get_score_history_endpoint",
+     "file": "api/v1/routes/portfolio_health.py",
+     "line": 120,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "weeks": "12"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'history': [], 'periods': 0}",
+     "dur_ms": 2943.666,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_score_history",
+       "qual": "get_score_history",
+       "file": "services/portfolio_health_engine.py",
+       "line": 407,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "weeks": "12"
+       },
+       "ret": "[]",
+       "dur_ms": 2943.55,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "_get_engine",
+         "qual": "_get_engine",
+         "file": "services/portfolio_health_engine.py",
+         "line": 78,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.013,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_exec",
+         "qual": "_exec",
+         "file": "services/portfolio_health_engine.py",
+         "line": 86,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "query": "\"\\n        SELECT reporting_year,\\n               AVG(CASE WHEN metric_type = 'waci'\\n                   THEN CASE WHEN glidepath_value > 0\\n                        THEN GREATEST(0, 100 - ((actual_value - glidepath_value) / glidepath_value\u2026",
+          "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001', 'w': 12}"
+         },
+         "ret": "[]",
+         "dur_ms": 2943.291,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "GET /api/v1/portfolio-health/{portfolio_id}/scores",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2157.361,
+   "node_count": 19,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "ecl_exposures",
+    "pcaf_time_series",
+    "platform_alerts",
+    "portfolios_pg",
+    "project_finance_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT name FROM portfolios_pg WHERE id = %(pid)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 71.33,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM platform_alerts WHERE portfolio_id = %(pid)s AND is_read = false AND is_resolved = false'",
+     "tables": [
+      "platform_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 66.812,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT sector, actual_value, glidepath_value, reporting_year FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND metric_type = 'waci' AND glidepath_value IS NOT NULL AND actual_value IS NOT NULL AND reporting_year = ( SELECT MAX(reporting_year) FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND metric_type = 'waci' )\"",
+     "tables": [
+      "pcaf_time_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 78.517,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT stage_assigned, SUM(exposure_value) AS exposure_sum FROM ecl_exposures WHERE portfolio_id = %(pid)s GROUP BY stage_assigned'",
+     "tables": [
+      "ecl_exposures"
+     ],
+     "rowcount": null,
+     "dur_ms": 125.348,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"stage_assigned\" does not exist\\nLINE 2:         SELECT stage_assigned, SUM(exposure_value) AS exposu...\\n                       ^\\n')"
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT MIN(min_dscr) FROM project_finance_assessments WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "project_finance_assessments"
+     ],
+     "rowcount": null,
+     "dur_ms": 60.964,
+     "is_reference": false,
+     "error": "UndefinedTable('relation \"project_finance_assessments\" does not exist\\nLINE 2:         SELECT MIN(min_dscr) FROM project_finance_assessment...\\n                                          ^\\n')"
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT exposure, sbti_aligned, transition_plan_status, pcaf_dqs FROM assets_pg WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "assets_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 57.245,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "portfolio_name",
+     "climate_health",
+     "financial_resilience",
+     "transition_readiness",
+     "overall_score",
+     "alert_count",
+     "data_available",
+     "last_updated"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_health_scores",
+     "qual": "get_health_scores",
+     "file": "api/v1/routes/portfolio_health.py",
+     "line": 81,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "PortfolioHealthResponse(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScoreOut(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calcula\u2026",
+     "dur_ms": 2157.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "compute_portfolio_health",
+       "qual": "compute_portfolio_health",
+       "file": "services/portfolio_health_engine.py",
+       "line": 340,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "PortfolioHealthScores(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation \u2026",
+       "dur_ms": 2156.735,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "_get_engine",
+         "qual": "_get_engine",
+         "file": "services/portfolio_health_engine.py",
+         "line": 78,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "get_unread_count",
+         "qual": "get_unread_count",
+         "file": "services/alert_engine.py",
+         "line": 456,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "0",
+         "dur_ms": 358.795,
+         "sql": [
+          1
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 12,
+           "name": "_get_engine",
+           "qual": "_get_engine",
+           "file": "services/alert_engine.py",
+           "line": 57,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 13,
+         "name": "_compute_climate_health",
+         "qual": "_compute_climate_health",
+         "file": "services/portfolio_health_engine.py",
+         "line": 105,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')",
+         "dur_ms": 388.958,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 14,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "\"\\n        SELECT sector,\\n               actual_value,\\n               glidepath_value,\\n               reporting_year\\n        FROM pcaf_time_series\\n        WHERE portfolio_id = :pid\\n          AND metric_type   = 'waci'\\n          AND \u2026",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 388.899,
+           "sql": [
+            2
+           ],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 15,
+         "name": "_compute_financial_resilience",
+         "qual": "_compute_financial_resilience",
+         "file": "services/portfolio_health_engine.py",
+         "line": 177,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')",
+         "dur_ms": 786.977,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 16,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT stage_assigned, SUM(exposure_value) AS exposure_sum\\n        FROM ecl_exposures\\n        WHERE portfolio_id = :pid\\n        GROUP BY stage_assigned\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 406.233,
+           "sql": [
+            3
+           ],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "<genexpr>",
+           "qual": "_compute_financial_resilience.<locals>.<genexpr>",
+           "file": "services/portfolio_health_engine.py",
+           "line": 196,
+           "args": {
+            ".0": "<list_iterator object at 0x000001D950F33BB0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "<genexpr>",
+           "qual": "_compute_financial_resilience.<locals>.<genexpr>",
+           "file": "services/portfolio_health_engine.py",
+           "line": 197,
+           "args": {
+            ".0": "<list_iterator object at 0x000001D950F33BB0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "_scalar",
+           "qual": "_scalar",
+           "file": "services/portfolio_health_engine.py",
+           "line": 95,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT MIN(min_dscr) FROM project_finance_assessments\\n        WHERE portfolio_id = :pid\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "None",
+           "dur_ms": 380.496,
+           "sql": [
+            4
+           ],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "_clamp",
+           "qual": "_clamp",
+           "file": "services/portfolio_health_engine.py",
+           "line": 72,
+           "args": {
+            "v": "100.0"
+           },
+           "ret": "100.0",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 21,
+         "name": "_compute_transition_readiness",
+         "qual": "_compute_transition_readiness",
+         "file": "services/portfolio_health_engine.py",
+         "line": 257,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')",
+         "dur_ms": 291.996,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 22,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT exposure,\\n               sbti_aligned,\\n               transition_plan_status,\\n               pcaf_dqs\\n        FROM assets_pg\\n        WHERE portfolio_id = :pid\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 291.946,
+           "sql": [
+            5
+           ],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 23,
+       "name": "_health_to_response",
+       "qual": "_health_to_response",
+       "file": "api/v1/routes/portfolio_health.py",
+       "line": 65,
+       "args": {
+        "h": "PortfolioHealthScores(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation \u2026"
+       },
+       "ret": "PortfolioHealthResponse(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScoreOut(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calcula\u2026",
+       "dur_ms": 0.166,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 24,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')",
+         "dur_ms": 0.031,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "GET /api/v1/portfolio-health/{portfolio_id}/unread-count",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1411.505,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "platform_alerts"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM platform_alerts WHERE portfolio_id = %(pid)s AND is_read = false AND is_resolved = false'",
+     "tables": [
+      "platform_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 310.71,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "unread_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "get_unread_alert_count",
+     "qual": "get_unread_alert_count",
+     "file": "api/v1/routes/portfolio_health.py",
+     "line": 174,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'unread_count': 0}",
+     "dur_ms": 1411.282,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 28,
+       "name": "get_unread_count",
+       "qual": "get_unread_count",
+       "file": "services/alert_engine.py",
+       "line": 456,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "0",
+       "dur_ms": 1411.25,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 29,
+         "name": "_get_engine",
+         "qual": "_get_engine",
+         "file": "services/alert_engine.py",
+         "line": 57,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "PATCH /api/v1/portfolio-health/alerts/{alert_id}/read",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "PATCH /api/v1/portfolio-health/{portfolio_id}/read-all",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-health",
+   "label": "POST /api/v1/portfolio-health/{portfolio_id}/refresh",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4035.44,
+   "node_count": 19,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "ecl_exposures",
+    "pcaf_time_series",
+    "platform_alerts",
+    "portfolios_pg",
+    "project_finance_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT name FROM portfolios_pg WHERE id = %(pid)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.186,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM platform_alerts WHERE portfolio_id = %(pid)s AND is_read = false AND is_resolved = false'",
+     "tables": [
+      "platform_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 65.197,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT sector, actual_value, glidepath_value, reporting_year FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND metric_type = 'waci' AND glidepath_value IS NOT NULL AND actual_value IS NOT NULL AND reporting_year = ( SELECT MAX(reporting_year) FROM pcaf_time_series WHERE portfolio_id = %(pid)s AND metric_type = 'waci' )\"",
+     "tables": [
+      "pcaf_time_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.234,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT stage_assigned, SUM(exposure_value) AS exposure_sum FROM ecl_exposures WHERE portfolio_id = %(pid)s GROUP BY stage_assigned'",
+     "tables": [
+      "ecl_exposures"
+     ],
+     "rowcount": null,
+     "dur_ms": 499.234,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"stage_assigned\" does not exist\\nLINE 2:         SELECT stage_assigned, SUM(exposure_value) AS exposu...\\n                       ^\\n')"
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT MIN(min_dscr) FROM project_finance_assessments WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "project_finance_assessments"
+     ],
+     "rowcount": null,
+     "dur_ms": 65.617,
+     "is_reference": false,
+     "error": "UndefinedTable('relation \"project_finance_assessments\" does not exist\\nLINE 2:         SELECT MIN(min_dscr) FROM project_finance_assessment...\\n                                          ^\\n')"
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT exposure, sbti_aligned, transition_plan_status, pcaf_dqs FROM assets_pg WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "assets_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 58.564,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "message",
+     "scores"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 30,
+     "name": "refresh_health_scores",
+     "qual": "refresh_health_scores",
+     "file": "api/v1/routes/portfolio_health.py",
+     "line": 138,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'message': 'Health scores refreshed successfully', 'scores': PortfolioHealthResponse(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScoreOut(value=50.0, rag='AMBER', label='No WACI da\u2026",
+     "dur_ms": 4035.008,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 31,
+       "name": "compute_portfolio_health",
+       "qual": "compute_portfolio_health",
+       "file": "services/portfolio_health_engine.py",
+       "line": 340,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "PortfolioHealthScores(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation \u2026",
+       "dur_ms": 4034.735,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 32,
+         "name": "_get_engine",
+         "qual": "_get_engine",
+         "file": "services/portfolio_health_engine.py",
+         "line": 78,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "get_unread_count",
+         "qual": "get_unread_count",
+         "file": "services/alert_engine.py",
+         "line": 456,
+         "args": {
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "0",
+         "dur_ms": 692.533,
+         "sql": [
+          1
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 34,
+           "name": "_get_engine",
+           "qual": "_get_engine",
+           "file": "services/alert_engine.py",
+           "line": 57,
+           "args": {},
+           "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 35,
+         "name": "_compute_climate_health",
+         "qual": "_compute_climate_health",
+         "file": "services/portfolio_health_engine.py",
+         "line": 105,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')",
+         "dur_ms": 459.186,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 36,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "\"\\n        SELECT sector,\\n               actual_value,\\n               glidepath_value,\\n               reporting_year\\n        FROM pcaf_time_series\\n        WHERE portfolio_id = :pid\\n          AND metric_type   = 'waci'\\n          AND \u2026",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 459.122,
+           "sql": [
+            2
+           ],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 37,
+         "name": "_compute_financial_resilience",
+         "qual": "_compute_financial_resilience",
+         "file": "services/portfolio_health_engine.py",
+         "line": 177,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')",
+         "dur_ms": 2112.561,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 38,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT stage_assigned, SUM(exposure_value) AS exposure_sum\\n        FROM ecl_exposures\\n        WHERE portfolio_id = :pid\\n        GROUP BY stage_assigned\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 1791.96,
+           "sql": [
+            3
+           ],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 39,
+           "name": "<genexpr>",
+           "qual": "_compute_financial_resilience.<locals>.<genexpr>",
+           "file": "services/portfolio_health_engine.py",
+           "line": 196,
+           "args": {
+            ".0": "<list_iterator object at 0x000001D9527834F0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 40,
+           "name": "<genexpr>",
+           "qual": "_compute_financial_resilience.<locals>.<genexpr>",
+           "file": "services/portfolio_health_engine.py",
+           "line": 197,
+           "args": {
+            ".0": "<list_iterator object at 0x000001D9527834F0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 41,
+           "name": "_scalar",
+           "qual": "_scalar",
+           "file": "services/portfolio_health_engine.py",
+           "line": 95,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT MIN(min_dscr) FROM project_finance_assessments\\n        WHERE portfolio_id = :pid\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "None",
+           "dur_ms": 320.192,
+           "sql": [
+            4
+           ],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42,
+           "name": "_clamp",
+           "qual": "_clamp",
+           "file": "services/portfolio_health_engine.py",
+           "line": 72,
+           "args": {
+            "v": "100.0"
+           },
+           "ret": "100.0",
+           "dur_ms": 0.012,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 43,
+         "name": "_compute_transition_readiness",
+         "qual": "_compute_transition_readiness",
+         "file": "services/portfolio_health_engine.py",
+         "line": 257,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "HealthScore(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')",
+         "dur_ms": 315.943,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 44,
+           "name": "_exec",
+           "qual": "_exec",
+           "file": "services/portfolio_health_engine.py",
+           "line": 86,
+           "args": {
+            "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+            "query": "'\\n        SELECT exposure,\\n               sbti_aligned,\\n               transition_plan_status,\\n               pcaf_dqs\\n        FROM assets_pg\\n        WHERE portfolio_id = :pid\\n        '",
+            "params": "{'pid': '550e8400-e29b-41d4-a716-446655440001'}"
+           },
+           "ret": "[]",
+           "dur_ms": 315.856,
+           "sql": [
+            5
+           ],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 45,
+       "name": "_health_to_response",
+       "qual": "_health_to_response",
+       "file": "api/v1/routes/portfolio_health.py",
+       "line": 65,
+       "args": {
+        "h": "PortfolioHealthScores(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation \u2026"
+       },
+       "ret": "PortfolioHealthResponse(portfolio_id='550e8400-e29b-41d4-a716-446655440001', portfolio_name='550e8400\u2026', climate_health=HealthScoreOut(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calcula\u2026",
+       "dur_ms": 0.141,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 46,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No WACI data available \u2014 run PCAF calculation', action='Run PCAF calculation to populate climate health score', action_link='/portfolio-analytics')",
+         "dur_ms": 0.02,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No ECL or DSCR data \u2014 run financial risk assessment', action='Run ECL Climate assessment to populate resilience score', action_link='/financial-risk')",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "_score_to_out",
+         "qual": "_score_to_out",
+         "file": "api/v1/routes/portfolio_health.py",
+         "line": 55,
+         "args": {
+          "score": "HealthScore(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')"
+         },
+         "ret": "HealthScoreOut(value=50.0, rag='AMBER', label='No asset transition data \u2014 add counterparty details', action='Update SBTi and transition plan status for portfolio assets', action_link='/portfolio-analytics')",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

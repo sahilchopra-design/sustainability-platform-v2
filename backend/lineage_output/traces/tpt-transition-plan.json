@@ -1,0 +1,491 @@
+{
+ "domain": "tpt-transition-plan",
+ "meta": {
+  "ts": "2026-06-30T14:05:35",
+  "module": "api.v1.routes.tpt_transition_plan",
+  "router_prefix": "/api/v1/tpt-transition-plan",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "tpt-transition-plan",
+   "label": "GET /api/v1/tpt-transition-plan/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.479,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'cross_framework_map': {'tcfd_governance_board': {'tcfd': 'Governance \u2014 Board oversight', 'tpt_element': 'governance', 'tpt_sub_element': '5.1', 'ifrs_s2': 'S2-6 (Board oversight of climate)', 'csrd_esrs_e1': 'E\u2026",
+     "dur_ms": 0.131,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "ref_cross_framework",
+       "qual": "TPTTransitionPlanEngine.ref_cross_framework",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 898,
+       "args": {},
+       "ret": "{'cross_framework_map': {'tcfd_governance_board': {'tcfd': 'Governance \u2014 Board oversight', 'tpt_element': 'governance', 'tpt_sub_element': '5.1', 'ifrs_s2': 'S2-6 (Board oversight of climate)', 'csrd_esrs_e1': 'E1-GOV-1 (Climate-related go\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "GET /api/v1/tpt-transition-plan/ref/elements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.913,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_elements",
+     "qual": "ref_elements",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 136,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'tpt_elements': {'foundations': {'element_id': '1', 'name': 'Foundations', 'description': 'The ambition, current state, and milestones underpinning the transition plan', 'tpt_reference': 'TPT Framework \u00a7\u00a71-3', '\u2026",
+     "dur_ms": 0.921,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "ref_elements",
+       "qual": "TPTTransitionPlanEngine.ref_elements",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 889,
+       "args": {},
+       "ret": "{'tpt_elements': {'foundations': {'element_id': '1', 'name': 'Foundations', 'description': 'The ambition, current state, and milestones underpinning the transition plan', 'tpt_reference': 'TPT Framework \u00a7\u00a71-3', 'sub_elements': {'1.1': {'na\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "GET /api/v1/tpt-transition-plan/ref/entity-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.402,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_entity_types",
+     "qual": "ref_entity_types",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 145,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'entity_types': {'bank': {'name': 'Bank / Credit Institution', 'relevant_elements': ['foundations', 'implementation_strategy', 'engagement_accountability', 'metrics_targets', 'governance', 'finance'], 'priority_\u2026",
+     "dur_ms": 0.119,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "ref_entity_types",
+       "qual": "TPTTransitionPlanEngine.ref_entity_types",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 892,
+       "args": {},
+       "ret": "{'entity_types': {'bank': {'name': 'Bank / Credit Institution', 'relevant_elements': ['foundations', 'implementation_strategy', 'engagement_accountability', 'metrics_targets', 'governance', 'finance'], 'priority_sub_elements': ['1.2', '2.1\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "GET /api/v1/tpt-transition-plan/ref/interim-targets-guidance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.339,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_interim_targets_guidance",
+     "qual": "ref_interim_targets_guidance",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 172,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'interim_targets_guidance': {'2025': {'required_by': ['leading_practice', 'GFANZ_commitment'], 'typical_reduction_vs_base_year': '-10% to -20% Scope 1+2', 'notes': 'Short-term operational wins; renewable energy \u2026",
+     "dur_ms": 0.094,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "ref_interim_targets_guidance",
+       "qual": "TPTTransitionPlanEngine.ref_interim_targets_guidance",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 901,
+       "args": {},
+       "ret": "{'interim_targets_guidance': {'2025': {'required_by': ['leading_practice', 'GFANZ_commitment'], 'typical_reduction_vs_base_year': '-10% to -20% Scope 1+2', 'notes': 'Short-term operational wins; renewable energy procurement'}, '2030': {'re\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "GET /api/v1/tpt-transition-plan/ref/quality-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.419,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_quality_tiers",
+     "qual": "ref_quality_tiers",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 154,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'quality_tiers': {'initial': {'name': 'Initial', 'score_range': [0, 25], 'description': 'Early-stage transition planning. High-level commitments present but limited quantification or implementation detail.', 'ty\u2026",
+     "dur_ms": 0.133,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "ref_quality_tiers",
+       "qual": "TPTTransitionPlanEngine.ref_quality_tiers",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 895,
+       "args": {},
+       "ret": "{'quality_tiers': {'initial': {'name': 'Initial', 'score_range': [0, 25], 'description': 'Early-stage transition planning. High-level commitments present but limited quantification or implementation detail.', 'typical_characteristics': ['N\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "POST /api/v1/tpt-transition-plan/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.469,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_tpt",
+     "qual": "assess_tpt",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 63,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.068,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "POST /api/v1/tpt-transition-plan/gap-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.242,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "gap_analysis",
+     "qual": "gap_analysis",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 99,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "tpt-transition-plan",
+   "label": "POST /api/v1/tpt-transition-plan/score-element",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.256,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "score_element",
+     "qual": "score_element",
+     "file": "api/v1/routes/tpt_transition_plan.py",
+     "line": 84,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/tpt_transition_plan_engine.py",
+       "line": 940,
+       "args": {},
+       "ret": "<services.tpt_transition_plan_engine.TPTTransitionPlanEngine object at 0x000002140BB87B30>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

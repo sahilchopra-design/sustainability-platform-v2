@@ -1,0 +1,475 @@
+{
+ "domain": "scheduled-reports",
+ "meta": {
+  "ts": "2026-06-30T14:05:01",
+  "module": "api.v1.routes.scheduled_reports",
+  "router_prefix": "/api/v1/scheduled-reports",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "scheduled-reports",
+   "label": "GET /api/v1/scheduled-reports",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 372.493,
+   "node_count": 4,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scheduled_reports"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, name, report_type, frequency, recipients, format, parameters, is_active, next_run, last_run, created_at, updated_at FROM scheduled_reports WHERE 1=1 ORDER BY next_run ASC'",
+     "tables": [
+      "scheduled_reports"
+     ],
+     "rowcount": 1,
+     "dur_ms": 151.413,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "active_only": "False (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_reports",
+     "qual": "list_reports",
+     "file": "api/v1/routes/scheduled_reports.py",
+     "line": 97,
+     "args": {
+      "active_only": "False"
+     },
+     "ret": "ScheduledReportListResponse(items=[ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@c\u2026",
+     "dur_ms": 370.184,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "list_scheduled_reports",
+       "qual": "list_scheduled_reports",
+       "file": "services/scheduled_reports_service.py",
+       "line": 213,
+       "args": {
+        "user_id": "None",
+        "active_only": "False"
+       },
+       "ret": "[ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@compan\u2026",
+       "dur_ms": 369.856,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "_get_db_engine",
+         "qual": "_get_db_engine",
+         "file": "services/scheduled_reports_service.py",
+         "line": 20,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 4,
+       "name": "report_to_response",
+       "qual": "report_to_response",
+       "file": "api/v1/routes/scheduled_reports.py",
+       "line": 57,
+       "args": {
+        "report": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026"
+       },
+       "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
+       "dur_ms": 0.056,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "GET /api/v1/scheduled-reports/due/list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 293.137,
+   "node_count": 4,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scheduled_reports"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, name, report_type, frequency, recipients, format, parameters, is_active, next_run, last_run, created_at, updated_at FROM scheduled_reports WHERE is_active = true AND next_run <= %(now)s ORDER BY next_run ASC'",
+     "tables": [
+      "scheduled_reports"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.037,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_due_reports_list",
+     "qual": "get_due_reports_list",
+     "file": "api/v1/routes/scheduled_reports.py",
+     "line": 156,
+     "args": {},
+     "ret": "{'items': [ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pd\u2026",
+     "dur_ms": 291.467,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_due_reports",
+       "qual": "get_due_reports",
+       "file": "services/scheduled_reports_service.py",
+       "line": 317,
+       "args": {},
+       "ret": "[ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@compan\u2026",
+       "dur_ms": 291.189,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "_get_db_engine",
+         "qual": "_get_db_engine",
+         "file": "services/scheduled_reports_service.py",
+         "line": 20,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 8,
+       "name": "report_to_response",
+       "qual": "report_to_response",
+       "file": "api/v1/routes/scheduled_reports.py",
+       "line": 57,
+       "args": {
+        "report": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026"
+       },
+       "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
+       "dur_ms": 0.051,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "GET /api/v1/scheduled-reports/options/frequencies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.322,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frequencies"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_frequencies",
+     "qual": "get_frequencies",
+     "file": "api/v1/routes/scheduled_reports.py",
+     "line": 178,
+     "args": {},
+     "ret": "{'frequencies': [{'value': 'daily', 'label': 'Daily'}, {'value': 'weekly', 'label': 'Weekly'}, {'value': 'monthly', 'label': 'Monthly'}, {'value': 'quarterly', 'label': 'Quarterly'}]}",
+     "dur_ms": 0.036,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "GET /api/v1/scheduled-reports/options/types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.321,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_report_types",
+     "qual": "get_report_types",
+     "file": "api/v1/routes/scheduled_reports.py",
+     "line": 167,
+     "args": {},
+     "ret": "{'types': [{'value': 'portfolio_analytics', 'label': 'Portfolio Analytics'}, {'value': 'carbon_credits', 'label': 'Carbon Credits'}, {'value': 'stranded_assets', 'label': 'Stranded Assets'}, {'value': 'nature_risk', 'label': 'Nature Risk'}\u2026",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "GET /api/v1/scheduled-reports/{report_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 856.286,
+   "node_count": 4,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scheduled_reports"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, name, report_type, frequency, recipients, format, parameters, is_active, next_run, last_run, created_at, updated_at FROM scheduled_reports WHERE id = %(id)s'",
+     "tables": [
+      "scheduled_reports"
+     ],
+     "rowcount": 1,
+     "dur_ms": 576.012,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "report_id": "f247b739-108d-4f4e-868d-16ed3958a8e1 (real id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "id",
+     "name",
+     "report_type",
+     "frequency",
+     "recipients",
+     "format",
+     "parameters",
+     "is_active",
+     "next_run",
+     "last_run",
+     "created_at"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "get_report",
+     "qual": "get_report",
+     "file": "api/v1/routes/scheduled_reports.py",
+     "line": 107,
+     "args": {
+      "report_id": "'f247b739-108d-4f4e-868d-16ed3958a8e1'"
+     },
+     "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
+     "dur_ms": 854.61,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_scheduled_report",
+       "qual": "get_scheduled_report",
+       "file": "services/scheduled_reports_service.py",
+       "line": 178,
+       "args": {
+        "report_id": "'f247b739-108d-4f4e-868d-16ed3958a8e1'"
+       },
+       "ret": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026",
+       "dur_ms": 854.311,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 13,
+         "name": "_get_db_engine",
+         "qual": "_get_db_engine",
+         "file": "services/scheduled_reports_service.py",
+         "line": 20,
+         "args": {},
+         "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 14,
+       "name": "report_to_response",
+       "qual": "report_to_response",
+       "file": "api/v1/routes/scheduled_reports.py",
+       "line": 57,
+       "args": {
+        "report": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026"
+       },
+       "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
+       "dur_ms": 0.048,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "POST /api/v1/scheduled-reports",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "PATCH /api/v1/scheduled-reports/{report_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "DELETE /api/v1/scheduled-reports/{report_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scheduled-reports",
+   "label": "POST /api/v1/scheduled-reports/{report_id}/toggle",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

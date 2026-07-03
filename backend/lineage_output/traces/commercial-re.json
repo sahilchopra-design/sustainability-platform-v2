@@ -1,0 +1,329 @@
+{
+ "domain": "commercial-re",
+ "meta": {
+  "ts": "2026-06-30T14:00:03",
+  "module": "api.v1.routes.commercial_re",
+  "router_prefix": "/api/v1/commercial-re",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "commercial-re",
+   "label": "GET /api/v1/commercial-re/ref/crrem-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.521,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_crrem_pathways",
+     "qual": "ref_crrem_pathways",
+     "file": "api/v1/routes/commercial_re.py",
+     "line": 318,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'office': {'UK': {'2025': 28.0, '2030': 18.0, '2035': 12.0, '2040': 7.0, '2050': 2.0}, 'DE': {'2025': 22.0, '2030': 15.0, '2035': 9.0, '2040': 5.0, '2050': 1.5}, 'FR': {'2025': 18.0, '2030': 12.0, '2035': 7.0\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "commercial-re",
+   "label": "GET /api/v1/commercial-re/ref/epc-thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.245,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_epc_thresholds",
+     "qual": "ref_epc_thresholds",
+     "file": "api/v1/routes/commercial_re.py",
+     "line": 324,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'thresholds': {'UK': {'A': 50.0, 'B': 75.0, 'C': 100.0, 'D': 125.0, 'E': 150.0, 'F': 175.0, 'G': 999.0}, 'DE': {'A+': 30.0, 'A': 50.0, 'B': 75.0, 'C': 100.0, 'D': 130.0, 'E': 160.0, 'F': 200.0, 'G': 250.0, 'H\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "commercial-re",
+   "label": "GET /api/v1/commercial-re/ref/green-premium",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.238,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_green_premium",
+     "qual": "ref_green_premium",
+     "file": "api/v1/routes/commercial_re.py",
+     "line": 349,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'green_premium_evidence': {'UK': {'office': {'premium_pct': 8.5, 'brown_discount_pct': 6.0}, 'retail': {'premium_pct': 5.0, 'brown_discount_pct': 4.0}, 'logistics': {'premium_pct': 6.0, 'brown_discount_pct': \u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "commercial-re",
+   "label": "GET /api/v1/commercial-re/ref/retrofit-measures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.3,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_retrofit_measures",
+     "qual": "ref_retrofit_measures",
+     "file": "api/v1/routes/commercial_re.py",
+     "line": 336,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'measures': {'insulation': {'typical_capex_per_m2': 45.0, 'energy_saving_pct': 20.0, 'co2_saving_pct': 22.0, 'lifetime_yrs': 30}, 'HVAC': {'typical_capex_per_m2': 80.0, 'energy_saving_pct': 25.0, 'co2_saving_\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/crrem",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/epc-epbd",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.272,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/commercial_re.py",
+     "line": 305,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/green-lease",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/gresb",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/nabers",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/refi",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "commercial-re",
+   "label": "POST /api/v1/commercial-re/retrofit",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

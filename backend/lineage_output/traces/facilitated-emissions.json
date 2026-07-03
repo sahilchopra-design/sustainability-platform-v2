@@ -1,0 +1,1452 @@
+{
+ "domain": "facilitated-emissions",
+ "meta": {
+  "ts": "2026-06-30T14:02:14",
+  "module": "api.v1.routes.facilitated_emissions",
+  "router_prefix": "/api/v1/facilitated-emissions",
+  "endpoints": 17
+ },
+ "transactions": [
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1307.674,
+   "node_count": 10,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "facilitated_emissions_v2",
+    "insurance_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'CREATE TABLE IF NOT EXISTS facilitated_emissions_v2 ( id SERIAL PRIMARY KEY, deal_id TEXT UNIQUE NOT NULL, deal_type TEXT NOT NULL, issuer_name TEXT NOT NULL, issuer_id TEXT, issuer_sector_gics TEXT, issuer_country_iso2 TEXT, issuer_revenue_musd NUMERIC(16,4), underwritten_amount_musd NUMERIC(16,4), total_deal_size_musd NUMERIC(16,4), shares_placed_value_musd NUMERIC(16,4), market_cap_musd NUMER\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 70.175,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'CREATE TABLE IF NOT EXISTS insurance_emissions ( id SERIAL PRIMARY KEY, policy_id TEXT UNIQUE NOT NULL, line_of_business TEXT NOT NULL, policyholder_name TEXT NOT NULL, policyholder_id TEXT, policyholder_sector_gics TEXT, policyholder_country_iso2 TEXT, gross_written_premium_musd NUMERIC(16,4), net_earned_premium_musd NUMERIC(16,4), claims_paid_musd NUMERIC(16,4), loss_ratio_pct NUMERIC(8,4), ve\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 40.599,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT 'facilitated' AS record_type, deal_id AS ref, issuer_name AS entity_name, deal_type, facilitated_total_tco2e AS total_tco2e, pcaf_dqs, created_at FROM facilitated_emissions_v2 ORDER BY created_at DESC LIMIT 250\"",
+     "tables": [
+      "facilitated_emissions_v2"
+     ],
+     "rowcount": 4,
+     "dur_ms": 105.984,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "\"SELECT 'insurance' AS record_type, policy_id AS ref, policyholder_name AS entity_name, line_of_business AS deal_type, insured_total_tco2e AS total_tco2e, pcaf_dqs, created_at FROM insurance_emissions ORDER BY created_at DESC LIMIT 250\"",
+     "tables": [
+      "insurance_emissions"
+     ],
+     "rowcount": 4,
+     "dur_ms": 46.024,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": [
+     "record_type",
+     "ref",
+     "entity_name",
+     "deal_type",
+     "total_tco2e",
+     "pcaf_dqs",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_all",
+     "qual": "list_all",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 728,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E0483680>"
+     },
+     "ret": "[{'record_type': 'insurance', 'ref': 'TEST', 'entity_name': 'LIC', 'deal_type': 'life', 'total_tco2e': Decimal('30000.0000'), 'pcaf_dqs': 4, 'created_at': datetime.datetime(2026, 3, 23, 23, 2, 14, 574964)}, {'record_type': 'facilitated', '\u2026",
+     "dur_ms": 1273.397,
+     "sql": [
+      2,
+      3
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_ensure_tables",
+       "qual": "_ensure_tables",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 155,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E0483680>"
+       },
+       "ret": "None",
+       "dur_ms": 883.293,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'facilitated', 'ref': 'TEST', 'entity_name': 'Reliance', 'deal_type': 'bond_underwriting', 'total_tco2e': Decimal('7215992.7840'), 'pcaf_dqs': 3, 'created_at': datetime.datetime(2026, 3, 23, 23, 2, 14, 563814)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 2, 14, 563814)",
+       "dur_ms": 0.022,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'facilitated', 'ref': 'DEAL-001', 'entity_name': 'Reliance Industries', 'deal_type': 'bond_underwriting', 'total_tco2e': Decimal('7215992.7840'), 'pcaf_dqs': 3, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 34, 137907\u2026"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 34, 137907)",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'facilitated', 'ref': 'DEAL-002', 'entity_name': 'Adani Green Energy', 'deal_type': 'ipo_underwriting', 'total_tco2e': None, 'pcaf_dqs': 3, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 34, 137907)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 34, 137907)",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'facilitated', 'ref': 'DEAL-003', 'entity_name': 'ONGC', 'deal_type': 'syndicated_loan', 'total_tco2e': None, 'pcaf_dqs': 3, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 34, 137907)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 34, 137907)",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'insurance', 'ref': 'TEST', 'entity_name': 'LIC', 'deal_type': 'life', 'total_tco2e': Decimal('30000.0000'), 'pcaf_dqs': 4, 'created_at': datetime.datetime(2026, 3, 23, 23, 2, 14, 574964)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 2, 14, 574964)",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'insurance', 'ref': 'POL-001', 'entity_name': 'LIC of India', 'deal_type': 'life', 'total_tco2e': Decimal('30000.0000'), 'pcaf_dqs': 4, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 11, 906830)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 11, 906830)",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'insurance', 'ref': 'POL-002', 'entity_name': 'Bajaj Allianz Motor', 'deal_type': 'motor_commercial', 'total_tco2e': Decimal('102000.0000'), 'pcaf_dqs': 4, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 11, 906830)}"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 11, 906830)",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<lambda>",
+       "qual": "list_all.<locals>.<lambda>",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 748,
+       "args": {
+        "x": "{'record_type': 'insurance', 'ref': 'POL-003', 'entity_name': 'New India Assurance Property', 'deal_type': 'property_commercial', 'total_tco2e': Decimal('37500.0000'), 'pcaf_dqs': 4, 'created_at': datetime.datetime(2026, 3, 23, 23, 1, 11, \u2026"
+       },
+       "ret": "datetime.datetime(2026, 3, 23, 23, 1, 11, 906830)",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/deals",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 816.852,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "facilitated_emissions_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'CREATE TABLE IF NOT EXISTS facilitated_emissions_v2 ( id SERIAL PRIMARY KEY, deal_id TEXT UNIQUE NOT NULL, deal_type TEXT NOT NULL, issuer_name TEXT NOT NULL, issuer_id TEXT, issuer_sector_gics TEXT, issuer_country_iso2 TEXT, issuer_revenue_musd NUMERIC(16,4), underwritten_amount_musd NUMERIC(16,4), total_deal_size_musd NUMERIC(16,4), shares_placed_value_musd NUMERIC(16,4), market_cap_musd NUMER\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 65.98,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'CREATE TABLE IF NOT EXISTS insurance_emissions ( id SERIAL PRIMARY KEY, policy_id TEXT UNIQUE NOT NULL, line_of_business TEXT NOT NULL, policyholder_name TEXT NOT NULL, policyholder_id TEXT, policyholder_sector_gics TEXT, policyholder_country_iso2 TEXT, gross_written_premium_musd NUMERIC(16,4), net_earned_premium_musd NUMERIC(16,4), claims_paid_musd NUMERIC(16,4), loss_ratio_pct NUMERIC(8,4), ve\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 42.644,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT * FROM facilitated_emissions_v2 ORDER BY created_at DESC LIMIT 500'",
+     "tables": [
+      "facilitated_emissions_v2"
+     ],
+     "rowcount": 4,
+     "dur_ms": 72.581,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "id",
+     "deal_id",
+     "deal_type",
+     "issuer_name",
+     "issuer_id",
+     "issuer_sector_gics",
+     "issuer_country_iso2",
+     "issuer_revenue_musd",
+     "underwritten_amount_musd",
+     "total_deal_size_musd",
+     "shares_placed_value_musd",
+     "market_cap_musd",
+     "tranche_held_musd",
+     "total_pool_musd",
+     "arranged_amount_musd"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "list_facilitated_deals",
+     "qual": "list_facilitated_deals",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 505,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E04829C0>"
+     },
+     "ret": "[{'id': 4, 'deal_id': 'TEST', 'deal_type': 'bond_underwriting', 'issuer_name': 'Reliance', 'issuer_id': None, 'issuer_sector_gics': 'Energy', 'issuer_country_iso2': 'IN', 'issuer_revenue_musd': Decimal('105600.0000'), 'underwritten_amount_\u2026",
+     "dur_ms": 783.836,
+     "sql": [
+      2
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_ensure_tables",
+       "qual": "_ensure_tables",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 155,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E04829C0>"
+       },
+       "ret": "None",
+       "dur_ms": 378.767,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/deals/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 993.71,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "facilitated_emissions_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'CREATE TABLE IF NOT EXISTS facilitated_emissions_v2 ( id SERIAL PRIMARY KEY, deal_id TEXT UNIQUE NOT NULL, deal_type TEXT NOT NULL, issuer_name TEXT NOT NULL, issuer_id TEXT, issuer_sector_gics TEXT, issuer_country_iso2 TEXT, issuer_revenue_musd NUMERIC(16,4), underwritten_amount_musd NUMERIC(16,4), total_deal_size_musd NUMERIC(16,4), shares_placed_value_musd NUMERIC(16,4), market_cap_musd NUMER\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 86.569,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'CREATE TABLE IF NOT EXISTS insurance_emissions ( id SERIAL PRIMARY KEY, policy_id TEXT UNIQUE NOT NULL, line_of_business TEXT NOT NULL, policyholder_name TEXT NOT NULL, policyholder_id TEXT, policyholder_sector_gics TEXT, policyholder_country_iso2 TEXT, gross_written_premium_musd NUMERIC(16,4), net_earned_premium_musd NUMERIC(16,4), claims_paid_musd NUMERIC(16,4), loss_ratio_pct NUMERIC(8,4), ve\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 37.171,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) AS deal_count, SUM(facilitated_total_tco2e) AS total_facilitated_tco2e, SUM(facilitated_scope1_tco2e) AS total_s1, SUM(facilitated_scope2_tco2e) AS total_s2, SUM(facilitated_scope3_tco2e) AS total_s3, AVG(pcaf_dqs) AS avg_dqs, COUNT(*) FILTER (WHERE green_bond = TRUE) AS green_count, SUM(underwritten_amount_musd) AS total_underwritten_musd, SUM(shares_placed_value_musd) AS total_\u2026",
+     "tables": [
+      "facilitated_emissions_v2"
+     ],
+     "rowcount": 1,
+     "dur_ms": 90.553,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT deal_type, COUNT(*) AS count, SUM(facilitated_total_tco2e) AS facilitated_tco2e FROM facilitated_emissions_v2 GROUP BY deal_type ORDER BY facilitated_tco2e DESC NULLS LAST'",
+     "tables": [
+      "facilitated_emissions_v2"
+     ],
+     "rowcount": 3,
+     "dur_ms": 40.626,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "\"SELECT COALESCE(issuer_sector_gics, 'Unknown') AS sector, COUNT(*) AS count, SUM(facilitated_total_tco2e) AS facilitated_tco2e FROM facilitated_emissions_v2 GROUP BY issuer_sector_gics ORDER BY facilitated_tco2e DESC NULLS LAST\"",
+     "tables": [
+      "facilitated_emissions_v2"
+     ],
+     "rowcount": 2,
+     "dur_ms": 32.541,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "totals",
+     "by_deal_type",
+     "by_sector",
+     "methodology"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "facilitated_summary",
+     "qual": "facilitated_summary",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 517,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1BDADE0>"
+     },
+     "ret": "{'totals': {'deal_count': 4, 'total_facilitated_tco2e': 14431985.568, 'scope1_tco2e': 8659191.3408, 'scope2_tco2e': 5772794.2272, 'scope3_tco2e': 0.0, 'avg_pcaf_dqs': 3.0, 'green_deal_count': 1, 'total_underwritten_musd': 8760.0, 'total_pl\u2026",
+     "dur_ms": 834.649,
+     "sql": [
+      2,
+      3,
+      4
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_ensure_tables",
+       "qual": "_ensure_tables",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 155,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1BDADE0>"
+       },
+       "ret": "None",
+       "dur_ms": 373.293,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/insurance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3019.487,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "insurance_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'CREATE TABLE IF NOT EXISTS facilitated_emissions_v2 ( id SERIAL PRIMARY KEY, deal_id TEXT UNIQUE NOT NULL, deal_type TEXT NOT NULL, issuer_name TEXT NOT NULL, issuer_id TEXT, issuer_sector_gics TEXT, issuer_country_iso2 TEXT, issuer_revenue_musd NUMERIC(16,4), underwritten_amount_musd NUMERIC(16,4), total_deal_size_musd NUMERIC(16,4), shares_placed_value_musd NUMERIC(16,4), market_cap_musd NUMER\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 574.234,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'CREATE TABLE IF NOT EXISTS insurance_emissions ( id SERIAL PRIMARY KEY, policy_id TEXT UNIQUE NOT NULL, line_of_business TEXT NOT NULL, policyholder_name TEXT NOT NULL, policyholder_id TEXT, policyholder_sector_gics TEXT, policyholder_country_iso2 TEXT, gross_written_premium_musd NUMERIC(16,4), net_earned_premium_musd NUMERIC(16,4), claims_paid_musd NUMERIC(16,4), loss_ratio_pct NUMERIC(8,4), ve\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 317.857,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT * FROM insurance_emissions ORDER BY created_at DESC LIMIT 500'",
+     "tables": [
+      "insurance_emissions"
+     ],
+     "rowcount": 4,
+     "dur_ms": 357.093,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "id",
+     "policy_id",
+     "line_of_business",
+     "policyholder_name",
+     "policyholder_id",
+     "policyholder_sector_gics",
+     "policyholder_country_iso2",
+     "gross_written_premium_musd",
+     "net_earned_premium_musd",
+     "claims_paid_musd",
+     "loss_ratio_pct",
+     "vehicle_count",
+     "fuel_type",
+     "annual_km_per_vehicle",
+     "insured_property_area_m2"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "list_insurance_emissions",
+     "qual": "list_insurance_emissions",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 625,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1D15610>"
+     },
+     "ret": "[{'id': 4, 'policy_id': 'TEST', 'line_of_business': 'life', 'policyholder_name': 'LIC', 'policyholder_id': None, 'policyholder_sector_gics': 'Unknown', 'policyholder_country_iso2': 'IN', 'gross_written_premium_musd': Decimal('6000.0000'), \u2026",
+     "dur_ms": 2910.339,
+     "sql": [
+      2
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "_ensure_tables",
+       "qual": "_ensure_tables",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 155,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1D15610>"
+       },
+       "ret": "None",
+       "dur_ms": 1150.932,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/insurance/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2749.446,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "insurance_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'CREATE TABLE IF NOT EXISTS facilitated_emissions_v2 ( id SERIAL PRIMARY KEY, deal_id TEXT UNIQUE NOT NULL, deal_type TEXT NOT NULL, issuer_name TEXT NOT NULL, issuer_id TEXT, issuer_sector_gics TEXT, issuer_country_iso2 TEXT, issuer_revenue_musd NUMERIC(16,4), underwritten_amount_musd NUMERIC(16,4), total_deal_size_musd NUMERIC(16,4), shares_placed_value_musd NUMERIC(16,4), market_cap_musd NUMER\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 312.176,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'CREATE TABLE IF NOT EXISTS insurance_emissions ( id SERIAL PRIMARY KEY, policy_id TEXT UNIQUE NOT NULL, line_of_business TEXT NOT NULL, policyholder_name TEXT NOT NULL, policyholder_id TEXT, policyholder_sector_gics TEXT, policyholder_country_iso2 TEXT, gross_written_premium_musd NUMERIC(16,4), net_earned_premium_musd NUMERIC(16,4), claims_paid_musd NUMERIC(16,4), loss_ratio_pct NUMERIC(8,4), ve\u2026",
+     "tables": [],
+     "rowcount": -1,
+     "dur_ms": 87.99,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) AS policy_count, SUM(insured_total_tco2e) AS total_insured_tco2e, SUM(insured_scope1_tco2e) AS total_s1, SUM(insured_scope2_tco2e) AS total_s2, AVG(pcaf_dqs) AS avg_dqs, SUM(gross_written_premium_musd) AS total_gwp_musd FROM insurance_emissions'",
+     "tables": [
+      "insurance_emissions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 138.624,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT line_of_business, COUNT(*) AS count, SUM(insured_total_tco2e) AS insured_tco2e, SUM(gross_written_premium_musd) AS gwp_musd FROM insurance_emissions GROUP BY line_of_business ORDER BY insured_tco2e DESC NULLS LAST'",
+     "tables": [
+      "insurance_emissions"
+     ],
+     "rowcount": 3,
+     "dur_ms": 37.238,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "totals",
+     "by_line_of_business",
+     "methodology"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "insurance_summary",
+     "qual": "insurance_summary",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 637,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1D156D0>"
+     },
+     "ret": "{'totals': {'policy_count': 4, 'total_insured_tco2e': 199500.0, 'scope1_tco2e': 135000.0, 'scope2_tco2e': 64500.0, 'avg_pcaf_dqs': 4.0, 'total_gwp_musd': 12240.0}, 'by_line_of_business': [{'line_of_business': 'motor_commercial', 'count': 1\u2026",
+     "dur_ms": 2712.013,
+     "sql": [
+      2,
+      3
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "_ensure_tables",
+       "qual": "_ensure_tables",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 155,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F2E1D156D0>"
+       },
+       "ret": "None",
+       "dur_ms": 984.477,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/building-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 21.457,
+   "node_count": 20,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "A+",
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "ref_building_factors",
+     "qual": "ref_building_factors",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 714,
+     "args": {},
+     "ret": "{'A+': {'kgco2_per_m2': 8.0, 'kwh_per_m2': 25.0}, 'A': {'kgco2_per_m2': 15.0, 'kwh_per_m2': 50.0}, 'B': {'kgco2_per_m2': 30.0, 'kwh_per_m2': 100.0}, 'C': {'kgco2_per_m2': 50.0, 'kwh_per_m2': 150.0}, 'D': {'kgco2_per_m2': 75.0, 'kwh_per_m2'\u2026",
+     "dur_ms": 21.218,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 21.14,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 21,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/__init__.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/facilitated_emissions_engine.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 15.367,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 23,
+           "name": "FacilitatedDealType",
+           "qual": "FacilitatedDealType",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 43,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.146,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 24,
+           "name": "InsuranceLineOfBusiness",
+           "qual": "InsuranceLineOfBusiness",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 55,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.157,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "BondType",
+           "qual": "BondType",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 69,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.112,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 26,
+           "name": "SecuritisationType",
+           "qual": "SecuritisationType",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 79,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.111,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 27,
+           "name": "VehicleFuelType",
+           "qual": "VehicleFuelType",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 87,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.12,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 28,
+           "name": "BuildingEPCRating",
+           "qual": "BuildingEPCRating",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 98,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.121,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 29,
+           "name": "DataQualityScore",
+           "qual": "DataQualityScore",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 109,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.092,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 30,
+           "name": "IssuerEmissions",
+           "qual": "IssuerEmissions",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 185,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 31,
+           "name": "FacilitatedDealInput",
+           "qual": "FacilitatedDealInput",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 206,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.011,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 32,
+           "name": "InsurancePolicyInput",
+           "qual": "InsurancePolicyInput",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 253,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 33,
+           "name": "FacilitatedEmissionsResult",
+           "qual": "FacilitatedEmissionsResult",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 298,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.013,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 34,
+           "name": "InsuranceEmissionsResult",
+           "qual": "InsuranceEmissionsResult",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 328,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.011,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 35,
+           "name": "PortfolioFacilitatedSummary",
+           "qual": "PortfolioFacilitatedSummary",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 352,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.014,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 36,
+           "name": "PortfolioInsuranceSummary",
+           "qual": "PortfolioInsuranceSummary",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 369,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.013,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 37,
+           "name": "FacilitatedEmissionsEngine",
+           "qual": "FacilitatedEmissionsEngine",
+           "file": "services/facilitated_emissions_engine.py",
+           "line": 415,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.014,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 38,
+       "name": "get_building_factors",
+       "qual": "FacilitatedEmissionsEngine.get_building_factors",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 602,
+       "args": {},
+       "ret": "{'A+': {'kgco2_per_m2': 8.0, 'kwh_per_m2': 25.0}, 'A': {'kgco2_per_m2': 15.0, 'kwh_per_m2': 50.0}, 'B': {'kgco2_per_m2': 30.0, 'kwh_per_m2': 100.0}, 'C': {'kgco2_per_m2': 50.0, 'kwh_per_m2': 150.0}, 'D': {'kgco2_per_m2': 75.0, 'kwh_per_m2'\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/deal-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.304,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": [
+     "value",
+     "label"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "ref_deal_types",
+     "qual": "ref_deal_types",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 694,
+     "args": {},
+     "ret": "[{'value': 'bond_underwriting', 'label': 'Bond Underwriting'}, {'value': 'equity_placement', 'label': 'Equity Placement'}, {'value': 'convertible_underwriting', 'label': 'Convertible Underwriting'}, {'value': 'securitisation', 'label': 'Se\u2026",
+     "dur_ms": 0.13,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "get_deal_types",
+       "qual": "FacilitatedEmissionsEngine.get_deal_types",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 610,
+       "args": {},
+       "ret": "[{'value': 'bond_underwriting', 'label': 'Bond Underwriting'}, {'value': 'equity_placement', 'label': 'Equity Placement'}, {'value': 'convertible_underwriting', 'label': 'Convertible Underwriting'}, {'value': 'securitisation', 'label': 'Se\u2026",
+       "dur_ms": 0.078,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/insurance-lob-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.185,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "motor_personal",
+     "motor_commercial",
+     "property_residential",
+     "property_commercial",
+     "commercial_liability",
+     "commercial_marine",
+     "commercial_energy",
+     "commercial_other",
+     "life",
+     "health"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42,
+     "name": "ref_lob_factors",
+     "qual": "ref_lob_factors",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 719,
+     "args": {},
+     "ret": "{'motor_personal': 42.0, 'motor_commercial': 85.0, 'property_residential': 28.0, 'property_commercial': 55.0, 'commercial_liability': 35.0, 'commercial_marine': 120.0, 'commercial_energy': 450.0, 'commercial_other': 65.0, 'life': 5.0, 'hea\u2026",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 43,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "get_insurance_lob_factors",
+       "qual": "FacilitatedEmissionsEngine.get_insurance_lob_factors",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 606,
+       "args": {},
+       "ret": "{'motor_personal': 42.0, 'motor_commercial': 85.0, 'property_residential': 28.0, 'property_commercial': 55.0, 'commercial_liability': 35.0, 'commercial_marine': 120.0, 'commercial_energy': 450.0, 'commercial_other': 65.0, 'life': 5.0, 'hea\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/insurance-lobs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.274,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 10,
+    "item0_keys": [
+     "value",
+     "label"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 45,
+     "name": "ref_insurance_lobs",
+     "qual": "ref_insurance_lobs",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 699,
+     "args": {},
+     "ret": "[{'value': 'motor_personal', 'label': 'Motor Personal'}, {'value': 'motor_commercial', 'label': 'Motor Commercial'}, {'value': 'property_residential', 'label': 'Property Resi'}, {'value': 'property_commercial', 'label': 'Property Comm'}, {\u2026",
+     "dur_ms": 0.129,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 46,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "get_insurance_lobs",
+       "qual": "FacilitatedEmissionsEngine.get_insurance_lobs",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 617,
+       "args": {},
+       "ret": "[{'value': 'motor_personal', 'label': 'Motor Personal'}, {'value': 'motor_commercial', 'label': 'Motor Commercial'}, {'value': 'property_residential', 'label': 'Property Resi'}, {'value': 'property_commercial', 'label': 'Property Comm'}, {\u2026",
+       "dur_ms": 0.079,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/sector-intensities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.198,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "Energy",
+     "Materials",
+     "Industrials",
+     "Consumer Discretionary",
+     "Consumer Staples",
+     "Health Care",
+     "Financials",
+     "Information Technology",
+     "Communication Services",
+     "Utilities",
+     "Real Estate",
+     "Sovereign",
+     "Unknown"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 48,
+     "name": "ref_sector_intensities",
+     "qual": "ref_sector_intensities",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 704,
+     "args": {},
+     "ret": "{'Energy': 820.0, 'Materials': 410.0, 'Industrials': 180.0, 'Consumer Discretionary': 85.0, 'Consumer Staples': 110.0, 'Health Care': 55.0, 'Financials': 12.0, 'Information Technology': 28.0, 'Communication Services': 22.0, 'Utilities': 95\u2026",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 49,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "get_sector_intensities",
+       "qual": "FacilitatedEmissionsEngine.get_sector_intensities",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 593,
+       "args": {},
+       "ret": "{'Energy': 820.0, 'Materials': 410.0, 'Industrials': 180.0, 'Consumer Discretionary': 85.0, 'Consumer Staples': 110.0, 'Health Care': 55.0, 'Financials': 12.0, 'Information Technology': 28.0, 'Communication Services': 22.0, 'Utilities': 95\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "GET /api/v1/facilitated-emissions/reference/vehicle-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.184,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "petrol",
+     "diesel",
+     "hybrid",
+     "phev",
+     "bev",
+     "lpg",
+     "cng",
+     "h2_fcev"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 51,
+     "name": "ref_vehicle_factors",
+     "qual": "ref_vehicle_factors",
+     "file": "api/v1/routes/facilitated_emissions.py",
+     "line": 709,
+     "args": {},
+     "ret": "{'petrol': {'gco2_per_km': 170.0, 'annual_km_default': 12000}, 'diesel': {'gco2_per_km': 155.0, 'annual_km_default': 18000}, 'hybrid': {'gco2_per_km': 105.0, 'annual_km_default': 12000}, 'phev': {'gco2_per_km': 60.0, 'annual_km_default': 1\u2026",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 52,
+       "name": "_get_engine",
+       "qual": "_get_engine",
+       "file": "api/v1/routes/facilitated_emissions.py",
+       "line": 36,
+       "args": {},
+       "ret": "<services.facilitated_emissions_engine.FacilitatedEmissionsEngine object at 0x000001F2E1D159A0>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "get_vehicle_factors",
+       "qual": "FacilitatedEmissionsEngine.get_vehicle_factors",
+       "file": "services/facilitated_emissions_engine.py",
+       "line": 598,
+       "args": {},
+       "ret": "{'petrol': {'gco2_per_km': 170.0, 'annual_km_default': 12000}, 'diesel': {'gco2_per_km': 155.0, 'annual_km_default': 18000}, 'hybrid': {'gco2_per_km': 105.0, 'annual_km_default': 12000}, 'phev': {'gco2_per_km': 60.0, 'annual_km_default': 1\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "POST /api/v1/facilitated-emissions/deals",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "POST /api/v1/facilitated-emissions/deals/batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "DELETE /api/v1/facilitated-emissions/deals/{record_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "POST /api/v1/facilitated-emissions/insurance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "POST /api/v1/facilitated-emissions/insurance/batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "facilitated-emissions",
+   "label": "DELETE /api/v1/facilitated-emissions/insurance/{record_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

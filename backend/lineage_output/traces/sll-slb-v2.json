@@ -1,0 +1,320 @@
+{
+ "domain": "sll-slb-v2",
+ "meta": {
+  "ts": "2026-06-30T14:05:10",
+  "module": "api.v1.routes.sll_slb_v2",
+  "router_prefix": "/api/v1/sll-slb-v2",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "sll-slb-v2",
+   "label": "GET /api/v1/sll-slb-v2/ref/icma-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.669,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "instrument_type": "'SLB' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "instrument_type",
+     "source",
+     "components",
+     "spt_calibration_criteria",
+     "margin_ratchet_types",
+     "margin_ratchet_market_data",
+     "greenwashing_red_flags",
+     "market_reference"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_icma_principles",
+     "qual": "ref_icma_principles",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 148,
+     "args": {
+      "instrument_type": "'SLB'"
+     },
+     "ret": "{'instrument_type': 'SLB', 'source': 'ICMA Sustainability-Linked Bond Principles (June 2023)', 'components': {'kpi_selection': {'component': 1, 'name': 'Selection of Key Performance Indicators (KPIs)', 'principle': \"KPIs should be material\u2026",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "GET /api/v1/sll-slb-v2/ref/kpi-materiality",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.631,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "None (default)",
+    "kpi_key": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "note",
+     "source",
+     "kpi_count",
+     "sector_count",
+     "sectors",
+     "kpi_definitions",
+     "matrix"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_kpi_materiality",
+     "qual": "ref_kpi_materiality",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 212,
+     "args": {
+      "sector": "None",
+      "kpi_key": "None"
+     },
+     "ret": "{'note': 'Materiality scores: 0=not material, 1=emerging, 2=material, 3=highly material', 'source': 'SASB Industry Standards, GRI 300/400, ICMA SLBP KPI guidance', 'kpi_count': 40, 'sector_count': 20, 'sectors': ['oil_gas', 'utilities_powe\u2026",
+     "dur_ms": 0.073,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "GET /api/v1/sll-slb-v2/ref/sda-trajectories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.316,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "methodology",
+     "sectors_count",
+     "trajectories"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_sda_trajectories",
+     "qual": "ref_sda_trajectories",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 184,
+     "args": {
+      "sector": "None"
+     },
+     "ret": "{'source': 'Science Based Targets initiative \u2014 SDA Technical Summary 2023', 'methodology': 'Paris Agreement 1.5\u00b0C-consistent decarbonization pathway', 'sectors_count': 8, 'trajectories': {'power': {'sector': 'Power Generation', 'unit': 'gC\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "GET /api/v1/sll-slb-v2/ref/verification-agents",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.246,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "spo_providers",
+     "spo_market_share_2023",
+     "verification_standards",
+     "external_reviewer_requirements"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_verification_agents",
+     "qual": "ref_verification_agents",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 282,
+     "args": {},
+     "ret": "{'spo_providers': {'sustainalytics': {'name': 'Sustainalytics (Morningstar)', 'type': 'Second Party Opinion (SPO)', 'icma_registered': True, 'market_share_pct': 28.0, 'methodology': 'ICMA SLBP + proprietary ESG research', 'isae_3000_capabl\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "POST /api/v1/sll-slb-v2/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'kpis'",
+   "dur_ms": 0.247,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_sll_slb",
+     "qual": "assess_sll_slb",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 46,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "POST /api/v1/sll-slb-v2/calibrate-spt",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "POST /api/v1/sll-slb-v2/greenwashing-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'spt_is_intensity_based'",
+   "dur_ms": 0.278,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "greenwashing_screen",
+     "qual": "greenwashing_screen",
+     "file": "api/v1/routes/sll_slb_v2.py",
+     "line": 125,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.076,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "screen_greenwashing_flags",
+       "qual": "SllSlbV2Engine.screen_greenwashing_flags",
+       "file": "services/sll_slb_v2_engine.py",
+       "line": 1188,
+       "args": {
+        "request": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sll-slb-v2",
+   "label": "POST /api/v1/sll-slb-v2/margin-impact",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,213 @@
+{
+ "domain": "portfolio-pg",
+ "meta": {
+  "ts": "2026-06-30T14:04:08",
+  "module": "api.v1.routes.portfolio_pg",
+  "router_prefix": "/api/pg",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "portfolio-pg",
+   "label": "GET /api/pg/portfolios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'state'",
+   "dur_ms": 47.511,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_portfolios",
+     "qual": "list_portfolios",
+     "file": "api/v1/routes/portfolio_pg.py",
+     "line": 48,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000273CC71C350>"
+     },
+     "ret": "None",
+     "dur_ms": 46.657,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "GET /api/pg/portfolios/{pid}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 1813.489,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg WHERE portfolios_pg.id = %(pk_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.877,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "pid": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_portfolio",
+     "qual": "get_portfolio",
+     "file": "api/v1/routes/portfolio_pg.py",
+     "line": 92,
+     "args": {
+      "pid": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000273CC876E10>"
+     },
+     "ret": "None",
+     "dur_ms": 1777.826,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "POST /api/pg/portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "POST /api/pg/portfolios/seed-sample",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "PUT /api/pg/portfolios/{pid}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "DELETE /api/pg/portfolios/{pid}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "POST /api/pg/portfolios/{pid}/assets",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolio-pg",
+   "label": "DELETE /api/pg/portfolios/{pid}/assets/{aid}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

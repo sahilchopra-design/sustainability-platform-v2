@@ -1,0 +1,1397 @@
+{
+ "domain": "esg-ratings",
+ "meta": {
+  "ts": "2026-06-30T14:01:53",
+  "module": "api.v1.routes.esg_ratings",
+  "router_prefix": "/api/v1/esg-ratings",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "esg-ratings",
+   "label": "GET /api/v1/esg-ratings/ref/divergence-research",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.273,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "primary_study",
+     "key_finding",
+     "divergence_sources",
+     "esra_impact",
+     "additional_studies"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_divergence_research",
+     "qual": "get_divergence_research",
+     "file": "api/v1/routes/esg_ratings.py",
+     "line": 340,
+     "args": {},
+     "ret": "{'primary_study': 'Berg, Kolbel & Rigobon (2022) \u2014 Aggregate Confusion: The Divergence of ESG Ratings, Review of Finance', 'key_finding': 'Average pairwise correlation among major ESG providers: 0.54 (vs 0.99 for credit ratings)', 'diverge\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "GET /api/v1/esg-ratings/ref/esra-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.155,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "regulator",
+     "entry_into_force",
+     "authorisation_deadline",
+     "scope",
+     "requirements"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_esra_requirements",
+     "qual": "get_esra_requirements",
+     "file": "api/v1/routes/esg_ratings.py",
+     "line": 211,
+     "args": {},
+     "ret": "{'regulation': 'EU ESG Ratings Regulation 2024/3005 (ESRA)', 'regulator': 'ESMA (European Securities and Markets Authority)', 'entry_into_force': '2024-07-02', 'authorisation_deadline': '2025-07-02', 'scope': 'All ESG rating providers oper\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "GET /api/v1/esg-ratings/ref/provider-methodologies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.137,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "providers"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_provider_methodologies",
+     "qual": "get_provider_methodologies",
+     "file": "api/v1/routes/esg_ratings.py",
+     "line": 283,
+     "args": {},
+     "ret": "{'source': 'IOSCO ESG Ratings and Data Products Providers Report (2021)', 'providers': [{'name': 'MSCI ESG Ratings', 'scale': 'CCC to AAA (7 categories)', 'scope': 'ESG risk exposure and risk management', 'data_sources': 'Company disclosur\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/bias-detection",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/composite-rating",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/divergence-analysis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.679,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<DivergenceAnalysisRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "normalised_scores",
+     "divergence_score",
+     "divergence_sources",
+     "correlation_matrix",
+     "consensus_rating",
+     "average_normalised_score",
+     "confidence_interval"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "divergence_analysis_endpoint",
+     "qual": "divergence_analysis_endpoint",
+     "file": "api/v1/routes/esg_ratings.py",
+     "line": 110,
+     "args": {
+      "req": "DivergenceAnalysisRequest(entity_id='TEST_req_entity_id', ratings={})"
+     },
+     "ret": "{'normalised_scores': {}, 'divergence_score': 0.0, 'divergence_sources': {'scope_56pct': 0.0, 'weight_23pct': 0.0, 'measurement_21pct': 0.0}, 'correlation_matrix': {}, 'consensus_rating': 'BB', 'average_normalised_score': 50.0, 'confidence\u2026",
+     "dur_ms": 0.3,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "analyse_rating_divergence",
+       "qual": "analyse_rating_divergence",
+       "file": "services/esg_ratings_engine.py",
+       "line": 176,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "ratings": "{}"
+       },
+       "ret": "{'normalised_scores': {}, 'divergence_score': 0.0, 'divergence_sources': {'scope_56pct': 0.0, 'weight_23pct': 0.0, 'measurement_21pct': 0.0}, 'correlation_matrix': {}, 'consensus_rating': 'BB', 'average_normalised_score': 50.0, 'confidence\u2026",
+       "dur_ms": 0.212,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/esg_ratings_engine.py",
+         "line": 70,
+         "args": {
+          "entity_id": "'TEST_req_entity_iddivergence'"
+         },
+         "ret": "<random.Random object at 0x00000208FBDEC250>",
+         "dur_ms": 0.029,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "0.0",
+          "digits": "2"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "0.0",
+          "digits": "2"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "0.0",
+          "digits": "2"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "_composite_rating",
+         "qual": "_composite_rating",
+         "file": "services/esg_ratings_engine.py",
+         "line": 94,
+         "args": {
+          "score": "50.0"
+         },
+         "ret": "'BB'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "40.0",
+          "digits": "1"
+         },
+         "ret": "40.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "60.0",
+          "digits": "1"
+         },
+         "ret": "60.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "50.0",
+          "digits": "1"
+         },
+         "ret": "50.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/divergence-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/e-pillar-divergence",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/esra-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ratings",
+   "label": "POST /api/v1/esg-ratings/peer-benchmark",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.333,
+   "node_count": 58,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<PeerBenchmarkRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "percentile_rank",
+     "sector",
+     "sector_median",
+     "sector_p75",
+     "sector_leader",
+     "entity_score",
+     "gap_to_median",
+     "gap_to_leader",
+     "n_peers",
+     "improvement_roadmap"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "peer_benchmark_endpoint",
+     "qual": "peer_benchmark_endpoint",
+     "file": "api/v1/routes/esg_ratings.py",
+     "line": 174,
+     "args": {
+      "req": "PeerBenchmarkRequest(entity_id='TEST_req_entity_id', sector='other', composite_score=50.0, n_peers=20)"
+     },
+     "ret": "{'percentile_rank': 33.3, 'sector': 'other', 'sector_median': 56.5, 'sector_p75': 63.3, 'sector_leader': 97.4, 'entity_score': 50.0, 'gap_to_median': 6.5, 'gap_to_leader': 47.4, 'n_peers': 20, 'improvement_roadmap': ['Close 6pt gap to sect\u2026",
+     "dur_ms": 1.128,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "benchmark_against_peers",
+       "qual": "benchmark_against_peers",
+       "file": "services/esg_ratings_engine.py",
+       "line": 430,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "sector": "'other'",
+        "composite_score": "50.0",
+        "n_peers": "20"
+       },
+       "ret": "{'percentile_rank': 33.3, 'sector': 'other', 'sector_median': 56.5, 'sector_p75': 63.3, 'sector_leader': 97.4, 'entity_score': 50.0, 'gap_to_median': 6.5, 'gap_to_leader': 47.4, 'n_peers': 20, 'improvement_roadmap': ['Close 6pt gap to sect\u2026",
+       "dur_ms": 1.084,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 16,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/esg_ratings_engine.py",
+         "line": 70,
+         "args": {
+          "entity_id": "'TEST_req_entity_idbenchmark'"
+         },
+         "ret": "<random.Random object at 0x00000208FBDEC250>",
+         "dur_ms": 0.019,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "61.458505157324694",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "61.458505157324694",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "61.458505157324694",
+          "digits": "1"
+         },
+         "ret": "61.5",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "37.836849651013196",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "37.836849651013196",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "37.836849651013196",
+          "digits": "1"
+         },
+         "ret": "37.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "63.308592463200796",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "63.308592463200796",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "63.308592463200796",
+          "digits": "1"
+         },
+         "ret": "63.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "77.63640857406915",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "77.63640857406915",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "77.63640857406915",
+          "digits": "1"
+         },
+         "ret": "77.6",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "41.07801187101402",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "41.07801187101402",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "41.07801187101402",
+          "digits": "1"
+         },
+         "ret": "41.1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "69.79628263422227",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "69.79628263422227",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "69.79628263422227",
+          "digits": "1"
+         },
+         "ret": "69.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "62.280455964858106",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "62.280455964858106",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "62.280455964858106",
+          "digits": "1"
+         },
+         "ret": "62.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "55.34701358237181",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "55.34701358237181",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "55.34701358237181",
+          "digits": "1"
+         },
+         "ret": "55.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "41.361792996163715",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "41.361792996163715",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "41.361792996163715",
+          "digits": "1"
+         },
+         "ret": "41.4",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "58.284846278135575",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "58.284846278135575",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "58.284846278135575",
+          "digits": "1"
+         },
+         "ret": "58.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "28.931036274154952",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "28.931036274154952",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "28.931036274154952",
+          "digits": "1"
+         },
+         "ret": "28.9",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "22.133913366793674",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "22.133913366793674",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "22.133913366793674",
+          "digits": "1"
+         },
+         "ret": "22.1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "57.34164037624165",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "57.34164037624165",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "57.34164037624165",
+          "digits": "1"
+         },
+         "ret": "57.3",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "55.64476863396074",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "55.64476863396074",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "55.64476863396074",
+          "digits": "1"
+         },
+         "ret": "55.6",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "44.83800829027807",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "44.83800829027807",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "44.83800829027807",
+          "digits": "1"
+         },
+         "ret": "44.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "52.392895033443054",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "52.392895033443054",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "52.392895033443054",
+          "digits": "1"
+         },
+         "ret": "52.4",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "97.4419131525861",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "97.4419131525861",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "97.4419131525861",
+          "digits": "1"
+         },
+         "ret": "97.4",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "62.30970540916147",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "62.30970540916147",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "62.30970540916147",
+          "digits": "1"
+         },
+         "ret": "62.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "67.87781239460384",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "67.87781239460384",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "67.87781239460384",
+          "digits": "1"
+         },
+         "ret": "67.9",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "53.080762541012",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "53.080762541012",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "53.080762541012",
+          "digits": "1"
+         },
+         "ret": "53.1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/esg_ratings_engine.py",
+         "line": 74,
+         "args": {
+          "val": "50.0",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "50.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "<genexpr>",
+         "qual": "benchmark_against_peers.<locals>.<genexpr>",
+         "file": "services/esg_ratings_engine.py",
+         "line": 445,
+         "args": {
+          ".0": "<list_iterator object at 0x00000208FCEE23B0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 65,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "33.33333333333333",
+          "digits": "1"
+         },
+         "ret": "33.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "56.45",
+          "digits": "1"
+         },
+         "ret": "56.5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "63.3",
+          "digits": "1"
+         },
+         "ret": "63.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "97.4",
+          "digits": "1"
+         },
+         "ret": "97.4",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "6.5",
+          "digits": "1"
+         },
+         "ret": "6.5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "47.400000000000006",
+          "digits": "1"
+         },
+         "ret": "47.4",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/esg_ratings_engine.py",
+         "line": 78,
+         "args": {
+          "val": "50.0",
+          "digits": "1"
+         },
+         "ret": "50.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

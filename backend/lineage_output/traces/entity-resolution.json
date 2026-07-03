@@ -1,0 +1,687 @@
+{
+ "domain": "entity-resolution",
+ "meta": {
+  "ts": "2026-06-30T14:01:49",
+  "module": "api.v1.routes.entity_resolution",
+  "router_prefix": "/api/v1/entity-resolution",
+  "endpoints": 13
+ },
+ "transactions": [
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/cross-module/entity/{lei}",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: LEI must be exactly 20 characters",
+   "dur_ms": 0.317,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lei": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "entity_graph",
+     "qual": "entity_graph",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 456,
+     "args": {
+      "lei": "'550e8400-e29b-41d4-a716-446655440001'",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC276A0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/lei",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3942.476,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "entity_lei"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT entity_lei.lei AS entity_lei_lei, entity_lei.legal_name AS entity_lei_legal_name, entity_lei.legal_name_language AS entity_lei_legal_name_language, entity_lei.other_names AS entity_lei_other_names, entity_lei.status AS entity_lei_status, entity_lei.entity_category AS entity_lei_entity_category, entity_lei.legal_form_code AS entity_lei_legal_form_code, enti\u2026",
+     "tables": [
+      "entity_lei"
+     ],
+     "rowcount": 1,
+     "dur_ms": 137.684,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT entity_lei.lei AS entity_lei_lei, entity_lei.legal_name AS entity_lei_legal_name, entity_lei.legal_name_language AS entity_lei_legal_name_language, entity_lei.other_names AS entity_lei_other_names, entity_lei.status AS entity_lei_status, entity_lei.entity_category AS entity_lei_entity_category, entity_lei.legal_form_code AS entity_lei_legal_form_code, entity_lei.legal_form_name AS entity_\u2026",
+     "tables": [
+      "entity_lei"
+     ],
+     "rowcount": 0,
+     "dur_ms": 185.809,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "q": "None (default)",
+    "jurisdiction": "None (default)",
+    "status": "None (default)",
+    "limit": "20 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "search_lei",
+     "qual": "search_lei",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 51,
+     "args": {
+      "q": "None",
+      "jurisdiction": "None",
+      "status": "None",
+      "limit": "20",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFB0ACC0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAE2CA020>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'records': []}",
+     "dur_ms": 3585.867,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/lei/{lei}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: LEI not found",
+   "dur_ms": 2137.14,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "entity_lei"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT entity_lei.lei AS entity_lei_lei, entity_lei.legal_name AS entity_lei_legal_name, entity_lei.legal_name_language AS entity_lei_legal_name_language, entity_lei.other_names AS entity_lei_other_names, entity_lei.status AS entity_lei_status, entity_lei.entity_category AS entity_lei_entity_category, entity_lei.legal_form_code AS entity_lei_legal_form_code, entity_lei.legal_form_name AS entity_\u2026",
+     "tables": [
+      "entity_lei"
+     ],
+     "rowcount": 0,
+     "dur_ms": 236.047,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "lei": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_lei",
+     "qual": "get_lei",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 82,
+     "args": {
+      "lei": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD2EB40>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFB38AE0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 2102.355,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/sanctions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2157.452,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "entity_sanctions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT entity_sanctions.id AS entity_sanctions_id, entity_sanctions.schema_type AS entity_sanctions_schema_type, entity_sanctions.caption AS entity_sanctions_caption, entity_sanctions.names AS entity_sanctions_names, entity_sanctions.birth_date AS entity_sanctions_birth_date, entity_sanctions.nationalities AS entity_sanctions_nationalities, entity_sanctions.count\u2026",
+     "tables": [
+      "entity_sanctions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 788.949,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT entity_sanctions.id AS entity_sanctions_id, entity_sanctions.schema_type AS entity_sanctions_schema_type, entity_sanctions.caption AS entity_sanctions_caption, entity_sanctions.names AS entity_sanctions_names, entity_sanctions.birth_date AS entity_sanctions_birth_date, entity_sanctions.nationalities AS entity_sanctions_nationalities, entity_sanctions.countries AS entity_sanctions_countrie\u2026",
+     "tables": [
+      "entity_sanctions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 42.3,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "q": "None (default)",
+    "schema_type": "None (default)",
+    "dataset": "None (default)",
+    "limit": "20 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "search_sanctions",
+     "qual": "search_sanctions",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 97,
+     "args": {
+      "q": "None",
+      "schema_type": "None",
+      "dataset": "None",
+      "limit": "20",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD677D0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC256C0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'records': []}",
+     "dur_ms": 2116.683,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/sanctions/{sanction_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Sanctions entity not found",
+   "dur_ms": 731.794,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "entity_sanctions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT entity_sanctions.id AS entity_sanctions_id, entity_sanctions.schema_type AS entity_sanctions_schema_type, entity_sanctions.caption AS entity_sanctions_caption, entity_sanctions.names AS entity_sanctions_names, entity_sanctions.birth_date AS entity_sanctions_birth_date, entity_sanctions.nationalities AS entity_sanctions_nationalities, entity_sanctions.countries AS entity_sanctions_countrie\u2026",
+     "tables": [
+      "entity_sanctions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 179.791,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sanction_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_sanction",
+     "qual": "get_sanction",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 127,
+     "args": {
+      "sanction_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD67D40>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC25BC0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 684.307,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/screening-results",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1582.826,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "entity_screening_results"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT entity_screening_results.id AS entity_screening_results_id, entity_screening_results.entity_name AS entity_screening_results_entity_name, entity_screening_results.entity_type AS entity_screening_results_entity_type, entity_screening_results.entity_identifier AS entity_screening_results_entity_identifier, entity_screening_results.matched_sanction_id AS enti\u2026",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 1,
+     "dur_ms": 342.83,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT entity_screening_results.id AS entity_screening_results_id, entity_screening_results.entity_name AS entity_screening_results_entity_name, entity_screening_results.entity_type AS entity_screening_results_entity_type, entity_screening_results.entity_identifier AS entity_screening_results_entity_identifier, entity_screening_results.matched_sanction_id AS entity_screening_results_matched_sanc\u2026",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 0,
+     "dur_ms": 35.142,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "portfolio_id": "None (default)",
+    "limit": "20 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "results"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_screening_results",
+     "qual": "list_screening_results",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 202,
+     "args": {
+      "status": "None",
+      "portfolio_id": "None",
+      "limit": "20",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7320>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC26340>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'results': []}",
+     "dur_ms": 1437.104,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/screening-results/{result_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Screening result not found",
+   "dur_ms": 734.724,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "entity_screening_results"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT entity_screening_results.id AS entity_screening_results_id, entity_screening_results.entity_name AS entity_screening_results_entity_name, entity_screening_results.entity_type AS entity_screening_results_entity_type, entity_screening_results.entity_identifier AS entity_screening_results_entity_identifier, entity_screening_results.matched_sanction_id AS entity_screening_results_matched_sanc\u2026",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 0,
+     "dur_ms": 75.438,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "result_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_screening_result",
+     "qual": "get_screening_result",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 235,
+     "args": {
+      "result_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7AA0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC265C0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 701.508,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "GET /api/v1/entity-resolution/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 585.972,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "entity_lei",
+    "entity_sanctions",
+    "entity_screening_results"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(entity_lei.lei) AS count_1 FROM entity_lei'",
+     "tables": [
+      "entity_lei"
+     ],
+     "rowcount": 1,
+     "dur_ms": 57.283,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(entity_sanctions.id) AS count_1 FROM entity_sanctions'",
+     "tables": [
+      "entity_sanctions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 164.105,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(entity_screening_results.id) AS count_1 FROM entity_screening_results'",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 1,
+     "dur_ms": 47.779,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(entity_screening_results.id) AS count_1 FROM entity_screening_results WHERE entity_screening_results.status = %(status_1)s'",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.922,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT count(entity_screening_results.id) AS count_1 FROM entity_screening_results WHERE entity_screening_results.status = %(status_1)s'",
+     "tables": [
+      "entity_screening_results"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.62,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "lei_records",
+     "sanctions_entities",
+     "screening_results",
+     "pending_reviews",
+     "confirmed_matches"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "entity_resolution_stats",
+     "qual": "entity_resolution_stats",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 275,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7320>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC26C00>, use_cache=True, scope=None)"
+     },
+     "ret": "{'lei_records': 0, 'sanctions_entities': 0, 'screening_results': 0, 'pending_reviews': 0, 'confirmed_matches': 0}",
+     "dur_ms": 551.982,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "POST /api/v1/entity-resolution/cross-module/auto-link",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "POST /api/v1/entity-resolution/cross-module/resolve",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "POST /api/v1/entity-resolution/cross-module/resolve/batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "POST /api/v1/entity-resolution/screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.52,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "screen_entity",
+     "qual": "screen_entity",
+     "file": "api/v1/routes/entity_resolution.py",
+     "line": 142,
+     "args": {
+      "req": "'TEST_req'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EB0128200>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC25E40>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "entity-resolution",
+   "label": "PUT /api/v1/entity-resolution/screening-results/{result_id}/review",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

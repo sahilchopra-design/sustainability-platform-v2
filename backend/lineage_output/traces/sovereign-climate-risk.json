@@ -1,0 +1,239 @@
+{
+ "domain": "sovereign-climate-risk",
+ "meta": {
+  "ts": "2026-06-30T14:05:13",
+  "module": "api.v1.routes.sovereign_climate_risk",
+  "router_prefix": "/api/v1/sovereign-climate-risk",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "sovereign-climate-risk",
+   "label": "GET /api/v1/sovereign-climate-risk/ref/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.159,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_countries",
+     "qual": "ref_countries",
+     "file": "api/v1/routes/sovereign_climate_risk.py",
+     "line": 127,
+     "args": {},
+     "ret": "{'countries': [{'iso2': 'US', 'name': 'United States', 'region': 'north_america', 'credit_rating': 'AA+', 'nd_gain': 73.0}, {'iso2': 'GB', 'name': 'United Kingdom', 'region': 'europe', 'credit_rating': 'AA', 'nd_gain': 75.0}, {'iso2': 'DE'\u2026",
+     "dur_ms": 0.198,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_country_list",
+       "qual": "SovereignClimateRiskEngine.get_country_list",
+       "file": "services/sovereign_climate_risk_engine.py",
+       "line": 522,
+       "args": {},
+       "ret": "[{'iso2': 'US', 'name': 'United States', 'region': 'north_america', 'credit_rating': 'AA+', 'nd_gain': 73.0}, {'iso2': 'GB', 'name': 'United Kingdom', 'region': 'europe', 'credit_rating': 'AA', 'nd_gain': 75.0}, {'iso2': 'DE', 'name': 'Ger\u2026",
+       "dur_ms": 0.036,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-climate-risk",
+   "label": "GET /api/v1/sovereign-climate-risk/ref/profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.696,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sovereign_profiles"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_profiles",
+     "qual": "ref_profiles",
+     "file": "api/v1/routes/sovereign_climate_risk.py",
+     "line": 115,
+     "args": {},
+     "ret": "{'sovereign_profiles': {'US': {'name': 'United States', 'physical_risk': 4.5, 'transition_readiness': 6.0, 'fiscal_resilience': 7.5, 'ndc_ambition': 5.0, 'nd_gain': 73.0, 'credit_rating_sp': 'AA+', 'region': 'north_america', 'gdp_usd_bn': \u2026",
+     "dur_ms": 0.175,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_sovereign_profiles",
+       "qual": "SovereignClimateRiskEngine.get_sovereign_profiles",
+       "file": "services/sovereign_climate_risk_engine.py",
+       "line": 514,
+       "args": {},
+       "ret": "{'US': {'name': 'United States', 'physical_risk': 4.5, 'transition_readiness': 6.0, 'fiscal_resilience': 7.5, 'ndc_ambition': 5.0, 'nd_gain': 73.0, 'credit_rating_sp': 'AA+', 'region': 'north_america', 'gdp_usd_bn': 25462, 'debt_to_gdp_pct\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-climate-risk",
+   "label": "GET /api/v1/sovereign-climate-risk/ref/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.624,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "climate_scenarios"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_scenarios",
+     "qual": "ref_scenarios",
+     "file": "api/v1/routes/sovereign_climate_risk.py",
+     "line": 121,
+     "args": {},
+     "ret": "{'climate_scenarios': {'net_zero_2050': {'label': 'Net Zero 2050 (NGFS Orderly)', 'physical_risk_multiplier_2030': 1.0, 'physical_risk_multiplier_2050': 1.1, 'transition_pressure_2030': 1.4, 'transition_pressure_2050': 1.2, 'description': \u2026",
+     "dur_ms": 0.106,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_climate_scenarios",
+       "qual": "SovereignClimateRiskEngine.get_climate_scenarios",
+       "file": "services/sovereign_climate_risk_engine.py",
+       "line": 518,
+       "args": {},
+       "ret": "{'net_zero_2050': {'label': 'Net Zero 2050 (NGFS Orderly)', 'physical_risk_multiplier_2030': 1.0, 'physical_risk_multiplier_2050': 1.1, 'transition_pressure_2030': 1.4, 'transition_pressure_2050': 1.2, 'description': 'Immediate, ambitious \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-climate-risk",
+   "label": "POST /api/v1/sovereign-climate-risk/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'country_iso2'",
+   "dur_ms": 0.781,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_sovereign",
+     "qual": "assess_sovereign",
+     "file": "api/v1/routes/sovereign_climate_risk.py",
+     "line": 49,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.178,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-climate-risk",
+   "label": "POST /api/v1/sovereign-climate-risk/portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'holdings'",
+   "dur_ms": 0.369,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "assess_portfolio",
+     "qual": "assess_portfolio",
+     "file": "api/v1/routes/sovereign_climate_risk.py",
+     "line": 82,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,330 @@
+{
+ "domain": "stress-testing",
+ "meta": {
+  "ts": "2026-06-30T14:05:24",
+  "module": "api.v1.routes.stress_testing",
+  "router_prefix": "/api/v1/stress-testing",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "stress-testing",
+   "label": "GET /api/v1/stress-testing/backtest/thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.099,
+   "node_count": 5,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "gini_thresholds",
+     "iv_thresholds",
+     "traffic_light_rules",
+     "minimum_sample_sizes"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_backtest_thresholds",
+     "qual": "get_backtest_thresholds",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 473,
+     "args": {},
+     "ret": "{'gini_thresholds': {'excellent': 0.6, 'good': 0.4, 'acceptable': 0.25, 'poor': 0.0}, 'iv_thresholds': {'very_strong': 0.5, 'strong': 0.3, 'medium': 0.1, 'weak': 0.02, 'useless': 0.0}, 'traffic_light_rules': {'GREEN': 'Binomial p-value >= \u2026",
+     "dur_ms": 0.103,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_gini_thresholds",
+       "qual": "PDBacktester.get_gini_thresholds",
+       "file": "services/pd_backtester.py",
+       "line": 633,
+       "args": {},
+       "ret": "{'excellent': 0.6, 'good': 0.4, 'acceptable': 0.25, 'poor': 0.0}",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "get_iv_thresholds",
+       "qual": "PDBacktester.get_iv_thresholds",
+       "file": "services/pd_backtester.py",
+       "line": 641,
+       "args": {},
+       "ret": "{'very_strong': 0.5, 'strong': 0.3, 'medium': 0.1, 'weak': 0.02, 'useless': 0.0}",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "get_traffic_light_rules",
+       "qual": "PDBacktester.get_traffic_light_rules",
+       "file": "services/pd_backtester.py",
+       "line": 650,
+       "args": {},
+       "ret": "{'GREEN': 'Binomial p-value >= 0.05 -- model well-calibrated', 'YELLOW': 'Binomial p-value 0.01 <= p < 0.05 -- monitoring required', 'RED': 'Binomial p-value < 0.01 -- recalibration required'}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "get_minimum_sample_sizes",
+       "qual": "PDBacktester.get_minimum_sample_sizes",
+       "file": "services/pd_backtester.py",
+       "line": 659,
+       "args": {},
+       "ret": "{'overall_backtest': 30, 'per_grade_binomial': 20, 'hosmer_lemeshow': 50, 'gini_reliable': 200, 'regulatory_minimum': 100}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "GET /api/v1/stress-testing/lgd-haircuts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 11.699,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "lgd_haircuts"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_lgd_haircuts",
+     "qual": "get_lgd_haircuts",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 429,
+     "args": {},
+     "ret": "{'lgd_haircuts': {'OPTIMISTIC': {'property': -0.02, 'equipment': -0.01, 'financial': -0.01, 'unsecured': 0.0}, 'BASE': {'property': 0.0, 'equipment': 0.0, 'financial': 0.0, 'unsecured': 0.0}, 'ADVERSE': {'property': 0.05, 'equipment': 0.07\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "GET /api/v1/stress-testing/pd-multipliers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.528,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pd_multipliers"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_pd_multipliers",
+     "qual": "get_pd_multipliers",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 423,
+     "args": {},
+     "ret": "{'pd_multipliers': {'OPTIMISTIC': {'low': 0.85, 'medium': 0.9, 'high': 0.95, 'very_high': 0.97}, 'BASE': {'low': 1.0, 'medium': 1.0, 'high': 1.0, 'very_high': 1.0}, 'ADVERSE': {'low': 1.3, 'medium': 1.8, 'high': 2.5, 'very_high': 3.5}, 'SE\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "GET /api/v1/stress-testing/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.073,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "weights"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_scenarios",
+     "qual": "get_scenarios",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 414,
+     "args": {},
+     "ret": "{'scenarios': ['OPTIMISTIC', 'BASE', 'ADVERSE', 'SEVERE'], 'weights': {'OPTIMISTIC': 0.1, 'BASE': 0.4, 'ADVERSE': 0.35, 'SEVERE': 0.15}}",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "GET /api/v1/stress-testing/sector-risk-levels",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.071,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_risk_levels"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_sector_risk_levels",
+     "qual": "get_sector_risk_levels",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 435,
+     "args": {},
+     "ret": "{'sector_risk_levels': {'Oil & Gas': 'very_high', 'Coal Mining': 'very_high', 'Steel & Metals': 'very_high', 'Cement & Building Materials': 'high', 'Chemicals': 'high', 'Aviation': 'high', 'Shipping & Maritime': 'high', 'Power Generation':\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "POST /api/v1/stress-testing/backtest",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: PD backtest failed: 'str' object has no attribute 'n_buckets'",
+   "dur_ms": 12.11,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "run_pd_backtest",
+     "qual": "run_pd_backtest",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 446,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 10.737,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-testing",
+   "label": "POST /api/v1/stress-testing/run",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Stress test failed: 'str' object has no attribute 'scenarios'",
+   "dur_ms": 15.532,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "run_stress_test",
+     "qual": "run_stress_test",
+     "file": "api/v1/routes/stress_testing.py",
+     "line": 383,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 13.194,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

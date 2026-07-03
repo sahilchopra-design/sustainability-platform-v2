@@ -1,0 +1,603 @@
+{
+ "domain": "renewable-ppa",
+ "meta": {
+  "ts": "2026-06-30T14:04:39",
+  "module": "api.v1.routes.renewable_ppa",
+  "router_prefix": "/api/v1/renewable-ppa",
+  "endpoints": 14
+ },
+ "transactions": [
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/credit-ratings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.469,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "AAA",
+     "AA",
+     "A",
+     "BBB",
+     "BB",
+     "B",
+     "CCC",
+     "unrated_ig",
+     "unrated_sub_ig",
+     "unrated",
+     "sovereign",
+     "utility"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_credit_ratings",
+     "qual": "ref_credit_ratings",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 310,
+     "args": {},
+     "ret": "{'AAA': 5, 'AA': 8, 'A': 12, 'BBB': 20, 'BB': 35, 'B': 50, 'CCC': 70, 'unrated_ig': 25, 'unrated_sub_ig': 55, 'unrated': 40, 'sovereign': 10, 'utility': 15}",
+     "dur_ms": 0.147,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_credit_ratings",
+       "qual": "PPARiskScorer.get_credit_ratings",
+       "file": "services/ppa_risk_scorer.py",
+       "line": 209,
+       "args": {},
+       "ret": "{'AAA': 5, 'AA': 8, 'A': 12, 'BBB': 20, 'BB': 35, 'B': 50, 'CCC': 70, 'unrated_ig': 25, 'unrated_sub_ig': 55, 'unrated': 40, 'sovereign': 10, 'utility': 15}",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/curtailment-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.279,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "low",
+     "moderate",
+     "high",
+     "very_high"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_curtailment_risk",
+     "qual": "ref_curtailment_risk",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 325,
+     "args": {},
+     "ret": "{'low': {'label': 'Low congestion', 'score': 10, 'example': 'Strong grid, no constraints'}, 'moderate': {'label': 'Moderate congestion', 'score': 30, 'example': 'Occasional negative pricing'}, 'high': {'label': 'High congestion', 'score': \u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/ppa-risk-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.201,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "counterparty_credit",
+     "price_structure",
+     "tenor",
+     "curtailment",
+     "regulatory"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ppa_risk_weights",
+     "qual": "ref_ppa_risk_weights",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 320,
+     "args": {},
+     "ret": "{'counterparty_credit': 0.25, 'price_structure': 0.25, 'tenor': 0.15, 'curtailment': 0.2, 'regulatory': 0.15}",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/price-structures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.208,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fixed",
+     "fixed_escalation",
+     "cap_floor",
+     "indexed_power",
+     "indexed_gas",
+     "partial_merchant",
+     "full_merchant",
+     "subsidy_cfd",
+     "feed_in_tariff"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_price_structures",
+     "qual": "ref_price_structures",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 315,
+     "args": {},
+     "ret": "{'fixed': 10, 'fixed_escalation': 15, 'cap_floor': 25, 'indexed_power': 35, 'indexed_gas': 45, 'partial_merchant': 55, 'full_merchant': 80, 'subsidy_cfd': 12, 'feed_in_tariff': 8}",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_price_structures",
+       "qual": "PPARiskScorer.get_price_structures",
+       "file": "services/ppa_risk_scorer.py",
+       "line": 212,
+       "args": {},
+       "ret": "{'fixed': 10, 'fixed_escalation': 15, 'cap_floor': 25, 'indexed_power': 35, 'indexed_gas': 45, 'partial_merchant': 55, 'full_merchant': 80, 'subsidy_cfd': 12, 'feed_in_tariff': 8}",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/regulatory-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.178,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "stable",
+     "moderate",
+     "high",
+     "very_high"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_regulatory_risk",
+     "qual": "ref_regulatory_risk",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 330,
+     "args": {},
+     "ret": "{'stable': {'label': 'Stable framework', 'score': 10, 'example': 'DE, NL, FR'}, 'moderate': {'label': 'Moderate policy risk', 'score': 25, 'example': 'IT, ES, PL'}, 'high': {'label': 'High policy risk', 'score': 45, 'example': 'Subsidy cla\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/solar-defaults",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.191,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "capex_eur_per_kwp",
+     "opex_eur_per_kwp_yr",
+     "performance_ratio",
+     "degradation_pct_yr",
+     "lifetime_years",
+     "temp_coeff_pct_per_c",
+     "avg_module_temp_above_stc_c"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_solar_defaults",
+     "qual": "ref_solar_defaults",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 305,
+     "args": {},
+     "ret": "{'capex_eur_per_kwp': 750, 'opex_eur_per_kwp_yr': 12, 'performance_ratio': 0.82, 'degradation_pct_yr': 0.5, 'lifetime_years': 30, 'temp_coeff_pct_per_c': -0.35, 'avg_module_temp_above_stc_c': 15}",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/solar-ghi",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.228,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "DE",
+     "FR",
+     "ES",
+     "IT",
+     "PT",
+     "NL",
+     "GB",
+     "SE",
+     "PL",
+     "GR",
+     "US",
+     "IN",
+     "AU",
+     "BR",
+     "ZA",
+     "AE",
+     "SA",
+     "JP",
+     "CN",
+     "MX"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_solar_ghi",
+     "qual": "ref_solar_ghi",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 300,
+     "args": {},
+     "ret": "{'DE': {'ghi': 1100, 'label': 'Germany'}, 'FR': {'ghi': 1400, 'label': 'France'}, 'ES': {'ghi': 1800, 'label': 'Spain'}, 'IT': {'ghi': 1600, 'label': 'Italy'}, 'PT': {'ghi': 1750, 'label': 'Portugal'}, 'NL': {'ghi': 1050, 'label': 'Netherl\u2026",
+     "dur_ms": 0.057,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_solar_ghi_data",
+       "qual": "RenewableProjectEngine.get_solar_ghi_data",
+       "file": "services/renewable_project_engine.py",
+       "line": 547,
+       "args": {},
+       "ret": "{'DE': {'ghi': 1100, 'label': 'Germany'}, 'FR': {'ghi': 1400, 'label': 'France'}, 'ES': {'ghi': 1800, 'label': 'Spain'}, 'IT': {'ghi': 1600, 'label': 'Italy'}, 'PT': {'ghi': 1750, 'label': 'Portugal'}, 'NL': {'ghi': 1050, 'label': 'Netherl\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/turbine-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.228,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "onshore_2mw",
+     "offshore_5mw",
+     "offshore_8mw",
+     "onshore_4mw",
+     "offshore_12mw"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_turbine_classes",
+     "qual": "ref_turbine_classes",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 290,
+     "args": {},
+     "ret": "{'onshore_2mw': {'name': 'Onshore 2 MW', 'capacity_mw': 2.0, 'hub_height_m': 80, 'rotor_diameter_m': 90, 'cut_in_ms': 3.0, 'rated_ms': 12.0, 'cut_out_ms': 25.0, 'capex_eur_per_kw': 1200, 'opex_eur_per_kw_yr': 35, 'lifetime_years': 25}, 'of\u2026",
+     "dur_ms": 0.055,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_turbine_classes",
+       "qual": "RenewableProjectEngine.get_turbine_classes",
+       "file": "services/renewable_project_engine.py",
+       "line": 541,
+       "args": {},
+       "ret": "{'onshore_2mw': {'name': 'Onshore 2 MW', 'capacity_mw': 2.0, 'hub_height_m': 80, 'rotor_diameter_m': 90, 'cut_in_ms': 3.0, 'rated_ms': 12.0, 'cut_out_ms': 25.0, 'capex_eur_per_kw': 1200, 'opex_eur_per_kw_yr': 35, 'lifetime_years': 25}, 'of\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "GET /api/v1/renewable-ppa/ref/wind-regions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.232,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "north_sea",
+     "baltic_sea",
+     "atlantic_france",
+     "mediterranean",
+     "northern_europe_onshore",
+     "central_europe_onshore",
+     "iberia_onshore",
+     "uk_offshore",
+     "scandinavia_onshore",
+     "us_midwest",
+     "us_texas",
+     "india_tamil_nadu",
+     "brazil_northeast",
+     "south_africa",
+     "australia_nsw"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_wind_regions",
+     "qual": "ref_wind_regions",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 295,
+     "args": {},
+     "ret": "{'north_sea': {'k': 2.1, 'lambda': 10.5, 'label': 'North Sea Offshore'}, 'baltic_sea': {'k': 2.0, 'lambda': 8.8, 'label': 'Baltic Sea Offshore'}, 'atlantic_france': {'k': 2.0, 'lambda': 9.2, 'label': 'Atlantic France'}, 'mediterranean': {'\u2026",
+     "dur_ms": 0.054,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_wind_regions",
+       "qual": "RenewableProjectEngine.get_wind_regions",
+       "file": "services/renewable_project_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "{'north_sea': {'k': 2.1, 'lambda': 10.5, 'label': 'North Sea Offshore'}, 'baltic_sea': {'k': 2.0, 'lambda': 8.8, 'label': 'Baltic Sea Offshore'}, 'atlantic_france': {'k': 2.0, 'lambda': 9.2, 'label': 'Atlantic France'}, 'mediterranean': {'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "POST /api/v1/renewable-ppa/lcoe",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "POST /api/v1/renewable-ppa/ppa-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "POST /api/v1/renewable-ppa/project-assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'project_name'",
+   "dur_ms": 0.448,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "project_assess",
+     "qual": "project_assess",
+     "file": "api/v1/routes/renewable_ppa.py",
+     "line": 240,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "POST /api/v1/renewable-ppa/solar-yield",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "renewable-ppa",
+   "label": "POST /api/v1/renewable-ppa/wind-yield",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

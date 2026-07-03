@@ -1,0 +1,295 @@
+{
+ "domain": "regulatory-horizon",
+ "meta": {
+  "ts": "2026-06-30T14:04:33",
+  "module": "api.v1.routes.regulatory_horizon",
+  "router_prefix": "/api/v1/regulatory-horizon",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "regulatory-horizon",
+   "label": "GET /api/v1/regulatory-horizon/ref/cost-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.356,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cost_benchmarks",
+     "qual": "ref_cost_benchmarks",
+     "file": "api/v1/routes/regulatory_horizon.py",
+     "line": 174,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'size_buckets': {'small': '<$1B AUM / <\u20ac50M revenue', 'medium': '$1-50B AUM / \u20ac50M-\u20ac1B revenue', 'large': '>$50B AUM / >\u20ac1B revenue'}, 'benchmarks': {'very_high': {'small': {'one_time_usd': 2000000, 'annual_o\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "ref_cost_benchmarks",
+       "qual": "RegulatoryHorizonEngine.ref_cost_benchmarks",
+       "file": "services/regulatory_horizon_engine.py",
+       "line": 1407,
+       "args": {},
+       "ret": "{'size_buckets': {'small': '<$1B AUM / <\u20ac50M revenue', 'medium': '$1-50B AUM / \u20ac50M-\u20ac1B revenue', 'large': '>$50B AUM / >\u20ac1B revenue'}, 'benchmarks': {'very_high': {'small': {'one_time_usd': 2000000, 'annual_ongoing_usd': 800000, 'fte_equi\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "GET /api/v1/regulatory-horizon/ref/entity-applicability",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.298,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_entity_applicability",
+     "qual": "ref_entity_applicability",
+     "file": "api/v1/routes/regulatory_horizon.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'applicability_matrix': {'EU_CSDDD': {'bank': False, 'insurer': False, 'asset_manager': False, 'corporate': True, 'pension'\u2026",
+     "dur_ms": 0.08,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "ref_entity_applicability",
+       "qual": "RegulatoryHorizonEngine.ref_entity_applicability",
+       "file": "services/regulatory_horizon_engine.py",
+       "line": 1401,
+       "args": {},
+       "ret": "{'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'applicability_matrix': {'EU_CSDDD': {'bank': False, 'insurer': False, 'asset_manager': False, 'corporate': True, 'pension': False, 'all': False}, 'EU_EU\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "GET /api/v1/regulatory-horizon/ref/interconnection-map",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.221,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_interconnection_map",
+     "qual": "ref_interconnection_map",
+     "file": "api/v1/routes/regulatory_horizon.py",
+     "line": 186,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'description': 'regulation_id \u2192 list of regulation_ids whose output/data is required as input', 'interconnection_map': {'EU_SFDR_L3': ['EU_CSRD_ESRS', 'EU_TAXONOMY_DA', 'EU_SFDR_L2_PAI'], 'EU_SFDR_L2_PAI': ['\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "ref_interconnection_map",
+       "qual": "RegulatoryHorizonEngine.ref_interconnection_map",
+       "file": "services/regulatory_horizon_engine.py",
+       "line": 1418,
+       "args": {},
+       "ret": "{'description': 'regulation_id \u2192 list of regulation_ids whose output/data is required as input', 'interconnection_map': {'EU_SFDR_L3': ['EU_CSRD_ESRS', 'EU_TAXONOMY_DA', 'EU_SFDR_L2_PAI'], 'EU_SFDR_L2_PAI': ['EU_CSRD_ESRS', 'GLOBAL_ISSB_S1\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "GET /api/v1/regulatory-horizon/ref/regulation-pipeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.732,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_regulation_pipeline",
+     "qual": "ref_regulation_pipeline",
+     "file": "api/v1/routes/regulatory_horizon.py",
+     "line": 151,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'count': 59, 'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'status_values': ['consultation', 'proposed', 'level2', 'adopted', 'in_force'], 'topic_values': ['climate', 'b\u2026",
+     "dur_ms": 0.351,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "ref_regulation_pipeline",
+       "qual": "RegulatoryHorizonEngine.ref_regulation_pipeline",
+       "file": "services/regulatory_horizon_engine.py",
+       "line": 1392,
+       "args": {},
+       "ret": "{'count': 59, 'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'status_values': ['consultation', 'proposed', 'level2', 'adopted', 'in_force'], 'topic_values': ['climate', 'biodiversity', 'social', 'gover\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "POST /api/v1/regulatory-horizon/readiness",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "POST /api/v1/regulatory-horizon/regulatory-burden",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "POST /api/v1/regulatory-horizon/scan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "regulatory-horizon",
+   "label": "POST /api/v1/regulatory-horizon/synergies",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

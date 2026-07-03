@@ -1,0 +1,329 @@
+{
+ "domain": "shipping-maritime",
+ "meta": {
+  "ts": "2026-06-30T14:05:09",
+  "module": "api.v1.routes.shipping_maritime",
+  "router_prefix": "/api/v1/shipping-maritime",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "shipping-maritime",
+   "label": "GET /api/v1/shipping-maritime/ref/cii-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.378,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cii_requirements",
+     "qual": "ref_cii_requirements",
+     "file": "api/v1/routes/shipping_maritime.py",
+     "line": 343,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {2023: 5.0, 2024: 7.0, 2025: 9.0, 2026: 11.0, 2027: 13.0, 2028: 15.0, 2029: 17.0, 2030: 20.0}}",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "GET /api/v1/shipping-maritime/ref/fuel-emission-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.29,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_fuel_emission_factors",
+     "qual": "ref_fuel_emission_factors",
+     "file": "api/v1/routes/shipping_maritime.py",
+     "line": 355,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'fuel_factors': {'HFO': {'co2_per_tonne': 3.114, 'ghg_wtw_per_mj': 91.16, 'lcv_mj_per_tonne': 40200.0, 'name': 'Heavy Fuel Oil'}, 'VLSFO': {'co2_per_tonne': 3.151, 'ghg_wtw_per_mj': 91.5, 'lcv_mj_per_tonne': \u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "GET /api/v1/shipping-maritime/ref/fueleu-targets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.203,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_fueleu_targets",
+     "qual": "ref_fueleu_targets",
+     "file": "api/v1/routes/shipping_maritime.py",
+     "line": 349,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {2025: 89.34, 2030: 80.43, 2035: 71.53, 2040: 53.65, 2045: 35.76, 2050: 17.88}}",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "GET /api/v1/shipping-maritime/ref/vessel-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.217,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_vessel_types",
+     "qual": "ref_vessel_types",
+     "file": "api/v1/routes/shipping_maritime.py",
+     "line": 337,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'bulk_carrier': {'imo_category': 'Bulk carrier', 'cii_reference_line_coeff': 4745.0, 'eexi_required_gco2_dwt': 3.0, 'fueleu_ghg_base': 91.16}, 'tanker': {'imo_category': 'Tanker', 'cii_reference_line_coeff': \u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/cii-rating",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/eexi",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/ets-obligation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/fleet-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/fuel-switch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/fueleu",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.245,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/shipping_maritime.py",
+     "line": 324,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "shipping-maritime",
+   "label": "POST /api/v1/shipping-maritime/poseidon-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,426 @@
+{
+ "domain": "supply-chain",
+ "meta": {
+  "ts": "2026-06-30T14:05:28",
+  "module": "api.v1.routes.supply_chain",
+  "router_prefix": "/api/v1",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "supply-chain",
+   "label": "GET /api/v1/supply-chain/emission-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 577.533,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "emission_factor_library"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, activity_type, activity_sub_type, category_number, factor_value, factor_unit, source_name, valid_from_year, country_iso FROM emission_factor_library WHERE is_active = true ORDER BY activity_type, valid_from_year DESC LIMIT 100'",
+     "tables": [
+      "emission_factor_library"
+     ],
+     "rowcount": 60,
+     "dur_ms": 64.525,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)",
+    "category": "None (default)",
+    "country_iso": "None (default)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_count",
+     "filters_applied",
+     "factors",
+     "validation_summary"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_emission_factors",
+     "qual": "list_emission_factors",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 621,
+     "args": {
+      "sector": "None",
+      "category": "None",
+      "country_iso": "None",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36C626C0>"
+     },
+     "ret": "EmissionFactorListResponse(total_count=60, filters_applied={'sector': None, 'category': None, 'country_iso': None, 'year': None}, factors=[EmissionFactor(factor_id='93831cbf', sector='air_travel', category='cat6_business_travel', activity_\u2026",
+     "dur_ms": 547.216,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_query_emission_factors_db",
+       "qual": "_query_emission_factors_db",
+       "file": "api/v1/routes/supply_chain.py",
+       "line": 669,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36C626C0>",
+        "sector": "None",
+        "category": "None",
+        "country_iso": "None",
+        "year": "None"
+       },
+       "ret": "[EmissionFactor(factor_id='93831cbf', sector='air_travel', category='cat6_business_travel', activity_description='Short Haul Economy < 3700km', unit='kgCO2e/pass-km', kgco2e_per_unit=0.15353, source='DEFRA', year=2024, country_iso=None), E\u2026",
+       "dur_ms": 546.467,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "_build_validation_summary",
+       "qual": "_build_validation_summary",
+       "file": "api/v1/routes/supply_chain.py",
+       "line": 133,
+       "args": {
+        "warnings": "[]",
+        "missing": "[]"
+       },
+       "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
+       "dur_ms": 0.042,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "GET /api/v1/supply-chain/scope3/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 731.165,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scope3_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, entity_name, reporting_year, total_scope3_tco2e, calculation_approach, status, created_at FROM scope3_assessments WHERE 1=1 ORDER BY created_at DESC LIMIT 50'",
+     "tables": [
+      "scope3_assessments"
+     ],
+     "rowcount": 18,
+     "dur_ms": 76.5,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "reporting_year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assessments",
+     "total_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "list_scope3_assessments",
+     "qual": "list_scope3_assessments",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 734,
+     "args": {
+      "status": "None",
+      "reporting_year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36C63020>"
+     },
+     "ret": "{'assessments': [{'assessment_id': '942a3557-de55-45e2-a6da-7f503c85834d', 'entity_name': 'Schneider Electric SE', 'reporting_year': 2024, 'total_scope3_tco2e': 14800000.0, 'calculation_approach': 'activity_based', 'status': 'published', '\u2026",
+     "dur_ms": 696.642,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "GET /api/v1/supply-chain/scope3/assessments/{assessment_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Assessment not found",
+   "dur_ms": 300.207,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scope3_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, entity_name, reporting_year, calculation_approach, cat1_purchased_goods_tco2e, cat2_capital_goods_tco2e, cat3_fuel_energy_tco2e, cat4_upstream_transport_tco2e, cat5_waste_tco2e, cat6_business_travel_tco2e, cat7_employee_commuting_tco2e, cat8_upstream_leased_tco2e, cat9_downstream_transport_tco2e, cat10_processing_tco2e, cat11_use_of_sold_products_tco2e, cat12_eol_treatment_tco2e\u2026",
+     "tables": [
+      "scope3_assessments"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.126,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_scope3_assessment",
+     "qual": "get_scope3_assessment",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 780,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36C62DE0>"
+     },
+     "ret": "None",
+     "dur_ms": 266.935,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "GET /api/v1/supply-chain/scope3/sbti-targets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 350.576,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "sbti_targets"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, entity_name, target_type, sbti_pathway, base_year, base_year_total_tco2e, near_term_target_year, near_term_reduction_pct, near_term_annual_reduction_rate_pct, sbti_status, created_at FROM sbti_targets WHERE 1=1 ORDER BY created_at DESC LIMIT 50'",
+     "tables": [
+      "sbti_targets"
+     ],
+     "rowcount": 7,
+     "dur_ms": 83.151,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "pathway": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "targets",
+     "total_count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_sbti_targets",
+     "qual": "list_sbti_targets",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 847,
+     "args": {
+      "status": "None",
+      "pathway": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36D95C40>"
+     },
+     "ret": "{'targets': [{'target_id': 'afd1060e-55ae-47a9-92de-ce7840d299fa', 'entity_name': 'Shell plc', 'target_type': 'near_term', 'sbti_pathway': '1.5C_absolute', 'base_year': 2019, 'base_year_total_tco2e': 68600000.0, 'target_year': 2030, 'reduc\u2026",
+     "dur_ms": 318.106,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "GET /api/v1/supply-chain/scope3/sbti-targets/{target_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: SBTi target not found",
+   "dur_ms": 304.28,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "sbti_targets"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id::text, entity_name, target_type, sbti_pathway, base_year, base_year_total_tco2e, near_term_target_year, near_term_reduction_pct, near_term_target_tco2e, near_term_annual_reduction_rate_pct, validation_summary, sbti_status, created_at FROM sbti_targets WHERE id = %(tid)s'",
+     "tables": [
+      "sbti_targets"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.789,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "target_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_sbti_target",
+     "qual": "get_sbti_target",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 900,
+     "args": {
+      "target_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36D96360>"
+     },
+     "ret": "None",
+     "dur_ms": 272.421,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "POST /api/v1/supply-chain/scope3/calculate",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: activities_by_category must not be empty.",
+   "dur_ms": 0.558,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<Scope3CalculateRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "calculate_scope3",
+     "qual": "calculate_scope3",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 414,
+     "args": {
+      "request": "Scope3CalculateRequest(entity_id='TEST_request_entity_id', entity_name=None, reporting_year=1, activities_by_category={}, include_hotspot_analysis=True)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36D97500>"
+     },
+     "ret": "None",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "supply-chain",
+   "label": "POST /api/v1/supply-chain/scope3/sbti-target",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: target_year must be after base_year",
+   "dur_ms": 0.836,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<SBTiTargetRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "calculate_sbti_target",
+     "qual": "calculate_sbti_target",
+     "file": "api/v1/routes/supply_chain.py",
+     "line": 531,
+     "args": {
+      "request": "SBTiTargetRequest(entity_id='TEST_request_entity_id', entity_name=None, base_year=1, base_year_emissions_tco2e=1.0, target_year=1, reduction_pct=1.0, sbti_pathway='1.5C')",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002CE36C635F0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

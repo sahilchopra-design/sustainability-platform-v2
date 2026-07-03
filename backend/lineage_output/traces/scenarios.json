@@ -1,0 +1,1341 @@
+{
+ "domain": "scenarios",
+ "meta": {
+  "ts": "2026-06-30T14:05:00",
+  "module": "api.v1.routes.scenarios",
+  "router_prefix": "/api/v1/scenarios",
+  "endpoints": 16
+ },
+ "transactions": [
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3468.92,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id, scenarios.name, scenarios.description, scenarios.source, scenarios.ngfs_scenario_type, scenarios.ngfs_version, scenarios.base_scenario_id, scenarios.approval_status, scenarios.submitted_by, scenarios.approved_by, scenarios.submitted_at, scenarios.approved_at, scenarios.rejection_reason, scenarios.current_version, scenarios.is_published, scenarios.parameters, scenarios.create\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 40,
+     "dur_ms": 242.262,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "approval_status": "None (default)",
+    "source": "None (default)",
+    "published_only": "False (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 40,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_scenarios",
+     "qual": "list_scenarios",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 127,
+     "args": {
+      "approval_status": "None",
+      "source": "None",
+      "published_only": "False",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74323F20>"
+     },
+     "ret": "[<db.models.scenario.Scenario object at 0x0000025B747992B0>, <db.models.scenario.Scenario object at 0x0000025B74799310>, <db.models.scenario.Scenario object at 0x0000025B747993A0>, <db.models.scenario.Scenario object at 0x0000025B747994C0>\u2026",
+     "dur_ms": 3436.613,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74323F20>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "list_scenarios",
+       "qual": "ScenarioBuilderService.list_scenarios",
+       "file": "services/scenario_builder_service.py",
+       "line": 35,
+       "args": {
+        "approval_status": "None",
+        "source": "None",
+        "published_only": "False"
+       },
+       "ret": "[<db.models.scenario.Scenario object at 0x0000025B747992B0>, <db.models.scenario.Scenario object at 0x0000025B74799310>, <db.models.scenario.Scenario object at 0x0000025B747993A0>, <db.models.scenario.Scenario object at 0x0000025B747994C0>\u2026",
+       "dur_ms": 3436.494,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios/ngfs/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 341.716,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_data_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_data_sources.id, ngfs_data_sources.name, ngfs_data_sources.url, ngfs_data_sources.version, ngfs_data_sources.release_date, ngfs_data_sources.last_synced_at, ngfs_data_sources.last_sync_status, ngfs_data_sources.last_sync_error, ngfs_data_sources.sync_count, ngfs_data_sources.scenario_count, ngfs_data_sources.data_hash, ngfs_data_sources.created_at, ngfs_data_sources.updated_at FROM n\u2026",
+     "tables": [
+      "ngfs_data_sources"
+     ],
+     "rowcount": 2,
+     "dur_ms": 71.268,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 2,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_ngfs_sources",
+     "qual": "get_ngfs_sources",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 39,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B740E4B60>"
+     },
+     "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000025B747BEE70>, <db.models.scenario.NGFSDataSource object at 0x0000025B747BEEA0>]",
+     "dur_ms": 309.965,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "__init__",
+       "qual": "NGFSSyncService.__init__",
+       "file": "services/ngfs_sync_service.py",
+       "line": 160,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B740E4B60>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "get_ngfs_sources",
+       "qual": "NGFSSyncService.get_ngfs_sources",
+       "file": "services/ngfs_sync_service.py",
+       "line": 163,
+       "args": {},
+       "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000025B747BEE70>, <db.models.scenario.NGFSDataSource object at 0x0000025B747BEEA0>]",
+       "dur_ms": 309.804,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios/templates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 304.649,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id, scenarios.name, scenarios.description, scenarios.source, scenarios.ngfs_scenario_type, scenarios.ngfs_version, scenarios.base_scenario_id, scenarios.approval_status, scenarios.submitted_by, scenarios.approved_by, scenarios.submitted_at, scenarios.approved_at, scenarios.rejection_reason, scenarios.current_version, scenarios.is_published, scenarios.parameters, scenarios.create\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 12,
+     "dur_ms": 61.273,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 12,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_scenario_templates",
+     "qual": "get_scenario_templates",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 103,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7425B350>"
+     },
+     "ret": "[ScenarioTemplateResponse(id='54fdf6d0-457b-4db0-a195-63ca3c1bdbf1', name='Below 2\u00b0C (5.0)', description='Gradual strengthening of policies limits warming to below 2\u00b0C', ngfs_scenario_type=<NGFSScenarioType.BELOW_2C: 'below_2c'>, parameter\u2026",
+     "dur_ms": 271.486,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7425B350>"
+       },
+       "ret": "None",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "get_ngfs_templates",
+       "qual": "ScenarioBuilderService.get_ngfs_templates",
+       "file": "services/scenario_builder_service.py",
+       "line": 265,
+       "args": {},
+       "ret": "[<db.models.scenario.Scenario object at 0x0000025B7479A510>, <db.models.scenario.Scenario object at 0x0000025B7479A630>, <db.models.scenario.Scenario object at 0x0000025B7479A750>, <db.models.scenario.Scenario object at 0x0000025B7479AC30>\u2026",
+       "dur_ms": 270.962,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios/{scenario_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 323.006,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 84.441,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_scenario",
+     "qual": "get_scenario",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 165,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B72A9A060>"
+     },
+     "ret": "None",
+     "dur_ms": 290.117,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B72A9A060>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "get_scenario",
+       "qual": "ScenarioBuilderService.get_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 57,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 289.998,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios/{scenario_id}/preview/{portfolio_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "ModuleNotFoundError: No module named 'backend'",
+   "dur_ms": 6.184,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_impact_preview",
+     "qual": "get_impact_preview",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 389,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799310>"
+     },
+     "ret": "None",
+     "dur_ms": 5.473,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "GET /api/v1/scenarios/{scenario_id}/versions",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 334.508,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 73.043,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "get_scenario_versions",
+     "qual": "get_scenario_versions",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 316,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747992E0>"
+     },
+     "ret": "None",
+     "dur_ms": 298.148,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747992E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "get_scenario",
+       "qual": "ScenarioBuilderService.get_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 57,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 298.035,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1071.095,
+   "node_count": 9,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scenario_versions",
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO scenarios (id, name, description, source, ngfs_scenario_type, ngfs_version, base_scenario_id, approval_status, submitted_by, approved_by, submitted_at, approved_at, rejection_reason, current_version, is_published, parameters, created_at, updated_at, created_by) VALUES (%(id)s, %(name)s, %(description)s, %(source)s, %(ngfs_scenario_type)s, %(ngfs_version)s, %(base_scenario_id)s, %(app\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 104.909,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT scenarios.id, scenarios.name, scenarios.description, scenarios.source, scenarios.ngfs_scenario_type, scenarios.ngfs_version, scenarios.base_scenario_id, scenarios.approval_status, scenarios.submitted_by, scenarios.approved_by, scenarios.submitted_at, scenarios.approved_at, scenarios.rejection_reason, scenarios.current_version, scenarios.is_published, scenarios.parameters, scenarios.create\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 60.11,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'INSERT INTO scenario_versions (id, scenario_id, version_number, parameters, change_summary, changed_by, created_at) VALUES (%(id)s, %(scenario_id)s, %(version_number)s, %(parameters)s, %(change_summary)s, %(changed_by)s, %(created_at)s)'",
+     "tables": [
+      "scenario_versions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 40.595,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 76.723,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario": "<ScenarioCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "Scenario",
+    "repr": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "create_scenario",
+     "qual": "create_scenario",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 150,
+     "args": {
+      "scenario": "ScenarioCreate(name='TEST_scenario_name', description=None, source=<ScenarioSource.CUSTOM: 'custom'>, ngfs_scenario_type=None, base_scenario_id=None, parameters=ScenarioParametersBase(carbon_price={}, temperature_pathway={}, gdp_impact={},\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799EE0>"
+     },
+     "ret": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>",
+     "dur_ms": 1038.021,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799EE0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "create_scenario",
+       "qual": "ScenarioBuilderService.create_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 61,
+       "args": {
+        "scenario_data": "ScenarioCreate(name='TEST_scenario_name', description=None, source=<ScenarioSource.CUSTOM: 'custom'>, ngfs_scenario_type=None, base_scenario_id=None, parameters=ScenarioParametersBase(carbon_price={}, temperature_pathway={}, gdp_impact={},\u2026"
+       },
+       "ret": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>",
+       "dur_ms": 1037.878,
+       "sql": [
+        0,
+        1,
+        3
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 20,
+         "name": "<lambda>",
+         "qual": "Scenario.<lambda>",
+         "file": "db/models/scenario.py",
+         "line": 55,
+         "args": {},
+         "ret": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'",
+         "dur_ms": 0.067,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<lambda>",
+         "qual": "Scenario.<lambda>",
+         "file": "db/models/scenario.py",
+         "line": 88,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 18, 4, 56, 992998, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<lambda>",
+         "qual": "Scenario.<lambda>",
+         "file": "db/models/scenario.py",
+         "line": 89,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 18, 4, 56, 992998, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "_create_version",
+         "qual": "ScenarioBuilderService._create_version",
+         "file": "services/scenario_builder_service.py",
+         "line": 274,
+         "args": {
+          "scenario_id": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'",
+          "version_number": "1",
+          "parameters": "{'carbon_price': {}, 'temperature_pathway': {}, 'gdp_impact': {}, 'sectoral_multipliers': {}, 'physical_risk': {}}",
+          "change_summary": "'Initial version'",
+          "changed_by": "None"
+         },
+         "ret": "<db.models.scenario.ScenarioVersion object at 0x0000025B743997F0>",
+         "dur_ms": 44.021,
+         "sql": [
+          2
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 24,
+           "name": "<lambda>",
+           "qual": "ScenarioVersion.<lambda>",
+           "file": "db/models/scenario.py",
+           "line": 103,
+           "args": {},
+           "ret": "'c898b3ac-66fa-4683-ae69-3768af0f5c88'",
+           "dur_ms": 0.028,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "<lambda>",
+           "qual": "ScenarioVersion.<lambda>",
+           "file": "db/models/scenario.py",
+           "line": 113,
+           "args": {},
+           "ret": "datetime.datetime(2026, 6, 30, 18, 4, 57, 406600, tzinfo=datetime.timezone.utc)",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/ngfs/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 637.565,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_data_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_data_sources.id, ngfs_data_sources.name, ngfs_data_sources.url, ngfs_data_sources.version, ngfs_data_sources.release_date, ngfs_data_sources.last_synced_at, ngfs_data_sources.last_sync_status, ngfs_data_sources.last_sync_error, ngfs_data_sources.sync_count, ngfs_data_sources.scenario_count, ngfs_data_sources.data_hash, ngfs_data_sources.created_at, ngfs_data_sources.updated_at FROM n\u2026",
+     "tables": [
+      "ngfs_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.29,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'UPDATE ngfs_data_sources SET updated_at=%(updated_at)s WHERE ngfs_data_sources.id = %(ngfs_data_sources_id)s'",
+     "tables": [
+      "ngfs_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.837,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT ngfs_data_sources.id, ngfs_data_sources.name, ngfs_data_sources.url, ngfs_data_sources.version, ngfs_data_sources.release_date, ngfs_data_sources.last_synced_at, ngfs_data_sources.last_sync_status, ngfs_data_sources.last_sync_error, ngfs_data_sources.sync_count, ngfs_data_sources.scenario_count, ngfs_data_sources.data_hash, ngfs_data_sources.created_at, ngfs_data_sources.updated_at FROM n\u2026",
+     "tables": [
+      "ngfs_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.189,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "name": "'NGFS Phase V' (default)",
+    "version": "'5.0' (default)",
+    "url": "'https://data.ece.iiasa.ac.at/ngfs/' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "NGFSDataSource",
+    "repr": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "create_ngfs_source",
+     "qual": "create_ngfs_source",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 47,
+     "args": {
+      "name": "'NGFS Phase V'",
+      "version": "'5.0'",
+      "url": "'https://data.ece.iiasa.ac.at/ngfs/'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479BAD0>"
+     },
+     "ret": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>",
+     "dur_ms": 608.37,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 27,
+       "name": "__init__",
+       "qual": "NGFSSyncService.__init__",
+       "file": "services/ngfs_sync_service.py",
+       "line": 160,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479BAD0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "create_or_update_source",
+       "qual": "NGFSSyncService.create_or_update_source",
+       "file": "services/ngfs_sync_service.py",
+       "line": 167,
+       "args": {
+        "name": "'NGFS Phase V'",
+        "url": "'https://data.ece.iiasa.ac.at/ngfs/'",
+        "version": "'5.0'",
+        "release_date": "None"
+       },
+       "ret": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>",
+       "dur_ms": 608.253,
+       "sql": [
+        0,
+        1,
+        2
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/ngfs/sync",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.508,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "source_id": "None (default)",
+    "background_tasks": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "message"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "sync_ngfs_data",
+     "qual": "sync_ngfs_data",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 60,
+     "args": {
+      "source_id": "None",
+      "background_tasks": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B9B0>"
+     },
+     "ret": "{'message': 'NGFS sync started for all sources'}",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "PATCH /api/v1/scenarios/{scenario_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scenarios",
+   "label": "DELETE /api/v1/scenarios/{scenario_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/{scenario_id}/approve",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 278.608,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 54.351,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "decision": "<ScenarioApprovalDecision (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 30,
+     "name": "approve_scenario",
+     "qual": "approve_scenario",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 282,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "decision": "ScenarioApprovalDecision(approved=True, approved_by='TEST_decision_approved_by', notes=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479AC90>"
+     },
+     "ret": "None",
+     "dur_ms": 249.572,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 31,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479AC90>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "approve_scenario",
+       "qual": "ScenarioBuilderService.approve_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 199,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "approved_by": "'TEST_decision_approved_by'",
+        "notes": "None"
+       },
+       "ret": "None",
+       "dur_ms": 249.487,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/{scenario_id}/fork",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 560.508,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.242,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "fork_request": "<ScenarioForkRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 33,
+     "name": "fork_scenario",
+     "qual": "fork_scenario",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 219,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "fork_request": "ScenarioForkRequest(new_name='TEST_fork_request_new_name', description=None, created_by=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B470>"
+     },
+     "ret": "None",
+     "dur_ms": 529.132,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 34,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B470>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "fork_scenario",
+       "qual": "ScenarioBuilderService.fork_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 145,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "new_name": "'TEST_fork_request_new_name'",
+        "description": "None",
+        "created_by": "None"
+       },
+       "ret": "None",
+       "dur_ms": 529.059,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/{scenario_id}/preview",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 309.126,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 58.962,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "<ScenarioImpactPreviewRequest (mock)>",
+    "background_tasks": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 36,
+     "name": "calculate_impact_preview",
+     "qual": "calculate_impact_preview",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 334,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "ScenarioImpactPreviewRequest(portfolio_id='TEST_request_portfolio_id', parameters=None)",
+      "background_tasks": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BF050>"
+     },
+     "ret": "None",
+     "dur_ms": 279.489,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 37,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BF050>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "get_scenario",
+       "qual": "ScenarioBuilderService.get_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 57,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 279.356,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/{scenario_id}/publish",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 297.623,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 57.017,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "publish_scenario",
+     "qual": "publish_scenario",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 240,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BD940>"
+     },
+     "ret": "None",
+     "dur_ms": 270.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BD940>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "publish_scenario",
+       "qual": "ScenarioBuilderService.publish_scenario",
+       "file": "services/scenario_builder_service.py",
+       "line": 239,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 269.974,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenarios",
+   "label": "POST /api/v1/scenarios/{scenario_id}/submit-for-approval",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 367.374,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT scenarios.id AS scenarios_id, scenarios.name AS scenarios_name, scenarios.description AS scenarios_description, scenarios.source AS scenarios_source, scenarios.ngfs_scenario_type AS scenarios_ngfs_scenario_type, scenarios.ngfs_version AS scenarios_ngfs_version, scenarios.base_scenario_id AS scenarios_base_scenario_id, scenarios.approval_status AS scenarios_approval_status, scenarios.submi\u2026",
+     "tables": [
+      "scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.49,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "submission": "<ScenarioSubmitForApproval (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42,
+     "name": "submit_for_approval",
+     "qual": "submit_for_approval",
+     "file": "api/v1/routes/scenarios.py",
+     "line": 259,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "submission": "ScenarioSubmitForApproval(submitted_by='TEST_submission_submitted_by', notes=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74798BC0>"
+     },
+     "ret": "None",
+     "dur_ms": 338.907,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 43,
+       "name": "__init__",
+       "qual": "ScenarioBuilderService.__init__",
+       "file": "services/scenario_builder_service.py",
+       "line": 32,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74798BC0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "submit_for_approval",
+       "qual": "ScenarioBuilderService.submit_for_approval",
+       "file": "services/scenario_builder_service.py",
+       "line": 179,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "submitted_by": "'TEST_submission_submitted_by'",
+        "notes": "None"
+       },
+       "ret": "None",
+       "dur_ms": 338.846,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

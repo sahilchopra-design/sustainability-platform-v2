@@ -1,0 +1,354 @@
+{
+ "domain": "loss-damage",
+ "meta": {
+  "ts": "2026-06-30T14:03:01",
+  "module": "api.v1.routes.loss_damage",
+  "router_prefix": "/api/v1/loss-damage",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "loss-damage",
+   "label": "GET /api/v1/loss-damage/ref/frld-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.959,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "access_criteria",
+     "fund_initial_capitalisation_bn_usd",
+     "pledges_at_cop28_bn_usd",
+     "host_institution",
+     "governing_board",
+     "decision",
+     "note"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_frld_criteria",
+     "qual": "ref_frld_criteria",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 239,
+     "args": {},
+     "ret": "{'access_criteria': {'sids': {'description': 'Small Island Developing States', 'eligibility_threshold': 'UNOHRLLS SIDS list membership', 'access_modality': 'simplified_procedures', 'indicative_annual_allocation_usd_mn': 50, 'co_financing_r\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "GET /api/v1/loss-damage/ref/global-shield",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.131,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pillars",
+     "total_committed_bn_usd",
+     "coverage_countries",
+     "g7_launch",
+     "v2_update",
+     "flagship_instruments",
+     "target_2025"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_global_shield",
+     "qual": "ref_global_shield",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 253,
+     "args": {},
+     "ret": "{'pillars': {'pre_arranged_finance': {'description': 'Pre-arranged financial instruments activated at trigger events', 'instruments': ['catastrophe_bonds', 'contingent_credit', 'parametric_insurance', 'shock_responsive_social_protection'],\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "GET /api/v1/loss-damage/ref/loss-event-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.07,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "event_types",
+     "total_types",
+     "wim_action_areas",
+     "global_annual_ld_bn_usd",
+     "insured_pct",
+     "source"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_loss_event_types",
+     "qual": "ref_loss_event_types",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 288,
+     "args": {},
+     "ret": "{'event_types': {'cyclone': {'description': 'Tropical cyclone including hurricane and typhoon', 'wim_relevance': 'high', 'economic_loss_multiplier': 3.5, 'non_economic_share': 0.35, 'insurance_penetration_typical': 0.25, 'parametric_suitab\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "GET /api/v1/loss-damage/ref/parametric-triggers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.174,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "triggers",
+     "total_indices",
+     "standard",
+     "basis_risk_mitigation",
+     "settlement_process"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_parametric_triggers",
+     "qual": "ref_parametric_triggers",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 272,
+     "args": {},
+     "ret": "{'triggers': {'wind_speed_kmh': {'description': 'Maximum sustained wind speed (1-min average)', 'data_source': 'WMO RSMC tropical cyclone bulletins', 'typical_attachment': 89, 'typical_exhaustion': 185, 'unit': 'km/h', 'settlement_days': 1\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "GET /api/v1/loss-damage/ref/v20-members",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.763,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "v20_members",
+     "total_members",
+     "combined_gdp_bn_usd",
+     "combined_population_mn",
+     "annual_ld_bn_usd",
+     "description",
+     "founding",
+     "secretariat"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_v20_members",
+     "qual": "ref_v20_members",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 224,
+     "args": {},
+     "ret": "{'v20_members': ['AFG', 'BGD', 'BEN', 'BHU', 'BFA', 'KHM', 'CMR', 'CAF', 'COD', 'COG', 'CIV', 'DJI', 'ETH', 'FJI', 'GMB', 'GHA', 'GTM', 'GNB', 'HTI', 'HND', 'KEN', 'KIR', 'MDG', 'MWI', 'MDV', 'MLI', 'MHL', 'FSM', 'MNG', 'MOZ', 'NPL', 'NER'\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "POST /api/v1/loss-damage/frld-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "loss-damage",
+   "label": "POST /api/v1/loss-damage/ld-gap-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: float() argument must be a string or a real number, not 'NoneType'",
+   "dur_ms": 2.304,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<LDGapRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ld_gap_analysis_endpoint",
+     "qual": "ld_gap_analysis_endpoint",
+     "file": "api/v1/routes/loss_damage.py",
+     "line": 159,
+     "args": {
+      "request": "LDGapRequest(country_iso='TEST_request_country_iso', country_name=None, event_type='cyclone', gdp_usd=None, insurance_penetration=None, global_shield_covered=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.104,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "calculate_residual_ld_gap",
+       "qual": "calculate_residual_ld_gap",
+       "file": "services/loss_damage_engine.py",
+       "line": 455,
+       "args": {
+        "country_data": "{'country_iso': 'TEST_request_country_iso', 'country_name': None, 'event_type': 'cyclone', 'gdp_usd': None}",
+        "coverage_data": "{}"
+       },
+       "ret": "None",
+       "dur_ms": 0.046,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage",
+   "label": "POST /api/v1/loss-damage/ld-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "loss-damage",
+   "label": "POST /api/v1/loss-damage/parametric-design",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "loss-damage",
+   "label": "POST /api/v1/loss-damage/wim-access",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

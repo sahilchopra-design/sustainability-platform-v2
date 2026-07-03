@@ -1,0 +1,103 @@
+{
+ "domain": "attribution-benchmark",
+ "meta": {
+  "ts": "2026-06-30T13:59:12",
+  "module": "api.v1.routes.attribution_benchmark",
+  "router_prefix": "/api/v1/attribution",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "attribution-benchmark",
+   "label": "GET /api/v1/attribution/pai-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.243,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mandatory_pai_indicators"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_pai_indicators",
+     "qual": "get_pai_indicators",
+     "file": "api/v1/routes/attribution_benchmark.py",
+     "line": 265,
+     "args": {},
+     "ret": "{'mandatory_pai_indicators': [{'id': 'PAI_1', 'name': 'GHG Emissions (Scope 1)', 'unit': 'tCO2e', 'direction': 'lower_is_better'}, {'id': 'PAI_2', 'name': 'GHG Emissions (Scope 2)', 'unit': 'tCO2e', 'direction': 'lower_is_better'}, {'id': \u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "attribution-benchmark",
+   "label": "POST /api/v1/attribution/benchmark-report",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund'",
+   "dur_ms": 0.173,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "benchmark_report",
+     "qual": "benchmark_report",
+     "file": "api/v1/routes/attribution_benchmark.py",
+     "line": 230,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "attribution-benchmark",
+   "label": "POST /api/v1/attribution/esg-attribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

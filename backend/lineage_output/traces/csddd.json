@@ -1,0 +1,501 @@
+{
+ "domain": "csddd",
+ "meta": {
+  "ts": "2026-06-30T14:00:12",
+  "module": "api.v1.routes.csddd",
+  "router_prefix": "/api/v1/csddd",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/adverse-impacts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.48,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "adverse_impact_categories"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_adverse_impacts",
+     "qual": "ref_adverse_impacts",
+     "file": "api/v1/routes/csddd.py",
+     "line": 252,
+     "args": {},
+     "ret": "{'adverse_impact_categories': [{'code': 'HR-01', 'category': 'human_rights', 'title': 'Forced / compulsory labour', 'instruments': ['ILO C29', 'ILO C105'], 'severity_weight': 1.0}, {'code': 'HR-02', 'category': 'human_rights', 'title': 'Ch\u2026",
+     "dur_ms": 0.111,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_adverse_impact_categories",
+       "qual": "CSDDDEngine.get_adverse_impact_categories",
+       "file": "services/csddd_engine.py",
+       "line": 829,
+       "args": {},
+       "ret": "[{'code': 'HR-01', 'category': 'human_rights', 'title': 'Forced / compulsory labour', 'instruments': ['ILO C29', 'ILO C105'], 'severity_weight': 1.0}, {'code': 'HR-02', 'category': 'human_rights', 'title': 'Child labour', 'instruments': ['\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/climate-plan",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.297,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "climate_plan_requirements"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_climate_plan",
+     "qual": "ref_climate_plan",
+     "file": "api/v1/routes/csddd.py",
+     "line": 264,
+     "args": {},
+     "ret": "{'climate_plan_requirements': [{'id': 'CTP-01', 'requirement': 'Paris-aligned GHG reduction targets (1.5C pathway)', 'article': 'Art 22(1)'}, {'id': 'CTP-02', 'requirement': 'Time-bound implementation actions', 'article': 'Art 22(1)'}, {'i\u2026",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_climate_transition_plan_requirements",
+       "qual": "CSDDDEngine.get_climate_transition_plan_requirements",
+       "file": "services/csddd_engine.py",
+       "line": 837,
+       "args": {},
+       "ret": "[{'id': 'CTP-01', 'requirement': 'Paris-aligned GHG reduction targets (1.5C pathway)', 'article': 'Art 22(1)'}, {'id': 'CTP-02', 'requirement': 'Time-bound implementation actions', 'article': 'Art 22(1)'}, {'id': 'CTP-03', 'requirement': '\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.272,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cross_framework_map"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/csddd.py",
+     "line": 276,
+     "args": {},
+     "ret": "{'cross_framework_map': [{'csddd_article': 'Art 6 (Impact identification)', 'csrd_esrs': 'ESRS S1 (Own Workforce), S2 (Value Chain Workers), S3 (Affected Communities)', 'ungp': 'Pillar II \u2014 Human Rights Due Diligence', 'oecd': 'Chapter IV \u2026",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_cross_framework_map",
+       "qual": "CSDDDEngine.get_cross_framework_map",
+       "file": "services/csddd_engine.py",
+       "line": 845,
+       "args": {},
+       "ret": "[{'csddd_article': 'Art 6 (Impact identification)', 'csrd_esrs': 'ESRS S1 (Own Workforce), S2 (Value Chain Workers), S3 (Affected Communities)', 'ungp': 'Pillar II \u2014 Human Rights Due Diligence', 'oecd': 'Chapter IV \u2014 Human Rights'}, {'csdd\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/dd-obligations",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dd_obligations"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_dd_obligations",
+     "qual": "ref_dd_obligations",
+     "file": "api/v1/routes/csddd.py",
+     "line": 258,
+     "args": {},
+     "ret": "{'dd_obligations': [{'id': 'DD-01', 'obligation': 'Integrate due diligence into company policies', 'article': 'Art 5', 'weight': 0.1}, {'id': 'DD-02', 'obligation': 'Identify actual & potential adverse impacts', 'article': 'Art 6', 'weight\u2026",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_dd_obligations",
+       "qual": "CSDDDEngine.get_dd_obligations",
+       "file": "services/csddd_engine.py",
+       "line": 833,
+       "args": {},
+       "ret": "[{'id': 'DD-01', 'obligation': 'Integrate due diligence into company policies', 'article': 'Art 5', 'weight': 0.1}, {'id': 'DD-02', 'obligation': 'Identify actual & potential adverse impacts', 'article': 'Art 6', 'weight': 0.2}, {'id': 'DD\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/high-risk-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.383,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "high_risk_sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_high_risk_sectors",
+     "qual": "ref_high_risk_sectors",
+     "file": "api/v1/routes/csddd.py",
+     "line": 282,
+     "args": {},
+     "ret": "{'high_risk_sectors': {'textiles': {'nace': ['C13', 'C14', 'C15'], 'risk_areas': ['HR-01', 'HR-02', 'HR-05', 'HR-06']}, 'agriculture_food': {'nace': ['A01', 'A02', 'C10', 'C11'], 'risk_areas': ['HR-01', 'HR-02', 'HR-07', 'ENV-02']}, 'extra\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_high_risk_sectors",
+       "qual": "CSDDDEngine.get_high_risk_sectors",
+       "file": "services/csddd_engine.py",
+       "line": 849,
+       "args": {},
+       "ret": "{'textiles': {'nace': ['C13', 'C14', 'C15'], 'risk_areas': ['HR-01', 'HR-02', 'HR-05', 'HR-06']}, 'agriculture_food': {'nace': ['A01', 'A02', 'C10', 'C11'], 'risk_areas': ['HR-01', 'HR-02', 'HR-07', 'ENV-02']}, 'extractives': {'nace': ['B0\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/penalties",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.225,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "penalty_framework"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_penalties",
+     "qual": "ref_penalties",
+     "file": "api/v1/routes/csddd.py",
+     "line": 270,
+     "args": {},
+     "ret": "{'penalty_framework': {'max_turnover_pct': 5.0, 'description': 'Up to 5% of worldwide net turnover', 'injunctive_relief': True, 'naming_and_shaming': True, 'interim_measures': True, 'civil_liability': {'article': 'Art 29', 'description': '\u2026",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_penalty_framework",
+       "qual": "CSDDDEngine.get_penalty_framework",
+       "file": "services/csddd_engine.py",
+       "line": 841,
+       "args": {},
+       "ret": "{'max_turnover_pct': 5.0, 'description': 'Up to 5% of worldwide net turnover', 'injunctive_relief': True, 'naming_and_shaming': True, 'interim_measures': True, 'civil_liability': {'article': 'Art 29', 'description': 'Civil liability for fa\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "GET /api/v1/csddd/ref/scope-thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.214,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scope_thresholds"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_scope_thresholds",
+     "qual": "ref_scope_thresholds",
+     "file": "api/v1/routes/csddd.py",
+     "line": 246,
+     "args": {},
+     "ret": "{'scope_thresholds': {'group_1': {'applies_from': '2027-07-26', 'employees_min': 5000, 'turnover_min_eur': 1500000000, 'description': 'Large EU companies (>5000 employees AND >EUR 1.5bn turnover)'}, 'group_2': {'applies_from': '2028-07-26'\u2026",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_scope_thresholds",
+       "qual": "CSDDDEngine.get_scope_thresholds",
+       "file": "services/csddd_engine.py",
+       "line": 825,
+       "args": {},
+       "ret": "{'group_1': {'applies_from': '2027-07-26', 'employees_min': 5000, 'turnover_min_eur': 1500000000, 'description': 'Large EU companies (>5000 employees AND >EUR 1.5bn turnover)'}, 'group_2': {'applies_from': '2028-07-26', 'employees_min': 30\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "POST /api/v1/csddd/adverse-impacts",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "csddd",
+   "label": "POST /api/v1/csddd/dd-compliance",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.508,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess_dd_compliance",
+     "qual": "assess_dd_compliance",
+     "file": "api/v1/routes/csddd.py",
+     "line": 164,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "POST /api/v1/csddd/scope-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.932,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_scope",
+     "qual": "assess_scope",
+     "file": "api/v1/routes/csddd.py",
+     "line": 105,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "csddd",
+   "label": "POST /api/v1/csddd/value-chain-mapping",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.81,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "assess_value_chain",
+     "qual": "assess_value_chain",
+     "file": "api/v1/routes/csddd.py",
+     "line": 212,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

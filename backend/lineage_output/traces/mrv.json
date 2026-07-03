@@ -1,0 +1,310 @@
+{
+ "domain": "mrv",
+ "meta": {
+  "ts": "2026-06-30T14:03:15",
+  "module": "api.v1.routes.mrv",
+  "router_prefix": "/api/v1/mrv",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "mrv",
+   "label": "GET /api/v1/mrv/ref/satellite-platforms",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.022,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "satellite_platforms"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_satellite_platforms",
+     "qual": "get_satellite_platforms",
+     "file": "api/v1/routes/mrv.py",
+     "line": 222,
+     "args": {},
+     "ret": "{'satellite_platforms': {'TROPOMI': {'full_name': 'TROPOspheric Monitoring Instrument', 'operator': 'ESA / Copernicus', 'satellite': 'Sentinel-5P', 'gases': ['CH4', 'CO2', 'NO2', 'SO2', 'CO', 'O3'], 'spatial_resolution_km': 3.5, 'revisit_d\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "GET /api/v1/mrv/ref/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 8.979,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standards"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_verification_standards",
+     "qual": "get_verification_standards",
+     "file": "api/v1/routes/mrv.py",
+     "line": 193,
+     "args": {},
+     "ret": "{'standards': {'ISO_14064_3': {'full_name': 'ISO 14064-3:2019 Specification for verification and validation of GHG statements', 'assurance_levels': ['limited', 'reasonable'], 'scope': 'Scope 1, 2 and 3 emissions'}, 'ISAE_3410': {'full_name\u2026",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "GET /api/v1/mrv/ref/tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.769,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mrv_tiers"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_mrv_tiers",
+     "qual": "get_mrv_tiers",
+     "file": "api/v1/routes/mrv.py",
+     "line": 175,
+     "args": {},
+     "ret": "{'mrv_tiers': {'1': {'name': 'Manual / Spreadsheet', 'description': 'Activity-data-based estimates using default emission factors; Excel/manual entry', 'iso14064_level': 'limited', 'ipcc_tier': 1, 'typical_uncertainty_pct_range': [20.0, 35\u2026",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "GET /api/v1/mrv/ref/uncertainty-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.344,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ipcc_uncertainty_tiers",
+     "cdp_cdsb_requirements"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_uncertainty_tiers",
+     "qual": "get_uncertainty_tiers",
+     "file": "api/v1/routes/mrv.py",
+     "line": 234,
+     "args": {},
+     "ret": "{'ipcc_uncertainty_tiers': {'Tier1': {'method': 'Default emission factors from IPCC inventory guidelines', 'typical_uncertainty_pct': 30.0, 'data_requirements': 'Low \u2014 national average activity data', 'suitable_for': 'reporting_only'}, 'Ti\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "GET /api/v1/mrv/ref/verification-bodies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.736,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "verification_bodies"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_verification_bodies",
+     "qual": "get_verification_bodies",
+     "file": "api/v1/routes/mrv.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'verification_bodies': [{'name': 'Bureau Veritas', 'accreditation': ['ISO_14064_3', 'ISAE_3410', 'GHG_Protocol'], 'tier': 'tier1'}, {'name': 'SGS', 'accreditation': ['ISO_14064_3', 'ISAE_3410', 'CDP'], 'tier': 'tier1'}, {'name': 'DNV', 'a\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "POST /api/v1/mrv/data-quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "mrv",
+   "label": "POST /api/v1/mrv/improvement-plan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "mrv",
+   "label": "POST /api/v1/mrv/satellite-coverage",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "mrv",
+   "label": "POST /api/v1/mrv/tier-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 3.414,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "post_mrv_tier",
+     "qual": "post_mrv_tier",
+     "file": "api/v1/routes/mrv.py",
+     "line": 73,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mrv",
+   "label": "POST /api/v1/mrv/verification-readiness",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

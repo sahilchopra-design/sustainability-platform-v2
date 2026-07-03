@@ -1,0 +1,648 @@
+{
+ "domain": "unified-valuation",
+ "meta": {
+  "ts": "2026-06-30T14:05:40",
+  "module": "api.v1.routes.unified_valuation",
+  "router_prefix": "/api/v1",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "unified-valuation",
+   "label": "GET /api/v1/valuation/asset-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.894,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_classes",
+     "esg_scenarios",
+     "valuation_standards"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_asset_classes",
+     "qual": "list_asset_classes",
+     "file": "api/v1/routes/unified_valuation.py",
+     "line": 364,
+     "args": {},
+     "ret": "{'asset_classes': [{'id': 'infrastructure', 'label': 'Infrastructure', 'description': 'Regulated utilities, transport, social infrastructure, telecom, data centres', 'subtypes': ['regulated_utility', 'toll_road', 'rail', 'port', 'airport',\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "unified-valuation",
+   "label": "GET /api/v1/valuation/schema/{asset_class}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Unknown asset class: 550e8400-e29b-41d4-a716-446655440001. Valid: ['infrastructure', 'project', 'energy', 'commercial', 'residential', 'agricultural', 'land']",
+   "dur_ms": 64.864,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "asset_class": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_input_schema",
+     "qual": "get_input_schema",
+     "file": "api/v1/routes/unified_valuation.py",
+     "line": 342,
+     "args": {
+      "asset_class": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 61.435,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "unified-valuation",
+   "label": "POST /api/v1/valuation/batch",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 125.333,
+   "node_count": 32,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<BatchValuationRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count_requested",
+     "count_succeeded",
+     "count_failed",
+     "portfolio_total_value",
+     "avg_esg_adjustment_pct",
+     "results",
+     "errors"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "batch_valuations",
+     "qual": "batch_valuations",
+     "file": "api/v1/routes/unified_valuation.py",
+     "line": 297,
+     "args": {
+      "request": "BatchValuationRequest(valuations=[ValuationRequest(asset_class='TEST_request_valuations_asset_class', asset_name='', country_iso='GB', currency='GBP', valuation_date=None, valuation_standard='RICS_Red_Book', esg=ESGInputs(epc_rating='D', e\u2026"
+     },
+     "ret": "{'count_requested': 1, 'count_succeeded': 0, 'count_failed': 1, 'portfolio_total_value': 0, 'avg_esg_adjustment_pct': 0, 'results': [], 'errors': [{'index': 0, 'asset_name': '', 'error': \"'TEST_request_valuations_asset_class' is not a vali\u2026",
+     "dur_ms": 121.267,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/__init__.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/unified_valuation_engine.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 45.169,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "AssetClass",
+         "qual": "AssetClass",
+         "file": "services/unified_valuation_engine.py",
+         "line": 47,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.143,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "InfrastructureSubtype",
+         "qual": "InfrastructureSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 57,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.197,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "ProjectSubtype",
+         "qual": "ProjectSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 69,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.12,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "EnergySubtype",
+         "qual": "EnergySubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 78,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.258,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "CommercialSubtype",
+         "qual": "CommercialSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 95,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.243,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "ResidentialSubtype",
+         "qual": "ResidentialSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 112,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.115,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "AgriculturalSubtype",
+         "qual": "AgriculturalSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 121,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.139,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "LandSubtype",
+         "qual": "LandSubtype",
+         "file": "services/unified_valuation_engine.py",
+         "line": 132,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.154,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "ValuationMethod",
+         "qual": "ValuationMethod",
+         "file": "services/unified_valuation_engine.py",
+         "line": 144,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.318,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "ClimateScenario",
+         "qual": "ClimateScenario",
+         "file": "services/unified_valuation_engine.py",
+         "line": 158,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.09,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "EPCRating",
+         "qual": "EPCRating",
+         "file": "services/unified_valuation_engine.py",
+         "line": 165,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.318,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "ESGClimateInputs",
+         "qual": "ESGClimateInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 173,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.028,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "InfrastructureInputs",
+         "qual": "InfrastructureInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 193,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "ProjectInputs",
+         "qual": "ProjectInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 214,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.016,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "EnergyInputs",
+         "qual": "EnergyInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 233,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "CommercialInputs",
+         "qual": "CommercialInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 253,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.02,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "ResidentialInputs",
+         "qual": "ResidentialInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 278,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.078,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "AgriculturalInputs",
+         "qual": "AgriculturalInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 298,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.016,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "LandInputs",
+         "qual": "LandInputs",
+         "file": "services/unified_valuation_engine.py",
+         "line": 323,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.026,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "ValuationRequest",
+         "qual": "ValuationRequest",
+         "file": "services/unified_valuation_engine.py",
+         "line": 345,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.052,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "MethodResult",
+         "qual": "MethodResult",
+         "file": "services/unified_valuation_engine.py",
+         "line": 367,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "ESGAdjustment",
+         "qual": "ESGAdjustment",
+         "file": "services/unified_valuation_engine.py",
+         "line": 379,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.025,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "ValuationResult",
+         "qual": "ValuationResult",
+         "file": "services/unified_valuation_engine.py",
+         "line": 393,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.027,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "MarketDefaults",
+         "qual": "MarketDefaults",
+         "file": "services/unified_valuation_engine.py",
+         "line": 431,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.151,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "ESGOverlayEngine",
+         "qual": "ESGOverlayEngine",
+         "file": "services/unified_valuation_engine.py",
+         "line": 525,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.021,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "UnifiedValuationEngine",
+         "qual": "UnifiedValuationEngine",
+         "file": "services/unified_valuation_engine.py",
+         "line": 1195,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "__init__",
+         "qual": "UnifiedValuationEngine.__init__",
+         "file": "services/unified_valuation_engine.py",
+         "line": 1201,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 33,
+       "name": "run_valuation",
+       "qual": "run_valuation",
+       "file": "services/unified_valuation_engine.py",
+       "line": 1363,
+       "args": {
+        "request_dict": "{'asset_class': 'TEST_request_valuations_asset_class', 'asset_name': '', 'country_iso': 'GB', 'currency': 'GBP', 'valuation_date': None, 'valuation_standard': 'RICS_Red_Book', 'esg': {'epc_rating': 'D', 'energy_intensity_kwh_m2': 0.0, 'car\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.086,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "batch_valuations.<locals>.<genexpr>",
+       "file": "api/v1/routes/unified_valuation.py",
+       "line": 325,
+       "args": {
+        ".0": "<list_iterator object at 0x00000169C0499DB0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "unified-valuation",
+   "label": "POST /api/v1/valuation/calculate",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: 'TEST_request_asset_class' is not a valid AssetClass",
+   "dur_ms": 5.578,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<ValuationRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "calculate_valuation",
+     "qual": "calculate_valuation",
+     "file": "api/v1/routes/unified_valuation.py",
+     "line": 209,
+     "args": {
+      "request": "ValuationRequest(asset_class='TEST_request_asset_class', asset_name='', country_iso='GB', currency='GBP', valuation_date=None, valuation_standard='RICS_Red_Book', esg=ESGInputs(epc_rating='D', energy_intensity_kwh_m2=0.0, carbon_intensity_\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.135,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 36,
+       "name": "run_valuation",
+       "qual": "run_valuation",
+       "file": "services/unified_valuation_engine.py",
+       "line": 1363,
+       "args": {
+        "request_dict": "{'asset_class': 'TEST_request_asset_class', 'asset_name': '', 'country_iso': 'GB', 'currency': 'GBP', 'valuation_date': None, 'valuation_standard': 'RICS_Red_Book', 'esg': {'epc_rating': 'D', 'energy_intensity_kwh_m2': 0.0, 'carbon_intensi\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "unified-valuation",
+   "label": "POST /api/v1/valuation/sensitivity",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: 'TEST_request_base_request_asset_class' is not a valid AssetClass",
+   "dur_ms": 4.374,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<SensitivityRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "run_sensitivity_analysis",
+     "qual": "run_sensitivity_analysis",
+     "file": "api/v1/routes/unified_valuation.py",
+     "line": 239,
+     "args": {
+      "request": "SensitivityRequest(base_request=ValuationRequest(asset_class='TEST_request_base_request_asset_class', asset_name='', country_iso='GB', currency='GBP', valuation_date=None, valuation_standard='RICS_Red_Book', esg=ESGInputs(epc_rating='D', e\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.159,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "run_valuation",
+       "qual": "run_valuation",
+       "file": "services/unified_valuation_engine.py",
+       "line": 1363,
+       "args": {
+        "request_dict": "{'asset_class': 'TEST_request_base_request_asset_class', 'asset_name': '', 'country_iso': 'GB', 'currency': 'GBP', 'valuation_date': None, 'valuation_standard': 'RICS_Red_Book', 'esg': {'epc_rating': 'D', 'energy_intensity_kwh_m2': 0.0, 'c\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

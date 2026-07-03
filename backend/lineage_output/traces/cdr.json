@@ -1,0 +1,487 @@
+{
+ "domain": "cdr",
+ "meta": {
+  "ts": "2026-06-30T13:59:42",
+  "module": "api.v1.routes.cdr",
+  "router_prefix": "/api/v1/cdr",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "cdr",
+   "label": "GET /api/v1/cdr/ref/cdr-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.537,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cdr_methods",
+     "bezero_rating_thresholds",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cdr_methods",
+     "qual": "ref_cdr_methods",
+     "file": "api/v1/routes/cdr.py",
+     "line": 183,
+     "args": {},
+     "ret": "{'cdr_methods': {'beccs': {'permanence_yrs': 200, 'cost_range_usd_t': (50.0, 150.0), 'maturity_trl': 7, 'co_benefits': ['bioenergy_production', 'rural_employment', 'waste_valorisation'], 'risks': ['land_use_competition', 'water_stress', 'b\u2026",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "cdr",
+   "label": "GET /api/v1/cdr/ref/oxford-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.361,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "oxford_principles",
+     "vcmi_claims_levels",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_oxford_principles",
+     "qual": "ref_oxford_principles",
+     "file": "api/v1/routes/cdr.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'oxford_principles': {'1_cut_emissions_first': {'description': 'Prioritise deep and immediate emissions cuts; offsets only for residual emissions', 'test': 'offset_pct_of_total_emissions < 10', 'weight': 0.3}, '2_shift_to_durable_removals\u2026",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "cdr",
+   "label": "GET /api/v1/cdr/ref/verification-standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.277,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "verification_standards",
+     "article_6_4_criteria",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_verification_standards",
+     "qual": "ref_verification_standards",
+     "file": "api/v1/routes/cdr.py",
+     "line": 193,
+     "args": {},
+     "ret": "{'verification_standards': {'puro_earth': {'methodology': 'Puro.earth CORC Standard \u2014 industrial and engineered removals', 'permanence_buffer_pct': 5.0, 'third_party_required': True, 'eligible_methods': ['daccs', 'biochar', 'enhanced_weath\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/article-6-4",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/lcor",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/oxford-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/quality-assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 5.481,
+   "node_count": 14,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CDRQualityRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "cdr_method",
+     "verification_standard",
+     "annual_removal_tco2",
+     "bezero_rating",
+     "quality_score",
+     "additionality_rating",
+     "permanence_rating",
+     "verification_tier",
+     "component_scores",
+     "buffer_pool_pct",
+     "buffer_pool_tco2",
+     "net_credits_tco2",
+     "co_benefits",
+     "ipcc_classification"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "quality_assessment",
+     "qual": "quality_assessment",
+     "file": "api/v1/routes/cdr.py",
+     "line": 86,
+     "args": {
+      "req": "CDRQualityRequest(entity_id='TEST_req_entity_id', cdr_method='afforestation', annual_removal_tco2=10000.0, permanence_yrs=100, verification_standard='gold_standard', additionality_score=75.0, leakage_risk_pct=5.0)"
+     },
+     "ret": "{'entity_id': 'TEST_req_entity_id', 'cdr_method': 'afforestation', 'verification_standard': 'gold_standard', 'annual_removal_tco2': 10000.0, 'bezero_rating': 'AA', 'quality_score': 77.88, 'additionality_rating': 'adequate', 'permanence_rat\u2026",
+     "dur_ms": 0.581,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "assess_cdr_quality",
+       "qual": "CDREngine.assess_cdr_quality",
+       "file": "services/cdr_engine.py",
+       "line": 247,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "cdr_method": "'afforestation'",
+        "annual_removal_tco2": "10000.0",
+        "permanence_yrs": "100",
+        "verification_standard": "'gold_standard'",
+        "additionality_score": "75.0",
+        "leakage_risk_pct": "5.0"
+       },
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'cdr_method': 'afforestation', 'verification_standard': 'gold_standard', 'annual_removal_tco2': 10000.0, 'bezero_rating': 'AA', 'quality_score': 77.88, 'additionality_rating': 'adequate', 'permanence_rat\u2026",
+       "dur_ms": 0.471,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/cdr_engine.py",
+         "line": 221,
+         "args": {
+          "entity_id": "'TEST_req_entity_id'"
+         },
+         "ret": "<random.Random object at 0x000002246E89C260>",
+         "dur_ms": 0.037,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/cdr_engine.py",
+         "line": 217,
+         "args": {
+          "lo": "0.0",
+          "hi": "100.0",
+          "val": "75.0"
+         },
+         "ret": "75.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/cdr_engine.py",
+         "line": 217,
+         "args": {
+          "lo": "0.0",
+          "hi": "100.0",
+          "val": "5.0"
+         },
+         "ret": "5.0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/cdr_engine.py",
+         "line": 217,
+         "args": {
+          "lo": "0.0",
+          "hi": "100.0",
+          "val": "92.5"
+         },
+         "ret": "92.5",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "_bezero_rating",
+         "qual": "_bezero_rating",
+         "file": "services/cdr_engine.py",
+         "line": 225,
+         "args": {
+          "score": "77.88"
+         },
+         "ret": "'AA'",
+         "dur_ms": 0.18,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('AAA', 85.0)"
+           },
+           "ret": "-85.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('AA', 75.0)"
+           },
+           "ret": "-75.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('A', 65.0)"
+           },
+           "ret": "-65.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 14,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('BBB', 55.0)"
+           },
+           "ret": "-55.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('BB', 45.0)"
+           },
+           "ret": "-45.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('B', 35.0)"
+           },
+           "ret": "-35.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "<lambda>",
+           "qual": "_bezero_rating.<locals>.<lambda>",
+           "file": "services/cdr_engine.py",
+           "line": 226,
+           "args": {
+            "x": "('CCC', 0.0)"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "cdr",
+   "label": "POST /api/v1/cdr/vcmi-claims",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

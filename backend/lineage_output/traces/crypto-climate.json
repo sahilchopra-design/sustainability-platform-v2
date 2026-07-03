@@ -1,0 +1,594 @@
+{
+ "domain": "crypto-climate",
+ "meta": {
+  "ts": "2026-06-30T14:00:10",
+  "module": "api.v1.routes.crypto_climate",
+  "router_prefix": "/api/v1/crypto-climate",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "crypto-climate",
+   "label": "GET /api/v1/crypto-climate/ref/consensus-mechanisms",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.415,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "consensus_mechanisms",
+     "methodology_notes",
+     "last_updated"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_consensus_mechanisms",
+     "qual": "get_consensus_mechanisms",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 346,
+     "args": {},
+     "ret": "{'consensus_mechanisms': {'PoW': {'label': 'Proof of Work', 'representative_assets': ['BTC', 'LTC', 'XMR'], 'gco2e_per_tx_low': 300.0, 'gco2e_per_tx_central': 600.0, 'gco2e_per_tx_high': 900.0, 'energy_per_tx_kwh_central': 1.2, 'source': '\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "GET /api/v1/crypto-climate/ref/country-energy-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.281,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "country_profiles",
+     "total_countries",
+     "sources"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_country_energy_profiles",
+     "qual": "get_country_energy_profiles",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 370,
+     "args": {},
+     "ret": "{'country_profiles': {'US': {'name': 'United States', 'renewable_pct': 25.0, 'grid_carbon_intensity_gco2_kwh': 386.0, 'mining_share_pct': 38.0, 'primary_energy_sources': ['natural_gas', 'coal', 'nuclear', 'wind', 'hydro'], 'source': 'EIA 2\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "GET /api/v1/crypto-climate/ref/mica-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.231,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "article",
+     "effective_date",
+     "competent_authority",
+     "compliance_levels",
+     "esma_technical_standards",
+     "cross_reference"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_mica_requirements",
+     "qual": "get_mica_requirements",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 390,
+     "args": {},
+     "ret": "{'regulation': 'EU MiCA Regulation (EU) 2023/1114', 'article': 'Article 66', 'effective_date': '2024-12-30', 'competent_authority': 'European Securities and Markets Authority (ESMA)', 'compliance_levels': {'basic': {'label': 'Basic Disclos\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "GET /api/v1/crypto-climate/ref/rwa-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.239,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "tokenisation_benefits",
+     "risks",
+     "key_regulation"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_rwa_frameworks",
+     "qual": "get_rwa_frameworks",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 406,
+     "args": {},
+     "ret": "{'frameworks': {'ICMA_GBP': {'name': 'ICMA Green Bond Principles 2021', 'asset_type': 'green_bond', 'tokenisation_premium_bps_base': 5.0, 'certification_quality_pct': 100, 'key_requirements': ['Use of Proceeds', 'Project Evaluation', 'Mana\u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.925,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<CryptoAssetRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_symbol",
+     "consensus_mechanism",
+     "energy",
+     "emissions",
+     "geography",
+     "mica_compliance",
+     "tokenised_green_asset",
+     "pcaf",
+     "climate_risk_tier",
+     "summary"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_crypto_asset",
+     "qual": "assess_crypto_asset",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 123,
+     "args": {
+      "request": "CryptoAssetRequest(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='TEST_request_consensus_mechanism', annual_transaction_count=None, network_energy_twh_yr=None, mining_country_distribution=None, market_cap_usd=None, outstand\u2026"
+     },
+     "ret": "{'asset_symbol': 'TEST_request_asset_symbol', 'consensus_mechanism': 'TEST_request_consensus_mechanism', 'energy': {'network_energy_twh_yr_low': 0.084, 'network_energy_twh_yr_central': 0.12, 'network_energy_twh_yr_high': 0.168, 'energy_per\u2026",
+     "dur_ms": 0.448,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "assess_crypto_asset",
+       "qual": "CryptoClimateEngine.assess_crypto_asset",
+       "file": "services/crypto_climate_engine.py",
+       "line": 384,
+       "args": {
+        "asset_input": "CryptoAssetInput(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='TEST_request_consensus_mechanism', annual_transaction_count=None, network_energy_twh_yr=None, mining_country_distribution=None, market_cap_usd=None, outstandin\u2026"
+       },
+       "ret": "CryptoClimateResult(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='TEST_request_consensus_mechanism', network_energy_twh_yr_low=0.084, network_energy_twh_yr_central=0.12, network_energy_twh_yr_high=0.168, energy_per_tx_kwh=\u2026",
+       "dur_ms": 0.32,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "_geography_adjusted_intensity",
+         "qual": "CryptoClimateEngine._geography_adjusted_intensity",
+         "file": "services/crypto_climate_engine.py",
+         "line": 870,
+         "args": {
+          "country_dist": "None"
+         },
+         "ret": "(35.0, 450.0)",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "check_mica_compliance",
+         "qual": "CryptoClimateEngine.check_mica_compliance",
+         "file": "services/crypto_climate_engine.py",
+         "line": 558,
+         "args": {
+          "asset_input": "CryptoAssetInput(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='TEST_request_consensus_mechanism', annual_transaction_count=None, network_energy_twh_yr=None, mining_country_distribution=None, market_cap_usd=None, outstandin\u2026"
+         },
+         "ret": "{'required_level': 'basic', 'compliance_level': 'non_compliant', 'score': 0.0, 'requirements_met': 0, 'requirements_total': 3, 'gaps': ['energy_consumption_annual_disclosure', 'renewable_energy_pct_disclosure', 'consensus_mechanism_descrip\u2026",
+         "dur_ms": 0.025,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "_classify_climate_risk",
+         "qual": "CryptoClimateEngine._classify_climate_risk",
+         "file": "services/crypto_climate_engine.py",
+         "line": 917,
+         "args": {
+          "mechanism": "'TEST_request_consensus_mechanism'",
+          "grid_carbon": "450.0",
+          "renewable_pct": "35.0"
+         },
+         "ret": "'medium'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/financed-emissions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.777,
+   "node_count": 6,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<FundedEmissionsRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "reporting_period",
+     "total_financed_emissions_tco2e",
+     "portfolio_financed_emissions_intensity_tco2e_per_musd",
+     "holding_breakdown",
+     "pcaf_methodology",
+     "data_quality_score",
+     "dqs_rationale",
+     "limitations"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "calculate_financed_emissions",
+     "qual": "calculate_financed_emissions",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 285,
+     "args": {
+      "request": "FundedEmissionsRequest(portfolio_id='TEST_request_portfolio_id', holdings=[{}], total_portfolio_value_usd=1.0, investor_name=None, reporting_period='2024')"
+     },
+     "ret": "{'portfolio_id': 'TEST_request_portfolio_id', 'reporting_period': '2024', 'total_financed_emissions_tco2e': 0.0, 'portfolio_financed_emissions_intensity_tco2e_per_musd': 0.0, 'holding_breakdown': [{'symbol': 'UNKNOWN', 'consensus_mechanism\u2026",
+     "dur_ms": 0.277,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "calculate_financed_emissions",
+       "qual": "CryptoClimateEngine.calculate_financed_emissions",
+       "file": "services/crypto_climate_engine.py",
+       "line": 700,
+       "args": {
+        "portfolio_input": "CryptoPortfolioInput(portfolio_id='TEST_request_portfolio_id', holdings=[{}], total_portfolio_value_usd=1.0, investor_name=None, reporting_period='2024', include_defi_protocols=False, defi_tvl_usd=None)"
+       },
+       "ret": "{'portfolio_id': 'TEST_request_portfolio_id', 'reporting_period': '2024', 'total_financed_emissions_tco2e': 0.0, 'portfolio_financed_emissions_intensity_tco2e_per_musd': 0.0, 'holding_breakdown': [{'symbol': 'UNKNOWN', 'consensus_mechanism\u2026",
+       "dur_ms": 0.19,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12,
+         "name": "_geography_adjusted_intensity",
+         "qual": "CryptoClimateEngine._geography_adjusted_intensity",
+         "file": "services/crypto_climate_engine.py",
+         "line": 870,
+         "args": {
+          "country_dist": "{'other': 100.0}"
+         },
+         "ret": "(35.0, 450.0)",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "_compute_pcaf_single",
+         "qual": "CryptoClimateEngine._compute_pcaf_single",
+         "file": "services/crypto_climate_engine.py",
+         "line": 891,
+         "args": {
+          "outstanding_value": "0.0",
+          "market_cap": "0.0",
+          "network_energy_twh": "0.096",
+          "grid_factor_gco2_kwh": "450.0"
+         },
+         "ret": "{'attribution_factor': 0.0, 'financed_emissions_tco2e': 0.0, 'total_network_tco2e': 43200.0, 'dqs': 4}",
+         "dur_ms": 0.011,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "CryptoClimateEngine.calculate_financed_emissions.<locals>.<genexpr>",
+         "file": "services/crypto_climate_engine.py",
+         "line": 755,
+         "args": {
+          ".0": "<list_iterator object at 0x000002722C247250>"
+         },
+         "ret": "1.0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "CryptoClimateEngine.calculate_financed_emissions.<locals>.<genexpr>",
+         "file": "services/crypto_climate_engine.py",
+         "line": 755,
+         "args": {
+          ".0": "<list_iterator object at 0x000002722C247250>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/mica-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/mining-geography",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.401,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<MiningGeographyRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "hashrate_eh_s",
+     "hardware_efficiency_j_th",
+     "annual_energy_kwh_yr",
+     "annual_energy_twh_yr",
+     "total_tco2e_yr",
+     "weighted_renewable_pct",
+     "weighted_grid_carbon_gco2_kwh",
+     "country_breakdown",
+     "renewable_counterfactual_tco2e",
+     "additional_tco2e_vs_renewable",
+     "assessment_year",
+     "methodology"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_mining_geography",
+     "qual": "assess_mining_geography",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 200,
+     "args": {
+      "request": "MiningGeographyRequest(hashrate_eh_s=1.0, country_distribution={}, hardware_efficiency_j_th=40.0, assessment_year=2024)"
+     },
+     "ret": "{'hashrate_eh_s': 1.0, 'hardware_efficiency_j_th': 40.0, 'annual_energy_kwh_yr': 350400000.0, 'annual_energy_twh_yr': 0.3504, 'total_tco2e_yr': 0.0, 'weighted_renewable_pct': 0.0, 'weighted_grid_carbon_gco2_kwh': 0.0, 'country_breakdown': \u2026",
+     "dur_ms": 0.095,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "assess_mining_geography",
+       "qual": "CryptoClimateEngine.assess_mining_geography",
+       "file": "services/crypto_climate_engine.py",
+       "line": 495,
+       "args": {
+        "geo_input": "MiningGeographyInput(hashrate_eh_s=1.0, country_distribution={}, hardware_efficiency_j_th=40.0, assessment_year=2024)"
+       },
+       "ret": "{'hashrate_eh_s': 1.0, 'hardware_efficiency_j_th': 40.0, 'annual_energy_kwh_yr': 350400000.0, 'annual_energy_twh_yr': 0.3504, 'total_tco2e_yr': 0.0, 'weighted_renewable_pct': 0.0, 'weighted_grid_carbon_gco2_kwh': 0.0, 'country_breakdown': \u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "crypto-climate",
+   "label": "POST /api/v1/crypto-climate/tokenised-green-assets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.458,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<TokenisedGreenAssetRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "underlying_asset_type",
+     "certification_standard",
+     "underlying_face_value_usd",
+     "on_chain_verification",
+     "tokenisation_premium_bps",
+     "verification_status",
+     "certification_quality_score",
+     "framework_alignment",
+     "blockchain_network",
+     "recommended_standards",
+     "notes"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "assess_tokenised_green_assets",
+     "qual": "assess_tokenised_green_assets",
+     "file": "api/v1/routes/crypto_climate.py",
+     "line": 256,
+     "args": {
+      "request": "TokenisedGreenAssetRequest(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='PoS', is_tokenised_green_asset=True, underlying_asset_type='TEST_request_underlying_asset_type', underlying_face_value_usd=None, on_chain_verificatio\u2026"
+     },
+     "ret": "{'underlying_asset_type': 'TEST_request_underlying_asset_type', 'certification_standard': 'none', 'underlying_face_value_usd': None, 'on_chain_verification': False, 'tokenisation_premium_bps': 0.0, 'verification_status': 'unverified', 'cer\u2026",
+     "dur_ms": 0.086,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "assess_tokenised_green_asset",
+       "qual": "CryptoClimateEngine.assess_tokenised_green_asset",
+       "file": "services/crypto_climate_engine.py",
+       "line": 625,
+       "args": {
+        "asset_input": "CryptoAssetInput(asset_symbol='TEST_request_asset_symbol', consensus_mechanism='PoS', annual_transaction_count=None, network_energy_twh_yr=None, mining_country_distribution=None, market_cap_usd=None, outstanding_value_usd=None, issuer_inco\u2026"
+       },
+       "ret": "{'underlying_asset_type': 'TEST_request_underlying_asset_type', 'certification_standard': 'none', 'underlying_face_value_usd': None, 'on_chain_verification': False, 'tokenisation_premium_bps': 0.0, 'verification_status': 'unverified', 'cer\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

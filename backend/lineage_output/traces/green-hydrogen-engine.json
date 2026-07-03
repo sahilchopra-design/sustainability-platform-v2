@@ -1,0 +1,468 @@
+{
+ "domain": "green-hydrogen-engine",
+ "meta": {
+  "ts": "2026-06-30T14:02:37",
+  "module": "api.v1.routes.green_hydrogen_engine",
+  "router_prefix": "/api/v1/green-hydrogen-engine",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "GET /api/v1/green-hydrogen-engine/ref/cost-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.68,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "electrolyser_benchmarks",
+     "country_grid_factors",
+     "dedicated_re_factors",
+     "rfnbo_criteria",
+     "h2cfd_framework",
+     "repowereu_targets",
+     "iea_cost_trajectory",
+     "ghg_thresholds",
+     "h2_physical_properties"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cost_scenarios",
+     "qual": "ref_cost_scenarios",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 222,
+     "args": {},
+     "ret": "{'electrolyser_benchmarks': {'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw': 900.0, 'capex_high_usd_kw': 1500.0, 'capex_2030_mid_usd_kw': 600.0, 'ca\u2026",
+     "dur_ms": 0.636,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cost_scenarios",
+       "qual": "GreenHydrogenEngine.get_cost_scenarios",
+       "file": "services/green_hydrogen_engine.py",
+       "line": 1389,
+       "args": {},
+       "ret": "{'electrolyser_benchmarks': {'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw': 900.0, 'capex_high_usd_kw': 1500.0, 'capex_2030_mid_usd_kw': 600.0, 'ca\u2026",
+       "dur_ms": 0.41,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "get_h2_benchmarks",
+         "qual": "get_h2_benchmarks",
+         "file": "services/green_hydrogen_engine.py",
+         "line": 1168,
+         "args": {},
+         "ret": "{'electrolyser_benchmarks': {'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw': 900.0, 'capex_high_usd_kw': 1500.0, 'capex_2030_mid_usd_kw': 600.0, 'ca\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "GET /api/v1/green-hydrogen-engine/ref/electrolyser-params",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.333,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "PEM",
+     "ALK",
+     "SOEC",
+     "AEM"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_electrolyser_params",
+     "qual": "ref_electrolyser_params",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 204,
+     "args": {},
+     "ret": "{'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw': 900.0, 'capex_high_usd_kw': 1500.0, 'capex_2030_mid_usd_kw': 600.0, 'capex_2050_mid_usd_kw': 300.0,\u2026",
+     "dur_ms": 0.068,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_electrolyser_params",
+       "qual": "GreenHydrogenEngine.get_electrolyser_params",
+       "file": "services/green_hydrogen_engine.py",
+       "line": 1372,
+       "args": {},
+       "ret": "{'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw': 900.0, 'capex_high_usd_kw': 1500.0, 'capex_2030_mid_usd_kw': 600.0, 'capex_2050_mid_usd_kw': 300.0,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "GET /api/v1/green-hydrogen-engine/ref/pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.158,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "green",
+     "blue",
+     "grey",
+     "pink",
+     "turquoise"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_pathways",
+     "qual": "ref_pathways",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 198,
+     "args": {},
+     "ret": "{'green': {'description': 'Electrolysis powered by renewables', 'rfnbo_eligible': True, 'ghg_threshold_kg_co2_kgh2': 3.38}, 'blue': {'description': 'SMR/ATR with CCS', 'rfnbo_eligible': False, 'ghg_threshold_kg_co2_kgh2': None}, 'grey': {'\u2026",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_h2_pathways",
+       "qual": "GreenHydrogenEngine.get_h2_pathways",
+       "file": "services/green_hydrogen_engine.py",
+       "line": 1362,
+       "args": {},
+       "ret": "{'green': {'description': 'Electrolysis powered by renewables', 'rfnbo_eligible': True, 'ghg_threshold_kg_co2_kgh2': 3.38}, 'blue': {'description': 'SMR/ATR with CCS', 'rfnbo_eligible': False, 'ghg_threshold_kg_co2_kgh2': None}, 'grey': {'\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "GET /api/v1/green-hydrogen-engine/ref/rfnbo-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.355,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ghg_intensity",
+     "additionality",
+     "temporal_correlation",
+     "geographical_correlation"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_rfnbo_criteria",
+     "qual": "ref_rfnbo_criteria",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'ghg_intensity': {'criterion_id': 'C1', 'name': 'GHG Intensity Threshold', 'legal_basis': 'EU Delegated Regulation (EU) 2023/1184, Article 3', 'description': 'The lifecycle GHG intensity of the RFNBO must not exceed 3.38 kgCO2eq/kgH2 (70%\u2026",
+     "dur_ms": 0.152,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_eu_rfnbo_criteria",
+       "qual": "GreenHydrogenEngine.get_eu_rfnbo_criteria",
+       "file": "services/green_hydrogen_engine.py",
+       "line": 1376,
+       "args": {},
+       "ret": "{'ghg_intensity': {'criterion_id': 'C1', 'name': 'GHG Intensity Threshold', 'legal_basis': 'EU Delegated Regulation (EU) 2023/1184, Article 3', 'description': 'The lifecycle GHG intensity of the RFNBO must not exceed 3.38 kgCO2eq/kgH2 (70%\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "GET /api/v1/green-hydrogen-engine/ref/subsidy-schemes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.277,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eu_h2_bank",
+     "ira_45v",
+     "h2global",
+     "uk_rhi"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_subsidy_schemes",
+     "qual": "ref_subsidy_schemes",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 216,
+     "args": {},
+     "ret": "{'eu_h2_bank': {'name': 'EU Hydrogen Bank', 'value_usd_kg': 1.5}, 'ira_45v': {'name': 'IRA Section 45V', 'value_usd_kg': 3.0}, 'h2global': {'name': 'H2Global', 'value_usd_kg': 1.2}, 'uk_rhi': {'name': 'UK Renewable Heat Incentive', 'value_\u2026",
+     "dur_ms": 0.059,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_subsidy_schemes",
+       "qual": "GreenHydrogenEngine.get_subsidy_schemes",
+       "file": "services/green_hydrogen_engine.py",
+       "line": 1380,
+       "args": {},
+       "ret": "{'eu_h2_bank': {'name': 'EU Hydrogen Bank', 'value_usd_kg': 1.5}, 'ira_45v': {'name': 'IRA Section 45V', 'value_usd_kg': 3.0}, 'h2global': {'name': 'H2Global', 'value_usd_kg': 1.2}, 'uk_rhi': {'name': 'UK Renewable Heat Incentive', 'value_\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/apply-subsidy",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/calculate-lcoh",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.294,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "calculate_lcoh",
+     "qual": "calculate_lcoh",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 124,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/classify-pathway",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/eu-rfnbo-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.17,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 173,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen-engine",
+   "label": "POST /api/v1/green-hydrogen-engine/scenario-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.16,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "scenario_analysis",
+     "qual": "scenario_analysis",
+     "file": "api/v1/routes/green_hydrogen_engine.py",
+     "line": 156,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

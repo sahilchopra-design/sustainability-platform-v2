@@ -1,0 +1,339 @@
+{
+ "domain": "modern-slavery",
+ "meta": {
+  "ts": "2026-06-30T14:03:12",
+  "module": "api.v1.routes.modern_slavery",
+  "router_prefix": "/api/v1/modern-slavery",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "modern-slavery",
+   "label": "GET /api/v1/modern-slavery/ref/audit-schemes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.545,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "effectiveness_scale",
+     "schemes"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_audit_schemes",
+     "qual": "ref_audit_schemes",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 165,
+     "args": {},
+     "ret": "{'count': 15, 'effectiveness_scale': {'very_high': 'Rigorous; unannounced; strong worker voice; certification with surveillance', 'high': 'Solid coverage; semi-announced; good corrective action follow-up', 'medium': 'Baseline compliance; a\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "GET /api/v1/modern-slavery/ref/high-risk-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.768,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "note",
+     "sectors",
+     "cahra_countries"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_high_risk_sectors",
+     "qual": "ref_high_risk_sectors",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 144,
+     "args": {},
+     "ret": "{'count': 24, 'note': 'Risk ratings are indicative based on ILO, ITUC, and U.S. DoL research', 'sectors': {'garments_textiles_bangladesh': {'sector': 'Garments & Textiles', 'geography': 'Bangladesh', 'forced_labour_risk': 'very_high', 'chi\u2026",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "GET /api/v1/modern-slavery/ref/ilo-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.709,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "ilo_conventions",
+     "count",
+     "indicators"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ilo_indicators",
+     "qual": "ref_ilo_indicators",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 115,
+     "args": {},
+     "ret": "{'source': 'ILO (2012) Hard to See, Harder to Count \u2014 Survey Guidelines', 'ilo_conventions': ['C29 Forced Labour Convention 1930', 'C105 Abolition of Forced Labour 1957'], 'count': 11, 'indicators': {'abuse_of_vulnerability': {'number': 1,\u2026",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "GET /api/v1/modern-slavery/ref/uflpa-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.283,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "legislation",
+     "enacted",
+     "enforcing_body",
+     "rebuttable_presumption",
+     "entity_categories",
+     "high_risk_commodities",
+     "approved_importer_criteria",
+     "cbp_enforcement_statistics",
+     "documentation_requirements",
+     "eu_flr_summary",
+     "uk_msa_summary"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_uflpa_criteria",
+     "qual": "ref_uflpa_criteria",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 188,
+     "args": {},
+     "ret": "{'legislation': 'Uyghur Forced Labor Prevention Act, Pub. L. 117-78', 'enacted': '2022-06-21', 'enforcing_body': 'U.S. Customs and Border Protection (CBP)', 'rebuttable_presumption': {'description': 'Any goods mined, produced, or manufactu\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "POST /api/v1/modern-slavery/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'sector'",
+   "dur_ms": 0.338,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_forced_labour",
+     "qual": "assess_forced_labour",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 40,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.071,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "assess_forced_labour_risk",
+       "qual": "ModernSlaveryEngine.assess_forced_labour_risk",
+       "file": "services/modern_slavery_engine.py",
+       "line": 1297,
+       "args": {
+        "entity_data": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "POST /api/v1/modern-slavery/msa-statement",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'covers_area_1_structure'",
+   "dur_ms": 0.778,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "evaluate_msa_statement",
+     "qual": "evaluate_msa_statement",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 77,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.13,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "evaluate_msa_statement",
+       "qual": "ModernSlaveryEngine.evaluate_msa_statement",
+       "file": "services/modern_slavery_engine.py",
+       "line": 1464,
+       "args": {
+        "statement": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.031,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "POST /api/v1/modern-slavery/supply-chain-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'suppliers'",
+   "dur_ms": 0.433,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "screen_supply_chain",
+     "qual": "screen_supply_chain",
+     "file": "api/v1/routes/modern_slavery.py",
+     "line": 57,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.025,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "modern-slavery",
+   "label": "POST /api/v1/modern-slavery/uflpa-exposure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,5429 @@
+{
+ "domain": "real-estate-valuation",
+ "meta": {
+  "ts": "2026-06-30T14:04:31",
+  "module": "api.v1.routes.real_estate_valuation",
+  "router_prefix": "/api/v1/valuation",
+  "endpoints": 16
+ },
+ "transactions": [
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/comparables",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1443.818,
+   "node_count": 7,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "comparable_sales"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM comparable_sales'",
+     "tables": [
+      "comparable_sales"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.35,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT * FROM comparable_sales ORDER BY sale_date DESC LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "comparable_sales"
+     ],
+     "rowcount": 5,
+     "dur_ms": 34.433,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "property_type": "None (default)",
+    "city": "None (default)",
+    "min_price": "None (default)",
+    "max_price": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_comparable_sales",
+     "qual": "list_comparable_sales",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 554,
+     "args": {
+      "property_type": "None",
+      "city": "None",
+      "min_price": "None",
+      "max_price": "None"
+     },
+     "ret": "ComparableSaleListResponse(items=[ComparableSaleResponse(property_type=<PropertyType.INDUSTRIAL: 'industrial'>, address='3000 Warehouse Road', city='Chicago', state_province='IL', country='USA', latitude=None, longitude=None, sale_date=dat\u2026",
+     "dur_ms": 1440.221,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_all_comparables",
+       "qual": "RealEstateDBService.get_all_comparables",
+       "file": "services/real_estate_db_service.py",
+       "line": 233,
+       "args": {
+        "property_type": "None",
+        "city": "None",
+        "page": "1",
+        "page_size": "100"
+       },
+       "ret": "{'items': [{'id': '18c20cf6-c3f5-4408-bc9f-c592eab073a5', 'property_type': 'industrial', 'address': '3000 Warehouse Road', 'city': 'Chicago', 'state_province': 'IL', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datet\u2026",
+       "dur_ms": 1439.869,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('18c20cf6-c3f5-4408-bc9f-c592eab073a5'), 'industrial', '3000 Warehouse Road', 'Chicago', 'IL', 'USA', None, None, datetime.date(2024, 9, 5), Decimal('95000000.00'), Decimal('680000.00'), Decimal('139.71'), 2020, None, None, 'class_a'\u2026"
+         },
+         "ret": "{'id': '18c20cf6-c3f5-4408-bc9f-c592eab073a5', 'property_type': 'industrial', 'address': '3000 Warehouse Road', 'city': 'Chicago', 'state_province': 'IL', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(20\u2026",
+         "dur_ms": 0.036,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('9d681afc-3cec-4d66-9616-c3708bc86242'), 'retail', '450 Commerce Center', 'Los Angeles', 'CA', 'USA', None, None, datetime.date(2024, 8, 10), Decimal('72000000.00'), Decimal('160000.00'), Decimal('450.00'), 2012, None, None, 'class_b\u2026"
+         },
+         "ret": "{'id': '9d681afc-3cec-4d66-9616-c3708bc86242', 'property_type': 'retail', 'address': '450 Commerce Center', 'city': 'Los Angeles', 'state_province': 'CA', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(20\u2026",
+         "dur_ms": 0.018,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('e2aa77f6-395c-4639-8c37-ad740e5ac6c4'), 'multifamily', '950 Urban Living', 'Seattle', 'WA', 'USA', None, None, datetime.date(2024, 7, 22), Decimal('155000000.00'), Decimal('290000.00'), Decimal('534.48'), 2016, 250, None, 'class_a',\u2026"
+         },
+         "ret": "{'id': 'e2aa77f6-395c-4639-8c37-ad740e5ac6c4', 'property_type': 'multifamily', 'address': '950 Urban Living', 'city': 'Seattle', 'state_province': 'WA', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(2024\u2026",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('09dc17de-895a-427b-99a7-e918cc091177'), 'office', '200 Financial District', 'New York', 'NY', 'USA', None, None, datetime.date(2024, 6, 15), Decimal('380000000.00'), Decimal('400000.00'), Decimal('950.00'), 2003, None, None, 'class_\u2026"
+         },
+         "ret": "{'id': '09dc17de-895a-427b-99a7-e918cc091177', 'property_type': 'office', 'address': '200 Financial District', 'city': 'New York', 'state_province': 'NY', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(20\u2026",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('118a4f70-a82b-49c0-80a8-acaa4653ae18'), 'office', '150 Park Avenue', 'New York', 'NY', 'USA', None, None, datetime.date(2024, 3, 20), Decimal('425000000.00'), Decimal('380000.00'), Decimal('1118.42'), 2008, None, None, 'class_a', 'e\u2026"
+         },
+         "ret": "{'id': '118a4f70-a82b-49c0-80a8-acaa4653ae18', 'property_type': 'office', 'address': '150 Park Avenue', 'city': 'New York', 'state_province': 'NY', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(2024, 3, \u2026",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/comparables/{comparable_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 305.497,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "comparable_sales"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM comparable_sales WHERE id = %(id)s'",
+     "tables": [
+      "comparable_sales"
+     ],
+     "rowcount": 1,
+     "dur_ms": 69.332,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comparable_id": "18c20cf6-c3f5-4408-bc9f-c592eab073a5 (real id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "property_type",
+     "address",
+     "city",
+     "state_province",
+     "country",
+     "latitude",
+     "longitude",
+     "sale_date",
+     "sale_price",
+     "size_sf",
+     "year_built",
+     "num_units",
+     "occupancy_rate",
+     "quality_rating",
+     "condition_rating",
+     "data_source",
+     "verified",
+     "id",
+     "price_per_sf",
+     "created_at"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_comparable_sale",
+     "qual": "get_comparable_sale",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 583,
+     "args": {
+      "comparable_id": "'18c20cf6-c3f5-4408-bc9f-c592eab073a5'"
+     },
+     "ret": "ComparableSaleResponse(property_type=<PropertyType.INDUSTRIAL: 'industrial'>, address='3000 Warehouse Road', city='Chicago', state_province='IL', country='USA', latitude=None, longitude=None, sale_date=datetime.date(2024, 9, 5), sale_price\u2026",
+     "dur_ms": 303.785,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_comparable_by_id",
+       "qual": "RealEstateDBService.get_comparable_by_id",
+       "file": "services/real_estate_db_service.py",
+       "line": 284,
+       "args": {
+        "comp_id": "UUID('18c20cf6-c3f5-4408-bc9f-c592eab073a5')"
+       },
+       "ret": "{'id': '18c20cf6-c3f5-4408-bc9f-c592eab073a5', 'property_type': 'industrial', 'address': '3000 Warehouse Road', 'city': 'Chicago', 'state_province': 'IL', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(20\u2026",
+       "dur_ms": 303.645,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('18c20cf6-c3f5-4408-bc9f-c592eab073a5'), 'industrial', '3000 Warehouse Road', 'Chicago', 'IL', 'USA', None, None, datetime.date(2024, 9, 5), Decimal('95000000.00'), Decimal('680000.00'), Decimal('139.71'), 2020, None, None, 'class_a'\u2026"
+         },
+         "ret": "{'id': '18c20cf6-c3f5-4408-bc9f-c592eab073a5', 'property_type': 'industrial', 'address': '3000 Warehouse Road', 'city': 'Chicago', 'state_province': 'IL', 'country': 'USA', 'latitude': None, 'longitude': None, 'sale_date': datetime.date(20\u2026",
+         "dur_ms": 0.03,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/cost/construction-costs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.586,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "construction_type": "None (default)",
+    "quality": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "construction_costs",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "get_construction_costs",
+     "qual": "get_construction_costs",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 501,
+     "args": {
+      "construction_type": "None",
+      "quality": "None"
+     },
+     "ret": "{'construction_costs': [{'construction_type': 'steel_frame', 'quality': 'class_a', 'cost_per_sf': 350.0}, {'construction_type': 'steel_frame', 'quality': 'class_b', 'cost_per_sf': 280.0}, {'construction_type': 'steel_frame', 'quality': 'cl\u2026",
+     "dur_ms": 0.11,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/cost/location-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.193,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "location_factors",
+     "description"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_location_factors",
+     "qual": "get_location_factors",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 524,
+     "args": {},
+     "ret": "{'location_factors': {'new_york': 1.35, 'san_francisco': 1.32, 'los_angeles': 1.2, 'chicago': 1.15, 'seattle': 1.18, 'boston': 1.25, 'miami': 1.05, 'houston': 0.95, 'dallas': 0.92, 'phoenix': 0.9, 'atlanta': 0.95, 'denver': 1.02, 'national\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 733.97,
+   "node_count": 8,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "properties",
+    "valuations"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) as total, COALESCE(SUM(market_value), 0) as total_value, COALESCE(AVG(cap_rate), 0) as avg_cap_rate, COALESCE(AVG(market_value / NULLIF(rentable_area_sf, 0)), 0) as avg_value_per_sf FROM properties'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 68.817,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT property_type, COUNT(*) as count FROM properties GROUP BY property_type'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.732,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) FROM valuations'",
+     "tables": [
+      "valuations"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.365,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(*) FROM properties'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.424,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT * FROM properties ORDER BY created_at DESC LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 4,
+     "dur_ms": 31.817,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_properties",
+     "total_valuations",
+     "total_portfolio_value",
+     "avg_cap_rate",
+     "avg_value_per_sf",
+     "properties_by_type",
+     "valuations_by_method",
+     "recent_valuations"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_dashboard_kpis",
+     "qual": "get_dashboard_kpis",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 362,
+     "args": {},
+     "ret": "ValuationDashboardKPIs(total_properties=4, total_valuations=8, total_portfolio_value=Decimal('830000000.00'), avg_cap_rate=Decimal('0.0575'), avg_value_per_sf=Decimal('544.7743055555555'), properties_by_type={'industrial': 1, 'office': 1, \u2026",
+     "dur_ms": 732.477,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_dashboard_metrics",
+       "qual": "RealEstateDBService.get_dashboard_metrics",
+       "file": "services/real_estate_db_service.py",
+       "line": 405,
+       "args": {},
+       "ret": "{'total_properties': 4, 'total_portfolio_value': Decimal('830000000.00'), 'avg_cap_rate': Decimal('0.0575'), 'avg_value_per_sf': Decimal('544.77'), 'total_valuations': 0, 'properties_by_type': {'industrial': 1, 'office': 1, 'retail': 1, 'm\u2026",
+       "dur_ms": 402.56,
+       "sql": [
+        0,
+        1,
+        2
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "get_properties_from_db",
+       "qual": "get_properties_from_db",
+       "file": "api/v1/routes/real_estate_valuation.py",
+       "line": 56,
+       "args": {},
+       "ret": "[{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country':\u2026",
+       "dur_ms": 329.635,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 16,
+         "name": "get_all_properties",
+         "qual": "RealEstateDBService.get_all_properties",
+         "file": "services/real_estate_db_service.py",
+         "line": 32,
+         "args": {
+          "property_type": "None",
+          "city": "None",
+          "user_id": "None",
+          "page": "1",
+          "page_size": "100"
+         },
+         "ret": "{'items': [{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', \u2026",
+         "dur_ms": 329.47,
+         "sql": [
+          3,
+          4
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 17,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('5e2019fd-d7fd-41f2-aead-f6c961cffe3f'), None, 'Downtown Office Tower', 'office', None, '100 Main Street', 'New York', 'NY', 'USA', None, Decimal('40.71280000'), Decimal('-74.00600000'), 2005, None, Decimal('450000.00'), Decimal('1.5\u2026"
+           },
+           "ret": "{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country': \u2026",
+           "dur_ms": 0.063,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('375e3722-b5a0-4adc-b314-4d092625b1d3'), None, 'Suburban Retail Center', 'retail', None, '500 Shopping Plaza Drive', 'Los Angeles', 'CA', 'USA', None, Decimal('34.05220000'), Decimal('-118.24370000'), 2010, None, Decimal('180000.00')\u2026"
+           },
+           "ret": "{'id': '375e3722-b5a0-4adc-b314-4d092625b1d3', 'user_id': None, 'property_name': 'Suburban Retail Center', 'property_type': 'retail', 'subcategory': None, 'address': '500 Shopping Plaza Drive', 'city': 'Los Angeles', 'state_province': 'CA'\u2026",
+           "dur_ms": 0.04,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('43d4db67-0c37-4c98-891e-58eda9d69526'), None, 'Industrial Distribution Center', 'industrial', None, '2000 Logistics Way', 'Chicago', 'IL', 'USA', None, Decimal('41.87810000'), Decimal('-87.62980000'), 2018, None, Decimal('750000.00'\u2026"
+           },
+           "ret": "{'id': '43d4db67-0c37-4c98-891e-58eda9d69526', 'user_id': None, 'property_name': 'Industrial Distribution Center', 'property_type': 'industrial', 'subcategory': None, 'address': '2000 Logistics Way', 'city': 'Chicago', 'state_province': 'I\u2026",
+           "dur_ms": 0.042,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('cde4b152-ec2d-47c5-bc29-221c2a5046bd'), None, 'Urban Multifamily Complex', 'multifamily', None, '800 Residential Blvd', 'Seattle', 'WA', 'USA', None, Decimal('47.60620000'), Decimal('-122.33210000'), 2015, None, Decimal('320000.00')\u2026"
+           },
+           "ret": "{'id': 'cde4b152-ec2d-47c5-bc29-221c2a5046bd', 'user_id': None, 'property_name': 'Urban Multifamily Complex', 'property_type': 'multifamily', 'subcategory': None, 'address': '800 Residential Blvd', 'city': 'Seattle', 'state_province': 'WA'\u2026",
+           "dur_ms": 0.035,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/map-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 475.033,
+   "node_count": 7,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM properties'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 63.812,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT * FROM properties ORDER BY created_at DESC LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.152,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "property_type": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assets",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "get_properties_map_data",
+     "qual": "get_properties_map_data",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 728,
+     "args": {
+      "property_type": "None"
+     },
+     "ret": "{'assets': [{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'name': 'Downtown Office Tower', 'type': 'office', 'latitude': 40.7128, 'longitude': -74.006, 'location': 'New York, NY', 'market_value': 450000000.0, 'noi': 24750000.0, 'cap_rate'\u2026",
+     "dur_ms": 473.184,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 22,
+       "name": "get_properties_from_db",
+       "qual": "get_properties_from_db",
+       "file": "api/v1/routes/real_estate_valuation.py",
+       "line": 56,
+       "args": {},
+       "ret": "[{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country':\u2026",
+       "dur_ms": 473.076,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 23,
+         "name": "get_all_properties",
+         "qual": "RealEstateDBService.get_all_properties",
+         "file": "services/real_estate_db_service.py",
+         "line": 32,
+         "args": {
+          "property_type": "None",
+          "city": "None",
+          "user_id": "None",
+          "page": "1",
+          "page_size": "100"
+         },
+         "ret": "{'items': [{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', \u2026",
+         "dur_ms": 472.874,
+         "sql": [
+          0,
+          1
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 24,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('5e2019fd-d7fd-41f2-aead-f6c961cffe3f'), None, 'Downtown Office Tower', 'office', None, '100 Main Street', 'New York', 'NY', 'USA', None, Decimal('40.71280000'), Decimal('-74.00600000'), 2005, None, Decimal('450000.00'), Decimal('1.5\u2026"
+           },
+           "ret": "{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country': \u2026",
+           "dur_ms": 0.061,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('375e3722-b5a0-4adc-b314-4d092625b1d3'), None, 'Suburban Retail Center', 'retail', None, '500 Shopping Plaza Drive', 'Los Angeles', 'CA', 'USA', None, Decimal('34.05220000'), Decimal('-118.24370000'), 2010, None, Decimal('180000.00')\u2026"
+           },
+           "ret": "{'id': '375e3722-b5a0-4adc-b314-4d092625b1d3', 'user_id': None, 'property_name': 'Suburban Retail Center', 'property_type': 'retail', 'subcategory': None, 'address': '500 Shopping Plaza Drive', 'city': 'Los Angeles', 'state_province': 'CA'\u2026",
+           "dur_ms": 0.04,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 26,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('43d4db67-0c37-4c98-891e-58eda9d69526'), None, 'Industrial Distribution Center', 'industrial', None, '2000 Logistics Way', 'Chicago', 'IL', 'USA', None, Decimal('41.87810000'), Decimal('-87.62980000'), 2018, None, Decimal('750000.00'\u2026"
+           },
+           "ret": "{'id': '43d4db67-0c37-4c98-891e-58eda9d69526', 'user_id': None, 'property_name': 'Industrial Distribution Center', 'property_type': 'industrial', 'subcategory': None, 'address': '2000 Logistics Way', 'city': 'Chicago', 'state_province': 'I\u2026",
+           "dur_ms": 0.036,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 27,
+           "name": "_row_to_property_dict",
+           "qual": "RealEstateDBService._row_to_property_dict",
+           "file": "services/real_estate_db_service.py",
+           "line": 185,
+           "args": {
+            "row": "(UUID('cde4b152-ec2d-47c5-bc29-221c2a5046bd'), None, 'Urban Multifamily Complex', 'multifamily', None, '800 Residential Blvd', 'Seattle', 'WA', 'USA', None, Decimal('47.60620000'), Decimal('-122.33210000'), 2015, None, Decimal('320000.00')\u2026"
+           },
+           "ret": "{'id': 'cde4b152-ec2d-47c5-bc29-221c2a5046bd', 'user_id': None, 'property_name': 'Urban Multifamily Complex', 'property_type': 'multifamily', 'subcategory': None, 'address': '800 Residential Blvd', 'city': 'Seattle', 'state_province': 'WA'\u2026",
+           "dur_ms": 0.038,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/market/cap-rates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.665,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "property_type": "None (default)",
+    "quality": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cap_rates",
+     "total",
+     "as_of_date"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28,
+     "name": "get_market_cap_rates",
+     "qual": "get_market_cap_rates",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 701,
+     "args": {
+      "property_type": "None",
+      "quality": "None"
+     },
+     "ret": "{'cap_rates': [{'property_type': 'office', 'quality': 'class_a', 'cap_rate_low': 0.055, 'cap_rate_mid': 0.065, 'cap_rate_high': 0.075}, {'property_type': 'office', 'quality': 'class_b', 'cap_rate_low': 0.065, 'cap_rate_mid': 0.075, 'cap_ra\u2026",
+     "dur_ms": 0.154,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/properties",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 730.576,
+   "node_count": 6,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM properties'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.603,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT * FROM properties ORDER BY created_at DESC LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 4,
+     "dur_ms": 30.114,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "property_type": "None (default)",
+    "city": "None (default)",
+    "quality_rating": "None (default)",
+    "page": "1 (default)",
+    "page_size": "20 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "items",
+     "total",
+     "page",
+     "page_size"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "list_properties",
+     "qual": "list_properties",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 390,
+     "args": {
+      "property_type": "None",
+      "city": "None",
+      "quality_rating": "None",
+      "page": "1",
+      "page_size": "20"
+     },
+     "ret": "PropertyListResponse(items=[PropertyResponse(property_name='Downtown Office Tower', property_type=<PropertyType.OFFICE: 'office'>, subcategory=None, address='100 Main Street', city='New York', state_province='NY', country='USA', postal_cod\u2026",
+     "dur_ms": 728.323,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "get_all_properties",
+       "qual": "RealEstateDBService.get_all_properties",
+       "file": "services/real_estate_db_service.py",
+       "line": 32,
+       "args": {
+        "property_type": "None",
+        "city": "None",
+        "user_id": "None",
+        "page": "1",
+        "page_size": "20"
+       },
+       "ret": "{'items': [{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', \u2026",
+       "dur_ms": 728.029,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 31,
+         "name": "_row_to_property_dict",
+         "qual": "RealEstateDBService._row_to_property_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 185,
+         "args": {
+          "row": "(UUID('5e2019fd-d7fd-41f2-aead-f6c961cffe3f'), None, 'Downtown Office Tower', 'office', None, '100 Main Street', 'New York', 'NY', 'USA', None, Decimal('40.71280000'), Decimal('-74.00600000'), 2005, None, Decimal('450000.00'), Decimal('1.5\u2026"
+         },
+         "ret": "{'id': '5e2019fd-d7fd-41f2-aead-f6c961cffe3f', 'user_id': None, 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': None, 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country': \u2026",
+         "dur_ms": 0.087,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_row_to_property_dict",
+         "qual": "RealEstateDBService._row_to_property_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 185,
+         "args": {
+          "row": "(UUID('375e3722-b5a0-4adc-b314-4d092625b1d3'), None, 'Suburban Retail Center', 'retail', None, '500 Shopping Plaza Drive', 'Los Angeles', 'CA', 'USA', None, Decimal('34.05220000'), Decimal('-118.24370000'), 2010, None, Decimal('180000.00')\u2026"
+         },
+         "ret": "{'id': '375e3722-b5a0-4adc-b314-4d092625b1d3', 'user_id': None, 'property_name': 'Suburban Retail Center', 'property_type': 'retail', 'subcategory': None, 'address': '500 Shopping Plaza Drive', 'city': 'Los Angeles', 'state_province': 'CA'\u2026",
+         "dur_ms": 0.081,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_row_to_property_dict",
+         "qual": "RealEstateDBService._row_to_property_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 185,
+         "args": {
+          "row": "(UUID('43d4db67-0c37-4c98-891e-58eda9d69526'), None, 'Industrial Distribution Center', 'industrial', None, '2000 Logistics Way', 'Chicago', 'IL', 'USA', None, Decimal('41.87810000'), Decimal('-87.62980000'), 2018, None, Decimal('750000.00'\u2026"
+         },
+         "ret": "{'id': '43d4db67-0c37-4c98-891e-58eda9d69526', 'user_id': None, 'property_name': 'Industrial Distribution Center', 'property_type': 'industrial', 'subcategory': None, 'address': '2000 Logistics Way', 'city': 'Chicago', 'state_province': 'I\u2026",
+         "dur_ms": 0.127,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "_row_to_property_dict",
+         "qual": "RealEstateDBService._row_to_property_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 185,
+         "args": {
+          "row": "(UUID('cde4b152-ec2d-47c5-bc29-221c2a5046bd'), None, 'Urban Multifamily Complex', 'multifamily', None, '800 Residential Blvd', 'Seattle', 'WA', 'USA', None, Decimal('47.60620000'), Decimal('-122.33210000'), 2015, None, Decimal('320000.00')\u2026"
+         },
+         "ret": "{'id': 'cde4b152-ec2d-47c5-bc29-221c2a5046bd', 'user_id': None, 'property_name': 'Urban Multifamily Complex', 'property_type': 'multifamily', 'subcategory': None, 'address': '800 Residential Blvd', 'city': 'Seattle', 'state_province': 'WA'\u2026",
+         "dur_ms": 0.119,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "GET /api/v1/valuation/properties/{property_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Property not found",
+   "dur_ms": 1657.922,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM properties WHERE id = %(id)s'",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 0,
+     "dur_ms": 617.263,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "property_id": "18c20cf6-c3f5-4408-bc9f-c592eab073a5 (real id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "get_property",
+     "qual": "get_property",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 420,
+     "args": {
+      "property_id": "'18c20cf6-c3f5-4408-bc9f-c592eab073a5'"
+     },
+     "ret": "None",
+     "dur_ms": 1655.86,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 36,
+       "name": "get_property_by_id",
+       "qual": "RealEstateDBService.get_property_by_id",
+       "file": "services/real_estate_db_service.py",
+       "line": 87,
+       "args": {
+        "property_id": "UUID('18c20cf6-c3f5-4408-bc9f-c592eab073a5')"
+       },
+       "ret": "None",
+       "dur_ms": 1655.75,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/comparables",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 297.714,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "comparable_sales"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO comparable_sales ( id, property_type, address, city, state_province, country, latitude, longitude, sale_date, sale_price, size_sf, price_per_sf, year_built, num_units, occupancy_rate, quality_rating, condition_rating, location_type, data_source, verified, created_at ) VALUES ( %(id)s, %(property_type)s, %(address)s, %(city)s, %(state_province)s, %(country)s, %(latitude)s, %(longitude\u2026",
+     "tables": [
+      "comparable_sales"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.172,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comparable": "<ComparableSaleCreate (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "property_type",
+     "address",
+     "city",
+     "state_province",
+     "country",
+     "latitude",
+     "longitude",
+     "sale_date",
+     "sale_price",
+     "size_sf",
+     "year_built",
+     "num_units",
+     "occupancy_rate",
+     "quality_rating",
+     "condition_rating",
+     "data_source",
+     "verified",
+     "id",
+     "price_per_sf",
+     "created_at"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "create_comparable_sale",
+     "qual": "create_comparable_sale",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 597,
+     "args": {
+      "comparable": "ComparableSaleCreate(property_type=<PropertyType.OFFICE: 'office'>, address=None, city=None, state_province=None, country=None, latitude=None, longitude=None, sale_date=datetime.date(2024, 1, 1), sale_price=Decimal('1.0'), size_sf=Decimal(\u2026"
+     },
+     "ret": "ComparableSaleResponse(property_type=<PropertyType.OFFICE: 'office'>, address=None, city=None, state_province=None, country=None, latitude=None, longitude=None, sale_date=datetime.date(2024, 1, 1), sale_price=Decimal('1.00'), size_sf=Decim\u2026",
+     "dur_ms": 295.335,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "create_comparable",
+       "qual": "RealEstateDBService.create_comparable",
+       "file": "services/real_estate_db_service.py",
+       "line": 324,
+       "args": {
+        "data": "{'property_type': <PropertyType.OFFICE: 'office'>, 'address': None, 'city': None, 'state_province': None, 'country': None, 'latitude': None, 'longitude': None, 'sale_date': datetime.date(2024, 1, 1), 'sale_price': Decimal('1.0'), 'size_sf'\u2026"
+       },
+       "ret": "{'id': 'f5791562-c16c-4335-aaa9-c237f2ea6b0b', 'property_type': 'office', 'address': None, 'city': None, 'state_province': None, 'country': None, 'latitude': None, 'longitude': None, 'sale_date': datetime.date(2024, 1, 1), 'sale_price': De\u2026",
+       "dur_ms": 295.138,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 39,
+         "name": "_row_to_comparable_dict",
+         "qual": "RealEstateDBService._row_to_comparable_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 377,
+         "args": {
+          "row": "(UUID('f5791562-c16c-4335-aaa9-c237f2ea6b0b'), 'office', None, None, None, None, None, None, datetime.date(2024, 1, 1), Decimal('1.00'), Decimal('1.00'), Decimal('1.00'), None, None, None, None, None, None, None, False, datetime.datetime(2\u2026"
+         },
+         "ret": "{'id': 'f5791562-c16c-4335-aaa9-c237f2ea6b0b', 'property_type': 'office', 'address': None, 'city': None, 'state_province': None, 'country': None, 'latitude': None, 'longitude': None, 'sale_date': datetime.date(2024, 1, 1), 'sale_price': De\u2026",
+         "dur_ms": 0.036,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/comprehensive",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Property not found",
+   "dur_ms": 2.524,
+   "node_count": 3,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<ComprehensiveValuationRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40,
+     "name": "run_comprehensive_valuation",
+     "qual": "run_comprehensive_valuation",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 608,
+     "args": {
+      "request": "ComprehensiveValuationRequest(property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), include_income=True, include_cost=True, include_sales=True, income_method=<IncomeMethod.DIRECT_CAPITALIZATION: 'direct_capitalization'>, approach_weigh\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.235,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 41,
+       "name": "get_sample_properties",
+       "qual": "get_sample_properties",
+       "file": "api/v1/routes/real_estate_valuation.py",
+       "line": 70,
+       "args": {},
+       "ret": "[{'id': 'aa0e8400-e29b-41d4-a716-446655440001', 'property_name': 'Downtown Office Tower', 'property_type': 'office', 'subcategory': 'high_rise', 'address': '100 Main Street', 'city': 'New York', 'state_province': 'NY', 'country': 'USA', 'p\u2026",
+       "dur_ms": 0.048,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<genexpr>",
+       "qual": "run_comprehensive_valuation.<locals>.<genexpr>",
+       "file": "api/v1/routes/real_estate_valuation.py",
+       "line": 623,
+       "args": {
+        ".0": "<list_iterator object at 0x000001E3F4C4FD90>"
+       },
+       "ret": "None",
+       "dur_ms": 0.035,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/cost/replacement",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'",
+   "dur_ms": 2.005,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<ReplacementCostRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 43,
+     "name": "calculate_replacement_cost",
+     "qual": "calculate_replacement_cost",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 483,
+     "args": {
+      "request": "ReplacementCostRequest(property_id=None, land_area_acres=Decimal('1.0'), land_value_per_acre=Decimal('1.0'), building_area_sf=Decimal('1.0'), construction_type=<ConstructionType.STEEL_FRAME: 'steel_frame'>, quality=<QualityRating.CLASS_A: \u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.09,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 44,
+       "name": "cost_approach",
+       "qual": "RealEstateValuationEngine.cost_approach",
+       "file": "services/real_estate_valuation_engine.py",
+       "line": 386,
+       "args": {
+        "inputs": "ReplacementCostRequest(property_id=None, land_area_acres=Decimal('1.0'), land_value_per_acre=Decimal('1.0'), building_area_sf=Decimal('1.0'), construction_type=<ConstructionType.STEEL_FRAME: 'steel_frame'>, quality=<QualityRating.CLASS_A: \u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.039,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 45,
+         "name": "get_construction_cost",
+         "qual": "CostDataService.get_construction_cost",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 85,
+         "args": {
+          "construction_type": "<ConstructionType.STEEL_FRAME: 'steel_frame'>",
+          "quality": "<QualityRating.CLASS_A: 'class_a'>"
+         },
+         "ret": "Decimal('350')",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/income/dcf",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 31.208,
+   "node_count": 241,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<DCFRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cash_flows",
+     "terminal_value",
+     "terminal_value_present",
+     "total_pv_cash_flows",
+     "npv",
+     "irr",
+     "equity_multiple",
+     "cash_on_cash_year1",
+     "average_cash_on_cash",
+     "payback_period_years",
+     "sensitivity_cap_rate",
+     "sensitivity_discount_rate"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 46,
+     "name": "calculate_dcf",
+     "qual": "calculate_dcf",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 462,
+     "args": {
+      "request": "DCFRequest(property_id=None, projection_years=10, current_noi=Decimal('1.0'), revenue_growth_rate=0.03, expense_growth_rate=0.02, inflation_rate=0.02, discount_rate=0.08, terminal_cap_rate=0.07, terminal_growth_rate=0.02, equity_investment\u2026"
+     },
+     "ret": "DCFResult(cash_flows=[DCFProjectionYear(year=1, revenue=Decimal('1.54'), expenses=Decimal('0.52'), noi=Decimal('1.02'), debt_service=Decimal('0'), cfads=Decimal('1.02'), cumulative_cash_flow=Decimal('1.02')), DCFProjectionYear(year=2, reve\u2026",
+     "dur_ms": 9.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 47,
+       "name": "income_approach_dcf",
+       "qual": "RealEstateValuationEngine.income_approach_dcf",
+       "file": "services/real_estate_valuation_engine.py",
+       "line": 261,
+       "args": {
+        "inputs": "DCFRequest(property_id=None, projection_years=10, current_noi=Decimal('1.0'), revenue_growth_rate=0.03, expense_growth_rate=0.02, inflation_rate=0.02, discount_rate=0.08, terminal_cap_rate=0.07, terminal_growth_rate=0.02, equity_investment\u2026"
+       },
+       "ret": "DCFResult(cash_flows=[DCFProjectionYear(year=1, revenue=Decimal('1.54'), expenses=Decimal('0.52'), noi=Decimal('1.02'), debt_service=Decimal('0'), cfads=Decimal('1.02'), cumulative_cash_flow=Decimal('1.02')), DCFProjectionYear(year=2, reve\u2026",
+       "dur_ms": 8.87,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 48,
+         "name": "_calculate_irr",
+         "qual": "RealEstateValuationEngine._calculate_irr",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 787,
+         "args": {
+          "cash_flows": "[Decimal('-1.0'), Decimal('1.02'), Decimal('1.05'), Decimal('1.08'), Decimal('1.10'), Decimal('1.13'), Decimal('1.16'), Decimal('1.19'), Decimal('1.22'), Decimal('1.25'), Decimal('19.37188571428571428571428571')]",
+          "max_iterations": "100"
+         },
+         "ret": "1.0601124087559655",
+         "dur_ms": 7.911,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 49,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 50,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.9272727272727272",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 51,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.8677685950413222",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 52,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.8114199849737038",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 53,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.7513148009015777",
+           "dur_ms": 0.064,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 54,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.701641095056845",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 55,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.6547897588623814",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 56,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.6106581606945406",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.5691390038558743",
+           "dur_ms": 0.013,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 58,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.5301220229656057",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 59,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "7.468700540738662",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 60,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 61,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 62,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-0.8429752066115701",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 63,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-1.577761081893313",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 64,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-2.2129635953828286",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 65,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-2.732053821460282",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 66,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-3.1892777048038408",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 67,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-3.571580502885716",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 68,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-3.8860064771470766",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 69,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-4.13919275531545",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 70,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-4.337362006082229",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 71,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-67.89727764307874",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 73,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 74,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.8248448712523966",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 75,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.6866469768482811",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 76,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.5711367097959004",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 77,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.47041494593775274",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 78,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.3907859819380289",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 79,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.3244073078538445",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 80,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.2691235529540641",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 81,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.2231190661662603",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 82,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "0.1848668207628816",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 83,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "2.316823578387021",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 84,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C94720>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 85,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 86,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.6670284917954731",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 87,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.1105436023809172",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 88,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.385585840762108",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 89,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.5216445314401126",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 90,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.5800873184260529",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 91,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.5740335534120051",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 92,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.523427722266351",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 93,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.4434401365165797",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 94,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.345468667391167",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 95,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-18.73549064930548",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 96,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 97,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 98,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.724964229553123",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 99,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.5304227132238859",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 100,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.387768901139326",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 101,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.2807102768019661",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 102,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.20495592494723777",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 103,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.14953967421238717",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 104,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.10903396593693364",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 105,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.07944948478737886",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 106,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.05785723493980502",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 107,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.6372883309985493",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 108,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 109,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 110,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.5152677785603463",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 111,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.7539950855486894",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 112,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.8268193607621547",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 113,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.798058468821103",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 114,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.7283613442241271",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 115,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.6377112629588723",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 116,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.5424706625236606",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 117,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.4517492904099976",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 118,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.3700978742842039",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 119,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-4.529521998878029",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 120,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 121,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 122,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.6296743445093185",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 123,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.4001482786811821",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 124,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.2540804421026273",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 125,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.15975556410400388",
+           "dur_ms": 0.012,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 126,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.10131122773891503",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 127,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.06420264954433914",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 128,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.04065909897602769",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 129,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.02573276456187599",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 130,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.016276178939561115",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 131,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.1557148988636097",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 132,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 133,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 134,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.3887154707188626",
+           "dur_ms": 0.019,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 135,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.494045304088442",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 136,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.47055275245179323",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 137,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.3944861965055099",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 138,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.31271118097027256",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 139,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.23780447804466612",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 140,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.17569994163969427",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 141,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1270844051600932",
+           "dur_ms": 0.052,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 142,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.09042963798427517",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 143,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.9612713418850809",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 144,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 145,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 146,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.5507815480180965",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 147,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.30615948608138344",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 148,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.1700440292615085",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 149,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.09352108300170386",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 150,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.05187695736260988",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 151,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.028756316349011445",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 152,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.015929473999719307",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 153,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.008818475552305891",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 154,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0048789111377559235",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 155,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.040828554459489366",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 156,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 157,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 158,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.2974120721933439",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 159,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.33064116800848875",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 160,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.27546209902320046",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 161,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.20199877203140135",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 162,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1400630925619954",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 163,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.09316734372945072",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 164,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.06021139454976072",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 165,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.03809453816359825",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 166,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.02371071378614065",
+           "dur_ms": 0.035,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 167,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.22046680812292854",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 168,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 169,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 170,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.5065907954955174",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 171,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.2590022546951367",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 172,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.13231074780619353",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 173,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.06693005417766976",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 174,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.03414790446427709",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 175,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.01741007838017799",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 176,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.008870473878416054",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 177,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.004516653905549989",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 178,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0022983920915606968",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 179,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.017690622969388246",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 180,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 181,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 182,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.25160219027527564",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 183,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.257270898512043",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 184,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1971394323051364",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 185,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.13296529171930904",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 186,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.08479908866207383",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 187,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.05188109091913927",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 188,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.030839120519042137",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 189,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.01794584545090592",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 190,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0102736259825677",
+           "dur_ms": 0.01,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 191,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.08786183100856533",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 192,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 193,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 194,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.4956766708403861",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 195,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.2479624472473846",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 196,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.12394205076808583",
+           "dur_ms": 0.014,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 197,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.06134595262530899",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 198,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.030624568672491154",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 199,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.01527734315875734",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 200,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.007616143415737486",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 201,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0037944277704777844",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 202,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0018892732692610261",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 203,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.014228364179996553",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 204,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 205,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 206,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.2408778058974593",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 207,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.24099843204905577",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 208,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.18069171500545556",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 209,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1192461081052753",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 210,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.07441119728187842",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 211,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.04454483880128815",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 212,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.025907855186950775",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 213,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.014751445686390093",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 214,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.008262958980132686",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 215,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0691438057671107",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 216,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 217,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 218,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.4951199870505905",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 219,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.24740579743927887",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 220,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.12352492963802703",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 221,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.06107083126278644",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 222,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.03045298554181779",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 223,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.015174685837459055",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 224,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0075564700843931834",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 225,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.003760469955351929",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 226,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0018702626121001906",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 227,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.014069373657436997",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 228,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 229,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 230,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.2403370603695852",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 231,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.24018736318505254",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 232,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.17988135753766188",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 233,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1185779967999985",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 234,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.07391118532900316",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 235,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.04419582503140886",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 236,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.025675995678755382",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 237,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.014603010475278287",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 238,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.008170627061331617",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 239,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0682943931674522",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 240,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 241,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-1.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 242,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.4951186137620097",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 243,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.24740442500797274",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 244,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.12352390179684158",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 245,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.06107015370964007",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 246,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.03045256321484253",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 247,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.015174433303784532",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 248,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0075563233726949845",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 249,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.00376038651440104",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 250,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.0018702159255661347",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 251,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "0.014068983427401196",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 252,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 800,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 253,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 254,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.24033572715060209",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 255,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.24018536460496973",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 256,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1798793618356671",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 257,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.1185763523409798",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 258,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.07390995531584707",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 259,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.04419496695290512",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 260,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.025675425954885794",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 261,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.01460264594682038",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 262,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.008170400439722987",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 263,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "-0.06829230952564282",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 264,
+           "name": "<genexpr>",
+           "qual": "RealEstateValuationEngine._calculate_irr.<locals>.<genexpr>",
+           "file": "services/real_estate_valuation_engine.py",
+           "line": 801,
+           "args": {
+            ".0": "<enumerate object at 0x000001E3F4C6FF10>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 265,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.02')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 266,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.05')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 267,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.08')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 268,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.10')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 269,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.13')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 270,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.16')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 271,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.19')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 272,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.22')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 273,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.25')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 274,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.28')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 275,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 339,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 276,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.02')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 277,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.05')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 278,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.08')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 279,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.10')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 280,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.13')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 281,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.16')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 282,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.19')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 283,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.22')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 284,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.25')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 285,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "Decimal('1.28')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 286,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.income_approach_dcf.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 344,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C4E890>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/income/direct-capitalization",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: unsupported operand type(s) for *: 'decimal.Decimal' and 'float'",
+   "dur_ms": 1.767,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<DirectCapitalizationRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 287,
+     "name": "calculate_direct_capitalization",
+     "qual": "calculate_direct_capitalization",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 443,
+     "args": {
+      "request": "DirectCapitalizationRequest(property_id=None, rentable_area_sf=Decimal('1.0'), market_rent_per_sf=Decimal('1.0'), other_income=0, vacancy_rate=0.05, collection_loss_rate=0.02, operating_expense_ratio=None, cap_rate=Decimal('1.0'), expense_\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.058,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 288,
+       "name": "income_approach_direct_cap",
+       "qual": "RealEstateValuationEngine.income_approach_direct_cap",
+       "file": "services/real_estate_valuation_engine.py",
+       "line": 184,
+       "args": {
+        "inputs": "DirectCapitalizationRequest(property_id=None, rentable_area_sf=Decimal('1.0'), market_rent_per_sf=Decimal('1.0'), other_income=0, vacancy_rate=0.05, collection_loss_rate=0.02, operating_expense_ratio=None, cap_rate=Decimal('1.0'), expense_\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/properties",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 365.133,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO properties ( id, user_id, property_name, property_type, subcategory, address, city, state_province, country, postal_code, latitude, longitude, year_built, gross_floor_area_m2, rentable_area_sf, land_area_acres, num_floors, num_units, construction_type, quality_rating, condition_rating, effective_age, total_economic_life, market_value, replacement_value, land_value, annual_rental_inco\u2026",
+     "tables": [
+      "properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 82.461,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "property_data": "<PropertyCreate (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "property_name",
+     "property_type",
+     "subcategory",
+     "address",
+     "city",
+     "state_province",
+     "country",
+     "postal_code",
+     "latitude",
+     "longitude",
+     "year_built",
+     "gross_floor_area_m2",
+     "rentable_area_sf",
+     "land_area_acres",
+     "num_floors",
+     "num_units",
+     "construction_type",
+     "quality_rating",
+     "condition_rating",
+     "effective_age",
+     "total_economic_life",
+     "market_value",
+     "replacement_value",
+     "land_value",
+     "annual_rental_income"
+    ],
+    "n_keys": 40
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 289,
+     "name": "create_property",
+     "qual": "create_property",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 434,
+     "args": {
+      "property_data": "PropertyCreate(property_name='TEST_property_data_property_name', property_type=<PropertyType.OFFICE: 'office'>, subcategory=None, address=None, city=None, state_province=None, country=None, postal_code=None, latitude=None, longitude=None, \u2026"
+     },
+     "ret": "PropertyResponse(property_name='TEST_property_data_property_name', property_type=<PropertyType.OFFICE: 'office'>, subcategory=None, address=None, city=None, state_province=None, country=None, postal_code=None, latitude=None, longitude=None\u2026",
+     "dur_ms": 344.31,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 290,
+       "name": "create_property",
+       "qual": "RealEstateDBService.create_property",
+       "file": "services/real_estate_db_service.py",
+       "line": 98,
+       "args": {
+        "data": "{'property_name': 'TEST_property_data_property_name', 'property_type': <PropertyType.OFFICE: 'office'>, 'subcategory': None, 'address': None, 'city': None, 'state_province': None, 'country': None, 'postal_code': None, 'latitude': None, 'lo\u2026"
+       },
+       "ret": "{'id': 'd2c556e2-2075-457b-bbf0-cedde28cd7ee', 'user_id': None, 'property_name': 'TEST_property_data_property_name', 'property_type': 'office', 'subcategory': None, 'address': None, 'city': None, 'state_province': None, 'country': None, 'p\u2026",
+       "dur_ms": 343.933,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 291,
+         "name": "_row_to_property_dict",
+         "qual": "RealEstateDBService._row_to_property_dict",
+         "file": "services/real_estate_db_service.py",
+         "line": 185,
+         "args": {
+          "row": "(UUID('d2c556e2-2075-457b-bbf0-cedde28cd7ee'), None, 'TEST_property_data_property_name', 'office', None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, No\u2026"
+         },
+         "ret": "{'id': 'd2c556e2-2075-457b-bbf0-cedde28cd7ee', 'user_id': None, 'property_name': 'TEST_property_data_property_name', 'property_type': 'office', 'subcategory': None, 'address': None, 'city': None, 'state_province': None, 'country': None, 'p\u2026",
+         "dur_ms": 0.054,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-valuation",
+   "label": "POST /api/v1/valuation/sales-comparison",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.33,
+   "node_count": 19,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<SalesComparisonRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "adjusted_comparables",
+     "mean_adjusted_price",
+     "median_adjusted_price",
+     "std_dev",
+     "coefficient_of_variation",
+     "reconciled_value",
+     "value_per_sf",
+     "confidence_range_low",
+     "confidence_range_high",
+     "confidence_level",
+     "avg_gross_adjustment_percent",
+     "avg_net_adjustment_percent"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 292,
+     "name": "calculate_sales_comparison",
+     "qual": "calculate_sales_comparison",
+     "file": "api/v1/routes/real_estate_valuation.py",
+     "line": 535,
+     "args": {
+      "request": "SalesComparisonRequest(subject_property=SubjectProperty(property_id=None, size_sf=Decimal('1.0'), year_built=1, quality=<QualityRating.CLASS_A: 'class_a'>, condition=<ConditionRating.EXCELLENT: 'excellent'>, location='TEST_request_subject_\u2026"
+     },
+     "ret": "SalesComparisonResult(adjusted_comparables=[AdjustedComparable(comp_id=UUID('550e8400-e29b-41d4-a716-446655440000'), original_sale_price=Decimal('1.0'), sale_date=datetime.date(2024, 1, 1), days_since_sale=911, adjustments=[AdjustmentDetai\u2026",
+     "dur_ms": 1.021,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 293,
+       "name": "sales_comparison",
+       "qual": "RealEstateValuationEngine.sales_comparison",
+       "file": "services/real_estate_valuation_engine.py",
+       "line": 460,
+       "args": {
+        "request": "SalesComparisonRequest(subject_property=SubjectProperty(property_id=None, size_sf=Decimal('1.0'), year_built=1, quality=<QualityRating.CLASS_A: 'class_a'>, condition=<ConditionRating.EXCELLENT: 'excellent'>, location='TEST_request_subject_\u2026"
+       },
+       "ret": "SalesComparisonResult(adjusted_comparables=[AdjustedComparable(comp_id=UUID('550e8400-e29b-41d4-a716-446655440000'), original_sale_price=Decimal('1.0'), sale_date=datetime.date(2024, 1, 1), days_since_sale=911, adjustments=[AdjustmentDetai\u2026",
+       "dur_ms": 0.863,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 294,
+         "name": "get_location_adjustment",
+         "qual": "MarketDataService.get_location_adjustment",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 160,
+         "args": {
+          "subject_location": "'TEST_request_subject_property_location'",
+          "comp_location": "'TEST_request_comparables_location'"
+         },
+         "ret": "Decimal('0')",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 295,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('0.15')",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 296,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('-0.00')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 297,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('0.00')",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 298,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('0.00')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 299,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('0.00')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 300,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "Decimal('0.00')",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 301,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 559,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 302,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "0.1518",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 303,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "-0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 304,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 305,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 306,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 307,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 308,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 560,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E3F4C8CF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 309,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 591,
+         "args": {
+          ".0": "<zip object at 0x000001E3F4CCC900>"
+         },
+         "ret": "0.9774999999999999",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 310,
+         "name": "<genexpr>",
+         "qual": "RealEstateValuationEngine.sales_comparison.<locals>.<genexpr>",
+         "file": "services/real_estate_valuation_engine.py",
+         "line": 591,
+         "args": {
+          ".0": "<zip object at 0x000001E3F4CCC900>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

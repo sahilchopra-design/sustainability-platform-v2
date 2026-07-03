@@ -1,0 +1,1725 @@
+{
+ "domain": "ingestion",
+ "meta": {
+  "ts": "2026-06-30T14:03:05",
+  "module": "api.v1.routes.ingestion",
+  "router_prefix": "/api/v1/ingestion",
+  "endpoints": 23
+ },
+ "transactions": [
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/cross-source",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3785.616,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_kpi_mappings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_kpi_mappings.id AS dh_kpi_mappings_id, dh_kpi_mappings.kpi_id AS dh_kpi_mappings_kpi_id, dh_kpi_mappings.source_id AS dh_kpi_mappings_source_id, dh_kpi_mappings.source_field_id AS dh_kpi_mappings_source_field_id, dh_kpi_mappings.priority_order AS dh_kpi_mappings_priority_order, dh_kpi_mappings.is_active AS dh_kpi_mappings_is_active, dh_kpi_mappings.transform_formula AS dh_kpi_mappings_\u2026",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 67.97,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "kpi_id": "None (default)",
+    "category": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "comparisons",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "cross_source_comparison",
+     "qual": "cross_source_comparison",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 843,
+     "args": {
+      "kpi_id": "None",
+      "category": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023938882DB0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'comparisons': [], 'total': 0}",
+     "dur_ms": 3741.974,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/ingesters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 13.544,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ingesters",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_ingesters",
+     "qual": "list_ingesters",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 55,
+     "args": {
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'ingesters': [], 'total': 0}",
+     "dur_ms": 13.3,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_get_manager",
+       "qual": "_get_manager",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 42,
+       "args": {},
+       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
+       "dur_ms": 13.223,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/ingesters/{source_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Unknown source_id: 550e8400-e29b-41d4-a716-446655440001",
+   "dur_ms": 0.403,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "source_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_ingester_status",
+     "qual": "get_ingester_status",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 67,
+     "args": {
+      "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "_get_manager",
+       "qual": "_get_manager",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 42,
+       "args": {},
+       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/jobs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3238.712,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_sync_jobs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_sync_jobs.id AS dh_sync_jobs_id, dh_sync_jobs.source_id AS dh_sync_jobs_source_id, dh_sync_jobs.triggered_by AS dh_sync_jobs_triggered_by, dh_sync_jobs.status AS dh_sync_jobs_status, dh_sync_jobs.started_at AS dh_sync_jobs_started_at, dh_sync_jobs.completed_at AS dh_sync_jobs_completed_at, dh_sync_jobs.duration_seconds AS dh_sync_jobs_duration_seconds, \u2026",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 1,
+     "dur_ms": 588.089,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_sync_jobs.id AS dh_sync_jobs_id, dh_sync_jobs.source_id AS dh_sync_jobs_source_id, dh_sync_jobs.triggered_by AS dh_sync_jobs_triggered_by, dh_sync_jobs.status AS dh_sync_jobs_status, dh_sync_jobs.started_at AS dh_sync_jobs_started_at, dh_sync_jobs.completed_at AS dh_sync_jobs_completed_at, dh_sync_jobs.duration_seconds AS dh_sync_jobs_duration_seconds, dh_sync_jobs.rows_fetched AS dh_s\u2026",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 4,
+     "dur_ms": 490.084,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "None (default)",
+    "status": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "limit",
+     "offset",
+     "jobs"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_sync_jobs",
+     "qual": "list_sync_jobs",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 161,
+     "args": {
+      "source_id": "None",
+      "status": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A470C80>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 4, 'limit': 50, 'offset': 0, 'jobs': [{'id': 'job_8ca58bf4c746', 'source_id': 'gdelt-events', 'triggered_by': 'manual', 'status': 'success', 'started_at': '2026-03-07T02:22:31.500438+00:00', 'completed_at': '2026-03-07T02:22:33.7\u2026",
+     "dur_ms": 2624.725,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/jobs/{job_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Sync job not found",
+   "dur_ms": 1072.686,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_sync_jobs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_sync_jobs.id AS dh_sync_jobs_id, dh_sync_jobs.source_id AS dh_sync_jobs_source_id, dh_sync_jobs.triggered_by AS dh_sync_jobs_triggered_by, dh_sync_jobs.status AS dh_sync_jobs_status, dh_sync_jobs.started_at AS dh_sync_jobs_started_at, dh_sync_jobs.completed_at AS dh_sync_jobs_completed_at, dh_sync_jobs.duration_seconds AS dh_sync_jobs_duration_seconds, dh_sync_jobs.rows_fetched AS dh_s\u2026",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.448,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "job_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_sync_job",
+     "qual": "get_sync_job",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 176,
+     "args": {
+      "job_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A471E20>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1042.759,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/kpi-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2640.623,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_application_kpis"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_application_kpis.category AS dh_application_kpis_category, count(dh_application_kpis.id) AS count FROM dh_application_kpis GROUP BY dh_application_kpis.category ORDER BY dh_application_kpis.category'",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 13,
+     "dur_ms": 458.648,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "categories"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "list_kpi_categories",
+     "qual": "list_kpi_categories",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 480,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4B9400>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'categories': [{'category': 'compliance', 'count': 1}, {'category': 'emissions', 'count': 8}, {'category': 'energy', 'count': 2}, {'category': 'esg', 'count': 8}, {'category': 'financial', 'count': 7}, {'category': 'governance', 'count': \u2026",
+     "dur_ms": 1942.884,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/kpis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 822.074,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_application_kpis",
+    "dh_kpi_mappings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_application_kpis.id AS dh_application_kpis_id, dh_application_kpis.name AS dh_application_kpis_name, dh_application_kpis.slug AS dh_application_kpis_slug, dh_application_kpis.category AS dh_application_kpis_category, dh_application_kpis.sub_category AS dh_application_kpis_sub_category, dh_application_kpis.description AS dh_application_kpis_description, \u2026",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 1,
+     "dur_ms": 184.173,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_application_kpis.id AS dh_application_kpis_id, dh_application_kpis.name AS dh_application_kpis_name, dh_application_kpis.slug AS dh_application_kpis_slug, dh_application_kpis.category AS dh_application_kpis_category, dh_application_kpis.sub_category AS dh_application_kpis_sub_category, dh_application_kpis.description AS dh_application_kpis_description, dh_application_kpis.unit AS dh_ap\u2026",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 51,
+     "dur_ms": 65.568,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT dh_kpi_mappings.kpi_id AS dh_kpi_mappings_kpi_id, count(dh_kpi_mappings.id) AS count_1 FROM dh_kpi_mappings WHERE dh_kpi_mappings.is_active = true GROUP BY dh_kpi_mappings.kpi_id'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 160.33,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "category": "None (default)",
+    "module": "None (default)",
+    "is_required": "None (default)",
+    "search": "None (default)",
+    "limit": "100 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "kpis"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "list_kpis",
+     "qual": "list_kpis",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 355,
+     "args": {
+      "category": "None",
+      "module": "None",
+      "is_required": "None",
+      "search": "None",
+      "limit": "100",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4B9FA0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 51, 'kpis': [{'id': '39266e74-80f8-467d-a15b-035eda621564', 'name': 'Adverse Media / Controversy Flag', 'slug': 'adverse_media_flag', 'category': 'compliance', 'sub_category': 'screening', 'description': None, 'unit': 'boolean', \u2026",
+     "dur_ms": 792.608,
+     "sql": [
+      0,
+      1,
+      2
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/kpis/{kpi_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: KPI not found",
+   "dur_ms": 410.355,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_application_kpis"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_application_kpis.id AS dh_application_kpis_id, dh_application_kpis.name AS dh_application_kpis_name, dh_application_kpis.slug AS dh_application_kpis_slug, dh_application_kpis.category AS dh_application_kpis_category, dh_application_kpis.sub_category AS dh_application_kpis_sub_category, dh_application_kpis.description AS dh_application_kpis_description, dh_application_kpis.unit AS dh_ap\u2026",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.931,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "kpi_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_kpi_detail",
+     "qual": "get_kpi_detail",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 419,
+     "args": {
+      "kpi_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA480>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 380.705,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/mappings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 888.142,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_kpi_mappings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_kpi_mappings.id AS dh_kpi_mappings_id, dh_kpi_mappings.kpi_id AS dh_kpi_mappings_kpi_id, dh_kpi_mappings.source_id AS dh_kpi_mappings_source_id, dh_kpi_mappings.source_field_id AS dh_kpi_mappings_source_field_id, dh_kpi_mappings.priority_order AS dh_kpi_mappings_priority_order, dh_kpi_mappings.is_active AS dh_kpi_mappings_is_active, dh_kpi_mappings.tran\u2026",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 83.147,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_kpi_mappings.id AS dh_kpi_mappings_id, dh_kpi_mappings.kpi_id AS dh_kpi_mappings_kpi_id, dh_kpi_mappings.source_id AS dh_kpi_mappings_source_id, dh_kpi_mappings.source_field_id AS dh_kpi_mappings_source_field_id, dh_kpi_mappings.priority_order AS dh_kpi_mappings_priority_order, dh_kpi_mappings.is_active AS dh_kpi_mappings_is_active, dh_kpi_mappings.transform_formula AS dh_kpi_mappings_\u2026",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.322,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "kpi_id": "None (default)",
+    "source_id": "None (default)",
+    "is_active": "None (default)",
+    "limit": "200 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "mappings"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "list_mappings",
+     "qual": "list_mappings",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 588,
+     "args": {
+      "kpi_id": "None",
+      "source_id": "None",
+      "is_active": "None",
+      "limit": "200",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA7E0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'mappings': []}",
+     "dur_ms": 607.442,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/module-coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2533.595,
+   "node_count": 19,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_application_kpis",
+    "dh_kpi_mappings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_application_kpis.id AS dh_application_kpis_id, dh_application_kpis.name AS dh_application_kpis_name, dh_application_kpis.slug AS dh_application_kpis_slug, dh_application_kpis.category AS dh_application_kpis_category, dh_application_kpis.sub_category AS dh_application_kpis_sub_category, dh_application_kpis.description AS dh_application_kpis_description, dh_application_kpis.unit AS dh_ap\u2026",
+     "tables": [
+      "dh_application_kpis"
+     ],
+     "rowcount": 51,
+     "dur_ms": 227.324,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.kpi_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.798,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 150.0,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.369,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.478,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s, %(kpi_id_1_7)s, %(kpi_id_1_8)s, %(kpi_id_1_9)s, %(kpi_id_1_10)s, %(kpi_id_1_11)s, %(kpi_id_1_12)s, %(kpi_id_1_13)s, %(kpi_id_1_14)s, %(kpi_id_1_15)s, %(kpi_id_1_16)s, %(kpi_id_1_17)s, %(kpi_id_1_18)s, %(kpi\u2026",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.066,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.376,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 419.002,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 55.412,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s, %(kpi_id_1_7)s, %(kpi_id_1_8)s, %(kpi_id_1_9)s, %(kpi_id_1_10)s, %(kpi_id_1_11)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 165.062,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 55.66,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s, %(kpi_id_1_7)s, %(kpi_id_1_8)s, %(kpi_id_1_9)s, %(kpi_id_1_10)s, %(kpi_id_1_11)s, %(kpi_id_1_12)s, %(kpi_id_1_13)s, %(kpi_id_1_14)s, %(kpi_id_1_15)s, %(kpi_id_1_16)s, %(kpi_id_1_17)s, %(kpi_id_1_18)s, %(kpi\u2026",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 35.247,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.934,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.788,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 138.65,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 56.539,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s, %(kpi_id_1_7)s, %(kpi_id_1_8)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.611,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 40.988,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT DISTINCT dh_kpi_mappings.source_id FROM dh_kpi_mappings WHERE dh_kpi_mappings.kpi_id IN (%(kpi_id_1_1)s, %(kpi_id_1_2)s, %(kpi_id_1_3)s, %(kpi_id_1_4)s, %(kpi_id_1_5)s, %(kpi_id_1_6)s, %(kpi_id_1_7)s, %(kpi_id_1_8)s) AND dh_kpi_mappings.is_active = true'",
+     "tables": [
+      "dh_kpi_mappings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.005,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "modules",
+     "total_kpis",
+     "total_mapped"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_module_coverage",
+     "qual": "get_module_coverage",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 778,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A8464E0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'modules': [{'module': 'carbon_calculator', 'total_kpis': 6, 'mapped_kpis': 0, 'coverage_pct': 0.0, 'source_count': 0}, {'module': 'cbam_calculator', 'total_kpis': 2, 'mapped_kpis': 0, 'coverage_pct': 0.0, 'source_count': 0}, {'module': '\u2026",
+     "dur_ms": 1985.177,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 802,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A845630>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x000002393A8443D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/running",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.486,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "running",
+     "count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 31,
+     "name": "get_running_jobs",
+     "qual": "get_running_jobs",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 149,
+     "args": {
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'running': [], 'count': 0}",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 32,
+       "name": "_get_manager",
+       "qual": "_get_manager",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 42,
+       "args": {},
+       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/scheduler",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 5.386,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "available",
+     "running",
+     "scheduled_jobs",
+     "next_runs"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 33,
+     "name": "get_scheduler_status",
+     "qual": "get_scheduler_status",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 209,
+     "args": {
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'available': False, 'running': False, 'scheduled_jobs': [], 'next_runs': []}",
+     "dur_ms": 5.205,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 34,
+       "name": "_get_scheduler",
+       "qual": "_get_scheduler",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 48,
+       "args": {},
+       "ret": "<ingestion.scheduler.IngestionScheduler object at 0x000002393A860050>",
+       "dur_ms": 5.175,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/source-fields",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 809.202,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_source_fields"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_source_fields.id AS dh_source_fields_id, dh_source_fields.source_id AS dh_source_fields_source_id, dh_source_fields.field_name AS dh_source_fields_field_name, dh_source_fields.field_path AS dh_source_fields_field_path, dh_source_fields.data_type AS dh_source_fields_data_type, dh_source_fields.description AS dh_source_fields_description, dh_source_fields\u2026",
+     "tables": [
+      "dh_source_fields"
+     ],
+     "rowcount": 1,
+     "dur_ms": 76.505,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_source_fields.id AS dh_source_fields_id, dh_source_fields.source_id AS dh_source_fields_source_id, dh_source_fields.field_name AS dh_source_fields_field_name, dh_source_fields.field_path AS dh_source_fields_field_path, dh_source_fields.data_type AS dh_source_fields_data_type, dh_source_fields.description AS dh_source_fields_description, dh_source_fields.unit AS dh_source_fields_unit, d\u2026",
+     "tables": [
+      "dh_source_fields"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.453,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "None (default)",
+    "search": "None (default)",
+    "limit": "200 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "fields"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "list_source_fields",
+     "qual": "list_source_fields",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 503,
+     "args": {
+      "source_id": "None",
+      "search": "None",
+      "limit": "200",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B60>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'fields': []}",
+     "dur_ms": 776.006,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 673.509,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_data_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_data_sources.id AS dh_data_sources_id, dh_data_sources.name AS dh_data_sources_name, dh_data_sources.category AS dh_data_sources_category, dh_data_sources.sub_category AS dh_data_sources_sub_category, dh_data_sources.description AS dh_data_sources_description, dh_data_sources.rationale AS dh_data_sources_rationale, dh_data_sources.access_type AS dh_data\u2026",
+     "tables": [
+      "dh_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 85.01,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_data_sources.id AS dh_data_sources_id, dh_data_sources.name AS dh_data_sources_name, dh_data_sources.category AS dh_data_sources_category, dh_data_sources.sub_category AS dh_data_sources_sub_category, dh_data_sources.description AS dh_data_sources_description, dh_data_sources.rationale AS dh_data_sources_rationale, dh_data_sources.access_type AS dh_data_sources_access_type, dh_data_sou\u2026",
+     "tables": [
+      "dh_data_sources"
+     ],
+     "rowcount": 50,
+     "dur_ms": 346.313,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "category": "None (default)",
+    "sync_enabled": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "sources"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 36,
+     "name": "list_data_sources",
+     "qual": "list_data_sources",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 237,
+     "args": {
+      "category": "None",
+      "sync_enabled": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B90>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 120, 'sources': [{'id': '29b29d02-9e76-4624-96d0-e344bce955c2', 'name': 'ACLED', 'category': 'Geopolitical', 'sub_category': 'Conflict', 'access_type': 'REST API', 'sync_enabled': False, 'sync_schedule': None, 'last_synced_at': N\u2026",
+     "dur_ms": 643.468,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/sources/{source_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Data source not found",
+   "dur_ms": 452.979,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_data_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_data_sources.id AS dh_data_sources_id, dh_data_sources.name AS dh_data_sources_name, dh_data_sources.category AS dh_data_sources_category, dh_data_sources.sub_category AS dh_data_sources_sub_category, dh_data_sources.description AS dh_data_sources_description, dh_data_sources.rationale AS dh_data_sources_rationale, dh_data_sources.access_type AS dh_data_sources_access_type, dh_data_sou\u2026",
+     "tables": [
+      "dh_data_sources"
+     ],
+     "rowcount": 0,
+     "dur_ms": 83.6,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "get_data_source",
+     "qual": "get_data_source",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 278,
+     "args": {
+      "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B00>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 417.844,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "GET /api/v1/ingestion/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1378.074,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_data_sources",
+    "dh_sync_jobs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_data_sources.id AS dh_data_sources_id, dh_data_sources.name AS dh_data_sources_name, dh_data_sources.category AS dh_data_sources_category, dh_data_sources.sub_category AS dh_data_sources_sub_category, dh_data_sources.description AS dh_data_sources_description, dh_data_sources.rationale AS dh_data_sources_rationale, dh_data_sources.access_type AS dh_data\u2026",
+     "tables": [
+      "dh_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 180.196,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_data_sources.id AS dh_data_sources_id, dh_data_sources.name AS dh_data_sources_name, dh_data_sources.category AS dh_data_sources_category, dh_data_sources.sub_category AS dh_data_sources_sub_category, dh_data_sources.description AS dh_data_sources_description, dh_data_sources.rationale AS dh_data_sources_rationale, dh_data_sources.access_type AS dh_data\u2026",
+     "tables": [
+      "dh_data_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.279,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_sync_jobs.id AS dh_sync_jobs_id, dh_sync_jobs.source_id AS dh_sync_jobs_source_id, dh_sync_jobs.triggered_by AS dh_sync_jobs_triggered_by, dh_sync_jobs.status AS dh_sync_jobs_status, dh_sync_jobs.started_at AS dh_sync_jobs_started_at, dh_sync_jobs.completed_at AS dh_sync_jobs_completed_at, dh_sync_jobs.duration_seconds AS dh_sync_jobs_duration_seconds, \u2026",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.44,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_sync_jobs.id AS dh_sync_jobs_id, dh_sync_jobs.source_id AS dh_sync_jobs_source_id, dh_sync_jobs.triggered_by AS dh_sync_jobs_triggered_by, dh_sync_jobs.status AS dh_sync_jobs_status, dh_sync_jobs.started_at AS dh_sync_jobs_started_at, dh_sync_jobs.completed_at AS dh_sync_jobs_completed_at, dh_sync_jobs.duration_seconds AS dh_sync_jobs_duration_seconds, \u2026",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 1,
+     "dur_ms": 37.168,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT source_id, status, completed_at, rows_inserted FROM dh_sync_jobs WHERE id IN ( SELECT DISTINCT ON (source_id) id FROM dh_sync_jobs ORDER BY source_id, created_at DESC )'",
+     "tables": [
+      "dh_sync_jobs"
+     ],
+     "rowcount": 3,
+     "dur_ms": 39.016,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_sources",
+     "enabled_sources",
+     "total_sync_jobs",
+     "failed_jobs",
+     "latest_per_source"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 38,
+     "name": "get_ingestion_stats",
+     "qual": "get_ingestion_stats",
+     "file": "api/v1/routes/ingestion.py",
+     "line": 225,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA7E0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total_sources': 120, 'enabled_sources': 9, 'total_sync_jobs': 4, 'failed_jobs': 1, 'latest_per_source': [{'source_id': 'irena-lcoe-benchmarks', 'status': 'success', 'completed_at': '2026-03-07T01:53:25.489918+00:00', 'rows_inserted': 409\u2026",
+     "dur_ms": 1089.716,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ingestion",
+   "label": "POST /api/v1/ingestion/mappings",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "PUT /api/v1/ingestion/mappings/{mapping_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "DELETE /api/v1/ingestion/mappings/{mapping_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "POST /api/v1/ingestion/source-fields",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "PATCH /api/v1/ingestion/sources/{source_id}/sync-config",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "POST /api/v1/ingestion/trigger",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ingestion",
+   "label": "POST /api/v1/ingestion/trigger-all",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

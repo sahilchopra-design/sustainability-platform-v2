@@ -1,0 +1,801 @@
+{
+ "domain": "sasb-industry",
+ "meta": {
+  "ts": "2026-06-30T14:04:42",
+  "module": "api.v1.routes.sasb_industry",
+  "router_prefix": "/api/v1/sasb",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/esrs-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.458,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esrs_mapping"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_esrs_mapping",
+     "qual": "ref_esrs_mapping",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 129,
+     "args": {},
+     "ret": "{'esrs_mapping': {'GHG Emissions': ['ESRS E1 (Climate Change)'], 'Air Quality': ['ESRS E2 (Pollution)'], 'Energy Management': ['ESRS E1 (Climate Change)'], 'Water Management': ['ESRS E3 (Water & Marine Resources)'], 'Biodiversity Impacts':\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_esrs_mapping",
+       "qual": "SASBIndustryEngine.get_esrs_mapping",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1045,
+       "args": {},
+       "ret": "{'GHG Emissions': ['ESRS E1 (Climate Change)'], 'Air Quality': ['ESRS E2 (Pollution)'], 'Energy Management': ['ESRS E1 (Climate Change)'], 'Water Management': ['ESRS E3 (Water & Marine Resources)'], 'Biodiversity Impacts': ['ESRS E4 (Biodi\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/gri-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.238,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "gri_mapping"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_gri_mapping",
+     "qual": "ref_gri_mapping",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 123,
+     "args": {},
+     "ret": "{'gri_mapping': {'GHG Emissions': ['GRI 305-1', 'GRI 305-2', 'GRI 305-3', 'GRI 305-4', 'GRI 305-5'], 'Air Quality': ['GRI 305-7'], 'Energy Management': ['GRI 302-1', 'GRI 302-2', 'GRI 302-3', 'GRI 302-4'], 'Water Management': ['GRI 303-1',\u2026",
+     "dur_ms": 0.048,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_gri_mapping",
+       "qual": "SASBIndustryEngine.get_gri_mapping",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1040,
+       "args": {},
+       "ret": "{'GHG Emissions': ['GRI 305-1', 'GRI 305-2', 'GRI 305-3', 'GRI 305-4', 'GRI 305-5'], 'Air Quality': ['GRI 305-7'], 'Energy Management': ['GRI 302-1', 'GRI 302-2', 'GRI 302-3', 'GRI 302-4'], 'Water Management': ['GRI 303-1', 'GRI 303-2', 'G\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/industry-codes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.934,
+   "node_count": 22,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "industry_codes"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_industry_codes",
+     "qual": "ref_industry_codes",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 104,
+     "args": {},
+     "ret": "{'industry_codes': [{'code': 'EM-CO', 'name': 'Coal Operations', 'sector': 'Extractives & Minerals Processing', 'topic_count': 6}, {'code': 'EM-EP', 'name': 'Oil & Gas \u2014 Exploration & Production', 'sector': 'Extractives & Minerals Processi\u2026",
+     "dur_ms": 0.715,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_industry_codes",
+       "qual": "SASBIndustryEngine.get_industry_codes",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1016,
+       "args": {},
+       "ret": "[{'code': 'EM-CO', 'name': 'Coal Operations', 'sector': 'Extractives & Minerals Processing', 'topic_count': 6}, {'code': 'EM-EP', 'name': 'Oil & Gas \u2014 Exploration & Production', 'sector': 'Extractives & Minerals Processing', 'topic_count':\u2026",
+       "dur_ms": 0.632,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'EM-CO', 'name': 'Coal Operations', 'sector': 'Extractives & Minerals Processing', 'topic_count': 6}"
+         },
+         "ret": "'EM-CO'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'EM-EP', 'name': 'Oil & Gas \u2014 Exploration & Production', 'sector': 'Extractives & Minerals Processing', 'topic_count': 8}"
+         },
+         "ret": "'EM-EP'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'EM-MD', 'name': 'Oil & Gas \u2014 Midstream', 'sector': 'Extractives & Minerals Processing', 'topic_count': 5}"
+         },
+         "ret": "'EM-MD'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'EM-RM', 'name': 'Oil & Gas \u2014 Refining & Marketing', 'sector': 'Extractives & Minerals Processing', 'topic_count': 6}"
+         },
+         "ret": "'EM-RM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'EM-MM', 'name': 'Metals & Mining', 'sector': 'Extractives & Minerals Processing', 'topic_count': 8}"
+         },
+         "ret": "'EM-MM'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'IF-EU', 'name': 'Electric Utilities & Power Generators', 'sector': 'Infrastructure', 'topic_count': 7}"
+         },
+         "ret": "'IF-EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'IF-GU', 'name': 'Gas Utilities & Distributors', 'sector': 'Infrastructure', 'topic_count': 4}"
+         },
+         "ret": "'IF-GU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'IF-RE', 'name': 'Real Estate', 'sector': 'Infrastructure', 'topic_count': 4}"
+         },
+         "ret": "'IF-RE'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'IF-EN', 'name': 'Engineering & Construction Services', 'sector': 'Infrastructure', 'topic_count': 5}"
+         },
+         "ret": "'IF-EN'",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'FN-CB', 'name': 'Commercial Banks', 'sector': 'Financials', 'topic_count': 5}"
+         },
+         "ret": "'FN-CB'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'FN-IN', 'name': 'Insurance', 'sector': 'Financials', 'topic_count': 4}"
+         },
+         "ret": "'FN-IN'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'FN-AC', 'name': 'Asset Management & Custody Activities', 'sector': 'Financials', 'topic_count': 3}"
+         },
+         "ret": "'FN-AC'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'TR-AU', 'name': 'Automobiles', 'sector': 'Transportation', 'topic_count': 5}"
+         },
+         "ret": "'TR-AU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'TR-TR', 'name': 'Road Transportation', 'sector': 'Transportation', 'topic_count': 4}"
+         },
+         "ret": "'TR-TR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'TR-MT', 'name': 'Marine Transportation', 'sector': 'Transportation', 'topic_count': 4}"
+         },
+         "ret": "'TR-MT'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'TR-AL', 'name': 'Airlines', 'sector': 'Transportation', 'topic_count': 4}"
+         },
+         "ret": "'TR-AL'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'RT-CH', 'name': 'Chemicals', 'sector': 'Resource Transformation', 'topic_count': 6}"
+         },
+         "ret": "'RT-CH'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'FB-AG', 'name': 'Agricultural Products', 'sector': 'Food & Beverage', 'topic_count': 6}"
+         },
+         "ret": "'FB-AG'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'FB-PF', 'name': 'Processed Foods', 'sector': 'Food & Beverage', 'topic_count': 5}"
+         },
+         "ret": "'FB-PF'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<lambda>",
+         "qual": "SASBIndustryEngine.get_industry_codes.<locals>.<lambda>",
+         "file": "services/sasb_industry_engine.py",
+         "line": 1028,
+         "args": {
+          "x": "{'code': 'RR-RE', 'name': 'Solar & Wind Energy', 'sector': 'Renewable Resources & Alternative Energy', 'topic_count': 5}"
+         },
+         "ret": "'RR-RE'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/issb-s2-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.495,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "issb_s2_mapping"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "ref_issb_s2_mapping",
+     "qual": "ref_issb_s2_mapping",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 117,
+     "args": {},
+     "ret": "{'issb_s2_mapping': {'EM-CO': {'ifrs_s2_appendix_b_paras': ['B4', 'B5'], 'cross_industry_metrics': ['Scope 1 absolute (S2 \u00a729a)', 'Scope 2 absolute (S2 \u00a729b)', 'Transition risk exposure as % revenue (S2 Appendix B)']}, 'EM-EP': {'ifrs_s2_a\u2026",
+     "dur_ms": 0.242,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 28,
+       "name": "get_issb_s2_mapping",
+       "qual": "SASBIndustryEngine.get_issb_s2_mapping",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1035,
+       "args": {},
+       "ret": "{'EM-CO': {'ifrs_s2_appendix_b_paras': ['B4', 'B5'], 'cross_industry_metrics': ['Scope 1 absolute (S2 \u00a729a)', 'Scope 2 absolute (S2 \u00a729b)', 'Transition risk exposure as % revenue (S2 Appendix B)']}, 'EM-EP': {'ifrs_s2_appendix_b_paras': ['\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/materiality-map/{code}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.308,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "code": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sasb_industry_code",
+     "materiality_map"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "ref_materiality_map",
+     "qual": "ref_materiality_map",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 110,
+     "args": {
+      "code": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'sasb_industry_code': '550e8400-e29b-41d4-a716-446655440001', 'materiality_map': []}",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "get_materiality_map",
+       "qual": "SASBIndustryEngine.get_materiality_map",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1030,
+       "args": {
+        "sasb_industry_code": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "[]",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/sector-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.251,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_benchmarks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 31,
+     "name": "ref_sector_benchmarks",
+     "qual": "ref_sector_benchmarks",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 135,
+     "args": {},
+     "ret": "{'sector_benchmarks': {'EM-CO': {'scope_1_intensity_tco2e_per_kt': 1250.0, 'water_intensity_m3_per_kt': 3.5, 'trir': 1.8, 'completeness_pct': 65.0}, 'EM-EP': {'scope_1_intensity_tco2e_per_boe': 0.042, 'methane_intensity_pct': 0.2, 'trir': \u2026",
+     "dur_ms": 0.062,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 32,
+       "name": "get_sector_benchmarks",
+       "qual": "SASBIndustryEngine.get_sector_benchmarks",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1050,
+       "args": {},
+       "ret": "{'EM-CO': {'scope_1_intensity_tco2e_per_kt': 1250.0, 'water_intensity_m3_per_kt': 3.5, 'trir': 1.8, 'completeness_pct': 65.0}, 'EM-EP': {'scope_1_intensity_tco2e_per_boe': 0.042, 'methane_intensity_pct': 0.2, 'trir': 0.6, 'completeness_pct\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "GET /api/v1/sasb/ref/sics-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.394,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sics_sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 33,
+     "name": "ref_sics_sectors",
+     "qual": "ref_sics_sectors",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 98,
+     "args": {},
+     "ret": "{'sics_sectors': {'extractives_minerals': {'label': 'Extractives & Minerals Processing', 'industries': {'EM-CO': {'name': 'Coal Operations', 'topic_count': 6, 'key_topics': ['GHG Emissions', 'Water Management', 'Waste & Hazardous Materials\u2026",
+     "dur_ms": 0.162,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 34,
+       "name": "get_sics_sectors",
+       "qual": "SASBIndustryEngine.get_sics_sectors",
+       "file": "services/sasb_industry_engine.py",
+       "line": 1011,
+       "args": {},
+       "ret": "{'extractives_minerals': {'label': 'Extractives & Minerals Processing', 'industries': {'EM-CO': {'name': 'Coal Operations', 'topic_count': 6, 'key_topics': ['GHG Emissions', 'Water Management', 'Waste & Hazardous Materials', 'Biodiversity \u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "POST /api/v1/sasb/assess-industry",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.288,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "assess_industry",
+     "qual": "assess_industry",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 55,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 36,
+       "name": "__init__",
+       "qual": "SASBIndustryEngine.__init__",
+       "file": "services/sasb_industry_engine.py",
+       "line": 564,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "POST /api/v1/sasb/assess-materiality",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.238,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "assess_materiality",
+     "qual": "assess_materiality",
+     "file": "api/v1/routes/sasb_industry.py",
+     "line": 68,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 38,
+       "name": "__init__",
+       "qual": "SASBIndustryEngine.__init__",
+       "file": "services/sasb_industry_engine.py",
+       "line": 564,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sasb-industry",
+   "label": "POST /api/v1/sasb/compare-peers",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

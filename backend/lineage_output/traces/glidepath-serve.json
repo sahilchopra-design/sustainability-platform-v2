@@ -1,0 +1,823 @@
+{
+ "domain": "glidepath-serve",
+ "meta": {
+  "ts": "2026-06-30T14:02:35",
+  "module": "api.v1.routes.glidepath_serve",
+  "router_prefix": "/api/v1/glidepaths",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "glidepath-serve",
+   "label": "GET /api/v1/glidepaths/crrem/{country}/{asset_type}",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Asset type '550e8400-e29b-41d4-a716-446655440001' not found. Available: ['office', 'retail', 'residential', 'hotel', 'logistics']",
+   "dur_ms": 4138.139,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_crrem_pathways"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT year, carbon_intensity_kgco2_m2, energy_intensity_kwh_m2 FROM dh_crrem_pathways WHERE LOWER(property_type) = %(ptype)s AND country_iso3 = %(country_iso3)s AND scenario = %(scenario)s ORDER BY year'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 0,
+     "dur_ms": 484.862,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "asset_type": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "scenario": "'1.5C' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_crrem_pathway",
+     "qual": "get_crrem_pathway",
+     "file": "api/v1/routes/glidepath_serve.py",
+     "line": 153,
+     "args": {
+      "country": "'550e8400-e29b-41d4-a716-446655440001'",
+      "asset_type": "'550e8400-e29b-41d4-a716-446655440001'",
+      "scenario": "'1.5C'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001FDAFB5E0F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001FDAFB4BCE0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 3692.096,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "glidepath-serve",
+   "label": "GET /api/v1/glidepaths/nze/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 905.131,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 81.545,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.865,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "scenario": "'Net Zero 2050' (default)",
+    "model": "None (default)",
+    "region": "'World' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "scenario",
+     "region",
+     "variable_pattern",
+     "data_points",
+     "glidepath_series"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_nze_glidepath",
+     "qual": "get_nze_glidepath",
+     "file": "api/v1/routes/glidepath_serve.py",
+     "line": 89,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+      "scenario": "'Net Zero 2050'",
+      "model": "None",
+      "region": "'World'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001FDAFB5DDF0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001FDAFB4BB00>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'scenario': 'Net Zero 2050', 'region': 'World', 'variable_pattern': 'Emissions|CO2', 'data_points': 0, 'glidepath_series': []}",
+     "dur_ms": 873.014,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "glidepath-serve",
+   "label": "GET /api/v1/glidepaths/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1848.532,
+   "node_count": 17,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_crrem_pathways"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT DISTINCT property_type FROM dh_crrem_pathways ORDER BY property_type'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 7,
+     "dur_ms": 601.817,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT DISTINCT country_iso3 FROM dh_crrem_pathways ORDER BY country_iso3'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 9,
+     "dur_ms": 41.638,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ngfs_sectors",
+     "crrem_asset_types",
+     "crrem_countries",
+     "crrem_source"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "list_glidepath_sectors",
+     "qual": "list_glidepath_sectors",
+     "file": "api/v1/routes/glidepath_serve.py",
+     "line": 242,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001FDB007BE00>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001FDAFC68900>, use_cache=True, scope=None)"
+     },
+     "ret": "{'ngfs_sectors': ['Energy', 'Utilities', 'Materials', 'Industrials', 'Transport', 'Buildings', 'Agriculture'], 'crrem_asset_types': ['healthcare', 'hotel', 'industrial', 'logistics', 'multifamily', 'office', 'retail'], 'crrem_countries': [\u2026",
+     "dur_ms": 1815.804,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'SG'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'NL'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "list_glidepath_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 254,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA57B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath-serve",
+   "label": "GET /api/v1/glidepaths/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1082.691,
+   "node_count": 17,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_crrem_pathways",
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(dh_ngfs_scenario_data.id) AS count_1 FROM dh_ngfs_scenario_data WHERE dh_ngfs_scenario_data.variable ILIKE %(variable_1)s'",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 69.714,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(dh_ngfs_scenario_data.id) AS count_1 FROM dh_ngfs_scenario_data WHERE dh_ngfs_scenario_data.variable ILIKE %(variable_1)s'",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.346,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) FROM dh_crrem_pathways'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.744,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(DISTINCT property_type) FROM dh_crrem_pathways'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.811,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_crrem_pathways'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.321,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ngfs_emission_records",
+     "ngfs_carbon_price_records",
+     "crrem_records",
+     "crrem_asset_types",
+     "crrem_countries",
+     "crrem_source"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "glidepath_stats",
+     "qual": "glidepath_stats",
+     "file": "api/v1/routes/glidepath_serve.py",
+     "line": 280,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001FDB00B6630>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001FDAFC68D60>, use_cache=True, scope=None)"
+     },
+     "ret": "{'ngfs_emission_records': 0, 'ngfs_carbon_price_records': 0, 'crrem_records': 3906, 'crrem_asset_types': 7, 'crrem_countries': 9, 'crrem_source': 'live'}",
+     "dur_ms": 1050.319,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'SG'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'NL'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'US'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'DE'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "'GB'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "glidepath_stats.<locals>.<genexpr>",
+       "file": "api/v1/routes/glidepath_serve.py",
+       "line": 299,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001FDAFCA7600>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

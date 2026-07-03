@@ -1,0 +1,420 @@
+{
+ "domain": "sscf",
+ "meta": {
+  "ts": "2026-06-30T14:05:17",
+  "module": "api.v1.routes.sscf",
+  "router_prefix": "/api/v1/sscf",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "sscf",
+   "label": "GET /api/v1/sscf/ref/kpi-library",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.535,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "kpi_library",
+     "kpi_count",
+     "grouped_by_category",
+     "environmental_kpi_count",
+     "social_kpi_count",
+     "governance_kpi_count",
+     "verification_required_kpis",
+     "sbt_aligned_kpis"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_kpi_library_ref",
+     "qual": "get_kpi_library_ref",
+     "file": "api/v1/routes/sscf.py",
+     "line": 70,
+     "args": {},
+     "ret": "{'kpi_library': {'SK001': {'id': 'SK001', 'group': 'Environmental', 'name': 'GHG Emissions Intensity', 'description': 'tCO2e per USD 1m revenue \u2014 Scope 1 + 2 market-based', 'unit': 'tCO2e / USD 1m revenue', 'data_source': 'GHG Protocol Cor\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "GET /api/v1/sscf/ref/oecd-ddg",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.607,
+   "node_count": 7,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "oecd_ddg_5_steps",
+     "step_count",
+     "total_weight_pct",
+     "csddd_adverse_impact_categories",
+     "csddd_human_rights_categories",
+     "csddd_environmental_categories",
+     "cascade_applicable_categories",
+     "reference_standards"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_oecd_ddg_ref",
+     "qual": "get_oecd_ddg_ref",
+     "file": "api/v1/routes/sscf.py",
+     "line": 139,
+     "args": {},
+     "ret": "{'oecd_ddg_5_steps': {'step_1_management_systems': {'step': 1, 'name': 'Embed Responsible Business Conduct into Policies and Management Systems', 'description': 'Establish a supply chain policy aligned with OECD MNE Guidelines, UNGP and IL\u2026",
+     "dur_ms": 0.433,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "20",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "25",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "25",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "20",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "10",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "get_oecd_ddg_ref.<locals>.<genexpr>",
+       "file": "api/v1/routes/sscf.py",
+       "line": 157,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001E8E2639350>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "GET /api/v1/sscf/ref/sector-risk-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.073,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_risk_profiles",
+     "sector_count",
+     "sector_ids",
+     "risk_tier_distribution",
+     "eudr_exposed_sectors",
+     "cahra_exposed_sectors",
+     "conflict_mineral_sectors"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_sector_risk_profiles_ref",
+     "qual": "get_sector_risk_profiles_ref",
+     "file": "api/v1/routes/sscf.py",
+     "line": 102,
+     "args": {},
+     "ret": "{'sector_risk_profiles': {'textiles': {'name': 'Textiles, Apparel and Footwear', 'nace_code': 'C13-C15', 'inherent_risk_tier': 'very_high', 'primary_risks': ['forced_labour', 'child_labour', 'chemical_pollution', 'water_intensity'], 'cahra\u2026",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "GET /api/v1/sscf/ref/sscf-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.396,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "framework_count",
+     "framework_ids"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_sscf_frameworks_ref",
+     "qual": "get_sscf_frameworks_ref",
+     "file": "api/v1/routes/sscf.py",
+     "line": 49,
+     "args": {},
+     "ret": "{'frameworks': {'LMA_SSCF_2023': {'name': 'LMA / APLMA Sustainable Supply Chain Finance Framework 2023', 'issuer': 'Loan Market Association / Asia Pacific Loan Market Association', 'published': '2023-Q3', 'core_components': [{'id': 'GLP-1'\u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "POST /api/v1/sscf/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'sscf_framework'",
+   "dur_ms": 1.885,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_programme",
+     "qual": "assess_programme",
+     "file": "api/v1/routes/sscf.py",
+     "line": 179,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "POST /api/v1/sscf/dynamic-discount",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'buyer_wacc_pct'",
+   "dur_ms": 9.204,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "compute_dynamic_discount",
+     "qual": "compute_dynamic_discount",
+     "file": "api/v1/routes/sscf.py",
+     "line": 283,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 7.477,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "POST /api/v1/sscf/margin-ratchet",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'spts_met'",
+   "dur_ms": 4.12,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "compute_margin_ratchet",
+     "qual": "compute_margin_ratchet",
+     "file": "api/v1/routes/sscf.py",
+     "line": 248,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sscf",
+   "label": "POST /api/v1/sscf/supplier-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'kpi_data'",
+   "dur_ms": 2.531,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "compute_supplier_score",
+     "qual": "compute_supplier_score",
+     "file": "api/v1/routes/sscf.py",
+     "line": 221,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

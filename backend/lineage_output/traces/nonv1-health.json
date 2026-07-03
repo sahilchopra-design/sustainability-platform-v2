@@ -1,0 +1,36 @@
+{
+ "domain": "nonv1-health",
+ "meta": {
+  "ts": "2026-06-30T14:26:17",
+  "endpoints": 1,
+  "source": "server.app",
+  "predicate": "nonv1-health"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-health",
+   "label": "GET /api/health",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.199,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "timestamp"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

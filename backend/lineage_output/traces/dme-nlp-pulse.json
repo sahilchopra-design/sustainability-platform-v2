@@ -1,0 +1,172 @@
+{
+ "domain": "dme-nlp-pulse",
+ "meta": {
+  "ts": "2026-06-30T14:00:54",
+  "module": "api.v1.routes.dme_nlp_pulse",
+  "router_prefix": "/api/v1/dme-nlp-pulse",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "dme-nlp-pulse",
+   "label": "GET /api/v1/dme-nlp-pulse/ref/event-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.482,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "type",
+     "half_life_hours"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_event_types",
+     "qual": "get_event_types",
+     "file": "api/v1/routes/dme_nlp_pulse.py",
+     "line": 39,
+     "args": {},
+     "ret": "[{'type': 'breaking_news', 'half_life_hours': 12.0}, {'type': 'regulatory_enforcement', 'half_life_hours': 168.0}, {'type': 'investigative_journalism', 'half_life_hours': 336.0}, {'type': 'industry_policy_shift', 'half_life_hours': 2160.0}\u2026",
+     "dur_ms": 0.147,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_reference_data",
+       "qual": "NLPPulseEngine.get_reference_data",
+       "file": "services/dme_nlp_pulse_engine.py",
+       "line": 209,
+       "args": {},
+       "ret": "{'event_types': [{'type': 'breaking_news', 'half_life_hours': 12.0}, {'type': 'regulatory_enforcement', 'half_life_hours': 168.0}, {'type': 'investigative_journalism', 'half_life_hours': 336.0}, {'type': 'industry_policy_shift', 'half_life\u2026",
+       "dur_ms": 0.082,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-nlp-pulse",
+   "label": "GET /api/v1/dme-nlp-pulse/ref/source-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.291,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "tier",
+     "name",
+     "credibility"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_source_tiers",
+     "qual": "get_source_tiers",
+     "file": "api/v1/routes/dme_nlp_pulse.py",
+     "line": 46,
+     "args": {},
+     "ret": "[{'tier': 1, 'name': 'TIER1_INSTITUTIONAL', 'credibility': 0.95}, {'tier': 2, 'name': 'TIER2_SPECIALIST', 'credibility': 0.7}, {'tier': 3, 'name': 'TIER3_BROAD_MEDIA', 'credibility': 0.4}, {'tier': 4, 'name': 'TIER4_SOCIAL', 'credibility':\u2026",
+     "dur_ms": 0.101,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_reference_data",
+       "qual": "NLPPulseEngine.get_reference_data",
+       "file": "services/dme_nlp_pulse_engine.py",
+       "line": 209,
+       "args": {},
+       "ret": "{'event_types': [{'type': 'breaking_news', 'half_life_hours': 12.0}, {'type': 'regulatory_enforcement', 'half_life_hours': 168.0}, {'type': 'investigative_journalism', 'half_life_hours': 336.0}, {'type': 'industry_policy_shift', 'half_life\u2026",
+       "dur_ms": 0.059,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-nlp-pulse",
+   "label": "POST /api/v1/dme-nlp-pulse/apply-decay",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-nlp-pulse",
+   "label": "POST /api/v1/dme-nlp-pulse/process-batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-nlp-pulse",
+   "label": "POST /api/v1/dme-nlp-pulse/process-signal",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

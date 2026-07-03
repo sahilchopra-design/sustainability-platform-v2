@@ -1,0 +1,3608 @@
+{
+ "domain": "real-estate-carbon-analytics",
+ "meta": {
+  "ts": "2026-06-30T14:04:26",
+  "module": "api.v1.routes.real_estate_carbon_analytics",
+  "router_prefix": "/api/v1/real-estate-carbon-analytics",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "GET /api/v1/real-estate-carbon-analytics/properties",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2341.239,
+   "node_count": 81,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ep_recarb1_properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ep_recarb1_properties.id AS ep_recarb1_properties_id, ep_recarb1_properties.ref AS ep_recarb1_properties_ref, ep_recarb1_properties.name AS ep_recarb1_properties_name, ep_recarb1_properties.category AS ep_recarb1_properties_category, ep_recarb1_properties.value AS ep_recarb1_properties_value, ep_recarb1_properties.payload AS ep_recarb1_properties_payload, ep_recarb1_properties.created_at \u2026",
+     "tables": [
+      "ep_recarb1_properties"
+     ],
+     "rowcount": 80,
+     "dur_ms": 135.433,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 80,
+    "item0_keys": [
+     "id",
+     "ref",
+     "name",
+     "category",
+     "value",
+     "sector",
+     "region",
+     "epc",
+     "epcIdx",
+     "gia",
+     "age",
+     "ownershipPct",
+     "a1a3",
+     "a4a5",
+     "bLifeMaint"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_properties",
+     "qual": "list_properties",
+     "file": "api/v1/routes/real_estate_carbon_analytics.py",
+     "line": 24,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000273D240F920>"
+     },
+     "ret": "[{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 2\u2026",
+     "dur_ms": 2042.764,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 24\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 2, 'ref': 'Asset-002', 'name': 'Asset-002', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'North West', 'epc': 'A', 'epcIdx': 0, 'gia': 2987, 'age': 1966, 'ownershipPct': 70, 'a1a3': 391, 'a4a5': 113, 'bLifeMai\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 3, 'ref': 'Asset-003', 'name': 'Asset-003', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'South West', 'epc': 'F', 'epcIdx': 5, 'gia': 3879, 'age': 2003, 'ownershipPct': 41, 'a1a3': 407, 'a4a5': 87, 'bLifeMaint'\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 4, 'ref': 'Asset-004', 'name': 'Asset-004', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'South West', 'epc': 'A', 'epcIdx': 0, 'gia': 5880, 'age': 2016, 'ownershipPct': 98, 'a1a3': 258, 'a4a5': 53, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 5, 'ref': 'Asset-005', 'name': 'Asset-005', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 3461, 'age': 1963, 'ownershipPct': 7, 'a1a3': 432, 'a4a5': 106, 'bLifeMaint': \u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 6, 'ref': 'Asset-006', 'name': 'Asset-006', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8603, 'age': 1995, 'ownershipPct': 71, 'a1a3': 305, 'a4a5': 88, 'bLifeMaint': 22\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 7, 'ref': 'Asset-007', 'name': 'Asset-007', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'G', 'epcIdx': 6, 'gia': 17783, 'age': 2008, 'ownershipPct': 67, 'a1a3': 319, 'a4a5': 81, 'bLifeMaint': \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 8, 'ref': 'Asset-008', 'name': 'Asset-008', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 2681, 'age': 1986, 'ownershipPct': 24, 'a1a3': 366, 'a4a5': 77, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 9, 'ref': 'Asset-009', 'name': 'Asset-009', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 17181, 'age': 1965, 'ownershipPct': 42, 'a1a3': 403, 'a4a5': 113, 'bLifeMain\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 10, 'ref': 'Asset-010', 'name': 'Asset-010', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'North West', 'epc': 'D', 'epcIdx': 3, 'gia': 16034, 'age': 2000, 'ownershipPct': 13, 'a1a3': 381, 'a4a5': 87, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 11, 'ref': 'Asset-011', 'name': 'Asset-011', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'G', 'epcIdx': 6, 'gia': 18219, 'age': 1962, 'ownershipPct': 19, 'a1a3': 447, 'a4a5': 98, 'bLifeMai\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 12, 'ref': 'Asset-012', 'name': 'Asset-012', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'South East', 'epc': 'F', 'epcIdx': 5, 'gia': 15385, 'age': 2022, 'ownershipPct': 47, 'a1a3': 436, 'a4a5': 93, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 13, 'ref': 'Asset-013', 'name': 'Asset-013', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Scotland', 'epc': 'D', 'epcIdx': 3, 'gia': 986, 'age': 1953, 'ownershipPct': 58, 'a1a3': 358, 'a4a5': 69, 'bLifeMaint': 161\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 14, 'ref': 'Asset-014', 'name': 'Asset-014', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'South West', 'epc': 'D', 'epcIdx': 3, 'gia': 10413, 'age': 1982, 'ownershipPct': 40, 'a1a3': 255, 'a4a5': 68, 'bLifeMai\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 15, 'ref': 'Asset-015', 'name': 'Asset-015', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'F', 'epcIdx': 5, 'gia': 18183, 'age': 1951, 'ownershipPct': 78, 'a1a3': 450, 'a4a5': 97, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 16, 'ref': 'Asset-016', 'name': 'Asset-016', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Wales', 'epc': 'C', 'epcIdx': 2, 'gia': 18433, 'age': 1984, 'ownershipPct': 66, 'a1a3': 441, 'a4a5': 109, 'bLifeMaint'\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 17, 'ref': 'Asset-017', 'name': 'Asset-017', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Wales', 'epc': 'E', 'epcIdx': 4, 'gia': 530, 'age': 2015, 'ownershipPct': 74, 'a1a3': 309, 'a4a5': 81, 'bLifeMaint': 155, '\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 18, 'ref': 'Asset-018', 'name': 'Asset-018', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'D', 'epcIdx': 3, 'gia': 9399, 'age': 1961, 'ownershipPct': 98, 'a1a3': 369, 'a4a5': 107, 'bLifeMaint':\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 19, 'ref': 'Asset-019', 'name': 'Asset-019', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'G', 'epcIdx': 6, 'gia': 13104, 'age': 1979, 'ownershipPct': 77, 'a1a3': 298, 'a4a5': 67, 'bLifeMaint': 158\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 20, 'ref': 'Asset-020', 'name': 'Asset-020', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South East', 'epc': 'D', 'epcIdx': 3, 'gia': 7282, 'age': 1970, 'ownershipPct': 17, 'a1a3': 328, 'a4a5': 87, 'bLifeMaint': \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 21, 'ref': 'Asset-021', 'name': 'Asset-021', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'B', 'epcIdx': 1, 'gia': 1131, 'age': 1966, 'ownershipPct': 19, 'a1a3': 465, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 22, 'ref': 'Asset-022', 'name': 'Asset-022', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South East', 'epc': 'G', 'epcIdx': 6, 'gia': 2418, 'age': 1952, 'ownershipPct': 22, 'a1a3': 401, 'a4a5': 126, 'bLifeMa\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 23, 'ref': 'Asset-023', 'name': 'Asset-023', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'E', 'epcIdx': 4, 'gia': 8777, 'age': 2000, 'ownershipPct': 30, 'a1a3': 348, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 24, 'ref': 'Asset-024', 'name': 'Asset-024', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Wales', 'epc': 'D', 'epcIdx': 3, 'gia': 3437, 'age': 1962, 'ownershipPct': 98, 'a1a3': 266, 'a4a5': 67, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 25, 'ref': 'Asset-025', 'name': 'Asset-025', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'G', 'epcIdx': 6, 'gia': 3239, 'age': 1956, 'ownershipPct': 88, 'a1a3': 395, 'a4a5': 100, 'bLifeMaint': 158\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 26, 'ref': 'Asset-026', 'name': 'Asset-026', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South East', 'epc': 'G', 'epcIdx': 6, 'gia': 11159, 'age': 1984, 'ownershipPct': 42, 'a1a3': 469, 'a4a5': 90, 'bLifeMa\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 27, 'ref': 'Asset-027', 'name': 'Asset-027', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 14457, 'age': 1965, 'ownershipPct': 38, 'a1a3': 453, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 28, 'ref': 'Asset-028', 'name': 'Asset-028', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8797, 'age': 1995, 'ownershipPct': 66, 'a1a3': 455, 'a4a5': 112, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 29, 'ref': 'Asset-029', 'name': 'Asset-029', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 3030, 'age': 1977, 'ownershipPct': 44, 'a1a3': 436, 'a4a5': 111, 'bLifeMaint': 248\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 30, 'ref': 'Asset-030', 'name': 'Asset-030', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 19654, 'age': 2021, 'ownershipPct': 47, 'a1a3': 292, 'a4a5': 84, 'bLifeMaint': \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 31, 'ref': 'Asset-031', 'name': 'Asset-031', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'F', 'epcIdx': 5, 'gia': 14228, 'age': 2010, 'ownershipPct': 52, 'a1a3': 441, 'a4a5': 105, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 32, 'ref': 'Asset-032', 'name': 'Asset-032', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8300, 'age': 1992, 'ownershipPct': 8, 'a1a3': 463, 'a4a5': 98, 'bLifeMaint': 156\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 33, 'ref': 'Asset-033', 'name': 'Asset-033', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 19751, 'age': 1993, 'ownershipPct': 26, 'a1a3': 335, 'a4a5': 82, 'bLifeMaint': 186\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 34, 'ref': 'Asset-034', 'name': 'Asset-034', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 15449, 'age': 2011, 'ownershipPct': 93, 'a1a3': 357, 'a4a5': 83, 'bLifeMaint': 175\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 35, 'ref': 'Asset-035', 'name': 'Asset-035', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Yorkshire', 'epc': 'F', 'epcIdx': 5, 'gia': 8028, 'age': 2011, 'ownershipPct': 58, 'a1a3': 406, 'a4a5': 89, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 36, 'ref': 'Asset-036', 'name': 'Asset-036', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 11608, 'age': 2006, 'ownershipPct': 24, 'a1a3': 475, 'a4a5': 116, 'bLifeMaint\u2026",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 37, 'ref': 'Asset-037', 'name': 'Asset-037', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'North West', 'epc': 'A', 'epcIdx': 0, 'gia': 7615, 'age': 1988, 'ownershipPct': 13, 'a1a3': 378, 'a4a5': 92, 'bLifeMaint': \u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 38, 'ref': 'Asset-038', 'name': 'Asset-038', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 16489, 'age': 1991, 'ownershipPct': 66, 'a1a3': 231, 'a4a5': 76, 'bLifeMaint':\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 39, 'ref': 'Asset-039', 'name': 'Asset-039', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Midlands', 'epc': 'E', 'epcIdx': 4, 'gia': 1229, 'age': 2018, 'ownershipPct': 48, 'a1a3': 468, 'a4a5': 111, 'bLifeMaint': 24\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 40, 'ref': 'Asset-040', 'name': 'Asset-040', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 17192, 'age': 1971, 'ownershipPct': 68, 'a1a3': 430, 'a4a5': 109, 'bLifeMaint\u2026",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 41, 'ref': 'Asset-041', 'name': 'Asset-041', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 17813, 'age': 2023, 'ownershipPct': 32, 'a1a3': 266, 'a4a5': 65, 'bLifeMaint\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 42, 'ref': 'Asset-042', 'name': 'Asset-042', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'South East', 'epc': 'A', 'epcIdx': 0, 'gia': 5139, 'age': 1964, 'ownershipPct': 71, 'a1a3': 364, 'a4a5': 88, 'bLifeMaint\u2026",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 43, 'ref': 'Asset-043', 'name': 'Asset-043', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 18602, 'age': 2017, 'ownershipPct': 15, 'a1a3': 300, 'a4a5': 80, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 44, 'ref': 'Asset-044', 'name': 'Asset-044', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South West', 'epc': 'B', 'epcIdx': 1, 'gia': 17739, 'age': 1976, 'ownershipPct': 58, 'a1a3': 372, 'a4a5': 115, 'bLifeM\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 45, 'ref': 'Asset-045', 'name': 'Asset-045', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South East', 'epc': 'C', 'epcIdx': 2, 'gia': 2735, 'age': 1981, 'ownershipPct': 55, 'a1a3': 389, 'a4a5': 97, 'bLifeMaint': \u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 46, 'ref': 'Asset-046', 'name': 'Asset-046', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'F', 'epcIdx': 5, 'gia': 585, 'age': 1975, 'ownershipPct': 95, 'a1a3': 375, 'a4a5': 92, 'bLifeMaint': \u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 47, 'ref': 'Asset-047', 'name': 'Asset-047', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'B', 'epcIdx': 1, 'gia': 16814, 'age': 2021, 'ownershipPct': 59, 'a1a3': 411, 'a4a5': 102, 'bLifeMaint': \u2026",
+       "dur_ms": 0.084,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 48, 'ref': 'Asset-048', 'name': 'Asset-048', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 14081, 'age': 1966, 'ownershipPct': 56, 'a1a3': 374, 'a4a5': 81, 'bLifeMaint':\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 49, 'ref': 'Asset-049', 'name': 'Asset-049', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Scotland', 'epc': 'B', 'epcIdx': 1, 'gia': 8494, 'age': 1984, 'ownershipPct': 89, 'a1a3': 382, 'a4a5': 106, 'bLifeMaint'\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 50, 'ref': 'Asset-050', 'name': 'Asset-050', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 1947, 'age': 1990, 'ownershipPct': 50, 'a1a3': 367, 'a4a5': 100, 'bLifeMaint': 185\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 51, 'ref': 'Asset-051', 'name': 'Asset-051', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 3463, 'age': 2018, 'ownershipPct': 74, 'a1a3': 357, 'a4a5': 86, 'bLifeMaint': 21\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 52, 'ref': 'Asset-052', 'name': 'Asset-052', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'F', 'epcIdx': 5, 'gia': 12317, 'age': 1957, 'ownershipPct': 76, 'a1a3': 408, 'a4a5': 88, 'bLifeMaint':\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 53, 'ref': 'Asset-053', 'name': 'Asset-053', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'North West', 'epc': 'G', 'epcIdx': 6, 'gia': 790, 'age': 1969, 'ownershipPct': 34, 'a1a3': 235, 'a4a5': 70, 'bLifeMaint\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 54, 'ref': 'Asset-054', 'name': 'Asset-054', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'F', 'epcIdx': 5, 'gia': 1530, 'age': 1991, 'ownershipPct': 72, 'a1a3': 333, 'a4a5': 99, 'bLifeMaint': 26\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 55, 'ref': 'Asset-055', 'name': 'Asset-055', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'E', 'epcIdx': 4, 'gia': 12507, 'age': 2000, 'ownershipPct': 51, 'a1a3': 363, 'a4a5': 88, 'bLifeMai\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 56, 'ref': 'Asset-056', 'name': 'Asset-056', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 3490, 'age': 2023, 'ownershipPct': 74, 'a1a3': 398, 'a4a5': 86, 'bLifeMaint': 23\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 57, 'ref': 'Asset-057', 'name': 'Asset-057', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'C', 'epcIdx': 2, 'gia': 12817, 'age': 2004, 'ownershipPct': 22, 'a1a3': 351, 'a4a5': 113, 'bLifeMaint': 28\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 58, 'ref': 'Asset-058', 'name': 'Asset-058', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'North West', 'epc': 'F', 'epcIdx': 5, 'gia': 19158, 'age': 1970, 'ownershipPct': 26, 'a1a3': 481, 'a4a5': 105, 'bLifeMaint':\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 59, 'ref': 'Asset-059', 'name': 'Asset-059', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'North West', 'epc': 'C', 'epcIdx': 2, 'gia': 11425, 'age': 1992, 'ownershipPct': 32, 'a1a3': 402, 'a4a5': 116, 'bLifeMaint':\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 60, 'ref': 'Asset-060', 'name': 'Asset-060', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'F', 'epcIdx': 5, 'gia': 1587, 'age': 1995, 'ownershipPct': 12, 'a1a3': 402, 'a4a5': 104, 'bLifeMaint'\u2026",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 61, 'ref': 'Asset-061', 'name': 'Asset-061', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 2744, 'age': 1977, 'ownershipPct': 15, 'a1a3': 404, 'a4a5': 96, 'bLifeMaint': 178\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 62, 'ref': 'Asset-062', 'name': 'Asset-062', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'D', 'epcIdx': 3, 'gia': 957, 'age': 2014, 'ownershipPct': 36, 'a1a3': 348, 'a4a5': 85, 'bLifeMaint': 220\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 63, 'ref': 'Asset-063', 'name': 'Asset-063', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 11180, 'age': 2007, 'ownershipPct': 19, 'a1a3': 430, 'a4a5': 114, 'bLifeMaint':\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 64, 'ref': 'Asset-064', 'name': 'Asset-064', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Yorkshire', 'epc': 'G', 'epcIdx': 6, 'gia': 9319, 'age': 2013, 'ownershipPct': 18, 'a1a3': 355, 'a4a5': 86, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 65, 'ref': 'Asset-065', 'name': 'Asset-065', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8300, 'age': 1961, 'ownershipPct': 32, 'a1a3': 304, 'a4a5': 85, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 66, 'ref': 'Asset-066', 'name': 'Asset-066', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 2831, 'age': 1955, 'ownershipPct': 31, 'a1a3': 246, 'a4a5': 72, 'bLifeMaint\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 67, 'ref': 'Asset-067', 'name': 'Asset-067', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 3733, 'age': 2022, 'ownershipPct': 91, 'a1a3': 491, 'a4a5': 121, 'bLifeMaint': \u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 68, 'ref': 'Asset-068', 'name': 'Asset-068', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'E', 'epcIdx': 4, 'gia': 19664, 'age': 1956, 'ownershipPct': 81, 'a1a3': 440, 'a4a5': 99, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 69, 'ref': 'Asset-069', 'name': 'Asset-069', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'A', 'epcIdx': 0, 'gia': 4930, 'age': 1988, 'ownershipPct': 32, 'a1a3': 375, 'a4a5': 113, 'bLifeMaint': 210\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 70, 'ref': 'Asset-070', 'name': 'Asset-070', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 2367, 'age': 1963, 'ownershipPct': 40, 'a1a3': 354, 'a4a5': 105, 'bLifeMaint':\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 71, 'ref': 'Asset-071', 'name': 'Asset-071', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 5143, 'age': 1958, 'ownershipPct': 18, 'a1a3': 481, 'a4a5': 125, 'bLifeMain\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 72, 'ref': 'Asset-072', 'name': 'Asset-072', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Scotland', 'epc': 'D', 'epcIdx': 3, 'gia': 8331, 'age': 1959, 'ownershipPct': 28, 'a1a3': 259, 'a4a5': 61, 'bLifeMaint'\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 73, 'ref': 'Asset-073', 'name': 'Asset-073', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South West', 'epc': 'A', 'epcIdx': 0, 'gia': 12779, 'age': 1964, 'ownershipPct': 47, 'a1a3': 416, 'a4a5': 117, 'bLifeM\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 74, 'ref': 'Asset-074', 'name': 'Asset-074', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 13538, 'age': 1988, 'ownershipPct': 29, 'a1a3': 331, 'a4a5': 92, 'bLifeMaint': 190\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 75, 'ref': 'Asset-075', 'name': 'Asset-075', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 4782, 'age': 2000, 'ownershipPct': 55, 'a1a3': 288, 'a4a5': 75, 'bLifeMaint'\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 76, 'ref': 'Asset-076', 'name': 'Asset-076', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 5693, 'age': 1951, 'ownershipPct': 15, 'a1a3': 428, 'a4a5': 102, 'bLifeMaint': 199\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 77, 'ref': 'Asset-077', 'name': 'Asset-077', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 19602, 'age': 1994, 'ownershipPct': 86, 'a1a3': 286, 'a4a5': 66, 'bLifeMain\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 78, 'ref': 'Asset-078', 'name': 'Asset-078', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 4833, 'age': 2001, 'ownershipPct': 11, 'a1a3': 326, 'a4a5': 105, 'bLifeMaint': 218\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 79, 'ref': 'Asset-079', 'name': 'Asset-079', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 4480, 'age': 2018, 'ownershipPct': 57, 'a1a3': 432, 'a4a5': 98, 'bLifeMain\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 80, 'ref': 'Asset-080', 'name': 'Asset-080', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'G', 'epcIdx': 6, 'gia': 18394, 'age': 2016, 'ownershipPct': 88, 'a1a3': 332, 'a4a5': 86, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "GET /api/v1/real-estate-carbon-analytics/properties/{row_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 703.079,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ep_recarb1_properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ep_recarb1_properties.id AS ep_recarb1_properties_id, ep_recarb1_properties.ref AS ep_recarb1_properties_ref, ep_recarb1_properties.name AS ep_recarb1_properties_name, ep_recarb1_properties.category AS ep_recarb1_properties_category, ep_recarb1_properties.value AS ep_recarb1_properties_value, ep_recarb1_properties.payload AS ep_recarb1_properties_payload, ep_recarb1_properties.created_at \u2026",
+     "tables": [
+      "ep_recarb1_properties"
+     ],
+     "rowcount": 1,
+     "dur_ms": 193.51,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "row_id": "1 (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "id",
+     "ref",
+     "name",
+     "category",
+     "value",
+     "sector",
+     "region",
+     "epc",
+     "epcIdx",
+     "gia",
+     "age",
+     "ownershipPct",
+     "a1a3",
+     "a4a5",
+     "bLifeMaint",
+     "cDemolit",
+     "d_reuse",
+     "embodiedTotal",
+     "oci",
+     "opCarbonTotal",
+     "embCarbonTotal",
+     "wholeLifeCarbon",
+     "crrem15",
+     "crrem20",
+     "overshoot15"
+    ],
+    "n_keys": 39
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 82,
+     "name": "get_one",
+     "qual": "get_one",
+     "file": "api/v1/routes/real_estate_carbon_analytics.py",
+     "line": 30,
+     "args": {
+      "row_id": "'1'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000273D262C410>"
+     },
+     "ret": "{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 24\u2026",
+     "dur_ms": 667.422,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 83,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 24\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "GET /api/v1/real-estate-carbon-analytics/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 755.925,
+   "node_count": 163,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ep_recarb1_properties"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ep_recarb1_properties.id AS ep_recarb1_properties_id, ep_recarb1_properties.ref AS ep_recarb1_properties_ref, ep_recarb1_properties.name AS ep_recarb1_properties_name, ep_recarb1_properties.category AS ep_recarb1_properties_category, ep_recarb1_properties.value AS ep_recarb1_properties_value, ep_recarb1_properties.payload AS ep_recarb1_properties_payload, ep_recarb1_properties.created_at \u2026",
+     "tables": [
+      "ep_recarb1_properties"
+     ],
+     "rowcount": 80,
+     "dur_ms": 113.862,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "total_value",
+     "avg_value"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 84,
+     "name": "summary",
+     "qual": "summary",
+     "file": "api/v1/routes/real_estate_carbon_analytics.py",
+     "line": 63,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000273D262D580>"
+     },
+     "ret": "{'count': 80, 'total_value': 0, 'avg_value': 0.0}",
+     "dur_ms": 725.357,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 85,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 24\u2026",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 2, 'ref': 'Asset-002', 'name': 'Asset-002', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'North West', 'epc': 'A', 'epcIdx': 0, 'gia': 2987, 'age': 1966, 'ownershipPct': 70, 'a1a3': 391, 'a4a5': 113, 'bLifeMai\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 3, 'ref': 'Asset-003', 'name': 'Asset-003', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'South West', 'epc': 'F', 'epcIdx': 5, 'gia': 3879, 'age': 2003, 'ownershipPct': 41, 'a1a3': 407, 'a4a5': 87, 'bLifeMaint'\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 4, 'ref': 'Asset-004', 'name': 'Asset-004', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'South West', 'epc': 'A', 'epcIdx': 0, 'gia': 5880, 'age': 2016, 'ownershipPct': 98, 'a1a3': 258, 'a4a5': 53, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 5, 'ref': 'Asset-005', 'name': 'Asset-005', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 3461, 'age': 1963, 'ownershipPct': 7, 'a1a3': 432, 'a4a5': 106, 'bLifeMaint': \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 6, 'ref': 'Asset-006', 'name': 'Asset-006', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8603, 'age': 1995, 'ownershipPct': 71, 'a1a3': 305, 'a4a5': 88, 'bLifeMaint': 22\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 7, 'ref': 'Asset-007', 'name': 'Asset-007', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'G', 'epcIdx': 6, 'gia': 17783, 'age': 2008, 'ownershipPct': 67, 'a1a3': 319, 'a4a5': 81, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 8, 'ref': 'Asset-008', 'name': 'Asset-008', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 2681, 'age': 1986, 'ownershipPct': 24, 'a1a3': 366, 'a4a5': 77, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 9, 'ref': 'Asset-009', 'name': 'Asset-009', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 17181, 'age': 1965, 'ownershipPct': 42, 'a1a3': 403, 'a4a5': 113, 'bLifeMain\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 10, 'ref': 'Asset-010', 'name': 'Asset-010', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'North West', 'epc': 'D', 'epcIdx': 3, 'gia': 16034, 'age': 2000, 'ownershipPct': 13, 'a1a3': 381, 'a4a5': 87, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 11, 'ref': 'Asset-011', 'name': 'Asset-011', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'G', 'epcIdx': 6, 'gia': 18219, 'age': 1962, 'ownershipPct': 19, 'a1a3': 447, 'a4a5': 98, 'bLifeMai\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 12, 'ref': 'Asset-012', 'name': 'Asset-012', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'South East', 'epc': 'F', 'epcIdx': 5, 'gia': 15385, 'age': 2022, 'ownershipPct': 47, 'a1a3': 436, 'a4a5': 93, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 13, 'ref': 'Asset-013', 'name': 'Asset-013', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Scotland', 'epc': 'D', 'epcIdx': 3, 'gia': 986, 'age': 1953, 'ownershipPct': 58, 'a1a3': 358, 'a4a5': 69, 'bLifeMaint': 161\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 14, 'ref': 'Asset-014', 'name': 'Asset-014', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'South West', 'epc': 'D', 'epcIdx': 3, 'gia': 10413, 'age': 1982, 'ownershipPct': 40, 'a1a3': 255, 'a4a5': 68, 'bLifeMai\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 15, 'ref': 'Asset-015', 'name': 'Asset-015', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'F', 'epcIdx': 5, 'gia': 18183, 'age': 1951, 'ownershipPct': 78, 'a1a3': 450, 'a4a5': 97, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 16, 'ref': 'Asset-016', 'name': 'Asset-016', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Wales', 'epc': 'C', 'epcIdx': 2, 'gia': 18433, 'age': 1984, 'ownershipPct': 66, 'a1a3': 441, 'a4a5': 109, 'bLifeMaint'\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 17, 'ref': 'Asset-017', 'name': 'Asset-017', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Wales', 'epc': 'E', 'epcIdx': 4, 'gia': 530, 'age': 2015, 'ownershipPct': 74, 'a1a3': 309, 'a4a5': 81, 'bLifeMaint': 155, '\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 18, 'ref': 'Asset-018', 'name': 'Asset-018', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'D', 'epcIdx': 3, 'gia': 9399, 'age': 1961, 'ownershipPct': 98, 'a1a3': 369, 'a4a5': 107, 'bLifeMaint':\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 103,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 19, 'ref': 'Asset-019', 'name': 'Asset-019', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'G', 'epcIdx': 6, 'gia': 13104, 'age': 1979, 'ownershipPct': 77, 'a1a3': 298, 'a4a5': 67, 'bLifeMaint': 158\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 104,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 20, 'ref': 'Asset-020', 'name': 'Asset-020', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South East', 'epc': 'D', 'epcIdx': 3, 'gia': 7282, 'age': 1970, 'ownershipPct': 17, 'a1a3': 328, 'a4a5': 87, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 105,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 21, 'ref': 'Asset-021', 'name': 'Asset-021', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'B', 'epcIdx': 1, 'gia': 1131, 'age': 1966, 'ownershipPct': 19, 'a1a3': 465, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 106,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 22, 'ref': 'Asset-022', 'name': 'Asset-022', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South East', 'epc': 'G', 'epcIdx': 6, 'gia': 2418, 'age': 1952, 'ownershipPct': 22, 'a1a3': 401, 'a4a5': 126, 'bLifeMa\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 107,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 23, 'ref': 'Asset-023', 'name': 'Asset-023', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'E', 'epcIdx': 4, 'gia': 8777, 'age': 2000, 'ownershipPct': 30, 'a1a3': 348, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 108,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 24, 'ref': 'Asset-024', 'name': 'Asset-024', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Wales', 'epc': 'D', 'epcIdx': 3, 'gia': 3437, 'age': 1962, 'ownershipPct': 98, 'a1a3': 266, 'a4a5': 67, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 109,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 25, 'ref': 'Asset-025', 'name': 'Asset-025', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'G', 'epcIdx': 6, 'gia': 3239, 'age': 1956, 'ownershipPct': 88, 'a1a3': 395, 'a4a5': 100, 'bLifeMaint': 158\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 110,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 26, 'ref': 'Asset-026', 'name': 'Asset-026', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South East', 'epc': 'G', 'epcIdx': 6, 'gia': 11159, 'age': 1984, 'ownershipPct': 42, 'a1a3': 469, 'a4a5': 90, 'bLifeMa\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 111,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 27, 'ref': 'Asset-027', 'name': 'Asset-027', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 14457, 'age': 1965, 'ownershipPct': 38, 'a1a3': 453, 'a4a5': 100, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 112,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 28, 'ref': 'Asset-028', 'name': 'Asset-028', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8797, 'age': 1995, 'ownershipPct': 66, 'a1a3': 455, 'a4a5': 112, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 113,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 29, 'ref': 'Asset-029', 'name': 'Asset-029', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 3030, 'age': 1977, 'ownershipPct': 44, 'a1a3': 436, 'a4a5': 111, 'bLifeMaint': 248\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 114,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 30, 'ref': 'Asset-030', 'name': 'Asset-030', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 19654, 'age': 2021, 'ownershipPct': 47, 'a1a3': 292, 'a4a5': 84, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 115,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 31, 'ref': 'Asset-031', 'name': 'Asset-031', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'F', 'epcIdx': 5, 'gia': 14228, 'age': 2010, 'ownershipPct': 52, 'a1a3': 441, 'a4a5': 105, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 116,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 32, 'ref': 'Asset-032', 'name': 'Asset-032', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8300, 'age': 1992, 'ownershipPct': 8, 'a1a3': 463, 'a4a5': 98, 'bLifeMaint': 156\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 117,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 33, 'ref': 'Asset-033', 'name': 'Asset-033', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 19751, 'age': 1993, 'ownershipPct': 26, 'a1a3': 335, 'a4a5': 82, 'bLifeMaint': 186\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 118,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 34, 'ref': 'Asset-034', 'name': 'Asset-034', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 15449, 'age': 2011, 'ownershipPct': 93, 'a1a3': 357, 'a4a5': 83, 'bLifeMaint': 175\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 119,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 35, 'ref': 'Asset-035', 'name': 'Asset-035', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Yorkshire', 'epc': 'F', 'epcIdx': 5, 'gia': 8028, 'age': 2011, 'ownershipPct': 58, 'a1a3': 406, 'a4a5': 89, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 120,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 36, 'ref': 'Asset-036', 'name': 'Asset-036', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 11608, 'age': 2006, 'ownershipPct': 24, 'a1a3': 475, 'a4a5': 116, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 121,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 37, 'ref': 'Asset-037', 'name': 'Asset-037', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'North West', 'epc': 'A', 'epcIdx': 0, 'gia': 7615, 'age': 1988, 'ownershipPct': 13, 'a1a3': 378, 'a4a5': 92, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 122,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 38, 'ref': 'Asset-038', 'name': 'Asset-038', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 16489, 'age': 1991, 'ownershipPct': 66, 'a1a3': 231, 'a4a5': 76, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 123,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 39, 'ref': 'Asset-039', 'name': 'Asset-039', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Midlands', 'epc': 'E', 'epcIdx': 4, 'gia': 1229, 'age': 2018, 'ownershipPct': 48, 'a1a3': 468, 'a4a5': 111, 'bLifeMaint': 24\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 124,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 40, 'ref': 'Asset-040', 'name': 'Asset-040', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 17192, 'age': 1971, 'ownershipPct': 68, 'a1a3': 430, 'a4a5': 109, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 125,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 41, 'ref': 'Asset-041', 'name': 'Asset-041', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 17813, 'age': 2023, 'ownershipPct': 32, 'a1a3': 266, 'a4a5': 65, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 126,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 42, 'ref': 'Asset-042', 'name': 'Asset-042', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'South East', 'epc': 'A', 'epcIdx': 0, 'gia': 5139, 'age': 1964, 'ownershipPct': 71, 'a1a3': 364, 'a4a5': 88, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 127,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 43, 'ref': 'Asset-043', 'name': 'Asset-043', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 18602, 'age': 2017, 'ownershipPct': 15, 'a1a3': 300, 'a4a5': 80, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 128,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 44, 'ref': 'Asset-044', 'name': 'Asset-044', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South West', 'epc': 'B', 'epcIdx': 1, 'gia': 17739, 'age': 1976, 'ownershipPct': 58, 'a1a3': 372, 'a4a5': 115, 'bLifeM\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 129,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 45, 'ref': 'Asset-045', 'name': 'Asset-045', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South East', 'epc': 'C', 'epcIdx': 2, 'gia': 2735, 'age': 1981, 'ownershipPct': 55, 'a1a3': 389, 'a4a5': 97, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 130,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 46, 'ref': 'Asset-046', 'name': 'Asset-046', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'F', 'epcIdx': 5, 'gia': 585, 'age': 1975, 'ownershipPct': 95, 'a1a3': 375, 'a4a5': 92, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 131,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 47, 'ref': 'Asset-047', 'name': 'Asset-047', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'B', 'epcIdx': 1, 'gia': 16814, 'age': 2021, 'ownershipPct': 59, 'a1a3': 411, 'a4a5': 102, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 132,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 48, 'ref': 'Asset-048', 'name': 'Asset-048', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 14081, 'age': 1966, 'ownershipPct': 56, 'a1a3': 374, 'a4a5': 81, 'bLifeMaint':\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 133,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 49, 'ref': 'Asset-049', 'name': 'Asset-049', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Scotland', 'epc': 'B', 'epcIdx': 1, 'gia': 8494, 'age': 1984, 'ownershipPct': 89, 'a1a3': 382, 'a4a5': 106, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 134,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 50, 'ref': 'Asset-050', 'name': 'Asset-050', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 1947, 'age': 1990, 'ownershipPct': 50, 'a1a3': 367, 'a4a5': 100, 'bLifeMaint': 185\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 135,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 51, 'ref': 'Asset-051', 'name': 'Asset-051', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 3463, 'age': 2018, 'ownershipPct': 74, 'a1a3': 357, 'a4a5': 86, 'bLifeMaint': 21\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 136,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 52, 'ref': 'Asset-052', 'name': 'Asset-052', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'F', 'epcIdx': 5, 'gia': 12317, 'age': 1957, 'ownershipPct': 76, 'a1a3': 408, 'a4a5': 88, 'bLifeMaint':\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 137,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 53, 'ref': 'Asset-053', 'name': 'Asset-053', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'North West', 'epc': 'G', 'epcIdx': 6, 'gia': 790, 'age': 1969, 'ownershipPct': 34, 'a1a3': 235, 'a4a5': 70, 'bLifeMaint\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 138,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 54, 'ref': 'Asset-054', 'name': 'Asset-054', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'F', 'epcIdx': 5, 'gia': 1530, 'age': 1991, 'ownershipPct': 72, 'a1a3': 333, 'a4a5': 99, 'bLifeMaint': 26\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 139,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 55, 'ref': 'Asset-055', 'name': 'Asset-055', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'E', 'epcIdx': 4, 'gia': 12507, 'age': 2000, 'ownershipPct': 51, 'a1a3': 363, 'a4a5': 88, 'bLifeMai\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 140,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 56, 'ref': 'Asset-056', 'name': 'Asset-056', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 3490, 'age': 2023, 'ownershipPct': 74, 'a1a3': 398, 'a4a5': 86, 'bLifeMaint': 23\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 141,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 57, 'ref': 'Asset-057', 'name': 'Asset-057', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'C', 'epcIdx': 2, 'gia': 12817, 'age': 2004, 'ownershipPct': 22, 'a1a3': 351, 'a4a5': 113, 'bLifeMaint': 28\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 142,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 58, 'ref': 'Asset-058', 'name': 'Asset-058', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'North West', 'epc': 'F', 'epcIdx': 5, 'gia': 19158, 'age': 1970, 'ownershipPct': 26, 'a1a3': 481, 'a4a5': 105, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 143,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 59, 'ref': 'Asset-059', 'name': 'Asset-059', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'North West', 'epc': 'C', 'epcIdx': 2, 'gia': 11425, 'age': 1992, 'ownershipPct': 32, 'a1a3': 402, 'a4a5': 116, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 144,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 60, 'ref': 'Asset-060', 'name': 'Asset-060', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Midlands', 'epc': 'F', 'epcIdx': 5, 'gia': 1587, 'age': 1995, 'ownershipPct': 12, 'a1a3': 402, 'a4a5': 104, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 145,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 61, 'ref': 'Asset-061', 'name': 'Asset-061', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'C', 'epcIdx': 2, 'gia': 2744, 'age': 1977, 'ownershipPct': 15, 'a1a3': 404, 'a4a5': 96, 'bLifeMaint': 178\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 146,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 62, 'ref': 'Asset-062', 'name': 'Asset-062', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'Wales', 'epc': 'D', 'epcIdx': 3, 'gia': 957, 'age': 2014, 'ownershipPct': 36, 'a1a3': 348, 'a4a5': 85, 'bLifeMaint': 220\u2026",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 147,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 63, 'ref': 'Asset-063', 'name': 'Asset-063', 'category': None, 'value': None, 'sector': 'Mixed-Use', 'region': 'London', 'epc': 'D', 'epcIdx': 3, 'gia': 11180, 'age': 2007, 'ownershipPct': 19, 'a1a3': 430, 'a4a5': 114, 'bLifeMaint':\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 148,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 64, 'ref': 'Asset-064', 'name': 'Asset-064', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Yorkshire', 'epc': 'G', 'epcIdx': 6, 'gia': 9319, 'age': 2013, 'ownershipPct': 18, 'a1a3': 355, 'a4a5': 86, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 149,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 65, 'ref': 'Asset-065', 'name': 'Asset-065', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'Yorkshire', 'epc': 'D', 'epcIdx': 3, 'gia': 8300, 'age': 1961, 'ownershipPct': 32, 'a1a3': 304, 'a4a5': 85, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 150,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 66, 'ref': 'Asset-066', 'name': 'Asset-066', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 2831, 'age': 1955, 'ownershipPct': 31, 'a1a3': 246, 'a4a5': 72, 'bLifeMaint\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 151,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 67, 'ref': 'Asset-067', 'name': 'Asset-067', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 3733, 'age': 2022, 'ownershipPct': 91, 'a1a3': 491, 'a4a5': 121, 'bLifeMaint': \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 152,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 68, 'ref': 'Asset-068', 'name': 'Asset-068', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Yorkshire', 'epc': 'E', 'epcIdx': 4, 'gia': 19664, 'age': 1956, 'ownershipPct': 81, 'a1a3': 440, 'a4a5': 99, 'bLifeMaint': 1\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 153,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 69, 'ref': 'Asset-069', 'name': 'Asset-069', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'A', 'epcIdx': 0, 'gia': 4930, 'age': 1988, 'ownershipPct': 32, 'a1a3': 375, 'a4a5': 113, 'bLifeMaint': 210\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 154,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 70, 'ref': 'Asset-070', 'name': 'Asset-070', 'category': None, 'value': None, 'sector': 'Office', 'region': 'South West', 'epc': 'C', 'epcIdx': 2, 'gia': 2367, 'age': 1963, 'ownershipPct': 40, 'a1a3': 354, 'a4a5': 105, 'bLifeMaint':\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 155,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 71, 'ref': 'Asset-071', 'name': 'Asset-071', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 5143, 'age': 1958, 'ownershipPct': 18, 'a1a3': 481, 'a4a5': 125, 'bLifeMain\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 156,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 72, 'ref': 'Asset-072', 'name': 'Asset-072', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Scotland', 'epc': 'D', 'epcIdx': 3, 'gia': 8331, 'age': 1959, 'ownershipPct': 28, 'a1a3': 259, 'a4a5': 61, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 157,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 73, 'ref': 'Asset-073', 'name': 'Asset-073', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'South West', 'epc': 'A', 'epcIdx': 0, 'gia': 12779, 'age': 1964, 'ownershipPct': 47, 'a1a3': 416, 'a4a5': 117, 'bLifeM\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 158,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 74, 'ref': 'Asset-074', 'name': 'Asset-074', 'category': None, 'value': None, 'sector': 'Retail', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 13538, 'age': 1988, 'ownershipPct': 29, 'a1a3': 331, 'a4a5': 92, 'bLifeMaint': 190\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 159,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 75, 'ref': 'Asset-075', 'name': 'Asset-075', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Midlands', 'epc': 'B', 'epcIdx': 1, 'gia': 4782, 'age': 2000, 'ownershipPct': 55, 'a1a3': 288, 'a4a5': 75, 'bLifeMaint'\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 160,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 76, 'ref': 'Asset-076', 'name': 'Asset-076', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'B', 'epcIdx': 1, 'gia': 5693, 'age': 1951, 'ownershipPct': 15, 'a1a3': 428, 'a4a5': 102, 'bLifeMaint': 199\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 161,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 77, 'ref': 'Asset-077', 'name': 'Asset-077', 'category': None, 'value': None, 'sector': 'Industrial', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 19602, 'age': 1994, 'ownershipPct': 86, 'a1a3': 286, 'a4a5': 66, 'bLifeMain\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 162,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 78, 'ref': 'Asset-078', 'name': 'Asset-078', 'category': None, 'value': None, 'sector': 'Office', 'region': 'London', 'epc': 'E', 'epcIdx': 4, 'gia': 4833, 'age': 2001, 'ownershipPct': 11, 'a1a3': 326, 'a4a5': 105, 'bLifeMaint': 218\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 163,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 79, 'ref': 'Asset-079', 'name': 'Asset-079', 'category': None, 'value': None, 'sector': 'Residential', 'region': 'Yorkshire', 'epc': 'C', 'epcIdx': 2, 'gia': 4480, 'age': 2018, 'ownershipPct': 57, 'a1a3': 432, 'a4a5': 98, 'bLifeMain\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 164,
+       "name": "as_dict",
+       "qual": "RealEstateCarbonAnalyticsProperty.as_dict",
+       "file": "db/models/real_estate_carbon_analytics.py",
+       "line": 21,
+       "args": {},
+       "ret": "{'id': 80, 'ref': 'Asset-080', 'name': 'Asset-080', 'category': None, 'value': None, 'sector': 'Office', 'region': 'Scotland', 'epc': 'G', 'epcIdx': 6, 'gia': 18394, 'age': 2016, 'ownershipPct': 88, 'a1a3': 332, 'a4a5': 86, 'bLifeMaint': 2\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 165,
+       "name": "summarise",
+       "qual": "RealEstateCarbonAnalyticsEngine.summarise",
+       "file": "services/real_estate_carbon_analytics_engine.py",
+       "line": 8,
+       "args": {
+        "rows": "[{'id': 1, 'ref': 'Asset-001', 'name': 'Asset-001', 'category': None, 'value': None, 'sector': 'Hotel', 'region': 'Scotland', 'epc': 'E', 'epcIdx': 4, 'gia': 14342, 'age': 2002, 'ownershipPct': 72, 'a1a3': 478, 'a4a5': 125, 'bLifeMaint': 2\u2026"
+       },
+       "ret": "{'count': 80, 'total_value': 0, 'avg_value': 0.0}",
+       "dur_ms": 1.09,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 166,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 167,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 168,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 169,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 170,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 171,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 172,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 173,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 174,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 175,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 176,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 177,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 178,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 179,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 180,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 181,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 182,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 183,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 184,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 185,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 186,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 187,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 188,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 189,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 190,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 191,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 192,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 193,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 194,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 195,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 196,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 197,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 198,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 199,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 200,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 201,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 202,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 203,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 204,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 205,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 206,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 207,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 208,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 209,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.019,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 210,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 211,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 212,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 213,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 214,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 215,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 216,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 217,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 218,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 219,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 220,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 221,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 222,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 223,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 224,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 225,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 226,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 227,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 228,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 229,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 230,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 231,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 232,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 233,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 234,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 235,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 236,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 237,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 238,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 239,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 240,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 241,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 242,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 243,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 244,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 245,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 246,
+         "name": "<genexpr>",
+         "qual": "RealEstateCarbonAnalyticsEngine.summarise.<locals>.<genexpr>",
+         "file": "services/real_estate_carbon_analytics_engine.py",
+         "line": 10,
+         "args": {
+          ".0": "<list_iterator object at 0x00000273D263C8B0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "POST /api/v1/real-estate-carbon-analytics/properties",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "PUT /api/v1/real-estate-carbon-analytics/properties/{row_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-estate-carbon-analytics",
+   "label": "DELETE /api/v1/real-estate-carbon-analytics/properties/{row_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

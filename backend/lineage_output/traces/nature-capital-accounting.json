@@ -1,0 +1,349 @@
+{
+ "domain": "nature-capital-accounting",
+ "meta": {
+  "ts": "2026-06-30T14:03:18",
+  "module": "api.v1.routes.nature_capital_accounting",
+  "router_prefix": "/api/v1/nature-capital-accounting",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "nature-capital-accounting",
+   "label": "GET /api/v1/nature-capital-accounting/ref/encore-dependencies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.465,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_encore_dependencies",
+     "qual": "ref_encore_dependencies",
+     "file": "api/v1/routes/nature_capital_accounting.py",
+     "line": 198,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'source': 'ENCORE v2.0 \u2014 Natural Capital Finance Alliance', 'dependency_scale': {'VH': 'Very High (>80%)', 'H': 'High (60-80%)', 'M': 'Medium (30-60%)', 'L': 'Low (<30%)'}, 'sub_industries': ['crop_production\u2026",
+     "dur_ms": 0.109,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "ref_encore_dependencies",
+       "qual": "NatureCapitalAccountingEngine.ref_encore_dependencies",
+       "file": "services/nature_capital_accounting_engine.py",
+       "line": 1050,
+       "args": {},
+       "ret": "{'source': 'ENCORE v2.0 \u2014 Natural Capital Finance Alliance', 'dependency_scale': {'VH': 'Very High (>80%)', 'H': 'High (60-80%)', 'M': 'Medium (30-60%)', 'L': 'Low (<30%)'}, 'sub_industries': ['crop_production', 'livestock_production', 'fi\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "GET /api/v1/nature-capital-accounting/ref/seea-ecosystem-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.372,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_seea_ecosystem_types",
+     "qual": "ref_seea_ecosystem_types",
+     "file": "api/v1/routes/nature_capital_accounting.py",
+     "line": 186,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'seea_version': 'UN SEEA EA 2021', 'ecosystem_types': {'cultivated': {'label': 'Cultivated & Managed Land', 'description': 'Agricultural land, plantations, managed forests under cultivation', 'iucn_habitat': \u2026",
+     "dur_ms": 0.148,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "ref_seea_ecosystem_types",
+       "qual": "NatureCapitalAccountingEngine.ref_seea_ecosystem_types",
+       "file": "services/nature_capital_accounting_engine.py",
+       "line": 1041,
+       "args": {},
+       "ret": "{'seea_version': 'UN SEEA EA 2021', 'ecosystem_types': {'cultivated': {'label': 'Cultivated & Managed Land', 'description': 'Agricultural land, plantations, managed forests under cultivation', 'iucn_habitat': '14', 'typical_services': ['fo\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "GET /api/v1/nature-capital-accounting/ref/tnfd-leap-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.263,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_tnfd_leap_framework",
+     "qual": "ref_tnfd_leap_framework",
+     "file": "api/v1/routes/nature_capital_accounting.py",
+     "line": 222,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'tnfd_version': 'v1.0 September 2023', 'total_score_max': 100, 'steps': {'locate': {'step': 1, 'max_score': 25, 'description': 'Identify business units and value chain in interface with nature', 'criteria': {\u2026",
+     "dur_ms": 0.069,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "ref_tnfd_leap_framework",
+       "qual": "NatureCapitalAccountingEngine.ref_tnfd_leap_framework",
+       "file": "services/nature_capital_accounting_engine.py",
+       "line": 1066,
+       "args": {},
+       "ret": "{'tnfd_version': 'v1.0 September 2023', 'total_score_max': 100, 'steps': {'locate': {'step': 1, 'max_score': 25, 'description': 'Identify business units and value chain in interface with nature', 'criteria': {'asset_mapping': {'max_pts': 6\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "GET /api/v1/nature-capital-accounting/ref/valuation-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.337,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_valuation_benchmarks",
+     "qual": "ref_valuation_benchmarks",
+     "file": "api/v1/routes/nature_capital_accounting.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'status': 'ok', 'reference': {'source_list': ['Costanza 2014', 'de Groot 2012', 'TEEB 2010', 'CICES 2021', 'Brander 2021'], 'unit': 'USD/ha/yr (2020 prices)', 'count': 50, 'benchmarks': [{'ecosystem': 'forest', 'service': 'carbon_sequestr\u2026",
+     "dur_ms": 0.12,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "ref_valuation_benchmarks",
+       "qual": "NatureCapitalAccountingEngine.ref_valuation_benchmarks",
+       "file": "services/nature_capital_accounting_engine.py",
+       "line": 1058,
+       "args": {},
+       "ret": "{'source_list': ['Costanza 2014', 'de Groot 2012', 'TEEB 2010', 'CICES 2021', 'Brander 2021'], 'unit': 'USD/ha/yr (2020 prices)', 'count': 50, 'benchmarks': [{'ecosystem': 'forest', 'service': 'carbon_sequestration', 'min_usd_ha_yr': 50, '\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "POST /api/v1/nature-capital-accounting/ncp-assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: unsupported operand type(s) for *: 'NoneType' and 'float'",
+   "dur_ms": 0.605,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<NcpAssessRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ncp_assess",
+     "qual": "ncp_assess",
+     "file": "api/v1/routes/nature_capital_accounting.py",
+     "line": 113,
+     "args": {
+      "req": "NcpAssessRequest(entity_data=EntityData(entity_id='TEST_req_entity_data_entity_id', entity_name='TEST_req_entity_data_entity_name', sector='food_beverage', annual_revenue_usd=None), scope={}, assessment_type='direct')"
+     },
+     "ret": "None",
+     "dur_ms": 0.238,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "apply_natural_capital_protocol",
+       "qual": "NatureCapitalAccountingEngine.apply_natural_capital_protocol",
+       "file": "services/nature_capital_accounting_engine.py",
+       "line": 611,
+       "args": {
+        "entity_data": "{'entity_id': 'TEST_req_entity_data_entity_id', 'entity_name': 'TEST_req_entity_data_entity_name', 'sector': 'food_beverage', 'annual_revenue_usd': None}",
+        "scope": "{}",
+        "assessment_type": "'direct'"
+       },
+       "ret": "None",
+       "dur_ms": 0.123,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "POST /api/v1/nature-capital-accounting/sbtn-readiness",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "POST /api/v1/nature-capital-accounting/seea-accounts",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "POST /api/v1/nature-capital-accounting/tev",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-capital-accounting",
+   "label": "POST /api/v1/nature-capital-accounting/tnfd-leap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

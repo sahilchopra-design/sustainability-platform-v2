@@ -1,0 +1,209 @@
+{
+ "domain": "nonv1-auth",
+ "meta": {
+  "ts": "2026-06-30T14:26:02",
+  "endpoints": 7,
+  "source": "server.app",
+  "predicate": "nonv1-auth"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-auth",
+   "label": "GET /api/auth/invite/{token}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Invite not found",
+   "dur_ms": 2718.365,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "rbac_access_invites"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT rbac_access_invites.id AS rbac_access_invites_id, rbac_access_invites.invite_token AS rbac_access_invites_invite_token, rbac_access_invites.email AS rbac_access_invites_email, rbac_access_invites.rbac_role AS rbac_access_invites_rbac_role, rbac_access_invites.preset_id AS rbac_access_invites_preset_id, rbac_access_invites.module_overrides AS rbac_access_invites_module_overrides, rbac_acce\u2026",
+     "tables": [
+      "rbac_access_invites"
+     ],
+     "rowcount": 0,
+     "dur_ms": 340.026,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "token": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_invite",
+     "qual": "get_invite",
+     "file": "api/auth_pg.py",
+     "line": 297,
+     "args": {
+      "token": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B656993D10>"
+     },
+     "ret": "None",
+     "dur_ms": 2660.457,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "GET /api/auth/me",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'cookies'",
+   "dur_ms": 0.347,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_me",
+     "qual": "get_me",
+     "file": "api/auth_pg.py",
+     "line": 189,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569B9550>"
+     },
+     "ret": "None",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "_get_token",
+       "qual": "_get_token",
+       "file": "api/auth_pg.py",
+       "line": 49,
+       "args": {
+        "request": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "POST /api/auth/google/session",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "POST /api/auth/invite/{token}/accept",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "POST /api/auth/login",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "POST /api/auth/logout",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-auth",
+   "label": "POST /api/auth/register",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

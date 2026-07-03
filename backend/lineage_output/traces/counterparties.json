@@ -1,0 +1,189 @@
+{
+ "domain": "counterparties",
+ "meta": {
+  "ts": "2026-06-30T14:00:06",
+  "module": "api.v1.routes.counterparties",
+  "router_prefix": "/counterparties",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "counterparties",
+   "label": "GET /counterparties",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'Depends' object has no attribute 'skip'",
+   "dur_ms": 0.938,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "search": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_counterparties",
+     "qual": "list_counterparties",
+     "file": "api/v1/routes/counterparties.py",
+     "line": 16,
+     "args": {
+      "search": "None",
+      "pagination": "Depends(dependency=None, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000019F612B14C0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000019F612B14C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "counterparties",
+   "label": "GET /counterparties/{counterparty_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "InvalidRequestError: When initializing mapper Mapper[Portfolio(portfolios)], expression 'FileUpload' failed to locate a name ('FileUpload'). If this is a class name, consider adding this relationship() to the <class 'db.models_sql.Portfolio'> class after both dependent classes have been defined.",
+   "dur_ms": 6.167,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "counterparty_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_counterparty",
+     "qual": "get_counterparty",
+     "file": "api/v1/routes/counterparties.py",
+     "line": 64,
+     "args": {
+      "counterparty_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000019F61360470>"
+     },
+     "ret": "None",
+     "dur_ms": 5.9,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000019F61360470>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 5.848,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "counterparties",
+   "label": "POST /counterparties",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "counterparties",
+   "label": "PATCH /counterparties/{counterparty_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "counterparties",
+   "label": "DELETE /counterparties/{counterparty_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

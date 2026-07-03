@@ -1,0 +1,551 @@
+{
+ "domain": "pcaf-regulatory",
+ "meta": {
+  "ts": "2026-07-01T10:16:01",
+  "endpoints": 9,
+  "module": "api.v1.routes.pcaf_regulatory",
+  "router_prefix": "/api/v1"
+ },
+ "transactions": [
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/eu-taxonomy/assessments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 671.9,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "eu_taxonomy_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, entity_name, reporting_year, taxonomy_eligible_turnover_pct, taxonomy_aligned_turnover_pct, taxonomy_eligible_capex_pct, taxonomy_aligned_capex_pct, status, created_at FROM eu_taxonomy_assessments ORDER BY created_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "eu_taxonomy_assessments"
+     ],
+     "rowcount": 17,
+     "dur_ms": 76.906,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>",
+    "reporting_year": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 17,
+    "item0_keys": [
+     "id",
+     "entity_name",
+     "reporting_year",
+     "taxonomy_eligible_turnover_pct",
+     "taxonomy_aligned_turnover_pct",
+     "taxonomy_eligible_capex_pct",
+     "taxonomy_aligned_capex_pct",
+     "status",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_eu_taxonomy_assessments",
+     "qual": "list_eu_taxonomy_assessments",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 839,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A445FEB260>",
+      "reporting_year": "None",
+      "limit": "50",
+      "offset": "0"
+     },
+     "ret": "[{'id': UUID('eecc62f2-0927-4237-a307-32d39fbeb31a'), 'entity_name': 'RWE AG', 'reporting_year': 2025, 'taxonomy_eligible_turnover_pct': Decimal('78.40'), 'taxonomy_aligned_turnover_pct': Decimal('52.30'), 'taxonomy_eligible_capex_pct': De\u2026",
+     "dur_ms": 638.023,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/eu-taxonomy/assessments/{assessment_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 368.713,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "eu_taxonomy_activities",
+    "eu_taxonomy_assessments"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM eu_taxonomy_assessments WHERE id = CAST(%(aid)s AS uuid)'",
+     "tables": [
+      "eu_taxonomy_assessments"
+     ],
+     "rowcount": 1,
+     "dur_ms": 68.164,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT * FROM eu_taxonomy_activities WHERE assessment_id = CAST(%(aid)s AS uuid) ORDER BY activity_code'",
+     "tables": [
+      "eu_taxonomy_activities"
+     ],
+     "rowcount": 3,
+     "dur_ms": 39.87,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "assessment_id": "eecc62f2-0927-4237-a307-32d39fbeb31a (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "id",
+     "entity_id",
+     "entity_name",
+     "reporting_year",
+     "assessment_type",
+     "total_turnover_gbp",
+     "taxonomy_eligible_turnover_pct",
+     "taxonomy_aligned_turnover_pct",
+     "not_eligible_turnover_pct",
+     "total_capex_gbp",
+     "taxonomy_eligible_capex_pct",
+     "taxonomy_aligned_capex_pct",
+     "not_eligible_capex_pct",
+     "total_opex_gbp",
+     "taxonomy_eligible_opex_pct",
+     "taxonomy_aligned_opex_pct",
+     "not_eligible_opex_pct",
+     "obj1_climate_mitigation_aligned_pct",
+     "obj2_climate_adaptation_aligned_pct",
+     "obj3_water_marine_aligned_pct",
+     "obj4_circular_economy_aligned_pct",
+     "obj5_pollution_prevention_aligned_pct",
+     "obj6_biodiversity_aligned_pct",
+     "dnsh_compliance",
+     "minimum_safeguards_met"
+    ],
+    "n_keys": 33
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_eu_taxonomy_assessment",
+     "qual": "get_eu_taxonomy_assessment",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 864,
+     "args": {
+      "assessment_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB2C0>"
+     },
+     "ret": "{'id': UUID('eecc62f2-0927-4237-a307-32d39fbeb31a'), 'entity_id': UUID('57f9613a-3919-42cb-941c-b52095f5a9ff'), 'entity_name': 'RWE AG', 'reporting_year': 2025, 'assessment_type': 'full_assessment', 'total_turnover_gbp': Decimal('470000000\u2026",
+     "dur_ms": 333.204,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/pcaf/portfolios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 387.306,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "pcaf_portfolios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, entity_name, reporting_year, portfolio_type, total_financed_emissions_tco2e, waci_tco2e_per_mrevenue, carbon_footprint_tco2e_per_mgbp_invested, portfolio_temperature_c, status, created_at FROM pcaf_portfolios ORDER BY created_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "pcaf_portfolios"
+     ],
+     "rowcount": 2,
+     "dur_ms": 70.091,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>",
+    "status": "None (default)",
+    "reporting_year": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 2,
+    "item0_keys": [
+     "id",
+     "entity_name",
+     "reporting_year",
+     "portfolio_type",
+     "total_financed_emissions_tco2e",
+     "waci_tco2e_per_mrevenue",
+     "carbon_footprint_tco2e_per_mgbp_invested",
+     "portfolio_temperature_c",
+     "status",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "list_pcaf_portfolios",
+     "qual": "list_pcaf_portfolios",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 756,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB1A0>",
+      "status": "None",
+      "reporting_year": "None",
+      "limit": "50",
+      "offset": "0"
+     },
+     "ret": "[{'id': UUID('f07fd174-3190-4811-b365-f8c44264dca1'), 'entity_name': 'GS Sustainable Finance Article 8 Fund', 'reporting_year': 2025, 'portfolio_type': 'listed_equity', 'total_financed_emissions_tco2e': Decimal('129412.4000'), 'waci_tco2e_\u2026",
+     "dur_ms": 351.298,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/pcaf/portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: PCAF portfolio not found",
+   "dur_ms": 334.162,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pcaf_portfolios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM pcaf_portfolios WHERE id = CAST(%(pid)s AS uuid)'",
+     "tables": [
+      "pcaf_portfolios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.496,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "eecc62f2-0927-4237-a307-32d39fbeb31a (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_pcaf_portfolio",
+     "qual": "get_pcaf_portfolio",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 785,
+     "args": {
+      "portfolio_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB2C0>"
+     },
+     "ret": "None",
+     "dur_ms": 299.768,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/sfdr/pai-disclosures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 307.292,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "sfdr_pai_disclosures"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, entity_name, reporting_period_start, reporting_period_end, sfdr_article, pai_1_scope1_scope2_tco2e, pai_2_carbon_footprint, pai_4_fossil_fuel_exposure_pct, weighted_avg_dq_score, status, created_at FROM sfdr_pai_disclosures ORDER BY created_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "sfdr_pai_disclosures"
+     ],
+     "rowcount": 14,
+     "dur_ms": 68.08,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>",
+    "reporting_year": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 14,
+    "item0_keys": [
+     "id",
+     "entity_name",
+     "reporting_period_start",
+     "reporting_period_end",
+     "sfdr_article",
+     "pai_1_scope1_scope2_tco2e",
+     "pai_2_carbon_footprint",
+     "pai_4_fossil_fuel_exposure_pct",
+     "weighted_avg_dq_score",
+     "status",
+     "created_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_sfdr_disclosures",
+     "qual": "list_sfdr_disclosures",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 802,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763E8A0>",
+      "reporting_year": "None",
+      "limit": "50",
+      "offset": "0"
+     },
+     "ret": "[{'id': UUID('fbf6e449-d12b-4c5f-8cad-17f7d7c98623'), 'entity_name': 'GS Sustainable Finance Ltd', 'reporting_period_start': datetime.date(2025, 1, 1), 'reporting_period_end': datetime.date(2025, 12, 31), 'sfdr_article': 8, 'pai_1_scope1_s\u2026",
+     "dur_ms": 270.691,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "GET /api/v1/sfdr/pai-disclosures/{disclosure_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: SFDR PAI disclosure not found",
+   "dur_ms": 316.815,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "sfdr_pai_disclosures"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM sfdr_pai_disclosures WHERE id = CAST(%(did)s AS uuid)'",
+     "tables": [
+      "sfdr_pai_disclosures"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.588,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "disclosure_id": "eecc62f2-0927-4237-a307-32d39fbeb31a (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_sfdr_disclosure",
+     "qual": "get_sfdr_disclosure",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 828,
+     "args": {
+      "disclosure_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763F440>"
+     },
+     "ret": "None",
+     "dur_ms": 281.864,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "POST /api/v1/eu-taxonomy/alignment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: EU Taxonomy engine error: 'dict' object has no attribute 'total_revenue_gbp'",
+   "dur_ms": 7.297,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<TaxonomyAlignmentRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "assess_eu_taxonomy_alignment",
+     "qual": "assess_eu_taxonomy_alignment",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 662,
+     "args": {
+      "request": "TaxonomyAlignmentRequest(entities=[{'entity_id': 'TEST_request_entities_entity_id', 'sector': 'TEST_request_entities_sector', 'country_iso': 'TEST_request_entities_country_iso', 'activities': [{'activity_code': 'TEST_request_entities_activ\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763F350>"
+     },
+     "ret": "None",
+     "dur_ms": 6.213,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "POST /api/v1/pcaf/financed-emissions",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: PCAF engine error: 'dict' object has no attribute 'model_dump'",
+   "dur_ms": 6.466,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<PCAFRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "calculate_financed_emissions",
+     "qual": "calculate_financed_emissions",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 459,
+     "args": {
+      "request": "PCAFRequest(investees=[{'investee_id': 'TEST_request_investees_investee_id', 'sector': 'TEST_request_investees_sector', 'country_iso': 'TEST_request_investees_country_iso', 'investment_value_gbp': 1.0}], reporting_year=1, asset_class='list\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763FBC0>"
+     },
+     "ret": "None",
+     "dur_ms": 5.603,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-regulatory",
+   "label": "POST /api/v1/sfdr/pai",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: SFDR PAI engine error: 'dict' object has no attribute 'model_dump'",
+   "dur_ms": 6.759,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<SFDRPAIRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "calculate_sfdr_pai",
+     "qual": "calculate_sfdr_pai",
+     "file": "api/v1/routes/pcaf_regulatory.py",
+     "line": 546,
+     "args": {
+      "request": "SFDRPAIRequest(investees=[{'investee_id': 'TEST_request_investees_investee_id', 'sector': 'TEST_request_investees_sector', 'country_iso': 'TEST_request_investees_country_iso', 'investment_value_gbp': 1.0}], reporting_year=1, reference_year\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763EA20>"
+     },
+     "ret": "None",
+     "dur_ms": 5.151,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

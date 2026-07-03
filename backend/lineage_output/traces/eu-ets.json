@@ -1,0 +1,536 @@
+{
+ "domain": "eu-ets",
+ "meta": {
+  "ts": "2026-06-30T14:01:57",
+  "module": "api.v1.routes.eu_ets",
+  "router_prefix": "/api/v1/eu-ets",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1402.36,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ets_product_benchmarks"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT product_key, product_name, benchmark_value, unit, period_start, period_end, annual_reduction, source_decision, cbam_overlap FROM ets_product_benchmarks WHERE period_start = %(ps)s ORDER BY product_key'",
+     "tables": [
+      "ets_product_benchmarks"
+     ],
+     "rowcount": null,
+     "dur_ms": 323.605,
+     "is_reference": false,
+     "error": "UndefinedTable('relation \"ets_product_benchmarks\" does not exist\\nLINE 5:                     FROM   ets_product_benchmarks\\n                                   ^\\n')"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "product_benchmarks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_benchmarks",
+     "qual": "ref_benchmarks",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 206,
+     "args": {},
+     "ret": "{'product_benchmarks': {'hot_metal': {'benchmark_2021': 1.328, 'annual_reduction': 0.024, 'unit': 'tCO2/t'}, 'sintered_ore': {'benchmark_2021': 0.171, 'annual_reduction': 0.003, 'unit': 'tCO2/t'}, 'coke': {'benchmark_2021': 0.286, 'annual_\u2026",
+     "dur_ms": 1401.748,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_product_benchmarks",
+       "qual": "EUETSEngine.get_product_benchmarks",
+       "file": "services/eu_ets_engine.py",
+       "line": 565,
+       "args": {},
+       "ret": "{'hot_metal': {'benchmark_2021': 1.328, 'annual_reduction': 0.024, 'unit': 'tCO2/t'}, 'sintered_ore': {'benchmark_2021': 0.171, 'annual_reduction': 0.003, 'unit': 'tCO2/t'}, 'coke': {'benchmark_2021': 0.286, 'annual_reduction': 0.005, 'uni\u2026",
+       "dur_ms": 1401.635,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/benchmarks/all",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 316.043,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ets_product_benchmarks"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT product_key, product_name, benchmark_value, unit, period_start, period_end, annual_reduction, source_decision, source_article, cbam_overlap, valid_from, valid_to FROM ets_product_benchmarks ORDER BY period_start, product_key'",
+     "tables": [
+      "ets_product_benchmarks"
+     ],
+     "rowcount": null,
+     "dur_ms": 61.801,
+     "is_reference": false,
+     "error": "UndefinedTable('relation \"ets_product_benchmarks\" does not exist\\nLINE 6:                     FROM   ets_product_benchmarks\\n                                   ^\\n')"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "product_benchmarks",
+     "note"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_benchmarks_all",
+     "qual": "ref_benchmarks_all",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 217,
+     "args": {},
+     "ret": "{'product_benchmarks': [{'product_key': 'hot_metal', 'product_name': 'Hot Metal', 'benchmark_value': 1.328, 'unit': 'tCO2/t', 'period': '2021-2025', 'annual_reduction': 0.024, 'source_decision': 'Decision (EU) 2021/927', 'source_article': \u2026",
+     "dur_ms": 315.717,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_product_benchmarks_all_periods",
+       "qual": "EUETSEngine.get_product_benchmarks_all_periods",
+       "file": "services/eu_ets_engine.py",
+       "line": 618,
+       "args": {},
+       "ret": "[{'product_key': 'hot_metal', 'product_name': 'Hot Metal', 'benchmark_value': 1.328, 'unit': 'tCO2/t', 'period': '2021-2025', 'annual_reduction': 0.024, 'source_decision': 'Decision (EU) 2021/927', 'source_article': 'Annex I', 'cbam_overla\u2026",
+       "dur_ms": 315.588,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/cap-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.295,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ets_cap_parameters"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_cap_parameters",
+     "qual": "ref_cap_parameters",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 241,
+     "args": {},
+     "ret": "{'ets_cap_parameters': {'base_cap_2021_mt': 1571.6, 'annual_lrf_pct_2021_2023': 2.2, 'annual_lrf_pct_2024_2027': 4.3, 'annual_lrf_pct_2028_plus': 4.4, 'msr_intake_rate_pct': 24, 'msr_threshold_upper_mt': 833, 'msr_threshold_lower_mt': 400,\u2026",
+     "dur_ms": 0.05,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_ets_cap_parameters",
+       "qual": "EUETSEngine.get_ets_cap_parameters",
+       "file": "services/eu_ets_engine.py",
+       "line": 682,
+       "args": {},
+       "ret": "{'base_cap_2021_mt': 1571.6, 'annual_lrf_pct_2021_2023': 2.2, 'annual_lrf_pct_2024_2027': 4.3, 'annual_lrf_pct_2028_plus': 4.4, 'msr_intake_rate_pct': 24, 'msr_threshold_upper_mt': 833, 'msr_threshold_lower_mt': 400, 'msr_invalidation_abov\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/cbam-phaseout",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.257,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cbam_phaseout"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_cbam_phaseout",
+     "qual": "ref_cbam_phaseout",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 235,
+     "args": {},
+     "ret": "{'cbam_phaseout': {2026: 0.975, 2027: 0.95, 2028: 0.9, 2029: 0.825, 2030: 0.75, 2031: 0.625, 2032: 0.5, 2033: 0.375, 2034: 0.25, 2035: 0.0}}",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_cbam_phaseout_schedule",
+       "qual": "EUETSEngine.get_cbam_phaseout_schedule",
+       "file": "services/eu_ets_engine.py",
+       "line": 678,
+       "args": {},
+       "ret": "{2026: 0.975, 2027: 0.95, 2028: 0.9, 2029: 0.825, 2030: 0.75, 2031: 0.625, 2032: 0.5, 2033: 0.375, 2034: 0.25, 2035: 0.0}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/leakage-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.241,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "carbon_leakage_tiers"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_leakage_tiers",
+     "qual": "ref_leakage_tiers",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 247,
+     "args": {},
+     "ret": "{'carbon_leakage_tiers': {'HIGH': {'description': 'Deemed at risk of carbon leakage (CL list)', 'free_allocation_factor': 1.0, 'trade_intensity_threshold': 0.1, 'emission_intensity_threshold': 0.05}, 'MEDIUM': {'description': 'Not on CL li\u2026",
+     "dur_ms": 0.057,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_carbon_leakage_tiers",
+       "qual": "EUETSEngine.get_carbon_leakage_tiers",
+       "file": "services/eu_ets_engine.py",
+       "line": 686,
+       "args": {},
+       "ret": "{'HIGH': {'description': 'Deemed at risk of carbon leakage (CL list)', 'free_allocation_factor': 1.0, 'trade_intensity_threshold': 0.1, 'emission_intensity_threshold': 0.05}, 'MEDIUM': {'description': 'Not on CL list but significant exposu\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "GET /api/v1/eu-ets/ref/price-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.224,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "carbon_price_scenarios"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_price_scenarios",
+     "qual": "ref_price_scenarios",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 229,
+     "args": {},
+     "ret": "{'carbon_price_scenarios': {'EU_REFERENCE': {2025: 80, 2030: 110, 2035: 150, 2040: 200, 2050: 300}, 'FIT_FOR_55': {2025: 85, 2030: 130, 2035: 180, 2040: 250, 2050: 400}, 'NET_ZERO_2050': {2025: 90, 2030: 150, 2035: 220, 2040: 320, 2050: 50\u2026",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_carbon_price_scenarios",
+       "qual": "EUETSEngine.get_carbon_price_scenarios",
+       "file": "services/eu_ets_engine.py",
+       "line": 674,
+       "args": {},
+       "ret": "{'EU_REFERENCE': {2025: 80, 2030: 110, 2035: 150, 2040: 200, 2050: 300}, 'FIT_FOR_55': {2025: 85, 2030: 130, 2035: 180, 2040: 250, 2050: 400}, 'NET_ZERO_2050': {2025: 90, 2030: 150, 2035: 220, 2040: 320, 2050: 500}, 'DELAYED_ACTION': {2025\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "POST /api/v1/eu-ets/cap-trajectory",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'start_year'",
+   "dur_ms": 0.307,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "compute_cap_trajectory",
+     "qual": "compute_cap_trajectory",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 162,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "POST /api/v1/eu-ets/carbon-price-forecast",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'scenario'",
+   "dur_ms": 0.268,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "forecast_carbon_price",
+     "qual": "forecast_carbon_price",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 146,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "POST /api/v1/eu-ets/compliance",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'installation_id'",
+   "dur_ms": 0.201,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess_compliance",
+     "qual": "assess_compliance",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 121,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "POST /api/v1/eu-ets/ets2-readiness",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.193,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_ets2_readiness",
+     "qual": "assess_ets2_readiness",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 169,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-ets",
+   "label": "POST /api/v1/eu-ets/free-allocation",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'installation_id'",
+   "dur_ms": 0.195,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "calculate_free_allocation",
+     "qual": "calculate_free_allocation",
+     "file": "api/v1/routes/eu_ets.py",
+     "line": 94,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

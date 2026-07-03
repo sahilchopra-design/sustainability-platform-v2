@@ -1,0 +1,317 @@
+{
+ "domain": "export-credit-esg",
+ "meta": {
+  "ts": "2026-06-30T14:02:02",
+  "module": "api.v1.routes.export_credit_esg",
+  "router_prefix": "/api/v1/export-credit-esg",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "export-credit-esg",
+   "label": "GET /api/v1/export-credit-esg/ref/eca-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.179,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "eca_profiles",
+     "berne_union_framework",
+     "miga_overview"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_eca_profiles",
+     "qual": "ref_eca_profiles",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 154,
+     "args": {},
+     "ret": "{'count': 15, 'eca_profiles': {'UKEF': {'full_name': 'UK Export Finance', 'country': 'GB', 'paris_alignment_commitment': True, 'paris_alignment_year': 2021, 'oecd_arrangement_member': True, 'green_bond_eligible': True, 'excluded_commoditie\u2026",
+     "dur_ms": 0.216,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "GET /api/v1/export-credit-esg/ref/fossil-fuel-exclusions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.617,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fossil_fuel_types",
+     "exclusion_matrix",
+     "notes"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_fossil_fuel_exclusions",
+     "qual": "ref_fossil_fuel_exclusions",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 242,
+     "args": {},
+     "ret": "{'fossil_fuel_types': ['coal_mining', 'coal_power', 'oil_sands', 'upstream_oil_gas', 'lng_infrastructure', 'petrochemicals'], 'exclusion_matrix': {'coal_mining': {'description': 'Coal exploration, extraction, and mine development', 'eu_tax\u2026",
+     "dur_ms": 0.165,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "GET /api/v1/export-credit-esg/ref/ifc-performance-standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.403,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "standards",
+     "equator_principles",
+     "designated_country_note",
+     "ep_applicability_threshold_usd"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ifc_performance_standards",
+     "qual": "ref_ifc_performance_standards",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 214,
+     "args": {},
+     "ret": "{'count': 8, 'standards': {'PS1': {'number': 1, 'title': 'Assessment and Management of Environmental and Social Risks and Impacts', 'key_requirements': ['Environmental and Social Assessment (ESA) commensurate with project risks', 'Environm\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "GET /api/v1/export-credit-esg/ref/oecd-arrangement",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.415,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_understandings",
+     "common_approaches",
+     "ep_signatory_banks",
+     "ep_threshold_usd",
+     "green_trade_instruments",
+     "sector_risk_matrix"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_oecd_arrangement",
+     "qual": "ref_oecd_arrangement",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 191,
+     "args": {},
+     "ret": "{'sector_understandings': {'OSS': {'name': 'Sector Understanding on Export Credits for Ships', 'abbreviation': 'OSS', 'sectors': ['commercial_vessels', 'fishing_vessels', 'offshore_platforms'], 'max_repayment_years': 12, 'green_eligibility\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "POST /api/v1/export-credit-esg/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'eca_name'",
+   "dur_ms": 0.726,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "data": "'TEST_data' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_export_credit",
+     "qual": "assess_export_credit",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 78,
+     "args": {
+      "data": "'TEST_data'"
+     },
+     "ret": "None",
+     "dur_ms": 0.244,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "assess",
+       "qual": "ExportCreditESGEngine.assess",
+       "file": "services/export_credit_esg_engine.py",
+       "line": 1489,
+       "args": {
+        "data": "'TEST_data'"
+       },
+       "ret": "None",
+       "dur_ms": 0.171,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "assess_export_credit_esg",
+         "qual": "assess_export_credit_esg",
+         "file": "services/export_credit_esg_engine.py",
+         "line": 1163,
+         "args": {
+          "transaction": "'TEST_data'"
+         },
+         "ret": "None",
+         "dur_ms": 0.1,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "POST /api/v1/export-credit-esg/equator-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "POST /api/v1/export-credit-esg/fossil-fuel-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'sector'",
+   "dur_ms": 0.387,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "fossil_fuel_screen",
+     "qual": "fossil_fuel_screen",
+     "file": "api/v1/routes/export_credit_esg.py",
+     "line": 94,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "export-credit-esg",
+   "label": "POST /api/v1/export-credit-esg/green-classification",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

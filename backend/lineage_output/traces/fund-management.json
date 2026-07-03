@@ -1,0 +1,102 @@
+{
+ "domain": "fund-management",
+ "meta": {
+  "ts": "2026-06-30T14:02:14",
+  "module": "api.v1.routes.fund_management",
+  "router_prefix": "/api/v1/fund-management",
+  "endpoints": 2
+ },
+ "transactions": [
+  {
+   "domain": "fund-management",
+   "label": "GET /api/v1/fund-management/sfdr-summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.751,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "classifications",
+     "esg_strategies"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_sfdr_summary",
+     "qual": "get_sfdr_summary",
+     "file": "api/v1/routes/fund_management.py",
+     "line": 212,
+     "args": {},
+     "ret": "{'classifications': {'art6': {'name': 'Article 6', 'description': 'No ESG characteristics promoted. Basic sustainability risk disclosure.', 'taxonomy_disclosure': 'Not required'}, 'art8': {'name': 'Article 8', 'description': 'Promotes envi\u2026",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "fund-management",
+   "label": "POST /api/v1/fund-management/analyse",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'fund_id'",
+   "dur_ms": 0.348,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "analyse_fund",
+     "qual": "analyse_fund",
+     "file": "api/v1/routes/fund_management.py",
+     "line": 203,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_to_fund",
+       "qual": "_to_fund",
+       "file": "api/v1/routes/fund_management.py",
+       "line": 105,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

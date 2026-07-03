@@ -1,0 +1,388 @@
+{
+ "domain": "sentiment-analysis",
+ "meta": {
+  "ts": "2026-06-30T14:05:03",
+  "module": "api.v1.routes.sentiment_analysis",
+  "router_prefix": "/api/v1/sentiment",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "sentiment-analysis",
+   "label": "GET /api/v1/sentiment/ref/alert-config",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.294,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sentiment_thresholds",
+     "velocity_thresholds",
+     "compound_condition"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_alert_config",
+     "qual": "get_alert_config",
+     "file": "api/v1/routes/sentiment_analysis.py",
+     "line": 100,
+     "args": {},
+     "ret": "{'sentiment_thresholds': {'WATCH': -0.3, 'ELEVATED': -0.5, 'CRITICAL': -0.7, 'EXTREME': -0.9}, 'velocity_thresholds': {'WATCH': 1.5, 'ELEVATED': 2.0, 'CRITICAL': 3.0, 'EXTREME': 4.0}, 'compound_condition': 'sentiment_below_threshold AND (v\u2026",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_alert_config",
+       "qual": "SentimentAnalysisEngine.get_alert_config",
+       "file": "services/sentiment_analysis_engine.py",
+       "line": 743,
+       "args": {},
+       "ret": "{'sentiment_thresholds': {'WATCH': -0.3, 'ELEVATED': -0.5, 'CRITICAL': -0.7, 'EXTREME': -0.9}, 'velocity_thresholds': {'WATCH': 1.5, 'ELEVATED': 2.0, 'CRITICAL': 3.0, 'EXTREME': 4.0}, 'compound_condition': 'sentiment_below_threshold AND (v\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "GET /api/v1/sentiment/ref/config",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.218,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "stakeholder_groups",
+     "stakeholder_weights",
+     "source_credibility_tiers",
+     "signal_decay_half_lives",
+     "regime_thresholds",
+     "esg_topic_keywords"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_reference_data",
+     "qual": "get_reference_data",
+     "file": "api/v1/routes/sentiment_analysis.py",
+     "line": 82,
+     "args": {},
+     "ret": "{'stakeholder_groups': ['investor', 'employee', 'customer', 'regulator', 'community', 'ngo', 'media', 'supplier'], 'stakeholder_weights': {'investor': 0.2, 'regulator': 0.18, 'employee': 0.15, 'customer': 0.14, 'media': 0.12, 'ngo': 0.08, \u2026",
+     "dur_ms": 0.067,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_reference_data",
+       "qual": "SentimentAnalysisEngine.get_reference_data",
+       "file": "services/sentiment_analysis_engine.py",
+       "line": 724,
+       "args": {},
+       "ret": "{'stakeholder_groups': ['investor', 'employee', 'customer', 'regulator', 'community', 'ngo', 'media', 'supplier'], 'stakeholder_weights': {'investor': 0.2, 'regulator': 0.18, 'employee': 0.15, 'customer': 0.14, 'media': 0.12, 'ngo': 0.08, \u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "GET /api/v1/sentiment/ref/module-connections",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.181,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "inbound",
+     "outbound"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_module_connections",
+     "qual": "get_module_connections",
+     "file": "api/v1/routes/sentiment_analysis.py",
+     "line": 94,
+     "args": {},
+     "ret": "{'inbound': [{'module': 'dme_nlp_pulse_engine', 'feed_type': 'score_input', 'description': 'NLP pulse scores with source credibility'}, {'module': 'dme_greenwashing_engine', 'feed_type': 'controversy_flag', 'description': 'Greenwashing div\u2026",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_module_connections",
+       "qual": "SentimentAnalysisEngine.get_module_connections",
+       "file": "services/sentiment_analysis_engine.py",
+       "line": 739,
+       "args": {},
+       "ret": "{'inbound': [{'module': 'dme_nlp_pulse_engine', 'feed_type': 'score_input', 'description': 'NLP pulse scores with source credibility'}, {'module': 'dme_greenwashing_engine', 'feed_type': 'controversy_flag', 'description': 'Greenwashing div\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "GET /api/v1/sentiment/ref/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.218,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 20,
+    "item0_keys": [
+     "name",
+     "type",
+     "tier",
+     "frequency"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_sources",
+     "qual": "get_sources",
+     "file": "api/v1/routes/sentiment_analysis.py",
+     "line": 88,
+     "args": {},
+     "ret": "[{'name': 'SEC EDGAR', 'type': 'regulatory', 'tier': 1, 'frequency': 'daily'}, {'name': 'EU Official Journal', 'type': 'regulatory', 'tier': 1, 'frequency': 'daily'}, {'name': 'Company Annual Reports', 'type': 'financial', 'tier': 1, 'freq\u2026",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_sources",
+       "qual": "SentimentAnalysisEngine.get_sources",
+       "file": "services/sentiment_analysis_engine.py",
+       "line": 735,
+       "args": {},
+       "ret": "[{'name': 'SEC EDGAR', 'type': 'regulatory', 'tier': 1, 'frequency': 'daily'}, {'name': 'EU Official Journal', 'type': 'regulatory', 'tier': 1, 'frequency': 'daily'}, {'name': 'Company Annual Reports', 'type': 'financial', 'tier': 1, 'freq\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/entity-score",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.431,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<EntityScoreRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "lookback_days",
+     "as_of_date",
+     "composite_score",
+     "composite_confidence",
+     "signal_count",
+     "source_diversity",
+     "stakeholder_scores",
+     "esg_scores",
+     "velocity",
+     "alert"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "entity_score",
+     "qual": "entity_score",
+     "file": "api/v1/routes/sentiment_analysis.py",
+     "line": 40,
+     "args": {
+      "req": "EntityScoreRequest(entity_id='TEST_req_entity_id', lookback_days=90, stakeholder_weights=None, min_credibility_tier=5, include_velocity=True)"
+     },
+     "ret": "{'entity_id': 'TEST_req_entity_id', 'lookback_days': 90, 'as_of_date': '2026-06-30', 'composite_score': -0.0587, 'composite_confidence': 0.86, 'signal_count': 196, 'source_diversity': 0.929, 'stakeholder_scores': {'investor': -0.378, 'empl\u2026",
+     "dur_ms": 0.187,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "entity_score",
+       "qual": "SentimentAnalysisEngine.entity_score",
+       "file": "services/sentiment_analysis_engine.py",
+       "line": 397,
+       "args": {
+        "req": "EntityScoreRequest(entity_id='TEST_req_entity_id', lookback_days=90, stakeholder_weights=None, min_credibility_tier=5, include_velocity=True)"
+       },
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'lookback_days': 90, 'as_of_date': '2026-06-30', 'composite_score': -0.0587, 'composite_confidence': 0.86, 'signal_count': 196, 'source_diversity': 0.929, 'stakeholder_scores': {'investor': -0.378, 'empl\u2026",
+       "dur_ms": 0.132,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/module-feed",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/process-batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/process-signal",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sentiment-analysis",
+   "label": "POST /api/v1/sentiment/topic-trend",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

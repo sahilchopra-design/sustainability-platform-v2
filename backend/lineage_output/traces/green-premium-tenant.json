@@ -1,0 +1,126 @@
+{
+ "domain": "green-premium-tenant",
+ "meta": {
+  "ts": "2026-06-30T14:02:37",
+  "module": "api.v1.routes.green_premium_tenant",
+  "router_prefix": "/api/v1/green-premium",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "green-premium-tenant",
+   "label": "GET /api/v1/green-premium/reference-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.296,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "green_rent_premium_by_certification",
+     "epc_cap_rate_adjustment_bps",
+     "epc_rent_discount_pct",
+     "green_lease_clauses",
+     "green_lease_clause_weights",
+     "sector_carbon_benchmarks_tco2e_per_employee"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_reference_data",
+     "qual": "get_reference_data",
+     "file": "api/v1/routes/green_premium_tenant.py",
+     "line": 250,
+     "args": {},
+     "ret": "{'green_rent_premium_by_certification': {'LEED': {'Platinum': 12.0, 'Gold': 8.0, 'Silver': 4.0, 'Certified': 2.0}, 'BREEAM': {'Outstanding': 10.0, 'Excellent': 7.0, 'Very Good': 4.0, 'Good': 2.0, 'Pass': 0.5}, 'NABERS': {'6 Star': 12.0, '5\u2026",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-premium-tenant",
+   "label": "POST /api/v1/green-premium/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'properties'",
+   "dur_ms": 0.209,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "assess_green_premium",
+     "qual": "assess_green_premium",
+     "file": "api/v1/routes/green_premium_tenant.py",
+     "line": 198,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-premium-tenant",
+   "label": "POST /api/v1/green-premium/tenant-esg",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'properties'",
+   "dur_ms": 0.202,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "assess_tenant_esg",
+     "qual": "assess_tenant_esg",
+     "file": "api/v1/routes/green_premium_tenant.py",
+     "line": 226,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

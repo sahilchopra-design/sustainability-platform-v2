@@ -1,0 +1,471 @@
+{
+ "domain": "banking-risk",
+ "meta": {
+  "ts": "2026-06-30T13:59:24",
+  "module": "api.v1.routes.banking_risk",
+  "router_prefix": "/api/v1/banking-risk",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "banking-risk",
+   "label": "GET /api/v1/banking-risk/lgd-collateral-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.35,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "lgd_by_collateral"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "lgd_collateral_types",
+     "qual": "lgd_collateral_types",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 299,
+     "args": {},
+     "ret": "{'lgd_by_collateral': {'sovereign_guarantee': 5.0, 'cash_collateral': 10.0, 'residential_mortgage': 20.0, 'commercial_mortgage': 30.0, 'receivables': 35.0, 'other_physical': 40.0, 'unsecured_senior': 45.0, 'unsecured_subordinated': 75.0}}",
+     "dur_ms": 0.082,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_lgd_collateral_types",
+       "qual": "BankingRiskEngine.get_lgd_collateral_types",
+       "file": "services/banking_risk_engine.py",
+       "line": 808,
+       "args": {},
+       "ret": "{'sovereign_guarantee': 5.0, 'cash_collateral': 10.0, 'residential_mortgage': 20.0, 'commercial_mortgage': 30.0, 'receivables': 35.0, 'other_physical': 40.0, 'unsecured_senior': 45.0, 'unsecured_subordinated': 75.0}",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "GET /api/v1/banking-risk/pd-term-structures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.171,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pd_term_structures"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "pd_term_structures",
+     "qual": "pd_term_structures",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 294,
+     "args": {},
+     "ret": "{'pd_term_structures': {'AAA': [0.01, 0.03, 0.06, 0.1, 0.15], 'AA': [0.02, 0.05, 0.1, 0.18, 0.28], 'A': [0.05, 0.12, 0.22, 0.35, 0.5], 'BBB': [0.15, 0.4, 0.72, 1.1, 1.55], 'BB': [0.6, 1.5, 2.7, 4.0, 5.4], 'B': [2.0, 5.0, 8.5, 12.0, 15.5], \u2026",
+     "dur_ms": 0.036,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_pd_term_structures",
+       "qual": "BankingRiskEngine.get_pd_term_structures",
+       "file": "services/banking_risk_engine.py",
+       "line": 804,
+       "args": {},
+       "ret": "{'AAA': [0.01, 0.03, 0.06, 0.1, 0.15], 'AA': [0.02, 0.05, 0.1, 0.18, 0.28], 'A': [0.05, 0.12, 0.22, 0.35, 0.5], 'BBB': [0.15, 0.4, 0.72, 1.1, 1.55], 'BB': [0.6, 1.5, 2.7, 4.0, 5.4], 'B': [2.0, 5.0, 8.5, 12.0, 15.5], 'CCC': [8.0, 16.0, 23.0\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "GET /api/v1/banking-risk/risk-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.134,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "risk_weights"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "risk_weights",
+     "qual": "risk_weights",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 304,
+     "args": {},
+     "ret": "{'risk_weights': {'sovereign_0': 0.0, 'sovereign_20': 20.0, 'bank_20': 20.0, 'bank_50': 50.0, 'corporate_ig': 65.0, 'corporate_standard': 100.0, 'corporate_high_risk': 150.0, 'retail': 75.0, 'residential_mortgage': 35.0, 'commercial_re': 1\u2026",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_risk_weights",
+       "qual": "BankingRiskEngine.get_risk_weights",
+       "file": "services/banking_risk_engine.py",
+       "line": 812,
+       "args": {},
+       "ret": "{'sovereign_0': 0.0, 'sovereign_20': 20.0, 'bank_20': 20.0, 'bank_50': 50.0, 'corporate_ig': 65.0, 'corporate_standard': 100.0, 'corporate_high_risk': 150.0, 'retail': 75.0, 'residential_mortgage': 35.0, 'commercial_re': 100.0, 'equity': 2\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "GET /api/v1/banking-risk/tsa-beta-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.16,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "tsa_beta_factors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "tsa_beta_factors",
+     "qual": "tsa_beta_factors",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 309,
+     "args": {},
+     "ret": "{'tsa_beta_factors': {'corporate_finance': 18.0, 'trading_and_sales': 18.0, 'retail_banking': 12.0, 'commercial_banking': 15.0, 'payment_and_settlement': 18.0, 'agency_services': 15.0, 'asset_management': 12.0, 'retail_brokerage': 12.0}}",
+     "dur_ms": 0.021,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_tsa_beta_factors",
+       "qual": "BankingRiskEngine.get_tsa_beta_factors",
+       "file": "services/banking_risk_engine.py",
+       "line": 816,
+       "args": {},
+       "ret": "{'corporate_finance': 18.0, 'trading_and_sales': 18.0, 'retail_banking': 12.0, 'commercial_banking': 15.0, 'payment_and_settlement': 18.0, 'agency_services': 15.0, 'asset_management': 12.0, 'retail_brokerage': 12.0}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/aml-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'counterparty_countries'",
+   "dur_ms": 0.172,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "assess_aml_risk",
+     "qual": "assess_aml_risk",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 257,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/capital-adequacy",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'cet1_capital_eur'",
+   "dur_ms": 0.155,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "assess_capital_adequacy",
+     "qual": "assess_capital_adequacy",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 266,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/comprehensive",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.129,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "comprehensive_assessment",
+     "qual": "comprehensive_assessment",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 281,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/credit-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'total_exposure_eur'",
+   "dur_ms": 0.126,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_credit_risk",
+     "qual": "assess_credit_risk",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 207,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/liquidity-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'hqla_holdings'",
+   "dur_ms": 0.119,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "assess_liquidity_risk",
+     "qual": "assess_liquidity_risk",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 222,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/market-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'trading_book_eur'",
+   "dur_ms": 0.17,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "assess_market_risk",
+     "qual": "assess_market_risk",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 232,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "banking-risk",
+   "label": "POST /api/v1/banking-risk/operational-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'gross_income_year1_eur'",
+   "dur_ms": 0.122,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess_operational_risk",
+     "qual": "assess_operational_risk",
+     "file": "api/v1/routes/banking_risk.py",
+     "line": 246,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1842 @@
+{
+ "domain": "climate-tech",
+ "meta": {
+  "ts": "2026-06-30T14:00:00",
+  "module": "api.v1.routes.climate_tech",
+  "router_prefix": "/api/v1/climate-tech",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "climate-tech",
+   "label": "GET /api/v1/climate-tech/ref/ctvc-taxonomy",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.608,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "sector_count",
+     "sectors"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_ctvc_taxonomy",
+     "qual": "get_ctvc_taxonomy",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 158,
+     "args": {},
+     "ret": "{'source': 'CTVC Climate Tech Taxonomy 2024', 'sector_count': 11, 'sectors': {'energy': {'description': 'Clean energy generation, storage and infrastructure', 'sub_sectors': ['solar_pv', 'onshore_wind', 'offshore_wind', 'battery_storage', \u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "GET /api/v1/climate-tech/ref/iea-deployment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.394,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "reporting_year",
+     "technology_count",
+     "technologies"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_iea_deployment",
+     "qual": "get_iea_deployment",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 172,
+     "args": {},
+     "ret": "{'source': 'IEA World Energy Investment 2024 / Net Zero by 2050 (NZE 2023)', 'reporting_year': 2024, 'technology_count': 21, 'technologies': {'solar_pv_utility': {'display_name': 'Solar PV (Utility-Scale)', 'ctvc_sector': 'energy', 'curren\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "GET /api/v1/climate-tech/ref/mac-curves",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.277,
+   "node_count": 78,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "technology_count",
+     "total_abatement_potential_2030_gtco2",
+     "total_abatement_potential_2050_gtco2",
+     "cost_tiers",
+     "curves"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_mac_curves",
+     "qual": "get_mac_curves",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 189,
+     "args": {},
+     "ret": "{'source': 'IEA Net Zero by 2050 \u2014 MAC Curve (2023 edition)', 'technology_count': 25, 'total_abatement_potential_2030_gtco2': 22.5, 'total_abatement_potential_2050_gtco2': 67.7, 'cost_tiers': {'negative_cost': ['building_energy_efficiency'\u2026",
+     "dur_ms": 1.976,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'building_energy_efficiency', 'mac_usd_tco2': -80, 'abatement_2030_gtco2': 1.8, 'abatement_2050_gtco2': 3.5, 'sector': 'buildings', 'trl': 9, 'notes': 'Insulation, LED, HVAC \u2014 net negative cost'}"
+       },
+       "ret": "-80",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'industrial_energy_efficiency', 'mac_usd_tco2': -45, 'abatement_2030_gtco2': 1.2, 'abatement_2050_gtco2': 2.8, 'sector': 'industry', 'trl': 9, 'notes': 'Motor systems, waste heat recovery'}"
+       },
+       "ret": "-45",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'fuel_switching_gas_to_re', 'mac_usd_tco2': -30, 'abatement_2030_gtco2': 1.5, 'abatement_2050_gtco2': 4.0, 'sector': 'energy', 'trl': 9, 'notes': 'Replacing gas peakers with solar+storage'}"
+       },
+       "ret": "-30",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'heat_pumps', 'mac_usd_tco2': -20, 'abatement_2030_gtco2': 0.8, 'abatement_2050_gtco2': 2.2, 'sector': 'buildings', 'trl': 9, 'notes': 'Negative cost at EU carbon prices >\u20ac60/t'}"
+       },
+       "ret": "-20",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'solar_pv_utility', 'mac_usd_tco2': -15, 'abatement_2030_gtco2': 2.8, 'abatement_2050_gtco2': 6.5, 'sector': 'energy', 'trl': 9, 'notes': 'LCOE below gas in most markets'}"
+       },
+       "ret": "-15",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'smart_grid', 'mac_usd_tco2': -5, 'abatement_2030_gtco2': 0.5, 'abatement_2050_gtco2': 1.5, 'sector': 'energy', 'trl': 9, 'notes': 'Demand response and flexibility'}"
+       },
+       "ret": "-5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'onshore_wind', 'mac_usd_tco2': -10, 'abatement_2030_gtco2': 1.8, 'abatement_2050_gtco2': 4.0, 'sector': 'energy', 'trl': 9, 'notes': 'LCOE competitive in windy regions'}"
+       },
+       "ret": "-10",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'ev_passenger', 'mac_usd_tco2': 5, 'abatement_2030_gtco2': 1.4, 'abatement_2050_gtco2': 4.5, 'sector': 'transportation', 'trl': 9, 'notes': 'Near cost-parity with ICE by 2025-2027'}"
+       },
+       "ret": "5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'methane_flaring_reduction', 'mac_usd_tco2': -15, 'abatement_2030_gtco2': 0.9, 'abatement_2050_gtco2': 1.5, 'sector': 'energy', 'trl': 9, 'notes': 'Oil & gas sector methane capture'}"
+       },
+       "ret": "-15",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'forest_conservation_redd', 'mac_usd_tco2': 5, 'abatement_2030_gtco2': 3.5, 'abatement_2050_gtco2': 5.5, 'sector': 'food_land_use', 'trl': 9, 'notes': 'REDD+ and avoided deforestation'}"
+       },
+       "ret": "5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'battery_storage_liion', 'mac_usd_tco2': 15, 'abatement_2030_gtco2': 0.6, 'abatement_2050_gtco2': 2.0, 'sector': 'energy', 'trl': 9, 'notes': 'Short-duration grid storage'}"
+       },
+       "ret": "15",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'offshore_wind', 'mac_usd_tco2': 20, 'abatement_2030_gtco2': 0.9, 'abatement_2050_gtco2': 3.5, 'sector': 'energy', 'trl': 9, 'notes': 'Higher CAPEX but growing rapidly'}"
+       },
+       "ret": "20",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'ev_commercial', 'mac_usd_tco2': 25, 'abatement_2030_gtco2': 0.5, 'abatement_2050_gtco2': 2.5, 'sector': 'transportation', 'trl': 8, 'notes': 'Truck electrification at growing scale'}"
+       },
+       "ret": "25",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'soil_carbon_agriculture', 'mac_usd_tco2': 30, 'abatement_2030_gtco2': 1.0, 'abatement_2050_gtco2': 2.0, 'sector': 'food_land_use', 'trl': 8, 'notes': 'Regenerative and precision agriculture'}"
+       },
+       "ret": "30",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'blue_hydrogen', 'mac_usd_tco2': 60, 'abatement_2030_gtco2': 0.3, 'abatement_2050_gtco2': 1.5, 'sector': 'industry', 'trl': 8, 'notes': 'SMR+CCS bridge technology'}"
+       },
+       "ret": "60",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'nuclear_large', 'mac_usd_tco2': 70, 'abatement_2030_gtco2': 0.5, 'abatement_2050_gtco2': 2.0, 'sector': 'energy', 'trl': 9, 'notes': 'High capital cost but low-carbon baseload'}"
+       },
+       "ret": "70",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'ccs_ccus_industrial', 'mac_usd_tco2': 95, 'abatement_2030_gtco2': 0.7, 'abatement_2050_gtco2': 5.8, 'sector': 'industry', 'trl': 8, 'notes': 'Hard-to-abate sectors cement/steel'}"
+       },
+       "ret": "95",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'green_hydrogen', 'mac_usd_tco2': 120, 'abatement_2030_gtco2': 0.4, 'abatement_2050_gtco2': 3.8, 'sector': 'industry', 'trl': 8, 'notes': 'Cost declining rapidly with RE + scale'}"
+       },
+       "ret": "120",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'long_duration_storage', 'mac_usd_tco2': 50, 'abatement_2030_gtco2': 0.15, 'abatement_2050_gtco2': 0.8, 'sector': 'energy', 'trl': 6, 'notes': 'Seasonal and multi-day storage'}"
+       },
+       "ret": "50",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'steel_dri_h2', 'mac_usd_tco2': 80, 'abatement_2030_gtco2': 0.3, 'abatement_2050_gtco2': 1.8, 'sector': 'industry', 'trl': 7, 'notes': 'Hydrogen-based steelmaking (HYBRIT)'}"
+       },
+       "ret": "80",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'cement_ccus', 'mac_usd_tco2': 90, 'abatement_2030_gtco2': 0.2, 'abatement_2050_gtco2': 1.4, 'sector': 'industry', 'trl': 6, 'notes': 'Oxyfuel and post-combustion CCS'}"
+       },
+       "ret": "90",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'beccs', 'mac_usd_tco2': 150, 'abatement_2030_gtco2': 0.5, 'abatement_2050_gtco2': 2.5, 'sector': 'carbon_removal', 'trl': 7, 'notes': 'Sustainable biomass constraint critical'}"
+       },
+       "ret": "150",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'sustainable_aviation_fuel', 'mac_usd_tco2': 300, 'abatement_2030_gtco2': 0.1, 'abatement_2050_gtco2': 0.6, 'sector': 'transportation', 'trl': 8, 'notes': 'Green premium vs conventional jet fuel'}"
+       },
+       "ret": "300",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'direct_air_capture', 'mac_usd_tco2': 600, 'abatement_2030_gtco2': 0.1, 'abatement_2050_gtco2': 1.0, 'sector': 'carbon_removal', 'trl': 7, 'notes': 'High cost now, declining with scale'}"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<lambda>",
+       "qual": "get_mac_curves.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 199,
+       "args": {
+        "x": "{'technology': 'ocean_alkalinity_enhancement', 'mac_usd_tco2': 200, 'abatement_2030_gtco2': 0.05, 'abatement_2050_gtco2': 0.5, 'sector': 'carbon_removal', 'trl': 4, 'notes': 'Early stage \u2014 ecological risks uncertain'}"
+       },
+       "ret": "200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.2",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.4",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "3.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.7",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.15",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.05",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 200,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "3.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.8",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "4.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "6.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "4.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "4.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "5.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "3.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "5.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "3.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "2.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "1.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "<genexpr>",
+       "qual": "get_mac_curves.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 201,
+       "args": {
+        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "GET /api/v1/climate-tech/ref/vc-market-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.979,
+   "node_count": 25,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "reporting_year",
+     "total_climate_tech_investment_usd_bn",
+     "total_deal_count",
+     "sectors",
+     "bnef_learning_curve_count",
+     "patent_intensity_technologies",
+     "trl_definitions",
+     "green_taxonomy_mappings"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 81,
+     "name": "get_vc_market_data",
+     "qual": "get_vc_market_data",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 217,
+     "args": {},
+     "ret": "{'source': 'CTVC State of Climate Tech 2024 / BloombergNEF Energy Transition Investment Trends 2024', 'reporting_year': 2024, 'total_climate_tech_investment_usd_bn': 161.0, 'total_deal_count': 1890, 'sectors': {'energy': {'total_capital_20\u2026",
+     "dur_ms": 0.652,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 82,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "42.0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "35.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 84,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "12.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 85,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "18.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "14.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "5.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "8.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "7.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "3.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "10.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "6.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 235,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "380",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "290",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "180",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "150",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "220",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "95",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "160",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "110",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "70",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 103,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "140",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 104,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "95",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 105,
+       "name": "<genexpr>",
+       "qual": "get_vc_market_data.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_tech.py",
+       "line": 236,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "POST /api/v1/climate-tech/assess-technology",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'technology_name'",
+   "dur_ms": 0.262,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 106,
+     "name": "assess_technology",
+     "qual": "assess_technology",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 85,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "POST /api/v1/climate-tech/investment-opportunity",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'technology'",
+   "dur_ms": 0.25,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 107,
+     "name": "analyse_investment_opportunity",
+     "qual": "analyse_investment_opportunity",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 99,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "POST /api/v1/climate-tech/learning-curve",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'technology'",
+   "dur_ms": 0.2,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 108,
+     "name": "calculate_learning_curve",
+     "qual": "calculate_learning_curve",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 136,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-tech",
+   "label": "POST /api/v1/climate-tech/portfolio-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'technology_list'",
+   "dur_ms": 0.197,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 109,
+     "name": "build_portfolio_analysis",
+     "qual": "build_portfolio_analysis",
+     "file": "api/v1/routes/climate_tech.py",
+     "line": 118,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

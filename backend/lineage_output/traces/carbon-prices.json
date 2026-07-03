@@ -1,0 +1,408 @@
+{
+ "domain": "carbon-prices",
+ "meta": {
+  "ts": "2026-06-30T13:59:38",
+  "module": "api.v1.routes.carbon_prices",
+  "router_prefix": "/api/v1/carbon-prices",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "carbon-prices",
+   "label": "GET /api/v1/carbon-prices/compare",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 992.423,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 210.357,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.837,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 160.944,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenarios": "'TEST_scenarios' (mock-required)",
+    "region": "'World' (default)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "region",
+     "year",
+     "scenarios"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "compare_carbon_prices",
+     "qual": "compare_carbon_prices",
+     "file": "api/v1/routes/carbon_prices.py",
+     "line": 56,
+     "args": {
+      "scenarios": "'TEST_scenarios'",
+      "region": "'World'",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED0E3260>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED1D7060>, use_cache=True, scope=None)"
+     },
+     "ret": "{'region': 'World', 'year': None, 'scenarios': [{'scenario': 'TEST_scenarios', 'price_at_year': None, 'data_points': 0, 'min_price': None, 'max_price': None, 'time_series': []}]}",
+     "dur_ms": 961.697,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_find_carbon_price_records",
+       "qual": "_find_carbon_price_records",
+       "file": "api/v1/routes/carbon_prices.py",
+       "line": 35,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED0E3260>",
+        "scenario": "'TEST_scenarios'",
+        "region": "'World'"
+       },
+       "ret": "[]",
+       "dur_ms": 961.544,
+       "sql": [
+        0,
+        1,
+        2
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "compare_carbon_prices.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_prices.py",
+       "line": 86,
+       "args": {
+        ".0": "<list_iterator object at 0x000001C2ED038340>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "compare_carbon_prices.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_prices.py",
+       "line": 87,
+       "args": {
+        ".0": "<list_iterator object at 0x000001C2ED038340>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-prices",
+   "label": "GET /api/v1/carbon-prices/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 291.874,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.category AS dh_ngfs_scenario_data_category, count(dh_ngfs_scenario_data.id) AS data_points, min(dh_ngfs_scenario_data.year) AS year_min, max(dh_ngfs_scenario_data.year) AS year_max FROM dh_ngfs_scenario_data WHERE dh_ngfs_scenario_data.variabl\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.993,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_carbon_price_scenarios",
+     "qual": "list_carbon_price_scenarios",
+     "file": "api/v1/routes/carbon_prices.py",
+     "line": 98,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3A6E70>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED1D72E0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'scenarios': [], 'total': 0}",
+     "dur_ms": 262.727,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-prices",
+   "label": "GET /api/v1/carbon-prices/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 381.998,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scen\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.703,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(DISTINCT dh_ngfs_scenario_data.scenario) AS count_1 FROM dh_ngfs_scenario_data WHERE dh_ngfs_scenario_data.variable ILIKE %(variable_1)s'",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.017,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(DISTINCT dh_ngfs_scenario_data.model) AS count_1 FROM dh_ngfs_scenario_data WHERE dh_ngfs_scenario_data.variable ILIKE %(variable_1)s'",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.958,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_data_points",
+     "distinct_scenarios",
+     "distinct_models"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "carbon_price_stats",
+     "qual": "carbon_price_stats",
+     "file": "api/v1/routes/carbon_prices.py",
+     "line": 132,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3D9BE0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED2C7F60>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total_data_points': 0, 'distinct_scenarios': 0, 'distinct_models': 0}",
+     "dur_ms": 352.136,
+     "sql": [
+      0,
+      1,
+      2
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-prices",
+   "label": "GET /api/v1/carbon-prices/{scenario}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 363.389,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_ngfs_scenario_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.069,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.352,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.183,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "year": "None (default)",
+    "region": "'World' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenario",
+     "region",
+     "year",
+     "price_usd",
+     "unit",
+     "source",
+     "time_series"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_carbon_price",
+     "qual": "get_carbon_price",
+     "file": "api/v1/routes/carbon_prices.py",
+     "line": 160,
+     "args": {
+      "scenario": "'550e8400-e29b-41d4-a716-446655440001'",
+      "year": "None",
+      "region": "'World'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3DAAB0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED2F4360>, use_cache=True, scope=None)"
+     },
+     "ret": "{'scenario': '550e8400-e29b-41d4-a716-446655440001', 'region': 'World', 'year': None, 'price_usd': None, 'unit': 'USD/tCO2', 'source': 'NGFS (no data found)', 'time_series': []}",
+     "dur_ms": 332.417,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_find_carbon_price_records",
+       "qual": "_find_carbon_price_records",
+       "file": "api/v1/routes/carbon_prices.py",
+       "line": 35,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3DAAB0>",
+        "scenario": "'550e8400-e29b-41d4-a716-446655440001'",
+        "region": "'World'"
+       },
+       "ret": "[]",
+       "dur_ms": 332.373,
+       "sql": [
+        0,
+        1,
+        2
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

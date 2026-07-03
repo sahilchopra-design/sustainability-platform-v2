@@ -1,0 +1,372 @@
+{
+ "domain": "esg-controversy",
+ "meta": {
+  "ts": "2026-06-30T14:01:51",
+  "module": "api.v1.routes.esg_controversy",
+  "router_prefix": "/api/v1/esg-controversy",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "esg-controversy",
+   "label": "GET /api/v1/esg-controversy/ref/controversy-levels",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.329,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "levels",
+     "msci_controversy_impact",
+     "sfdr_pai_definitions",
+     "industry_exposure_factors"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_controversy_levels",
+     "qual": "ref_controversy_levels",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 146,
+     "args": {},
+     "ret": "{'framework': 'Sustainalytics ESG Risk Rating Controversy Assessment (2023)', 'levels': {1: {'level': 1, 'label': 'Low', 'description': 'No significant controversy; minor isolated incidents with negligible stakeholder impact', 'esg_risk_ra\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "GET /api/v1/esg-controversy/ref/incident-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.813,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_incident_types",
+     "by_category",
+     "all_incidents",
+     "ungc_violation_incidents",
+     "catastrophic_incidents"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_incident_types",
+     "qual": "ref_incident_types",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 192,
+     "args": {},
+     "ret": "{'total_incident_types': 54, 'by_category': {'E': {'oil_spill': {'category': 'E', 'subcategory': 'Pollution', 'description': 'Oil spill or petroleum product release into water bodies or land', 'ungc_violation': True, 'ungc_principles': [7,\u2026",
+     "dur_ms": 0.064,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "GET /api/v1/esg-controversy/ref/reprisk-methodology",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.17,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "methodology",
+     "total_esg_topics",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_reprisk_methodology",
+     "qual": "ref_reprisk_methodology",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 169,
+     "args": {},
+     "ret": "{'methodology': {'rri_definition': {'name': 'RepRisk Index (RRI)', 'scale': '0-100', 'description': 'Quantified reputational risk exposure; 0 = no ESG risk exposure, 100 = maximum risk exposure', 'peak_rri': 'Highest RRI recorded in the pa\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "GET /api/v1/esg-controversy/ref/ungc-violations",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.406,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ungc_principles",
+     "total_violation_incident_types",
+     "violations_by_incident_type",
+     "incident_types_by_principle",
+     "sfdr_pai_10_definition",
+     "sfdr_pai_11_definition",
+     "sfdr_pai_14_definition",
+     "oecd_guidelines_reference"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ungc_violations",
+     "qual": "ref_ungc_violations",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 241,
+     "args": {},
+     "ret": "{'ungc_principles': {1: {'principle': 1, 'area': 'Human Rights', 'text': 'Support and respect the protection of internationally proclaimed human rights'}, 2: {'principle': 2, 'area': 'Human Rights', 'text': 'Make sure they are not complici\u2026",
+     "dur_ms": 0.149,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "POST /api/v1/esg-controversy/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.224,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_entity_controversy",
+     "qual": "assess_entity_controversy",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 43,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "assess",
+       "qual": "ESGControversyEngine.assess",
+       "file": "services/esg_controversy_engine.py",
+       "line": 1652,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "POST /api/v1/esg-controversy/controversy-trend",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "POST /api/v1/esg-controversy/portfolio-exposure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "POST /api/v1/esg-controversy/remediation-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'acknowledgement'",
+   "dur_ms": 0.177,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "remediation_score",
+     "qual": "remediation_score",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 80,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "remediation_score",
+       "qual": "ESGControversyEngine.remediation_score",
+       "file": "services/esg_controversy_engine.py",
+       "line": 1665,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-controversy",
+   "label": "POST /api/v1/esg-controversy/score-incident",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'incident_type'",
+   "dur_ms": 0.138,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "score_incident",
+     "qual": "score_incident",
+     "file": "api/v1/routes/esg_controversy.py",
+     "line": 62,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "score_incident",
+       "qual": "ESGControversyEngine.score_incident",
+       "file": "services/esg_controversy_engine.py",
+       "line": 1659,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

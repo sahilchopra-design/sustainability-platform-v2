@@ -1,0 +1,351 @@
+{
+ "domain": "organisations",
+ "meta": {
+  "ts": "2026-06-30T14:03:32",
+  "module": "api.v1.routes.organisations",
+  "router_prefix": "/api/v1/organisations",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "organisations",
+   "label": "GET /api/v1/organisations/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2860.294,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "organisations"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT organisations.id AS organisations_id, organisations.name AS organisations_name, organisations.short_name AS organisations_short_name, organisations.org_type AS organisations_org_type, organisations.jurisdiction AS organisations_jurisdiction, organisations.regulatory_regime AS organisations_regulatory_regime, organisations.subscription_tier AS organisations_subscription_tier, organisations\u2026",
+     "tables": [
+      "organisations"
+     ],
+     "rowcount": 2,
+     "dur_ms": 90.556,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT organisations.id AS organisations_id, organisations.name AS organisations_name, organisations.short_name AS organisations_short_name, organisations.org_type AS organisations_org_type, organisations.jurisdiction AS organisations_jurisdiction, organisations.regulatory_regime AS organisations_regulatory_regime, organisations.subscription_tier AS organisations\u2026",
+     "tables": [
+      "organisations"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.333,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "organisations"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_organisations",
+     "qual": "list_organisations",
+     "file": "api/v1/routes/organisations.py",
+     "line": 72,
+     "args": {
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F4D0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B67C0C20>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 2, 'organisations': [{'id': '37b45899-30fc-4e05-b9bf-4c1f6d403682', 'name': 'AA IMPACT Inc', 'short_name': None, 'org_type': 'fintech', 'jurisdiction': 'IND', 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei'\u2026",
+     "dur_ms": 2830.182,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_org_to_dict",
+       "qual": "_org_to_dict",
+       "file": "api/v1/routes/organisations.py",
+       "line": 55,
+       "args": {
+        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x00000257B6992FF0>"
+       },
+       "ret": "{'id': '37b45899-30fc-4e05-b9bf-4c1f6d403682', 'name': 'AA IMPACT Inc', 'short_name': None, 'org_type': 'fintech', 'jurisdiction': 'IND', 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei': None, 'is_active': True, 'cre\u2026",
+       "dur_ms": 0.085,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "_org_to_dict",
+       "qual": "_org_to_dict",
+       "file": "api/v1/routes/organisations.py",
+       "line": 55,
+       "args": {
+        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x00000257B6993020>"
+       },
+       "ret": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Platform Default', 'short_name': None, 'org_type': 'other', 'jurisdiction': None, 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei': None, 'is_active': True, 'cre\u2026",
+       "dur_ms": 0.038,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "organisations",
+   "label": "GET /api/v1/organisations/mine",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.454,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "organisation",
+     "message"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_my_org",
+     "qual": "get_my_org",
+     "file": "api/v1/routes/organisations.py",
+     "line": 84,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F650>",
+      "user": "Depends(dependency=<function get_current_user at 0x00000257B6755DA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'organisation': None, 'message': 'No organisation assigned'}",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "organisations",
+   "label": "GET /api/v1/organisations/{org_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Organisation not found",
+   "dur_ms": 322.899,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "organisations"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT organisations.id AS organisations_id, organisations.name AS organisations_name, organisations.short_name AS organisations_short_name, organisations.org_type AS organisations_org_type, organisations.jurisdiction AS organisations_jurisdiction, organisations.regulatory_regime AS organisations_regulatory_regime, organisations.subscription_tier AS organisations_subscription_tier, organisations\u2026",
+     "tables": [
+      "organisations"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.414,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "org_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_organisation",
+     "qual": "get_organisation",
+     "file": "api/v1/routes/organisations.py",
+     "line": 102,
+     "args": {
+      "org_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F4D0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B68A5BC0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 288.324,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "organisations",
+   "label": "GET /api/v1/organisations/{org_id}/members",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 313.144,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "org_users"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT org_users.id AS org_users_id, org_users.org_id AS org_users_org_id, org_users.email AS org_users_email, org_users.full_name AS org_users_full_name, org_users.role AS org_users_role, org_users.department AS org_users_department, org_users.is_active AS org_users_is_active, org_users.last_login AS org_users_last_login, org_users.permissions AS org_users_permissions, org_users.created_at AS o\u2026",
+     "tables": [
+      "org_users"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.985,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "org_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "org_id",
+     "members"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_org_members",
+     "qual": "list_org_members",
+     "file": "api/v1/routes/organisations.py",
+     "line": 192,
+     "args": {
+      "org_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B6992EA0>",
+      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B68A65C0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'org_id': '550e8400-e29b-41d4-a716-446655440001', 'members': []}",
+     "dur_ms": 282.658,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "organisations",
+   "label": "POST /api/v1/organisations/",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "organisations",
+   "label": "PUT /api/v1/organisations/{org_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "organisations",
+   "label": "POST /api/v1/organisations/{org_id}/members",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "organisations",
+   "label": "POST /api/v1/organisations/{org_id}/seed-demo",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

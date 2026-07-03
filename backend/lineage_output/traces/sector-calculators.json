@@ -1,0 +1,199 @@
+{
+ "domain": "sector-calculators",
+ "meta": {
+  "ts": "2026-06-30T14:05:03",
+  "module": "api.v1.routes.sector_calculators",
+  "router_prefix": "/api/v1/sector-calculators",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "sector-calculators",
+   "label": "GET /api/v1/sector-calculators/shipping/fuel-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.465,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fuel_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_fuel_types",
+     "qual": "list_fuel_types",
+     "file": "api/v1/routes/sector_calculators.py",
+     "line": 230,
+     "args": {},
+     "ret": "{'fuel_types': {'HFO': 3.114, 'VLSFO': 3.151, 'MDO': 3.206, 'LNG': 2.75, 'LPG_butane': 3.03, 'LPG_propane': 3.0, 'METHANOL': 1.375, 'AMMONIA': 0.0, 'HYDROGEN': 0.0}}",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-calculators",
+   "label": "GET /api/v1/sector-calculators/shipping/vessel-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.346,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "vessel_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_vessel_types",
+     "qual": "list_vessel_types",
+     "file": "api/v1/routes/sector_calculators.py",
+     "line": 225,
+     "args": {},
+     "ret": "{'vessel_types': ['bulker', 'tanker', 'container', 'lng_carrier', 'ro_ro', 'cruise', 'general_cargo']}",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-calculators",
+   "label": "GET /api/v1/sector-calculators/steel/iea-glidepath",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.771,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "title",
+     "metric",
+     "glidepath"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_steel_glidepath",
+     "qual": "get_steel_glidepath",
+     "file": "api/v1/routes/sector_calculators.py",
+     "line": 235,
+     "args": {},
+     "ret": "{'title': 'IEA NZE 2023 Steel Decarbonisation Pathway', 'metric': 'tCO2 / tonne steel (weighted average)', 'glidepath': [{'year': 2020, 'intensity': 1.85}, {'year': 2025, 'intensity': 1.6}, {'year': 2030, 'intensity': 1.2}, {'year': 2035, \u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-calculators",
+   "label": "POST /api/v1/sector-calculators/shipping/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'vessel_name'",
+   "dur_ms": 12.906,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "calculate_shipping",
+     "qual": "calculate_shipping",
+     "file": "api/v1/routes/sector_calculators.py",
+     "line": 139,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 10.977,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sector-calculators",
+   "label": "POST /api/v1/sector-calculators/steel/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'plant_name'",
+   "dur_ms": 10.959,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "calculate_steel",
+     "qual": "calculate_steel",
+     "file": "api/v1/routes/sector_calculators.py",
+     "line": 179,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 8.909,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

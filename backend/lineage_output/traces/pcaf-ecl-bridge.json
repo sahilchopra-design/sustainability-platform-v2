@@ -1,0 +1,262 @@
+{
+ "domain": "pcaf-ecl-bridge",
+ "meta": {
+  "ts": "2026-06-30T14:03:38",
+  "module": "api.v1.routes.pcaf_ecl_bridge",
+  "router_prefix": "/api/v1/pcaf-ecl",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "GET /api/v1/pcaf-ecl/dqs-confidence",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.36,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "description",
+     "methodology",
+     "weights"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_dqs_confidence",
+     "qual": "get_dqs_confidence",
+     "file": "api/v1/routes/pcaf_ecl_bridge.py",
+     "line": 261,
+     "args": {},
+     "ret": "{'description': 'PCAF Data Quality Score to ECL overlay confidence weight', 'methodology': 'Higher DQS = lower data quality = less confidence in transition risk scoring', 'weights': {'DQS_1': {'weight': 1.0, 'label': 'Verified data (audite\u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "GET /api/v1/pcaf-ecl/scenario-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.353,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "temperature_c": "2.5 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "temperature_c",
+     "temperature_bucket",
+     "scenario_weights",
+     "all_buckets"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_scenario_weights",
+     "qual": "get_scenario_weights",
+     "file": "api/v1/routes/pcaf_ecl_bridge.py",
+     "line": 212,
+     "args": {
+      "temperature_c": "2.5"
+     },
+     "ret": "{'temperature_c': 2.5, 'temperature_bucket': '2.5_to_3.0', 'scenario_weights': {'OPTIMISTIC': 0.15, 'BASE': 0.4, 'ADVERSE': 0.3, 'SEVERE': 0.15}, 'all_buckets': {'below_1.5': {'OPTIMISTIC': 0.35, 'BASE': 0.4, 'ADVERSE': 0.2, 'SEVERE': 0.05\u2026",
+     "dur_ms": 0.05,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_temperature_bucket",
+       "qual": "_temperature_bucket",
+       "file": "services/pcaf_ecl_bridge.py",
+       "line": 152,
+       "args": {
+        "temp_c": "2.5"
+       },
+       "ret": "'2.5_to_3.0'",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "GET /api/v1/pcaf-ecl/transition-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.514,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "waci": "200.0 (default)",
+    "sector_gics": "'' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "waci_tco2e_per_meur",
+     "sector_gics",
+     "transition_risk_level",
+     "transition_risk_score",
+     "carbon_price_sensitivity",
+     "risk_thresholds"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_transition_risk",
+     "qual": "get_transition_risk",
+     "file": "api/v1/routes/pcaf_ecl_bridge.py",
+     "line": 242,
+     "args": {
+      "waci": "200.0",
+      "sector_gics": "''"
+     },
+     "ret": "{'waci_tco2e_per_meur': 200.0, 'sector_gics': '', 'transition_risk_level': 'high', 'transition_risk_score': 39.5, 'carbon_price_sensitivity': 0.4, 'risk_thresholds': [{'max_waci': 50, 'level': 'low'}, {'max_waci': 150, 'level': 'medium'}, \u2026",
+     "dur_ms": 0.155,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "_waci_to_transition_risk",
+       "qual": "_waci_to_transition_risk",
+       "file": "services/pcaf_ecl_bridge.py",
+       "line": 168,
+       "args": {
+        "waci": "200.0"
+       },
+       "ret": "'high'",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "_waci_to_transition_score",
+       "qual": "_waci_to_transition_score",
+       "file": "services/pcaf_ecl_bridge.py",
+       "line": 176,
+       "args": {
+        "waci": "200.0"
+       },
+       "ret": "39.5",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "_carbon_price_sensitivity",
+       "qual": "_carbon_price_sensitivity",
+       "file": "services/pcaf_ecl_bridge.py",
+       "line": 188,
+       "args": {
+        "waci": "200.0",
+        "sector_gics": "''"
+       },
+       "ret": "0.4",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "POST /api/v1/pcaf-ecl/bridge",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "POST /api/v1/pcaf-ecl/bridge-from-db",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pcaf-ecl-bridge",
+   "label": "POST /api/v1/pcaf-ecl/bridge-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,142 @@
+{
+ "domain": "ecl-gar-pillar3",
+ "meta": {
+  "ts": "2026-06-30T14:01:03",
+  "module": "api.v1.routes.ecl_gar_pillar3",
+  "router_prefix": "/api/v1/ecl-gar-pillar3",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "ecl-gar-pillar3",
+   "label": "GET /api/v1/ecl-gar-pillar3/ref/kpis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.625,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pillar3_kpi_template"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_kpis",
+     "qual": "ref_kpis",
+     "file": "api/v1/routes/ecl_gar_pillar3.py",
+     "line": 221,
+     "args": {},
+     "ret": "{'pillar3_kpi_template': [{'kpi_id': 'GAR-1', 'label': 'GAR \u2014 total covered assets (numerator)', 'unit': 'EUR_m', 'taxonomy_note': 'Sum taxonomy-aligned exposures'}, {'kpi_id': 'GAR-2', 'label': 'GAR \u2014 total covered assets (denominator)', \u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ecl-gar-pillar3",
+   "label": "GET /api/v1/ecl-gar-pillar3/ref/nace-eligible",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.467,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "taxonomy_eligible_nace",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_nace",
+     "qual": "ref_nace",
+     "file": "api/v1/routes/ecl_gar_pillar3.py",
+     "line": 227,
+     "args": {},
+     "ret": "{'taxonomy_eligible_nace': {'A01': {'label': 'Crop and animal production', 'ccm': True, 'cca': False, 'nace_code': 'A01'}, 'D35': {'label': 'Electricity, gas, steam and AC supply', 'ccm': True, 'cca': True, 'nace_code': 'D35'}, 'F41': {'la\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ecl-gar-pillar3",
+   "label": "POST /api/v1/ecl-gar-pillar3/ecl-only",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ecl-gar-pillar3",
+   "label": "POST /api/v1/ecl-gar-pillar3/gar-only",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ecl-gar-pillar3",
+   "label": "POST /api/v1/ecl-gar-pillar3/orchestrate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

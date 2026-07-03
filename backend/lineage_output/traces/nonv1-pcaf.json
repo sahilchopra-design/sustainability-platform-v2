@@ -1,0 +1,49 @@
+{
+ "domain": "nonv1-pcaf",
+ "meta": {
+  "ts": "2026-06-30T14:26:17",
+  "endpoints": 1,
+  "source": "server.app",
+  "predicate": "nonv1-pcaf"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-pcaf",
+   "label": "POST /api/pcaf/financed-emissions",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.324,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 159,
+     "name": "calculate_financed_emissions",
+     "qual": "calculate_financed_emissions",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 406,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569D5FA0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

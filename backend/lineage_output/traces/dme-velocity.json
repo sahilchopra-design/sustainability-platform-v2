@@ -1,0 +1,149 @@
+{
+ "domain": "dme-velocity",
+ "meta": {
+  "ts": "2026-06-30T14:00:57",
+  "module": "api.v1.routes.dme_velocity",
+  "router_prefix": "/api/v1/dme-velocity",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "dme-velocity",
+   "label": "GET /api/v1/dme-velocity/ref/config-defaults",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.465,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "metric_key",
+     "ewma_alpha",
+     "lookback_days",
+     "z_threshold_elevated",
+     "z_threshold_critical",
+     "z_threshold_extreme",
+     "delta_t"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_config_defaults",
+     "qual": "get_config_defaults",
+     "file": "api/v1/routes/dme_velocity.py",
+     "line": 46,
+     "args": {},
+     "ret": "{'metric_key': 'default', 'ewma_alpha': 0.2, 'lookback_days': 252, 'z_threshold_elevated': 1.0, 'z_threshold_critical': 2.0, 'z_threshold_extreme': 3.0, 'delta_t': 1.0}",
+     "dur_ms": 0.091,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dme-velocity",
+   "label": "GET /api/v1/dme-velocity/ref/regimes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.246,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regimes",
+     "defaults",
+     "pipeline_stages"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_regime_definitions",
+     "qual": "get_regime_definitions",
+     "file": "api/v1/routes/dme_velocity.py",
+     "line": 52,
+     "args": {},
+     "ret": "{'regimes': [{'regime': 'NORMAL', 'condition': '|z| < z_threshold_elevated'}, {'regime': 'ELEVATED', 'condition': 'z_threshold_elevated \u2264 |z| < z_threshold_critical'}, {'regime': 'CRITICAL', 'condition': 'z_threshold_critical \u2264 |z| < z_thr\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dme-velocity",
+   "label": "POST /api/v1/dme-velocity/classify-alert",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-velocity",
+   "label": "POST /api/v1/dme-velocity/process-series",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-velocity",
+   "label": "POST /api/v1/dme-velocity/process-single",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,275 @@
+{
+ "domain": "social-taxonomy",
+ "meta": {
+  "ts": "2026-06-30T14:05:12",
+  "module": "api.v1.routes.social_taxonomy",
+  "router_prefix": "/api/v1/social-taxonomy",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "social-taxonomy",
+   "label": "GET /api/v1/social-taxonomy/ref/country-labour-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.634,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries_covered",
+     "risk_tier_definitions",
+     "tier_summary",
+     "profiles",
+     "cahra_countries_note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_country_labour_risk",
+     "qual": "ref_country_labour_risk",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 342,
+     "args": {},
+     "ret": "{'countries_covered': 22, 'risk_tier_definitions': {1: 'Low \u2014 robust labour law enforcement (OECD/EU)', 2: 'Medium-Low \u2014 some ILO gaps or structural risks', 3: 'High \u2014 significant HR concerns; enhanced HRDD required', 4: 'Very High \u2014 sever\u2026",
+     "dur_ms": 0.081,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "GET /api/v1/social-taxonomy/ref/decent-work",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.244,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "sdg_target",
+     "related_ilo_documents",
+     "indicators",
+     "composite_note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_decent_work",
+     "qual": "ref_decent_work",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 316,
+     "args": {},
+     "ret": "{'framework': 'UN Sustainable Development Goal 8 \u2014 Decent Work and Economic Growth', 'sdg_target': 'SDG 8 (full employment and decent work for all by 2030)', 'related_ilo_documents': ['ILO Decent Work Agenda (1999)', 'ILO Centenary Declara\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "GET /api/v1/social-taxonomy/ref/eu-social-taxonomy",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.31,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "body",
+     "report_date",
+     "supplementary_report_date",
+     "status",
+     "objectives",
+     "dnsh_rule",
+     "minimum_safeguards",
+     "taxonomy_alignment_tiers"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_eu_social_taxonomy",
+     "qual": "ref_eu_social_taxonomy",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 251,
+     "args": {},
+     "ret": "{'framework': 'EU Social Taxonomy', 'body': 'European Commission \u2014 Platform on Sustainable Finance', 'report_date': '2022-02-28', 'supplementary_report_date': '2023', 'status': 'Non-binding recommendations; awaiting formal Delegated Act', \u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "GET /api/v1/social-taxonomy/ref/ilo-conventions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.251,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "adopted",
+     "body",
+     "core_conventions_count",
+     "four_categories",
+     "conventions",
+     "compliance_scoring_note"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_ilo_conventions",
+     "qual": "ref_ilo_conventions",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 287,
+     "args": {},
+     "ret": "{'framework': 'ILO Declaration on Fundamental Principles and Rights at Work', 'adopted': 1998, 'body': 'International Labour Organization (ILO)', 'core_conventions_count': 8, 'four_categories': ['Forced Labour (C029, C105)', 'Child Labour \u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "POST /api/v1/social-taxonomy/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.246,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 100,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "POST /api/v1/social-taxonomy/hrdd",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "social-taxonomy",
+   "label": "POST /api/v1/social-taxonomy/supply-chain-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'tier1_supplier_countries'",
+   "dur_ms": 0.232,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "supply_chain_screen",
+     "qual": "supply_chain_screen",
+     "file": "api/v1/routes/social_taxonomy.py",
+     "line": 177,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

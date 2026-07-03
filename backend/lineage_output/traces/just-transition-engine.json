@@ -1,0 +1,408 @@
+{
+ "domain": "just-transition-engine",
+ "meta": {
+  "ts": "2026-06-30T14:02:59",
+  "module": "api.v1.routes.just_transition_engine",
+  "router_prefix": "/api/v1/just-transition",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "just-transition-engine",
+   "label": "GET /api/v1/just-transition/ref/cbi-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.299,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cbi_criteria",
+     "qual": "ref_cbi_criteria",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 301,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'standard': 'Climate Bonds Initiative \u2014 Just Transition Finance Label Criteria (2023)', 'total_criteria': 0, 'eligibility_threshold': '6 of 8 criteria must be met', 'criteria': [], 'applicable_instruments': [\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "GET /api/v1/just-transition/ref/esrs-social-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.405,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_esrs_social_requirements",
+     "qual": "ref_esrs_social_requirements",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 251,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'framework': 'CSRD ESRS \u2014 Social Standards (EFRAG IG3)', 'S1': {'name': 'Own Workforce', 'requirements_count': 0, 'requirements': [], 'mandatory_count': 0}, 'S2': {'name': 'Workers in the Value Chain', 'requi\u2026",
+     "dur_ms": 0.232,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/just_transition_engine.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/just_transition_engine.py",
+       "line": 267,
+       "args": {
+        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/just_transition_engine.py",
+       "line": 273,
+       "args": {
+        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/just_transition_engine.py",
+       "line": 279,
+       "args": {
+        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "GET /api/v1/just-transition/ref/ilo-dimensions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_ilo_dimensions",
+     "qual": "ref_ilo_dimensions",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 236,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'framework': 'ILO Guidelines for a Just Transition towards Environmentally Sustainable Economies and Societies (2015)', 'total_dimensions': 0, 'dimensions': {}, 'classification_thresholds': {}, 'automation_ri\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "GET /api/v1/just-transition/ref/living-wage-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.148,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_living_wage_benchmarks",
+     "qual": "ref_living_wage_benchmarks",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 286,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'source': 'Anker Research Institute \u2014 Living Wage Benchmarks (2024)', 'methodology': 'Based on cost of a nutritious diet, decent housing, transport, and a small contingency', 'currency': 'USD/month (net)', 'b\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/cbi-jt-finance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/esrs-social",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.209,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 221,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/ilo-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.167,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ilo_assessment",
+     "qual": "ilo_assessment",
+     "file": "api/v1/routes/just_transition_engine.py",
+     "line": 136,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/living-wage",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/sec-human-capital",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/stakeholder-mapping",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition-engine",
+   "label": "POST /api/v1/just-transition/worker-displacement",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

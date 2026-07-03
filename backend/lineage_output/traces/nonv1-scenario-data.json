@@ -1,0 +1,153 @@
+{
+ "domain": "nonv1-scenario-data",
+ "meta": {
+  "ts": "2026-06-30T14:26:24",
+  "endpoints": 2,
+  "source": "server.app",
+  "predicate": "nonv1-scenario-data"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-scenario-data",
+   "label": "GET /api/scenario-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 483.516,
+   "node_count": 0,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scenario_series"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT DISTINCT scenario_series.scenario FROM scenario_series'",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.635,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT DISTINCT scenario_series.variable FROM scenario_series'",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.024,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT DISTINCT scenario_series.region FROM scenario_series'",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 54.777,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT DISTINCT scenario_series.year FROM scenario_series'",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.136,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT scenario_series.id AS scenario_series_id, scenario_series.year AS scenario_series_year, scenario_series.scenario AS scenario_series_scenario, scenario_series.model AS scenario_series_model, scenario_series.region AS scenario_series_region, scenario_series.variable AS scenario_series_variable, scenario_series.unit AS scenario_series_unit, scenario_series.va\u2026",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.552,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "variables",
+     "regions",
+     "years",
+     "total_records"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-scenario-data",
+   "label": "POST /api/scenario-data/refresh",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 377.206,
+   "node_count": 0,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "scenario_series"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT scenario_series.id AS scenario_series_id, scenario_series.year AS scenario_series_year, scenario_series.scenario AS scenario_series_scenario, scenario_series.model AS scenario_series_model, scenario_series.region AS scenario_series_region, scenario_series.variable AS scenario_series_variable, scenario_series.unit AS scenario_series_unit, scenario_series.va\u2026",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.278,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'INSERT INTO scenario_series (year, scenario, model, region, variable, unit, value, source_version) VALUES (%(year)s, %(scenario)s, %(model)s, %(region)s, %(variable)s, %(unit)s, %(value)s, %(source_version)s)'",
+     "tables": [
+      "scenario_series"
+     ],
+     "rowcount": 144,
+     "dur_ms": 87.471,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data": "<ScenarioDataRefresh (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "message",
+     "records_inserted",
+     "source_version"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,4740 @@
+{
+ "domain": "china-trade",
+ "meta": {
+  "ts": "2026-06-30T13:59:57",
+  "module": "api.v1.routes.china_trade",
+  "router_prefix": "/api/v1/china-trade",
+  "endpoints": 25
+ },
+ "transactions": [
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cbam/hs-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 13.346,
+   "node_count": 14,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "benchmarks",
+     "cets_price_cny",
+     "cets_price_eur",
+     "eu_ets_reference_eur",
+     "arbitrage_eur_per_tco2",
+     "source"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "cbam_hs_benchmarks",
+     "qual": "cbam_hs_benchmarks",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 116,
+     "args": {},
+     "ret": "{'benchmarks': {'7206': {'desc': 'Iron / non-alloy steel ingots', 'eu_benchmark_tco2': 0.878, 'sector': 'Steel'}, '7207': {'desc': 'Semi-finished iron/steel', 'eu_benchmark_tco2': 0.878, 'sector': 'Steel'}, '7208': {'desc': 'Flat-rolled ir\u2026",
+     "dur_ms": 12.996,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD14814F0>",
+       "dur_ms": 12.9,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/__init__.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/china_trade_engine.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.448,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 5,
+           "name": "ChinaExporterEngine",
+           "qual": "ChinaExporterEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 64,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.022,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 6,
+           "name": "CBAMAutoFillEngine",
+           "qual": "CBAMAutoFillEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 414,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.017,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 7,
+           "name": "SupplierFrameworkEngine",
+           "qual": "SupplierFrameworkEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 586,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 8,
+           "name": "ChinaESGETSEngine",
+           "qual": "ChinaESGETSEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 719,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 9,
+           "name": "TradeCorridorEngine",
+           "qual": "TradeCorridorEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 863,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 10,
+           "name": "MarketplaceEngine",
+           "qual": "MarketplaceEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 1027,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.01,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11,
+           "name": "CrossModuleEngine",
+           "qual": "CrossModuleEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 1203,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.012,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "ChinaTradeEngine",
+           "qual": "ChinaTradeEngine",
+           "file": "services/china_trade_engine.py",
+           "line": 1596,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 13,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 14,
+       "name": "get_hs_benchmark_table",
+       "qual": "CBAMAutoFillEngine.get_hs_benchmark_table",
+       "file": "services/china_trade_engine.py",
+       "line": 570,
+       "args": {},
+       "ret": "{'benchmarks': {'7206': {'desc': 'Iron / non-alloy steel ingots', 'eu_benchmark_tco2': 0.878, 'sector': 'Steel'}, '7207': {'desc': 'Semi-finished iron/steel', 'eu_benchmark_tco2': 0.878, 'sector': 'Steel'}, '7208': {'desc': 'Flat-rolled ir\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cbam/supplier-lookup",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.357,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "entity_name": "None (default)",
+    "hs_code": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_name",
+     "sector",
+     "hs_code",
+     "hs_description",
+     "embedded_carbon_tco2_per_tonne",
+     "production_process",
+     "eu_benchmark_tco2_per_tonne",
+     "vs_eu_benchmark_pct",
+     "green_certified",
+     "green_certification_type",
+     "cets_price_cny_per_tco2",
+     "cets_price_eur_per_tco2",
+     "cbam_auto_fill"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "cbam_supplier_lookup",
+     "qual": "cbam_supplier_lookup",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 91,
+     "args": {
+      "entity_name": "None",
+      "hs_code": "None"
+     },
+     "ret": "{'entity_name': 'Chinese Supplier (Reference)', 'sector': 'Unknown', 'hs_code': None, 'hs_description': None, 'embedded_carbon_tco2_per_tonne': 1.5, 'production_process': 'Reference', 'eu_benchmark_tco2_per_tonne': None, 'vs_eu_benchmark_p\u2026",
+     "dur_ms": 0.099,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2919C70>",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 17,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 18,
+       "name": "supplier_lookup",
+       "qual": "CBAMAutoFillEngine.supplier_lookup",
+       "file": "services/china_trade_engine.py",
+       "line": 448,
+       "args": {
+        "entity_name": "None",
+        "hs_code": "None"
+       },
+       "ret": "{'entity_name': 'Chinese Supplier (Reference)', 'sector': 'Unknown', 'hs_code': None, 'hs_description': None, 'embedded_carbon_tco2_per_tonne': 1.5, 'production_process': 'Reference', 'eu_benchmark_tco2_per_tonne': None, 'vs_eu_benchmark_p\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/corridors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 908.165,
+   "node_count": 6,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ctp_trade_corridors"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_trade_corridors ORDER BY trade_value_usd_bn DESC'",
+     "tables": [
+      "ctp_trade_corridors"
+     ],
+     "rowcount": 5,
+     "dur_ms": 80.716,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "corridors"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "list_corridors",
+     "qual": "list_corridors",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 258,
+     "args": {},
+     "ret": "{'source': 'db', 'corridors': [{'id': UUID('b7482ad2-3975-40b9-9a52-b28274083642'), 'origin_country': 'CN', 'destination_country': 'EU', 'corridor_name': 'China \u2192 EU', 'trade_value_usd_bn': Decimal('618.00'), 'trade_volume_mn_tonnes': None\u2026",
+     "dur_ms": 907.915,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2BAE1E0>",
+       "dur_ms": 0.022,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 21,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 22,
+       "name": "get_all_corridors",
+       "qual": "TradeCorridorEngine.get_all_corridors",
+       "file": "services/china_trade_engine.py",
+       "line": 959,
+       "args": {},
+       "ret": "{'source': 'db', 'corridors': [{'id': UUID('b7482ad2-3975-40b9-9a52-b28274083642'), 'origin_country': 'CN', 'destination_country': 'EU', 'corridor_name': 'China \u2192 EU', 'trade_value_usd_bn': Decimal('618.00'), 'trade_volume_mn_tonnes': None\u2026",
+       "dur_ms": 907.784,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 23,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_trade_corridors ORDER BY trade_value_usd_bn DESC'",
+          "params": "None"
+         },
+         "ret": "[{'id': UUID('b7482ad2-3975-40b9-9a52-b28274083642'), 'origin_country': 'CN', 'destination_country': 'EU', 'corridor_name': 'China \u2192 EU', 'trade_value_usd_bn': Decimal('618.00'), 'trade_volume_mn_tonnes': None, 'carbon_intensity_avg_tco2_p\u2026",
+         "dur_ms": 907.553,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 24,
+           "name": "<module>",
+           "qual": "<module>",
+           "file": "db/postgres.py",
+           "line": 1,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.998,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/corridors/pl-impact/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.597,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "eu_ets_price_eur": "65.0 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "embedded_carbon_tco2_per_tonne",
+     "eu_benchmark_tco2_per_tonne",
+     "excess_carbon_tco2_per_tonne",
+     "cets_price_eur",
+     "current_eu_ets_price_eur",
+     "scenarios"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "corridor_pl_impact",
+     "qual": "corridor_pl_impact",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 279,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+      "eu_ets_price_eur": "65.0"
+     },
+     "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'embedded_carbon_tco2_per_tonne': 1.5, 'eu_benchmark_tco2_per_tonne': 1.0, 'excess_carbon_tco2_per_tonne': 0.5, 'cets_price_eur': 12.16, 'current_eu_ets_price_eur': 65.0, 'scenarios': [{'e\u2026",
+     "dur_ms": 0.231,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 26,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD129C980>",
+       "dur_ms": 0.044,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 27,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 28,
+       "name": "get_pl_impact",
+       "qual": "TradeCorridorEngine.get_pl_impact",
+       "file": "services/china_trade_engine.py",
+       "line": 978,
+       "args": {
+        "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+        "eu_ets_price_eur": "65.0"
+       },
+       "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'embedded_carbon_tco2_per_tonne': 1.5, 'eu_benchmark_tco2_per_tonne': 1.0, 'excess_carbon_tco2_per_tonne': 0.5, 'cets_price_eur': 12.16, 'current_eu_ets_price_eur': 65.0, 'scenarios': [{'e\u2026",
+       "dur_ms": 0.067,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/corridors/{origin}/{destination}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 643.731,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_trade_corridors"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_trade_corridors WHERE origin_country = %(o)s AND destination_country = %(d)s LIMIT 1'",
+     "tables": [
+      "ctp_trade_corridors"
+     ],
+     "rowcount": 0,
+     "dur_ms": 89.046,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "origin": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "destination": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "corridor_name",
+     "origin_country",
+     "destination_country",
+     "trade_value_usd_bn",
+     "trade_volume_mn_tonnes",
+     "carbon_intensity_avg_tco2_per_tonne",
+     "total_embedded_carbon_mtco2",
+     "cbam_applicable",
+     "carbon_border_regime",
+     "regime_full_implementation",
+     "key_product_categories",
+     "top_hs_codes",
+     "annual_cbam_liability_est_eur_mn",
+     "eu_ets_price_eur",
+     "cets_price_eur",
+     "arbitrage_eur_per_tco2"
+    ],
+    "n_keys": 16
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "get_corridor",
+     "qual": "get_corridor",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 270,
+     "args": {
+      "origin": "'550e8400-e29b-41d4-a716-446655440001'",
+      "destination": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'corridor_name': 'China \u2192 EU', 'origin_country': 'CN', 'destination_country': 'EU', 'trade_value_usd_bn': 618.0, 'trade_volume_mn_tonnes': 285.0, 'carbon_intensity_avg_tco2_per_tonne': 1.82, 'total_embedded_carbon_mtco2': 518.7, 'cbam_app\u2026",
+     "dur_ms": 643.312,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BCE114470>",
+       "dur_ms": 0.042,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 31,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 32,
+       "name": "get_corridor",
+       "qual": "TradeCorridorEngine.get_corridor",
+       "file": "services/china_trade_engine.py",
+       "line": 965,
+       "args": {
+        "origin": "'550e8400-e29b-41d4-a716-446655440001'",
+        "destination": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'corridor_name': 'China \u2192 EU', 'origin_country': 'CN', 'destination_country': 'EU', 'trade_value_usd_bn': 618.0, 'trade_volume_mn_tonnes': 285.0, 'carbon_intensity_avg_tco2_per_tonne': 1.82, 'total_embedded_carbon_mtco2': 518.7, 'cbam_app\u2026",
+       "dur_ms": 643.154,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 33,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_trade_corridors WHERE origin_country = :o AND destination_country = :d LIMIT 1'",
+          "params": "{'o': '550E8400-E29B-41D4-A716-446655440001', 'd': '550E8400-E29B-41D4-A716-446655440001'}"
+         },
+         "ret": "[]",
+         "dur_ms": 642.929,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "TradeCorridorEngine.get_corridor.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 973,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD166FD90>"
+         },
+         "ret": "None",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/ecl-cbam-overlay",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 478.521,
+   "node_count": 10,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_cbam_liabilities",
+    "ctp_entities",
+    "ctp_export_products"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT e.entity_name, e.sector, e.cbam_readiness_score, e.esg_tier, e.ets_registered, ep.embedded_carbon_tco2_per_tonne, cl.net_cbam_liability_eur, cl.competitiveness_risk_band FROM ctp_entities e LEFT JOIN ctp_export_products ep ON ep.entity_id = e.id LEFT JOIN ctp_cbam_liabilities cl ON cl.entity_id = e.id ORDER BY e.cbam_readiness_score ASC LIMIT 50'",
+     "tables": [
+      "ctp_cbam_liabilities",
+      "ctp_entities",
+      "ctp_export_products"
+     ],
+     "rowcount": null,
+     "dur_ms": 80.503,
+     "is_reference": false,
+     "error": "UndefinedColumn('column e.esg_tier does not exist\\nLINE 3:                    e.esg_tier, e.ets_registered,\\n                           ^\\n')"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module",
+     "description",
+     "methodology",
+     "cets_price_eur",
+     "eu_ets_price_eur",
+     "cbam_arbitrage_eur",
+     "risk_bands",
+     "total_entities_assessed",
+     "china_trade_link",
+     "reference_standard"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "cross_module_ecl_cbam",
+     "qual": "cross_module_ecl_cbam",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 416,
+     "args": {},
+     "ret": "{'module': 'Financial Risk \u2014 IFRS 9 ECL', 'description': 'CBAM readiness as credit quality overlay for China-exposed portfolios', 'methodology': 'CBAM readiness score maps to PD/LGD uplift bands per IFRS 9 staging', 'cets_price_eur': 12.16\u2026",
+     "dur_ms": 478.163,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 36,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD166FDA0>",
+       "dur_ms": 0.057,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 37,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 38,
+       "name": "get_ecl_cbam_overlay",
+       "qual": "CrossModuleEngine.get_ecl_cbam_overlay",
+       "file": "services/china_trade_engine.py",
+       "line": 1373,
+       "args": {},
+       "ret": "{'module': 'Financial Risk \u2014 IFRS 9 ECL', 'description': 'CBAM readiness as credit quality overlay for China-exposed portfolios', 'methodology': 'CBAM readiness score maps to PD/LGD uplift bands per IFRS 9 staging', 'cets_price_eur': 12.16\u2026",
+       "dur_ms": 477.973,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 39,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT e.entity_name, e.sector, e.cbam_readiness_score,\\n                   e.esg_tier, e.ets_registered,\\n                   ep.embedded_carbon_tco2_per_tonne,\\n                   cl.net_cbam_liability_eur,\\n               \u2026",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 477.674,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_ecl_cbam_overlay.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1418,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000016BD2BF1C60>"
+         },
+         "ret": "0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_ecl_cbam_overlay.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1418,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000016BD2BF1C60>"
+         },
+         "ret": "0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_ecl_cbam_overlay.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1418,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000016BD2BF1C60>"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_ecl_cbam_overlay.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1418,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000016BD2BF1C60>"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_ecl_cbam_overlay.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1418,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000016BD2BF1C60>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/entity-hub/{entity_name}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 811.888,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_entities WHERE entity_name ILIKE %(name)s LIMIT 1'",
+     "tables": [
+      "ctp_entities"
+     ],
+     "rowcount": 0,
+     "dur_ms": 168.614,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 45,
+     "name": "entity_hub",
+     "qual": "entity_hub",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 387,
+     "args": {
+      "entity_name": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'error': \"Entity '550e8400-e29b-41d4-a716-446655440001' not found in China Trade database\"}",
+     "dur_ms": 811.582,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 46,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2BAF320>",
+       "dur_ms": 0.074,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 47,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.04,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 48,
+       "name": "get_entity_hub",
+       "qual": "CrossModuleEngine.get_entity_hub",
+       "file": "services/china_trade_engine.py",
+       "line": 1530,
+       "args": {
+        "entity_name": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'error': \"Entity '550e8400-e29b-41d4-a716-446655440001' not found in China Trade database\"}",
+       "dur_ms": 811.321,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 49,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT * FROM ctp_entities WHERE entity_name ILIKE :name LIMIT 1\\n        '",
+          "params": "{'name': '%550e8400-e29b-41d4-a716-446655440001%'}"
+         },
+         "ret": "[]",
+         "dur_ms": 811.206,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/portfolio-cbam",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 934.402,
+   "node_count": 15,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_cbam_liabilities",
+    "ctp_entities",
+    "ctp_export_products"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT e.sector, COUNT(DISTINCT e.id) AS entity_count, AVG(e.cbam_readiness_score) AS avg_readiness, SUM(cl.gross_cbam_liability_eur) AS gross_liability_eur, SUM(cl.net_cbam_liability_eur) AS net_liability_eur, AVG(ep.embedded_carbon_tco2_per_tonne) AS avg_carbon_intensity, AVG(ep.vs_eu_benchmark_pct) AS avg_vs_eu_benchmark_pct FROM ctp_entities e LEFT JOIN ctp_cbam_liabilities cl ON cl.entity_i\u2026",
+     "tables": [
+      "ctp_cbam_liabilities",
+      "ctp_entities",
+      "ctp_export_products"
+     ],
+     "rowcount": null,
+     "dur_ms": 62.249,
+     "is_reference": false,
+     "error": "UndefinedColumn('column cl.gross_cbam_liability_eur does not exist\\nLINE 5:                    SUM(cl.gross_cbam_liability_eur)         ...\\n                               ^\\n')"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module",
+     "description",
+     "total_gross_cbam_liability_eur",
+     "total_net_cbam_liability_eur",
+     "art9_cets_deduction_eur",
+     "cets_price_eur",
+     "eu_ets_price_eur",
+     "sector_breakdown",
+     "china_trade_link",
+     "reference_standard"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 50,
+     "name": "cross_module_portfolio_cbam",
+     "qual": "cross_module_portfolio_cbam",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 458,
+     "args": {},
+     "ret": "{'module': 'Portfolio Analytics \u2014 CBAM Exposure', 'description': 'Aggregated CBAM liability across China-exposed portfolio by sector', 'total_gross_cbam_liability_eur': 6360000, 'total_net_cbam_liability_eur': 5226000, 'art9_cets_deduction\u2026",
+     "dur_ms": 934.098,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 51,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2BAFE00>",
+       "dur_ms": 0.056,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 52,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 53,
+       "name": "get_portfolio_cbam",
+       "qual": "CrossModuleEngine.get_portfolio_cbam",
+       "file": "services/china_trade_engine.py",
+       "line": 1485,
+       "args": {},
+       "ret": "{'module': 'Portfolio Analytics \u2014 CBAM Exposure', 'description': 'Aggregated CBAM liability across China-exposed portfolio by sector', 'total_gross_cbam_liability_eur': 6360000, 'total_net_cbam_liability_eur': 5226000, 'art9_cets_deduction\u2026",
+       "dur_ms": 933.894,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 54,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT e.sector,\\n                   COUNT(DISTINCT e.id)                                    AS entity_count,\\n                   AVG(e.cbam_readiness_score)                             AS avg_readiness,\\n                   \u2026",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 933.612,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1514,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "2400000",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1514,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "1800000",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1514,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "960000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1514,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "1200000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1514,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1515,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "1920000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1515,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "1530000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1515,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "816000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1515,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "960000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "<genexpr>",
+         "qual": "CrossModuleEngine.get_portfolio_cbam.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1515,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2BAFDC0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/regulatory-csrd",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 989.066,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_china_esg_disclosures",
+    "ctp_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT e.entity_name, e.sector, e.esg_tier, ed.env_score, ed.social_score, ed.governance_score, ed.overall_esg_score, ed.scope1_tco2e, ed.scope2_tco2e, ed.renewable_energy_pct, ed.water_withdrawal_000m3, ed.disclosure_framework FROM ctp_china_esg_disclosures ed JOIN ctp_entities e ON ed.entity_id = e.id ORDER BY ed.overall_esg_score DESC LIMIT 50'",
+     "tables": [
+      "ctp_china_esg_disclosures",
+      "ctp_entities"
+     ],
+     "rowcount": null,
+     "dur_ms": 72.439,
+     "is_reference": false,
+     "error": "UndefinedColumn('column e.esg_tier does not exist\\nLINE 2:             SELECT e.entity_name, e.sector, e.esg_tier,\\n                                                    ^\\nHINT:  Perhaps you meant to \u2026"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module",
+     "description",
+     "regulation",
+     "effective_date",
+     "entity_count",
+     "csrd_sfdr_issb_mapping",
+     "entities",
+     "key_gaps",
+     "china_trade_link",
+     "source"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 65,
+     "name": "cross_module_regulatory_csrd",
+     "qual": "cross_module_regulatory_csrd",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 430,
+     "args": {},
+     "ret": "{'module': 'Regulatory \u2014 China ESG Intelligence', 'description': 'SSE/SZSE 2024 mandatory ESG disclosures mapped to CSRD/SFDR/ISSB standards', 'regulation': 'CSME Guidelines for ESG Disclosure 2024 (SSE/SZSE)', 'effective_date': '2024-01-0\u2026",
+     "dur_ms": 988.897,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 66,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0C140>",
+       "dur_ms": 0.023,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 67,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 68,
+       "name": "get_regulatory_csrd",
+       "qual": "CrossModuleEngine.get_regulatory_csrd",
+       "file": "services/china_trade_engine.py",
+       "line": 1423,
+       "args": {},
+       "ret": "{'module': 'Regulatory \u2014 China ESG Intelligence', 'description': 'SSE/SZSE 2024 mandatory ESG disclosures mapped to CSRD/SFDR/ISSB standards', 'regulation': 'CSME Guidelines for ESG Disclosure 2024 (SSE/SZSE)', 'effective_date': '2024-01-0\u2026",
+       "dur_ms": 988.8,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 69,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT e.entity_name, e.sector, e.esg_tier,\\n                   ed.env_score, ed.social_score, ed.governance_score, ed.overall_esg_score,\\n                   ed.scope1_tco2e, ed.scope2_tco2e, ed.renewable_energy_pct,\\n      \u2026",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 988.746,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/scenario-cets-ngfs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 572.919,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_ets_positions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT year, price_cny, price_eur, compliance_factor, source FROM ctp_ets_positions WHERE compliance_status IS NOT NULL ORDER BY year ASC'",
+     "tables": [
+      "ctp_ets_positions"
+     ],
+     "rowcount": null,
+     "dur_ms": 68.003,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"price_cny\" does not exist\\nLINE 2:             SELECT year, price_cny, price_eur, compliance_fa...\\n                                 ^\\n')"
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module",
+     "description",
+     "base_case_price_cny",
+     "base_case_price_eur",
+     "eu_ets_price_eur",
+     "scenarios",
+     "historical_cets",
+     "china_ndc_peak_year",
+     "china_ndc_neutrality_year",
+     "coverage_sectors_2024",
+     "coverage_sectors_2030_projected",
+     "china_trade_link",
+     "source"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 70,
+     "name": "cross_module_scenario_ngfs",
+     "qual": "cross_module_scenario_ngfs",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 444,
+     "args": {},
+     "ret": "{'module': 'Scenario Analysis \u2014 NGFS \u00d7 CETS', 'description': 'China ETS (CETS) price trajectories under NGFS v4 climate scenarios', 'base_case_price_cny': 95.0, 'base_case_price_eur': 12.16, 'eu_ets_price_eur': 65.0, 'scenarios': [{'ngfs_s\u2026",
+     "dur_ms": 572.71,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 71,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2BAF140>",
+       "dur_ms": 0.029,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 72,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 73,
+       "name": "get_scenario_cets_ngfs",
+       "qual": "CrossModuleEngine.get_scenario_cets_ngfs",
+       "file": "services/china_trade_engine.py",
+       "line": 1457,
+       "args": {},
+       "ret": "{'module': 'Scenario Analysis \u2014 NGFS \u00d7 CETS', 'description': 'China ETS (CETS) price trajectories under NGFS v4 climate scenarios', 'base_case_price_cny': 95.0, 'base_case_price_eur': 12.16, 'eu_ets_price_eur': 65.0, 'scenarios': [{'ngfs_s\u2026",
+       "dur_ms": 572.604,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 74,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT year, price_cny, price_eur, compliance_factor, source\\n            FROM   ctp_ets_positions\\n            WHERE  compliance_status IS NOT NULL\\n            ORDER  BY year ASC\\n        '",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 572.574,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/cross-module/scope3-cat1",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 328.784,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_entities",
+    "ctp_export_products"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ep.hs_code, ep.product_name, ep.sector, ep.embedded_carbon_tco2_per_tonne AS ef_tco2_t, ep.eu_benchmark_tco2_per_tonne, ep.vs_eu_benchmark_pct, e.entity_name, e.cbam_readiness_score FROM ctp_export_products ep JOIN ctp_entities e ON ep.entity_id = e.id WHERE (%(sector)s IS NULL OR ep.sector = %(sector)s) ORDER BY ef_tco2_t ASC LIMIT 100'",
+     "tables": [
+      "ctp_entities",
+      "ctp_export_products"
+     ],
+     "rowcount": null,
+     "dur_ms": 73.905,
+     "is_reference": false,
+     "error": "UndefinedColumn('column ep.sector does not exist\\nLINE 2:             SELECT ep.hs_code, ep.product_name, ep.sector,\\n                                                        ^\\nHINT:  Perhaps you mea\u2026"
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module",
+     "description",
+     "ghg_protocol_category",
+     "data_source",
+     "factors",
+     "china_trade_link",
+     "total_factors"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 75,
+     "name": "cross_module_scope3_cat1",
+     "qual": "cross_module_scope3_cat1",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 402,
+     "args": {
+      "sector": "None"
+     },
+     "ret": "{'module': 'Supply Chain \u2014 Scope 3 Cat 1', 'description': 'Chinese exported goods emission factors for GHG Protocol Cat 1 calculations', 'ghg_protocol_category': 'Category 1 \u2014 Purchased Goods and Services', 'data_source': 'CETS verified em\u2026",
+     "dur_ms": 328.494,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 76,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0C350>",
+       "dur_ms": 0.037,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 77,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 78,
+       "name": "get_scope3_cat1",
+       "qual": "CrossModuleEngine.get_scope3_cat1",
+       "file": "services/china_trade_engine.py",
+       "line": 1338,
+       "args": {
+        "sector": "None"
+       },
+       "ret": "{'module': 'Supply Chain \u2014 Scope 3 Cat 1', 'description': 'Chinese exported goods emission factors for GHG Protocol Cat 1 calculations', 'ghg_protocol_category': 'Category 1 \u2014 Purchased Goods and Services', 'data_source': 'CETS verified em\u2026",
+       "dur_ms": 328.361,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 79,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'\\n            SELECT ep.hs_code, ep.product_name, ep.sector,\\n                   ep.embedded_carbon_tco2_per_tonne AS ef_tco2_t,\\n                   ep.eu_benchmark_tco2_per_tonne,\\n                   ep.vs_eu_benchmark_pct,\\n            \u2026",
+          "params": "{'sector': None}"
+         },
+         "ret": "[]",
+         "dur_ms": 328.321,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/esg-ets/cets-price",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.306,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "current_price_cny",
+     "current_price_eur",
+     "cny_eur_rate",
+     "eu_ets_price_eur",
+     "arbitrage_eur_per_tco2",
+     "history",
+     "as_of",
+     "source"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 80,
+     "name": "cets_price",
+     "qual": "cets_price",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 235,
+     "args": {},
+     "ret": "{'current_price_cny': 95.0, 'current_price_eur': 12.16, 'cny_eur_rate': 0.128, 'eu_ets_price_eur': 65.0, 'arbitrage_eur_per_tco2': 52.84, 'history': [{'year': 2021, 'avg_price_cny': 48.0, 'phase': 'Phase1'}, {'year': 2022, 'avg_price_cny':\u2026",
+     "dur_ms": 0.076,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 81,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0C770>",
+       "dur_ms": 0.034,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 82,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/esg-ets/dashboard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2871.984,
+   "node_count": 31,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_china_esg_disclosures"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT entity_name, exchange, reporting_year, overall_esg_score, esg_tier, e_score, s_score, g_score, e_ghg_scope1_tco2e, e_renewable_pct, carbon_neutral_target_year FROM ctp_china_esg_disclosures ORDER BY overall_esg_score DESC LIMIT 50'",
+     "tables": [
+      "ctp_china_esg_disclosures"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.426,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)",
+    "esg_tier": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "reporting_year",
+     "framework",
+     "total_companies",
+     "tier_distribution",
+     "avg_overall_score",
+     "avg_e_score",
+     "disclosures"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 83,
+     "name": "esg_dashboard",
+     "qual": "esg_dashboard",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 196,
+     "args": {
+      "sector": "None",
+      "esg_tier": "None"
+     },
+     "ret": "{'source': 'reference', 'reporting_year': 2024, 'framework': 'SSE/SZSE 2024 Mandatory ESG Guidelines', 'total_companies': 12, 'tier_distribution': {'Leader': 1, 'Advanced': 3, 'Developing': 4, 'Emerging': 4}, 'avg_overall_score': 59.7, 'av\u2026",
+     "dur_ms": 2871.677,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 84,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0CA10>",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 85,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 86,
+       "name": "get_esg_dashboard",
+       "qual": "ChinaESGETSEngine.get_esg_dashboard",
+       "file": "services/china_trade_engine.py",
+       "line": 744,
+       "args": {
+        "sector": "None",
+        "esg_tier": "None"
+       },
+       "ret": "{'source': 'reference', 'reporting_year': 2024, 'framework': 'SSE/SZSE 2024 Mandatory ESG Guidelines', 'total_companies': 12, 'tier_distribution': {'Leader': 1, 'Advanced': 3, 'Developing': 4, 'Emerging': 4}, 'avg_overall_score': 59.7, 'av\u2026",
+       "dur_ms": 2871.543,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 87,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT entity_name, exchange, reporting_year, overall_esg_score, esg_tier, e_score, s_score, g_score, e_ghg_scope1_tco2e, e_renewable_pct, carbon_neutral_target_year FROM ctp_china_esg_disclosures ORDER BY overall_esg_score DESC LIMIT 50'",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 2870.627,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "86",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "82",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "79",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "71",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "65",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "62",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "61",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "55",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 96,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "44",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "38",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "35",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "38",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 100,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 792,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "91",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "88",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "82",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "68",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "58",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "55",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "52",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "44",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "36",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "28",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "32",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "<genexpr>",
+         "qual": "ChinaESGETSEngine.get_esg_dashboard.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 793,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0CF70>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/esg-ets/ets-positions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 344.854,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ctp_ets_positions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_ets_positions ORDER BY year DESC, sector LIMIT 100'",
+     "tables": [
+      "ctp_ets_positions"
+     ],
+     "rowcount": 7,
+     "dur_ms": 76.149,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "positions"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 114,
+     "name": "ets_positions",
+     "qual": "ets_positions",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 223,
+     "args": {
+      "sector": "None"
+     },
+     "ret": "{'source': 'db', 'positions': [{'id': UUID('a7c6b6e3-e891-4ff8-a422-3ca33c13c774'), 'entity_id': None, 'entity_name': None, 'year': 2024, 'sector': 'Aluminium', 'phase': None, 'allocation_allowances_tco2': None, 'verified_emissions_tco2': \u2026",
+     "dur_ms": 344.525,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 115,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0CFB0>",
+       "dur_ms": 0.035,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 116,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 117,
+       "name": "get_ets_positions",
+       "qual": "ChinaESGETSEngine.get_ets_positions",
+       "file": "services/china_trade_engine.py",
+       "line": 827,
+       "args": {
+        "sector": "None"
+       },
+       "ret": "{'source': 'db', 'positions': [{'id': UUID('a7c6b6e3-e891-4ff8-a422-3ca33c13c774'), 'entity_id': None, 'entity_name': None, 'year': 2024, 'sector': 'Aluminium', 'phase': None, 'allocation_allowances_tco2': None, 'verified_emissions_tco2': \u2026",
+       "dur_ms": 344.362,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 118,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_ets_positions ORDER BY year DESC, sector LIMIT 100'",
+          "params": "None"
+         },
+         "ret": "[{'id': UUID('a7c6b6e3-e891-4ff8-a422-3ca33c13c774'), 'entity_id': None, 'entity_name': None, 'year': 2024, 'sector': 'Aluminium', 'phase': None, 'allocation_allowances_tco2': None, 'verified_emissions_tco2': None, 'surplus_deficit_tco2': \u2026",
+         "dur_ms": 344.166,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/esg-ets/ndc-alignment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 330.933,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ctp_ndc_pathways"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_ndc_pathways ORDER BY sector, year'",
+     "tables": [
+      "ctp_ndc_pathways"
+     ],
+     "rowcount": 8,
+     "dur_ms": 80.374,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "pathways"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 119,
+     "name": "ndc_alignment",
+     "qual": "ndc_alignment",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 211,
+     "args": {
+      "sector": "None"
+     },
+     "ret": "{'source': 'db', 'pathways': [{'id': UUID('2be8e3e6-5a9d-4791-9a99-50ca768cd9da'), 'sector': 'Agriculture', 'year': None, 'baseline_emissions_mtco2': Decimal('620.00'), 'pathway_emissions_mtco2': None, 'current_emissions_mtco2': None, 'red\u2026",
+     "dur_ms": 330.546,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 120,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0D4C0>",
+       "dur_ms": 0.037,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 121,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 122,
+       "name": "get_ndc_alignment",
+       "qual": "ChinaESGETSEngine.get_ndc_alignment",
+       "file": "services/china_trade_engine.py",
+       "line": 797,
+       "args": {
+        "sector": "None"
+       },
+       "ret": "{'source': 'db', 'pathways': [{'id': UUID('2be8e3e6-5a9d-4791-9a99-50ca768cd9da'), 'sector': 'Agriculture', 'year': None, 'baseline_emissions_mtco2': Decimal('620.00'), 'pathway_emissions_mtco2': None, 'current_emissions_mtco2': None, 'red\u2026",
+       "dur_ms": 330.386,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 123,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_ndc_pathways ORDER BY sector, year'",
+          "params": "None"
+         },
+         "ret": "[{'id': UUID('2be8e3e6-5a9d-4791-9a99-50ca768cd9da'), 'sector': 'Agriculture', 'year': None, 'baseline_emissions_mtco2': Decimal('620.00'), 'pathway_emissions_mtco2': None, 'current_emissions_mtco2': None, 'reduction_vs_baseline_pct': None\u2026",
+         "dur_ms": 330.171,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/exporters/cbam-readiness-summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 324.977,
+   "node_count": 30,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_cbam_liabilities",
+    "ctp_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT e.entity_name, l.competitiveness_risk, l.net_cbam_liability_eur FROM ctp_entities e JOIN ctp_cbam_liabilities l ON l.entity_id = e.id WHERE e.country_code = 'CN' ORDER BY l.net_cbam_liability_eur DESC LIMIT 20\"",
+     "tables": [
+      "ctp_cbam_liabilities",
+      "ctp_entities"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.534,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "total_exporters",
+     "band_distribution",
+     "avg_cbam_readiness",
+     "cbam_exposed_sectors",
+     "top_exporters"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 124,
+     "name": "exporter_cbam_readiness_summary",
+     "qual": "exporter_cbam_readiness_summary",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 61,
+     "args": {},
+     "ret": "{'source': 'reference', 'total_exporters': 12, 'band_distribution': [{'band': 'Leader', 'count': 1, 'pct': 8.3}, {'band': 'Advanced', 'count': 3, 'pct': 25.0}, {'band': 'Developing', 'count': 4, 'pct': 33.3}, {'band': 'Emerging', 'count': \u2026",
+     "dur_ms": 324.677,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 125,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0D850>",
+       "dur_ms": 0.039,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 126,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 127,
+       "name": "get_cbam_readiness_summary",
+       "qual": "ChinaExporterEngine.get_cbam_readiness_summary",
+       "file": "services/china_trade_engine.py",
+       "line": 380,
+       "args": {},
+       "ret": "{'source': 'reference', 'total_exporters': 12, 'band_distribution': [{'band': 'Leader', 'count': 1, 'pct': 8.3}, {'band': 'Advanced', 'count': 3, 'pct': 25.0}, {'band': 'Developing', 'count': 4, 'pct': 33.3}, {'band': 'Emerging', 'count': \u2026",
+       "dur_ms": 324.524,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 128,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "\"SELECT e.entity_name, l.competitiveness_risk, l.net_cbam_liability_eur FROM ctp_entities e JOIN ctp_cbam_liabilities l ON l.entity_id = e.id WHERE e.country_code = 'CN' ORDER BY l.net_cbam_liability_eur DESC LIMIT 20\"",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 323.575,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "62",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "44",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 131,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "55",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 132,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "38",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 133,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "58",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 134,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "88",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 135,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "82",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 136,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "61",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 137,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "35",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 138,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "79",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 139,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 140,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "71",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 141,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0DA50>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 142,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Baowu Steel Group', 'entity_name_zh': '\u4e2d\u56fd\u5b9d\u6b66\u94a2\u94c1\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shanghai', 'sector': 'Steel', 'sub_sector': 'Crude Steel', 'annual_revenue_usd_mn': 156000, 'annual_expo\u2026"
+         },
+         "ret": "62",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 143,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'HBIS Group', 'entity_name_zh': '\u6cb3\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Hebei', 'sector': 'Steel', 'sub_sector': 'Flat Products', 'annual_revenue_usd_mn': 42000, 'annual_export_volume_usd_mn': \u2026"
+         },
+         "ret": "44",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 144,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Chalco (Aluminum Corp of China)', 'entity_name_zh': '\u4e2d\u56fd\u94dd\u4e1a', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Aluminium', 'sub_sector': 'Primary Aluminium', 'annual_revenue_usd_mn': 35000, \u2026"
+         },
+         "ret": "55",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 145,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Resources Cement', 'entity_name_zh': '\u534e\u6da6\u6c34\u6ce5', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Guangdong', 'sector': 'Cement', 'sub_sector': 'Portland Cement', 'annual_revenue_usd_mn': 8200, 'annual_expor\u2026"
+         },
+         "ret": "38",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 146,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Sinopec Group', 'entity_name_zh': '\u4e2d\u56fd\u77f3\u5316', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Chemicals', 'sub_sector': 'Nitrogen Fertilisers', 'annual_revenue_usd_mn': 471000, 'annual_export\u2026"
+         },
+         "ret": "58",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 147,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'LONGi Green Energy', 'entity_name_zh': '\u9686\u57fa\u7eff\u80fd\u79d1\u6280', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shaanxi', 'sector': 'Renewables', 'sub_sector': 'Solar PV Modules', 'annual_revenue_usd_mn': 9800, 'annual_expo\u2026"
+         },
+         "ret": "88",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 148,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'BYD Company', 'entity_name_zh': '\u6bd4\u4e9a\u8fea\u80a1\u4efd', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Guangdong', 'sector': 'Automotive', 'sub_sector': 'Battery Electric Vehicles', 'annual_revenue_usd_mn': 85000, 'annual_\u2026"
+         },
+         "ret": "82",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 149,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'CNOOC Limited', 'entity_name_zh': '\u4e2d\u56fd\u6d77\u6d0b\u77f3\u6cb9', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Oil & Gas', 'sub_sector': 'LNG / Crude', 'annual_revenue_usd_mn': 52000, 'annual_export_volume_\u2026"
+         },
+         "ret": "61",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 150,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Zijin Mining Group', 'entity_name_zh': '\u7d2b\u91d1\u77ff\u4e1a\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Fujian', 'sector': 'Metals', 'sub_sector': 'Copper / Gold', 'annual_revenue_usd_mn': 28000, 'annual_export_volu\u2026"
+         },
+         "ret": "35",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 151,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'CATL (Contemporary Amperex Technology)', 'entity_name_zh': '\u5b81\u5fb7\u65f6\u4ee3', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Fujian', 'sector': 'Battery Technology', 'sub_sector': 'Li-Ion Battery Cells', 'annual_revenu\u2026"
+         },
+         "ret": "79",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 152,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Shenhua Energy', 'entity_name_zh': '\u4e2d\u56fd\u795e\u534e\u80fd\u6e90', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Power', 'sub_sector': 'Thermal Coal / Power', 'annual_revenue_usd_mn': 38000, 'annual_ex\u2026"
+         },
+         "ret": "29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 153,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Ganfeng Lithium Group', 'entity_name_zh': '\u8d63\u950b\u9502\u4e1a\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Jiangxi', 'sector': 'Critical Minerals', 'sub_sector': 'Lithium Compounds', 'annual_revenue_usd_mn': 5400, '\u2026"
+         },
+         "ret": "71",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/exporters/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 990.358,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ctp_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT * FROM ctp_entities WHERE country_code = 'CN' AND entity_type IN ('exporter','both') ORDER BY entity_name LIMIT %(limit)s\"",
+     "tables": [
+      "ctp_entities"
+     ],
+     "rowcount": 20,
+     "dur_ms": 189.67,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "query": "None (default)",
+    "sector": "None (default)",
+    "cbam_applicable": "None (default)",
+    "min_cbam_readiness": "None (default)",
+    "limit": "20 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "count",
+     "exporters"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 154,
+     "name": "search_exporters",
+     "qual": "search_exporters",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 37,
+     "args": {
+      "query": "None",
+      "sector": "None",
+      "cbam_applicable": "None",
+      "min_cbam_readiness": "None",
+      "limit": "20"
+     },
+     "ret": "{'source': 'db', 'count': 20, 'exporters': [{'id': UUID('4b1d3f78-369d-41b7-b122-0c213b004a1b'), 'entity_name': 'Ansteel Group', 'entity_name_zh': '\u978d\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': None, 'city': None, 'se\u2026",
+     "dur_ms": 989.612,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 155,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2BAF8C0>",
+       "dur_ms": 0.05,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 156,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.011,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 157,
+       "name": "search_exporters",
+       "qual": "ChinaExporterEngine.search_exporters",
+       "file": "services/china_trade_engine.py",
+       "line": 328,
+       "args": {
+        "query": "None",
+        "sector": "None",
+        "cbam_applicable": "None",
+        "min_cbam_readiness": "None",
+        "limit": "20"
+       },
+       "ret": "{'source': 'db', 'count': 20, 'exporters': [{'id': UUID('4b1d3f78-369d-41b7-b122-0c213b004a1b'), 'entity_name': 'Ansteel Group', 'entity_name_zh': '\u978d\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': None, 'city': None, 'se\u2026",
+       "dur_ms": 989.136,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 158,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "\"SELECT * FROM ctp_entities WHERE country_code = 'CN' AND entity_type IN ('exporter','both') ORDER BY entity_name LIMIT :limit\"",
+          "params": "{'limit': 20}"
+         },
+         "ret": "[{'id': UUID('4b1d3f78-369d-41b7-b122-0c213b004a1b'), 'entity_name': 'Ansteel Group', 'entity_name_zh': '\u978d\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': None, 'city': None, 'sector': 'Steel', 'sub_sector': 'Long Steel',\u2026",
+         "dur_ms": 988.627,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/exporters/{entity_name}/profile",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 430.671,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_china_esg_disclosures",
+    "ctp_entities"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT e.*, d.overall_esg_score, d.esg_tier, d.e_score, d.s_score, d.g_score FROM ctp_entities e LEFT JOIN ctp_china_esg_disclosures d ON d.entity_id = e.id WHERE e.entity_name ILIKE %(n)s LIMIT 1'",
+     "tables": [
+      "ctp_china_esg_disclosures",
+      "ctp_entities"
+     ],
+     "rowcount": 0,
+     "dur_ms": 67.129,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_name",
+     "entity_name_zh",
+     "entity_type",
+     "country_code",
+     "province",
+     "sector",
+     "sub_sector",
+     "annual_revenue_usd_mn",
+     "annual_export_volume_usd_mn",
+     "is_ets_covered",
+     "sse_stock_code",
+     "primary_export_destinations",
+     "cbam_readiness_score",
+     "cbam_readiness_band",
+     "avg_embedded_carbon_tco2_per_tonne",
+     "vs_eu_benchmark_pct",
+     "green_certified",
+     "cets_covered",
+     "ets_registration_id"
+    ],
+    "n_keys": 19
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 159,
+     "name": "get_exporter_profile",
+     "qual": "get_exporter_profile",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 74,
+     "args": {
+      "entity_name": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'entity_name': 'China Baowu Steel Group', 'entity_name_zh': '\u4e2d\u56fd\u5b9d\u6b66\u94a2\u94c1\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shanghai', 'sector': 'Steel', 'sub_sector': 'Crude Steel', 'annual_revenue_usd_mn': 156000, 'annual_expo\u2026",
+     "dur_ms": 430.33,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 160,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0E0C0>",
+       "dur_ms": 0.038,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 161,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 162,
+       "name": "get_exporter_profile",
+       "qual": "ChinaExporterEngine.get_exporter_profile",
+       "file": "services/china_trade_engine.py",
+       "line": 365,
+       "args": {
+        "entity_name": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'entity_name': 'China Baowu Steel Group', 'entity_name_zh': '\u4e2d\u56fd\u5b9d\u6b66\u94a2\u94c1\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shanghai', 'sector': 'Steel', 'sub_sector': 'Crude Steel', 'annual_revenue_usd_mn': 156000, 'annual_expo\u2026",
+       "dur_ms": 430.198,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 163,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT e.*, d.overall_esg_score, d.esg_tier, d.e_score, d.s_score, d.g_score FROM ctp_entities e LEFT JOIN ctp_china_esg_disclosures d ON d.entity_id = e.id WHERE e.entity_name ILIKE :n LIMIT 1'",
+          "params": "{'n': '%550e8400-e29b-41d4-a716-446655440001%'}"
+         },
+         "ret": "[]",
+         "dur_ms": 429.942,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 164,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_exporter_profile.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 375,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0C280>"
+         },
+         "ret": "None",
+         "dur_ms": 0.049,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/marketplace/listings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1302.485,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_marketplace_listings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT * FROM ctp_marketplace_listings WHERE listing_status = 'active' ORDER BY listed_at DESC LIMIT %(limit)s\"",
+     "tables": [
+      "ctp_marketplace_listings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 79.632,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "listing_type": "None (default)",
+    "standard": "None (default)",
+    "sector": "None (default)",
+    "limit": "50 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "count",
+     "listings"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 165,
+     "name": "marketplace_listings",
+     "qual": "marketplace_listings",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 298,
+     "args": {
+      "listing_type": "None",
+      "standard": "None",
+      "sector": "None",
+      "limit": "50"
+     },
+     "ret": "{'source': 'reference', 'count': 6, 'listings': [{'listing_id': 'L001', 'seller_name': 'China Baowu Steel Group', 'listing_type': 'ets_allowance', 'product_description': 'CETS Phase 2 allowances (CEAs) \u2014 Power sector, vintage 2024', 'stand\u2026",
+     "dur_ms": 1301.672,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 166,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0E1B0>",
+       "dur_ms": 0.062,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 167,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 168,
+       "name": "get_listings",
+       "qual": "MarketplaceEngine.get_listings",
+       "file": "services/china_trade_engine.py",
+       "line": 1145,
+       "args": {
+        "listing_type": "None",
+        "standard": "None",
+        "sector": "None",
+        "limit": "50"
+       },
+       "ret": "{'source': 'reference', 'count': 6, 'listings': [{'listing_id': 'L001', 'seller_name': 'China Baowu Steel Group', 'listing_type': 'ets_allowance', 'product_description': 'CETS Phase 2 allowances (CEAs) \u2014 Power sector, vintage 2024', 'stand\u2026",
+       "dur_ms": 1301.344,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 169,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "\"SELECT * FROM ctp_marketplace_listings WHERE listing_status = 'active' ORDER BY listed_at DESC LIMIT :limit\"",
+          "params": "{'limit': 50}"
+         },
+         "ret": "[]",
+         "dur_ms": 1301.23,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/marketplace/price-discovery",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.425,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "benchmarks",
+     "spread_analysis",
+     "as_of",
+     "sources"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 170,
+     "name": "marketplace_price_discovery",
+     "qual": "marketplace_price_discovery",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 317,
+     "args": {},
+     "ret": "{'benchmarks': {'CETS': {'spot_usd': 13.1, 'forward_1y_usd': 16.8, 'unit': 'tCO2', 'exchange': 'CBEEX'}, 'CCER': {'spot_usd': 8.5, 'forward_1y_usd': 11.2, 'unit': 'tCO2', 'exchange': 'CBEEX'}, 'VCS': {'spot_usd': 5.8, 'forward_1y_usd': 7.4\u2026",
+     "dur_ms": 0.15,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 171,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0E480>",
+       "dur_ms": 0.04,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 172,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 173,
+       "name": "get_price_discovery",
+       "qual": "MarketplaceEngine.get_price_discovery",
+       "file": "services/china_trade_engine.py",
+       "line": 1170,
+       "args": {},
+       "ret": "{'benchmarks': {'CETS': {'spot_usd': 13.1, 'forward_1y_usd': 16.8, 'unit': 'tCO2', 'exchange': 'CBEEX'}, 'CCER': {'spot_usd': 8.5, 'forward_1y_usd': 11.2, 'unit': 'tCO2', 'exchange': 'CBEEX'}, 'VCS': {'spot_usd': 5.8, 'forward_1y_usd': 7.4\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/marketplace/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.465,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "china_voluntary_market_usd_mn",
+     "cets_trading_volume_mtco2_2024",
+     "ccer_pipeline_mtco2",
+     "top_listing_types",
+     "active_listings",
+     "total_volume_listed_tco2"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 174,
+     "name": "marketplace_stats",
+     "qual": "marketplace_stats",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 329,
+     "args": {},
+     "ret": "{'china_voluntary_market_usd_mn': 420, 'cets_trading_volume_mtco2_2024': 212, 'ccer_pipeline_mtco2': 800, 'top_listing_types': ['ets_allowance', 'carbon_credit', 'green_cert', 'cbam_cert'], 'active_listings': 6, 'total_volume_listed_tco2':\u2026",
+     "dur_ms": 0.29,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 175,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0E480>",
+       "dur_ms": 0.041,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 176,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 177,
+       "name": "get_market_stats",
+       "qual": "MarketplaceEngine.get_market_stats",
+       "file": "services/china_trade_engine.py",
+       "line": 1186,
+       "args": {},
+       "ret": "{'china_voluntary_market_usd_mn': 420, 'cets_trading_volume_mtco2_2024': 212, 'ccer_pipeline_mtco2': 800, 'top_listing_types': ['ets_allowance', 'carbon_credit', 'green_cert', 'cbam_cert'], 'active_listings': 6, 'total_volume_listed_tco2':\u2026",
+       "dur_ms": 0.156,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 178,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "4000000",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 179,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "850000",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 180,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "320000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 181,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "180000",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 182,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "145000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 183,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0E920>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1017.695,
+   "node_count": 42,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ctp_cbam_liabilities",
+    "ctp_entities",
+    "ctp_ndc_pathways",
+    "ctp_trade_corridors"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT e.entity_name, l.competitiveness_risk, l.net_cbam_liability_eur FROM ctp_entities e JOIN ctp_cbam_liabilities l ON l.entity_id = e.id WHERE e.country_code = 'CN' ORDER BY l.net_cbam_liability_eur DESC LIMIT 20\"",
+     "tables": [
+      "ctp_cbam_liabilities",
+      "ctp_entities"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.958,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT * FROM ctp_trade_corridors ORDER BY trade_value_usd_bn DESC'",
+     "tables": [
+      "ctp_trade_corridors"
+     ],
+     "rowcount": 5,
+     "dur_ms": 65.405,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT * FROM ctp_ndc_pathways ORDER BY sector, year'",
+     "tables": [
+      "ctp_ndc_pathways"
+     ],
+     "rowcount": 8,
+     "dur_ms": 75.163,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "exporter_count",
+     "avg_cbam_readiness_score",
+     "marketplace_listings_active",
+     "total_listed_volume_tco2",
+     "cets_price_cny",
+     "cets_price_eur",
+     "eu_ets_price_eur",
+     "cbam_arbitrage_eur_per_tco2",
+     "top_corridor_name",
+     "top_corridor_cbam_liability_eur_mn",
+     "ndc_on_track_pct",
+     "china_ndc_peak_year",
+     "china_ndc_neutrality_year"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 184,
+     "name": "platform_summary",
+     "qual": "platform_summary",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 342,
+     "args": {},
+     "ret": "{'exporter_count': 12, 'avg_cbam_readiness_score': 58.5, 'marketplace_listings_active': 6, 'total_listed_volume_tco2': 5495000, 'cets_price_cny': 95.0, 'cets_price_eur': 12.16, 'eu_ets_price_eur': 65.0, 'cbam_arbitrage_eur_per_tco2': 52.84\u2026",
+     "dur_ms": 1017.462,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 185,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0E660>",
+       "dur_ms": 0.027,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 186,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 187,
+       "name": "get_cbam_readiness_summary",
+       "qual": "ChinaExporterEngine.get_cbam_readiness_summary",
+       "file": "services/china_trade_engine.py",
+       "line": 380,
+       "args": {},
+       "ret": "{'source': 'reference', 'total_exporters': 12, 'band_distribution': [{'band': 'Leader', 'count': 1, 'pct': 8.3}, {'band': 'Advanced', 'count': 3, 'pct': 25.0}, {'band': 'Developing', 'count': 4, 'pct': 33.3}, {'band': 'Emerging', 'count': \u2026",
+       "dur_ms": 356.744,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 188,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "\"SELECT e.entity_name, l.competitiveness_risk, l.net_cbam_liability_eur FROM ctp_entities e JOIN ctp_cbam_liabilities l ON l.entity_id = e.id WHERE e.country_code = 'CN' ORDER BY l.net_cbam_liability_eur DESC LIMIT 20\"",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 355.74,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 189,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "62",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 190,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "44",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 191,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "55",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 192,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "38",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 193,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "58",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 194,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "88",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 195,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "82",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 196,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "61",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 197,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "35",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 198,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "79",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 199,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 200,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "71",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 201,
+         "name": "<genexpr>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 403,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EB60>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 202,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Baowu Steel Group', 'entity_name_zh': '\u4e2d\u56fd\u5b9d\u6b66\u94a2\u94c1\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shanghai', 'sector': 'Steel', 'sub_sector': 'Crude Steel', 'annual_revenue_usd_mn': 156000, 'annual_expo\u2026"
+         },
+         "ret": "62",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 203,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'HBIS Group', 'entity_name_zh': '\u6cb3\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Hebei', 'sector': 'Steel', 'sub_sector': 'Flat Products', 'annual_revenue_usd_mn': 42000, 'annual_export_volume_usd_mn': \u2026"
+         },
+         "ret": "44",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 204,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Chalco (Aluminum Corp of China)', 'entity_name_zh': '\u4e2d\u56fd\u94dd\u4e1a', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Aluminium', 'sub_sector': 'Primary Aluminium', 'annual_revenue_usd_mn': 35000, \u2026"
+         },
+         "ret": "55",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 205,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Resources Cement', 'entity_name_zh': '\u534e\u6da6\u6c34\u6ce5', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Guangdong', 'sector': 'Cement', 'sub_sector': 'Portland Cement', 'annual_revenue_usd_mn': 8200, 'annual_expor\u2026"
+         },
+         "ret": "38",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 206,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Sinopec Group', 'entity_name_zh': '\u4e2d\u56fd\u77f3\u5316', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Chemicals', 'sub_sector': 'Nitrogen Fertilisers', 'annual_revenue_usd_mn': 471000, 'annual_export\u2026"
+         },
+         "ret": "58",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 207,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'LONGi Green Energy', 'entity_name_zh': '\u9686\u57fa\u7eff\u80fd\u79d1\u6280', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shaanxi', 'sector': 'Renewables', 'sub_sector': 'Solar PV Modules', 'annual_revenue_usd_mn': 9800, 'annual_expo\u2026"
+         },
+         "ret": "88",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 208,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'BYD Company', 'entity_name_zh': '\u6bd4\u4e9a\u8fea\u80a1\u4efd', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Guangdong', 'sector': 'Automotive', 'sub_sector': 'Battery Electric Vehicles', 'annual_revenue_usd_mn': 85000, 'annual_\u2026"
+         },
+         "ret": "82",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 209,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'CNOOC Limited', 'entity_name_zh': '\u4e2d\u56fd\u6d77\u6d0b\u77f3\u6cb9', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Oil & Gas', 'sub_sector': 'LNG / Crude', 'annual_revenue_usd_mn': 52000, 'annual_export_volume_\u2026"
+         },
+         "ret": "61",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 210,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Zijin Mining Group', 'entity_name_zh': '\u7d2b\u91d1\u77ff\u4e1a\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Fujian', 'sector': 'Metals', 'sub_sector': 'Copper / Gold', 'annual_revenue_usd_mn': 28000, 'annual_export_volu\u2026"
+         },
+         "ret": "35",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 211,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'CATL (Contemporary Amperex Technology)', 'entity_name_zh': '\u5b81\u5fb7\u65f6\u4ee3', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Fujian', 'sector': 'Battery Technology', 'sub_sector': 'Li-Ion Battery Cells', 'annual_revenu\u2026"
+         },
+         "ret": "79",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 212,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'China Shenhua Energy', 'entity_name_zh': '\u4e2d\u56fd\u795e\u534e\u80fd\u6e90', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Power', 'sub_sector': 'Thermal Coal / Power', 'annual_revenue_usd_mn': 38000, 'annual_ex\u2026"
+         },
+         "ret": "29",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 213,
+         "name": "<lambda>",
+         "qual": "ChinaExporterEngine.get_cbam_readiness_summary.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 406,
+         "args": {
+          "x": "{'entity_name': 'Ganfeng Lithium Group', 'entity_name_zh': '\u8d63\u950b\u9502\u4e1a\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Jiangxi', 'sector': 'Critical Minerals', 'sub_sector': 'Lithium Compounds', 'annual_revenue_usd_mn': 5400, '\u2026"
+         },
+         "ret": "71",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 214,
+       "name": "get_market_stats",
+       "qual": "MarketplaceEngine.get_market_stats",
+       "file": "services/china_trade_engine.py",
+       "line": 1186,
+       "args": {},
+       "ret": "{'china_voluntary_market_usd_mn': 420, 'cets_trading_volume_mtco2_2024': 212, 'ccer_pipeline_mtco2': 800, 'top_listing_types': ['ets_allowance', 'carbon_credit', 'green_cert', 'cbam_cert'], 'active_listings': 6, 'total_volume_listed_tco2':\u2026",
+       "dur_ms": 0.15,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 215,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "4000000",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 216,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "850000",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 217,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "320000",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 218,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "180000",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 219,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "145000",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 220,
+         "name": "<genexpr>",
+         "qual": "MarketplaceEngine.get_market_stats.<locals>.<genexpr>",
+         "file": "services/china_trade_engine.py",
+         "line": 1193,
+         "args": {
+          ".0": "<list_iterator object at 0x0000016BD2C0EEF0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 221,
+       "name": "get_all_corridors",
+       "qual": "TradeCorridorEngine.get_all_corridors",
+       "file": "services/china_trade_engine.py",
+       "line": 959,
+       "args": {},
+       "ret": "{'source': 'db', 'corridors': [{'id': UUID('b7482ad2-3975-40b9-9a52-b28274083642'), 'origin_country': 'CN', 'destination_country': 'EU', 'corridor_name': 'China \u2192 EU', 'trade_value_usd_bn': Decimal('618.00'), 'trade_volume_mn_tonnes': None\u2026",
+       "dur_ms": 314.074,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 222,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_trade_corridors ORDER BY trade_value_usd_bn DESC'",
+          "params": "None"
+         },
+         "ret": "[{'id': UUID('b7482ad2-3975-40b9-9a52-b28274083642'), 'origin_country': 'CN', 'destination_country': 'EU', 'corridor_name': 'China \u2192 EU', 'trade_value_usd_bn': Decimal('618.00'), 'trade_volume_mn_tonnes': None, 'carbon_intensity_avg_tco2_p\u2026",
+         "dur_ms": 313.898,
+         "sql": [
+          1
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 223,
+       "name": "get_ndc_alignment",
+       "qual": "ChinaESGETSEngine.get_ndc_alignment",
+       "file": "services/china_trade_engine.py",
+       "line": 797,
+       "args": {
+        "sector": "None"
+       },
+       "ret": "{'source': 'db', 'pathways': [{'id': UUID('2be8e3e6-5a9d-4791-9a99-50ca768cd9da'), 'sector': 'Agriculture', 'year': None, 'baseline_emissions_mtco2': Decimal('620.00'), 'pathway_emissions_mtco2': None, 'current_emissions_mtco2': None, 'red\u2026",
+       "dur_ms": 345.987,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 224,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_ndc_pathways ORDER BY sector, year'",
+          "params": "None"
+         },
+         "ret": "[{'id': UUID('2be8e3e6-5a9d-4791-9a99-50ca768cd9da'), 'sector': 'Agriculture', 'year': None, 'baseline_emissions_mtco2': Decimal('620.00'), 'pathway_emissions_mtco2': None, 'current_emissions_mtco2': None, 'reduction_vs_baseline_pct': None\u2026",
+         "dur_ms": 345.788,
+         "sql": [
+          2
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 225,
+       "name": "<genexpr>",
+       "qual": "platform_summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 356,
+       "args": {
+        ".0": "<list_iterator object at 0x0000016BD2C0ECB0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/suppliers/rank",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.004,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "product_category": "'TEST_product_category' (mock-required)",
+    "max_intensity": "None (default)",
+    "require_certified": "False (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "product_category",
+     "total_candidates",
+     "qualifying_count",
+     "ranked_suppliers"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 226,
+     "name": "rank_suppliers",
+     "qual": "rank_suppliers",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 172,
+     "args": {
+      "product_category": "'TEST_product_category'",
+      "max_intensity": "None",
+      "require_certified": "False"
+     },
+     "ret": "{'product_category': 'TEST_product_category', 'total_candidates': 12, 'qualifying_count': 6, 'ranked_suppliers': [{'rank': 1, 'entity_name': 'LONGi Green Energy', 'sector': 'Renewables', 'cbam_readiness_score': 88, 'cbam_readiness_band': '\u2026",
+     "dur_ms": 0.568,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 227,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0F3E0>",
+       "dur_ms": 0.035,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 228,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 229,
+       "name": "rank_suppliers",
+       "qual": "SupplierFrameworkEngine.rank_suppliers",
+       "file": "services/china_trade_engine.py",
+       "line": 669,
+       "args": {
+        "product_category": "'TEST_product_category'",
+        "max_intensity": "None",
+        "require_certified": "False"
+       },
+       "ret": "{'product_category': 'TEST_product_category', 'total_candidates': 12, 'qualifying_count': 6, 'ranked_suppliers': [{'rank': 1, 'entity_name': 'LONGi Green Energy', 'sector': 'Renewables', 'cbam_readiness_score': 88, 'cbam_readiness_band': '\u2026",
+       "dur_ms": 0.323,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 230,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'China Baowu Steel Group', 'entity_name_zh': '\u4e2d\u56fd\u5b9d\u6b66\u94a2\u94c1\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shanghai', 'sector': 'Steel', 'sub_sector': 'Crude Steel', 'annual_revenue_usd_mn': 156000, 'annual_expo\u2026"
+         },
+         "ret": "62",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 231,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'HBIS Group', 'entity_name_zh': '\u6cb3\u94a2\u96c6\u56e2', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Hebei', 'sector': 'Steel', 'sub_sector': 'Flat Products', 'annual_revenue_usd_mn': 42000, 'annual_export_volume_usd_mn': \u2026"
+         },
+         "ret": "44",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 232,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'Chalco (Aluminum Corp of China)', 'entity_name_zh': '\u4e2d\u56fd\u94dd\u4e1a', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Aluminium', 'sub_sector': 'Primary Aluminium', 'annual_revenue_usd_mn': 35000, \u2026"
+         },
+         "ret": "55",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 233,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'China Resources Cement', 'entity_name_zh': '\u534e\u6da6\u6c34\u6ce5', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Guangdong', 'sector': 'Cement', 'sub_sector': 'Portland Cement', 'annual_revenue_usd_mn': 8200, 'annual_expor\u2026"
+         },
+         "ret": "38",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 234,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'Sinopec Group', 'entity_name_zh': '\u4e2d\u56fd\u77f3\u5316', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Beijing', 'sector': 'Chemicals', 'sub_sector': 'Nitrogen Fertilisers', 'annual_revenue_usd_mn': 471000, 'annual_export\u2026"
+         },
+         "ret": "58",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 235,
+         "name": "<lambda>",
+         "qual": "SupplierFrameworkEngine.rank_suppliers.<locals>.<lambda>",
+         "file": "services/china_trade_engine.py",
+         "line": 692,
+         "args": {
+          "x": "{'entity_name': 'LONGi Green Energy', 'entity_name_zh': '\u9686\u57fa\u7eff\u80fd\u79d1\u6280', 'entity_type': 'exporter', 'country_code': 'CN', 'province': 'Shaanxi', 'sector': 'Renewables', 'sub_sector': 'Solar PV Modules', 'annual_revenue_usd_mn': 9800, 'annual_expo\u2026"
+         },
+         "ret": "88",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "GET /api/v1/china-trade/suppliers/requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 422.071,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ctp_supplier_requirements"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ctp_supplier_requirements WHERE active = TRUE ORDER BY compliance_deadline'",
+     "tables": [
+      "ctp_supplier_requirements"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.336,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "framework": "None (default)",
+    "product_category": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "count",
+     "requirements"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 236,
+     "name": "get_supplier_requirements",
+     "qual": "get_supplier_requirements",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 157,
+     "args": {
+      "framework": "None",
+      "product_category": "None"
+     },
+     "ret": "{'source': 'reference', 'count': 4, 'requirements': [{'importer_name': 'Volkswagen AG', 'framework': 'CSDDD', 'requirement_type': 'carbon_intensity', 'product_category': 'Steel', 'hs_codes_in_scope': ['7208', '7209', '7210'], 'max_carbon_i\u2026",
+     "dur_ms": 421.777,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 237,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0F350>",
+       "dur_ms": 0.03,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 238,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 239,
+       "name": "get_requirements",
+       "qual": "SupplierFrameworkEngine.get_requirements",
+       "file": "services/china_trade_engine.py",
+       "line": 652,
+       "args": {
+        "framework": "None",
+        "product_category": "None"
+       },
+       "ret": "{'source': 'reference', 'count': 4, 'requirements': [{'importer_name': 'Volkswagen AG', 'framework': 'CSDDD', 'requirement_type': 'carbon_intensity', 'product_category': 'Steel', 'hs_codes_in_scope': ['7208', '7209', '7210'], 'max_carbon_i\u2026",
+       "dur_ms": 421.591,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 240,
+         "name": "_exec_read",
+         "qual": "_exec_read",
+         "file": "services/china_trade_engine.py",
+         "line": 25,
+         "args": {
+          "sql": "'SELECT * FROM ctp_supplier_requirements WHERE active = TRUE ORDER BY compliance_deadline'",
+          "params": "None"
+         },
+         "ret": "[]",
+         "dur_ms": 421.517,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "china-trade",
+   "label": "POST /api/v1/china-trade/cbam/calculate-liability",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 11.231,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 241,
+     "name": "calculate_cbam_liability",
+     "qual": "calculate_cbam_liability",
+     "file": "api/v1/routes/china_trade.py",
+     "line": 133,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 10.913,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 242,
+       "name": "_engine",
+       "qual": "_engine",
+       "file": "api/v1/routes/china_trade.py",
+       "line": 28,
+       "args": {},
+       "ret": "<services.china_trade_engine.ChinaTradeEngine object at 0x0000016BD2C0F860>",
+       "dur_ms": 0.037,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 243,
+         "name": "__init__",
+         "qual": "ChinaTradeEngine.__init__",
+         "file": "services/china_trade_engine.py",
+         "line": 1599,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

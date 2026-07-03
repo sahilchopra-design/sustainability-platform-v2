@@ -1,0 +1,592 @@
+{
+ "domain": "entity-data",
+ "meta": {
+  "ts": "2026-06-30T14:01:49",
+  "module": "api.v1.routes.entity_data",
+  "router_prefix": "/api/v1/entity-data",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/entities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3885.507,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "csrd_entity_registry",
+    "energy_entities",
+    "energy_generation_mix",
+    "esrs_e1_energy",
+    "esrs_e1_ghg_emissions",
+    "esrs_s1_workforce"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT cer.id, cer.legal_name, cer.primary_sector, cer.country_iso, cer.net_turnover_meur, cer.balance_sheet_total_meur, cer.employee_count, cer.fi_entity_id, cer.energy_entity_id, ghg.scope1_gross_tco2e, ghg.scope2_market_based_tco2e, ghg.scope3_total_tco2e, en.renewable_energy_pct, gen.renewables_capacity_share_pct, gen.avg_carbon_intensity_gco2_kwh, s1.gender_pay_gap_pct, s1.employees_headcou\u2026",
+     "tables": [
+      "csrd_entity_registry",
+      "energy_entities",
+      "energy_generation_mix",
+      "esrs_e1_energy",
+      "esrs_e1_ghg_emissions",
+      "esrs_s1_workforce"
+     ],
+     "rowcount": 15,
+     "dur_ms": 375.957,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_entities",
+     "qual": "list_entities",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 39,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887BB8B4A0>"
+     },
+     "ret": "{'entities': [{'id': 'f4d3544c-fc90-42e6-9f00-8923cfd74468', 'legal_name': 'Enel SpA', 'sector': 'energy_developer', 'country_iso': 'ITA', 'net_turnover_meur': 92900.0, 'balance_sheet_meur': None, 'employees': 65000, 'fi_entity_id': None, \u2026",
+     "dur_ms": 3837.689,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_entity_list",
+       "qual": "get_entity_list",
+       "file": "services/csrd_entity_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887BB8B4A0>"
+       },
+       "ret": "[{'id': 'f4d3544c-fc90-42e6-9f00-8923cfd74468', 'legal_name': 'Enel SpA', 'sector': 'energy_developer', 'country_iso': 'ITA', 'net_turnover_meur': 92900.0, 'balance_sheet_meur': None, 'employees': 65000, 'fi_entity_id': None, 'energy_entit\u2026",
+       "dur_ms": 3837.491,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 2883.575,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, primary_sector, sector_subtype, country_iso, jurisdiction, net_turnover_meur, balance_sheet_total_meur, employee_count, is_in_scope_csrd, is_in_scope_sfdr, sfdr_article_classification, is_in_scope_eu_taxonomy, is_in_scope_tcfd, is_in_scope_issb, fi_entity_id, energy_entity_id FROM csrd_entity_registry WHERE id = %(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 235.0,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "entity_profile",
+     "qual": "entity_profile",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 48,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C22D0>"
+     },
+     "ret": "None",
+     "dur_ms": 2844.073,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_entity_profile",
+       "qual": "get_entity_profile",
+       "file": "services/csrd_entity_service.py",
+       "line": 76,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C22D0>"
+       },
+       "ret": "None",
+       "dur_ms": 2844.016,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/carbon",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or has no GHG data",
+   "dur_ms": 2092.769,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT legal_name, country_iso, net_turnover_meur FROM csrd_entity_registry WHERE id=%(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 772.293,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "entity_carbon_inputs",
+     "qual": "entity_carbon_inputs",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 61,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C2240>"
+     },
+     "ret": "None",
+     "dur_ms": 2047.059,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_carbon_inputs",
+       "qual": "get_carbon_inputs",
+       "file": "services/csrd_entity_service.py",
+       "line": 124,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C2240>"
+       },
+       "ret": "None",
+       "dur_ms": 2047.003,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/ecl",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or is not a Financial Institution entity",
+   "dur_ms": 566.26,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT legal_name, country_iso, fi_entity_id FROM csrd_entity_registry WHERE id=%(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.3,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "entity_ecl_inputs",
+     "qual": "entity_ecl_inputs",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 73,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9970>"
+     },
+     "ret": "None",
+     "dur_ms": 538.075,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_ecl_inputs",
+       "qual": "get_ecl_inputs",
+       "file": "services/csrd_entity_service.py",
+       "line": 172,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9970>"
+       },
+       "ret": "None",
+       "dur_ms": 538.026,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/nature",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or has no biodiversity data",
+   "dur_ms": 1281.059,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT legal_name, country_iso FROM csrd_entity_registry WHERE id=%(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 75.607,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "entity_nature_inputs",
+     "qual": "entity_nature_inputs",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 89,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9F70>"
+     },
+     "ret": "None",
+     "dur_ms": 1252.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_nature_inputs",
+       "qual": "get_nature_inputs",
+       "file": "services/csrd_entity_service.py",
+       "line": 239,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9F70>"
+       },
+       "ret": "None",
+       "dur_ms": 1251.94,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/portfolio-asset",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 1150.13,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT cer.legal_name, cer.primary_sector, cer.country_iso, cer.net_turnover_meur, cer.balance_sheet_total_meur, cer.fi_entity_id, cer.energy_entity_id FROM csrd_entity_registry cer WHERE cer.id = %(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 226.169,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "entity_portfolio_asset",
+     "qual": "entity_portfolio_asset",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 129,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA570>"
+     },
+     "ret": "None",
+     "dur_ms": 1115.779,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_portfolio_asset_spec",
+       "qual": "get_portfolio_asset_spec",
+       "file": "services/csrd_entity_service.py",
+       "line": 377,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA570>"
+       },
+       "ret": "None",
+       "dur_ms": 1115.731,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/sector",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 296.585,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT legal_name, country_iso, energy_entity_id FROM csrd_entity_registry WHERE id=%(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.937,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "entity_sector_inputs",
+     "qual": "entity_sector_inputs",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 117,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA8A0>"
+     },
+     "ret": "None",
+     "dur_ms": 258.999,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_sector_inputs",
+       "qual": "get_sector_inputs",
+       "file": "services/csrd_entity_service.py",
+       "line": 338,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA8A0>"
+       },
+       "ret": "None",
+       "dur_ms": 258.958,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entity-data",
+   "label": "GET /api/v1/entity-data/{entity_id}/stranded",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or is not an Energy entity",
+   "dur_ms": 440.792,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "csrd_entity_registry"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT legal_name, country_iso, energy_entity_id FROM csrd_entity_registry WHERE id=%(eid)s'",
+     "tables": [
+      "csrd_entity_registry"
+     ],
+     "rowcount": 0,
+     "dur_ms": 68.249,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "entity_stranded_inputs",
+     "qual": "entity_stranded_inputs",
+     "file": "api/v1/routes/entity_data.py",
+     "line": 101,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DABD0>"
+     },
+     "ret": "None",
+     "dur_ms": 410.318,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 16,
+       "name": "get_stranded_inputs",
+       "qual": "get_stranded_inputs",
+       "file": "services/csrd_entity_service.py",
+       "line": 280,
+       "args": {
+        "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DABD0>"
+       },
+       "ret": "None",
+       "dur_ms": 410.268,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

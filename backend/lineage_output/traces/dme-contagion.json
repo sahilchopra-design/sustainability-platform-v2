@@ -1,0 +1,435 @@
+{
+ "domain": "dme-contagion",
+ "meta": {
+  "ts": "2026-06-30T14:00:47",
+  "module": "api.v1.routes.dme_contagion",
+  "router_prefix": "/api/v1/dme-contagion",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "dme-contagion",
+   "label": "GET /api/v1/dme-contagion/ref/parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.452,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "channel_weights",
+     "cross_pillar_amplifiers",
+     "cross_sector_defaults",
+     "empirical_targets"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_reference_data",
+     "qual": "get_reference_data",
+     "file": "api/v1/routes/dme_contagion.py",
+     "line": 58,
+     "args": {},
+     "ret": "{'channel_weights': {'financial': 0.45, 'supply_chain': 0.35, 'regulatory': 0.2}, 'cross_pillar_amplifiers': {'G_to_E': 2.5, 'X_to_EL': 4.3, 'X_to_VaR': 4.5, 'X_to_ES': 3.2, 'S_to_P': 2.3, 'same_pillar': 1.0}, 'cross_sector_defaults': {'En\u2026",
+     "dur_ms": 0.086,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_reference_data",
+       "qual": "ContagionEngine.get_reference_data",
+       "file": "services/dme_contagion_engine.py",
+       "line": 290,
+       "args": {},
+       "ret": "{'channel_weights': {'financial': 0.45, 'supply_chain': 0.35, 'regulatory': 0.2}, 'cross_pillar_amplifiers': {'G_to_E': 2.5, 'X_to_EL': 4.3, 'X_to_VaR': 4.5, 'X_to_ES': 3.2, 'S_to_P': 2.3, 'same_pillar': 1.0}, 'cross_sector_defaults': {'En\u2026",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/aggregate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/edge-weight",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.475,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<EdgeWeightInput (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financial",
+     "supply_chain",
+     "regulatory",
+     "composite"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "compute_edge_weight",
+     "qual": "compute_edge_weight",
+     "file": "api/v1/routes/dme_contagion.py",
+     "line": 15,
+     "args": {
+      "req": "EdgeWeightInput(ead_exposure=1.0, portfolio_total=1.0, hhi_concentration=1.0, revenue_share=1.0, substitutability=1.0, jurisdiction_overlap=1.0, gics_similarity=1.0)"
+     },
+     "ret": "{'financial': 0.9099999999999999, 'supply_chain': 0.0, 'regulatory': 1.0, 'composite': 0.6094999999999999}",
+     "dur_ms": 0.113,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "compute_edge_weight",
+       "qual": "ContagionEngine.compute_edge_weight",
+       "file": "services/dme_contagion_engine.py",
+       "line": 124,
+       "args": {
+        "inp": "EdgeWeightInput(ead_exposure=1.0, portfolio_total=1.0, hhi_concentration=1.0, revenue_share=1.0, substitutability=1.0, jurisdiction_overlap=1.0, gics_similarity=1.0)"
+       },
+       "ret": "EdgeWeightOutput(financial=0.9099999999999999, supply_chain=0.0, regulatory=1.0, composite=0.6094999999999999)",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/l1-intensity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/l2-intensity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/l3-intensity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/simulate",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 26.532,
+   "node_count": 12,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<FullSimulationRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenario",
+     "seed_entity_id",
+     "seed_event_type",
+     "cascade_depth",
+     "entities_affected",
+     "total_intensity",
+     "spectral_radius",
+     "is_stable",
+     "cascade_log",
+     "final_intensities"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "simulate",
+     "qual": "simulate",
+     "file": "api/v1/routes/dme_contagion.py",
+     "line": 52,
+     "args": {
+      "req": "FullSimulationRequest(seed_entity_id='TEST_req_seed_entity_id', seed_severity=0.8, seed_event_type='REGULATORY_SHOCK', adjacency_matrix=[[1.0]], entity_ids=['TEST_req_entity_ids'], beta_decay=0.5, mu_baseline=0.05, cascade_steps=5, scenari\u2026"
+     },
+     "ret": "{'scenario': 'base', 'seed_entity_id': 'TEST_req_seed_entity_id', 'seed_event_type': 'REGULATORY_SHOCK', 'cascade_depth': 5, 'entities_affected': 1, 'total_intensity': 2.806816, 'spectral_radius': 2.0, 'is_stable': False, 'cascade_log': [{\u2026",
+     "dur_ms": 26.139,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "simulate",
+       "qual": "ContagionEngine.simulate",
+       "file": "services/dme_contagion_engine.py",
+       "line": 242,
+       "args": {
+        "req": "FullSimulationRequest(seed_entity_id='TEST_req_seed_entity_id', seed_severity=0.8, seed_event_type='REGULATORY_SHOCK', adjacency_matrix=[[1.0]], entity_ids=['TEST_req_entity_ids'], beta_decay=0.5, mu_baseline=0.05, cascade_steps=5, scenari\u2026"
+       },
+       "ret": "{'scenario': 'base', 'seed_entity_id': 'TEST_req_seed_entity_id', 'seed_event_type': 'REGULATORY_SHOCK', 'cascade_depth': 5, 'entities_affected': 1, 'total_intensity': 2.806816, 'spectral_radius': 2.0, 'is_stable': False, 'cascade_log': [{\u2026",
+       "dur_ms": 26.048,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B9691F680>"
+         },
+         "ret": "np.float64(0.5155510607557384)",
+         "dur_ms": 0.024,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B9691F680>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B968F6980>"
+         },
+         "ret": "np.float64(0.5023581611218915)",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B968F6980>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B9693E500>"
+         },
+         "ret": "np.float64(0.4167868838202845)",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B9693E500>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B96AE9E80>"
+         },
+         "ret": "np.float64(0.3091999945742133)",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B96AE9E80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B96AE9C40>"
+         },
+         "ret": "np.float64(0.21291995782137407)",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "ContagionEngine.simulate.<locals>.<genexpr>",
+         "file": "services/dme_contagion_engine.py",
+         "line": 260,
+         "args": {
+          ".0": "<set_iterator object at 0x0000018B96AE9C40>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-contagion",
+   "label": "POST /api/v1/dme-contagion/stability-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

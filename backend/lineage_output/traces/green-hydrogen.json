@@ -1,0 +1,295 @@
+{
+ "domain": "green-hydrogen",
+ "meta": {
+  "ts": "2026-06-30T14:02:37",
+  "module": "api.v1.routes.green_hydrogen",
+  "router_prefix": "/api/v1/green-hydrogen",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "green-hydrogen",
+   "label": "GET /api/v1/green-hydrogen/ref/country-grid-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.238,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "countries",
+     "high_re_threshold_pct",
+     "high_re_eligible_countries",
+     "methodology",
+     "note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_country_grid_factors",
+     "qual": "ref_country_grid_factors",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 234,
+     "args": {},
+     "ret": "{'source': 'ENTSO-E Transparency Platform 2023; IEA Electricity Market Report 2023', 'countries': {'Germany': {'grid_ef_kg_co2_kwh': 0.38, 're_share_pct': 52.0, 'bidding_zone': 'DE-AT-LU', 'repowereu_target_mt': 1.0, 'current_capacity_mw':\u2026",
+     "dur_ms": 0.073,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "GET /api/v1/green-hydrogen/ref/electrolyser-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.045,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "benchmarks",
+     "notes"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_electrolyser_benchmarks",
+     "qual": "ref_electrolyser_benchmarks",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 216,
+     "args": {},
+     "ret": "{'source': 'IEA Global Hydrogen Review 2023; IRENA Green Hydrogen Cost Reduction 2020', 'benchmarks': {'PEM': {'full_name': 'Proton Exchange Membrane', 'electricity_consumption_kwh_kgH2': 55.0, 'efficiency_lhv_pct': 65.0, 'capex_low_usd_kw\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "GET /api/v1/green-hydrogen/ref/h2cfd-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.433,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "framework",
+     "key_parameters",
+     "eligibility_summary"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_h2cfd_framework",
+     "qual": "ref_h2cfd_framework",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 273,
+     "args": {},
+     "ret": "{'source': 'EU Innovation Fund H2 Bank Pilot Auction 2023; German AusH2 Regulation', 'framework': {'name': 'EU H2 Bank / Hydrogen Contract for Difference', 'legal_basis': 'EU Innovation Fund Regulation (EU) 2019/631 Art 10a; German AusH2 R\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "GET /api/v1/green-hydrogen/ref/repowereu-targets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.229,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "targets",
+     "repowereu_total_eu_target_mt_2030",
+     "eu_import_target_mt_2030",
+     "electrolysis_capacity_target_gw_2030",
+     "2024_installed_gw_estimate",
+     "gap_commentary"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_repowereu_targets",
+     "qual": "ref_repowereu_targets",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 253,
+     "args": {},
+     "ret": "{'source': 'REPowerEU Plan COM(2022) 230 final; EU Hydrogen Strategy COM(2020) 301 final', 'targets': {'eu_strategy_headline': {'domestic_production_mt_2030': 10.0, 'import_target_mt_2030': 10.0, 'total_target_mt_2030': 20.0, 'electrolysis\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "GET /api/v1/green-hydrogen/ref/rfnbo-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "effective_date",
+     "criteria",
+     "rfnbo_definition",
+     "green_hydrogen_classification",
+     "ghg_threshold_kg_co2_kgh2",
+     "counterfactual_method"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_rfnbo_criteria",
+     "qual": "ref_rfnbo_criteria",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 196,
+     "args": {},
+     "ret": "{'source': 'EU Delegated Regulations (EU) 2023/1184 and 2023/1185', 'effective_date': '2023-06-20', 'criteria': {'ghg_intensity': {'criterion_id': 'C1', 'name': 'GHG Intensity Threshold', 'legal_basis': 'EU Delegated Regulation (EU) 2023/1\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "POST /api/v1/green-hydrogen/assess",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: 'str' object has no attribute 'facility_name'",
+   "dur_ms": 1.311,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "assess_facility",
+     "qual": "assess_facility",
+     "file": "api/v1/routes/green_hydrogen.py",
+     "line": 100,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "POST /api/v1/green-hydrogen/lcoh",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-hydrogen",
+   "label": "POST /api/v1/green-hydrogen/rfnbo-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

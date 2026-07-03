@@ -1,0 +1,924 @@
+{
+ "domain": "sub-parameter",
+ "meta": {
+  "ts": "2026-06-30T14:05:26",
+  "module": "api.v1.routes.sub_parameter",
+  "router_prefix": "/api/v1/sub-parameter",
+  "endpoints": 16
+ },
+ "transactions": [
+  {
+   "domain": "sub-parameter",
+   "label": "GET /api/v1/sub-parameter/custom-scenario/{cs_id}/key-drivers",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Custom scenario not found",
+   "dur_ms": 672.189,
+   "node_count": 5,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.537,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "cs_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "custom_key_drivers",
+     "qual": "custom_key_drivers",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 266,
+     "args": {
+      "cs_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389808920>"
+     },
+     "ret": "None",
+     "dur_ms": 642.401,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "db/models/custom_builder.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 12.347,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "CustomScenario",
+         "qual": "CustomScenario",
+         "file": "db/models/custom_builder.py",
+         "line": 16,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 1.654,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "ParameterCustomization",
+         "qual": "ParameterCustomization",
+         "file": "db/models/custom_builder.py",
+         "line": 38,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.563,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "SimulationRun",
+         "qual": "SimulationRun",
+         "file": "db/models/custom_builder.py",
+         "line": 53,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.638,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "GET /api/v1/sub-parameter/interactions/{scenario_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 324.455,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.843,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "parameter_set": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "interaction_analysis",
+     "qual": "interaction_analysis",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 116,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "parameter_set": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B38985F890>"
+     },
+     "ret": "None",
+     "dur_ms": 292.206,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B38985F890>",
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 292.168,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "GET /api/v1/sub-parameter/parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.266,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "parameters"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "list_analyzable_parameters",
+     "qual": "list_analyzable_parameters",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 72,
+     "args": {},
+     "ret": "{'parameters': [{'name': 'Emissions|CO2', 'label': 'CO2 Emissions', 'unit': 'Gt/yr', 'default_range': 0.3}, {'name': 'Price|Carbon', 'label': 'Carbon Price', 'unit': 'USD/tCO2', 'default_range': 0.4}, {'name': 'GDP|PPP', 'label': 'GDP', 'u\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "GET /api/v1/sub-parameter/visualization/tornado/{scenario_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 287.813,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 59.949,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "target_metric": "'temperature' (default)",
+    "top_n": "10 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "viz_tornado",
+     "qual": "viz_tornado",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 137,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "target_metric": "'temperature'",
+      "top_n": "10",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DA6AB0>"
+     },
+     "ret": "None",
+     "dur_ms": 255.802,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DA6AB0>",
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 255.769,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "GET /api/v1/sub-parameter/visualization/waterfall/{scenario_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 305.392,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 65.756,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "viz_waterfall",
+     "qual": "viz_waterfall",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 149,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDDF70>"
+     },
+     "ret": "None",
+     "dur_ms": 273.629,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDDF70>",
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 273.502,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/attribution",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 303.721,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.446,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<AttributionRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "attribution_analysis",
+     "qual": "attribution_analysis",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 109,
+     "args": {
+      "body": "AttributionRequest(scenario_id='TEST_body_scenario_id', outcome_metric='temperature')",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC230>"
+     },
+     "ret": "None",
+     "dur_ms": 271.803,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC230>",
+        "scenario_id": "'TEST_body_scenario_id'"
+       },
+       "ret": "None",
+       "dur_ms": 271.74,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/custom-scenario/{cs_id}/analysis",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Custom scenario not found",
+   "dur_ms": 371.376,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 79.423,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "cs_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "analyze_custom_scenario",
+     "qual": "analyze_custom_scenario",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 244,
+     "args": {
+      "cs_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC1D0>"
+     },
+     "ret": "None",
+     "dur_ms": 338.044,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/elasticity",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 318.021,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 76.278,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<ElasticityRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "elasticity_analysis",
+     "qual": "elasticity_analysis",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 177,
+     "args": {
+      "body": "ElasticityRequest(scenario_id='TEST_body_scenario_id', target_metric='temperature', parameters=[], delta_pct=1.0)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE3C0>"
+     },
+     "ret": "None",
+     "dur_ms": 287.84,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE3C0>",
+        "scenario_id": "'TEST_body_scenario_id'"
+       },
+       "ret": "None",
+       "dur_ms": 287.805,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/export",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'get'",
+   "dur_ms": 796.391,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<ExportRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "export_analyses",
+     "qual": "export_analyses",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 221,
+     "args": {
+      "body": "ExportRequest(analyses=['TEST_body_analyses'], format='excel')",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>"
+     },
+     "ret": "None",
+     "dur_ms": 795.736,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/analysis_export.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.709,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "export_analysis_excel",
+       "qual": "export_analysis_excel",
+       "file": "services/analysis_export.py",
+       "line": 15,
+       "args": {
+        "analyses": "['TEST_body_analyses']"
+       },
+       "ret": "None",
+       "dur_ms": 771.705,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/interaction-matrix",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/ols-attribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/partial-correlation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/sensitivity-analysis",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 286.348,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.718,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<SensitivityRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "sensitivity_analysis",
+     "qual": "sensitivity_analysis",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 78,
+     "args": {
+      "body": "SensitivityRequest(scenario_id='TEST_body_scenario_id', target_metric='temperature', parameters=[], variation_range=0.2, analysis_type='tornado')",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B39830D4F0>"
+     },
+     "ret": "None",
+     "dur_ms": 257.626,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 22,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B39830D4F0>",
+        "scenario_id": "'TEST_body_scenario_id'"
+       },
+       "ret": "None",
+       "dur_ms": 257.591,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/shapley",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/what-if",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 283.739,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 56.246,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<WhatIfRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "what_if_analysis",
+     "qual": "what_if_analysis",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 88,
+     "args": {
+      "body": "WhatIfRequest(base_scenario_id='TEST_body_base_scenario_id', changes=[WhatIfChange(parameter='TEST_body_changes_parameter', change_type='relative', change_value=0, apply_year=2050)])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>"
+     },
+     "ret": "None",
+     "dur_ms": 255.337,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 24,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>",
+        "scenario_id": "'TEST_body_base_scenario_id'"
+       },
+       "ret": "None",
+       "dur_ms": 255.28,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sub-parameter",
+   "label": "POST /api/v1/sub-parameter/what-if/batch",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 288.755,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 58.468,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<WhatIfBatchRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "what_if_batch",
+     "qual": "what_if_batch",
+     "file": "api/v1/routes/sub_parameter.py",
+     "line": 96,
+     "args": {
+      "body": "WhatIfBatchRequest(base_scenario_id='TEST_body_base_scenario_id', change_sets=[[WhatIfChange(parameter='TEST_body_change_sets_parameter', change_type='relative', change_value=0, apply_year=2050)]])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001B3982F9DF0>"
+     },
+     "ret": "None",
+     "dur_ms": 260.355,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 26,
+       "name": "_get_trajs",
+       "qual": "_get_trajs",
+       "file": "api/v1/routes/sub_parameter.py",
+       "line": 24,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001B3982F9DF0>",
+        "scenario_id": "'TEST_body_base_scenario_id'"
+       },
+       "ret": "None",
+       "dur_ms": 260.026,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

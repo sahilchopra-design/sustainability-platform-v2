@@ -1,0 +1,2194 @@
+{
+ "domain": "scenario-builder-v2",
+ "meta": {
+  "ts": "2026-06-30T14:04:58",
+  "module": "api.v1.routes.scenario_builder_v2",
+  "router_prefix": "/api/v1/scenario-builder",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "scenario-builder-v2",
+   "label": "GET /api/v1/scenario-builder/base-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 10428.94,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_scenarios",
+    "hub_sources",
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 102,
+     "dur_ms": 143.08,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.933,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 43.092,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.772,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 35.342,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.376,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 34.187,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.705,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 33.929,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 42.985,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 30.409,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 162.903,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 42.108,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 33.885,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 31.244,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 31.845,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 31.254,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 33.812,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 43.704,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 31.337,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 43.973,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.049,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 34.908,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 38.289,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.776,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 24,
+     "dur_ms": 44.855,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.409,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 167.979,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 62.085,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 167.753,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 52.875,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 31,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 34.185,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 32,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 50.277,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 33,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 37.804,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 34,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.366,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 35,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.937,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 36,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 35.465,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 37,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 38.94,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 38,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.622,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 39,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.619,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 40,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 33.911,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 41,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.484,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 42,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 39.157,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 43,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 35.578,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 44,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 157.881,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 45,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 37.3,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 46,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.151,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 47,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 20,
+     "dur_ms": 419.619,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 48,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 183.28,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 49,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 429.175,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 50,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 57.731,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 51,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 66.088,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 52,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 31.546,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 53,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.247,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 54,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 31.362,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 55,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.192,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 56,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.914,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 57,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 9,
+     "dur_ms": 29.956,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 58,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 55.194,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 59,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.552,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 60,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.856,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 61,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 30.823,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 62,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 31.14,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 63,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.726,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 64,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.069,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 65,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.684,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 66,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.153,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 67,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.54,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 68,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.704,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 69,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 31.989,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 70,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.227,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 71,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.201,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 72,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 20,
+     "dur_ms": 32.167,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 73,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.716,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 74,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 32.061,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 75,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 32.293,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 76,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 33.324,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 77,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 34.308,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 78,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 53.602,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 79,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 20,
+     "dur_ms": 31.534,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 80,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.501,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 81,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.448,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 82,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 30.737,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 83,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.882,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 84,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.121,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 85,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.598,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 86,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.043,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 87,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 29.878,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 88,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 50.326,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 89,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 38.266,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 90,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 36.335,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 91,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 34.674,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 92,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 33.238,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 93,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 36.294,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 94,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 36.177,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 95,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.136,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 96,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 24,
+     "dur_ms": 42.558,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 97,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 31.167,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 98,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.285,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 99,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 687.246,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 100,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 1082.403,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 101,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 1288.581,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 102,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 66.328,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 103,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 64.52,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 104,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 37.976,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 105,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.596,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 106,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 44.486,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 107,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 45.101,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 108,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.98,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 109,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.581,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 110,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 164.384,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 111,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 296.371,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 112,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 44.556,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 113,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.543,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 114,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 33.902,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 115,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 180.676,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 116,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 47.244,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 117,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.133,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 118,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.959,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 119,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.045,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 120,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 24,
+     "dur_ms": 37.805,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 121,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 41.293,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 122,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 32.733,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 102,
+    "item0_keys": [
+     "id",
+     "name",
+     "source_name",
+     "category",
+     "temperature_target",
+     "trajectory_count",
+     "variables"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_base_scenarios",
+     "qual": "list_base_scenarios",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 394,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BBC6B4A0>"
+     },
+     "ret": "[{'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_name': 'WITCH (FEEM/CMCC)', 'category': 'Low Emissions', 'temperature_target': 1.5, 'trajectory_count': 3, 'variables': ['Price|Carbon', 'Emissions|CO2', 'GDP|PP\u2026",
+     "dur_ms": 10387.093,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "GET /api/v1/scenario-builder/custom",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 545.799,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2",
+    "hub_scenarios",
+    "hub_sources",
+    "parameter_customizations"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 2,
+     "dur_ms": 68.12,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 42.534,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT parameter_customizations.id AS parameter_customizations_id, parameter_customizations.custom_scenario_id AS parameter_customizations_custom_scenario_id, parameter_customizations.variable_name AS parameter_customizations_variable_name, parameter_customizations.region AS parameter_customizations_region, parameter_customizations.original_values AS parameter_customizations_original_values, par\u2026",
+     "tables": [
+      "parameter_customizations"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.631,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.129,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.079,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT parameter_customizations.id AS parameter_customizations_id, parameter_customizations.custom_scenario_id AS parameter_customizations_custom_scenario_id, parameter_customizations.variable_name AS parameter_customizations_variable_name, parameter_customizations.region AS parameter_customizations_region, parameter_customizations.original_values AS parameter_customizations_original_values, par\u2026",
+     "tables": [
+      "parameter_customizations"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.539,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.726,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "user_id": "'default_user' (default)",
+    "is_public": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 2,
+    "item0_keys": [
+     "id",
+     "name",
+     "description",
+     "is_public",
+     "is_fork",
+     "tags",
+     "base_scenario",
+     "customizations",
+     "calculated_impacts",
+     "created_at",
+     "updated_at"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_custom_scenarios",
+     "qual": "list_custom_scenarios",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 254,
+     "args": {
+      "user_id": "'default_user'",
+      "is_public": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+     },
+     "ret": "[{'id': 'a984c43c-0c5b-4ef6-86b6-9323a3395334', 'name': 'E2E Test Scenario', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source\u2026",
+     "dur_ms": 514.765,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_scenario_response",
+       "qual": "_scenario_response",
+       "file": "api/v1/routes/scenario_builder_v2.py",
+       "line": 75,
+       "args": {
+        "cs": "<db.models.custom_builder.CustomScenario object at 0x00000189BEC51B20>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+       },
+       "ret": "{'id': 'a984c43c-0c5b-4ef6-86b6-9323a3395334', 'name': 'E2E Test Scenario', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_\u2026",
+       "dur_ms": 126.359,
+       "sql": [
+        1,
+        2,
+        3
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "_scenario_response",
+       "qual": "_scenario_response",
+       "file": "api/v1/routes/scenario_builder_v2.py",
+       "line": 75,
+       "args": {
+        "cs": "<db.models.custom_builder.CustomScenario object at 0x00000189BEC51AF0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+       },
+       "ret": "{'id': 'c8aa21a1-e28f-4ea2-83a9-14032aa0a3a7', 'name': 'Test Custom', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_name':\u2026",
+       "dur_ms": 103.188,
+       "sql": [
+        4,
+        5,
+        6
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "GET /api/v1/scenario-builder/custom/{cs_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Custom scenario not found",
+   "dur_ms": 382.119,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.766,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "cs_id": "ad7292d6-72cd-4fcd-82a9-1d09fa6163ef (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_custom_scenario",
+     "qual": "get_custom_scenario",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 273,
+     "args": {
+      "cs_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC50110>"
+     },
+     "ret": "None",
+     "dur_ms": 351.492,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "GET /api/v1/scenario-builder/simulations/{sim_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Simulation not found",
+   "dur_ms": 313.608,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "simulation_runs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT simulation_runs.id AS simulation_runs_id, simulation_runs.custom_scenario_id AS simulation_runs_custom_scenario_id, simulation_runs.simulation_type AS simulation_runs_simulation_type, simulation_runs.status AS simulation_runs_status, simulation_runs.iterations AS simulation_runs_iterations, simulation_runs.time_horizons AS simulation_runs_time_horizons, simulation_runs.results AS simulati\u2026",
+     "tables": [
+      "simulation_runs"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.266,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sim_id": "ad7292d6-72cd-4fcd-82a9-1d09fa6163ef (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_simulation",
+     "qual": "get_simulation",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 237,
+     "args": {
+      "sim_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+     },
+     "ret": "None",
+     "dur_ms": 285.41,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/calculate-impacts",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No trajectory data for base scenario",
+   "dur_ms": 325.644,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 55.255,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<PreviewRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "calc_impacts",
+     "qual": "calc_impacts",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 169,
+     "args": {
+      "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC52FF0>"
+     },
+     "ret": "None",
+     "dur_ms": 296.659,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_get_base_trajectories",
+       "qual": "_get_base_trajectories",
+       "file": "api/v1/routes/scenario_builder_v2.py",
+       "line": 66,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC52FF0>",
+        "scenario_id": "'TEST_body_base_scenario_id'"
+       },
+       "ret": "[]",
+       "dur_ms": 296.555,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "PUT /api/v1/scenario-builder/custom/{cs_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "DELETE /api/v1/scenario-builder/custom/{cs_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/custom/{cs_id}/fork",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Custom scenario not found",
+   "dur_ms": 298.252,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 73.348,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "cs_id": "ad7292d6-72cd-4fcd-82a9-1d09fa6163ef (real id)",
+    "body": "<ForkRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "fork_custom_scenario",
+     "qual": "fork_custom_scenario",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 333,
+     "args": {
+      "cs_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
+      "body": "ForkRequest(new_name='TEST_body_new_name', additional_customizations=[])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+     },
+     "ret": "None",
+     "dur_ms": 263.584,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/customize",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Base scenario not found",
+   "dur_ms": 300.467,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.981,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<CustomizeRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "create_custom_scenario",
+     "qual": "create_custom_scenario",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 123,
+     "args": {
+      "body": "CustomizeRequest(base_scenario_id='TEST_body_base_scenario_id', name='TEST_body_name', description='', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_va\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC53FE0>"
+     },
+     "ret": "None",
+     "dur_ms": 271.274,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/preview",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Base scenario not found",
+   "dur_ms": 308.628,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.972,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<PreviewRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "preview_impacts",
+     "qual": "preview_impacts",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 106,
+     "args": {
+      "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC538F0>"
+     },
+     "ret": "None",
+     "dur_ms": 279.354,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/simulate",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Custom scenario not found",
+   "dur_ms": 284.808,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "custom_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT custom_scenarios_v2.id AS custom_scenarios_v2_id, custom_scenarios_v2.base_scenario_id AS custom_scenarios_v2_base_scenario_id, custom_scenarios_v2.user_id AS custom_scenarios_v2_user_id, custom_scenarios_v2.name AS custom_scenarios_v2_name, custom_scenarios_v2.description AS custom_scenarios_v2_description, custom_scenarios_v2.is_public AS custom_scenarios_v2_is_public, custom_scenarios_\u2026",
+     "tables": [
+      "custom_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.14,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<SimulateRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "run_simulation",
+     "qual": "run_simulation",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 186,
+     "args": {
+      "body": "SimulateRequest(custom_scenario_id='TEST_body_custom_scenario_id', simulation_type='quick', iterations=1000, time_horizons=[2030, 2050, 2100])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC53890>"
+     },
+     "ret": "None",
+     "dur_ms": 254.157,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "scenario-builder-v2",
+   "label": "POST /api/v1/scenario-builder/validate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'dict' object has no attribute 'model_dump'",
+   "dur_ms": 0.537,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<PreviewRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "validate",
+     "qual": "validate",
+     "file": "api/v1/routes/scenario_builder_v2.py",
+     "line": 179,
+     "args": {
+      "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

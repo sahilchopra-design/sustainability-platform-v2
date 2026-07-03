@@ -1,0 +1,140 @@
+{
+ "domain": "nonv1-analysis",
+ "meta": {
+  "ts": "2026-06-30T14:25:59",
+  "endpoints": 4,
+  "source": "server.app",
+  "predicate": "nonv1-analysis"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-analysis",
+   "label": "GET /api/analysis/runs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1073.961,
+   "node_count": 0,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "analysis_runs_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT analysis_runs_pg.id AS analysis_runs_pg_id, analysis_runs_pg.portfolio_id AS analysis_runs_pg_portfolio_id, analysis_runs_pg.portfolio_name AS analysis_runs_pg_portfolio_name, analysis_runs_pg.scenarios AS analysis_runs_pg_scenarios, analysis_runs_pg.horizons AS analysis_runs_pg_horizons, analysis_runs_pg.results AS analysis_runs_pg_results, analysis_runs_pg.status AS analysis_runs_pg_sta\u2026",
+     "tables": [
+      "analysis_runs_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 562.408,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "runs"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-analysis",
+   "label": "GET /api/analysis/runs/{run_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Analysis run not found",
+   "dur_ms": 1597.196,
+   "node_count": 0,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "analysis_runs_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT analysis_runs_pg.id AS analysis_runs_pg_id, analysis_runs_pg.portfolio_id AS analysis_runs_pg_portfolio_id, analysis_runs_pg.portfolio_name AS analysis_runs_pg_portfolio_name, analysis_runs_pg.scenarios AS analysis_runs_pg_scenarios, analysis_runs_pg.horizons AS analysis_runs_pg_horizons, analysis_runs_pg.results AS analysis_runs_pg_results, analysis_runs_pg.status AS analysis_runs_pg_sta\u2026",
+     "tables": [
+      "analysis_runs_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 316.87,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "run_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-analysis",
+   "label": "POST /api/analysis/run",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 1637.537,
+   "node_count": 0,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg WHERE portfolios_pg.id = %(id_1)s LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 606.312,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data": "<AnalysisRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-analysis",
+   "label": "DELETE /api/analysis/runs/{run_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

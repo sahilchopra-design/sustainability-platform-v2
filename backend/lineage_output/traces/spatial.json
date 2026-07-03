@@ -1,0 +1,249 @@
+{
+ "domain": "spatial",
+ "meta": {
+  "ts": "2026-06-30T14:05:16",
+  "module": "api.v1.routes.spatial",
+  "router_prefix": "/api/v1/spatial",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "spatial",
+   "label": "GET /api/v1/spatial/ref/spatial-indexes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 777.52,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "pg_am",
+    "pg_attribute",
+    "pg_class",
+    "pg_index",
+    "pg_namespace"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT n.nspname AS schema, t.relname AS table_name, i.relname AS index_name, a.attname AS column_name, am.amname AS index_type FROM pg_index ix JOIN pg_class t ON t.oid = ix.indrelid JOIN pg_class i ON i.oid = ix.indexrelid JOIN pg_am am ON am.oid = i.relam JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY(ix.indkey) JOIN pg_namespace n ON n.oid = t.relnamespace WHERE am.amname = 'gi\u2026",
+     "tables": [
+      "pg_am",
+      "pg_attribute",
+      "pg_class",
+      "pg_index",
+      "pg_namespace"
+     ],
+     "rowcount": 11,
+     "dur_ms": 131.42,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "gist_index_count",
+     "indexes"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_spatial_indexes",
+     "qual": "ref_spatial_indexes",
+     "file": "api/v1/routes/spatial.py",
+     "line": 392,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023037B91F70>"
+     },
+     "ret": "{'gist_index_count': 11, 'indexes': [{'schema': 'public', 'table_name': 'cat_risk_properties', 'index_name': 'idx_cat_risk_properties_location', 'column_name': 'location', 'index_type': 'gist'}, {'schema': 'public', 'table_name': 'eudr_geo\u2026",
+     "dur_ms": 745.47,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "spatial",
+   "label": "GET /api/v1/spatial/ref/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 361.514,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ref_flood_zones",
+    "ref_protected_areas",
+    "ref_sea_level_zones",
+    "ref_wildfire_zones",
+    "vw_postgis_status"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT extension, version, schema FROM vw_postgis_status'",
+     "tables": [
+      "vw_postgis_status"
+     ],
+     "rowcount": 3,
+     "dur_ms": 79.895,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT (SELECT COUNT(*) FROM ref_protected_areas) AS protected_areas, (SELECT COUNT(*) FROM ref_flood_zones) AS flood_zones, (SELECT COUNT(*) FROM ref_wildfire_zones) AS wildfire_zones, (SELECT COUNT(*) FROM ref_sea_level_zones) AS sea_level_zones'",
+     "tables": [
+      "ref_flood_zones",
+      "ref_protected_areas",
+      "ref_sea_level_zones",
+      "ref_wildfire_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 69.905,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "postgis_active",
+     "extensions",
+     "reference_table_counts",
+     "data_load_required",
+     "note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_postgis_status",
+     "qual": "ref_postgis_status",
+     "file": "api/v1/routes/spatial.py",
+     "line": 357,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000023037B91910>"
+     },
+     "ret": "{'postgis_active': True, 'extensions': [{'extension': 'pg_trgm', 'version': '1.6', 'schema': 'public'}, {'extension': 'postgis', 'version': '3.3.7', 'schema': 'public'}, {'extension': 'postgis_topology', 'version': '3.3.7', 'schema': 'topo\u2026",
+     "dur_ms": 331.898,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "spatial",
+   "label": "POST /api/v1/spatial/assets/flood-zones",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "spatial",
+   "label": "POST /api/v1/spatial/assets/protected-areas",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "spatial",
+   "label": "POST /api/v1/spatial/assets/wildfire-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "spatial",
+   "label": "POST /api/v1/spatial/eudr/plot-overlap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "spatial",
+   "label": "POST /api/v1/spatial/point/hazards",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,332 @@
+{
+ "domain": "esg-ma",
+ "meta": {
+  "ts": "2026-06-30T14:01:53",
+  "module": "api.v1.routes.esg_ma",
+  "router_prefix": "/api/v1/esg-ma",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "esg-ma",
+   "label": "GET /api/v1/esg-ma/ref/csddd-scope",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.532,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "directive",
+     "reference",
+     "published",
+     "transposition_deadline",
+     "scope_note",
+     "thresholds",
+     "value_chain_obligations",
+     "civil_liability"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_csddd_scope",
+     "qual": "get_csddd_scope",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 240,
+     "args": {},
+     "ret": "{'directive': 'EU Corporate Sustainability Due Diligence Directive (CSDDD)', 'reference': 'Directive (EU) 2024/1760 \u2014 Article 3 Scope', 'published': '2024-07-05', 'transposition_deadline': '2026-07-26', 'scope_note': 'Applies to EU and non\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ma",
+   "label": "GET /api/v1/esg-ma/ref/dd-checklist",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.755,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_items",
+     "categories_count",
+     "categories",
+     "all_items"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_dd_checklist",
+     "qual": "get_dd_checklist",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 151,
+     "args": {},
+     "ret": "{'total_items': 62, 'categories_count': 15, 'categories': {'GHG_Climate': [{'id': 'DD-E01', 'category': 'GHG_Climate', 'item': 'Scope 1/2/3 GHG inventory and verification status', 'weight': 3}, {'id': 'DD-E02', 'category': 'GHG_Climate', '\u2026",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ma",
+   "label": "GET /api/v1/esg-ma/ref/deal-breakers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.685,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_criteria",
+     "category_breakdown",
+     "threshold",
+     "criteria"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_deal_breakers",
+     "qual": "get_deal_breakers",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 222,
+     "args": {},
+     "ret": "{'total_criteria': 12, 'category_breakdown': {'Human_Rights': 2, 'Community': 1, 'Environment': 1, 'Anti_Corruption': 1, 'Sanctions': 1, 'Climate': 1, 'Labour': 1, 'Data_Privacy': 1, 'Governance': 1, 'Biodiversity': 1, 'Arms': 1}, 'thresho\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ma",
+   "label": "GET /api/v1/esg-ma/ref/ungp-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.57,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "endorsed",
+     "total_principles",
+     "pillar_I_count",
+     "pillar_II_count",
+     "pillar_III_count",
+     "pillars",
+     "ilo_core_conventions"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_ungp_principles",
+     "qual": "get_ungp_principles",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 173,
+     "args": {},
+     "ret": "{'framework': 'UN Guiding Principles on Business and Human Rights (UNGPs)', 'endorsed': 'UN Human Rights Council Resolution 17/4 (June 2011)', 'total_principles': 31, 'pillar_I_count': 10, 'pillar_II_count': 14, 'pillar_III_count': 7, 'pil\u2026",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ma",
+   "label": "GET /api/v1/esg-ma/ref/valuation-ranges",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.398,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "methodology",
+     "data_sources",
+     "adjustment_types_count",
+     "ranges"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_valuation_ranges",
+     "qual": "get_valuation_ranges",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 199,
+     "args": {},
+     "ret": "{'methodology': 'ESG purchase price adjustment \u2014 EBITDA multiple impact', 'data_sources': ['PwC M&A ESG Due Diligence 2023', 'EY Sustainability DD Guide 2024', 'KPMG ESG in M&A Report'], 'adjustment_types_count': 9, 'ranges': [{'finding_ty\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-ma",
+   "label": "POST /api/v1/esg-ma/dd-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ma",
+   "label": "POST /api/v1/esg-ma/due-diligence",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ma",
+   "label": "POST /api/v1/esg-ma/integration-plan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ma",
+   "label": "POST /api/v1/esg-ma/ungp-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "esg-ma",
+   "label": "POST /api/v1/esg-ma/valuation-impact",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.335,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "valuation_impact_endpoint",
+     "qual": "valuation_impact_endpoint",
+     "file": "api/v1/routes/esg_ma.py",
+     "line": 104,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

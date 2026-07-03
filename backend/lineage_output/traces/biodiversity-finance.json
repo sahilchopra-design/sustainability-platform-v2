@@ -1,0 +1,529 @@
+{
+ "domain": "biodiversity-finance",
+ "meta": {
+  "ts": "2026-06-30T13:59:27",
+  "module": "api.v1.routes.biodiversity_finance",
+  "router_prefix": "/api/v1/biodiversity-finance",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/assessment-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.227,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "types",
+     "descriptions"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_assessment_types",
+     "qual": "ref_assessment_types",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 80,
+     "args": {},
+     "ret": "{'types': ['tnfd', 'msa', 'sbtn', 'cbd_gbf', 'combined'], 'descriptions': {'tnfd': 'TNFD v1.0 14-metric disclosure framework', 'msa': 'Mean Species Abundance footprint calculation', 'sbtn': 'Science Based Targets for Nature (SBTN) steps 1-\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/cbd-gbf-target15",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.151,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "15a",
+     "15b",
+     "15c",
+     "15d",
+     "15e",
+     "15f"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_cbd_gbf_target15",
+     "qual": "ref_cbd_gbf_target15",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 70,
+     "args": {},
+     "ret": "{'15a': 'Assess biodiversity impacts across business operations', '15b': 'Reduce negative biodiversity impacts in operations', '15c': 'Increase positive biodiversity contributions', '15d': 'Disclose risks and dependencies', '15e': 'Provide\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "ref_cbd_gbf_target15",
+       "qual": "BiodiversityFinanceEngine.ref_cbd_gbf_target15",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 293,
+       "args": {},
+       "ret": "{'15a': 'Assess biodiversity impacts across business operations', '15b': 'Reduce negative biodiversity impacts in operations', '15c': 'Increase positive biodiversity contributions', '15d': 'Disclose risks and dependencies', '15e': 'Provide\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/encore-services",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.134,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "services"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_encore_services",
+     "qual": "ref_encore_services",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 75,
+     "args": {},
+     "ret": "{'services': ['biomass_provisioning', 'climate_regulation', 'flood_mitigation', 'water_supply', 'soil_quality', 'pollination', 'erosion_control', 'disease_regulation', 'soil_erosion_control', 'noise_mitigation']}",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "ref_encore_services",
+       "qual": "BiodiversityFinanceEngine.ref_encore_services",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 296,
+       "args": {},
+       "ret": "['biomass_provisioning', 'climate_regulation', 'flood_mitigation', 'water_supply', 'soil_quality', 'pollination', 'erosion_control', 'disease_regulation', 'soil_erosion_control', 'noise_mitigation']",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/land-use-msa",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.152,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "primary_vegetation",
+     "secondary_vegetation",
+     "extensive_agriculture",
+     "intensive_agriculture",
+     "plantation_forestry",
+     "urban_built_up",
+     "mining_quarrying",
+     "aquaculture"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_land_use_msa",
+     "qual": "ref_land_use_msa",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 60,
+     "args": {},
+     "ret": "{'primary_vegetation': {'msa_factor': 1.0, 'description': 'Pristine natural land'}, 'secondary_vegetation': {'msa_factor': 0.7, 'description': 'Regenerating natural land'}, 'extensive_agriculture': {'msa_factor': 0.5, 'description': 'Low-i\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "ref_land_use_msa",
+       "qual": "BiodiversityFinanceEngine.ref_land_use_msa",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 287,
+       "args": {},
+       "ret": "{'primary_vegetation': {'msa_factor': 1.0, 'description': 'Pristine natural land'}, 'secondary_vegetation': {'msa_factor': 0.7, 'description': 'Regenerating natural land'}, 'extensive_agriculture': {'msa_factor': 0.5, 'description': 'Low-i\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/pbaf-standard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.104,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standard",
+     "scope",
+     "methods",
+     "asset_classes",
+     "alignment_with"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_pbaf_standard",
+     "qual": "ref_pbaf_standard",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 95,
+     "args": {},
+     "ret": "{'standard': 'PBAF (Partnership for Biodiversity Accounting Financials) 2023', 'scope': 'Biodiversity impact assessment for financial institutions', 'methods': ['MSA footprint', 'ENCORE dependencies', 'Species threat score'], 'asset_classe\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/sbtn-steps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.12,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_sbtn_steps",
+     "qual": "ref_sbtn_steps",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 65,
+     "args": {},
+     "ret": "{1: {'name': 'Assess', 'description': 'Prioritise locations and value chain segments'}, 2: {'name': 'Interpret', 'description': 'Understand material dependencies and impacts'}, 3: {'name': 'Measure', 'description': 'Measure current state o\u2026",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "ref_sbtn_steps",
+       "qual": "BiodiversityFinanceEngine.ref_sbtn_steps",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 290,
+       "args": {},
+       "ret": "{1: {'name': 'Assess', 'description': 'Prioritise locations and value chain segments'}, 2: {'name': 'Interpret', 'description': 'Understand material dependencies and impacts'}, 3: {'name': 'Measure', 'description': 'Measure current state o\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "GET /api/v1/biodiversity-finance/ref/tnfd-pillars",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.124,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "governance",
+     "strategy",
+     "risk_management",
+     "metrics_targets"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_tnfd_pillars",
+     "qual": "ref_tnfd_pillars",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 55,
+     "args": {},
+     "ret": "{'governance': {'metrics': ['M1_board_oversight', 'M2_mgmt_responsibilities', 'M3_incentives'], 'weight': 0.25}, 'strategy': {'metrics': ['M4_dependency_assessment', 'M5_risk_identification', 'M6_scenario_analysis'], 'weight': 0.25}, 'risk\u2026",
+     "dur_ms": 0.025,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "ref_tnfd_pillars",
+       "qual": "BiodiversityFinanceEngine.ref_tnfd_pillars",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 284,
+       "args": {},
+       "ret": "{'governance': {'metrics': ['M1_board_oversight', 'M2_mgmt_responsibilities', 'M3_incentives'], 'weight': 0.25}, 'strategy': {'metrics': ['M4_dependency_assessment', 'M5_risk_identification', 'M6_scenario_analysis'], 'weight': 0.25}, 'risk\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "POST /api/v1/biodiversity-finance/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.345,
+   "node_count": 7,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<AssessRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "assessment"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/biodiversity_finance.py",
+     "line": 25,
+     "args": {
+      "req": "AssessRequest(entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', sector='TEST_req_sector', assessment_type='combined', operational_area_km2=None, land_use_breakdown=None)"
+     },
+     "ret": "{'status': 'ok', 'assessment': {'assessment_id': 'BIO-TEST_REQ-2024', 'entity_id': 'TEST_req_entity_id', 'entity_name': 'TEST_req_entity_name', 'sector': 'TEST_req_sector', 'assessment_type': 'combined', 'tnfd_overall_maturity': 3, 'tnfd_p\u2026",
+     "dur_ms": 1.083,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "assess",
+       "qual": "BiodiversityFinanceEngine.assess",
+       "file": "services/biodiversity_finance_engine.py",
+       "line": 144,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "entity_name": "'TEST_req_entity_name'",
+        "sector": "'TEST_req_sector'",
+        "assessment_type": "'combined'",
+        "operational_area_km2": "None",
+        "land_use_breakdown": "None"
+       },
+       "ret": "BiodiversityAssessment(assessment_id='BIO-TEST_REQ-2024', entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', sector='TEST_req_sector', assessment_type='combined', tnfd_overall_maturity=3, tnfd_pillar_scores=[TNFDPillarScor\u2026",
+       "dur_ms": 0.528,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "BiodiversityFinanceEngine.assess.<locals>.<genexpr>",
+         "file": "services/biodiversity_finance_engine.py",
+         "line": 178,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E03CBA1B10>"
+         },
+         "ret": "3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "BiodiversityFinanceEngine.assess.<locals>.<genexpr>",
+         "file": "services/biodiversity_finance_engine.py",
+         "line": 178,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E03CBA1B10>"
+         },
+         "ret": "5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "BiodiversityFinanceEngine.assess.<locals>.<genexpr>",
+         "file": "services/biodiversity_finance_engine.py",
+         "line": 178,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E03CBA1B10>"
+         },
+         "ret": "3",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "BiodiversityFinanceEngine.assess.<locals>.<genexpr>",
+         "file": "services/biodiversity_finance_engine.py",
+         "line": 178,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E03CBA1B10>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "BiodiversityFinanceEngine.assess.<locals>.<genexpr>",
+         "file": "services/biodiversity_finance_engine.py",
+         "line": 178,
+         "args": {
+          ".0": "<list_iterator object at 0x000001E03CBA1B10>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance",
+   "label": "POST /api/v1/biodiversity-finance/msa-footprint",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

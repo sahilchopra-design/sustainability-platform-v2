@@ -1,0 +1,791 @@
+{
+ "domain": "esg-data-quality",
+ "meta": {
+  "ts": "2026-06-30T14:01:51",
+  "module": "api.v1.routes.esg_data_quality",
+  "router_prefix": "/api/v1/esg-data-quality",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "esg-data-quality",
+   "label": "GET /api/v1/esg-data-quality/ref/dqs-levels",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.846,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dqs_levels",
+     "estimation_methods",
+     "notes"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_dqs_levels",
+     "qual": "get_dqs_levels",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 261,
+     "args": {},
+     "ret": "{'dqs_levels': {1: 'Reported third-party verified', 2: 'Reported unverified', 3: 'Estimated model (company-specific activity data)', 4: 'Proxy industry average', 5: 'Not available'}, 'estimation_methods': ['direct_measurement', 'supplier_d\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "GET /api/v1/esg-data-quality/ref/indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.558,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pillars",
+     "total_count",
+     "material_indicator_sets"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_indicators",
+     "qual": "get_indicators",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 251,
+     "args": {},
+     "ret": "{'pillars': {'E': [{'id': 'E01', 'name': 'GHG Scope 1', 'unit': 'tCO2e', 'material_sectors': ['energy', 'manufacturing', 'transport']}, {'id': 'E02', 'name': 'GHG Scope 2 (location)', 'unit': 'tCO2e', 'material_sectors': ['all']}, {'id': '\u2026",
+     "dur_ms": 0.105,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "get_indicators.<locals>.<genexpr>",
+       "file": "api/v1/routes/esg_data_quality.py",
+       "line": 256,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000175A2F7B0B0>"
+       },
+       "ret": "30",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "get_indicators.<locals>.<genexpr>",
+       "file": "api/v1/routes/esg_data_quality.py",
+       "line": 256,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000175A2F7B0B0>"
+       },
+       "ret": "25",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "get_indicators.<locals>.<genexpr>",
+       "file": "api/v1/routes/esg_data_quality.py",
+       "line": 256,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000175A2F7B0B0>"
+       },
+       "ret": "20",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "get_indicators.<locals>.<genexpr>",
+       "file": "api/v1/routes/esg_data_quality.py",
+       "line": 256,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000175A2F7B0B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "GET /api/v1/esg-data-quality/report/{report_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 1.351,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "report_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_report",
+     "qual": "get_report",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 223,
+     "args": {
+      "report_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "GET /api/v1/esg-data-quality/reports/{entity_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 1.327,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "list_reports",
+     "qual": "list_reports",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 197,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "POST /api/v1/esg-data-quality/bcbs239",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.104,
+   "node_count": 20,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<BCBS239Request (mock)>",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "bcbs239_score",
+     "compliance_tier",
+     "principle_scores",
+     "gaps",
+     "num_compliant",
+     "num_partial",
+     "num_non_compliant",
+     "assessed_at"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "assess_bcbs239",
+     "qual": "assess_bcbs239",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 183,
+     "args": {
+      "body": "BCBS239Request(entity_id='TEST_body_entity_id', data_governance_inputs=None)",
+      "request": "'TEST_request'"
+     },
+     "ret": "{'entity_id': 'TEST_body_entity_id', 'bcbs239_score': 62.5, 'compliance_tier': 'Partially compliant', 'principle_scores': [{'principle_id': 1, 'principle_name': 'Governance', 'category': 'Overarching', 'weight': 0.12, 'score': 74.4, 'statu\u2026",
+     "dur_ms": 1.012,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "assess_bcbs239_compliance",
+       "qual": "ESGDataQualityEngine.assess_bcbs239_compliance",
+       "file": "services/esg_data_quality_engine.py",
+       "line": 367,
+       "args": {
+        "entity_id": "'TEST_body_entity_id'",
+        "data_governance_inputs": "None"
+       },
+       "ret": "{'entity_id': 'TEST_body_entity_id', 'bcbs239_score': 62.5, 'compliance_tier': 'Partially compliant', 'principle_scores': [{'principle_id': 1, 'principle_name': 'Governance', 'category': 'Overarching', 'weight': 0.12, 'score': 74.4, 'statu\u2026",
+       "dur_ms": 0.891,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11,
+         "name": "_rng",
+         "qual": "ESGDataQualityEngine._rng",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 180,
+         "args": {
+          "entity_id": "'TEST_body_entity_id:bcbs239'"
+         },
+         "ret": "<random.Random object at 0x000001759FD57A30>",
+         "dur_ms": 0.029,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 409,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 409,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 409,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 410,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.assess_bcbs239_compliance.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 411,
+         "args": {
+          ".0": "<list_iterator object at 0x00000175A2F6DC30>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "POST /api/v1/esg-data-quality/provider-divergence",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.896,
+   "node_count": 11,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<ProviderDivergenceRequest (mock)>",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "pillar_divergence",
+     "overall_divergence_score",
+     "outlier_flags",
+     "recommended_primary_provider",
+     "benchmarks",
+     "assessed_at"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "analyse_provider_divergence",
+     "qual": "analyse_provider_divergence",
+     "file": "api/v1/routes/esg_data_quality.py",
+     "line": 167,
+     "args": {
+      "body": "ProviderDivergenceRequest(entity_id='TEST_body_entity_id', bloomberg_data=None, msci_data=None, sustainalytics_data=None)",
+      "request": "'TEST_request'"
+     },
+     "ret": "{'entity_id': 'TEST_body_entity_id', 'pillar_divergence': {'E': {'bloomberg': 46.3, 'msci': 67.8, 'sustainalytics': 81.1, 'spread': 34.8, 'average': 65.1, 'high_divergence': True}, 'S': {'bloomberg': 27.8, 'msci': 27.1, 'sustainalytics': 7\u2026",
+     "dur_ms": 0.511,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "analyse_provider_divergence",
+       "qual": "ESGDataQualityEngine.analyse_provider_divergence",
+       "file": "services/esg_data_quality_engine.py",
+       "line": 251,
+       "args": {
+        "entity_id": "'TEST_body_entity_id'",
+        "bloomberg_data": "None",
+        "msci_data": "None",
+        "sustainalytics_data": "None"
+       },
+       "ret": "{'entity_id': 'TEST_body_entity_id', 'pillar_divergence': {'E': {'bloomberg': 46.3, 'msci': 67.8, 'sustainalytics': 81.1, 'spread': 34.8, 'average': 65.1, 'high_divergence': True}, 'S': {'bloomberg': 27.8, 'msci': 27.1, 'sustainalytics': 7\u2026",
+       "dur_ms": 0.407,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 31,
+         "name": "_rng",
+         "qual": "ESGDataQualityEngine._rng",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 180,
+         "args": {
+          "entity_id": "'TEST_body_entity_id:divergence'"
+         },
+         "ret": "<random.Random object at 0x000001759FD57A30>",
+         "dur_ms": 0.022,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "_provider_scores",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>._provider_scores",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 261,
+         "args": {
+          "provider": "'bloomberg'"
+         },
+         "ret": "{'E': 46.3, 'S': 27.8, 'G': 94.8, 'overall': 60.5}",
+         "dur_ms": 0.032,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "_provider_scores",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>._provider_scores",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 261,
+         "args": {
+          "provider": "'msci'"
+         },
+         "ret": "{'E': 67.8, 'S': 27.1, 'G': 75.0, 'overall': 36.0}",
+         "dur_ms": 0.023,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "_provider_scores",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>._provider_scores",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 261,
+         "args": {
+          "provider": "'sustainalytics'"
+         },
+         "ret": "{'E': 81.1, 'S': 78.3, 'G': 88.1, 'overall': 69.1}",
+         "dur_ms": 0.021,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 292,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000175A2F910D0>"
+         },
+         "ret": "34.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 292,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000175A2F910D0>"
+         },
+         "ret": "51.2",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 292,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000175A2F910D0>"
+         },
+         "ret": "19.8",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 292,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000175A2F910D0>"
+         },
+         "ret": "33.1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "ESGDataQualityEngine.analyse_provider_divergence.<locals>.<genexpr>",
+         "file": "services/esg_data_quality_engine.py",
+         "line": 292,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000175A2F910D0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "esg-data-quality",
+   "label": "POST /api/v1/esg-data-quality/report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

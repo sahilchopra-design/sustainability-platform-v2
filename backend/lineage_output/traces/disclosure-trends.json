@@ -1,0 +1,375 @@
+{
+ "domain": "disclosure-trends",
+ "meta": {
+  "ts": "2026-06-30T14:00:45",
+  "module": "api.v1.routes.disclosure_trends",
+  "router_prefix": "/api/v1/disclosure-trends",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "disclosure-trends",
+   "label": "GET /api/v1/disclosure-trends/ref/framework-list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.439,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 9,
+    "item0_keys": [
+     "id",
+     "framework",
+     "standard",
+     "total_dps"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_framework_list",
+     "qual": "ref_framework_list",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 192,
+     "args": {},
+     "ret": "[{'id': 'ESRS_E1', 'framework': 'CSRD/ESRS', 'standard': 'E1 \u2014 Climate Change', 'total_dps': 15}, {'id': 'ESRS_E2', 'framework': 'CSRD/ESRS', 'standard': 'E2 \u2014 Pollution', 'total_dps': 6}, {'id': 'ESRS_E3', 'framework': 'CSRD/ESRS', 'stand\u2026",
+     "dur_ms": 0.093,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_framework_list",
+       "qual": "DisclosureCompletenessEngine.get_framework_list",
+       "file": "services/disclosure_completeness.py",
+       "line": 320,
+       "args": {},
+       "ret": "[{'id': 'ESRS_E1', 'framework': 'CSRD/ESRS', 'standard': 'E1 \u2014 Climate Change', 'total_dps': 15}, {'id': 'ESRS_E2', 'framework': 'CSRD/ESRS', 'standard': 'E2 \u2014 Pollution', 'total_dps': 6}, {'id': 'ESRS_E3', 'framework': 'CSRD/ESRS', 'stand\u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "GET /api/v1/disclosure-trends/ref/framework-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.466,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ESRS_E1",
+     "ESRS_E2",
+     "ESRS_E3",
+     "ESRS_E4",
+     "ESRS_E5",
+     "ISSB_S1",
+     "ISSB_S2",
+     "TCFD",
+     "SFDR_PAI"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_framework_requirements",
+     "qual": "ref_framework_requirements",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 187,
+     "args": {},
+     "ret": "{'ESRS_E1': {'framework': 'CSRD/ESRS', 'standard': 'E1 \u2014 Climate Change', 'required_dps': [{'dp_id': 'E1-1_transition_plan', 'label': 'Transition plan for climate change mitigation', 'type': 'narrative'}, {'dp_id': 'E1-2_policies', 'label'\u2026",
+     "dur_ms": 0.198,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_framework_requirements",
+       "qual": "DisclosureCompletenessEngine.get_framework_requirements",
+       "file": "services/disclosure_completeness.py",
+       "line": 317,
+       "args": {},
+       "ret": "{'ESRS_E1': {'framework': 'CSRD/ESRS', 'standard': 'E1 \u2014 Climate Change', 'required_dps': [{'dp_id': 'E1-1_transition_plan', 'label': 'Transition plan for climate change mitigation', 'type': 'narrative'}, {'dp_id': 'E1-2_policies', 'label'\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "GET /api/v1/disclosure-trends/ref/kpi-definitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.273,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scope1_tco2e",
+     "scope2_tco2e",
+     "scope3_tco2e",
+     "total_ghg_tco2e",
+     "ghg_intensity_revenue",
+     "energy_consumption_mwh",
+     "renewable_share_pct",
+     "water_consumption_m3",
+     "waste_total_tonnes",
+     "waste_recycling_pct",
+     "board_diversity_pct",
+     "gender_pay_gap_pct",
+     "employee_turnover_pct",
+     "training_hours_per_employee",
+     "financed_emissions_tco2e",
+     "waci_tco2e_per_m",
+     "carbon_footprint_tco2e_per_m",
+     "taxonomy_alignment_pct",
+     "esrs_completeness_pct",
+     "pai_coverage_pct"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_kpi_definitions",
+     "qual": "ref_kpi_definitions",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 197,
+     "args": {},
+     "ret": "{'scope1_tco2e': {'label': 'Scope 1 GHG emissions', 'unit': 'tCO2e', 'direction': 'lower_better', 'category': 'climate'}, 'scope2_tco2e': {'label': 'Scope 2 GHG emissions', 'unit': 'tCO2e', 'direction': 'lower_better', 'category': 'climate\u2026",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_kpi_definitions",
+       "qual": "TrendAnalyticsEngine.get_kpi_definitions",
+       "file": "services/trend_analytics.py",
+       "line": 282,
+       "args": {},
+       "ret": "{'scope1_tco2e': {'label': 'Scope 1 GHG emissions', 'unit': 'tCO2e', 'direction': 'lower_better', 'category': 'climate'}, 'scope2_tco2e': {'label': 'Scope 2 GHG emissions', 'unit': 'tCO2e', 'direction': 'lower_better', 'category': 'climate\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "GET /api/v1/disclosure-trends/ref/peer-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.199,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financial_institutions",
+     "energy",
+     "manufacturing",
+     "technology",
+     "real_estate"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_peer_benchmarks",
+     "qual": "ref_peer_benchmarks",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 202,
+     "args": {},
+     "ret": "{'financial_institutions': {'financed_emissions_tco2e': 1500000, 'waci_tco2e_per_m': 120, 'taxonomy_alignment_pct': 15, 'esrs_completeness_pct': 55}, 'energy': {'scope1_tco2e': 2000000, 'renewable_share_pct': 35, 'ghg_intensity_revenue': 2\u2026",
+     "dur_ms": 0.038,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_peer_benchmarks",
+       "qual": "TrendAnalyticsEngine.get_peer_benchmarks",
+       "file": "services/trend_analytics.py",
+       "line": 285,
+       "args": {},
+       "ret": "{'financial_institutions': {'financed_emissions_tco2e': 1500000, 'waci_tco2e_per_m': 120, 'taxonomy_alignment_pct': 15, 'esrs_completeness_pct': 55}, 'energy': {'scope1_tco2e': 2000000, 'renewable_share_pct': 35, 'ghg_intensity_revenue': 2\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "GET /api/v1/disclosure-trends/ref/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.176,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_sectors",
+     "qual": "ref_sectors",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 207,
+     "args": {},
+     "ret": "['energy', 'financial_institutions', 'manufacturing', 'real_estate', 'technology']",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_sectors",
+       "qual": "TrendAnalyticsEngine.get_sectors",
+       "file": "services/trend_analytics.py",
+       "line": 288,
+       "args": {},
+       "ret": "['energy', 'financial_institutions', 'manufacturing', 'real_estate', 'technology']",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "POST /api/v1/disclosure-trends/completeness",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'provided_dps'",
+   "dur_ms": 0.255,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_completeness",
+     "qual": "assess_completeness",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 151,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "disclosure-trends",
+   "label": "POST /api/v1/disclosure-trends/trends",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'kpi_series'",
+   "dur_ms": 0.185,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "analyse_trends",
+     "qual": "analyse_trends",
+     "file": "api/v1/routes/disclosure_trends.py",
+     "line": 167,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

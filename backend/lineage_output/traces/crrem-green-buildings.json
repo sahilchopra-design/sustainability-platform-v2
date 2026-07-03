@@ -1,0 +1,292 @@
+{
+ "domain": "crrem-green-buildings",
+ "meta": {
+  "ts": "2026-06-30T14:00:10",
+  "module": "api.v1.routes.crrem_green_buildings",
+  "router_prefix": "/api/v1/crrem",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "crrem-green-buildings",
+   "label": "GET /api/v1/crrem/ref/certifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.341,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "certifications",
+     "comparison_note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_certifications",
+     "qual": "ref_certifications",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 183,
+     "args": {},
+     "ret": "{'status': 'ok', 'certifications': {'BREEAM': {'full_name': 'Building Research Establishment Environmental Assessment Method', 'origin': 'UK (BRE Global)', 'applicable_regions': ['Europe', 'Middle East', 'Asia'], 'rating_scale': ['Unclassi\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "GET /api/v1/crrem/ref/crrem-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.492,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "building_type": "None (default)",
+    "country_iso3": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "description",
+     "scenarios",
+     "waypoint_years",
+     "data"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_crrem_pathways",
+     "qual": "ref_crrem_pathways",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 112,
+     "args": {
+      "building_type": "None",
+      "country_iso3": "None"
+     },
+     "ret": "{'status': 'ok', 'description': 'CRREM v2.0 (2023) pathway targets \u2014 energy intensity kWh/m\u00b2/yr and carbon intensity kgCO2/m\u00b2/yr', 'scenarios': ['1.5C', '2.0C'], 'waypoint_years': [2025, 2030, 2035, 2040, 2050], 'data': {'office': {'DEU': \u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "GET /api/v1/crrem/ref/epc-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.179,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "description",
+     "rating_order",
+     "unit",
+     "thresholds",
+     "regulatory_context"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_epc_benchmarks",
+     "qual": "ref_epc_benchmarks",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 162,
+     "args": {},
+     "ret": "{'status': 'ok', 'description': 'EPC energy intensity rating thresholds \u2014 EU EPBD recast 2024, UK DECs, ADEME DPE 2021, DOE 2023', 'rating_order': ['A', 'B', 'C', 'D', 'E', 'F', 'G'], 'unit': 'kWh/m\u00b2/yr (upper bound for each band)', 'thres\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "GET /api/v1/crrem/ref/retrofit-measures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.154,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "description",
+     "count",
+     "measures",
+     "notes"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_retrofit_measures",
+     "qual": "ref_retrofit_measures",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 142,
+     "args": {},
+     "ret": "{'status': 'ok', 'description': 'Retrofit measure specifications \u2014 EPBD 2024, RICS Sustainability Guidance, BPIE 2023', 'count': 12, 'measures': {'wall_insulation': {'energy_saving_pct': 18, 'carbon_saving_pct': 18, 'capex_eur_m2': 85, 'li\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "POST /api/v1/crrem/assess",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 0.188,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "crrem_assess",
+     "qual": "crrem_assess",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 42,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "POST /api/v1/crrem/green-premium",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "POST /api/v1/crrem/gresb-score",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: 'str' object has no attribute 'aspect_scores'",
+   "dur_ms": 0.165,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "gresb_score",
+     "qual": "gresb_score",
+     "file": "api/v1/routes/crrem_green_buildings.py",
+     "line": 92,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "crrem-green-buildings",
+   "label": "POST /api/v1/crrem/retrofit-plan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

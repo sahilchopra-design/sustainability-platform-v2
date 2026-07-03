@@ -1,0 +1,507 @@
+{
+ "domain": "insurance-risk",
+ "meta": {
+  "ts": "2026-06-30T14:02:48",
+  "module": "api.v1.routes.insurance_risk",
+  "router_prefix": "/api/v1/insurance-risk",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "insurance-risk",
+   "label": "GET /api/v1/insurance-risk/available-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.328,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "available_countries",
+     "qual": "available_countries",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 312,
+     "args": {},
+     "ret": "{'countries': ['AUS', 'BRA', 'CHN', 'DEU', 'FRA', 'GBR', 'IND', 'JPN', 'NGA', 'USA']}",
+     "dur_ms": 0.048,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_available_countries",
+       "qual": "InsuranceRiskEngine.get_available_countries",
+       "file": "services/insurance_risk_engine.py",
+       "line": 890,
+       "args": {},
+       "ret": "['AUS', 'BRA', 'CHN', 'DEU', 'FRA', 'GBR', 'IND', 'JPN', 'NGA', 'USA']",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "GET /api/v1/insurance-risk/available-perils",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "perils"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "available_perils",
+     "qual": "available_perils",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 317,
+     "args": {},
+     "ret": "{'perils': ['coastal_flood', 'cold_snap', 'convective_storm', 'drought', 'heatwave', 'river_flood', 'tropical_cyclone', 'wildfire']}",
+     "dur_ms": 0.064,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_available_perils",
+       "qual": "InsuranceRiskEngine.get_available_perils",
+       "file": "services/insurance_risk_engine.py",
+       "line": 894,
+       "args": {},
+       "ret": "['coastal_flood', 'cold_snap', 'convective_storm', 'drought', 'heatwave', 'river_flood', 'tropical_cyclone', 'wildfire']",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "GET /api/v1/insurance-risk/climate-adjustments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.213,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "adjustments"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "climate_adjustments",
+     "qual": "climate_adjustments",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 327,
+     "args": {},
+     "ret": "{'adjustments': {'heat_stress': {'age_bands_affected': ['65-74', '75-84', '85+'], 'qx_multiplier_per_c': 1.04, 'reference': 'Lancet Countdown 2024 \u2014 heat-related mortality indicator'}, 'air_quality': {'age_bands_affected': ['0-1', '1-4', '\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_climate_adjustments",
+       "qual": "InsuranceRiskEngine.get_climate_adjustments",
+       "file": "services/insurance_risk_engine.py",
+       "line": 902,
+       "args": {},
+       "ret": "{'heat_stress': {'age_bands_affected': ['65-74', '75-84', '85+'], 'qx_multiplier_per_c': 1.04, 'reference': 'Lancet Countdown 2024 \u2014 heat-related mortality indicator'}, 'air_quality': {'age_bands_affected': ['0-1', '1-4', '65-74', '75-84',\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "GET /api/v1/insurance-risk/solvency2-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.311,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "solvency2_countries",
+     "qual": "solvency2_countries",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 322,
+     "args": {},
+     "ret": "{'countries': ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'GB', 'IT', 'NL', 'PL', 'SE']}",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_solvency2_countries",
+       "qual": "InsuranceRiskEngine.get_solvency2_countries",
+       "file": "services/insurance_risk_engine.py",
+       "line": 898,
+       "args": {},
+       "ret": "['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'ES', 'FR', 'GB', 'IT', 'NL', 'PL', 'SE']",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/climate-frequency",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'hazard_types'",
+   "dur_ms": 0.25,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "assess_climate_frequency",
+     "qual": "assess_climate_frequency",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 249,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/comprehensive",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
+   "dur_ms": 0.174,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "comprehensive_assessment",
+     "qual": "comprehensive_assessment",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 300,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/liability-valuation",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'total_lives'",
+   "dur_ms": 0.154,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "value_liabilities",
+     "qual": "value_liabilities",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 224,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/medical-trend",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'claim_cost_per_member_eur'",
+   "dur_ms": 0.154,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_medical_trend",
+     "qual": "assess_medical_trend",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 288,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/mortality",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'country'",
+   "dur_ms": 0.145,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "assess_mortality",
+     "qual": "assess_mortality",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 216,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/natcat-exposure",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'country'",
+   "dur_ms": 0.171,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "assess_natcat",
+     "qual": "assess_natcat",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 238,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/retrocession",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'layers'",
+   "dur_ms": 0.15,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess_retrocession",
+     "qual": "assess_retrocession",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 273,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "insurance-risk",
+   "label": "POST /api/v1/insurance-risk/underwriting",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'gwp_eur'",
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_underwriting",
+     "qual": "assess_underwriting",
+     "file": "api/v1/routes/insurance_risk.py",
+     "line": 260,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

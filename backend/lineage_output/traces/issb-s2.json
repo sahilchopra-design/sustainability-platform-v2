@@ -1,0 +1,525 @@
+{
+ "domain": "issb-s2",
+ "meta": {
+  "ts": "2026-06-30T14:02:58",
+  "module": "api.v1.routes.issb_s2",
+  "router_prefix": "/api/v1/issb-s2",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/physical-risks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.637,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_physical_risks",
+     "qual": "ref_physical_risks",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 136,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'physical_risk_types': {'acute': {'description': 'Event-driven physical risks from weather/climate extremes', 'risks': {'extreme_weather': {'name': 'Extreme Weather Events', 'examples': ['hurricanes', 'cyclones'\u2026",
+     "dur_ms": 0.123,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "ref_physical_risks",
+       "qual": "ISSBS2Engine.ref_physical_risks",
+       "file": "services/issb_s2_engine.py",
+       "line": 1104,
+       "args": {},
+       "ret": "{'physical_risk_types': {'acute': {'description': 'Event-driven physical risks from weather/climate extremes', 'risks': {'extreme_weather': {'name': 'Extreme Weather Events', 'examples': ['hurricanes', 'cyclones', 'typhoons', 'storm surge'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/pillars",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.261,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_pillars",
+     "qual": "ref_pillars",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 118,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'ifrs_s2_pillars': {'governance': {'description': 'Governance of climate-related risks and opportunities (paragraphs 6-9)', 'sub_requirements': {'board_oversight': {'paragraph': 'S2-6', 'description': 'Board or \u2026",
+     "dur_ms": 0.093,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "ref_pillars",
+       "qual": "ISSBS2Engine.ref_pillars",
+       "file": "services/issb_s2_engine.py",
+       "line": 1098,
+       "args": {},
+       "ret": "{'ifrs_s2_pillars': {'governance': {'description': 'Governance of climate-related risks and opportunities (paragraphs 6-9)', 'sub_requirements': {'board_oversight': {'paragraph': 'S2-6', 'description': 'Board or equivalent body oversight o\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/sasb-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.299,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_sasb_sectors",
+     "qual": "ref_sasb_sectors",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 154,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'sasb_climate_sectors': {'financials': {'sasb_sector': 'Financials', 'sics_codes': ['FN-AC', 'FN-CB', 'FN-IB', 'FN-IN', 'FN-MF'], 'climate_metrics': [{'code': 'FN-CB-1', 'name': 'Financed Emissions \u2014 Absolute', \u2026",
+     "dur_ms": 0.117,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "ref_sasb_sectors",
+       "qual": "ISSBS2Engine.ref_sasb_sectors",
+       "file": "services/issb_s2_engine.py",
+       "line": 1110,
+       "args": {},
+       "ret": "{'sasb_climate_sectors': {'financials': {'sasb_sector': 'Financials', 'sics_codes': ['FN-AC', 'FN-CB', 'FN-IB', 'FN-IN', 'FN-MF'], 'climate_metrics': [{'code': 'FN-CB-1', 'name': 'Financed Emissions \u2014 Absolute', 'unit': 'tCO2e', 'descripti\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.18,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_scenarios",
+     "qual": "ref_scenarios",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 127,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'climate_scenarios': {'net_zero_1_5c': {'name': 'Net Zero 1.5\u00b0C', 'description': 'Orderly transition consistent with limiting warming to 1.5\u00b0C above pre-industrial levels', 'temperature_2030_c': 1.3, 'temperatur\u2026",
+     "dur_ms": 0.055,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "ref_scenarios",
+       "qual": "ISSBS2Engine.ref_scenarios",
+       "file": "services/issb_s2_engine.py",
+       "line": 1101,
+       "args": {},
+       "ret": "{'climate_scenarios': {'net_zero_1_5c': {'name': 'Net Zero 1.5\u00b0C', 'description': 'Orderly transition consistent with limiting warming to 1.5\u00b0C above pre-industrial levels', 'temperature_2030_c': 1.3, 'temperature_2050_c': 1.5, 'transition\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/tcfd-crossref",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_tcfd_crossref",
+     "qual": "ref_tcfd_crossref",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'tcfd_s2_crossref': {'governance_board': {'tcfd_recommendation': 'Governance \u2014 Board oversight', 'tcfd_description': 'Describe board oversight of climate-related risks and opportunities', 'ifrs_s2_paragraph': 'S\u2026",
+     "dur_ms": 0.075,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "ref_tcfd_crossref",
+       "qual": "ISSBS2Engine.ref_tcfd_crossref",
+       "file": "services/issb_s2_engine.py",
+       "line": 1113,
+       "args": {},
+       "ret": "{'tcfd_s2_crossref': {'governance_board': {'tcfd_recommendation': 'Governance \u2014 Board oversight', 'tcfd_description': 'Describe board oversight of climate-related risks and opportunities', 'ifrs_s2_paragraph': 'S2-6', 'ifrs_s2_pillar': 'go\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "GET /api/v1/issb-s2/ref/transition-risks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "ref_transition_risks",
+     "qual": "ref_transition_risks",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 145,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'transition_risk_types': {'policy': {'description': 'Policy and legal risks from the transition to a low-carbon economy', 'risks': {'carbon_price': {'name': 'Carbon Pricing Mechanisms', 'examples': ['EU ETS expa\u2026",
+     "dur_ms": 0.067,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "ref_transition_risks",
+       "qual": "ISSBS2Engine.ref_transition_risks",
+       "file": "services/issb_s2_engine.py",
+       "line": 1107,
+       "args": {},
+       "ret": "{'transition_risk_types': {'policy': {'description': 'Policy and legal risks from the transition to a low-carbon economy', 'risks': {'carbon_price': {'name': 'Carbon Pricing Mechanisms', 'examples': ['EU ETS expansion', 'carbon tax introdu\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "POST /api/v1/issb-s2/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.199,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "assess_issb_s2",
+     "qual": "assess_issb_s2",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 61,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.036,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "issb-s2",
+   "label": "POST /api/v1/issb-s2/risk-identification",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "issb-s2",
+   "label": "POST /api/v1/issb-s2/scenario-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.181,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "scenario_analysis",
+     "qual": "scenario_analysis",
+     "file": "api/v1/routes/issb_s2.py",
+     "line": 84,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.025,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 22,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/issb_s2_engine.py",
+       "line": 1124,
+       "args": {},
+       "ret": "<services.issb_s2_engine.ISSBS2Engine object at 0x00000218968B7590>",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

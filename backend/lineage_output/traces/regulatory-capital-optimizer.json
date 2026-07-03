@@ -1,0 +1,618 @@
+{
+ "domain": "regulatory-capital-optimizer",
+ "meta": {
+  "ts": "2026-06-30T14:04:32",
+  "module": "api.v1.routes.regulatory_capital_optimizer",
+  "router_prefix": "/api/v1/regulatory-capital",
+  "endpoints": 16
+ },
+ "transactions": [
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/climate-p2r",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.343,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "max_addon_bps",
+     "weighting",
+     "tier_thresholds",
+     "notes"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_climate_p2r_parameters",
+     "qual": "get_climate_p2r_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 498,
+     "args": {},
+     "ret": "{'source': 'ECB Supervisory Review and Evaluation Process (SREP) \u2014 Climate & Environmental Risk', 'max_addon_bps': 50, 'weighting': {'physical_risk_weight': 0.4, 'transition_risk_weight': 0.6}, 'tier_thresholds': [{'composite_score_lt': 0.\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/cva-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.214,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "ba_cva_scalar",
+     "supervisory_counterparty_pairs",
+     "notes"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_cva_parameters",
+     "qual": "get_cva_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 416,
+     "args": {},
+     "ret": "{'framework': 'CVA Capital \u2014 BCBS 325', 'ba_cva_scalar': 0.25, 'supervisory_counterparty_pairs': [{'sector': 'sovereign_IG', 'risk_weight': 0.005, 'maturity_years': 5}, {'sector': 'sovereign_HY', 'risk_weight': 0.05, 'maturity_years': 5}, \u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/frtb-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.187,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "sa_risk_weights",
+     "equity_buckets",
+     "pla_test_thresholds",
+     "backtesting_zones",
+     "ima_criteria",
+     "notes"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_frtb_parameters",
+     "qual": "get_frtb_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 377,
+     "args": {},
+     "ret": "{'framework': 'FRTB \u2014 BCBS 457 (Revised Market Risk Framework)', 'sa_risk_weights': {'general_interest_rate_risk': {'sovereign_AAA_AA': 0.005, 'sovereign_A_BBB': 0.01, 'sovereign_BB_B': 0.03, 'corporate_IG': 0.01, 'corporate_HY': 0.05, 'co\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/nsfr-lcr-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.156,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nsfr",
+     "lcr",
+     "leverage_ratio"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_nsfr_lcr_parameters",
+     "qual": "get_nsfr_lcr_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 433,
+     "args": {},
+     "ret": "{'nsfr': {'minimum': 1.0, 'asf_factors': {'tier1_capital': 1.0, 'tier2_capital': 1.0, 'other_liabilities_residual_gt1y': 1.0, 'retail_stable_deposits_lt1y': 0.95, 'retail_less_stable_deposits_lt1y': 0.9, 'wholesale_non_financial_lt1y': 0.5\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/operational-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.145,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "bic_marginal_coefficients",
+     "ilm_formula",
+     "ilm_floor",
+     "ilm_default_no_internal_data",
+     "notes"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_operational_risk_parameters",
+     "qual": "get_operational_risk_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 472,
+     "args": {},
+     "ret": "{'framework': 'SA-OPR \u2014 Basel IV (replaces BIA/TSA/AMA)', 'bic_marginal_coefficients': [{'bi_lower_keur': 0, 'bi_upper_keur': 1000, 'marginal_coefficient': 0.12}, {'bi_lower_keur': 1000, 'bi_upper_keur': 30000, 'marginal_coefficient': 0.15\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/optimization-techniques",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.167,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_techniques",
+     "techniques",
+     "notes"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_optimization_techniques",
+     "qual": "get_optimization_techniques",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 455,
+     "args": {},
+     "ret": "{'total_techniques': 8, 'techniques': [{'id': 'srt_synthetic_sec', 'name': 'Synthetic Securitisation (SRT)', 'description': 'Transfer of credit risk via CLN/CDS to SPV or institutional investors. Achieves Significant Risk Transfer (SRT) te\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/sa-ccr-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.157,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "alpha_factor",
+     "supervisory_factors",
+     "collateral_haircuts",
+     "notes"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_sa_ccr_parameters",
+     "qual": "get_sa_ccr_parameters",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 398,
+     "args": {},
+     "ret": "{'framework': 'SA-CCR \u2014 BCBS 279', 'alpha_factor': 1.4, 'supervisory_factors': {'interest_rate': {'maturity_lt1y': 0.005, 'maturity_1_5y': 0.005, 'maturity_gt5y': 0.015}, 'fx': {'default': 0.04}, 'credit_IG': {'single_name': 0.005, 'index'\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "GET /api/v1/regulatory-capital/ref/sa-cr-risk-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "rating_buckets",
+     "risk_weights_pct",
+     "residential_re_ltv_table",
+     "commercial_re_ltv_table",
+     "output_floor",
+     "firb_supervisory_lgd",
+     "notes"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_sacr_risk_weights",
+     "qual": "get_sacr_risk_weights",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 334,
+     "args": {},
+     "ret": "{'framework': 'CRR3 / Basel IV (effective Jan 2025)', 'rating_buckets': {0: 'AAA / AA', 1: 'A', 2: 'BBB', 3: 'BB', 4: 'B', 5: 'CCC+', 6: 'Unrated'}, 'risk_weights_pct': {'sovereign': [0, 20, 50, 100, 100, 150, 100], 'mdb': [0, 20, 50, 50, \u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/calculate-cva",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'counterparties'",
+   "dur_ms": 0.176,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "calculate_cva",
+     "qual": "calculate_cva",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 320,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/calculate-frtb",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'positions'",
+   "dur_ms": 0.148,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "calculate_frtb",
+     "qual": "calculate_frtb",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 217,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/calculate-ratios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'credit_rwa'",
+   "dur_ms": 0.137,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "calculate_capital_ratios",
+     "qual": "calculate_capital_ratios",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 251,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/calculate-rwa",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'exposures'",
+   "dur_ms": 0.135,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "calculate_rwa",
+     "qual": "calculate_rwa",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 206,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/calculate-sa-ccr",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'netting_sets'",
+   "dur_ms": 0.153,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "calculate_sa_ccr",
+     "qual": "calculate_sa_ccr",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 233,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/climate-p2r",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/operational-risk",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'business_indicator'",
+   "dur_ms": 0.133,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "calculate_operational_risk",
+     "qual": "calculate_operational_risk",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 308,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-capital-optimizer",
+   "label": "POST /api/v1/regulatory-capital/optimize",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'total_rwa'",
+   "dur_ms": 0.145,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "optimize_capital",
+     "qual": "optimize_capital",
+     "file": "api/v1/routes/regulatory_capital_optimizer.py",
+     "line": 274,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

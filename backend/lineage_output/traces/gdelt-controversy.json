@@ -1,0 +1,904 @@
+{
+ "domain": "gdelt-controversy",
+ "meta": {
+  "ts": "2026-06-30T14:02:35",
+  "module": "api.v1.routes.gdelt_controversy",
+  "router_prefix": "/api/v1/gdelt",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/controversy/entity/{entity_name}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No controversy data for 550e8400-e29b-41d4-a716-446655440001",
+   "dur_ms": 1995.045,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_controversy_scores"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, entity_name, entity_lei, country_iso3, sector, period_start, period_end, controversy_score, severity_level, trend, env_score, social_score, governance_score, total_events, negative_events, positive_events, avg_tone, avg_goldstein, media_mentions, top_themes FROM dh_controversy_scores WHERE entity_name ILIKE %(name)s ORDER BY period_end DESC LIMIT 1'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 0,
+     "dur_ms": 516.855,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "controversy_entity_detail",
+     "qual": "controversy_entity_detail",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 313,
+     "args": {
+      "entity_name": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F3725A0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F499EE0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1939.85,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/controversy/rankings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1967.523,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_controversy_scores"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT entity_name, country_iso3, sector, controversy_score, severity_level, env_score, social_score, governance_score, total_events, media_mentions, RANK() OVER (ORDER BY controversy_score DESC) AS rank FROM dh_controversy_scores ORDER BY controversy_score DESC LIMIT %(limit)s'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 15,
+     "dur_ms": 983.801,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)",
+    "limit": "20 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "rankings"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "controversy_rankings",
+     "qual": "controversy_rankings",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 366,
+     "args": {
+      "sector": "None",
+      "limit": "20",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F372840>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F49A160>, use_cache=True, scope=None)"
+     },
+     "ret": "{'rankings': [{'entity_name': 'Adani Enterprises Limited', 'country_iso3': 'IND', 'sector': 'Conglomerate', 'controversy_score': Decimal('82.100'), 'severity_level': 'Critical', 'env_score': Decimal('0.000'), 'social_score': Decimal('0.000\u2026",
+     "dur_ms": 1525.252,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/controversy/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2359.918,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_controversy_scores"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, entity_name, entity_lei, country_iso3, sector, period_start, period_end, controversy_score, severity_level, trend, env_score, social_score, governance_score, total_events, negative_events, positive_events, avg_tone, avg_goldstein, media_mentions, top_themes FROM dh_controversy_scores ORDER BY controversy_score DESC LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 15,
+     "dur_ms": 183.708,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_controversy_scores'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.029,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity": "None (default)",
+    "sector": "None (default)",
+    "severity": "None (default)",
+    "min_score": "None (default)",
+    "country": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "search_controversy",
+     "qual": "search_controversy",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 262,
+     "args": {
+      "entity": "None",
+      "sector": "None",
+      "severity": "None",
+      "min_score": "None",
+      "country": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F46A330>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F499C60>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [{'id': 'd0fcc88d-1272-5810-a4cf-b3972776bd4c', 'entity_name': 'Adani Enterprises Limited', 'entity_lei': None, 'country_iso3': 'IND', 'sector': 'Conglomerate', 'period_start': datetime.date(2023, 1, 1), 'period_end': datetime.\u2026",
+     "dur_ms": 2327.745,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/controversy/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2584.786,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_controversy_scores",
+    "dh_gdelt_gkg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_controversy_scores'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 207.695,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "\"SELECT COUNT(*) FROM dh_controversy_scores WHERE severity_level = 'Critical'\"",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 170.855,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT COUNT(*) FROM dh_controversy_scores WHERE severity_level = 'High'\"",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.415,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "\"SELECT COUNT(*) FROM dh_controversy_scores WHERE severity_level = 'Medium'\"",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.101,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "\"SELECT COUNT(*) FROM dh_controversy_scores WHERE severity_level = 'Low'\"",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.35,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT ROUND(AVG(controversy_score)::numeric, 1) FROM dh_controversy_scores'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 37.896,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT COUNT(DISTINCT sector) FROM dh_controversy_scores'",
+     "tables": [
+      "dh_controversy_scores"
+     ],
+     "rowcount": 1,
+     "dur_ms": 281.495,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_gkg'",
+     "tables": [
+      "dh_gdelt_gkg"
+     ],
+     "rowcount": 1,
+     "dur_ms": 58.598,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_gkg WHERE controversy_flag = true'",
+     "tables": [
+      "dh_gdelt_gkg"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.713,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "controversy"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "controversy_stats",
+     "qual": "controversy_stats",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 394,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CA8D0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F49A2A0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'controversy': {'entities_scored': 15, 'severity_distribution': {'critical': 1, 'high': 12, 'medium': 0, 'low': 2}, 'avg_score': 58.2, 'sectors': 7, 'gkg_records': 10, 'gkg_controversial': 8}}",
+     "dur_ms": 2549.215,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/events/actors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2748.145,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_events"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT matched_entity_name AS entity, COUNT(*) AS events, SUM(num_mentions) AS total_mentions, ROUND(AVG(avg_tone)::numeric, 2) AS avg_tone, ROUND(AVG(goldstein_scale)::numeric, 2) AS avg_goldstein, COUNT(*) FILTER (WHERE quad_class >= 3) AS negative_events, COUNT(*) FILTER (WHERE quad_class <= 2) AS positive_events FROM dh_gdelt_events WHERE matched_entity_name IS NOT NULL GROUP BY matched_enti\u2026",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 15,
+     "dur_ms": 870.279,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "min_events": "1 (default)",
+    "limit": "30 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "actors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "gdelt_top_actors",
+     "qual": "gdelt_top_actors",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 93,
+     "args": {
+      "min_events": "1",
+      "limit": "30",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CAAB0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F44F100>, use_cache=True, scope=None)"
+     },
+     "ret": "{'actors': [{'entity': 'Adani Enterprises Limited', 'events': 1, 'total_mentions': 823, 'avg_tone': Decimal('-6.15'), 'avg_goldstein': Decimal('-7.00'), 'negative_events': 1, 'positive_events': 0}, {'entity': 'Credit Suisse Group AG', 'eve\u2026",
+     "dur_ms": 2537.349,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/events/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1081.015,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_events"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT action_geo_country AS country, COUNT(*) AS events, SUM(num_mentions) AS mentions, ROUND(AVG(avg_tone)::numeric, 2) AS avg_tone, COUNT(DISTINCT matched_entity_name) AS entities FROM dh_gdelt_events WHERE action_geo_country IS NOT NULL GROUP BY action_geo_country ORDER BY events DESC'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 12,
+     "dur_ms": 80.553,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "gdelt_event_countries",
+     "qual": "gdelt_event_countries",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 153,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CAC90>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F498EA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': [{'country': 'USA', 'events': 3, 'mentions': 935, 'avg_tone': Decimal('-1.00'), 'entities': 3}, {'country': 'GBR', 'events': 2, 'mentions': 490, 'avg_tone': Decimal('-5.12'), 'entities': 2}, {'country': 'CHE', 'events': 1, 'm\u2026",
+     "dur_ms": 1046.806,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/events/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2475.996,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_events"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, global_event_id, event_date, year, month, actor1_name, actor1_country, actor1_type, actor2_name, actor2_country, actor2_type, event_code, event_base_code, event_root_code, quad_class, goldstein_scale, num_mentions, num_sources, num_articles, avg_tone, action_geo_country, action_geo_lat, action_geo_lon, action_geo_name, matched_entity_name FROM dh_gdelt_events ORDER BY num_mentions DES\u2026",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 15,
+     "dur_ms": 76.406,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.882,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "actor": "None (default)",
+    "country": "None (default)",
+    "quad_class": "None (default)",
+    "min_mentions": "None (default)",
+    "entity": "None (default)",
+    "year": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "search_gdelt_events",
+     "qual": "search_gdelt_events",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 36,
+     "args": {
+      "actor": "None",
+      "country": "None",
+      "quad_class": "None",
+      "min_mentions": "None",
+      "entity": "None",
+      "year": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CAEA0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F21FB00>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [{'id': '053e5a5c-ea55-5f5e-ad61-512a424e6ff3', 'global_event_id': 'GE20230205007', 'event_date': datetime.date(2023, 2, 5), 'year': 2023, 'month': 2, 'actor1_name': 'ADANI_GROUP', 'actor1_country': 'IND', 'actor1_type': 'COP',\u2026",
+     "dur_ms": 2308.688,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/events/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1386.35,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_events"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 179.71,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(DISTINCT matched_entity_name) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.602,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(DISTINCT action_geo_country) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.128,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_events WHERE quad_class >= 3'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.999,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_events WHERE quad_class <= 2'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 35.503,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT COALESCE(SUM(num_mentions), 0) FROM dh_gdelt_events'",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 1,
+     "dur_ms": 539.744,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "events"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "gdelt_event_stats",
+     "qual": "gdelt_event_stats",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 173,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CB6B0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F499120>, use_cache=True, scope=None)"
+     },
+     "ret": "{'events': {'total': 15, 'entities': 15, 'countries': 12, 'conflict_events': 13, 'cooperation_events': 2, 'total_mentions': 4550}}",
+     "dur_ms": 1070.265,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/events/timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1204.166,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_events"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT year || '-' || LPAD(month::text, 2, '0') AS period, COUNT(*) AS events, SUM(num_mentions) AS mentions, ROUND(AVG(avg_tone)::numeric, 2) AS avg_tone, COUNT(*) FILTER (WHERE quad_class >= 3) AS negative, COUNT(*) FILTER (WHERE quad_class <= 2) AS positive FROM dh_gdelt_events GROUP BY year || '-' || LPAD(month::text, 2, '0') ORDER BY year || '-' || LPAD(month::text, 2, '0')\"",
+     "tables": [
+      "dh_gdelt_events"
+     ],
+     "rowcount": 11,
+     "dur_ms": 184.203,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity": "None (default)",
+    "granularity": "'month' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "timeline"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "gdelt_event_timeline",
+     "qual": "gdelt_event_timeline",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 119,
+     "args": {
+      "entity": "None",
+      "granularity": "'month'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CB410>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F498C20>, use_cache=True, scope=None)"
+     },
+     "ret": "{'timeline': [{'period': '2023-02', 'events': 1, 'mentions': 823, 'avg_tone': Decimal('-6.15'), 'negative': 1, 'positive': 0}, {'period': '2023-03', 'events': 1, 'mentions': 412, 'avg_tone': Decimal('-3.92'), 'negative': 1, 'positive': 0},\u2026",
+     "dur_ms": 1159.016,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/gkg/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 615.854,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_gkg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, gkg_record_id, publish_date, source_name, document_tone, positive_score, negative_score, polarity, themes, organizations, esg_relevance_score, esg_category, controversy_flag, matched_entity_name FROM dh_gdelt_gkg ORDER BY esg_relevance_score DESC NULLS LAST LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_gdelt_gkg"
+     ],
+     "rowcount": 10,
+     "dur_ms": 79.859,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_gdelt_gkg'",
+     "tables": [
+      "dh_gdelt_gkg"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.845,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "entity": "None (default)",
+    "esg_category": "None (default)",
+    "controversy_only": "False (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "search_gdelt_gkg",
+     "qual": "search_gdelt_gkg",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 200,
+     "args": {
+      "entity": "None",
+      "esg_category": "None",
+      "controversy_only": "False",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CBB90>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F4994E0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [{'id': '2ff6b115-86c1-59fa-9495-08685c255d99', 'gkg_record_id': 'GKG20230205003', 'publish_date': datetime.datetime(2023, 2, 5, 6, 0, tzinfo=datetime.timezone.utc), 'source_name': 'Financial Times', 'document_tone': Decimal('-\u2026",
+     "dur_ms": 583.344,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gdelt-controversy",
+   "label": "GET /api/v1/gdelt/gkg/themes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 315.034,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gdelt_gkg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT themes, esg_category, controversy_flag, COUNT(*) AS occurrences, ROUND(AVG(document_tone)::numeric, 2) AS avg_tone, ROUND(AVG(esg_relevance_score)::numeric, 3) AS avg_relevance FROM dh_gdelt_gkg WHERE themes IS NOT NULL GROUP BY themes, esg_category, controversy_flag ORDER BY occurrences DESC'",
+     "tables": [
+      "dh_gdelt_gkg"
+     ],
+     "rowcount": 10,
+     "dur_ms": 77.187,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "themes"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "gdelt_gkg_themes",
+     "qual": "gdelt_gkg_themes",
+     "file": "api/v1/routes/gdelt_controversy.py",
+     "line": 241,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002442F4CBE60>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002442F4999E0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'themes': [{'themes': 'HUMAN_RIGHTS;ENV_MINING;INDIGENOUS_RIGHTS;ENV_BIODIVERSITY', 'esg_category': 'S', 'controversy_flag': True, 'occurrences': 1, 'avg_tone': Decimal('-5.67'), 'avg_relevance': Decimal('0.900')}, {'themes': 'BRIBERY;COR\u2026",
+     "dur_ms": 282.068,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

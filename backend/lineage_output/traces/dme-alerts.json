@@ -1,0 +1,104 @@
+{
+ "domain": "dme-alerts",
+ "meta": {
+  "ts": "2026-06-30T14:00:46",
+  "module": "api.v1.routes.dme_alerts",
+  "router_prefix": "/api/v1/dme-alerts",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "dme-alerts",
+   "label": "GET /api/v1/dme-alerts/ref/thresholds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.481,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "tier_thresholds",
+     "priority_bands",
+     "sla_hours",
+     "suppression_hours",
+     "priority_formula",
+     "compound_condition"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_thresholds",
+     "qual": "get_thresholds",
+     "file": "api/v1/routes/dme_alerts.py",
+     "line": 29,
+     "args": {},
+     "ret": "{'tier_thresholds': {'watch': 1.5, 'elevated': 2.0, 'critical': 3.0, 'extreme': 4.0, 'threshold_type': 'z_score'}, 'priority_bands': {'LOW': '0-25', 'MEDIUM': '26-50', 'HIGH': '51-75', 'CRITICAL': '76-100'}, 'sla_hours': {'LOW': 72, 'MEDIU\u2026",
+     "dur_ms": 0.117,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_reference_data",
+       "qual": "AlertEngine.get_reference_data",
+       "file": "services/dme_alert_engine.py",
+       "line": 201,
+       "args": {},
+       "ret": "{'tier_thresholds': {'watch': 1.5, 'elevated': 2.0, 'critical': 3.0, 'extreme': 4.0, 'threshold_type': 'z_score'}, 'priority_bands': {'LOW': '0-25', 'MEDIUM': '26-50', 'HIGH': '51-75', 'CRITICAL': '76-100'}, 'sla_hours': {'LOW': 72, 'MEDIU\u2026",
+       "dur_ms": 0.051,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-alerts",
+   "label": "POST /api/v1/dme-alerts/process-batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-alerts",
+   "label": "POST /api/v1/dme-alerts/process-signal",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

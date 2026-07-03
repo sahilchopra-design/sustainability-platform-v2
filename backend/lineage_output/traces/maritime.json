@@ -1,0 +1,455 @@
+{
+ "domain": "maritime",
+ "meta": {
+  "ts": "2026-06-30T14:03:03",
+  "module": "api.v1.routes.maritime",
+  "router_prefix": "/api/v1/maritime",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "maritime",
+   "label": "GET /api/v1/maritime/ref/fuel-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.421,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "fuel_emission_factors",
+     "alternative_fuel_capex_usd_per_kw",
+     "description",
+     "source"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_fuel_types",
+     "qual": "ref_fuel_types",
+     "file": "api/v1/routes/maritime.py",
+     "line": 190,
+     "args": {},
+     "ret": "{'fuel_emission_factors': {'HFO': {'cf_t_co2_t_fuel': 3.114, 'ghg_intensity_gco2e_mj': 91.16, 'imo_wtt_factor': 1.04}, 'LSFO': {'cf_t_co2_t_fuel': 3.151, 'ghg_intensity_gco2e_mj': 89.5, 'imo_wtt_factor': 1.04}, 'MDO': {'cf_t_co2_t_fuel': 3\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "GET /api/v1/maritime/ref/regulatory-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.218,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cii_reduction_targets",
+     "eu_ets_phase_coverage",
+     "fueleu_ghg_targets_gco2e_mj",
+     "key_milestones",
+     "source"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_regulatory_timeline",
+     "qual": "ref_regulatory_timeline",
+     "file": "api/v1/routes/maritime.py",
+     "line": 201,
+     "args": {},
+     "ret": "{'cii_reduction_targets': {2023: 0.95, 2024: 0.93, 2025: 0.91, 2026: 0.89, 2027: 0.87, 2028: 0.85, 2029: 0.83, 2030: 0.8}, 'eu_ets_phase_coverage': {2024: 0.4, 2025: 0.7, 2026: 1.0}, 'fueleu_ghg_targets_gco2e_mj': {2025: 89.34, 2030: 80.43\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "GET /api/v1/maritime/ref/ship-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.185,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ship_types",
+     "eexi_reference_values",
+     "description",
+     "source"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ship_types",
+     "qual": "ref_ship_types",
+     "file": "api/v1/routes/maritime.py",
+     "line": 179,
+     "args": {},
+     "ret": "{'ship_types': {'bulk_carrier': {'baseline_cii_ref': 4.745, 'eexi_ref_kW_per_GT': 0.0, 'fuel_consumption_factor': 0.042}, 'tanker': {'baseline_cii_ref': 5.247, 'eexi_ref_kW_per_GT': 0.0, 'fuel_consumption_factor': 0.048}, 'container': {'ba\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/cii-assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.541,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<CIIRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "ship_type",
+     "fuel_type",
+     "year",
+     "cii_attained",
+     "cii_required",
+     "cii_ratio",
+     "cii_rating",
+     "annual_co2_tonnes",
+     "improvement_needed_pct",
+     "corrective_action_deadline",
+     "regulatory_basis"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "cii_assessment",
+     "qual": "cii_assessment",
+     "file": "api/v1/routes/maritime.py",
+     "line": 86,
+     "args": {
+      "req": "CIIRequest(entity_id='TEST_req_entity_id', ship_type='bulk_carrier', deadweight_tonnes=75000.0, annual_fuel_consumption_t=3150.0, annual_distance_nm=55000.0, annual_cargo_tonnes=60000.0, fuel_type='HFO', year=2024)"
+     },
+     "ret": "{'entity_id': 'TEST_req_entity_id', 'ship_type': 'bulk_carrier', 'fuel_type': 'HFO', 'year': 2024, 'cii_attained': 2.378, 'cii_required': 4.4129, 'cii_ratio': 0.5389, 'cii_rating': 'A', 'annual_co2_tonnes': 9809.1, 'improvement_needed_pct'\u2026",
+     "dur_ms": 0.208,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "assess_cii",
+       "qual": "MaritimeEngine.assess_cii",
+       "file": "services/maritime_engine.py",
+       "line": 146,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "ship_type": "'bulk_carrier'",
+        "deadweight_tonnes": "75000.0",
+        "annual_fuel_consumption_t": "3150.0",
+        "annual_distance_nm": "55000.0",
+        "annual_cargo_tonnes": "60000.0",
+        "fuel_type": "'HFO'",
+        "year": "2024"
+       },
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'ship_type': 'bulk_carrier', 'fuel_type': 'HFO', 'year': 2024, 'cii_attained': 2.378, 'cii_required': 4.4129, 'cii_ratio': 0.5389, 'cii_rating': 'A', 'annual_co2_tonnes': 9809.1, 'improvement_needed_pct'\u2026",
+       "dur_ms": 0.12,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/maritime_engine.py",
+         "line": 120,
+         "args": {
+          "entity_id": "'TEST_req_entity_id'"
+         },
+         "ret": "<random.Random object at 0x0000025364D5C020>",
+         "dur_ms": 0.036,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_cii_rating",
+         "qual": "_cii_rating",
+         "file": "services/maritime_engine.py",
+         "line": 108,
+         "args": {
+          "ratio": "0.5389"
+         },
+         "ret": "'A'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/eexi-assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.95,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<EEXIRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "ship_type",
+     "fuel_type",
+     "gross_tonnage",
+     "installed_power_kw",
+     "eexi_attained",
+     "eexi_required",
+     "eexi_compliant",
+     "reduction_needed_pct",
+     "eedi_comparable",
+     "regulatory_basis",
+     "compliance_status"
+    ],
+    "n_keys": 12
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "eexi_assessment",
+     "qual": "eexi_assessment",
+     "file": "api/v1/routes/maritime.py",
+     "line": 104,
+     "args": {
+      "req": "EEXIRequest(entity_id='TEST_req_entity_id', ship_type='tanker', gross_tonnage=80000.0, installed_power_kw=12000.0, design_fuel_consumption_g_kwh=175.0, fuel_type='HFO')"
+     },
+     "ret": "{'entity_id': 'TEST_req_entity_id', 'ship_type': 'tanker', 'fuel_type': 'HFO', 'gross_tonnage': 80000.0, 'installed_power_kw': 12000.0, 'eexi_attained': 6.6337, 'eexi_required': 3.8, 'eexi_compliant': False, 'reduction_needed_pct': 74.57, \u2026",
+     "dur_ms": 0.147,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "assess_eexi",
+       "qual": "MaritimeEngine.assess_eexi",
+       "file": "services/maritime_engine.py",
+       "line": 207,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "ship_type": "'tanker'",
+        "gross_tonnage": "80000.0",
+        "installed_power_kw": "12000.0",
+        "design_fuel_consumption_g_kwh": "175.0",
+        "fuel_type": "'HFO'"
+       },
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'ship_type': 'tanker', 'fuel_type': 'HFO', 'gross_tonnage': 80000.0, 'installed_power_kw': 12000.0, 'eexi_attained': 6.6337, 'eexi_required': 3.8, 'eexi_compliant': False, 'reduction_needed_pct': 74.57, \u2026",
+       "dur_ms": 0.075,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/maritime_engine.py",
+         "line": 120,
+         "args": {
+          "entity_id": "'TEST_req_entity_id'"
+         },
+         "ret": "<random.Random object at 0x0000025364D5C020>",
+         "dur_ms": 0.027,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/eu-ets",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/fleet-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: float() argument must be a string or a real number, not 'NoneType'",
+   "dur_ms": 2.012,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<FleetRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "fleet_assessment",
+     "qual": "fleet_assessment",
+     "file": "api/v1/routes/maritime.py",
+     "line": 165,
+     "args": {
+      "req": "FleetRequest(entity_id='TEST_req_entity_id', ships=[ShipItem(ship_id='TEST_req_ships_ship_id', ship_type='bulk_carrier', fuel_type='HFO', gross_tonnage=50000.0, deadweight_tonnes=None, annual_fuel_consumption_t=None, annual_distance_nm=Non\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.227,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "assess_fleet",
+       "qual": "MaritimeEngine.assess_fleet",
+       "file": "services/maritime_engine.py",
+       "line": 443,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "ships": "[{'ship_id': 'TEST_req_ships_ship_id', 'ship_type': 'bulk_carrier', 'fuel_type': 'HFO', 'gross_tonnage': 50000.0, 'deadweight_tonnes': None, 'annual_fuel_consumption_t': None, 'annual_distance_nm': None, 'annual_cargo_tonnes': None, 'build\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.065,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 13,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/maritime_engine.py",
+         "line": 120,
+         "args": {
+          "entity_id": "'TEST_req_entity_id'"
+         },
+         "ret": "<random.Random object at 0x0000025364D5C020>",
+         "dur_ms": 0.025,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/fueleu",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "maritime",
+   "label": "POST /api/v1/maritime/stranding-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

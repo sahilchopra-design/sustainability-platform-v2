@@ -1,0 +1,459 @@
+{
+ "domain": "pcaf-sovereign",
+ "meta": {
+  "ts": "2026-06-30T14:03:41",
+  "module": "api.v1.routes.pcaf_sovereign",
+  "router_prefix": "/api/v1/pcaf-sovereign",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "pcaf-sovereign",
+   "label": "GET /api/v1/pcaf-sovereign/ref/attribution-formula",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.512,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_attribution_formula",
+     "qual": "ref_attribution_formula",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 148,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'attribution_formula': {'formula': 'Attributed Emissions = (Outstanding Amount / Government Debt) x Sovereign GHG Inventory', 'units': {'outstanding_amount': 'USD mn (convert to bn for calculation)', 'government\u2026",
+     "dur_ms": 0.126,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "ref_attribution_formula",
+       "qual": "PCAFSovereignEngine.ref_attribution_formula",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 958,
+       "args": {},
+       "ret": "{'attribution_formula': {'formula': 'Attributed Emissions = (Outstanding Amount / Government Debt) x Sovereign GHG Inventory', 'units': {'outstanding_amount': 'USD mn (convert to bn for calculation)', 'government_debt': 'USD bn (government\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "GET /api/v1/pcaf-sovereign/ref/country-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.651,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_country_profiles",
+     "qual": "ref_country_profiles",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 121,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'country_profiles': {'US': {'country_name': 'United States', 'region': 'north_america', 'annex_status': 'annex1', 'gdp_bn_2022': 25464.0, 'government_debt_pct_gdp': 122.5, 'ghg_inventory_mtco2e_2022': 5801.0, 'g\u2026",
+     "dur_ms": 0.292,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "ref_country_profiles",
+       "qual": "PCAFSovereignEngine.ref_country_profiles",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 949,
+       "args": {},
+       "ret": "{'country_profiles': {'US': {'country_name': 'United States', 'region': 'north_america', 'annex_status': 'annex1', 'gdp_bn_2022': 25464.0, 'government_debt_pct_gdp': 122.5, 'ghg_inventory_mtco2e_2022': 5801.0, 'ghg_per_capita_tco2e': 17.4,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "GET /api/v1/pcaf-sovereign/ref/dqs-methodology",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.311,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_dqs_methodology",
+     "qual": "ref_dqs_methodology",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 130,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'pcaf_dqs_sovereign': {1: {'score': 1, 'name': 'Primary \u2014 Current Year National Inventory', 'description': \"Reported national GHG inventory from the country's most recent UNFCCC submission (current reporting yea\u2026",
+     "dur_ms": 0.094,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "ref_dqs_methodology",
+       "qual": "PCAFSovereignEngine.ref_dqs_methodology",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 952,
+       "args": {},
+       "ret": "{'pcaf_dqs_sovereign': {1: {'score': 1, 'name': 'Primary \u2014 Current Year National Inventory', 'description': \"Reported national GHG inventory from the country's most recent UNFCCC submission (current reporting year)\", 'data_source': 'UNFCCC\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "GET /api/v1/pcaf-sovereign/ref/ndc-alignment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.387,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_ndc_alignment",
+     "qual": "ref_ndc_alignment",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 139,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'ndc_alignment_thresholds': {'aligned': {'name': 'Aligned', 'condition': 'Country on trajectory to meet or exceed NDC 2030 target', 'threshold': 'Current emissions trajectory <= NDC 2030 target + 5%', 'descripti\u2026",
+     "dur_ms": 0.081,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "ref_ndc_alignment",
+       "qual": "PCAFSovereignEngine.ref_ndc_alignment",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 955,
+       "args": {},
+       "ret": "{'ndc_alignment_thresholds': {'aligned': {'name': 'Aligned', 'condition': 'Country on trajectory to meet or exceed NDC 2030 target', 'threshold': 'Current emissions trajectory <= NDC 2030 target + 5%', 'description': \"Country's current emi\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "GET /api/v1/pcaf-sovereign/ref/pcaf-part-d",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.277,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "result"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_pcaf_part_d",
+     "qual": "ref_pcaf_part_d",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 157,
+     "args": {},
+     "ret": "{'status': 'ok', 'result': {'pcaf_part_d_overview': {'standard': 'PCAF Global GHG Accounting and Reporting Standard Part D: Sovereign Bonds and Loans', 'publication_year': 2023, 'asset_classes_covered': ['Government bonds (domestic and for\u2026",
+     "dur_ms": 0.084,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "ref_pcaf_part_d",
+       "qual": "PCAFSovereignEngine.ref_pcaf_part_d",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 980,
+       "args": {},
+       "ret": "{'pcaf_part_d_overview': {'standard': 'PCAF Global GHG Accounting and Reporting Standard Part D: Sovereign Bonds and Loans', 'publication_year': 2023, 'asset_classes_covered': ['Government bonds (domestic and foreign currency)', 'Sovereign\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "POST /api/v1/pcaf-sovereign/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.303,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "assess_sovereign",
+     "qual": "assess_sovereign",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 60,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "POST /api/v1/pcaf-sovereign/attribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pcaf-sovereign",
+   "label": "POST /api/v1/pcaf-sovereign/portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'sovereign_holdings'",
+   "dur_ms": 0.294,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "assess_portfolio",
+     "qual": "assess_portfolio",
+     "file": "api/v1/routes/pcaf_sovereign.py",
+     "line": 79,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/pcaf_sovereign_engine.py",
+       "line": 1019,
+       "args": {},
+       "ret": "<services.pcaf_sovereign_engine.PCAFSovereignEngine object at 0x0000027DCDAADBE0>",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,148 @@
+{
+ "domain": "agriculture-expanded",
+ "meta": {
+  "ts": "2026-06-30T13:59:05",
+  "module": "api.v1.routes.agriculture_expanded",
+  "router_prefix": "/api/v1/agriculture-engine",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "agriculture-expanded",
+   "label": "GET /api/v1/agriculture-engine/reference-data",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.493,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "crop_yield_sensitivity_pct_per_c",
+     "temperature_deltas_by_scenario",
+     "eudr_in_scope_commodities",
+     "eudr_country_risk",
+     "water_stress_scores",
+     "soil_sequestration_t_co2_ha_yr",
+     "carbon_price_eur_tco2e_reference",
+     "sources",
+     "enteric_ch4_kg_head_yr",
+     "manure_ch4_kg_head_yr",
+     "ch4_gwp_100",
+     "abatement_options",
+     "disease_profiles",
+     "biosecurity_adjustments",
+     "habitat_units_per_ha",
+     "condition_multipliers",
+     "bng_credit_price_gbp",
+     "mandatory_net_gain_pct"
+    ],
+    "n_keys": 18
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "reference_data",
+     "qual": "reference_data",
+     "file": "api/v1/routes/agriculture_expanded.py",
+     "line": 246,
+     "args": {},
+     "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
+     "dur_ms": 0.186,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_agriculture_engine_reference_data",
+       "qual": "get_agriculture_engine_reference_data",
+       "file": "services/agriculture_risk_engine.py",
+       "line": 613,
+       "args": {},
+       "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
+       "dur_ms": 0.1,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "get_reference_data",
+         "qual": "get_reference_data",
+         "file": "services/agriculture_risk_calculator.py",
+         "line": 300,
+         "args": {},
+         "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
+         "dur_ms": 0.027,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "agriculture-expanded",
+   "label": "POST /api/v1/agriculture-engine/biodiversity-bng",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "agriculture-expanded",
+   "label": "POST /api/v1/agriculture-engine/disease-outbreak",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "agriculture-expanded",
+   "label": "POST /api/v1/agriculture-engine/methane",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

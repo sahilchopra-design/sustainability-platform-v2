@@ -1,0 +1,342 @@
+{
+ "domain": "digital-product-passport",
+ "meta": {
+  "ts": "2026-06-30T14:00:43",
+  "module": "api.v1.routes.digital_product_passport",
+  "router_prefix": "/api/v1/digital-product-passport",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "digital-product-passport",
+   "label": "GET /api/v1/digital-product-passport/ref/battery-targets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.129,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "priority_materials",
+     "targets",
+     "description",
+     "all_requirements_overview"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_battery_targets",
+     "qual": "ref_battery_targets",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 343,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'Regulation (EU) 2023/1542 Art 8', 'priority_materials': ['lithium', 'cobalt', 'nickel', 'lead'], 'targets': {'2025': {'cobalt': 16, 'lead': 85, 'lithium': 6, 'nickel': 6}, '2030': {'cobalt': 26, 'lead': 85,\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "GET /api/v1/digital-product-passport/ref/dpp-mandatory-fields",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.545,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_mandatory_fields",
+     "fields",
+     "fields_by_section"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_dpp_mandatory_fields",
+     "qual": "ref_dpp_mandatory_fields",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 299,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'EU DPP schema draft Q1 2025; Regulation (EU) 2024/1781 Art 8', 'total_mandatory_fields': 25, 'fields': [{'field_id': 'DPP-01', 'name': 'unique_product_identifier', 'section': 'product_identity', 'format': '\u2026",
+     "dur_ms": 0.129,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "GET /api/v1/digital-product-passport/ref/epr-rates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.431,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_countries",
+     "currency",
+     "unit",
+     "rates_by_country"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_epr_rates",
+     "qual": "ref_epr_rates",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 318,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'Directive 2008/98/EC Art 8a; national EPR scheme transpositions 2021-2024', 'total_countries': 20, 'currency': 'EUR', 'unit': 'per tonne of product placed on market', 'rates_by_country': {'DE': {'avg_rate_e\u2026",
+     "dur_ms": 0.218,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "GET /api/v1/digital-product-passport/ref/product-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.544,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_categories",
+     "categories"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_product_categories",
+     "qual": "ref_product_categories",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 285,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'Regulation (EU) 2024/1781 (ESPR) Annex I and Delegated Acts', 'total_categories': 15, 'categories': {'textiles': {'regulation_ref': 'ESPR Delegated Act \u2014 Textiles (priority group, Annex I)', 'dpp_mandatory_\u2026",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/battery-regulation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/circularity-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 13.0,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "circularity_assessment",
+     "qual": "circularity_assessment",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 215,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 10.506,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/dpp-schema",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/epr-levy",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/espr-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 12.378,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/digital_product_passport.py",
+     "line": 262,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 9.908,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "digital-product-passport",
+   "label": "POST /api/v1/digital-product-passport/lifecycle-ghg",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,522 @@
+{
+ "domain": "blue-economy",
+ "meta": {
+  "ts": "2026-06-30T13:59:29",
+  "module": "api.v1.routes.blue_economy",
+  "router_prefix": "/api/v1/blue-economy",
+  "endpoints": 11
+ },
+ "transactions": [
+  {
+   "domain": "blue-economy",
+   "label": "GET /api/v1/blue-economy/ref/bbnj-articles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.467,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "articles",
+     "treaty_name",
+     "adoption_date",
+     "signatory_threshold_for_entry_into_force",
+     "note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_bbnj_articles",
+     "qual": "ref_bbnj_articles",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 247,
+     "args": {},
+     "ret": "{'articles': {'article_9_mgbr': {'title': 'Marine Genetic Resources & Benefit Sharing', 'description': 'Access and benefit sharing for MGRs in ABNJ; multilateral mechanism', 'compliance_indicators': ['mgr_access_policy', 'benefit_sharing_a\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "GET /api/v1/blue-economy/ref/ecosystems",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.468,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ecosystems",
+     "total_sequestration_potential_bn_tco2",
+     "source",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_ecosystems",
+     "qual": "ref_ecosystems",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 225,
+     "args": {},
+     "ret": "{'ecosystems': {'mangrove': {'sequestration_rate_min_tco2_ha_yr': 6.0, 'sequestration_rate_max_tco2_ha_yr': 8.0, 'sequestration_rate_mean_tco2_ha_yr': 7.0, 'soil_carbon_stock_tco2_ha': 860, 'above_ground_carbon_tco2_ha': 120, 'permanence_r\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "GET /api/v1/blue-economy/ref/ocean-markets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 15.892,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "global_ocean_economy_gdp_bn_usd",
+     "ocean_economy_potential_2030_bn_usd",
+     "sdg14_annual_financing_gap_bn_usd",
+     "blue_bond_issuance_2023_bn_usd",
+     "blue_carbon_market_2023_mn_usd",
+     "offshore_wind_installed_gw",
+     "offshore_wind_pipeline_2030_gw",
+     "mpa_coverage_pct_ocean",
+     "target_30x30_pct",
+     "rcp_scenarios",
+     "key_standards"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ocean_markets",
+     "qual": "ref_ocean_markets",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 270,
+     "args": {},
+     "ret": "{'global_ocean_economy_gdp_bn_usd': 2500, 'ocean_economy_potential_2030_bn_usd': 3000, 'sdg14_annual_financing_gap_bn_usd': 175, 'blue_bond_issuance_2023_bn_usd': 5.5, 'blue_carbon_market_2023_mn_usd': 120, 'offshore_wind_installed_gw': 65\u2026",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "GET /api/v1/blue-economy/ref/sof-pillars",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.425,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pillars",
+     "framework",
+     "total_pillars",
+     "sdg_alignment"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_sof_pillars",
+     "qual": "ref_sof_pillars",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 259,
+     "args": {},
+     "ret": "{'pillars': {'ocean_health': {'description': 'Reducing pollution, restoring ecosystems, addressing ocean acidification', 'key_indicators': ['mpa_coverage_pct', 'plastic_reduction_targets', 'wqi_score'], 'financing_instruments': ['blue_bond\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "GET /api/v1/blue-economy/ref/use-of-proceeds",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.506,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "categories",
+     "standard",
+     "total_categories",
+     "external_review_required_threshold_usd"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_use_of_proceeds",
+     "qual": "ref_use_of_proceeds",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 236,
+     "args": {},
+     "ret": "{'categories': {'sustainable_fisheries': {'description': 'MSC-certified and FIP-supported fisheries, IUU elimination', 'icma_alignment_score': 0.92, 'sof_pillar': 'sustainable_ocean_economy', 'sdg_targets': ['SDG14.4', 'SDG14.6'], 'typical\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/bbnj-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/blue-carbon",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/ocean-acidification",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/ocean-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/screen-bond",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'NoneType' object is not iterable",
+   "dur_ms": 28.865,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<BlueBondScreenRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "screen_bond_endpoint",
+     "qual": "screen_bond_endpoint",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 77,
+     "args": {
+      "request": "BlueBondScreenRequest(entity_id='TEST_request_entity_id', bond_id=None, issuer='Unknown Issuer', bond_amount_usd=500000000, use_of_proceeds_categories=None)"
+     },
+     "ret": "None",
+     "dur_ms": 22.35,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "screen_blue_bond",
+       "qual": "screen_blue_bond",
+       "file": "services/blue_economy_engine.py",
+       "line": 335,
+       "args": {
+        "bond_data": "{'entity_id': 'TEST_request_entity_id', 'bond_id': None, 'issuer': 'Unknown Issuer', 'bond_amount_usd': 500000000, 'use_of_proceeds_categories': None}"
+       },
+       "ret": "None",
+       "dur_ms": 0.071,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "blue-economy",
+   "label": "POST /api/v1/blue-economy/sof-assessment",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.902,
+   "node_count": 9,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<SOFAssessmentRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "entity_id",
+     "overall_sof_score",
+     "sof_tier",
+     "pillar_assessments",
+     "sdg14_financing_gap_bn_usd",
+     "entity_contribution_pct",
+     "poseidon_principles_aligned",
+     "sea_pledge_eligible",
+     "priority_pillars",
+     "reference_frameworks"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "sof_assessment_endpoint",
+     "qual": "sof_assessment_endpoint",
+     "file": "api/v1/routes/blue_economy.py",
+     "line": 211,
+     "args": {
+      "request": "SOFAssessmentRequest(entity_id='TEST_request_entity_id', entity_name=None, declared_sof_scores=None)"
+     },
+     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'overall_sof_score': 0.6239, 'sof_tier': 'progressing', 'pillar_assessments': {'ocean_health': {'score': 0.6893, 'description': 'Reducing pollution, restoring ecosystems, address\u2026",
+     "dur_ms": 0.307,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "assess_sof_alignment",
+       "qual": "assess_sof_alignment",
+       "file": "services/blue_economy_engine.py",
+       "line": 662,
+       "args": {
+        "entity_data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': None, 'declared_sof_scores': None}"
+       },
+       "ret": "{'entity_id': 'TEST_request_entity_id', 'overall_sof_score': 0.6239, 'sof_tier': 'progressing', 'pillar_assessments': {'ocean_health': {'score': 0.6893, 'description': 'Reducing pollution, restoring ecosystems, addressing ocean acidificati\u2026",
+       "dur_ms": 0.198,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.151646",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.083",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.13354",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.121932",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.0975",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "0.036303999999999996",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "assess_sof_alignment.<locals>.<genexpr>",
+         "file": "services/blue_economy_engine.py",
+         "line": 678,
+         "args": {
+          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

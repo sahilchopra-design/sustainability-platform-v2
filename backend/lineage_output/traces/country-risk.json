@@ -1,0 +1,371 @@
+{
+ "domain": "country-risk",
+ "meta": {
+  "ts": "2026-06-30T14:00:12",
+  "module": "api.v1.routes.country_risk",
+  "router_prefix": "/api/v1/country-risk",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/coal-capacity",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2285.121,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_reference_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT DISTINCT entity_name FROM dh_reference_data r WHERE r.source_name = 'GEM Coal Plant Tracker' ORDER BY entity_name LIMIT %(lim)s\"",
+     "tables": [
+      "dh_reference_data"
+     ],
+     "rowcount": 50,
+     "dur_ms": 114.878,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "\"SELECT entity_name, kpi_name, value_numeric, unit FROM dh_reference_data WHERE source_name = 'GEM Coal Plant Tracker' AND entity_name = ANY(%(names)s) ORDER BY entity_name, kpi_name\"",
+     "tables": [
+      "dh_reference_data"
+     ],
+     "rowcount": 500,
+     "dur_ms": 91.842,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "\"SELECT COUNT(DISTINCT entity_name) FROM dh_reference_data WHERE source_name = 'GEM Coal Plant Tracker'\"",
+     "tables": [
+      "dh_reference_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.625,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_countries",
+     "showing",
+     "countries"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "coal_capacity_by_country",
+     "qual": "coal_capacity_by_country",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 308,
+     "args": {
+      "country": "None",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A1B50>"
+     },
+     "ret": "{'total_countries': 112, 'showing': 50, 'countries': [{'country': 'Afghanistan', 'capacities': {'coal_capacity_announced': {'value_mw': 160.0, 'unit': 'MW'}, 'coal_capacity_announced_plus_pre-permit_plus_permitted': {'value_mw': 160.0, 'un\u2026",
+     "dur_ms": 2252.992,
+     "sql": [
+      0,
+      1,
+      2
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/compare",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Provide at least 2 comma-separated ISO3 codes",
+   "dur_ms": 0.907,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "countries": "'TEST_countries' (mock-required)",
+    "index_name": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "compare_countries",
+     "qual": "compare_countries",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 206,
+     "args": {
+      "countries": "'TEST_countries'",
+      "index_name": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A1C40>"
+     },
+     "ret": "None",
+     "dur_ms": 0.131,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/country/{country_iso3}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No data for country 550E8400-E29B-41D4-A716-446655440001",
+   "dur_ms": 356.282,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_country_risk_indices"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT index_name, year, score, rank, subcategories, country_name, source_name FROM dh_country_risk_indices WHERE country_iso3 = %(iso)s ORDER BY index_name, year DESC'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 0,
+     "dur_ms": 77.567,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country_iso3": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_country_profile",
+     "qual": "get_country_profile",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 81,
+     "args": {
+      "country_iso3": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A23C0>"
+     },
+     "ret": "None",
+     "dur_ms": 317.615,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/heatmap",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 325.508,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_country_risk_indices"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT MAX(year) FROM dh_country_risk_indices WHERE index_name = %(idx)s'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 1,
+     "dur_ms": 67.88,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT country_iso3, country_iso2, country_name, score, rank FROM dh_country_risk_indices WHERE index_name = %(idx)s AND year = %(yr)s ORDER BY country_name'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.515,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "index_name": "'TEST_index_name' (mock-required)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "index_name",
+     "year",
+     "data"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "country_risk_heatmap",
+     "qual": "country_risk_heatmap",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 269,
+     "args": {
+      "index_name": "'TEST_index_name'",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8170>"
+     },
+     "ret": "{'index_name': 'TEST_index_name', 'year': 2023, 'data': []}",
+     "dur_ms": 296.633,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/indices",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1395.626,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_country_risk_indices"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT index_name, COUNT(*), MIN(year), MAX(year), COUNT(DISTINCT country_iso3) FROM dh_country_risk_indices GROUP BY index_name ORDER BY index_name'",
+     "tables": [
+      "dh_country_risk_indices"
+     ],
+     "rowcount": 4,
+     "dur_ms": 595.324,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "indices"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "list_available_indices",
+     "qual": "list_available_indices",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 53,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8830>"
+     },
+     "ret": "{'indices': [{'index_name': 'CPI', 'full_name': 'Corruption Perceptions Index', 'source': 'Transparency International', 'scale': '0-100 (higher = less corrupt)', 'category': 'governance', 'record_count': 180, 'year_range': {'min': 2023, 'm\u2026",
+     "dur_ms": 1360.286,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "country-risk",
+   "label": "GET /api/v1/country-risk/rankings/{index_name}",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Unknown index '550e8400-e29b-41d4-a716-446655440001'. Available: ['CPI', 'FSI', 'FH_FIW', 'UNDP_GII']",
+   "dur_ms": 0.597,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "index_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "year": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_index_rankings",
+     "qual": "get_index_rankings",
+     "file": "api/v1/routes/country_risk.py",
+     "line": 147,
+     "args": {
+      "index_name": "'550e8400-e29b-41d4-a716-446655440001'",
+      "year": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8380>"
+     },
+     "ret": "None",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

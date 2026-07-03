@@ -1,0 +1,270 @@
+{
+ "domain": "nature-based-solutions",
+ "meta": {
+  "ts": "2026-06-30T14:03:17",
+  "module": "api.v1.routes.nature_based_solutions",
+  "router_prefix": "/api/v1/nature-based-solutions",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "nature-based-solutions",
+   "label": "GET /api/v1/nature-based-solutions/ref/ecosystem-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.345,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ecosystems",
+     "source"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_ecosystem_types",
+     "qual": "ref_ecosystem_types",
+     "file": "api/v1/routes/nature_based_solutions.py",
+     "line": 211,
+     "args": {},
+     "ret": "{'ecosystems': [{'ecosystem': 'mangrove', 'seq_rate_tco2_ha_pa': 6.2, 'permanence_risk': 'low', 'vcs_methodology': 'VM0033'}, {'ecosystem': 'seagrass', 'seq_rate_tco2_ha_pa': 1.8, 'permanence_risk': 'medium', 'vcs_methodology': 'VM0024'}, \u2026",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "GET /api/v1/nature-based-solutions/ref/methodologies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.202,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "methodologies",
+     "certification_schemes",
+     "icvcm_ccp_standard"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_methodologies",
+     "qual": "ref_methodologies",
+     "file": "api/v1/routes/nature_based_solutions.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'methodologies': [{'code': 'VM0007', 'name': 'REDD+ Methodology Framework', 'standard': 'Verra VCS', 'project_type': 'Avoided Deforestation', 'permanence_years': 100}, {'code': 'VM0033', 'name': 'Tidal Wetland and Seagrass Restoration', '\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/afolu-balance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/arr-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.224,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "arr_assessment",
+     "qual": "arr_assessment",
+     "file": "api/v1/routes/nature_based_solutions.py",
+     "line": 158,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/blue-carbon",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/credit-quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/iucn-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.248,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "iucn_assessment",
+     "qual": "iucn_assessment",
+     "file": "api/v1/routes/nature_based_solutions.py",
+     "line": 116,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/redd-plus",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/sequestration-timeseries",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-based-solutions",
+   "label": "POST /api/v1/nature-based-solutions/soil-carbon",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

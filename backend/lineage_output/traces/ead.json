@@ -1,0 +1,435 @@
+{
+ "domain": "ead",
+ "meta": {
+  "ts": "2026-06-30T14:01:00",
+  "module": "api.v1.routes.ead",
+  "router_prefix": "/api/v1/ead",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "ead",
+   "label": "GET /api/v1/ead/asset-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.713,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_classes",
+     "descriptions"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_asset_classes",
+     "qual": "list_asset_classes",
+     "file": "api/v1/routes/ead.py",
+     "line": 354,
+     "args": {},
+     "ret": "{'asset_classes': ['CORPORATE', 'SME', 'RETAIL_REVOLVING', 'RETAIL_MORTGAGE', 'RETAIL_OTHER', 'SOVEREIGN', 'BANK', 'SPECIALISED_LENDING', 'EQUITY'], 'descriptions': {'CORPORATE': 'Corporate loans (CRR Art. 122)', 'SME': 'Small/medium enter\u2026",
+     "dur_ms": 0.131,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_supported_asset_classes",
+       "qual": "EADCalculator.get_supported_asset_classes",
+       "file": "services/ead_calculator.py",
+       "line": 902,
+       "args": {},
+       "ret": "['CORPORATE', 'SME', 'RETAIL_REVOLVING', 'RETAIL_MORTGAGE', 'RETAIL_OTHER', 'SOVEREIGN', 'BANK', 'SPECIALISED_LENDING', 'EQUITY']",
+       "dur_ms": 0.071,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "GET /api/v1/ead/ccf-matrix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.434,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ccf_table",
+     "facility_types",
+     "asset_classes",
+     "short_maturity_overrides"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_ccf_matrix",
+     "qual": "get_ccf_matrix",
+     "file": "api/v1/routes/ead.py",
+     "line": 270,
+     "args": {},
+     "ret": "CCFTableResponse(ccf_table={'TERM_LOAN': {'CORPORATE': 1.0, 'SME': 1.0, 'RETAIL_REVOLVING': 1.0, 'RETAIL_MORTGAGE': 1.0, 'RETAIL_OTHER': 1.0, 'SOVEREIGN': 1.0, 'BANK': 1.0, 'SPECIALISED_LENDING': 1.0, 'EQUITY': 1.0}, 'REVOLVING_CREDIT': {'\u2026",
+     "dur_ms": 0.344,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_ccf_table",
+       "qual": "EADCalculator.get_ccf_table",
+       "file": "services/ead_calculator.py",
+       "line": 892,
+       "args": {},
+       "ret": "{'TERM_LOAN': {'CORPORATE': 1.0, 'SME': 1.0, 'RETAIL_REVOLVING': 1.0, 'RETAIL_MORTGAGE': 1.0, 'RETAIL_OTHER': 1.0, 'SOVEREIGN': 1.0, 'BANK': 1.0, 'SPECIALISED_LENDING': 1.0, 'EQUITY': 1.0}, 'REVOLVING_CREDIT': {'CORPORATE': 0.5, 'SME': 0.5\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "get_supported_facility_types",
+       "qual": "EADCalculator.get_supported_facility_types",
+       "file": "services/ead_calculator.py",
+       "line": 897,
+       "args": {},
+       "ret": "['TERM_LOAN', 'REVOLVING_CREDIT', 'UNDRAWN_COMMITMENT', 'UNCONDITIONALLY_CANCELLABLE', 'TRADE_LETTER_OF_CREDIT', 'STANDBY_LETTER_OF_CREDIT', 'GUARANTEE', 'FINANCIAL_GUARANTEE', 'NOTE_ISSUANCE_FACILITY', 'REPO_STYLE', 'OTC_DERIVATIVE', 'MAR\u2026",
+       "dur_ms": 0.071,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "get_supported_asset_classes",
+       "qual": "EADCalculator.get_supported_asset_classes",
+       "file": "services/ead_calculator.py",
+       "line": 902,
+       "args": {},
+       "ret": "['CORPORATE', 'SME', 'RETAIL_REVOLVING', 'RETAIL_MORTGAGE', 'RETAIL_OTHER', 'SOVEREIGN', 'BANK', 'SPECIALISED_LENDING', 'EQUITY']",
+       "dur_ms": 0.045,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "GET /api/v1/ead/ccf/{asset_class}/{facility_type}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 13.639,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "asset_class": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "facility_type": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_class",
+     "facility_type",
+     "ccf",
+     "saccr_alpha",
+     "maturity_caps"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_specific_ccf",
+     "qual": "get_specific_ccf",
+     "file": "api/v1/routes/ead.py",
+     "line": 286,
+     "args": {
+      "asset_class": "'550e8400-e29b-41d4-a716-446655440001'",
+      "facility_type": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "CCFLookupResponse(asset_class='550e8400-e29b-41d4-a716-446655440001', facility_type='550e8400-e29b-41d4-a716-446655440001', ccf=1.0, saccr_alpha=1.4, maturity_caps={'min': 1.0, 'max': 5.0, 'benchmark': 2.5})",
+     "dur_ms": 0.12,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_ccf",
+       "qual": "get_ccf",
+       "file": "services/ead_calculator.py",
+       "line": 356,
+       "args": {
+        "asset_class": "'550e8400-e29b-41d4-a716-446655440001'",
+        "facility_type": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "1.0",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<lambda>",
+       "qual": "CCFLookupResponse.<lambda>",
+       "file": "api/v1/routes/ead.py",
+       "line": 133,
+       "args": {},
+       "ret": "{'min': 1.0, 'max': 5.0, 'benchmark': 2.5}",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "GET /api/v1/ead/climate-stress",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.525,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "scenario": "'base' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenario",
+     "scenario_multiplier",
+     "available_scenarios",
+     "sector_stress_factors"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_climate_stress_factors",
+     "qual": "get_climate_stress_factors",
+     "file": "api/v1/routes/ead.py",
+     "line": 305,
+     "args": {
+      "scenario": "'base'"
+     },
+     "ret": "ClimateStressResponse(scenario='base', scenario_multiplier=1.0, available_scenarios=['optimistic', 'base', 'adverse', 'severe'], sector_stress_factors={'Power Generation': 0.15, 'Oil & Gas': 0.25, 'Metals & Mining': 0.2, 'Automotive': 0.18\u2026",
+     "dur_ms": 0.204,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "__init__",
+       "qual": "EADCalculator.__init__",
+       "file": "services/ead_calculator.py",
+       "line": 440,
+       "args": {
+        "climate_scenario": "'base'"
+       },
+       "ret": "None",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "get_scenario_info",
+       "qual": "EADCalculator.get_scenario_info",
+       "file": "services/ead_calculator.py",
+       "line": 912,
+       "args": {},
+       "ret": "{'climate_scenario': 'base', 'scenario_multiplier': 1.0, 'available_scenarios': ['optimistic', 'base', 'adverse', 'severe']}",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "get_climate_stress_factors",
+       "qual": "EADCalculator.get_climate_stress_factors",
+       "file": "services/ead_calculator.py",
+       "line": 907,
+       "args": {},
+       "ret": "{'Power Generation': 0.15, 'Oil & Gas': 0.25, 'Metals & Mining': 0.2, 'Automotive': 0.18, 'Airlines': 0.22, 'Real Estate': 0.12, 'Technology': 0.05, 'Healthcare': 0.03, 'Financial': 0.08, 'Agriculture': 0.1, 'Shipping': 0.2, 'Chemicals': 0\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "GET /api/v1/ead/facility-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.123,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "facility_types",
+     "descriptions"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "list_facility_types",
+     "qual": "list_facility_types",
+     "file": "api/v1/routes/ead.py",
+     "line": 330,
+     "args": {},
+     "ret": "{'facility_types': ['TERM_LOAN', 'REVOLVING_CREDIT', 'UNDRAWN_COMMITMENT', 'UNCONDITIONALLY_CANCELLABLE', 'TRADE_LETTER_OF_CREDIT', 'STANDBY_LETTER_OF_CREDIT', 'GUARANTEE', 'FINANCIAL_GUARANTEE', 'NOTE_ISSUANCE_FACILITY', 'REPO_STYLE', 'OT\u2026",
+     "dur_ms": 0.136,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "get_supported_facility_types",
+       "qual": "EADCalculator.get_supported_facility_types",
+       "file": "services/ead_calculator.py",
+       "line": 897,
+       "args": {},
+       "ret": "['TERM_LOAN', 'REVOLVING_CREDIT', 'UNDRAWN_COMMITMENT', 'UNCONDITIONALLY_CANCELLABLE', 'TRADE_LETTER_OF_CREDIT', 'STANDBY_LETTER_OF_CREDIT', 'GUARANTEE', 'FINANCIAL_GUARANTEE', 'NOTE_ISSUANCE_FACILITY', 'REPO_STYLE', 'OTC_DERIVATIVE', 'MAR\u2026",
+       "dur_ms": 0.074,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "POST /api/v1/ead/calculate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: EAD calculation failed: 'str' object has no attribute 'climate_scenario'",
+   "dur_ms": 2.658,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "calculate_ead",
+     "qual": "calculate_ead",
+     "file": "api/v1/routes/ead.py",
+     "line": 183,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.366,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ead",
+   "label": "POST /api/v1/ead/calculate-batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Batch EAD calculation failed: 'str' object has no attribute 'climate_scenario'",
+   "dur_ms": 4.405,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "calculate_ead_batch",
+     "qual": "calculate_ead_batch",
+     "file": "api/v1/routes/ead.py",
+     "line": 217,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.386,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

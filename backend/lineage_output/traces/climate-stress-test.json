@@ -1,0 +1,348 @@
+{
+ "domain": "climate-stress-test",
+ "meta": {
+  "ts": "2026-06-30T14:00:00",
+  "module": "api.v1.routes.climate_stress_test",
+  "router_prefix": "/api/v1/climate-stress-test",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "climate-stress-test",
+   "label": "GET /api/v1/climate-stress-test/ref/damage-functions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.515,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "physical_hazard_damage_functions",
+     "sector_transition_sensitivity",
+     "total_hazards",
+     "total_sectors"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_damage_functions",
+     "qual": "ref_damage_functions",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 233,
+     "args": {},
+     "ret": "{'physical_hazard_damage_functions': {'flood': {'short': 0.01, 'medium': 0.05, 'long': 0.15}, 'heat': {'short': 0.005, 'medium': 0.03, 'long': 0.1}, 'drought': {'short': 0.008, 'medium': 0.04, 'long': 0.12}, 'wind': {'short': 0.003, 'mediu\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "GET /api/v1/climate-stress-test/ref/frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.211,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "capital_adequacy_floors",
+     "total_frameworks"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_frameworks",
+     "qual": "ref_frameworks",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'frameworks': {'bcbs_517': {'supervisor': 'BCBS / BIS', 'full_name': 'BCBS 517 Principles for the Effective Management of Climate-Related Financial Risks', 'scenario_count': 3, 'time_horizon_yrs': 30, 'capital_req': True, 'mandatory': Tru\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "GET /api/v1/climate-stress-test/ref/ngfs-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 6.179,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "by_type",
+     "total"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ngfs_scenarios",
+     "qual": "ref_ngfs_scenarios",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 215,
+     "args": {},
+     "ret": "{'scenarios': {'net_zero_2050': {'description': 'Ambitious early action limiting warming to 1.5\u00b0C by 2100', 'carbon_price_2030': 130.0, 'carbon_price_2050': 560.0, 'gdp_impact_2030': -0.5, 'gdp_impact_2050': -0.3, 'temp_rise_2100': 1.5, 'p\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/apra-clt",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 6.251,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "apra_clt",
+     "qual": "apra_clt",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 159,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.049,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/bcbs-517",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 3.74,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "bcbs_517",
+     "qual": "bcbs_517",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 116,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/boe-cbes",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 4.91,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "boe_cbes",
+     "qual": "boe_cbes",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 131,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/cross-framework",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 4.823,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "cross_framework",
+     "qual": "cross_framework",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 172,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/ecb-cst",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 2.483,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ecb_cst",
+     "qual": "ecb_cst",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 145,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-stress-test",
+   "label": "POST /api/v1/climate-stress-test/portfolio-resilience",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'portfolios'",
+   "dur_ms": 3.599,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "portfolio_resilience",
+     "qual": "portfolio_resilience",
+     "file": "api/v1/routes/climate_stress_test.py",
+     "line": 187,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

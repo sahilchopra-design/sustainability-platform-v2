@@ -1,0 +1,515 @@
+{
+ "domain": "violations",
+ "meta": {
+  "ts": "2026-06-30T14:05:51",
+  "module": "api.v1.routes.violations",
+  "router_prefix": "/api/v1/violations",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/agencies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1292.787,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT agency, COUNT(*) AS count, SUM(penalty_amount_usd) AS total_penalties_usd, COUNT(DISTINCT company_name) AS companies_affected FROM dh_violation_tracker WHERE agency IS NOT NULL GROUP BY agency ORDER BY total_penalties_usd DESC NULLS LAST'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 14,
+     "dur_ms": 83.888,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "agencies"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "violation_agencies",
+     "qual": "violation_agencies",
+     "file": "api/v1/routes/violations.py",
+     "line": 128,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022005EC3A40>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000022007834CC0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'agencies': [{'agency': 'EPA', 'count': 3, 'total_penalties_usd': Decimal('35502500000.00'), 'companies_affected': 3}, {'agency': 'SEC', 'count': 1, 'total_penalties_usd': Decimal('13000000000.00'), 'companies_affected': 1}, {'agency': 'S\u2026",
+     "dur_ms": 1251.666,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/companies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 376.405,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT parent_company, COUNT(*) AS violations, SUM(penalty_amount_usd) AS total_penalties_usd, MAX(penalty_amount_usd) AS largest_penalty_usd, COUNT(DISTINCT violation_type) AS violation_types, BOOL_OR(repeat_offender) AS is_repeat_offender FROM dh_violation_tracker WHERE parent_company IS NOT NULL GROUP BY parent_company ORDER BY total_penalties_usd DESC NULLS LAST LIMIT %(limit)s'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 18,
+     "dur_ms": 62.063,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "limit": "30 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "companies"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "violation_companies",
+     "qual": "violation_companies",
+     "file": "api/v1/routes/violations.py",
+     "line": 89,
+     "args": {
+      "limit": "30",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022007712360>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002200770FBA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'companies': [{'parent_company': 'BP plc', 'violations': 1, 'total_penalties_usd': Decimal('20800000000.00'), 'largest_penalty_usd': Decimal('20800000000.00'), 'violation_types': 1, 'is_repeat_offender': True}, {'parent_company': 'Volkswa\u2026",
+     "dur_ms": 346.128,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/company/{company_name}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No violations for 550e8400-e29b-41d4-a716-446655440001",
+   "dur_ms": 296.821,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, company_name, parent_company, country_iso3, sector, violation_type, sub_type, agency, violation_date, resolution_date, penalty_amount_usd, description, case_id, severity, status FROM dh_violation_tracker WHERE company_name ILIKE %(name)s OR parent_company ILIKE %(name)s ORDER BY violation_date DESC NULLS LAST'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.259,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "company_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "violations_by_company",
+     "qual": "violations_by_company",
+     "file": "api/v1/routes/violations.py",
+     "line": 165,
+     "args": {
+      "company_name": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000220077125D0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x00000220078351C0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 265.408,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 358.206,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, company_name, parent_company, country_iso3, sector, violation_type, sub_type, agency, violation_date, resolution_date, penalty_amount_usd, description, case_id, severity, status, repeat_offender FROM dh_violation_tracker ORDER BY penalty_amount_usd DESC NULLS LAST LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 18,
+     "dur_ms": 66.006,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.412,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "company": "None (default)",
+    "parent": "None (default)",
+    "violation_type": "None (default)",
+    "agency": "None (default)",
+    "sector": "None (default)",
+    "country": "None (default)",
+    "severity": "None (default)",
+    "min_penalty": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "search_violations",
+     "qual": "search_violations",
+     "file": "api/v1/routes/violations.py",
+     "line": 28,
+     "args": {
+      "company": "None",
+      "parent": "None",
+      "violation_type": "None",
+      "agency": "None",
+      "sector": "None",
+      "country": "None",
+      "severity": "None",
+      "min_penalty": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x00000220077866F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x00000220075BF920>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [{'id': UUID('3f9c5676-cd20-5520-9159-276c4517a731'), 'company_name': 'BP plc', 'parent_company': 'BP plc', 'country_iso3': 'USA', 'sector': 'Oil & Gas', 'violation_type': 'Environmental', 'sub_type': 'Clean Water Act', 'agency\u2026",
+     "dur_ms": 323.592,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 296.759,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT sector, COUNT(*) AS violations, SUM(penalty_amount_usd) AS total_penalties_usd, COUNT(DISTINCT parent_company) AS companies, COUNT(DISTINCT violation_type) AS violation_types FROM dh_violation_tracker WHERE sector IS NOT NULL GROUP BY sector ORDER BY total_penalties_usd DESC NULLS LAST'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 8,
+     "dur_ms": 62.842,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "violation_sectors",
+     "qual": "violation_sectors",
+     "file": "api/v1/routes/violations.py",
+     "line": 146,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022007853140>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000022007834F40>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sectors': [{'sector': 'Oil & Gas', 'violations': 3, 'total_penalties_usd': Decimal('20802500000.00'), 'companies': 3, 'violation_types': 1}, {'sector': 'Financial Services', 'violations': 5, 'total_penalties_usd': Decimal('19683000000.00\u2026",
+     "dur_ms": 265.852,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 443.301,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 57.533,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(DISTINCT parent_company) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.467,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COALESCE(SUM(penalty_amount_usd), 0) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.054,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(DISTINCT violation_type) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.609,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(DISTINCT agency) FROM dh_violation_tracker'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.659,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT COUNT(*) FROM dh_violation_tracker WHERE repeat_offender = true'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.591,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "violations"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "violation_stats",
+     "qual": "violation_stats",
+     "file": "api/v1/routes/violations.py",
+     "line": 186,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022007852B70>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000022007835440>, use_cache=True, scope=None)"
+     },
+     "ret": "{'violations': {'total': 18, 'companies': 18, 'total_penalties_usd': 79381560269.0, 'violation_types': 4, 'agencies': 14, 'repeat_offenders': 10}}",
+     "dur_ms": 414.084,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "violations",
+   "label": "GET /api/v1/violations/types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 487.956,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_violation_tracker"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT violation_type, COUNT(*) AS count, SUM(penalty_amount_usd) AS total_penalties_usd, AVG(penalty_amount_usd) AS avg_penalty_usd FROM dh_violation_tracker GROUP BY violation_type ORDER BY total_penalties_usd DESC NULLS LAST'",
+     "tables": [
+      "dh_violation_tracker"
+     ],
+     "rowcount": 4,
+     "dur_ms": 63.215,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "violation_types",
+     "qual": "violation_types",
+     "file": "api/v1/routes/violations.py",
+     "line": 111,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000022007853650>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000022007834860>, use_cache=True, scope=None)"
+     },
+     "ret": "{'types': [{'violation_type': 'Environmental', 'count': 7, 'total_penalties_usd': Decimal('42548500000.00'), 'avg_penalty_usd': Decimal('7091416666.66666667')}, {'violation_type': 'Consumer', 'count': 3, 'total_penalties_usd': Decimal('189\u2026",
+     "dur_ms": 458.696,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

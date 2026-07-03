@@ -1,0 +1,436 @@
+{
+ "domain": "social-bond",
+ "meta": {
+  "ts": "2026-06-30T14:05:12",
+  "module": "api.v1.routes.social_bond",
+  "router_prefix": "/api/v1/social-bond",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "social-bond",
+   "label": "GET /api/v1/social-bond/ref/kpi-library",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.441,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "total_kpis",
+     "categories_covered",
+     "kpis_by_category",
+     "all_kpis",
+     "ref"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_kpi_library",
+     "qual": "ref_kpi_library",
+     "file": "api/v1/routes/social_bond.py",
+     "line": 360,
+     "args": {},
+     "ret": "{'status': 'success', 'total_kpis': 40, 'categories_covered': 9, 'kpis_by_category': {'affordable_housing': [{'id': 'SK001', 'name': 'Social housing units financed', 'category': 'affordable_housing', 'population': 'people_below_poverty_lin\u2026",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-bond",
+   "label": "GET /api/v1/social-bond/ref/project-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.156,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "data",
+     "ref"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_project_categories",
+     "qual": "ref_project_categories",
+     "file": "api/v1/routes/social_bond.py",
+     "line": 328,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 9, 'data': {'affordable_housing': {'icma_code': 'AH', 'description': 'Financing of affordable and social housing for low-income populations', 'eligible_activities': ['Construction of social housing units', 'R\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-bond",
+   "label": "GET /api/v1/social-bond/ref/sdg-mapping",
+   "status": "failed",
+   "http_status": 500,
+   "error": "KeyError: 'title'",
+   "dur_ms": 2.11,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_sdg_mapping",
+     "qual": "ref_sdg_mapping",
+     "file": "api/v1/routes/social_bond.py",
+     "line": 384,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-bond",
+   "label": "GET /api/v1/social-bond/ref/target-populations",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.29,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "data",
+     "ref"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_target_populations",
+     "qual": "ref_target_populations",
+     "file": "api/v1/routes/social_bond.py",
+     "line": 344,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 10, 'data': ['living_below_poverty_line', 'excluded_or_marginalized_communities', 'people_with_disabilities', 'migrants_and_displaced_persons', 'women_and_girls', 'elderly_populations', 'youth_and_children', \u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Full social bond assessment failed",
+   "dur_ms": 43.599,
+   "node_count": 10,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<SocialBondFullAssessmentRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/social_bond.py",
+     "line": 283,
+     "args": {
+      "req": "SocialBondFullAssessmentRequest(entity_id='TEST_req_entity_id', bond_name='TEST_req_bond_name', total_issuance_m=1.0, currency='EUR', has_framework=False, has_allocation_reporting=False, has_impact_reporting=False, has_spo=False, has_dedic\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 38.735,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "run_full_assessment",
+       "qual": "SocialBondEngine.run_full_assessment",
+       "file": "services/social_bond_engine.py",
+       "line": 983,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "bond_data": "{'bond_name': 'TEST_req_bond_name', 'total_issuance_m': 1.0, 'currency': 'EUR', 'has_framework': False, 'has_allocation_reporting': False, 'has_impact_reporting': False, 'has_spo': False, 'has_dedicated_account': True, 'unallocated_proceed\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.658,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "assess_icma_sbp_compliance",
+         "qual": "SocialBondEngine.assess_icma_sbp_compliance",
+         "file": "services/social_bond_engine.py",
+         "line": 489,
+         "args": {
+          "bond_data": "{'bond_name': 'TEST_req_bond_name', 'total_issuance_m': 1.0, 'currency': 'EUR', 'has_framework': False, 'has_allocation_reporting': False, 'has_impact_reporting': False, 'has_spo': False, 'has_dedicated_account': True, 'unallocated_proceed\u2026"
+         },
+         "ret": "{'bond_name': 'TEST_req_bond_name', 'entity_id': 'TEST_req_entity_id', 'component_scores': {'use_of_proceeds': {'raw': 30, 'weighted': 9.0}, 'process_for_project_evaluation': {'raw': 0, 'weighted': 0.0}, 'management_of_proceeds': {'raw': 8\u2026",
+         "dur_ms": 0.263,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 8,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 505,
+           "args": {
+            ".0": "<list_iterator object at 0x0000022E1AA5C5E0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 9,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 559,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x0000022E1AB98310>"
+           },
+           "ret": "9.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 10,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 559,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x0000022E1AB98310>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 559,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x0000022E1AB98310>"
+           },
+           "ret": "20.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 559,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x0000022E1AB98310>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13,
+           "name": "<genexpr>",
+           "qual": "SocialBondEngine.assess_icma_sbp_compliance.<locals>.<genexpr>",
+           "file": "services/social_bond_engine.py",
+           "line": 559,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x0000022E1AB98310>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 14,
+         "name": "assess_use_of_proceeds",
+         "qual": "SocialBondEngine.assess_use_of_proceeds",
+         "file": "services/social_bond_engine.py",
+         "line": 581,
+         "args": {
+          "entity_id": "'TEST_req_entity_id'",
+          "bond_name": "'TEST_req_bond_name'",
+          "categories": "None",
+          "total_issuance_m": "1.0"
+         },
+         "ret": "None",
+         "dur_ms": 0.024,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/icma-sbp-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/sdg-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/social-kpis",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/target-population",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "social-bond",
+   "label": "POST /api/v1/social-bond/use-of-proceeds",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

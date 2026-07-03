@@ -1,0 +1,537 @@
+{
+ "domain": "eudr",
+ "meta": {
+  "ts": "2026-06-30T14:02:01",
+  "module": "api.v1.routes.eudr",
+  "router_prefix": "/api/v1/eudr",
+  "endpoints": 13
+ },
+ "transactions": [
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/certifications",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.522,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "certification_schemes"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_certifications",
+     "qual": "ref_certifications",
+     "file": "api/v1/routes/eudr.py",
+     "line": 329,
+     "args": {},
+     "ret": "{'certification_schemes': {'RSPO': {'name': 'Roundtable on Sustainable Palm Oil', 'commodities': ['oil_palm'], 'credibility_tier': 'high', 'eudr_recognition': 'indicative_not_substitute'}, 'FSC': {'name': 'Forest Stewardship Council', 'com\u2026",
+     "dur_ms": 0.088,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_certification_schemes",
+       "qual": "EUDREngine.get_certification_schemes",
+       "file": "services/eudr_engine.py",
+       "line": 1023,
+       "args": {},
+       "ret": "{'RSPO': {'name': 'Roundtable on Sustainable Palm Oil', 'commodities': ['oil_palm'], 'credibility_tier': 'high', 'eudr_recognition': 'indicative_not_substitute'}, 'FSC': {'name': 'Forest Stewardship Council', 'commodities': ['wood'], 'cred\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/commodities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.301,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eudr_commodities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_commodities",
+     "qual": "ref_commodities",
+     "file": "api/v1/routes/eudr.py",
+     "line": 311,
+     "args": {},
+     "ret": "{'eudr_commodities': {'cattle': {'description': 'Cattle (live animals and derived products)', 'hs_chapters': ['0102', '0201', '0202', '4101', '4104', '4107'], 'derived_products': ['beef', 'leather', 'tallow', 'gelatin'], 'deforestation_cut\u2026",
+     "dur_ms": 0.074,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_commodities",
+       "qual": "EUDREngine.get_commodities",
+       "file": "services/eudr_engine.py",
+       "line": 1008,
+       "args": {},
+       "ret": "{'cattle': {'description': 'Cattle (live animals and derived products)', 'hs_chapters': ['0102', '0201', '0202', '4101', '4104', '4107'], 'derived_products': ['beef', 'leather', 'tallow', 'gelatin'], 'deforestation_cutoff': '2020-12-31', '\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/country-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.376,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "country_benchmarks"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_country_benchmarks",
+     "qual": "ref_country_benchmarks",
+     "file": "api/v1/routes/eudr.py",
+     "line": 317,
+     "args": {},
+     "ret": "{'country_benchmarks': {'BR': {'tier': 'high', 'name': 'Brazil', 'commodities': ['soya', 'cattle', 'coffee', 'wood', 'cocoa']}, 'ID': {'tier': 'high', 'name': 'Indonesia', 'commodities': ['oil_palm', 'rubber', 'wood', 'cocoa', 'coffee']}, \u2026",
+     "dur_ms": 0.118,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_country_benchmarks",
+       "qual": "EUDREngine.get_country_benchmarks",
+       "file": "services/eudr_engine.py",
+       "line": 1013,
+       "args": {},
+       "ret": "{'BR': {'tier': 'high', 'name': 'Brazil', 'commodities': ['soya', 'cattle', 'coffee', 'wood', 'cocoa']}, 'ID': {'tier': 'high', 'name': 'Indonesia', 'commodities': ['oil_palm', 'rubber', 'wood', 'cocoa', 'coffee']}, 'MY': {'tier': 'high', \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.245,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cross_framework_map"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/eudr.py",
+     "line": 341,
+     "args": {},
+     "ret": "{'cross_framework_map': [{'eudr_article': 'Art 4 (due diligence)', 'esrs': 'ESRS E4-4 (Biodiversity action plans)', 'eu_taxonomy': 'Forestry DNSH (Climate Adaptation)', 'gri': 'GRI 304-2 (Significant impacts on biodiversity)'}, {'eudr_arti\u2026",
+     "dur_ms": 0.054,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_cross_framework_map",
+       "qual": "EUDREngine.get_cross_framework_map",
+       "file": "services/eudr_engine.py",
+       "line": 1033,
+       "args": {},
+       "ret": "[{'eudr_article': 'Art 4 (due diligence)', 'esrs': 'ESRS E4-4 (Biodiversity action plans)', 'eu_taxonomy': 'Forestry DNSH (Climate Adaptation)', 'gri': 'GRI 304-2 (Significant impacts on biodiversity)'}, {'eudr_article': 'Art 9 (informatio\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/enforcement-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.336,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "enforcement_timeline"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_enforcement_timeline",
+     "qual": "ref_enforcement_timeline",
+     "file": "api/v1/routes/eudr.py",
+     "line": 323,
+     "args": {},
+     "ret": "{'enforcement_timeline': [{'date': '2023-06-29', 'event': 'EUDR enters into force', 'article': 'Reg 2023/1115'}, {'date': '2024-12-30', 'event': 'Original application date for large operators (deferred)', 'article': 'Art 38(1)'}, {'date': \u2026",
+     "dur_ms": 0.084,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_enforcement_timeline",
+       "qual": "EUDREngine.get_enforcement_timeline",
+       "file": "services/eudr_engine.py",
+       "line": 1018,
+       "args": {},
+       "ret": "[{'date': '2023-06-29', 'event': 'EUDR enters into force', 'article': 'Reg 2023/1115'}, {'date': '2024-12-30', 'event': 'Original application date for large operators (deferred)', 'article': 'Art 38(1)'}, {'date': '2025-06-30', 'event': 'O\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/hs-codes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.259,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "hs_code_lookup"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_hs_codes",
+     "qual": "ref_hs_codes",
+     "file": "api/v1/routes/eudr.py",
+     "line": 347,
+     "args": {},
+     "ret": "{'hs_code_lookup': {'0102': 'cattle', '0201': 'cattle', '0202': 'cattle', '4101': 'cattle', '4104': 'cattle', '4107': 'cattle', '1801': 'cocoa', '1802': 'cocoa', '1803': 'cocoa', '1804': 'cocoa', '1805': 'cocoa', '1806': 'cocoa', '0901': '\u2026",
+     "dur_ms": 0.058,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "get_hs_code_lookup",
+       "qual": "EUDREngine.get_hs_code_lookup",
+       "file": "services/eudr_engine.py",
+       "line": 1038,
+       "args": {},
+       "ret": "{'0102': 'cattle', '0201': 'cattle', '0202': 'cattle', '4101': 'cattle', '4104': 'cattle', '4107': 'cattle', '1801': 'cocoa', '1802': 'cocoa', '1803': 'cocoa', '1804': 'cocoa', '1805': 'cocoa', '1806': 'cocoa', '0901': 'coffee', '2101': 'c\u2026",
+       "dur_ms": 0.014,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "GET /api/v1/eudr/ref/requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.259,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "due_diligence_requirements"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "ref_requirements",
+     "qual": "ref_requirements",
+     "file": "api/v1/routes/eudr.py",
+     "line": 335,
+     "args": {},
+     "ret": "{'due_diligence_requirements': {'art_4_general': {'title': 'General due diligence obligation', 'article': '4', 'description': 'Operators must exercise due diligence before placing, making available, or exporting relevant commodities/produc\u2026",
+     "dur_ms": 0.065,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "get_due_diligence_requirements",
+       "qual": "EUDREngine.get_due_diligence_requirements",
+       "file": "services/eudr_engine.py",
+       "line": 1028,
+       "args": {},
+       "ret": "{'art_4_general': {'title': 'General due diligence obligation', 'article': '4', 'description': 'Operators must exercise due diligence before placing, making available, or exporting relevant commodities/products', 'applies_to': ['operator',\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/commodity-screening",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'product_name'",
+   "dur_ms": 0.257,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "screen_commodity",
+     "qual": "screen_commodity",
+     "file": "api/v1/routes/eudr.py",
+     "line": 128,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/compliance-gap",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'operator_id'",
+   "dur_ms": 0.809,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "analyse_compliance_gaps",
+     "qual": "analyse_compliance_gaps",
+     "file": "api/v1/routes/eudr.py",
+     "line": 242,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/country-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/due-diligence",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'operator_id'",
+   "dur_ms": 0.801,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "assess_due_diligence",
+     "qual": "assess_due_diligence",
+     "file": "api/v1/routes/eudr.py",
+     "line": 192,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/due-diligence-statement",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "eudr",
+   "label": "POST /api/v1/eudr/traceability-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

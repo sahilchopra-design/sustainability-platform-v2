@@ -1,0 +1,355 @@
+{
+ "domain": "biodiversity-credits",
+ "meta": {
+  "ts": "2026-06-30T13:59:25",
+  "module": "api.v1.routes.biodiversity_credits",
+  "router_prefix": "/api/v1/biodiversity-credits",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "biodiversity-credits",
+   "label": "GET /api/v1/biodiversity-credits/ref/credit-standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.314,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "credit_standards",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_credit_standards",
+     "qual": "ref_credit_standards",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 385,
+     "args": {},
+     "ret": "{'credit_standards': {'Verra_VM0033': {'name': 'Verra VM0033 \u2014 Tidal Wetland & Coastal Ecosystems', 'type': 'ecosystem', 'methodology_basis': 'VM0033 v2.0; GHG + biodiversity co-benefits; VCS + CCB Standards', 'accepted_jurisdictions': ['U\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "GET /api/v1/biodiversity-credits/ref/ecosystem-services",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.333,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ecosystem_services",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_ecosystem_services",
+     "qual": "ref_ecosystem_services",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 411,
+     "args": {},
+     "ret": "{'ecosystem_services': {'carbon_sequestration': {'unit': 'tCO2e/ha/yr', 'usd_per_unit_low': 15.0, 'usd_per_unit_high': 85.0, 'method': 'Social Cost of Carbon (US-IWG 2021 $51/tCO2) / market REDD+ price'}, 'water_purification': {'unit': 'm3\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "GET /api/v1/biodiversity-credits/ref/habitat-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.395,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "habitat_distinctiveness_tiers",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_habitat_tiers",
+     "qual": "ref_habitat_tiers",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 398,
+     "args": {},
+     "ret": "{'habitat_distinctiveness_tiers': {'high_distinctiveness': {'score_range': (0.7, 1.0), 'description': 'Ancient semi-natural habitats with long ecological continuity, high species richness and irreplaceability (e.g. ancient woodland, lowlan\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "GET /api/v1/biodiversity-credits/ref/price-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.277,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "price_benchmarks",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_price_benchmarks",
+     "qual": "ref_price_benchmarks",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 424,
+     "args": {},
+     "ret": "{'price_benchmarks': {'BNG_habitat_unit': {'price_usd_low': 1200.0, 'price_usd_high': 18000.0, 'liquidity_score': 0.65, 'key_buyers': ['UK property developers', 'infrastructure operators', 'local authorities'], 'trend': 'rising \u2014 mandatory\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'NoneType' object has no attribute 'get'",
+   "dur_ms": 1.537,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<FullAssessmentRequest (mock)>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "<lambda>",
+     "qual": "FullAssessmentRequest.<lambda>",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 258,
+     "args": {},
+     "ret": "{'governance': 55.0, 'strategy': 40.0, 'risk_management': 45.0, 'metrics_targets': 30.0}",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    },
+    {
+     "id": 6,
+     "name": "<lambda>",
+     "qual": "FullAssessmentRequest.<lambda>",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 273,
+     "args": {},
+     "ret": "{'a': 30.0, 'b': 20.0, 'c': 15.0, 'd': 25.0, 'e': 10.0, 'f': 20.0}",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    },
+    {
+     "id": 7,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/biodiversity_credits.py",
+     "line": 288,
+     "args": {
+      "request": "FullAssessmentRequest(entity_id='ENTITY_001', sector='financial_services', country='United Kingdom', revenue_usd_m=500.0, project_data=None, credit_data=None, pillar_scores={'governance': 55.0, 'strategy': 40.0, 'risk_management': 45.0, 'm\u2026"
+     },
+     "ret": "None",
+     "dur_ms": 0.152,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "run_full_assessment",
+       "qual": "BiodiversityCreditEngine.run_full_assessment",
+       "file": "services/biodiversity_credit_engine.py",
+       "line": 954,
+       "args": {
+        "entity_data": "{'entity_id': 'ENTITY_001', 'sector': 'financial_services', 'country': 'United Kingdom', 'revenue_usd_m': 500.0, 'project_data': None, 'credit_data': None, 'pillar_scores': {'governance': 55.0, 'strategy': 40.0, 'risk_management': 45.0, 'm\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.036,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "assess_bng_metric",
+         "qual": "BiodiversityCreditEngine.assess_bng_metric",
+         "file": "services/biodiversity_credit_engine.py",
+         "line": 453,
+         "args": {
+          "project_data": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/bng-metric",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/credit-quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/ecosystem-services",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/gbf-target15",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-credits",
+   "label": "POST /api/v1/biodiversity-credits/tnfd-disclosure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

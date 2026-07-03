@@ -1,0 +1,304 @@
+{
+ "domain": "trade-finance-esg",
+ "meta": {
+  "ts": "2026-06-30T14:05:35",
+  "module": "api.v1.routes.trade_finance_esg",
+  "router_prefix": "/api/v1/trade-finance-esg",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "trade-finance-esg",
+   "label": "GET /api/v1/trade-finance-esg/ref/emission-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.281,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "transport_emission_factors",
+     "product_ghg_intensity_kgco2e_per_tonne",
+     "scope3_categories",
+     "standard"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_emission_factors",
+     "qual": "get_emission_factors",
+     "file": "api/v1/routes/trade_finance_esg.py",
+     "line": 229,
+     "args": {},
+     "ret": "{'transport_emission_factors': {'air_freight': {'kgco2e_per_tonne_km': 0.602, 'scope3_category': 'Cat4_upstream_transport'}, 'sea_freight': {'kgco2e_per_tonne_km': 0.016, 'scope3_category': 'Cat4_upstream_transport'}, 'road_truck_hgv': {'k\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "GET /api/v1/trade-finance-esg/ref/ep4-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.639,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ep4_categories",
+     "ep4_principles",
+     "high_risk_country_count",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_ep4_categories",
+     "qual": "get_ep4_categories",
+     "file": "api/v1/routes/trade_finance_esg.py",
+     "line": 183,
+     "args": {},
+     "ret": "{'ep4_categories': {'A': {'description': 'Significant adverse social or environmental impacts that are diverse, irreversible or unprecedented', 'esia_required': True, 'independent_consultant': True, 'public_consultation': True, 'monitoring\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "GET /api/v1/trade-finance-esg/ref/esg-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.784,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "esg_tiers",
+     "icc_stf_principles",
+     "ilo_core_standards"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_esg_tiers",
+     "qual": "get_esg_tiers",
+     "file": "api/v1/routes/trade_finance_esg.py",
+     "line": 214,
+     "args": {},
+     "ret": "{'esg_tiers': {'A': {'description': 'Exemplary ESG performance \u2014 top 10% cohort', 'esg_score_range': (85, 100), 'discount_rate_bps': (0, 25), 'reverse_factoring_eligible': True, 'due_diligence_level': 'light', 'monitoring_frequency': 'annu\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "GET /api/v1/trade-finance-esg/ref/green-instruments",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.824,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "green_instruments",
+     "icc_stf_principles_2022",
+     "icma_categories"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_green_instruments",
+     "qual": "get_green_instruments",
+     "file": "api/v1/routes/trade_finance_esg.py",
+     "line": 243,
+     "args": {},
+     "ret": "{'green_instruments': {'green_lc': {'full_name': 'Green Letter of Credit', 'use_of_proceeds_required': True, 'eligible_sectors': ['renewable_energy', 'clean_tech', 'sustainable_agriculture', 'green_building'], 'icma_gbs_aligned': True, 'ic\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "GET /api/v1/trade-finance-esg/ref/oecd-arrangement",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.761,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "oecd_arrangement_sectors",
+     "version",
+     "climate_key_events",
+     "crc_scale"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_oecd_arrangement",
+     "qual": "get_oecd_arrangement",
+     "file": "api/v1/routes/trade_finance_esg.py",
+     "line": 194,
+     "args": {},
+     "ret": "{'oecd_arrangement_sectors': {'coal_power': {'climate_change_su': 'RESTRICTED', 'excluded_since': '2022-01-01', 'restriction_type': 'full_exclusion', 'max_repayment_years': 0, 'min_premium_pct': None}, 'renewable_energy': {'climate_change_\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "POST /api/v1/trade-finance-esg/eca-standards",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "POST /api/v1/trade-finance-esg/equator-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "POST /api/v1/trade-finance-esg/green-instrument",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "POST /api/v1/trade-finance-esg/supply-chain-esg",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "trade-finance-esg",
+   "label": "POST /api/v1/trade-finance-esg/trade-flow-emissions",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

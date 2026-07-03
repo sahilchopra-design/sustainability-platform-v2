@@ -1,0 +1,841 @@
+{
+ "domain": "adaptation-finance",
+ "meta": {
+  "ts": "2026-06-30T13:59:05",
+  "module": "api.v1.routes.adaptation_finance",
+  "router_prefix": "/api/v1/adaptation-finance",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "adaptation-finance",
+   "label": "GET /api/v1/adaptation-finance/ref/gfma-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.222,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_categories",
+     "categories"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_gfma_categories",
+     "qual": "ref_gfma_categories",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 321,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'GFMA Adaptation Finance Framework 2022', 'total_categories': 8, 'categories': {'water_infrastructure': {'gfma_code': 'WI', 'description': 'Drought-resilient water supply, desalination, catchment restoration\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "GET /api/v1/adaptation-finance/ref/hazard-risk-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.435,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_hazards",
+     "hazard_profiles",
+     "rcp_hazard_projections",
+     "gari_scoring_criteria",
+     "discount_rates_by_context"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_hazard_risk_profiles",
+     "qual": "ref_hazard_risk_profiles",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 373,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'IPCC AR6 WG2; World Bank NatCat risk database; GFMA Hazard Profiles', 'total_hazards': 10, 'hazard_profiles': {'flooding': {'risk_reduction_by_measure': {'dyke_levee': 0.7, 'floodplain_restoration': 0.4, 'e\u2026",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "GET /api/v1/adaptation-finance/ref/mdb-facilities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.127,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_facilities",
+     "facilities"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_mdb_facilities",
+     "qual": "ref_mdb_facilities",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 337,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'MDB climate finance eligibility criteria (2024)', 'total_facilities': 8, 'facilities': {'GCF': {'name': 'Green Climate Fund', 'url_ref': 'https://www.greenclimate.fund', 'min_project_size_m': 10.0, 'eligibl\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "GET /api/v1/adaptation-finance/ref/nap-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.612,
+   "node_count": 33,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "total_countries",
+     "nap_submitted_count",
+     "nap_in_progress_count",
+     "profiles"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_nap_profiles",
+     "qual": "ref_nap_profiles",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 352,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'UNFCCC NAP Portal (2024); NDC Registry', 'total_countries': 30, 'nap_submitted_count': 21, 'nap_in_progress_count': 9, 'profiles': {'BD': {'name': 'Bangladesh', 'nap_status': 'Submitted', 'nap_year': 2023, \u2026",
+     "dur_ms": 0.867,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 360,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "ref_nap_profiles.<locals>.<genexpr>",
+       "file": "api/v1/routes/adaptation_finance.py",
+       "line": 361,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x00000178AA1A7010>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/adaptation-npv",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 10.096,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 283,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 7.509,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/gari-scoring",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/gfma-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/mdb-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/nap-ndc-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/portfolio-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 8.535,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 38,
+     "name": "portfolio_assessment",
+     "qual": "portfolio_assessment",
+     "file": "api/v1/routes/adaptation_finance.py",
+     "line": 301,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 6.579,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "adaptation-finance",
+   "label": "POST /api/v1/adaptation-finance/resilience-delta",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

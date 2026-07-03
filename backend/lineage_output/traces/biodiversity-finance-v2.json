@@ -1,0 +1,365 @@
+{
+ "domain": "biodiversity-finance-v2",
+ "meta": {
+  "ts": "2026-06-30T13:59:27",
+  "module": "api.v1.routes.biodiversity_finance_v2",
+  "router_prefix": "/api/v1/biodiversity-finance-v2",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "GET /api/v1/biodiversity-finance-v2/ref/bng-habitats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.302,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_bng_habitats",
+     "qual": "ref_bng_habitats",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 275,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'standard': 'Natural England Biodiversity Net Gain Metric 4.0 (2023)', 'condition_multipliers': {'outstanding': 6.0, 'good': 4.0, 'moderate': 2.0, 'poor': 1.0, 'very_poor': 0.5, 'n_a': 0.0}, 'land_use_msa_fra\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "GET /api/v1/biodiversity-finance-v2/ref/ecosystem-services",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.197,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_ecosystem_services",
+     "qual": "ref_ecosystem_services",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'total_services': 23, 'services': {'water_flow_regulation': {'name': 'Water Flow Regulation', 'category': 'regulating', 'encore_id': 'ES01', 'default_weight': 0.08}, 'soil_quality': {'name': 'Soil Quality', '\u2026",
+     "dur_ms": 0.033,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "GET /api/v1/biodiversity-finance-v2/ref/gbf-targets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.168,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_gbf_targets",
+     "qual": "ref_gbf_targets",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 247,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'framework': 'Kunming-Montreal Global Biodiversity Framework (COP15, Dec 2022)', 'total_targets': 23, 'targets': [{'target_id': 'T01', 'description': '30\u00d730 \u2014 Protect 30% of land and oceans by 2030'}, {'targe\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "GET /api/v1/biodiversity-finance-v2/ref/pbaf-methods",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.09,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_pbaf_methods",
+     "qual": "ref_pbaf_methods",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 263,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'standard': 'PBAF Standard v2 (2023) \u2014 Portfolio Biodiversity Accounting and Assessment', 'methods': {'outstanding_amount': {'description': 'Attribution = (outstanding_amount / total_enterprise_value) \u00d7 expos\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/bffi-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.432,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "bffi_score",
+     "qual": "bffi_score",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 202,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/bng-calculation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/encore-scoring",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.238,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 213,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/gbf-alignment",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/leap-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.164,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "leap_assessment",
+     "qual": "leap_assessment",
+     "file": "api/v1/routes/biodiversity_finance_v2.py",
+     "line": 126,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/msa-footprint",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "biodiversity-finance-v2",
+   "label": "POST /api/v1/biodiversity-finance-v2/pbaf-attribution",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

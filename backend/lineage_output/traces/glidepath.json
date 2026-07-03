@@ -1,0 +1,1956 @@
+{
+ "domain": "glidepath",
+ "meta": {
+  "ts": "2026-06-30T14:02:35",
+  "module": "api.v1.routes.glidepath",
+  "router_prefix": "/api/v1/glidepath",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/crrem/asset/{asset_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3066.051,
+   "node_count": 38,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_crrem_pathways"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT year, carbon_intensity_kgco2_m2, energy_intensity_kwh_m2 FROM dh_crrem_pathways WHERE LOWER(property_type) = %(ptype)s AND country_iso3 = %(country_iso3)s AND scenario = %(scenario)s ORDER BY year'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 0,
+     "dur_ms": 605.484,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "asset_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "asset_name": "'Asset' (default)",
+    "asset_type": "'Office' (default)",
+    "country": "'EU' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_id",
+     "asset_name",
+     "stranding_year",
+     "current_intensity_kgco2_m2",
+     "pathway_source",
+     "data_points"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_crrem_asset",
+     "qual": "get_crrem_asset",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 233,
+     "args": {
+      "asset_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "asset_name": "'Asset'",
+      "asset_type": "'Office'",
+      "country": "'EU'"
+     },
+     "ret": "{'asset_id': '550e8400-e29b-41d4-a716-446655440001', 'asset_name': 'Asset', 'stranding_year': None, 'current_intensity_kgco2_m2': None, 'pathway_source': 'data_hub', 'data_points': [{'year': 2020, 'actual_waci': None, 'nzba_target': 44.0, \u2026",
+     "dur_ms": 3063.347,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/data_hub_client.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.165,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_emissions at 0x000001F58E1DB2E0>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB380>",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_glidepath at 0x000001F58E1DB420>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB4C0>",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_crrem_pathway at 0x000001F58E1DB560>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB600>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_carbon_price at 0x000001F58E1DB6A0>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58C8A9C60>",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_sector_benchmark at 0x000001F58E1DB740>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB7E0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_dqs_summary at 0x000001F58E1DB880>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB920>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 9,
+       "name": "wrapper",
+       "qual": "_safe_query.<locals>.wrapper",
+       "file": "services/data_hub_client.py",
+       "line": 44,
+       "args": {},
+       "ret": "[{'year': 2020, 'intensity': 44, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2022, 'intensity': 40, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2024, 'intensity': 36, 'uni\u2026",
+       "dur_ms": 3058.371,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "_get_db_session",
+         "qual": "_get_db_session",
+         "file": "services/data_hub_client.py",
+         "line": 33,
+         "args": {},
+         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E0AB110>",
+         "dur_ms": 0.082,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "get_crrem_pathway",
+         "qual": "get_crrem_pathway",
+         "file": "services/data_hub_client.py",
+         "line": 218,
+         "args": {
+          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E0AB110>",
+          "country": "'EU'",
+          "asset_type": "'Office'",
+          "scenario": "'1.5C'"
+         },
+         "ret": "[{'year': 2020, 'intensity': 44, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2022, 'intensity': 40, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2024, 'intensity': 36, 'uni\u2026",
+         "dur_ms": 2759.637,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": [
+          {
+           "id": 12,
+           "name": "<module>",
+           "qual": "<module>",
+           "file": "api/v1/routes/glidepath_serve.py",
+           "line": 1,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 59.897,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 13,
+             "name": "<module>",
+             "qual": "<module>",
+             "file": "db/models/scenario_ingest.py",
+             "line": 1,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 21.397,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 14,
+               "name": "NgfsScenarioData",
+               "qual": "NgfsScenarioData",
+               "file": "db/models/scenario_ingest.py",
+               "line": 20,
+               "args": {},
+               "ret": "None",
+               "dur_ms": 1.149,
+               "sql": [],
+               "error": null,
+               "children": []
+              },
+              {
+               "id": 15,
+               "name": "SbtiCompany",
+               "qual": "SbtiCompany",
+               "file": "db/models/scenario_ingest.py",
+               "line": 52,
+               "args": {},
+               "ret": "None",
+               "dur_ms": 1.271,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 16,
+             "name": "require_min_role",
+             "qual": "require_min_role",
+             "file": "api/dependencies.py",
+             "line": 156,
+             "args": {
+              "minimum_role": "'viewer'"
+             },
+             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E21F240>",
+             "dur_ms": 0.067,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 17,
+               "name": "_role_rank",
+               "qual": "_role_rank",
+               "file": "api/dependencies.py",
+               "line": 125,
+               "args": {
+                "role": "'viewer'"
+               },
+               "ret": "0",
+               "dur_ms": 0.006,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 18,
+             "name": "require_min_role",
+             "qual": "require_min_role",
+             "file": "api/dependencies.py",
+             "line": 156,
+             "args": {
+              "minimum_role": "'viewer'"
+             },
+             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24AB60>",
+             "dur_ms": 0.118,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 19,
+               "name": "_role_rank",
+               "qual": "_role_rank",
+               "file": "api/dependencies.py",
+               "line": 125,
+               "args": {
+                "role": "'viewer'"
+               },
+               "ret": "0",
+               "dur_ms": 0.007,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 20,
+             "name": "require_min_role",
+             "qual": "require_min_role",
+             "file": "api/dependencies.py",
+             "line": 156,
+             "args": {
+              "minimum_role": "'viewer'"
+             },
+             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24ADE0>",
+             "dur_ms": 0.063,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 21,
+               "name": "_role_rank",
+               "qual": "_role_rank",
+               "file": "api/dependencies.py",
+               "line": 125,
+               "args": {
+                "role": "'viewer'"
+               },
+               "ret": "0",
+               "dur_ms": 0.006,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            },
+            {
+             "id": 22,
+             "name": "require_min_role",
+             "qual": "require_min_role",
+             "file": "api/dependencies.py",
+             "line": 156,
+             "args": {
+              "minimum_role": "'viewer'"
+             },
+             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24B060>",
+             "dur_ms": 0.058,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 23,
+               "name": "_role_rank",
+               "qual": "_role_rank",
+               "file": "api/dependencies.py",
+               "line": 125,
+               "args": {
+                "role": "'viewer'"
+               },
+               "ret": "0",
+               "dur_ms": 0.007,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 24,
+       "name": "get_crrem_asset",
+       "qual": "PCAFTimeSeriesEngine.get_crrem_asset",
+       "file": "services/pcaf_time_series_engine.py",
+       "line": 204,
+       "args": {
+        "asset_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "asset_name": "'Asset'",
+        "asset_type": "'Office'",
+        "country": "'EU'",
+        "actual_by_year": "{}",
+        "crrem_pathway": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}"
+       },
+       "ret": "CRREMAssetResult(asset_id='550e8400-e29b-41d4-a716-446655440001', asset_name='Asset', asset_type='Office', country='EU', data_points=[GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=44.0, iea_nze_reference=None, rag_status='GRE\u2026",
+       "dur_ms": 0.229,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 25,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2020"
+         },
+         "ret": "44.0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2025"
+         },
+         "ret": "34.0",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2030"
+         },
+         "ret": "24.0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2035"
+         },
+         "ret": "14.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2040"
+         },
+         "ret": "6.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2045"
+         },
+         "ret": "2.0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}",
+          "year": "2050"
+         },
+         "ret": "2.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 32,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=44.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2020, 'actual_waci': None, 'nzba_target': 44.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2025, actual_waci=None, nzba_target=34.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2025, 'actual_waci': None, 'nzba_target': 34.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2030, actual_waci=None, nzba_target=24.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2030, 'actual_waci': None, 'nzba_target': 24.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2035, actual_waci=None, nzba_target=14.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2035, 'actual_waci': None, 'nzba_target': 14.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2040, actual_waci=None, nzba_target=6.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2040, 'actual_waci': None, 'nzba_target': 6.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2045, actual_waci=None, nzba_target=2.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2045, 'actual_waci': None, 'nzba_target': 2.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2050, actual_waci=None, nzba_target=2.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2050, 'actual_waci': None, 'nzba_target': 2.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/crrem/{asset_type}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1164.761,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_crrem_pathways"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT year, carbon_intensity_kgco2_m2, energy_intensity_kwh_m2 FROM dh_crrem_pathways WHERE LOWER(property_type) = %(ptype)s AND country_iso3 = %(country_iso3)s AND scenario = %(scenario)s ORDER BY year'",
+     "tables": [
+      "dh_crrem_pathways"
+     ],
+     "rowcount": 0,
+     "dur_ms": 97.62,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "asset_type": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "country": "'EU' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_type",
+     "country",
+     "metric",
+     "source",
+     "pathway"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39,
+     "name": "get_crrem_pathway",
+     "qual": "get_crrem_pathway",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 201,
+     "args": {
+      "asset_type": "'550e8400-e29b-41d4-a716-446655440001'",
+      "country": "'EU'"
+     },
+     "ret": "{'asset_type': '550e8400-e29b-41d4-a716-446655440001', 'country': 'EU', 'metric': 'kgCO2/m2', 'source': 'CRREM v2.0 (reference fallback)', 'pathway': [{'year': 2020, 'value': 45}, {'year': 2025, 'value': 35}, {'year': 2030, 'value': 25}, {\u2026",
+     "dur_ms": 1162.193,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 40,
+       "name": "wrapper",
+       "qual": "_safe_query.<locals>.wrapper",
+       "file": "services/data_hub_client.py",
+       "line": 44,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 1162.106,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 41,
+         "name": "_get_db_session",
+         "qual": "_get_db_session",
+         "file": "services/data_hub_client.py",
+         "line": 33,
+         "args": {},
+         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E0F8A40>",
+         "dur_ms": 0.046,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "get_crrem_pathway",
+         "qual": "get_crrem_pathway",
+         "file": "services/data_hub_client.py",
+         "line": 218,
+         "args": {
+          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E0F8A40>",
+          "country": "'EU'",
+          "asset_type": "'550e8400-e29b-41d4-a716-446655440001'",
+          "scenario": "'1.5C'"
+         },
+         "ret": "None",
+         "dur_ms": 1131.574,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/dqs/{portfolio_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2322.788,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT exposure, scope1_tco2e, scope2_tco2e, scope3_tco2e, pcaf_dqs, entity_lei, company_sector, company_name FROM assets_pg WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "assets_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 396.126,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "weighted_dqs",
+     "dqs_distribution",
+     "coverage_pct",
+     "total_assets",
+     "total_exposure",
+     "improvement_actions",
+     "note"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 43,
+     "name": "get_portfolio_dqs",
+     "qual": "get_portfolio_dqs",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 279,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001F58E1DA520>, use_cache=True, scope=None)"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'weighted_dqs': None, 'dqs_distribution': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'coverage_pct': 0, 'total_assets': 0, 'total_exposure': 0, 'improvement_actions': ['No assets found for this\u2026",
+     "dur_ms": 2306.42,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 44,
+       "name": "wrapper",
+       "qual": "_safe_query.<locals>.wrapper",
+       "file": "services/data_hub_client.py",
+       "line": 44,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 2306.375,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 45,
+         "name": "_get_db_session",
+         "qual": "_get_db_session",
+         "file": "services/data_hub_client.py",
+         "line": 33,
+         "args": {},
+         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E250FB0>",
+         "dur_ms": 0.048,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "get_dqs_summary",
+         "qual": "get_dqs_summary",
+         "file": "services/data_hub_client.py",
+         "line": 392,
+         "args": {
+          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250FB0>",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "None",
+         "dur_ms": 2264.028,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/dqs/{portfolio_id}/improve",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 453.605,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT exposure, scope1_tco2e, scope2_tco2e, scope3_tco2e, pcaf_dqs, entity_lei, company_sector, company_name FROM assets_pg WHERE portfolio_id = %(pid)s'",
+     "tables": [
+      "assets_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.571,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "current_weighted_dqs",
+     "improvement_plan",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 47,
+     "name": "get_dqs_improvement_plan",
+     "qual": "get_dqs_improvement_plan",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 313,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001F58E1DA8E0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'current_weighted_dqs': None, 'improvement_plan': [], 'note': 'No assets found.'}",
+     "dur_ms": 450.142,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 48,
+       "name": "wrapper",
+       "qual": "_safe_query.<locals>.wrapper",
+       "file": "services/data_hub_client.py",
+       "line": 44,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 450.07,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 49,
+         "name": "_get_db_session",
+         "qual": "_get_db_session",
+         "file": "services/data_hub_client.py",
+         "line": 33,
+         "args": {},
+         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E253470>",
+         "dur_ms": 0.075,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "get_dqs_summary",
+         "qual": "get_dqs_summary",
+         "file": "services/data_hub_client.py",
+         "line": 392,
+         "args": {
+          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E253470>",
+          "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+         },
+         "ret": "None",
+         "dur_ms": 421.406,
+         "sql": [
+          0
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/nzba/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 26.8,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "metric",
+     "source",
+     "glidepath"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 51,
+     "name": "get_nzba_glidepath",
+     "qual": "get_nzba_glidepath",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 187,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'metric': 'WACI tCO2e/MEUR', 'source': 'NZBA 2021 Guidelines (fallback)', 'glidepath': [{'year': 2020, 'value': 300}, {'year': 2025, 'value': 250}, {'year': 2030, 'value': 190}, {'year': 2\u2026",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/portfolio/{portfolio_id}/status-grid",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1800.744,
+   "node_count": 27,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "csrd_entity_registry",
+    "esrs_e1_ghg_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.company_sector, a.exposure, g.scope1_gross_tco2e, g.scope2_market_based_tco2e, cer.net_turnover_meur, g.reporting_year FROM assets_pg a JOIN csrd_entity_registry cer ON cer.legal_name = a.company_name LEFT JOIN esrs_e1_ghg_emissions g ON g.entity_registry_id = cer.id WHERE a.portfolio_id = %(pid)s AND g.scope1_gross_tco2e IS NOT NULL AND cer.net_turnover_meur IS NOT NULL AND cer.net_tur\u2026",
+     "tables": [
+      "assets_pg",
+      "csrd_entity_registry",
+      "esrs_e1_ghg_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 651.834,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "sectors": "'Power,Oil & Gas,Steel,Shipping' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolio_id",
+     "sectors",
+     "years",
+     "grid"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 52,
+     "name": "get_glidepath_status_grid",
+     "qual": "get_glidepath_status_grid",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 159,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "sectors": "'Power,Oil & Gas,Steel,Shipping'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250EF0>"
+     },
+     "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'sectors': ['Power', 'Oil & Gas', 'Steel', 'Shipping'], 'years': [2025, 2030, 2035, 2040, 2045, 2050], 'grid': [{'sector': 'Power', 'year': 2025, 'actual': None, 'target': 160.0, 'ra\u2026",
+     "dur_ms": 1763.462,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 53,
+       "name": "_compute_waci_rows",
+       "qual": "_compute_waci_rows",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 28,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250EF0>"
+       },
+       "ret": "[]",
+       "dur_ms": 1761.831,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "build_status_grid",
+       "qual": "PCAFTimeSeriesEngine.build_status_grid",
+       "file": "services/pcaf_time_series_engine.py",
+       "line": 265,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+        "sectors": "['Power', 'Oil & Gas', 'Steel', 'Shipping']",
+        "time_series_rows": "[]"
+       },
+       "ret": "[GlidepathStatusRow(sector='Power', year=2025, actual=None, target=160.0, rag='GREY'), GlidepathStatusRow(sector='Power', year=2030, actual=None, target=80.0, rag='GREY'), GlidepathStatusRow(sector='Power', year=2035, actual=None, target=3\u2026",
+       "dur_ms": 1.176,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 55,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2025"
+         },
+         "ret": "160.0",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2030"
+         },
+         "ret": "80.0",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2035"
+         },
+         "ret": "30.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2040"
+         },
+         "ret": "10.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2045"
+         },
+         "ret": "5.0",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 220, 2025: 160, 2030: 80, 2035: 30, 2040: 10, 2045: 5, 2050: 0}",
+          "year": "2050"
+         },
+         "ret": "0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2025"
+         },
+         "ret": "580.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2030"
+         },
+         "ret": "460.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2035"
+         },
+         "ret": "320.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2040"
+         },
+         "ret": "200.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 65,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2045"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 680, 2025: 580, 2030: 460, 2035: 320, 2040: 200, 2045: 100, 2050: 0}",
+          "year": "2050"
+         },
+         "ret": "0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2025"
+         },
+         "ret": "1600.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2030"
+         },
+         "ret": "1200.0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2035"
+         },
+         "ret": "800.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2040"
+         },
+         "ret": "400.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2045"
+         },
+         "ret": "150.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 72,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1850, 2025: 1600, 2030: 1200, 2035: 800, 2040: 400, 2045: 150, 2050: 0}",
+          "year": "2050"
+         },
+         "ret": "0",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 73,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2025"
+         },
+         "ret": "950.0",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2030"
+         },
+         "ret": "750.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 75,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2035"
+         },
+         "ret": "500.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 76,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2040"
+         },
+         "ret": "300.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 77,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2045"
+         },
+         "ret": "100.0",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 1120, 2025: 950, 2030: 750, 2035: 500, 2040: 300, 2045: 100, 2050: 0}",
+          "year": "2050"
+         },
+         "ret": "0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/sector/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1380.344,
+   "node_count": 20,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "csrd_entity_registry",
+    "dh_ngfs_scenario_data",
+    "esrs_e1_ghg_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT a.company_sector, a.exposure, g.scope1_gross_tco2e, g.scope2_market_based_tco2e, cer.net_turnover_meur, g.reporting_year FROM assets_pg a JOIN csrd_entity_registry cer ON cer.legal_name = a.company_name LEFT JOIN esrs_e1_ghg_emissions g ON g.entity_registry_id = cer.id WHERE a.portfolio_id = %(pid)s AND g.scope1_gross_tco2e IS NOT NULL AND cer.net_turnover_meur IS NOT NULL AND cer.net_tur\u2026",
+     "tables": [
+      "assets_pg",
+      "csrd_entity_registry",
+      "esrs_e1_ghg_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.88,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 72.147,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT dh_ngfs_scenario_data.id AS dh_ngfs_scenario_data_id, dh_ngfs_scenario_data.source_id AS dh_ngfs_scenario_data_source_id, dh_ngfs_scenario_data.model AS dh_ngfs_scenario_data_model, dh_ngfs_scenario_data.scenario AS dh_ngfs_scenario_data_scenario, dh_ngfs_scenario_data.variable AS dh_ngfs_scenario_data_variable, dh_ngfs_scenario_data.region AS dh_ngfs_scenario_data_region, dh_ngfs_scenari\u2026",
+     "tables": [
+      "dh_ngfs_scenario_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.102,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "portfolio_id": "'TEST_portfolio_id' (mock-required)",
+    "scenario": "'Net Zero 2050' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "portfolio_id",
+     "current_rag",
+     "glidepath_source",
+     "data_points",
+     "data_available",
+     "waci_rows_found"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 79,
+     "name": "get_sector_glidepath",
+     "qual": "get_sector_glidepath",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 108,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+      "portfolio_id": "'TEST_portfolio_id'",
+      "scenario": "'Net Zero 2050'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E252D80>"
+     },
+     "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'portfolio_id': 'TEST_portfolio_id', 'current_rag': 'GREY', 'glidepath_source': 'fallback', 'data_points': [{'year': 2020, 'actual_waci': None, 'nzba_target': 300, 'iea_nze_reference': 270\u2026",
+     "dur_ms": 1349.209,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 80,
+       "name": "_compute_waci_rows",
+       "qual": "_compute_waci_rows",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 28,
+       "args": {
+        "portfolio_id": "'TEST_portfolio_id'",
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E252D80>"
+       },
+       "ret": "[]",
+       "dur_ms": 894.284,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "wrapper",
+       "qual": "_safe_query.<locals>.wrapper",
+       "file": "services/data_hub_client.py",
+       "line": 44,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 454.319,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 82,
+         "name": "_get_db_session",
+         "qual": "_get_db_session",
+         "file": "services/data_hub_client.py",
+         "line": 33,
+         "args": {},
+         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E2538C0>",
+         "dur_ms": 0.075,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "get_glidepath",
+         "qual": "get_glidepath",
+         "file": "services/data_hub_client.py",
+         "line": 158,
+         "args": {
+          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E2538C0>",
+          "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+          "scenario": "'Net Zero 2050'"
+         },
+         "ret": "None",
+         "dur_ms": 419.787,
+         "sql": [
+          1,
+          2
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 84,
+       "name": "get_sector_glidepath",
+       "qual": "PCAFTimeSeriesEngine.get_sector_glidepath",
+       "file": "services/pcaf_time_series_engine.py",
+       "line": 137,
+       "args": {
+        "portfolio_id": "'TEST_portfolio_id'",
+        "sector": "'550e8400-e29b-41d4-a716-446655440001'",
+        "time_series_rows": "[]",
+        "data_hub_glidepath": "None"
+       },
+       "ret": "SectorGlidepathResult(sector='550e8400-e29b-41d4-a716-446655440001', portfolio_id='TEST_portfolio_id', data_points=[GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=300, iea_nze_reference=270.0, rag_status='GREY', deviation_pct=\u2026",
+       "dur_ms": 0.243,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 85,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2020"
+         },
+         "ret": "300",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2025"
+         },
+         "ret": "250.0",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2030"
+         },
+         "ret": "190.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2035"
+         },
+         "ret": "130.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2040"
+         },
+         "ret": "80.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2045"
+         },
+         "ret": "30.0",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "interpolate_glidepath",
+         "qual": "interpolate_glidepath",
+         "file": "services/pcaf_time_series_engine.py",
+         "line": 113,
+         "args": {
+          "glidepath": "{2020: 300, 2025: 250, 2030: 190, 2035: 130, 2040: 80, 2045: 30, 2050: 0}",
+          "year": "2050"
+         },
+         "ret": "0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 92,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=300, iea_nze_reference=270.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2020, 'actual_waci': None, 'nzba_target': 300, 'iea_nze_reference': 270.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2025, actual_waci=None, nzba_target=250.0, iea_nze_reference=225.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2025, 'actual_waci': None, 'nzba_target': 250.0, 'iea_nze_reference': 225.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2030, actual_waci=None, nzba_target=190.0, iea_nze_reference=171.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2030, 'actual_waci': None, 'nzba_target': 190.0, 'iea_nze_reference': 171.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2035, actual_waci=None, nzba_target=130.0, iea_nze_reference=117.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2035, 'actual_waci': None, 'nzba_target': 130.0, 'iea_nze_reference': 117.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2040, actual_waci=None, nzba_target=80.0, iea_nze_reference=72.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2040, 'actual_waci': None, 'nzba_target': 80.0, 'iea_nze_reference': 72.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2045, actual_waci=None, nzba_target=30.0, iea_nze_reference=27.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2045, 'actual_waci': None, 'nzba_target': 30.0, 'iea_nze_reference': 27.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "_dp_to_dict",
+       "qual": "_dp_to_dict",
+       "file": "api/v1/routes/glidepath.py",
+       "line": 86,
+       "args": {
+        "dp": "GlidepathDataPoint(year=2050, actual_waci=None, nzba_target=0, iea_nze_reference=0.0, rag_status='GREY', deviation_pct=None)"
+       },
+       "ret": "{'year': 2050, 'actual_waci': None, 'nzba_target': 0, 'iea_nze_reference': 0.0, 'rag_status': 'GREY', 'deviation_pct': None}",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "glidepath",
+   "label": "GET /api/v1/glidepath/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.172,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors",
+     "source"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 99,
+     "name": "list_glidepath_sectors",
+     "qual": "list_glidepath_sectors",
+     "file": "api/v1/routes/glidepath.py",
+     "line": 100,
+     "args": {},
+     "ret": "{'sectors': ['Power', 'Oil & Gas', 'Steel', 'Shipping', 'Real Estate', 'Aviation', 'Cement', 'Aluminium', 'Other'], 'source': 'NZBA 2021 Guidelines / IEA WEO 2023 + NGFS live data'}",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 100,
+       "name": "get_available_sectors",
+       "qual": "PCAFTimeSeriesEngine.get_available_sectors",
+       "file": "services/pcaf_time_series_engine.py",
+       "line": 295,
+       "args": {},
+       "ret": "['Power', 'Oil & Gas', 'Steel', 'Shipping', 'Real Estate', 'Aviation', 'Cement', 'Aluminium', 'Other']",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

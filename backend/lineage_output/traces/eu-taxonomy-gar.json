@@ -1,0 +1,439 @@
+{
+ "domain": "eu-taxonomy-gar",
+ "meta": {
+  "ts": "2026-06-30T14:02:00",
+  "module": "api.v1.routes.eu_taxonomy_gar",
+  "router_prefix": "/api/v1/eu-taxonomy-gar",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "GET /api/v1/eu-taxonomy-gar/ref/asset-classes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.601,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financial_corporations_eq",
+     "financial_corporations_debt",
+     "non_financial_corporations_eq",
+     "non_financial_corporations_debt",
+     "project_finance",
+     "mortgages",
+     "auto_loans",
+     "home_renovation_loans",
+     "local_government_debt",
+     "sovereigns",
+     "derivatives"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_asset_classes",
+     "qual": "ref_asset_classes",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 198,
+     "args": {},
+     "ret": "{'financial_corporations_eq': {'name': 'Equities in financial corporations', 'gar_eligible': True, 'btar_eligible': False, 'numerator_condition': 'Taxonomy-aligned activities of the financial corporation', 'article': 'Art 8 Del. Act Annex \u2026",
+     "dur_ms": 0.106,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_asset_classes",
+       "qual": "EUTaxonomyGAREngine.get_asset_classes",
+       "file": "services/eu_taxonomy_gar_engine.py",
+       "line": 492,
+       "args": {},
+       "ret": "{'financial_corporations_eq': {'name': 'Equities in financial corporations', 'gar_eligible': True, 'btar_eligible': False, 'numerator_condition': 'Taxonomy-aligned activities of the financial corporation', 'article': 'Art 8 Del. Act Annex \u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "GET /api/v1/eu-taxonomy-gar/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.342,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "csrd_esrs_e1",
+     "eu_gbs",
+     "sfdr_pai",
+     "mifid_spt",
+     "cbi"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 227,
+     "args": {},
+     "ret": "{'csrd_esrs_e1': 'ESRS E1-3 (energy) and E1-5 (GHG) inform CCM taxonomy technical screening criteria', 'eu_gbs': 'EU GBS issuances require 100% taxonomy-aligned use of proceeds; GAR supports issuer eligibility', 'sfdr_pai': 'SFDR PAI 14 (t\u2026",
+     "dur_ms": 0.054,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_cross_framework",
+       "qual": "EUTaxonomyGAREngine.get_cross_framework",
+       "file": "services/eu_taxonomy_gar_engine.py",
+       "line": 504,
+       "args": {},
+       "ret": "{'csrd_esrs_e1': 'ESRS E1-3 (energy) and E1-5 (GHG) inform CCM taxonomy technical screening criteria', 'eu_gbs': 'EU GBS issuances require 100% taxonomy-aligned use of proceeds; GAR supports issuer eligibility', 'sfdr_pai': 'SFDR PAI 14 (t\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "GET /api/v1/eu-taxonomy-gar/ref/dnsh-objectives",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.248,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "CCM",
+     "CCA",
+     "WMR",
+     "CE",
+     "PPE",
+     "BIO"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_dnsh_objectives",
+     "qual": "ref_dnsh_objectives",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 206,
+     "args": {},
+     "ret": "{'CCM': 'Climate Change Mitigation \u2014 no significant harm to mitigation (GHG emissions threshold check)', 'CCA': 'Climate Change Adaptation \u2014 no significant harm to adaptation (climate risk assessment required)', 'WMR': 'Water and Marine Re\u2026",
+     "dur_ms": 0.048,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_dnsh_objectives",
+       "qual": "EUTaxonomyGAREngine.get_dnsh_objectives",
+       "file": "services/eu_taxonomy_gar_engine.py",
+       "line": 495,
+       "args": {},
+       "ret": "{'CCM': 'Climate Change Mitigation \u2014 no significant harm to mitigation (GHG emissions threshold check)', 'CCA': 'Climate Change Adaptation \u2014 no significant harm to adaptation (climate risk assessment required)', 'WMR': 'Water and Marine Re\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "GET /api/v1/eu-taxonomy-gar/ref/gar-phases",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.236,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "phase_1",
+     "phase_2"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_gar_phases",
+     "qual": "ref_gar_phases",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 220,
+     "args": {},
+     "ret": "{'phase_1': {'period': '2022-2023', 'scope': 'Disclosure of KPIs: taxonomy eligible vs non-eligible', 'mandatory': True}, 'phase_2': {'period': '2024+', 'scope': 'Full GAR/BTAR/BSAR disclosure with taxonomy-aligned vs eligible split', 'man\u2026",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_gar_phases",
+       "qual": "EUTaxonomyGAREngine.get_gar_phases",
+       "file": "services/eu_taxonomy_gar_engine.py",
+       "line": 501,
+       "args": {},
+       "ret": "{'phase_1': {'period': '2022-2023', 'scope': 'Disclosure of KPIs: taxonomy eligible vs non-eligible', 'mandatory': True}, 'phase_2': {'period': '2024+', 'scope': 'Full GAR/BTAR/BSAR disclosure with taxonomy-aligned vs eligible split', 'man\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "GET /api/v1/eu-taxonomy-gar/ref/min-safeguards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.265,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ungc",
+     "oecd_mne",
+     "ungp",
+     "ilo_core",
+     "udhr"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_min_safeguards",
+     "qual": "ref_min_safeguards",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 213,
+     "args": {},
+     "ret": "{'ungc': {'name': 'UN Global Compact', 'description': 'Entity not in violation of UNGC Ten Principles (human rights, labour, environment, anti-corruption)', 'blocking': True}, 'oecd_mne': {'name': 'OECD Guidelines for MNEs', 'description':\u2026",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_min_safeguards",
+       "qual": "EUTaxonomyGAREngine.get_min_safeguards",
+       "file": "services/eu_taxonomy_gar_engine.py",
+       "line": 498,
+       "args": {},
+       "ret": "{'ungc': {'name': 'UN Global Compact', 'description': 'Entity not in violation of UNGC Ten Principles (human rights, labour, environment, anti-corruption)', 'blocking': True}, 'oecd_mne': {'name': 'OECD Guidelines for MNEs', 'description':\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "POST /api/v1/eu-taxonomy-gar/assess-dnsh",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'assets'",
+   "dur_ms": 0.452,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_dnsh",
+     "qual": "assess_dnsh",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 145,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "POST /api/v1/eu-taxonomy-gar/assess-min-safeguards",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.267,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "assess_min_safeguards",
+     "qual": "assess_min_safeguards",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 158,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "POST /api/v1/eu-taxonomy-gar/calculate-gar",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'assets'",
+   "dur_ms": 0.265,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "calculate_gar",
+     "qual": "calculate_gar",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 124,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eu-taxonomy-gar",
+   "label": "POST /api/v1/eu-taxonomy-gar/calculate-gar/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'assets'",
+   "dur_ms": 0.219,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "calculate_gar_batch",
+     "qual": "calculate_gar_batch",
+     "file": "api/v1/routes/eu_taxonomy_gar.py",
+     "line": 179,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

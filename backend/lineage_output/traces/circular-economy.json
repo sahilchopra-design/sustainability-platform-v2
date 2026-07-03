@@ -1,0 +1,242 @@
+{
+ "domain": "circular-economy",
+ "meta": {
+  "ts": "2026-06-30T13:59:44",
+  "module": "api.v1.routes.circular_economy",
+  "router_prefix": "/api/v1/circular-economy",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "circular-economy",
+   "label": "GET /api/v1/circular-economy/ref/crm-list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.353,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_crm_count",
+     "critical_raw_materials",
+     "strategic_raw_materials",
+     "eu_2030_targets",
+     "regulation",
+     "review_cycle",
+     "strategic_stockpiling"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_crm_list",
+     "qual": "ref_crm_list",
+     "file": "api/v1/routes/circular_economy.py",
+     "line": 216,
+     "args": {},
+     "ret": "{'total_crm_count': 34, 'critical_raw_materials': ['antimony', 'baryte', 'beryllium', 'bismuth', 'boron', 'cobalt', 'coking_coal', 'copper', 'feldspar', 'fluorspar', 'gallium', 'germanium', 'hafnium', 'heavy_rare_earth', 'helium', 'indium'\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "circular-economy",
+   "label": "GET /api/v1/circular-economy/ref/epr-rates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.22,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "rates",
+     "categories",
+     "currency",
+     "unit",
+     "directives",
+     "note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_epr_rates",
+     "qual": "ref_epr_rates",
+     "file": "api/v1/routes/circular_economy.py",
+     "line": 230,
+     "args": {},
+     "ret": "{'rates': [{'country': 'EU', 'category': 'packaging', 'rate_eur_t': 100.0}, {'country': 'DE', 'category': 'packaging', 'rate_eur_t': 130.0}, {'country': 'FR', 'category': 'packaging', 'rate_eur_t': 120.0}, {'country': 'GB', 'category': 'pa\u2026",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/crm-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/epr-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/esrs-e5",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/lca",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/material-flows",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/mci",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/overall-circularity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "circular-economy",
+   "label": "POST /api/v1/circular-economy/wbcsd-cti",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "domain": "nonv1-sfdr",
+ "meta": {
+  "ts": "2026-06-30T14:26:24",
+  "endpoints": 1,
+  "source": "server.app",
+  "predicate": "nonv1-sfdr"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-sfdr",
+   "label": "POST /api/sfdr/pai/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

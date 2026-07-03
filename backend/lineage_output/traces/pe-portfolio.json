@@ -1,0 +1,518 @@
+{
+ "domain": "pe-portfolio",
+ "meta": {
+  "ts": "2026-07-01T10:05:44",
+  "endpoints": 10,
+  "module": "api.v1.routes.pe_portfolio",
+  "router_prefix": "/api/v1/pe-portfolio"
+ },
+ "transactions": [
+  {
+   "domain": "pe-portfolio",
+   "label": "GET /api/v1/pe-portfolio/db/companies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 565.089,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pe_portfolio_companies"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM pe_portfolio_companies WHERE 1=1 ORDER BY investment_date DESC NULLS LAST LIMIT %(lim)s'",
+     "tables": [
+      "pe_portfolio_companies"
+     ],
+     "rowcount": 0,
+     "dur_ms": 59.017,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund_id": "None (default)",
+    "status": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "companies"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "db_list_companies",
+     "qual": "db_list_companies",
+     "file": "api/v1/routes/pe_portfolio.py",
+     "line": 321,
+     "args": {
+      "fund_id": "None",
+      "status": "None"
+     },
+     "ret": "{'count': 0, 'companies': []}",
+     "dur_ms": 564.869,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_portfolio.py",
+       "line": 270,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000002063748F5F0>",
+       "dur_ms": 1.497,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/pe_db_service.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.087,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 4,
+           "name": "PEDBService",
+           "qual": "PEDBService",
+           "file": "services/pe_db_service.py",
+           "line": 36,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 5,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 6,
+       "name": "list_portfolio_companies",
+       "qual": "PEDBService.list_portfolio_companies",
+       "file": "services/pe_db_service.py",
+       "line": 309,
+       "args": {
+        "fund_id": "None",
+        "status": "None",
+        "limit": "100"
+       },
+       "ret": "[]",
+       "dur_ms": 563.322,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "GET /api/v1/pe-portfolio/db/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 310.42,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "pe_portfolio_companies"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT COUNT(*) as total_companies, COUNT(*) FILTER (WHERE status = 'active') as active_count, COUNT(*) FILTER (WHERE status = 'exited') as exited_count, COALESCE(SUM(equity_invested_eur), 0) as total_invested_eur, COALESCE(SUM(current_nav_eur), 0) as total_nav_eur, COALESCE(SUM(exit_proceeds_eur), 0) as total_exit_proceeds_eur, COALESCE(AVG(esg_score_current), 0) as avg_esg_score, COALESCE(AVG(\u2026",
+     "tables": [
+      "pe_portfolio_companies"
+     ],
+     "rowcount": 1,
+     "dur_ms": 56.704,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "\"SELECT sector, COUNT(*) as count, COALESCE(SUM(equity_invested_eur), 0) as invested_eur, COALESCE(AVG(esg_score_current), 0) as avg_esg FROM pe_portfolio_companies WHERE status = 'active' GROUP BY sector ORDER BY invested_eur DESC\"",
+     "tables": [
+      "pe_portfolio_companies"
+     ],
+     "rowcount": 0,
+     "dur_ms": 27.335,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund_id": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_companies",
+     "active_count",
+     "exited_count",
+     "total_invested_eur",
+     "total_nav_eur",
+     "total_exit_proceeds_eur",
+     "avg_esg_score",
+     "avg_esg_entry_score",
+     "by_sector"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "db_portfolio_summary",
+     "qual": "db_portfolio_summary",
+     "file": "api/v1/routes/pe_portfolio.py",
+     "line": 359,
+     "args": {
+      "fund_id": "None"
+     },
+     "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0, 'by_sector': [\u2026",
+     "dur_ms": 310.221,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_portfolio.py",
+       "line": 270,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000002063A2A9F10>",
+       "dur_ms": 0.038,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 10,
+       "name": "portfolio_summary",
+       "qual": "PEDBService.portfolio_summary",
+       "file": "services/pe_db_service.py",
+       "line": 533,
+       "args": {
+        "fund_id": "None"
+       },
+       "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0, 'by_sector': [\u2026",
+       "dur_ms": 310.127,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 11,
+         "name": "_row_to_dict",
+         "qual": "_row_to_dict",
+         "file": "services/pe_db_service.py",
+         "line": 642,
+         "args": {
+          "row": "{'total_companies': 0, 'active_count': 0, 'exited_count': 0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0}"
+         },
+         "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0}",
+         "dur_ms": 0.049,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "GET /api/v1/pe-portfolio/kpi-template",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.255,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "kpis"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "get_kpi_template",
+     "qual": "get_kpi_template",
+     "file": "api/v1/routes/pe_portfolio.py",
+     "line": 248,
+     "args": {},
+     "ret": "{'kpis': [{'kpi_id': 'scope_1_emissions_tco2e', 'name': 'Scope 1 GHG Emissions', 'category': 'emissions', 'unit': 'tCO2e', 'direction': 'lower_is_better', 'ilpa_metric_id': 'GHG-1'}, {'kpi_id': 'scope_2_emissions_tco2e', 'name': 'Scope 2 G\u2026",
+     "dur_ms": 0.062,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13,
+       "name": "get_kpi_template",
+       "qual": "PEPortfolioMonitor.get_kpi_template",
+       "file": "services/pe_portfolio_monitor.py",
+       "line": 383,
+       "args": {},
+       "ret": "[{'kpi_id': 'scope_1_emissions_tco2e', 'name': 'Scope 1 GHG Emissions', 'category': 'emissions', 'unit': 'tCO2e', 'direction': 'lower_is_better', 'ilpa_metric_id': 'GHG-1'}, {'kpi_id': 'scope_2_emissions_tco2e', 'name': 'Scope 2 GHG Emissi\u2026",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "GET /api/v1/pe-portfolio/sector-levers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "'Technology' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "levers",
+     "available_sectors"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "get_sector_levers",
+     "qual": "get_sector_levers",
+     "file": "api/v1/routes/pe_portfolio.py",
+     "line": 255,
+     "args": {
+      "sector": "'Technology'"
+     },
+     "ret": "{'sector': 'Technology', 'levers': [{'lever_id': 'TECH_1', 'name': 'Data Centre Energy Efficiency', 'category': 'environmental', 'capex_eur_range': (200000, 2000000), 'annual_savings_pct': (5, 15), 'ebitda_uplift_pct': (1, 3), 'implementat\u2026",
+     "dur_ms": 0.06,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "get_sector_levers",
+       "qual": "PEValueCreationEngine.get_sector_levers",
+       "file": "services/pe_value_creation.py",
+       "line": 272,
+       "args": {
+        "sector": "'Technology'"
+       },
+       "ret": "[{'lever_id': 'TECH_1', 'name': 'Data Centre Energy Efficiency', 'category': 'environmental', 'capex_eur_range': (200000, 2000000), 'annual_savings_pct': (5, 15), 'ebitda_uplift_pct': (1, 3), 'implementation_months': 12, 'description': 'Op\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "get_available_sectors",
+       "qual": "PEValueCreationEngine.get_available_sectors",
+       "file": "services/pe_value_creation.py",
+       "line": 276,
+       "args": {},
+       "ret": "['Technology', 'Healthcare', 'Industrials', 'Consumer Staples', 'Energy']",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "POST /api/v1/pe-portfolio/db/companies",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "PATCH /api/v1/pe-portfolio/db/companies/{company_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "POST /api/v1/pe-portfolio/db/companies/{company_id}/exit",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "POST /api/v1/pe-portfolio/monitor-company",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "POST /api/v1/pe-portfolio/monitor-portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-portfolio",
+   "label": "POST /api/v1/pe-portfolio/value-creation-plan",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

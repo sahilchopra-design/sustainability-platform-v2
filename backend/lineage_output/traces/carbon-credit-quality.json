@@ -1,0 +1,599 @@
+{
+ "domain": "carbon-credit-quality",
+ "meta": {
+  "ts": "2026-06-30T13:59:33",
+  "module": "api.v1.routes.carbon_credit_quality",
+  "router_prefix": "/api/v1/carbon-credit-quality",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "carbon-credit-quality",
+   "label": "GET /api/v1/carbon-credit-quality/ref/corsia-eligibility",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.313,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "phase_2024_2026",
+     "ccp_premium"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_corsia_eligibility",
+     "qual": "ref_corsia_eligibility",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 147,
+     "args": {},
+     "ret": "{'phase_2024_2026': {'eligible_programmes': ['vcs', 'gold_standard', 'american_carbon_registry', 'climate_action_reserve', 'art6_itmo'], 'vintage_requirement': 'Issued from 2016 onwards', 'unit_criteria': 'Must meet CORSIA Eligible Emissio\u2026",
+     "dur_ms": 0.1,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.045,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.023,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 4,
+           "name": "__init__",
+           "qual": "CarbonCreditQualityEngine.__init__",
+           "file": "services/carbon_credit_quality_engine.py",
+           "line": 317,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 5,
+       "name": "ref_corsia_eligibility",
+       "qual": "CarbonCreditQualityEngine.ref_corsia_eligibility",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 537,
+       "args": {},
+       "ret": "{'phase_2024_2026': {'eligible_programmes': ['vcs', 'gold_standard', 'american_carbon_registry', 'climate_action_reserve', 'art6_itmo'], 'vintage_requirement': 'Issued from 2016 onwards', 'unit_criteria': 'Must meet CORSIA Eligible Emissio\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "GET /api/v1/carbon-credit-quality/ref/icvcm-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.188,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 10,
+    "item0_keys": [
+     "id",
+     "criterion",
+     "description",
+     "assessment_level"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "ref_icvcm_criteria",
+     "qual": "ref_icvcm_criteria",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 129,
+     "args": {},
+     "ret": "[{'id': 'CCP-1', 'criterion': 'Governance', 'description': 'Programme has effective governance, operational management and accountability.', 'assessment_level': 'programme'}, {'id': 'CCP-2', 'criterion': 'Tracking', 'description': 'Unique \u2026",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 8,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 9,
+       "name": "ref_icvcm_criteria",
+       "qual": "CarbonCreditQualityEngine.ref_icvcm_criteria",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 531,
+       "args": {},
+       "ret": "[{'id': 'CCP-1', 'criterion': 'Governance', 'description': 'Programme has effective governance, operational management and accountability.', 'assessment_level': 'programme'}, {'id': 'CCP-2', 'criterion': 'Tracking', 'description': 'Unique \u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "GET /api/v1/carbon-credit-quality/ref/methodologies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.191,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "AM0014",
+     "AR-ACM0003",
+     "VM0015",
+     "VM0007",
+     "AMS-II.G",
+     "GS_TPDDTEC",
+     "ACM0002",
+     "AMS-I.D",
+     "ACM0001",
+     "AMS-III.D",
+     "AMS-II.C",
+     "VM0042",
+     "VM0033",
+     "VM0024",
+     "ACR_SCA",
+     "CAR_IFM",
+     "GS_ICS",
+     "ART_TREES",
+     "VM0041",
+     "DAC_PILOT"
+    ],
+    "n_keys": 20
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "ref_methodologies",
+     "qual": "ref_methodologies",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 138,
+     "args": {},
+     "ret": "{'AM0014': {'standard': 'cdm', 'type': 'afforestation_reforestation', 'name': 'Natural forest management'}, 'AR-ACM0003': {'standard': 'cdm', 'type': 'afforestation_reforestation', 'name': 'Afforestation & reforestation \u2014 blanket/mosaic'},\u2026",
+     "dur_ms": 0.07,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 13,
+       "name": "ref_methodologies",
+       "qual": "CarbonCreditQualityEngine.ref_methodologies",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 534,
+       "args": {},
+       "ret": "{'AM0014': {'standard': 'cdm', 'type': 'afforestation_reforestation', 'name': 'Natural forest management'}, 'AR-ACM0003': {'standard': 'cdm', 'type': 'afforestation_reforestation', 'name': 'Afforestation & reforestation \u2014 blanket/mosaic'},\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "GET /api/v1/carbon-credit-quality/ref/price-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.189,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nature_based_removal",
+     "tech_removal",
+     "avoidance",
+     "ccp_label_premium"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 14,
+     "name": "ref_price_benchmarks",
+     "qual": "ref_price_benchmarks",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 156,
+     "args": {},
+     "ret": "{'nature_based_removal': {'min_usd_per_t': 15, 'max_usd_per_t': 60, 'median_usd_per_t': 28, 'description': 'Afforestation, REDD+, blue carbon, soil \u2014 high co-benefit premium possible'}, 'tech_removal': {'min_usd_per_t': 100, 'max_usd_per_t\u2026",
+     "dur_ms": 0.057,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 15,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 16,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 17,
+       "name": "ref_price_benchmarks",
+       "qual": "CarbonCreditQualityEngine.ref_price_benchmarks",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 540,
+       "args": {},
+       "ret": "{'nature_based_removal': {'min_usd_per_t': 15, 'max_usd_per_t': 60, 'median_usd_per_t': 28, 'description': 'Afforestation, REDD+, blue carbon, soil \u2014 high co-benefit premium possible'}, 'tech_removal': {'min_usd_per_t': 100, 'max_usd_per_t\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "GET /api/v1/carbon-credit-quality/ref/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.171,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "vcs",
+     "gold_standard",
+     "cdm",
+     "art6_itmo",
+     "ccp",
+     "plan_vivo",
+     "american_carbon_registry",
+     "climate_action_reserve"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "ref_standards",
+     "qual": "ref_standards",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 120,
+     "args": {},
+     "ret": "{'vcs': {'name': 'Verified Carbon Standard (VCS)', 'body': 'Verra', 'version': 'v4.0', 'registry': 'Verra Registry', 'corsia_eligible': True, 'ccp_label_eligible': True, 'notes': 'Largest voluntary carbon market standard; REDD+ and nature-\u2026",
+     "dur_ms": 0.061,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 19,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 20,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 21,
+       "name": "ref_standards",
+       "qual": "CarbonCreditQualityEngine.ref_standards",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 528,
+       "args": {},
+       "ret": "{'vcs': {'name': 'Verified Carbon Standard (VCS)', 'body': 'Verra', 'version': 'v4.0', 'registry': 'Verra Registry', 'corsia_eligible': True, 'ccp_label_eligible': True, 'notes': 'Largest voluntary carbon market standard; REDD+ and nature-\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "POST /api/v1/carbon-credit-quality/check-ccp-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "POST /api/v1/carbon-credit-quality/score-portfolio",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'portfolio'",
+   "dur_ms": 0.186,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "score_portfolio",
+     "qual": "score_portfolio",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 83,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 23,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 24,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-credit-quality",
+   "label": "POST /api/v1/carbon-credit-quality/score-project",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.17,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "score_project",
+     "qual": "score_project",
+     "file": "api/v1/routes/carbon_credit_quality.py",
+     "line": 59,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 26,
+       "name": "get_engine",
+       "qual": "get_engine",
+       "file": "services/carbon_credit_quality_engine.py",
+       "line": 544,
+       "args": {},
+       "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+       "dur_ms": 0.022,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 27,
+         "name": "get_instance",
+         "qual": "CarbonCreditQualityEngine.get_instance",
+         "file": "services/carbon_credit_quality_engine.py",
+         "line": 328,
+         "args": {},
+         "ret": "<services.carbon_credit_quality_engine.CarbonCreditQualityEngine object at 0x0000020069B11BB0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1477 @@
+{
+ "domain": "carbon",
+ "meta": {
+  "ts": "2026-06-30T13:59:38",
+  "module": "api.v1.routes.carbon",
+  "router_prefix": "/api/v1/carbon",
+  "endpoints": 28
+ },
+ "transactions": [
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/calculations/{calculation_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Calculation not found",
+   "dur_ms": 902.401,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_calculation"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_calculation.id AS carbon_calculation_id, carbon_calculation.portfolio_id AS carbon_calculation_portfolio_id, carbon_calculation.scenario_id AS carbon_calculation_scenario_id, carbon_calculation.calculation_type AS carbon_calculation_calculation_type, carbon_calculation.status AS carbon_calculation_status, carbon_calculation.project_count AS carbon_calculation_project_count, carbon_\u2026",
+     "tables": [
+      "carbon_calculation"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.777,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "calculation_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_calculation",
+     "qual": "get_calculation",
+     "file": "api/v1/routes/carbon.py",
+     "line": 769,
+     "args": {
+      "calculation_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9703D340>"
+     },
+     "ret": "None",
+     "dur_ms": 871.751,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/data/grid-emission-factor",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Grid emission factor not found for country 'TEST_country_code'. Contact support to add this country.",
+   "dur_ms": 351.917,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_emission_factor"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_emission_factor.id AS carbon_emission_factor_id, carbon_emission_factor.country_code AS carbon_emission_factor_country_code, carbon_emission_factor.country_name AS carbon_emission_factor_country_name, carbon_emission_factor.year AS carbon_emission_factor_year, carbon_emission_factor.grid_emission_factor AS carbon_emission_factor_grid_emission_factor, carbon_emission_factor.natural_\u2026",
+     "tables": [
+      "carbon_emission_factor"
+     ],
+     "rowcount": 0,
+     "dur_ms": 72.387,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country_code": "'TEST_country_code' (mock)",
+    "year": "2024 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_grid_emission_factor",
+     "qual": "get_grid_emission_factor",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1118,
+     "args": {
+      "country_code": "'TEST_country_code'",
+      "year": "2024",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC97106600>"
+     },
+     "ret": "None",
+     "dur_ms": 300.224,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/emission-factors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 327.229,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "carbon_emission_factor"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_emission_factor.id AS carbon_emission_factor_id, carbon_emission_factor.country_code AS carbon_emission_factor_country_code, carbon_emission_factor.country_name AS carbon_emission_factor_country_name, carbon_emission_factor.year AS carbon_emission_factor_year, carbon_emission_factor.grid_emission_factor AS carbon_emission_factor_grid_emission_factor, carbon_emission_factor.natural_\u2026",
+     "tables": [
+      "carbon_emission_factor"
+     ],
+     "rowcount": 8,
+     "dur_ms": 78.937,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country_code": "None (default)",
+    "year": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_emission_factors",
+     "qual": "get_emission_factors",
+     "file": "api/v1/routes/carbon.py",
+     "line": 74,
+     "args": {
+      "country_code": "None",
+      "year": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9713DF40>"
+     },
+     "ret": "[<db.models.carbon.CarbonEmissionFactor object at 0x000001BC97170590>, <db.models.carbon.CarbonEmissionFactor object at 0x000001BC971705C0>, <db.models.carbon.CarbonEmissionFactor object at 0x000001BC971705F0>, <db.models.carbon.CarbonEmis\u2026",
+     "dur_ms": 296.565,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/methodologies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 635.71,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "carbon_methodology"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_methodology.id AS carbon_methodology_id, carbon_methodology.code AS carbon_methodology_code, carbon_methodology.name AS carbon_methodology_name, carbon_methodology.standard AS carbon_methodology_standard, carbon_methodology.sector AS carbon_methodology_sector, carbon_methodology.subsector AS carbon_methodology_subsector, carbon_methodology.description AS carbon_methodology_descript\u2026",
+     "tables": [
+      "carbon_methodology"
+     ],
+     "rowcount": 6,
+     "dur_ms": 62.838,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "sector": "None (default)",
+    "standard": "None (default)",
+    "skip": "0 (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 6,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_methodologies",
+     "qual": "get_methodologies",
+     "file": "api/v1/routes/carbon.py",
+     "line": 46,
+     "args": {
+      "sector": "None",
+      "standard": "None",
+      "skip": "0",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9713F5F0>"
+     },
+     "ret": "[<db.models.carbon.CarbonMethodology object at 0x000001BC971722D0>, <db.models.carbon.CarbonMethodology object at 0x000001BC97172330>, <db.models.carbon.CarbonMethodology object at 0x000001BC97172360>, <db.models.carbon.CarbonMethodology o\u2026",
+     "dur_ms": 604.633,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/methodology-details/{methodology_code}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Methodology '550e8400-e29b-41d4-a716-446655440001' not found. Use /methodology-list to see available methodologies.",
+   "dur_ms": 0.237,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "methodology_code": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_methodology_info",
+     "qual": "get_methodology_info",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1036,
+     "args": {
+      "methodology_code": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_methodology_details",
+       "qual": "get_methodology_details",
+       "file": "services/methodology_engine.py",
+       "line": 1545,
+       "args": {
+        "methodology_code": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/methodology-inputs/{methodology_code}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Methodology '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 0.142,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "methodology_code": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_methodology_inputs",
+     "qual": "get_methodology_inputs",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1185,
+     "args": {
+      "methodology_code": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/methodology-list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.652,
+   "node_count": 12,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "methodologies",
+     "total_count",
+     "sectors"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "list_all_methodologies",
+     "qual": "list_all_methodologies",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1005,
+     "args": {},
+     "ret": "{'methodologies': [{'code': 'ACM0002', 'name': 'Grid-connected Renewable Energy', 'standard': 'CDM', 'scale': 'Large', 'sector': 'ENERGY'}, {'code': 'ACM0003', 'name': 'Biomass Substitution', 'standard': 'CDM', 'scale': 'Large', 'sector': \u2026",
+     "dur_ms": 0.464,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "get_all_methodologies",
+       "qual": "get_all_methodologies",
+       "file": "services/methodology_engine.py",
+       "line": 1603,
+       "args": {},
+       "ret": "[{'code': 'ACM0002', 'name': 'Grid-connected Renewable Energy', 'standard': 'CDM', 'scale': 'Large', 'sector': 'ENERGY'}, {'code': 'ACM0003', 'name': 'Biomass Substitution', 'standard': 'CDM', 'scale': 'Large', 'sector': 'ENERGY'}, {'code'\u2026",
+       "dur_ms": 0.41,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'ENERGY'"
+         },
+         "ret": "[{'code': 'ACM0002', 'name': 'Grid-connected Renewable Energy', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'ACM0003', 'name': 'Biomass Substitution', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'ACM0005', 'name': 'Waste Heat Recover\u2026",
+         "dur_ms": 0.011,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'WASTE'"
+         },
+         "ret": "[{'code': 'ACM0001', 'name': 'Landfill Gas Capture', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'ACM0022', 'name': 'Waste Composting', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'AMS-III.B', 'name': 'Wastewater Methane', 'standard'\u2026",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'FORESTRY'"
+         },
+         "ret": "[{'code': 'AR-ACM0003', 'name': 'Afforestation/Reforestation', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'VM0047', 'name': 'ARR (Afforestation)', 'standard': 'VCS', 'scale': 'Large'}, {'code': 'VM0048', 'name': 'REDD+', 'standard': 'V\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'AGRICULTURE'"
+         },
+         "ret": "[{'code': 'ACM0010', 'name': 'Manure Methane', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'AMS-III.AU', 'name': 'Agricultural Methane', 'standard': 'CDM', 'scale': 'Small'}, {'code': 'VM0022', 'name': 'Agricultural N2O', 'standard': 'V\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'INDUSTRIAL'"
+         },
+         "ret": "[{'code': 'ACM0012', 'name': 'Waste Heat Power', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'ACM0014', 'name': 'Cement Blending', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'AMS-II.G', 'name': 'Industrial Efficiency', 'standard': '\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'TRANSPORT'"
+         },
+         "ret": "[{'code': 'ACM0023', 'name': 'Low Emission Vehicles', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'AMS-III.C', 'name': 'Low Emission Vehicles/Tech', 'standard': 'CDM', 'scale': 'Small'}, {'code': 'AMS-III.S', 'name': 'Electric/Hybrid Ve\u2026",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'BUILDINGS'"
+         },
+         "ret": "[{'code': 'AMS-II.D', 'name': 'Building Efficiency', 'standard': 'CDM', 'scale': 'Small'}, {'code': 'AMS-II.E', 'name': 'Energy Efficient Lighting', 'standard': 'CDM', 'scale': 'Small'}, {'code': 'MMECD', 'name': 'Metered Energy Efficiency\u2026",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'HOUSEHOLD'"
+         },
+         "ret": "[{'code': 'TPDDTEC', 'name': 'Clean Cookstoves', 'standard': 'Gold Standard', 'scale': 'Large'}, {'code': 'TPDDTEC-SWH', 'name': 'Solar Water Heaters', 'standard': 'Gold Standard', 'scale': 'Large'}]",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'MINING'"
+         },
+         "ret": "[{'code': 'ACM0008', 'name': 'Coal Mine Methane', 'standard': 'CDM', 'scale': 'Large'}, {'code': 'VM0032', 'name': 'Coal Mine Methane (VCS)', 'standard': 'VCS', 'scale': 'Large'}, {'code': 'AMS-III.K', 'name': 'Methane Avoidance', 'standar\u2026",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "get_methodologies_by_sector",
+         "qual": "get_methodologies_by_sector",
+         "file": "services/methodology_engine.py",
+         "line": 1471,
+         "args": {
+          "sector": "'BLUE_CARBON'"
+         },
+         "ret": "[{'code': 'VM0033', 'name': 'Tidal Wetland/Seagrass', 'standard': 'VCS', 'scale': 'Large'}]",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/methodology-list/{sector}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.153,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector",
+     "methodologies",
+     "message"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "list_methodologies_by_sector",
+     "qual": "list_methodologies_by_sector",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1019,
+     "args": {
+      "sector": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'sector': '550E8400-E29B-41D4-A716-446655440001', 'methodologies': [], 'message': \"No methodologies found for sector '550e8400-e29b-41d4-a716-446655440001'. Valid sectors: ENERGY, WASTE, FORESTRY, AGRICULTURE, INDUSTRIAL, TRANSPORT, BUILD\u2026",
+     "dur_ms": 0.026,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "get_methodologies_by_sector",
+       "qual": "get_methodologies_by_sector",
+       "file": "services/methodology_engine.py",
+       "line": 1471,
+       "args": {
+        "sector": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "[]",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/portfolios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 294.208,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.14,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "skip": "0 (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "get_portfolios",
+     "qual": "get_portfolios",
+     "file": "api/v1/routes/carbon.py",
+     "line": 100,
+     "args": {
+      "skip": "0",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9713FDA0>"
+     },
+     "ret": "[]",
+     "dur_ms": 259.968,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 321.587,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 56.126,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "get_portfolio",
+     "qual": "get_portfolio",
+     "file": "api/v1/routes/carbon.py",
+     "line": 160,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC97171EE0>"
+     },
+     "ret": "None",
+     "dur_ms": 293.73,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/portfolios/{portfolio_id}/dashboard",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 291.647,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.367,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_portfolio_dashboard",
+     "qual": "get_portfolio_dashboard",
+     "file": "api/v1/routes/carbon.py",
+     "line": 223,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC97172030>"
+     },
+     "ret": "None",
+     "dur_ms": 260.006,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/portfolios/{portfolio_id}/scenarios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"carbon_scenario\" violates foreign key constraint \"carbon_scenario_portfolio_id_fkey\"\nDETAIL:  Key (portfolio_id)=(550e8400-e29b-41d4-a716-446655440001) is not present in table \"carbon_portfolio\".\n\n[SQL: INSERT INTO carbon_scenario (id, portfolio_id, name, description, is_default, permanence_risk_pct, delivery_risk_pct",
+   "dur_ms": 324.563,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_scenario"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_scenario.id AS carbon_scenario_id, carbon_scenario.portfolio_id AS carbon_scenario_portfolio_id, carbon_scenario.name AS carbon_scenario_name, carbon_scenario.description AS carbon_scenario_description, carbon_scenario.is_default AS carbon_scenario_is_default, carbon_scenario.permanence_risk_pct AS carbon_scenario_permanence_risk_pct, carbon_scenario.delivery_risk_pct AS carbon_sce\u2026",
+     "tables": [
+      "carbon_scenario"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.128,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'INSERT INTO carbon_scenario (id, portfolio_id, name, description, is_default, permanence_risk_pct, delivery_risk_pct, regulatory_risk_pct, market_risk_pct, base_carbon_price_usd, price_growth_rate_pct, price_volatility_pct, discount_rate_pct, projection_years, parameters, created_at, updated_at) VALUES (%(id)s, %(portfolio_id)s, %(name)s, %(description)s, %(is_default)s, %(permanence_risk_pct)s,\u2026",
+     "tables": [
+      "carbon_scenario"
+     ],
+     "rowcount": null,
+     "dur_ms": 39.363,
+     "is_reference": false,
+     "error": "ForeignKeyViolation('insert or update on table \"carbon_scenario\" violates foreign key constraint \"carbon_scenario_portfolio_id_fkey\"\\nDETAIL:  Key (portfolio_id)=(550e8400-e29b-41d4-a716-446655440001\u2026"
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "get_scenarios",
+     "qual": "get_scenarios",
+     "file": "api/v1/routes/carbon.py",
+     "line": 539,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC971733E0>"
+     },
+     "ret": "None",
+     "dur_ms": 323.733,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 26,
+       "name": "<lambda>",
+       "qual": "CarbonScenario.<lambda>",
+       "file": "db/models/carbon.py",
+       "line": 196,
+       "args": {},
+       "ret": "datetime.datetime(2026, 6, 30, 17, 59, 35, 157170, tzinfo=datetime.timezone.utc)",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<lambda>",
+       "qual": "CarbonScenario.<lambda>",
+       "file": "db/models/carbon.py",
+       "line": 197,
+       "args": {},
+       "ret": "datetime.datetime(2026, 6, 30, 17, 59, 35, 157170, tzinfo=datetime.timezone.utc)",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/projects",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 315.523,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_project"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_project.id AS carbon_project_id, carbon_project.portfolio_id AS carbon_project_portfolio_id, carbon_project.methodology_id AS carbon_project_methodology_id, carbon_project.name AS carbon_project_name, carbon_project.project_type AS carbon_project_project_type, carbon_project.standard AS carbon_project_standard, carbon_project.registry_id AS carbon_project_registry_id, carbon_projec\u2026",
+     "tables": [
+      "carbon_project"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.151,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "None (default)",
+    "project_type": "None (default)",
+    "country_code": "None (default)",
+    "skip": "0 (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28,
+     "name": "get_projects",
+     "qual": "get_projects",
+     "file": "api/v1/routes/carbon.py",
+     "line": 299,
+     "args": {
+      "portfolio_id": "None",
+      "project_type": "None",
+      "country_code": "None",
+      "skip": "0",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC97173620>"
+     },
+     "ret": "[]",
+     "dur_ms": 282.671,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/projects/{project_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Project not found",
+   "dur_ms": 606.607,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_project"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_project.id AS carbon_project_id, carbon_project.portfolio_id AS carbon_project_portfolio_id, carbon_project.methodology_id AS carbon_project_methodology_id, carbon_project.name AS carbon_project_name, carbon_project.project_type AS carbon_project_project_type, carbon_project.standard AS carbon_project_standard, carbon_project.registry_id AS carbon_project_registry_id, carbon_projec\u2026",
+     "tables": [
+      "carbon_project"
+     ],
+     "rowcount": 0,
+     "dur_ms": 80.126,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "project_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "get_project",
+     "qual": "get_project",
+     "file": "api/v1/routes/carbon.py",
+     "line": 379,
+     "args": {
+      "project_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC974F6150>"
+     },
+     "ret": "None",
+     "dur_ms": 570.694,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "GET /api/v1/carbon/reports/{report_id}/download",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Report not found",
+   "dur_ms": 302.024,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_report"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_report.id AS carbon_report_id, carbon_report.portfolio_id AS carbon_report_portfolio_id, carbon_report.calculation_id AS carbon_report_calculation_id, carbon_report.report_type AS carbon_report_report_type, carbon_report.format AS carbon_report_format, carbon_report.title AS carbon_report_title, carbon_report.content AS carbon_report_content, carbon_report.file_path AS carbon_repor\u2026",
+     "tables": [
+      "carbon_report"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.905,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "report_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 30,
+     "name": "download_report",
+     "qual": "download_report",
+     "file": "api/v1/routes/carbon.py",
+     "line": 838,
+     "args": {
+      "report_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC974F6600>"
+     },
+     "ret": "None",
+     "dur_ms": 269.985,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/calculate",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 336.956,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 65.608,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data": "<CalculationRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 31,
+     "name": "run_calculation",
+     "qual": "run_calculation",
+     "file": "api/v1/routes/carbon.py",
+     "line": 633,
+     "args": {
+      "data": "CalculationRequest(portfolio_id='TEST_data_portfolio_id', scenario_id=None, calculation_type='standard', monte_carlo_runs=1000, projects=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9751DA30>"
+     },
+     "ret": "None",
+     "dur_ms": 299.962,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/calculate/batch",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.27,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "calculations": "[{}] (mock)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "results",
+     "total_emission_reductions",
+     "calculation_count",
+     "unit"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 32,
+     "name": "calculate_batch",
+     "qual": "calculate_batch",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1082,
+     "args": {
+      "calculations": "[{}]"
+     },
+     "ret": "{'results': [{'error': 'methodology_code is required'}], 'total_emission_reductions': 0, 'calculation_count': 1, 'unit': 'tCO2e'}",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/calculate/methodology",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: {'error': 'Methodology TEST_methodology_code not found or not implemented', 'available_methodologies': ['ACM0001', 'ACM0002', 'ACM0003', 'ACM0005', 'ACM0006', 'ACM0007', 'ACM0008', 'ACM0009', 'ACM0010', 'ACM0012', 'ACM0014', 'ACM0022', 'ACM0023', 'AMS-I.A', 'AMS-I.C', 'AMS-I.D', 'AMS-II.D', 'AMS-II.E', 'AMS-II.G', 'AMS-III.AU', 'AMS-III.B', 'AMS-III.C', 'AMS-III.D', 'AM0012', '",
+   "dur_ms": 0.229,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "methodology_code": "'TEST_methodology_code' (mock)",
+    "inputs": "{} (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 33,
+     "name": "calculate_methodology",
+     "qual": "calculate_methodology",
+     "file": "api/v1/routes/carbon.py",
+     "line": 1055,
+     "args": {
+      "methodology_code": "'TEST_methodology_code'",
+      "inputs": "{}"
+     },
+     "ret": "None",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 34,
+       "name": "calculate_by_methodology",
+       "qual": "calculate_by_methodology",
+       "file": "services/methodology_engine.py",
+       "line": 1409,
+       "args": {
+        "methodology_code": "'TEST_methodology_code'",
+        "inputs": "{}"
+       },
+       "ret": "{'error': 'Methodology TEST_methodology_code not found or not implemented', 'available_methodologies': ['ACM0001', 'ACM0002', 'ACM0003', 'ACM0005', 'ACM0006', 'ACM0007', 'ACM0008', 'ACM0009', 'ACM0010', 'ACM0012', 'ACM0014', 'ACM0022', 'AC\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "PUT /api/v1/carbon/portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "DELETE /api/v1/carbon/portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/portfolios/{portfolio_id}/scenarios",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 305.928,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 66.576,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "data": "<CarbonScenarioCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "create_scenario",
+     "qual": "create_scenario",
+     "file": "api/v1/routes/carbon.py",
+     "line": 564,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "data": "CarbonScenarioCreate(name='TEST_data_name', description=None, is_default=False, permanence_risk_pct=10.0, delivery_risk_pct=5.0, regulatory_risk_pct=5.0, market_risk_pct=10.0, base_carbon_price_usd=15.0, price_growth_rate_pct=5.0, price_vo\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC970613D0>"
+     },
+     "ret": "None",
+     "dur_ms": 272.28,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "DELETE /api/v1/carbon/portfolios/{portfolio_id}/scenarios/{scenario_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/projects",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 312.038,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.301,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data": "<CarbonProjectCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 36,
+     "name": "create_project",
+     "qual": "create_project",
+     "file": "api/v1/routes/carbon.py",
+     "line": 324,
+     "args": {
+      "data": "CarbonProjectCreate(name='TEST_data_name', project_type='TEST_data_project_type', standard='TEST_data_standard', registry_id=None, country_code='TEST_data_country_code', region=None, coordinates=None, annual_credits=0, total_credits=0, vin\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9751E900>"
+     },
+     "ret": "None",
+     "dur_ms": 279.169,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/projects/from-calculation",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 595.453,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "carbon_portfolio"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT carbon_portfolio.id AS carbon_portfolio_id, carbon_portfolio.name AS carbon_portfolio_name, carbon_portfolio.description AS carbon_portfolio_description, carbon_portfolio.linked_portfolio_id AS carbon_portfolio_linked_portfolio_id, carbon_portfolio.owner_id AS carbon_portfolio_owner_id, carbon_portfolio.status AS carbon_portfolio_status, carbon_portfolio.target_annual_credits AS carbon_po\u2026",
+     "tables": [
+      "carbon_portfolio"
+     ],
+     "rowcount": 0,
+     "dur_ms": 65.05,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "data": "<SaveCalculationAsProjectRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 37,
+     "name": "create_project_from_calculation",
+     "qual": "create_project_from_calculation",
+     "file": "api/v1/routes/carbon.py",
+     "line": 428,
+     "args": {
+      "data": "SaveCalculationAsProjectRequest(portfolio_id='TEST_data_portfolio_id', project_name='TEST_data_project_name', methodology_code='TEST_data_methodology_code', annual_credits=1.0, country_code='US', project_type=None, standard=None, calculati\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BC9751EA80>"
+     },
+     "ret": "None",
+     "dur_ms": 562.302,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon",
+   "label": "PUT /api/v1/carbon/projects/{project_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "DELETE /api/v1/carbon/projects/{project_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon",
+   "label": "POST /api/v1/carbon/reports/generate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

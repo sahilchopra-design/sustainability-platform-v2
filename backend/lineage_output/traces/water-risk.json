@@ -1,0 +1,407 @@
+{
+ "domain": "water-risk",
+ "meta": {
+  "ts": "2026-06-30T14:05:48",
+  "module": "api.v1.routes.water_risk",
+  "router_prefix": "/api/v1/water-risk",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "water-risk",
+   "label": "GET /api/v1/water-risk/ref/cdp-methodology",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.349,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scoring_weights",
+     "grade_thresholds",
+     "a_list_threshold",
+     "source",
+     "disclosure_cycle"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cdp_methodology",
+     "qual": "ref_cdp_methodology",
+     "file": "api/v1/routes/water_risk.py",
+     "line": 229,
+     "args": {},
+     "ret": "{'scoring_weights': {'governance': 0.4, 'risk_assessment': 0.3, 'targets_and_actions': 0.3}, 'grade_thresholds': [{'grade': 'A', 'min_score': 90, 'description': 'Leadership \u2014 A-list eligible'}, {'grade': 'A-', 'min_score': 80, 'description\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-risk",
+   "label": "GET /api/v1/water-risk/ref/risk-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.523,
+   "node_count": 11,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scale",
+     "tiers",
+     "source",
+     "indicators"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_risk_tiers",
+     "qual": "ref_risk_tiers",
+     "file": "api/v1/routes/water_risk.py",
+     "line": 209,
+     "args": {},
+     "ret": "{'scale': '0-5 (higher = greater water risk)', 'tiers': [{'tier': 'Low', 'score_min': 0.0, 'score_max': 1.0, 'description': 'Water demand well within sustainable supply. Minimal competition.', 'recommended_action': 'Maintain monitoring; re\u2026",
+     "dur_ms": 0.258,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 3,
+       "name": "_tier_description",
+       "qual": "_tier_description",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 256,
+       "args": {
+        "tier": "'Low'"
+       },
+       "ret": "'Water demand well within sustainable supply. Minimal competition.'",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "_tier_action",
+       "qual": "_tier_action",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 267,
+       "args": {
+        "tier": "'Low'"
+       },
+       "ret": "'Maintain monitoring; report water data.'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "_tier_description",
+       "qual": "_tier_description",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 256,
+       "args": {
+        "tier": "'Low-Medium'"
+       },
+       "ret": "'Some seasonal stress. Monitor for trend changes.'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "_tier_action",
+       "qual": "_tier_action",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 267,
+       "args": {
+        "tier": "'Low-Medium'"
+       },
+       "ret": "'Set water efficiency targets; engage local authorities.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "_tier_description",
+       "qual": "_tier_description",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 256,
+       "args": {
+        "tier": "'Medium-High'"
+       },
+       "ret": "'Noticeable stress; supply-demand competition emerging.'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "_tier_action",
+       "qual": "_tier_action",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 267,
+       "args": {
+        "tier": "'Medium-High'"
+       },
+       "ret": "'Deploy water recycling; diversify sources; assess dependencies.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "_tier_description",
+       "qual": "_tier_description",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 256,
+       "args": {
+        "tier": "'High'"
+       },
+       "ret": "'Significant stress; operational disruption risk. Mitigation needed.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_tier_action",
+       "qual": "_tier_action",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 267,
+       "args": {
+        "tier": "'High'"
+       },
+       "ret": "'Implement resilience capex; supplier engagement; CDP disclosure.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "_tier_description",
+       "qual": "_tier_description",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 256,
+       "args": {
+        "tier": "'Extremely High'"
+       },
+       "ret": "'Severe stress; business continuity risk. Immediate action required.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "_tier_action",
+       "qual": "_tier_action",
+       "file": "api/v1/routes/water_risk.py",
+       "line": 267,
+       "args": {
+        "tier": "'Extremely High'"
+       },
+       "ret": "'Emergency response plan; potential relocation assessment; regulator engagement.'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/aqueduct-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/cdp-water",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/esrs-e3",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/financial-impact",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/materiality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/physical-risk-scenarios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.232,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "physical_risk_scenarios",
+     "qual": "physical_risk_scenarios",
+     "file": "api/v1/routes/water_risk.py",
+     "line": 183,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/tnfd-water-dependency",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "water-risk",
+   "label": "POST /api/v1/water-risk/water-footprint",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

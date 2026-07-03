@@ -1,0 +1,319 @@
+{
+ "domain": "physical-hazard",
+ "meta": {
+  "ts": "2026-06-30T14:03:50",
+  "module": "api.v1.routes.physical_hazard",
+  "router_prefix": "/api/v1/physical-hazard",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "physical-hazard",
+   "label": "GET /api/v1/physical-hazard/ref/adaptation-measures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.38,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "flood",
+     "wildfire",
+     "heat_stress",
+     "sea_level_rise",
+     "cyclone",
+     "drought",
+     "subsidence"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_adaptation_measures",
+     "qual": "ref_adaptation_measures",
+     "file": "api/v1/routes/physical_hazard.py",
+     "line": 185,
+     "args": {},
+     "ret": "{'flood': 'Install flood barriers, raise critical equipment, waterproof building envelope', 'wildfire': 'Create defensible space, fire-resistant construction materials, vegetation management', 'heat_stress': 'Cool roofs, green infrastructu\u2026",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_adaptation_measures",
+       "qual": "PhysicalHazardEngine.get_adaptation_measures",
+       "file": "services/physical_hazard_engine.py",
+       "line": 502,
+       "args": {},
+       "ret": "{'flood': 'Install flood barriers, raise critical equipment, waterproof building envelope', 'wildfire': 'Create defensible space, fire-resistant construction materials, vegetation management', 'heat_stress': 'Cool roofs, green infrastructu\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "GET /api/v1/physical-hazard/ref/country-hazard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "BD",
+     "PH",
+     "IN",
+     "CN",
+     "US",
+     "AU",
+     "ES",
+     "DE",
+     "NL",
+     "GB",
+     "JP",
+     "BR",
+     "ZA",
+     "NG",
+     "ID"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_country_hazard",
+     "qual": "ref_country_hazard",
+     "file": "api/v1/routes/physical_hazard.py",
+     "line": 179,
+     "args": {},
+     "ret": "{'BD': {'flood': 90, 'cyclone': 85, 'heat_stress': 70, 'drought': 40, 'sea_level_rise': 88}, 'PH': {'flood': 75, 'cyclone': 90, 'heat_stress': 65, 'drought': 45, 'sea_level_rise': 70}, 'IN': {'flood': 65, 'heat_stress': 75, 'drought': 60, \u2026",
+     "dur_ms": 0.048,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_country_base_hazard",
+       "qual": "PhysicalHazardEngine.get_country_base_hazard",
+       "file": "services/physical_hazard_engine.py",
+       "line": 494,
+       "args": {},
+       "ret": "{'BD': {'flood': 90, 'cyclone': 85, 'heat_stress': 70, 'drought': 40, 'sea_level_rise': 88}, 'PH': {'flood': 75, 'cyclone': 90, 'heat_stress': 65, 'drought': 45, 'sea_level_rise': 70}, 'IN': {'flood': 65, 'heat_stress': 75, 'drought': 60, \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "GET /api/v1/physical-hazard/ref/hazard-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.203,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "flood",
+     "wildfire",
+     "heat_stress",
+     "sea_level_rise",
+     "cyclone",
+     "drought",
+     "subsidence"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_hazard_profiles",
+     "qual": "ref_hazard_profiles",
+     "file": "api/v1/routes/physical_hazard.py",
+     "line": 173,
+     "args": {},
+     "ret": "{'flood': {'description': 'Riverine and coastal flood risk', 'data_source': 'JRC_EFAS_Global + WRI_Aqueduct_4.0', 'intensity_metric': '1-in-100yr flood depth (m)', 'rcp26_multiplier': 1.1, 'rcp45_multiplier': 1.3, 'rcp85_multiplier': 1.8},\u2026",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_hazard_profiles",
+       "qual": "PhysicalHazardEngine.get_hazard_profiles",
+       "file": "services/physical_hazard_engine.py",
+       "line": 490,
+       "args": {},
+       "ret": "{'flood': {'description': 'Riverine and coastal flood risk', 'data_source': 'JRC_EFAS_Global + WRI_Aqueduct_4.0', 'intensity_metric': '1-in-100yr flood depth (m)', 'rcp26_multiplier': 1.1, 'rcp45_multiplier': 1.3, 'rcp85_multiplier': 1.8},\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "POST /api/v1/physical-hazard/composite-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "POST /api/v1/physical-hazard/crrem-check",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "POST /api/v1/physical-hazard/financial-impact",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "POST /api/v1/physical-hazard/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.22,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/physical_hazard.py",
+     "line": 151,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.021,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "physical-hazard",
+   "label": "POST /api/v1/physical-hazard/score-hazard",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.322,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "score_hazard",
+     "qual": "score_hazard",
+     "file": "api/v1/routes/physical_hazard.py",
+     "line": 81,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

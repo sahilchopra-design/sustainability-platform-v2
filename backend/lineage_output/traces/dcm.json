@@ -1,0 +1,2966 @@
+{
+ "domain": "dcm",
+ "meta": {
+  "ts": "2026-06-30T14:00:42",
+  "module": "api.v1.routes.dcm",
+  "router_prefix": "/api/v1/dcm",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/methodologies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.702,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sector": "None (default)",
+    "standard": "None (default)",
+    "project_type": "None (default)"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 56,
+    "item0_keys": [
+     "code",
+     "name",
+     "sector",
+     "standard",
+     "project_type"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_methodologies",
+     "qual": "get_methodologies",
+     "file": "api/v1/routes/dcm.py",
+     "line": 88,
+     "args": {
+      "sector": "None",
+      "standard": "None",
+      "project_type": "None"
+     },
+     "ret": "[{'code': 'ACM0004', 'name': 'Wastewater Methane Recovery', 'sector': 'Waste', 'standard': 'CDM', 'project_type': 'Wastewater Treatment'}, {'code': 'ACM0011', 'name': 'Fuel Switch to Biomass', 'sector': 'Energy', 'standard': 'CDM', 'projec\u2026",
+     "dur_ms": 0.198,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "list_methodologies",
+       "qual": "list_methodologies",
+       "file": "services/dcm_engine.py",
+       "line": 1434,
+       "args": {
+        "sector": "None",
+        "standard": "None",
+        "project_type": "None"
+       },
+       "ret": "[{'code': 'ACM0004', 'name': 'Wastewater Methane Recovery', 'sector': 'Waste', 'standard': 'CDM', 'project_type': 'Wastewater Treatment'}, {'code': 'ACM0011', 'name': 'Fuel Switch to Biomass', 'sector': 'Energy', 'standard': 'CDM', 'projec\u2026",
+       "dur_ms": 0.061,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/methodologies/{code}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Methodology '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 0.214,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "code": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_methodology_detail",
+     "qual": "get_methodology_detail",
+     "file": "api/v1/routes/dcm.py",
+     "line": 118,
+     "args": {
+      "code": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.021,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/ref/article6-guidance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.181,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "article_6_2",
+     "article_6_4",
+     "corresponding_adjustments",
+     "corsia"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_article6_guidance",
+     "qual": "get_article6_guidance",
+     "file": "api/v1/routes/dcm.py",
+     "line": 246,
+     "args": {},
+     "ret": "{'article_6_2': {'description': 'Bilateral/cooperative transfers of ITMOs between Parties', 'key_requirements': ['Corresponding adjustments must be applied by host country', 'Reporting to UNFCCC central accounting and reporting tool (CART)\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/ref/cdr-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.197,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "pathway",
+     "code",
+     "current_cost_usd_per_t",
+     "2030_cost_projection_usd_per_t",
+     "permanence",
+     "co_benefits",
+     "readiness"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_cdr_pathways",
+     "qual": "get_cdr_pathways",
+     "file": "api/v1/routes/dcm.py",
+     "line": 192,
+     "args": {},
+     "ret": "[{'pathway': 'DACCS', 'code': 'CDR-DACCS', 'current_cost_usd_per_t': '400\u20131000', '2030_cost_projection_usd_per_t': '200\u2013400', 'permanence': '1000+ years (geological)', 'co_benefits': 'none', 'readiness': 'Commercial (Climeworks, Carbon Eng\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/ref/project-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.105,
+   "node_count": 57,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 56,
+    "item0_keys": [
+     "project_type",
+     "sector",
+     "example_standard",
+     "example_code"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "get_project_types",
+     "qual": "get_project_types",
+     "file": "api/v1/routes/dcm.py",
+     "line": 174,
+     "args": {},
+     "ret": "[{'project_type': 'Biochar Application', 'sector': 'Agriculture', 'example_standard': 'VCS', 'example_code': 'VM0036'}, {'project_type': 'Biogas Digester', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'AMS-III.A'}, {\u2026",
+     "dur_ms": 1.863,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Wastewater Treatment', 'sector': 'Waste', 'example_standard': 'CDM', 'example_code': 'ACM0004'}"
+       },
+       "ret": "('Waste', 'Wastewater Treatment')",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Fuel Switching', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'ACM0011'}"
+       },
+       "ret": "('Energy', 'Fuel Switching')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Rice Water Management', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'ACM0013'}"
+       },
+       "ret": "('Agriculture', 'Rice Water Management')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Nitrogen Management', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'ACM0015'}"
+       },
+       "ret": "('Agriculture', 'Nitrogen Management')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'BRT/Metro', 'sector': 'Transport', 'example_standard': 'CDM', 'example_code': 'ACM0016'}"
+       },
+       "ret": "('Transport', 'BRT/Metro')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'N2O Destruction', 'sector': 'Industry', 'example_standard': 'CDM', 'example_code': 'ACM0017'}"
+       },
+       "ret": "('Industry', 'N2O Destruction')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biomass Power Plant', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'ACM0018'}"
+       },
+       "ret": "('Energy', 'Biomass Power Plant')",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'CBM/CMM', 'sector': 'Mining', 'example_standard': 'CDM', 'example_code': 'ACM0019'}"
+       },
+       "ret": "('Mining', 'CBM/CMM')",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'WASH', 'sector': 'Household', 'example_standard': 'CDM', 'example_code': 'ACM0020'}"
+       },
+       "ret": "('Household', 'WASH')",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Energy Efficiency', 'sector': 'Industry', 'example_standard': 'CDM', 'example_code': 'ACM0021'}"
+       },
+       "ret": "('Industry', 'Energy Efficiency')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'EV Transition', 'sector': 'Transport', 'example_standard': 'CDM', 'example_code': 'ACM0024'}"
+       },
+       "ret": "('Transport', 'EV Transition')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Electric Buses', 'sector': 'Transport', 'example_standard': 'CDM', 'example_code': 'ACM0025'}"
+       },
+       "ret": "('Transport', 'Electric Buses')",
+       "dur_ms": 0.038,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'HFC Destruction', 'sector': 'Industry', 'example_standard': 'CDM', 'example_code': 'AM0001'}"
+       },
+       "ret": "('Industry', 'HFC Destruction')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Fugitive Emissions', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AM0014'}"
+       },
+       "ret": "('Energy', 'Fugitive Emissions')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Waste Heat Recovery', 'sector': 'Industry', 'example_standard': 'CDM', 'example_code': 'AM0026'}"
+       },
+       "ret": "('Industry', 'Waste Heat Recovery')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Electrolytic H2', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AM0057'}"
+       },
+       "ret": "('Energy', 'Electrolytic H2')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'CCS', 'sector': 'Industry', 'example_standard': 'CDM', 'example_code': 'AM0075'}"
+       },
+       "ret": "('Industry', 'CCS')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Off-Grid Renewable', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AMS-I.B'}"
+       },
+       "ret": "('Energy', 'Off-Grid Renewable')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Solar Lantern', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AMS-I.E'}"
+       },
+       "ret": "('Energy', 'Solar Lantern')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Agrivoltaics', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AMS-I.F'}"
+       },
+       "ret": "('Energy', 'Agrivoltaics')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Grid Efficiency', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AMS-II.A'}"
+       },
+       "ret": "('Energy', 'Grid Efficiency')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Boiler Efficiency', 'sector': 'Energy', 'example_standard': 'CDM', 'example_code': 'AMS-II.B'}"
+       },
+       "ret": "('Energy', 'Boiler Efficiency')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'HVAC Efficiency', 'sector': 'Buildings', 'example_standard': 'CDM', 'example_code': 'AMS-II.C'}"
+       },
+       "ret": "('Buildings', 'HVAC Efficiency')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Pump Efficiency', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'AMS-II.F'}"
+       },
+       "ret": "('Agriculture', 'Pump Efficiency')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biogas Digester', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'AMS-III.A'}"
+       },
+       "ret": "('Agriculture', 'Biogas Digester')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Composting/AD', 'sector': 'Waste', 'example_standard': 'CDM', 'example_code': 'AMS-III.E'}"
+       },
+       "ret": "('Waste', 'Composting/AD')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Fire Prevention', 'sector': 'Agriculture', 'example_standard': 'CDM', 'example_code': 'AMS-III.F'}"
+       },
+       "ret": "('Agriculture', 'Fire Prevention')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biogas from WW', 'sector': 'Waste', 'example_standard': 'CDM', 'example_code': 'AMS-III.R'}"
+       },
+       "ret": "('Waste', 'Biogas from WW')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biodiesel Transport', 'sector': 'Transport', 'example_standard': 'CDM', 'example_code': 'AMS-III.T'}"
+       },
+       "ret": "('Transport', 'Biodiesel Transport')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'AUDD/REDD+', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0003'}"
+       },
+       "ret": "('Forestry', 'AUDD/REDD+')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'IFM', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0006'}"
+       },
+       "ret": "('Forestry', 'IFM')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'REDD+', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0007'}"
+       },
+       "ret": "('Forestry', 'REDD+')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Agroforestry', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0009'}"
+       },
+       "ret": "('Forestry', 'Agroforestry')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Grassland SOC', 'sector': 'Land Use', 'example_standard': 'VCS', 'example_code': 'VM0010'}"
+       },
+       "ret": "('Land Use', 'Grassland SOC')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Peatland Conservation', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0011'}"
+       },
+       "ret": "('Forestry', 'Peatland Conservation')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Coastal Wetland', 'sector': 'Blue Carbon', 'example_standard': 'VCS', 'example_code': 'VM0015'}"
+       },
+       "ret": "('Blue Carbon', 'Coastal Wetland')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Grazing Management', 'sector': 'Agriculture', 'example_standard': 'VCS', 'example_code': 'VM0017'}"
+       },
+       "ret": "('Agriculture', 'Grazing Management')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'No-Till/Cover Crop', 'sector': 'Agriculture', 'example_standard': 'VCS', 'example_code': 'VM0019'}"
+       },
+       "ret": "('Agriculture', 'No-Till/Cover Crop')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Rewetting', 'sector': 'Land Use', 'example_standard': 'VCS', 'example_code': 'VM0020'}"
+       },
+       "ret": "('Land Use', 'Rewetting')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Avoided Deforestation', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0026'}"
+       },
+       "ret": "('Forestry', 'Avoided Deforestation')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biochar Application', 'sector': 'Agriculture', 'example_standard': 'VCS', 'example_code': 'VM0036'}"
+       },
+       "ret": "('Agriculture', 'Biochar Application')",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'ARR', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0037'}"
+       },
+       "ret": "('Forestry', 'ARR')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Coastal Restoration', 'sector': 'Blue Carbon', 'example_standard': 'VCS', 'example_code': 'VM0041'}"
+       },
+       "ret": "('Blue Carbon', 'Coastal Restoration')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Regen Ag', 'sector': 'Agriculture', 'example_standard': 'VCS', 'example_code': 'VM0045'}"
+       },
+       "ret": "('Agriculture', 'Regen Ag')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Afforestation/Reforestation', 'sector': 'Forestry', 'example_standard': 'VCS', 'example_code': 'VM0049'}"
+       },
+       "ret": "('Forestry', 'Afforestation/Reforestation')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Cookstoves', 'sector': 'Household', 'example_standard': 'Gold Standard', 'example_code': 'GS-ICS'}"
+       },
+       "ret": "('Household', 'Cookstoves')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Clean Water', 'sector': 'Household', 'example_standard': 'Gold Standard', 'example_code': 'GS-WASH'}"
+       },
+       "ret": "('Household', 'Clean Water')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Soil Carbon', 'sector': 'Agriculture', 'example_standard': 'Gold Standard', 'example_code': 'GS-AGRI'}"
+       },
+       "ret": "('Agriculture', 'Soil Carbon')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'WW Biogas', 'sector': 'Waste', 'example_standard': 'Gold Standard', 'example_code': 'GS-WW'}"
+       },
+       "ret": "('Waste', 'WW Biogas')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'DACCS', 'sector': 'CDR', 'example_standard': 'Article 6.4 / ISO 14064', 'example_code': 'CDR-DACCS'}"
+       },
+       "ret": "('CDR', 'DACCS')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'BECCS', 'sector': 'CDR', 'example_standard': 'Article 6.4 / ISO 14064', 'example_code': 'CDR-BECCS'}"
+       },
+       "ret": "('CDR', 'BECCS')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'ERW', 'sector': 'CDR', 'example_standard': 'Verra/IC-VCM', 'example_code': 'CDR-ERW'}"
+       },
+       "ret": "('CDR', 'ERW')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'OAE', 'sector': 'CDR', 'example_standard': 'ISO 14064 / NOAA', 'example_code': 'CDR-OAE'}"
+       },
+       "ret": "('CDR', 'OAE')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Biochar CDR', 'sector': 'CDR', 'example_standard': 'Puro.earth / Verra', 'example_code': 'CDR-Biochar'}"
+       },
+       "ret": "('CDR', 'Biochar CDR')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'ITMO', 'sector': 'Cross-Sector', 'example_standard': 'UNFCCC Art 6.4', 'example_code': 'ART6.4'}"
+       },
+       "ret": "('Cross-Sector', 'ITMO')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<lambda>",
+       "qual": "get_project_types.<locals>.<lambda>",
+       "file": "api/v1/routes/dcm.py",
+       "line": 189,
+       "args": {
+        "x": "{'project_type': 'Aviation', 'sector': 'Transport', 'example_standard': 'ICAO CORSIA', 'example_code': 'CORSIA'}"
+       },
+       "ret": "('Transport', 'Aviation')",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.303,
+   "node_count": 59,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 13,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 63,
+     "name": "get_sector_list",
+     "qual": "get_sector_list",
+     "file": "api/v1/routes/dcm.py",
+     "line": 106,
+     "args": {},
+     "ret": "['Agriculture', 'Blue Carbon', 'Buildings', 'CDR', 'Cross-Sector', 'Energy', 'Forestry', 'Household', 'Industry', 'Land Use', 'Mining', 'Transport', 'Waste']",
+     "dur_ms": 1.125,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 64,
+       "name": "get_sectors",
+       "qual": "get_sectors",
+       "file": "services/dcm_engine.py",
+       "line": 1458,
+       "args": {},
+       "ret": "['Agriculture', 'Blue Carbon', 'Buildings', 'CDR', 'Cross-Sector', 'Energy', 'Forestry', 'Household', 'Industry', 'Land Use', 'Mining', 'Transport', 'Waste']",
+       "dur_ms": 1.095,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 65,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Waste'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Transport'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Industry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 72,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Mining'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 73,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Household'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Industry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 75,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Transport'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 76,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Transport'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 77,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Industry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 79,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Industry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 80,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 81,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Industry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 82,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 84,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 85,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Energy'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Buildings'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Waste'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Waste'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Transport'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 96,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Land Use'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 100,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Blue Carbon'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Land Use'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Blue Carbon'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Forestry'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Household'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Household'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Agriculture'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Waste'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 114,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'CDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 115,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'CDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 116,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'CDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 117,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'CDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 118,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'CDR'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 119,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Cross-Sector'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 120,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "'Transport'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 121,
+         "name": "<genexpr>",
+         "qual": "get_sectors.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1459,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EECA0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "GET /api/v1/dcm/standards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.477,
+   "node_count": 59,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 9,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 122,
+     "name": "get_standard_list",
+     "qual": "get_standard_list",
+     "file": "api/v1/routes/dcm.py",
+     "line": 112,
+     "args": {},
+     "ret": "['Article 6.4 / ISO 14064', 'CDM', 'Gold Standard', 'ICAO CORSIA', 'ISO 14064 / NOAA', 'Puro.earth / Verra', 'UNFCCC Art 6.4', 'VCS', 'Verra/IC-VCM']",
+     "dur_ms": 1.225,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 123,
+       "name": "get_standards",
+       "qual": "get_standards",
+       "file": "services/dcm_engine.py",
+       "line": 1462,
+       "args": {},
+       "ret": "['Article 6.4 / ISO 14064', 'CDM', 'Gold Standard', 'ICAO CORSIA', 'ISO 14064 / NOAA', 'Puro.earth / Verra', 'UNFCCC Art 6.4', 'VCS', 'Verra/IC-VCM']",
+       "dur_ms": 1.197,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 124,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 125,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 126,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.028,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 127,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 128,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 131,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 132,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 133,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 134,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 135,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 136,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 137,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 138,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 139,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 140,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 141,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 142,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 143,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 144,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 145,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 146,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 147,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 148,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 149,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 150,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 151,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 152,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'CDM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 153,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 154,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 155,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 156,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 157,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 158,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 159,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 160,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 161,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 162,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 163,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 164,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 165,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 166,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 167,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 168,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'VCS'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 169,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Gold Standard'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 170,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Gold Standard'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 171,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Gold Standard'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 172,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Gold Standard'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 173,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Article 6.4 / ISO 14064'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 174,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Article 6.4 / ISO 14064'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 175,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Verra/IC-VCM'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 176,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'ISO 14064 / NOAA'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 177,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'Puro.earth / Verra'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 178,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'UNFCCC Art 6.4'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 179,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "'ICAO CORSIA'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 180,
+         "name": "<genexpr>",
+         "qual": "get_standards.<locals>.<genexpr>",
+         "file": "services/dcm_engine.py",
+         "line": 1463,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000189518EEDE0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "POST /api/v1/dcm/batch",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dcm",
+   "label": "POST /api/v1/dcm/calculate",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Calculation error: 'str' object has no attribute 'methodology_code'",
+   "dur_ms": 0.273,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 181,
+     "name": "run_calculation",
+     "qual": "run_calculation",
+     "file": "api/v1/routes/dcm.py",
+     "line": 60,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "dcm",
+   "label": "POST /api/v1/dcm/compare",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

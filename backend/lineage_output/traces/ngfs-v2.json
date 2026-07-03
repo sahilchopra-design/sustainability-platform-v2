@@ -1,0 +1,882 @@
+{
+ "domain": "ngfs-v2",
+ "meta": {
+  "ts": "2026-06-30T14:03:37",
+  "module": "api.v1.routes.ngfs_v2",
+  "router_prefix": "/api/v1/ngfs-scenarios",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3715.359,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 27,
+     "dur_ms": 75.899,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "phase": "None (default)",
+    "category": "None (default)",
+    "temperature_target": "None (default)",
+    "sort_by": "'phase' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_scenarios",
+     "qual": "list_scenarios",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 65,
+     "args": {
+      "phase": "None",
+      "category": "None",
+      "temperature_target": "None",
+      "sort_by": "'phase'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB849D2BA0>"
+     },
+     "ret": "{'data': [{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carb\u2026",
+     "dur_ms": 3682.953,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "[{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbon_neutra\u2026",
+        "meta": "{'total_scenarios': 27, 'phase_count': {'1': 6, '2': 10, '3': 8, '5': 3}, 'temperature_range': {'min': 1.4, 'max': 3.5}}"
+       },
+       "ret": "{'data': [{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carb\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/filter",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 346.786,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 27,
+     "dur_ms": 67.041,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "min_temp": "None (default)",
+    "max_temp": "None (default)",
+    "phases": "None (default)",
+    "has_net_zero_target": "None (default)",
+    "net_zero_by_year": "None (default)",
+    "carbon_price_min": "None (default)",
+    "carbon_price_max": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "filter_scenarios",
+     "qual": "filter_scenarios",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 133,
+     "args": {
+      "min_temp": "None",
+      "max_temp": "None",
+      "phases": "None",
+      "has_net_zero_target": "None",
+      "net_zero_by_year": "None",
+      "carbon_price_min": "None",
+      "carbon_price_max": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB849D2E10>"
+     },
+     "ret": "{'data': [{'id': '0a7c8df2-2b87-40e5-a950-311982371532', 'name': 'Technology Breakthrough', 'slug': 'technology-breakthrough', 'phase': 2, 'phase_year': 2021, 'category': 'Orderly', 'temperature_target': 1.4, 'temperature_by_2100': 1.4, 'c\u2026",
+     "dur_ms": 312.716,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "[{'id': '0a7c8df2-2b87-40e5-a950-311982371532', 'name': 'Technology Breakthrough', 'slug': 'technology-breakthrough', 'phase': 2, 'phase_year': 2021, 'category': 'Orderly', 'temperature_target': 1.4, 'temperature_by_2100': 1.4, 'carbon_neu\u2026",
+        "meta": "{'total': 27}"
+       },
+       "ret": "{'data': [{'id': '0a7c8df2-2b87-40e5-a950-311982371532', 'name': 'Technology Breakthrough', 'slug': 'technology-breakthrough', 'phase': 2, 'phase_year': 2021, 'category': 'Orderly', 'temperature_target': 1.4, 'temperature_by_2100': 1.4, 'c\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/phases",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 382.165,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 6,
+     "dur_ms": 67.682,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 10,
+     "dur_ms": 35.591,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 8,
+     "dur_ms": 32.027,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_phases",
+     "qual": "get_phases",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 101,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BCE0>"
+     },
+     "ret": "{'data': {'1': {'year': 2020, 'count': 6, 'scenarios': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'slug': 'orderly-below-2c', 'category': 'Orderly', 'temperature': 1.5}, {'id': '55c66d13-0599-493a-b161-d\u2026",
+     "dur_ms": 349.998,
+     "sql": [
+      0,
+      1,
+      2
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "{'1': {'year': 2020, 'count': 6, 'scenarios': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'slug': 'orderly-below-2c', 'category': 'Orderly', 'temperature': 1.5}, {'id': '55c66d13-0599-493a-b161-d00b79361f\u2026",
+        "meta": "None"
+       },
+       "ret": "{'data': {'1': {'year': 2020, 'count': 6, 'scenarios': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'slug': 'orderly-below-2c', 'category': 'Orderly', 'temperature': 1.5}, {'id': '55c66d13-0599-493a-b161-d\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/temperature-ranges",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 717.99,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 27,
+     "dur_ms": 340.893,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_temperature_ranges",
+     "qual": "get_temperature_ranges",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 117,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BD40>"
+     },
+     "ret": "{'data': {'below_1.5C': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'temperature': 1.5, 'category': 'Orderly', 'phase': 1}, {'id': 'ebc9a173-eab3-4c6d-be73-1b5e15bf0766', 'name': 'Divergent Net Zero', 'te\u2026",
+     "dur_ms": 683.47,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "{'below_1.5C': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'temperature': 1.5, 'category': 'Orderly', 'phase': 1}, {'id': 'ebc9a173-eab3-4c6d-be73-1b5e15bf0766', 'name': 'Divergent Net Zero', 'temperature\u2026",
+        "meta": "None"
+       },
+       "ret": "{'data': {'below_1.5C': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'temperature': 1.5, 'category': 'Orderly', 'phase': 1}, {'id': 'ebc9a173-eab3-4c6d-be73-1b5e15bf0766', 'name': 'Divergent Net Zero', 'te\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/{scenario_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 472.951,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenario_parameters",
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 1,
+     "dur_ms": 182.768,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT ngfs_scenario_parameters.id AS ngfs_scenario_parameters_id, ngfs_scenario_parameters.scenario_id AS ngfs_scenario_parameters_scenario_id, ngfs_scenario_parameters.parameter_name AS ngfs_scenario_parameters_parameter_name, ngfs_scenario_parameters.display_name AS ngfs_scenario_parameters_display_name, ngfs_scenario_parameters.unit AS ngfs_scenario_parameters_unit, ngfs_scenario_parameters.\u2026",
+     "tables": [
+      "ngfs_scenario_parameters"
+     ],
+     "rowcount": 4,
+     "dur_ms": 44.083,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "c8260fc9-2afb-4e2f-ab03-7f9d7a837828 (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_scenario",
+     "qual": "get_scenario",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 197,
+     "args": {
+      "scenario_id": "'c8260fc9-2afb-4e2f-ab03-7f9d7a837828'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634B9E0>"
+     },
+     "ret": "{'data': {'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbo\u2026",
+     "dur_ms": 443.408,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbon_neutral\u2026",
+        "meta": "None"
+       },
+       "ret": "{'data': {'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbo\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/{scenario_id}/parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 907.161,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenario_parameters",
+    "ngfs_scenario_timeseries",
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 1,
+     "dur_ms": 63.966,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT ngfs_scenario_parameters.id AS ngfs_scenario_parameters_id, ngfs_scenario_parameters.scenario_id AS ngfs_scenario_parameters_scenario_id, ngfs_scenario_parameters.parameter_name AS ngfs_scenario_parameters_parameter_name, ngfs_scenario_parameters.display_name AS ngfs_scenario_parameters_display_name, ngfs_scenario_parameters.unit AS ngfs_scenario_parameters_unit, ngfs_scenario_parameters.\u2026",
+     "tables": [
+      "ngfs_scenario_parameters"
+     ],
+     "rowcount": 4,
+     "dur_ms": 154.01,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT ngfs_scenario_timeseries.id AS ngfs_scenario_timeseries_id, ngfs_scenario_timeseries.scenario_id AS ngfs_scenario_timeseries_scenario_id, ngfs_scenario_timeseries.parameter_name AS ngfs_scenario_timeseries_parameter_name, ngfs_scenario_timeseries.year AS ngfs_scenario_timeseries_year, ngfs_scenario_timeseries.value AS ngfs_scenario_timeseries_value, ngfs_scenario_timeseries.is_interpolate\u2026",
+     "tables": [
+      "ngfs_scenario_timeseries"
+     ],
+     "rowcount": 76,
+     "dur_ms": 307.922,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT ngfs_scenario_timeseries.id AS ngfs_scenario_timeseries_id, ngfs_scenario_timeseries.scenario_id AS ngfs_scenario_timeseries_scenario_id, ngfs_scenario_timeseries.parameter_name AS ngfs_scenario_timeseries_parameter_name, ngfs_scenario_timeseries.year AS ngfs_scenario_timeseries_year, ngfs_scenario_timeseries.value AS ngfs_scenario_timeseries_value, ngfs_scenario_timeseries.is_interpolate\u2026",
+     "tables": [
+      "ngfs_scenario_timeseries"
+     ],
+     "rowcount": 76,
+     "dur_ms": 39.633,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT ngfs_scenario_timeseries.id AS ngfs_scenario_timeseries_id, ngfs_scenario_timeseries.scenario_id AS ngfs_scenario_timeseries_scenario_id, ngfs_scenario_timeseries.parameter_name AS ngfs_scenario_timeseries_parameter_name, ngfs_scenario_timeseries.year AS ngfs_scenario_timeseries_year, ngfs_scenario_timeseries.value AS ngfs_scenario_timeseries_value, ngfs_scenario_timeseries.is_interpolate\u2026",
+     "tables": [
+      "ngfs_scenario_timeseries"
+     ],
+     "rowcount": 76,
+     "dur_ms": 34.35,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT ngfs_scenario_timeseries.id AS ngfs_scenario_timeseries_id, ngfs_scenario_timeseries.scenario_id AS ngfs_scenario_timeseries_scenario_id, ngfs_scenario_timeseries.parameter_name AS ngfs_scenario_timeseries_parameter_name, ngfs_scenario_timeseries.year AS ngfs_scenario_timeseries_year, ngfs_scenario_timeseries.value AS ngfs_scenario_timeseries_value, ngfs_scenario_timeseries.is_interpolate\u2026",
+     "tables": [
+      "ngfs_scenario_timeseries"
+     ],
+     "rowcount": 76,
+     "dur_ms": 32.491,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "c8260fc9-2afb-4e2f-ab03-7f9d7a837828 (real id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "get_parameters",
+     "qual": "get_parameters",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 218,
+     "args": {
+      "scenario_id": "'c8260fc9-2afb-4e2f-ab03-7f9d7a837828'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BCE0>"
+     },
+     "ret": "{'data': [{'id': 'abd83769-21c4-402e-80e9-e09a4d6c775c', 'parameter_name': 'carbon_price', 'display_name': 'Carbon Price', 'unit': 'USD/tCO2', 'category': 'pricing', 'is_editable': True, 'min_value': 0.0, 'max_value': 700.0, 'default_value\u2026",
+     "dur_ms": 877.164,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "[{'id': 'abd83769-21c4-402e-80e9-e09a4d6c775c', 'parameter_name': 'carbon_price', 'display_name': 'Carbon Price', 'unit': 'USD/tCO2', 'category': 'pricing', 'is_editable': True, 'min_value': 0.0, 'max_value': 700.0, 'default_value': 10.0, \u2026",
+        "meta": "None"
+       },
+       "ret": "{'data': [{'id': 'abd83769-21c4-402e-80e9-e09a4d6c775c', 'parameter_name': 'carbon_price', 'display_name': 'Carbon Price', 'unit': 'USD/tCO2', 'category': 'pricing', 'is_editable': True, 'min_value': 0.0, 'max_value': 700.0, 'default_value\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "GET /api/v1/ngfs-scenarios/{scenario_id}/time-series",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1550.799,
+   "node_count": 2,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenario_timeseries",
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 1,
+     "dur_ms": 206.842,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT ngfs_scenario_timeseries.id AS ngfs_scenario_timeseries_id, ngfs_scenario_timeseries.scenario_id AS ngfs_scenario_timeseries_scenario_id, ngfs_scenario_timeseries.parameter_name AS ngfs_scenario_timeseries_parameter_name, ngfs_scenario_timeseries.year AS ngfs_scenario_timeseries_year, ngfs_scenario_timeseries.value AS ngfs_scenario_timeseries_value, ngfs_scenario_timeseries.is_interpolate\u2026",
+     "tables": [
+      "ngfs_scenario_timeseries"
+     ],
+     "rowcount": 304,
+     "dur_ms": 316.318,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "c8260fc9-2afb-4e2f-ab03-7f9d7a837828 (real id)",
+    "parameter_name": "None (default)",
+    "start_year": "2025 (default)",
+    "end_year": "2100 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "data",
+     "meta"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_time_series",
+     "qual": "get_time_series",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 243,
+     "args": {
+      "scenario_id": "'c8260fc9-2afb-4e2f-ab03-7f9d7a837828'",
+      "parameter_name": "None",
+      "start_year": "2025",
+      "end_year": "2100",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+     },
+     "ret": "{'data': {'carbon_price': [{'year': 2025, 'value': 10.0, 'is_interpolated': False}, {'year': 2026, 'value': 12.0, 'is_interpolated': True}, {'year': 2027, 'value': 14.0, 'is_interpolated': True}, {'year': 2028, 'value': 16.0, 'is_interpola\u2026",
+     "dur_ms": 1000.371,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_wrap",
+       "qual": "_wrap",
+       "file": "api/v1/routes/ngfs_v2.py",
+       "line": 55,
+       "args": {
+        "data": "{'carbon_price': [{'year': 2025, 'value': 10.0, 'is_interpolated': False}, {'year': 2026, 'value': 12.0, 'is_interpolated': True}, {'year': 2027, 'value': 14.0, 'is_interpolated': True}, {'year': 2028, 'value': 16.0, 'is_interpolated': Tru\u2026",
+        "meta": "None"
+       },
+       "ret": "{'data': {'carbon_price': [{'year': 2025, 'value': 10.0, 'is_interpolated': False}, {'year': 2026, 'value': 12.0, 'is_interpolated': True}, {'year': 2027, 'value': 14.0, 'is_interpolated': True}, {'year': 2028, 'value': 16.0, 'is_interpola\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "POST /api/v1/ngfs-scenarios/compare",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No scenarios found",
+   "dur_ms": 578.472,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS ngfs_scenarios_v2_temperature_tar\u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.112,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<CompareRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "compare_scenarios",
+     "qual": "compare_scenarios",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 276,
+     "args": {
+      "body": "CompareRequest(scenario_ids=['TEST_body_scenario_ids'], metrics=['carbon_price', 'emissions', 'temperature', 'gdp_impact'])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB861919A0>"
+     },
+     "ret": "None",
+     "dur_ms": 547.195,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "POST /api/v1/ngfs-scenarios/search",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'get'",
+   "dur_ms": 0.566,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "search_scenarios",
+     "qual": "search_scenarios",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 181,
+     "args": {
+      "body": "'TEST_body'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380FB0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-v2",
+   "label": "POST /api/v1/ngfs-scenarios/seed",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 384.506,
+   "node_count": 4,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ngfs_scenarios_v2"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT ngfs_scenarios_v2.id AS ngfs_scenarios_v2_id, ngfs_scenarios_v2.name AS ngfs_scenarios_v2_name, ngfs_scenarios_v2.slug AS ngfs_scenarios_v2_slug, ngfs_scenarios_v2.phase AS ngfs_scenarios_v2_phase, ngfs_scenarios_v2.phase_year AS ngfs_scenarios_v2_phase_year, ngfs_scenarios_v2.category AS ngfs_scenarios_v2_category, ngfs_scenarios_v2.temperature_target AS \u2026",
+     "tables": [
+      "ngfs_scenarios_v2"
+     ],
+     "rowcount": 1,
+     "dur_ms": 71.313,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "message",
+     "count"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "seed_scenarios",
+     "qual": "seed_scenarios",
+     "file": "api/v1/routes/ngfs_v2.py",
+     "line": 304,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+     },
+     "ret": "{'message': 'Already seeded', 'count': 27}",
+     "dur_ms": 352.396,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/__init__.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/ngfs_seeder.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.051,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "seed_ngfs_scenarios",
+       "qual": "seed_ngfs_scenarios",
+       "file": "services/ngfs_seeder.py",
+       "line": 261,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+       },
+       "ret": "{'message': 'Already seeded', 'count': 27}",
+       "dur_ms": 321.963,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

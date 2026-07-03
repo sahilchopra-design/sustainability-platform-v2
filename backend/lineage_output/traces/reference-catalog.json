@@ -1,0 +1,2388 @@
+{
+ "domain": "reference-catalog",
+ "meta": {
+  "ts": "2026-06-30T14:04:28",
+  "module": "api.v1.routes.reference_catalog",
+  "router_prefix": "/api/v1/reference-catalog",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "reference-catalog",
+   "label": "GET /api/v1/reference-catalog/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 8.62,
+   "node_count": 137,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "domain": "None (default)",
+    "include_missing": "True (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_datasets",
+     "embedded_count",
+     "seed_data_count",
+     "missing_count",
+     "stale_count",
+     "coverage_pct",
+     "entries",
+     "domains",
+     "missing_critical",
+     "recommendations"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "catalog",
+     "qual": "catalog",
+     "file": "api/v1/routes/reference_catalog.py",
+     "line": 69,
+     "args": {
+      "domain": "None",
+      "include_missing": "True"
+     },
+     "ret": "{'total_datasets': 38, 'embedded_count': 36, 'seed_data_count': 2, 'missing_count': 0, 'stale_count': 0, 'coverage_pct': 100.0, 'entries': [{'data_id': 'ghg_protocol_ef_scope1', 'label': 'GHG Protocol Scope 1 Emission Factors', 'domain': '\u2026",
+     "dur_ms": 7.415,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_catalog",
+       "qual": "ReferenceDataCatalogEngine.get_catalog",
+       "file": "services/reference_data_catalog.py",
+       "line": 576,
+       "args": {
+        "domain": "None",
+        "include_missing": "True"
+       },
+       "ret": "ReferenceCatalogResult(total_datasets=38, embedded_count=36, seed_data_count=2, missing_count=0, stale_count=0, coverage_pct=100.0, entries=[CatalogEntry(data_id='ghg_protocol_ef_scope1', label='GHG Protocol Scope 1 Emission Factors', doma\u2026",
+       "dur_ms": 2.411,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.042,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 21,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 22,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 25,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 26,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 27,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 28,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 29,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 30,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 31,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 32,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 35,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 36,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 37,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 38,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 616,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 40,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 617,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 617,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 617,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 618,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 619,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 55,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 56,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 57,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 58,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 59,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 60,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 61,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 65,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 66,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 67,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 68,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 69,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 70,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 71,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 72,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 73,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 74,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 75,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 76,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 77,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 79,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 80,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 81,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 82,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 84,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 85,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 96,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 632,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.get_catalog.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 633,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB373C790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 99,
+       "name": "_ser_catalog",
+       "qual": "_ser_catalog",
+       "file": "api/v1/routes/reference_catalog.py",
+       "line": 40,
+       "args": {
+        "c": "ReferenceCatalogResult(total_datasets=38, embedded_count=36, seed_data_count=2, missing_count=0, stale_count=0, coverage_pct=100.0, entries=[CatalogEntry(data_id='ghg_protocol_ef_scope1', label='GHG Protocol Scope 1 Emission Factors', doma\u2026"
+       },
+       "ret": "{'total_datasets': 38, 'embedded_count': 36, 'seed_data_count': 2, 'missing_count': 0, 'stale_count': 0, 'coverage_pct': 100.0, 'entries': [{'data_id': 'ghg_protocol_ef_scope1', 'label': 'GHG Protocol Scope 1 Emission Factors', 'domain': '\u2026",
+       "dur_ms": 2.757,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 100,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ghg_protocol_ef_scope1', label='GHG Protocol Scope 1 Emission Factors', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='IPCC 2006 Guidelines (2019 Refinement)', source_url='ht\u2026"
+         },
+         "ret": "{'data_id': 'ghg_protocol_ef_scope1', 'label': 'GHG Protocol Scope 1 Emission Factors', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'IPCC 2006 Guidelines (2019 Refinement)', 'source_url\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 101,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='iea_grid_ef', label='IEA Grid Emission Factors by Country', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='International Energy Agency \u2014 CO2 Emissions from Fuel Combustion', \u2026"
+         },
+         "ret": "{'data_id': 'iea_grid_ef', 'label': 'IEA Grid Emission Factors by Country', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'International Energy Agency \u2014 CO2 Emissions from Fuel Combustion\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 102,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='defra_conversion_factors', label='UK DEFRA GHG Conversion Factors', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='UK Department for Environment, Food & Rural Affairs', sourc\u2026"
+         },
+         "ret": "{'data_id': 'defra_conversion_factors', 'label': 'UK DEFRA GHG Conversion Factors', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'UK Department for Environment, Food & Rural Affairs', 's\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 103,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='gwp_ar5_100yr', label='IPCC AR5 Global Warming Potentials (100-year)', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='IPCC Fifth Assessment Report (2014)', source_url='https:\u2026"
+         },
+         "ret": "{'data_id': 'gwp_ar5_100yr', 'label': 'IPCC AR5 Global Warming Potentials (100-year)', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'IPCC Fifth Assessment Report (2014)', 'source_url': '\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 104,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ghg_protocol_scope3_ef', label='GHG Protocol Scope 3 Category Emission Factors', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='GHG Protocol Corporate Value Chain (Scope 3) S\u2026"
+         },
+         "ret": "{'data_id': 'ghg_protocol_scope3_ef', 'label': 'GHG Protocol Scope 3 Category Emission Factors', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'GHG Protocol Corporate Value Chain (Scope 3\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 105,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='exiobase_sector_ef', label='EXIOBASE Multi-Regional IO Emission Factors', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='EXIOBASE Consortium', source_url='https://www.exiobas\u2026"
+         },
+         "ret": "{'data_id': 'exiobase_sector_ef', 'label': 'EXIOBASE Multi-Regional IO Emission Factors', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'EXIOBASE Consortium', 'source_url': 'https://www.e\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 106,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ipcc_agriculture_ef', label='IPCC Agriculture Emission Factors', domain='emission_factors', domain_label='GHG Emission Factors & Conversion Data', source='IPCC 2019 Refinement \u2014 Volume 4 (AFOLU)', source_url='https://\u2026"
+         },
+         "ret": "{'data_id': 'ipcc_agriculture_ef', 'label': 'IPCC Agriculture Emission Factors', 'domain': 'emission_factors', 'domain_label': 'GHG Emission Factors & Conversion Data', 'source': 'IPCC 2019 Refinement \u2014 Volume 4 (AFOLU)', 'source_url': 'ht\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 107,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ngfs_scenario_v4_params', label='NGFS Phase IV Scenario Parameters', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='Network for Greening the Financial System', source_url\u2026"
+         },
+         "ret": "{'data_id': 'ngfs_scenario_v4_params', 'label': 'NGFS Phase IV Scenario Parameters', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'Network for Greening the Financial System', 'source\u2026",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 108,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='eba_climate_risk_weights', label='EBA Climate Risk Stress Test Parameters', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='European Banking Authority', source_url='https:\u2026"
+         },
+         "ret": "{'data_id': 'eba_climate_risk_weights', 'label': 'EBA Climate Risk Stress Test Parameters', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'European Banking Authority', 'source_url': '\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 109,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='crr2_ccf_sa', label='CRR2 Credit Conversion Factors (Standardised Approach)', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='EU Capital Requirements Regulation II \u2014 Art 1\u2026"
+         },
+         "ret": "{'data_id': 'crr2_ccf_sa', 'label': 'CRR2 Credit Conversion Factors (Standardised Approach)', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'EU Capital Requirements Regulation II \u2014 Ar\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 110,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='moodys_default_rates', label=\"Moody's Annual Default Study\", domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source=\"Moody's Investors Service\", source_url='https://www.moodys.com\u2026"
+         },
+         "ret": "{'data_id': 'moodys_default_rates', 'label': \"Moody's Annual Default Study\", 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': \"Moody's Investors Service\", 'source_url': 'https://www.mood\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 111,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='eba_lgd_floors', label='EBA LGD Floors (FIRB/AIRB)', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='EBA GL/2019/03 \u2014 CRR2 Art 161', source_url='https://www.eba.europa.eu/\u2026"
+         },
+         "ret": "{'data_id': 'eba_lgd_floors', 'label': 'EBA LGD Floors (FIRB/AIRB)', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'EBA GL/2019/03 \u2014 CRR2 Art 161', 'source_url': 'https://www.eba.euro\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 112,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='pe_benchmark_returns', label='PE Benchmark Returns (by vintage)', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='Cambridge Associates / Preqin', source_url='https://www.c\u2026"
+         },
+         "ret": "{'data_id': 'pe_benchmark_returns', 'label': 'PE Benchmark Returns (by vintage)', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'Cambridge Associates / Preqin', 'source_url': 'https:/\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 113,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='dqs_confidence_weights', label='PCAF Data Quality Score \u2192 Confidence Weights', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='PCAF Global GHG Accounting Standard v2.0 (20\u2026"
+         },
+         "ret": "{'data_id': 'dqs_confidence_weights', 'label': 'PCAF Data Quality Score \u2192 Confidence Weights', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'PCAF Global GHG Accounting Standard v2.0 \u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 114,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='esrs_data_point_mappings', label='ESRS Data Point Catalog (IG3 quantitative DPs)', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='EFRAG Implementation Guidance 3 (2024)', sou\u2026"
+         },
+         "ret": "{'data_id': 'esrs_data_point_mappings', 'label': 'ESRS Data Point Catalog (IG3 quantitative DPs)', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'EFRAG Implementation Guidance 3 (2024)', \u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 115,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='esrs_minimums_per_standard', label='ESRS Minimum Disclosure Requirements per Standard', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='CSRD Directive 2022/2464', source_url='\u2026"
+         },
+         "ret": "{'data_id': 'esrs_minimums_per_standard', 'label': 'ESRS Minimum Disclosure Requirements per Standard', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'CSRD Directive 2022/2464', 'source_u\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 116,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='sfdr_rts_pai_definitions', label='SFDR RTS Principal Adverse Impact Indicators', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='SFDR Regulatory Technical Standards (EU 2022/1\u2026"
+         },
+         "ret": "{'data_id': 'sfdr_rts_pai_definitions', 'label': 'SFDR RTS Principal Adverse Impact Indicators', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'SFDR Regulatory Technical Standards (EU 202\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 117,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='eu_taxonomy_tsc_climate', label='EU Taxonomy Technical Screening Criteria \u2014 Climate', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='EU Delegated Regulation 2021/2139 (Climat\u2026"
+         },
+         "ret": "{'data_id': 'eu_taxonomy_tsc_climate', 'label': 'EU Taxonomy Technical Screening Criteria \u2014 Climate', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'EU Delegated Regulation 2021/2139 (Cli\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 118,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='issb_sasb_industry_metrics', label='ISSB SASB Industry-Specific Metrics', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='IFRS Foundation \u2014 SASB Standards', source_url='https:\u2026"
+         },
+         "ret": "{'data_id': 'issb_sasb_industry_metrics', 'label': 'ISSB SASB Industry-Specific Metrics', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'IFRS Foundation \u2014 SASB Standards', 'source_url': '\u2026",
+         "dur_ms": 0.02,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 119,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='cbam_product_registry', label='CBAM Product CN Code Registry', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='EU CBAM Regulation 2023/956', source_url='https://eur-lex.europa\u2026"
+         },
+         "ret": "{'data_id': 'cbam_product_registry', 'label': 'CBAM Product CN Code Registry', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'EU CBAM Regulation 2023/956', 'source_url': 'https://eur-lex.\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 120,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='nace_activity_classification', label='NACE Rev 2 Activity Classification', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='Eurostat \u2014 Statistical Classification of Economic Ac\u2026"
+         },
+         "ret": "{'data_id': 'nace_activity_classification', 'label': 'NACE Rev 2 Activity Classification', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'Eurostat \u2014 Statistical Classification of Economic\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 121,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='sbti_sector_pathways', label='SBTi Sector Decarbonisation Pathways', domain='sector_benchmarks', domain_label='Sector-Level Benchmarks & Pathways', source='Science Based Targets initiative', source_url='https://scienc\u2026"
+         },
+         "ret": "{'data_id': 'sbti_sector_pathways', 'label': 'SBTi Sector Decarbonisation Pathways', 'domain': 'sector_benchmarks', 'domain_label': 'Sector-Level Benchmarks & Pathways', 'source': 'Science Based Targets initiative', 'source_url': 'https://\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 122,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='crrem_v2_decarbonisation_curves', label='CRREM v2 Decarbonisation Pathways', domain='sector_benchmarks', domain_label='Sector-Level Benchmarks & Pathways', source='Carbon Risk Real Estate Monitor (CRREM)', source_url=\u2026"
+         },
+         "ret": "{'data_id': 'crrem_v2_decarbonisation_curves', 'label': 'CRREM v2 Decarbonisation Pathways', 'domain': 'sector_benchmarks', 'domain_label': 'Sector-Level Benchmarks & Pathways', 'source': 'Carbon Risk Real Estate Monitor (CRREM)', 'source_\u2026",
+         "dur_ms": 0.068,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 123,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='gresb_benchmark_2024', label='GRESB Benchmark Data 2024', domain='sector_benchmarks', domain_label='Sector-Level Benchmarks & Pathways', source='GRESB BV', source_url='https://www.gresb.com', update_frequency='annual \u2026"
+         },
+         "ret": "{'data_id': 'gresb_benchmark_2024', 'label': 'GRESB Benchmark Data 2024', 'domain': 'sector_benchmarks', 'domain_label': 'Sector-Level Benchmarks & Pathways', 'source': 'GRESB BV', 'source_url': 'https://www.gresb.com', 'update_frequency':\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 124,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='wri_aqueduct_water_stress', label='WRI Aqueduct Water Risk Atlas', domain='geographic', domain_label='Geographic & Spatial Reference Data', source='World Resources Institute \u2014 Aqueduct', source_url='https://www.wri.or\u2026"
+         },
+         "ret": "{'data_id': 'wri_aqueduct_water_stress', 'label': 'WRI Aqueduct Water Risk Atlas', 'domain': 'geographic', 'domain_label': 'Geographic & Spatial Reference Data', 'source': 'World Resources Institute \u2014 Aqueduct', 'source_url': 'https://www.\u2026",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 125,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ibat_protected_areas', label='IBAT Key Biodiversity Areas & Protected Areas', domain='geographic', domain_label='Geographic & Spatial Reference Data', source='Integrated Biodiversity Assessment Tool (IBAT)', source_ur\u2026"
+         },
+         "ret": "{'data_id': 'ibat_protected_areas', 'label': 'IBAT Key Biodiversity Areas & Protected Areas', 'domain': 'geographic', 'domain_label': 'Geographic & Spatial Reference Data', 'source': 'Integrated Biodiversity Assessment Tool (IBAT)', 'sourc\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 126,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='cets_price_history', label='China ETS Carbon Price History', domain='geographic', domain_label='Geographic & Spatial Reference Data', source='Shanghai Environment and Energy Exchange', source_url='https://www.cneeex.c\u2026"
+         },
+         "ret": "{'data_id': 'cets_price_history', 'label': 'China ETS Carbon Price History', 'domain': 'geographic', 'domain_label': 'Geographic & Spatial Reference Data', 'source': 'Shanghai Environment and Energy Exchange', 'source_url': 'https://www.cn\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 127,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='module_registry', label='Platform Module Registry', domain='entity_master', domain_label='Entity Classification & Master Data', source='Internal \u2014 Entity 360 Engine', source_url='', update_frequency='per release', las\u2026"
+         },
+         "ret": "{'data_id': 'module_registry', 'label': 'Platform Module Registry', 'domain': 'entity_master', 'domain_label': 'Entity Classification & Master Data', 'source': 'Internal \u2014 Entity 360 Engine', 'source_url': '', 'update_frequency': 'per rele\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 128,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='entity_types', label='Entity Type Taxonomy', domain='entity_master', domain_label='Entity Classification & Master Data', source='Internal \u2014 Entity 360 Engine', source_url='', update_frequency='per release', last_known\u2026"
+         },
+         "ret": "{'data_id': 'entity_types', 'label': 'Entity Type Taxonomy', 'domain': 'entity_master', 'domain_label': 'Entity Classification & Master Data', 'source': 'Internal \u2014 Entity 360 Engine', 'source_url': '', 'update_frequency': 'per release', '\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 129,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='sector_map', label='Sector Classification Map', domain='entity_master', domain_label='Entity Classification & Master Data', source='Internal \u2014 Entity 360 Engine (GICS-aligned)', source_url='', update_frequency='per re\u2026"
+         },
+         "ret": "{'data_id': 'sector_map', 'label': 'Sector Classification Map', 'domain': 'entity_master', 'domain_label': 'Entity Classification & Master Data', 'source': 'Internal \u2014 Entity 360 Engine (GICS-aligned)', 'source_url': '', 'update_frequency'\u2026",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 130,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='who_mortality_tables', label='WHO Life Tables (Mortality by Age/Sex/Country)', domain='insurance', domain_label='Insurance Actuarial & Risk Parameters', source='World Health Organization \u2014 Global Health Observatory', \u2026"
+         },
+         "ret": "{'data_id': 'who_mortality_tables', 'label': 'WHO Life Tables (Mortality by Age/Sex/Country)', 'domain': 'insurance', 'domain_label': 'Insurance Actuarial & Risk Parameters', 'source': 'World Health Organization \u2014 Global Health Observatory\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 131,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='ipcc_ar6_damage_functions', label='IPCC AR6 Climate Damage Functions by Hazard', domain='insurance', domain_label='Insurance Actuarial & Risk Parameters', source='IPCC AR6 WG2 \u2014 Impacts, Adaptation, Vulnerability (DIC\u2026"
+         },
+         "ret": "{'data_id': 'ipcc_ar6_damage_functions', 'label': 'IPCC AR6 Climate Damage Functions by Hazard', 'domain': 'insurance', 'domain_label': 'Insurance Actuarial & Risk Parameters', 'source': 'IPCC AR6 WG2 \u2014 Impacts, Adaptation, Vulnerability (\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 132,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='solvency2_nat_cat_factors', label='Solvency II Natural Catastrophe Risk Factors', domain='insurance', domain_label='Insurance Actuarial & Risk Parameters', source='EIOPA \u2014 Solvency II Delegated Regulation 2015/35 Art \u2026"
+         },
+         "ret": "{'data_id': 'solvency2_nat_cat_factors', 'label': 'Solvency II Natural Catastrophe Risk Factors', 'domain': 'insurance', 'domain_label': 'Insurance Actuarial & Risk Parameters', 'source': 'EIOPA \u2014 Solvency II Delegated Regulation 2015/35 A\u2026",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 133,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='basel3_nsfr_lcr_factors', label='Basel III NSFR / LCR Factors (CRR2)', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='CRR2 Articles 411-428ai (BIS d295/d396)', source_url\u2026"
+         },
+         "ret": "{'data_id': 'basel3_nsfr_lcr_factors', 'label': 'Basel III NSFR / LCR Factors (CRR2)', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'CRR2 Articles 411-428ai (BIS d295/d396)', 'source\u2026",
+         "dur_ms": 0.044,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 134,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='fatf_country_risk_ratings', label='FATF Country Risk Ratings (AML/CFT)', domain='financial_parameters', domain_label='Financial Risk Parameters & Benchmarks', source='Financial Action Task Force \u2014 Consolidated Mutual \u2026"
+         },
+         "ret": "{'data_id': 'fatf_country_risk_ratings', 'label': 'FATF Country Risk Ratings (AML/CFT)', 'domain': 'financial_parameters', 'domain_label': 'Financial Risk Parameters & Benchmarks', 'source': 'Financial Action Task Force \u2014 Consolidated Mutu\u2026",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 135,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='fao_crop_yield_database', label='FAO Crop Yield Statistics (FAOSTAT)', domain='agriculture', domain_label='Agriculture & Land Use Reference Data', source='Food and Agriculture Organization of the United Nations \u2014 FAOS\u2026"
+         },
+         "ret": "{'data_id': 'fao_crop_yield_database', 'label': 'FAO Crop Yield Statistics (FAOSTAT)', 'domain': 'agriculture', 'domain_label': 'Agriculture & Land Use Reference Data', 'source': 'Food and Agriculture Organization of the United Nations \u2014 F\u2026",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 136,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='eudr_commodity_criteria', label='EU Deforestation Regulation Commodity Criteria', domain='regulatory', domain_label='Regulatory Framework Mappings & Requirements', source='EC Regulation 2025/1093 (EUDR Country Benchma\u2026"
+         },
+         "ret": "{'data_id': 'eudr_commodity_criteria', 'label': 'EU Deforestation Regulation Commodity Criteria', 'domain': 'regulatory', 'domain_label': 'Regulatory Framework Mappings & Requirements', 'source': 'EC Regulation 2025/1093 (EUDR Country Benc\u2026",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 137,
+         "name": "_ser_entry",
+         "qual": "_ser_entry",
+         "file": "api/v1/routes/reference_catalog.py",
+         "line": 23,
+         "args": {
+          "e": "CatalogEntry(data_id='bng_metric_4', label='Biodiversity Net Gain Statutory Metric', domain='nature', domain_label='Nature & Biodiversity Reference Data', source='Natural England \u2014 Statutory Biodiversity Metric (supersedes BNG 4.0)', sourc\u2026"
+         },
+         "ret": "{'data_id': 'bng_metric_4', 'label': 'Biodiversity Net Gain Statutory Metric', 'domain': 'nature', 'domain_label': 'Nature & Biodiversity Reference Data', 'source': 'Natural England \u2014 Statutory Biodiversity Metric (supersedes BNG 4.0)', 's\u2026",
+         "dur_ms": 0.085,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "reference-catalog",
+   "label": "GET /api/v1/reference-catalog/dataset/{data_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.39,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "data_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "error"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 138,
+     "name": "dataset_detail",
+     "qual": "dataset_detail",
+     "file": "api/v1/routes/reference_catalog.py",
+     "line": 99,
+     "args": {
+      "data_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'error': \"Dataset '550e8400-e29b-41d4-a716-446655440001' not found\"}",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 139,
+       "name": "get_dataset",
+       "qual": "ReferenceDataCatalogEngine.get_dataset",
+       "file": "services/reference_data_catalog.py",
+       "line": 760,
+       "args": {
+        "data_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "reference-catalog",
+   "label": "GET /api/v1/reference-catalog/domains",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.256,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "emission_factors",
+     "financial_parameters",
+     "regulatory",
+     "sector_benchmarks",
+     "geographic",
+     "entity_master",
+     "insurance",
+     "agriculture",
+     "nature"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 140,
+     "name": "domains",
+     "qual": "domains",
+     "file": "api/v1/routes/reference_catalog.py",
+     "line": 78,
+     "args": {},
+     "ret": "{'emission_factors': 'GHG Emission Factors & Conversion Data', 'financial_parameters': 'Financial Risk Parameters & Benchmarks', 'regulatory': 'Regulatory Framework Mappings & Requirements', 'sector_benchmarks': 'Sector-Level Benchmarks & \u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 141,
+       "name": "get_domains",
+       "qual": "ReferenceDataCatalogEngine.get_domains",
+       "file": "services/reference_data_catalog.py",
+       "line": 756,
+       "args": {},
+       "ret": "{'emission_factors': 'GHG Emission Factors & Conversion Data', 'financial_parameters': 'Financial Risk Parameters & Benchmarks', 'regulatory': 'Regulatory Framework Mappings & Requirements', 'sector_benchmarks': 'Sector-Level Benchmarks & \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "reference-catalog",
+   "label": "GET /api/v1/reference-catalog/gaps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.325,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_missing",
+     "total_stale",
+     "gaps",
+     "remediation_priority",
+     "estimated_effort"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 142,
+     "name": "gaps",
+     "qual": "gaps",
+     "file": "api/v1/routes/reference_catalog.py",
+     "line": 83,
+     "args": {},
+     "ret": "{'total_missing': 0, 'total_stale': 0, 'gaps': [], 'remediation_priority': [], 'estimated_effort': 'low'}",
+     "dur_ms": 0.151,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 143,
+       "name": "find_gaps",
+       "qual": "ReferenceDataCatalogEngine.find_gaps",
+       "file": "services/reference_data_catalog.py",
+       "line": 698,
+       "args": {},
+       "ret": "GapReport(total_missing=0, total_stale=0, gaps=[], remediation_priority=[], estimated_effort='low')",
+       "dur_ms": 0.081,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 144,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.find_gaps.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 741,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB35FE050>"
+         },
+         "ret": "None",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 145,
+         "name": "<genexpr>",
+         "qual": "ReferenceDataCatalogEngine.find_gaps.<locals>.<genexpr>",
+         "file": "services/reference_data_catalog.py",
+         "line": 742,
+         "args": {
+          ".0": "<list_iterator object at 0x0000021DB35FE050>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 146,
+       "name": "_ser_gap_report",
+       "qual": "_ser_gap_report",
+       "file": "api/v1/routes/reference_catalog.py",
+       "line": 55,
+       "args": {
+        "g": "GapReport(total_missing=0, total_stale=0, gaps=[], remediation_priority=[], estimated_effort='low')"
+       },
+       "ret": "{'total_missing': 0, 'total_stale': 0, 'gaps': [], 'remediation_priority': [], 'estimated_effort': 'low'}",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "reference-catalog",
+   "label": "GET /api/v1/reference-catalog/module/{module_id}",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.305,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "module_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "module_id",
+     "reference_data",
+     "total"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 147,
+     "name": "module_reference_data",
+     "qual": "module_reference_data",
+     "file": "api/v1/routes/reference_catalog.py",
+     "line": 89,
+     "args": {
+      "module_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "{'module_id': '550e8400-e29b-41d4-a716-446655440001', 'reference_data': [], 'total': 0}",
+     "dur_ms": 0.049,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 148,
+       "name": "get_module_reference_data",
+       "qual": "ReferenceDataCatalogEngine.get_module_reference_data",
+       "file": "services/reference_data_catalog.py",
+       "line": 661,
+       "args": {
+        "module_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "[]",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

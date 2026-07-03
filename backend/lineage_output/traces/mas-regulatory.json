@@ -1,0 +1,242 @@
+{
+ "domain": "mas-regulatory",
+ "meta": {
+  "ts": "2026-06-30T14:03:07",
+  "module": "api.v1.routes.mas_regulatory",
+  "router_prefix": "/api/v1/mas-regulatory",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "mas-regulatory",
+   "label": "GET /api/v1/mas-regulatory/erm/principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.439,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "url",
+     "principles"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_erm_principles",
+     "qual": "get_erm_principles",
+     "file": "api/v1/routes/mas_regulatory.py",
+     "line": 116,
+     "args": {},
+     "ret": "{'framework': 'MAS Guidelines on Environmental Risk Management (Banks) 2022', 'url': 'https://www.mas.gov.sg/regulation/guidelines/guidelines-on-environmental-risk-management', 'principles': [{'id': 'erm_1', 'section': '1', 'title': 'Board\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "GET /api/v1/mas-regulatory/notice-637/requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.914,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "items"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_notice_637",
+     "qual": "get_notice_637",
+     "file": "api/v1/routes/mas_regulatory.py",
+     "line": 158,
+     "args": {},
+     "ret": "{'framework': 'MAS Notice 637 \u2014 Risk Based Capital Adequacy Requirements (incl. Pillar 2 env. risk)', 'items': [{'id': 'n637_1', 'pillar': 'Pillar 2 \u2014 ICAAP', 'item': 'Environmental risk identification in ICAAP', 'requirement': 'Banks must\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "GET /api/v1/mas-regulatory/sgt/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.882,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "taxonomy",
+     "url",
+     "sectors"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_sgt_sectors",
+     "qual": "get_sgt_sectors",
+     "file": "api/v1/routes/mas_regulatory.py",
+     "line": 166,
+     "args": {},
+     "ret": "{'taxonomy': 'Singapore Green and Transition Taxonomy v2.0 (2024)', 'url': 'https://www.mas.gov.sg/development/sustainable-finance/singapore-green-and-transition-taxonomy', 'sectors': [{'sector': 'Energy', 'activities': ['Solar PV generati\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "GET /api/v1/mas-regulatory/slgs/stages",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.515,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "programme",
+     "description",
+     "stages"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_slgs_stages",
+     "qual": "get_slgs_stages",
+     "file": "api/v1/routes/mas_regulatory.py",
+     "line": 196,
+     "args": {},
+     "ret": "{'programme': 'Singapore Green Lane for Sustainability (SLGS)', 'description': 'MAS incentive programme for financial institutions demonstrating strong climate action', 'stages': [{'stage': 1, 'name': 'Pre-qualification', 'description': 'E\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "POST /api/v1/mas-regulatory/erm/self-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'responses'",
+   "dur_ms": 3.971,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "assessment": "'TEST_assessment' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "submit_erm_assessment",
+     "qual": "submit_erm_assessment",
+     "file": "api/v1/routes/mas_regulatory.py",
+     "line": 125,
+     "args": {
+      "assessment": "'TEST_assessment'"
+     },
+     "ret": "None",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "POST /api/v1/mas-regulatory/sgt/check-activity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "mas-regulatory",
+   "label": "POST /api/v1/mas-regulatory/slgs/application",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

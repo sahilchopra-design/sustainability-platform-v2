@@ -1,0 +1,659 @@
+{
+ "domain": "financial-data",
+ "meta": {
+  "ts": "2026-06-30T14:02:23",
+  "module": "api.v1.routes.financial_data",
+  "router_prefix": "/api/v1/financial-data",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/edgar",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3175.873,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_sec_edgar_filings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_sec_edgar_filings.id AS dh_sec_edgar_filings_id, dh_sec_edgar_filings.source_id AS dh_sec_edgar_filings_source_id, dh_sec_edgar_filings.cik AS dh_sec_edgar_filings_cik, dh_sec_edgar_filings.ticker AS dh_sec_edgar_filings_ticker, dh_sec_edgar_filings.company_name AS dh_sec_edgar_filings_company_name, dh_sec_edgar_filings.entity_type AS dh_sec_edgar_filin\u2026",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 1251.791,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_sec_edgar_filings.id AS dh_sec_edgar_filings_id, dh_sec_edgar_filings.source_id AS dh_sec_edgar_filings_source_id, dh_sec_edgar_filings.cik AS dh_sec_edgar_filings_cik, dh_sec_edgar_filings.ticker AS dh_sec_edgar_filings_ticker, dh_sec_edgar_filings.company_name AS dh_sec_edgar_filings_company_name, dh_sec_edgar_filings.entity_type AS dh_sec_edgar_filings_entity_type, dh_sec_edgar_fili\u2026",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.899,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "company": "None (default)",
+    "ticker": "None (default)",
+    "cik": "None (default)",
+    "filing_type": "None (default)",
+    "sic_code": "None (default)",
+    "fiscal_year_min": "None (default)",
+    "fiscal_year_max": "None (default)",
+    "limit": "100 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "search_edgar",
+     "qual": "search_edgar",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 33,
+     "args": {
+      "company": "None",
+      "ticker": "None",
+      "cik": "None",
+      "filing_type": "None",
+      "sic_code": "None",
+      "fiscal_year_min": "None",
+      "fiscal_year_max": "None",
+      "limit": "100",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878AB36900>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878AB4A0C0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 100, 'records': []}",
+     "dur_ms": 2864.563,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/edgar/companies",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 645.61,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_sec_edgar_filings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_sec_edgar_filings.cik AS dh_sec_edgar_filings_cik, dh_sec_edgar_filings.ticker AS dh_sec_edgar_filings_ticker, dh_sec_edgar_filings.company_name AS dh_sec_edgar_filings_company_name, count(dh_sec_edgar_filings.id) AS filings, min(dh_sec_edgar_filings.fiscal_year) AS year_min, max(dh_sec_edgar_filings.fiscal_year) AS year_max FROM dh_sec_edgar_filings GROUP BY dh_sec_edgar_filings.cik, \u2026",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 211.873,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "companies"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "edgar_companies",
+     "qual": "edgar_companies",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 79,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C5E2A20>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C3F0B80>, use_cache=True, scope=None)"
+     },
+     "ret": "{'companies': []}",
+     "dur_ms": 496.397,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/edgar/compare",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Invalid metric 'TEST_metric'. Valid: ['cash_and_equivalents', 'debt_to_equity', 'ebitda', 'eps_diluted', 'free_cash_flow', 'net_income', 'operating_cash_flow', 'operating_income', 'revenue', 'roa', 'roe', 'shares_outstanding', 'total_assets', 'total_debt', 'total_equity', 'total_liabilities']",
+   "dur_ms": 0.748,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "metric": "'TEST_metric' (mock-required)",
+    "tickers": "'TEST_tickers' (mock-required)",
+    "filing_type": "'10-K' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "edgar_compare",
+     "qual": "edgar_compare",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 127,
+     "args": {
+      "metric": "'TEST_metric'",
+      "tickers": "'TEST_tickers'",
+      "filing_type": "'10-K'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C6614F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D1C60>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/edgar/filing-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2138.053,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_sec_edgar_filings"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_sec_edgar_filings.filing_type AS dh_sec_edgar_filings_filing_type, count(dh_sec_edgar_filings.id) AS count FROM dh_sec_edgar_filings GROUP BY dh_sec_edgar_filings.filing_type ORDER BY count(dh_sec_edgar_filings.id) DESC'",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 0,
+     "dur_ms": 318.661,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "filing_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "edgar_filing_types",
+     "qual": "edgar_filing_types",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 109,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C6618E0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D1800>, use_cache=True, scope=None)"
+     },
+     "ret": "{'filing_types': []}",
+     "dur_ms": 2091.223,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/market",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1244.633,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_yfinance_market_data.id AS dh_yfinance_market_data_id, dh_yfinance_market_data.source_id AS dh_yfinance_market_data_source_id, dh_yfinance_market_data.ticker AS dh_yfinance_market_data_ticker, dh_yfinance_market_data.company_name AS dh_yfinance_market_data_company_name, dh_yfinance_market_data.exchange AS dh_yfinance_market_data_exchange, dh_yfinance_ma\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 371.667,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_yfinance_market_data.id AS dh_yfinance_market_data_id, dh_yfinance_market_data.source_id AS dh_yfinance_market_data_source_id, dh_yfinance_market_data.ticker AS dh_yfinance_market_data_ticker, dh_yfinance_market_data.company_name AS dh_yfinance_market_data_company_name, dh_yfinance_market_data.exchange AS dh_yfinance_market_data_exchange, dh_yfinance_market_data.currency AS dh_yfinance\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 46.04,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "ticker": "None (default)",
+    "company": "None (default)",
+    "sector": "None (default)",
+    "country": "None (default)",
+    "exchange": "None (default)",
+    "min_market_cap": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "search_market",
+     "qual": "search_market",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 176,
+     "args": {
+      "ticker": "None",
+      "company": "None",
+      "sector": "None",
+      "country": "None",
+      "exchange": "None",
+      "min_market_cap": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C661580>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D2020>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 50, 'records': []}",
+     "dur_ms": 1076.628,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/market/evic",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1969.365,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_yfinance_market_data.id AS dh_yfinance_market_data_id, dh_yfinance_market_data.source_id AS dh_yfinance_market_data_source_id, dh_yfinance_market_data.ticker AS dh_yfinance_market_data_ticker, dh_yfinance_market_data.company_name AS dh_yfinance_market_data_company_name, dh_yfinance_market_data.exchange AS dh_yfinance_market_data_exchange, dh_yfinance_market_data.currency AS dh_yfinance\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 646.455,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "ticker": "None (default)",
+    "min_evic": "None (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "records"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "market_evic",
+     "qual": "market_evic",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 286,
+     "args": {
+      "ticker": "None",
+      "min_evic": "None",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C661EB0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D2A20>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'records': []}",
+     "dur_ms": 1925.476,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/market/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 392.623,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_yfinance_market_data.sector AS dh_yfinance_market_data_sector, count(dh_yfinance_market_data.id) AS companies, sum(dh_yfinance_market_data.market_cap) AS total_market_cap, avg(dh_yfinance_market_data.pe_ratio) AS avg_pe, avg(dh_yfinance_market_data.pb_ratio) AS avg_pb, avg(dh_yfinance_market_data.dividend_yield) AS avg_div_yield, avg(dh_yfinance_market_data.beta) AS avg_beta FROM dh_yf\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 76.541,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "market_sectors",
+     "qual": "market_sectors",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 250,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878C662330>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D27A0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sectors': []}",
+     "dur_ms": 343.065,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/market/tickers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1681.304,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_yfinance_market_data.ticker AS dh_yfinance_market_data_ticker, dh_yfinance_market_data.company_name AS dh_yfinance_market_data_company_name, dh_yfinance_market_data.sector AS dh_yfinance_market_data_sector, dh_yfinance_market_data.market_cap AS dh_yfinance_market_data_market_cap, dh_yfinance_market_data.share_price AS dh_yfinance_market_data_share_price, dh_yfinance_market_data.evic AS\u2026",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 0,
+     "dur_ms": 113.001,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "tickers"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "market_tickers",
+     "qual": "market_tickers",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 219,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878CA25DC0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D2480>, use_cache=True, scope=None)"
+     },
+     "ret": "{'tickers': []}",
+     "dur_ms": 1631.94,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-data",
+   "label": "GET /api/v1/financial-data/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3754.199,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_sec_edgar_filings",
+    "dh_yfinance_market_data"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(dh_sec_edgar_filings.id) AS count_1 FROM dh_sec_edgar_filings'",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 584.405,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(DISTINCT dh_sec_edgar_filings.cik) AS count_1 FROM dh_sec_edgar_filings'",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 68.321,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(DISTINCT dh_sec_edgar_filings.filing_type) AS count_1 FROM dh_sec_edgar_filings'",
+     "tables": [
+      "dh_sec_edgar_filings"
+     ],
+     "rowcount": 1,
+     "dur_ms": 328.595,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(dh_yfinance_market_data.id) AS count_1 FROM dh_yfinance_market_data'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.728,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT count(DISTINCT dh_yfinance_market_data.ticker) AS count_1 FROM dh_yfinance_market_data'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 162.211,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT count(DISTINCT dh_yfinance_market_data.sector) AS count_1 FROM dh_yfinance_market_data'",
+     "tables": [
+      "dh_yfinance_market_data"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.914,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "edgar",
+     "market"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "combined_stats",
+     "qual": "combined_stats",
+     "file": "api/v1/routes/financial_data.py",
+     "line": 329,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002878CA26DE0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002878C4D2CA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'edgar': {'filings': 0, 'companies': 0, 'filing_types': 0}, 'market': {'snapshots': 0, 'tickers': 0, 'sectors': 0}}",
+     "dur_ms": 3720.505,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,49 @@
+{
+ "domain": "nonv1-ecl",
+ "meta": {
+  "ts": "2026-06-30T14:26:13",
+  "endpoints": 1,
+  "source": "server.app",
+  "predicate": "nonv1-ecl"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-ecl",
+   "label": "POST /api/ecl/portfolio-stress",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'scenario'",
+   "dur_ms": 0.31,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 127,
+     "name": "ecl_portfolio_stress",
+     "qual": "ecl_portfolio_stress",
+     "file": "api/v1/routes/portfolio_reporting.py",
+     "line": 589,
+     "args": {
+      "request": "'TEST_request'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569B9430>"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,650 @@
+{
+ "domain": "nature-capital",
+ "meta": {
+  "ts": "2026-06-30T14:03:18",
+  "module": "api.v1.routes.nature_capital",
+  "router_prefix": "/api/v1/nature-capital",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "nature-capital",
+   "label": "GET /api/v1/nature-capital/ref/biome-values",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.237,
+   "node_count": 20,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "methodology",
+     "price_year",
+     "currency",
+     "caveat",
+     "biome_count",
+     "biomes"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_biome_values",
+     "qual": "get_biome_values",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 238,
+     "args": {},
+     "ret": "{'methodology': 'Benefit transfer from primary studies \u2014 Costanza et al. (2014), TEEB (2010), IPBES (2019)', 'price_year': 2023, 'currency': 'USD', 'caveat': 'Unit values are estimates based on meta-analysis; site-specific valuations requi\u2026",
+     "dur_ms": 0.477,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('tropical_forest', {'total_usd_ha_yr': 5264, 'provisioning': 1200, 'regulating': 3200, 'cultural': 864, 'source': 'TEEB 2010 / Costanza et al 2014'})"
+       },
+       "ret": "5264",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('temperate_forest', {'total_usd_ha_yr': 3137, 'provisioning': 980, 'regulating': 1800, 'cultural': 357, 'source': 'TEEB 2010'})"
+       },
+       "ret": "3137",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('boreal_forest', {'total_usd_ha_yr': 894, 'provisioning': 320, 'regulating': 480, 'cultural': 94, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "894",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('tropical_grassland', {'total_usd_ha_yr': 1340, 'provisioning': 420, 'regulating': 750, 'cultural': 170, 'source': 'TEEB 2010'})"
+       },
+       "ret": "1340",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('temperate_grassland', {'total_usd_ha_yr': 1027, 'provisioning': 380, 'regulating': 520, 'cultural': 127, 'source': 'TEEB 2010'})"
+       },
+       "ret": "1027",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('wetland_freshwater', {'total_usd_ha_yr': 14785, 'provisioning': 2400, 'regulating': 10200, 'cultural': 2185, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "14785",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('wetland_coastal', {'total_usd_ha_yr': 28916, 'provisioning': 4500, 'regulating': 21000, 'cultural': 3416, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "28916",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('mangrove', {'total_usd_ha_yr': 33750, 'provisioning': 5200, 'regulating': 25000, 'cultural': 3550, 'source': 'TEEB 2010 / De Groot et al'})"
+       },
+       "ret": "33750",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('coral_reef', {'total_usd_ha_yr': 352249, 'provisioning': 65000, 'regulating': 270000, 'cultural': 17249, 'source': 'TEEB 2010'})"
+       },
+       "ret": "352249",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('seagrass', {'total_usd_ha_yr': 19004, 'provisioning': 3500, 'regulating': 13800, 'cultural': 1704, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "19004",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('open_ocean', {'total_usd_ha_yr': 491, 'provisioning': 250, 'regulating': 195, 'cultural': 46, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "491",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('cropland', {'total_usd_ha_yr': 1540, 'provisioning': 1380, 'regulating': 120, 'cultural': 40, 'source': 'TEEB 2010'})"
+       },
+       "ret": "1540",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('urban_greenspace', {'total_usd_ha_yr': 6531, 'provisioning': 580, 'regulating': 4200, 'cultural': 1751, 'source': 'TEEB Urban 2011'})"
+       },
+       "ret": "6531",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('peatland', {'total_usd_ha_yr': 3677, 'provisioning': 450, 'regulating': 2900, 'cultural': 327, 'source': 'IPBES 2019'})"
+       },
+       "ret": "3677",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('tundra', {'total_usd_ha_yr': 121, 'provisioning': 60, 'regulating': 50, 'cultural': 11, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "121",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('desert', {'total_usd_ha_yr': 43, 'provisioning': 20, 'regulating': 15, 'cultural': 8, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "43",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('mountain', {'total_usd_ha_yr': 688, 'provisioning': 350, 'regulating': 270, 'cultural': 68, 'source': 'TEEB 2010'})"
+       },
+       "ret": "688",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('mediterranean_shrubland', {'total_usd_ha_yr': 2071, 'provisioning': 650, 'regulating': 1100, 'cultural': 321, 'source': 'TEEB 2010'})"
+       },
+       "ret": "2071",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<lambda>",
+       "qual": "get_biome_values.<locals>.<lambda>",
+       "file": "api/v1/routes/nature_capital.py",
+       "line": 259,
+       "args": {
+        "x": "('savanna', {'total_usd_ha_yr': 930, 'provisioning': 350, 'regulating': 450, 'cultural': 130, 'source': 'Costanza et al 2014'})"
+       },
+       "ret": "930",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "GET /api/v1/nature-capital/ref/ecosystem-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.668,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "ecosystem_count",
+     "ecosystems"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "get_ecosystem_types",
+     "qual": "get_ecosystem_types",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 140,
+     "args": {},
+     "ret": "{'framework': 'SEEA EA 2021 / IPBES Global Assessment / TEEB', 'ecosystem_count': 19, 'ecosystems': [{'ecosystem_type': 'tropical_forest', 'total_value_usd_ha_yr': 5264, 'provisioning_usd_ha_yr': 1200, 'regulating_usd_ha_yr': 3200, 'cultur\u2026",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "GET /api/v1/nature-capital/ref/encore-services",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.583,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "version",
+     "total_services",
+     "categories"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "get_encore_services",
+     "qual": "get_encore_services",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 175,
+     "args": {},
+     "ret": "{'framework': 'ENCORE (Exploring Natural Capital Opportunities, Risks and Exposure) \u2014 UNEP-WCMC', 'version': '2023', 'total_services': 49, 'categories': {'provisioning': {'count': 20, 'description': 'Services that provision goods from natu\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "GET /api/v1/nature-capital/ref/seea-accounts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 7.053,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "adopted_by_un",
+     "accounts_count",
+     "accounts"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "get_seea_accounts",
+     "qual": "get_seea_accounts",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 162,
+     "args": {},
+     "ret": "{'framework': 'System of Environmental-Economic Accounting Ecosystem Accounting (SEEA EA 2021)', 'adopted_by_un': 'United Nations Statistical Commission 2021', 'accounts_count': 6, 'accounts': [{'id': 'EA-1', 'name': 'Ecosystem Extent Acco\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "GET /api/v1/nature-capital/ref/tnfd-disclosures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.882,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "version",
+     "published",
+     "total_disclosures",
+     "pillars",
+     "all_disclosures",
+     "leap_approach"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "get_tnfd_disclosures",
+     "qual": "get_tnfd_disclosures",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 208,
+     "args": {},
+     "ret": "{'framework': 'Taskforce on Nature-related Financial Disclosures (TNFD)', 'version': 'v1.0', 'published': 'September 2023', 'total_disclosures': 14, 'pillars': {'Governance': [{'id': 'TNFD-G1', 'topic': 'Board oversight of nature-related d\u2026",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "POST /api/v1/nature-capital/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.609,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "assess_natural_capital_endpoint",
+     "qual": "assess_natural_capital_endpoint",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 64,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "POST /api/v1/nature-capital/balance-sheet",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nature-capital",
+   "label": "POST /api/v1/nature-capital/dependency-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.533,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 26,
+     "name": "dependency_score_endpoint",
+     "qual": "dependency_score_endpoint",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 95,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "POST /api/v1/nature-capital/disclosure-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.483,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "disclosure_score_endpoint",
+     "qual": "disclosure_score_endpoint",
+     "file": "api/v1/routes/nature_capital.py",
+     "line": 109,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-capital",
+   "label": "POST /api/v1/nature-capital/valuate-services",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

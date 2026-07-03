@@ -1,0 +1,29 @@
+{
+ "domain": "nonv1-sample-data",
+ "meta": {
+  "ts": "2026-06-30T14:26:23",
+  "endpoints": 1,
+  "source": "server.app",
+  "predicate": "nonv1-sample-data"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-sample-data",
+   "label": "POST /api/sample-data/generate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "mock-sample"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

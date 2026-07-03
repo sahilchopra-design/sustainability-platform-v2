@@ -1,0 +1,609 @@
+{
+ "domain": "just-transition",
+ "meta": {
+  "ts": "2026-06-30T14:02:59",
+  "module": "api.v1.routes.just_transition",
+  "router_prefix": "/api/v1/just-transition",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "just-transition",
+   "label": "GET /api/v1/just-transition/ref/cif-facilities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.108,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "cif_facilities",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cif_facilities",
+     "qual": "ref_cif_facilities",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 480,
+     "args": {},
+     "ret": "{'cif_facilities': {'CTF': {'full_name': 'Clean Technology Fund', 'focus': 'Clean Technology Fund \u2014 scaling up low-carbon technologies in MICs', 'eligible_countries': ['Mexico', 'Brazil', 'Indonesia', 'Turkey', 'South Africa', 'India', 'Ph\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition",
+   "label": "GET /api/v1/just-transition/ref/coal-community-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.247,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "coal_community_profiles",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_coal_community_profiles",
+     "qual": "ref_coal_community_profiles",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 446,
+     "args": {},
+     "ret": "{'coal_community_profiles': {'ruhr_germany': {'country': 'Germany', 'region_name': 'Ruhr Valley', 'coal_employment_k': 12.0, 'peak_employment_year': 1985, 'phase_out_target_year': 2038, 'alternative_sector_score': 0.72, 'transition_fund_av\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition",
+   "label": "GET /api/v1/just-transition/ref/ilo-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.183,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ilo_jt_principles",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_ilo_principles",
+     "qual": "ref_ilo_principles",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 433,
+     "args": {},
+     "ret": "{'ilo_jt_principles': {'social_dialogue': {'weight': 0.25, 'sub_criteria': ['tripartite_consultation_body_established', 'workers_included_in_transition_planning', 'collective_bargaining_rights_protected', 'grievance_mechanism_operational']\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition",
+   "label": "GET /api/v1/just-transition/ref/sector-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.31,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sector_profiles",
+     "count",
+     "source"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_sector_profiles",
+     "qual": "ref_sector_profiles",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 465,
+     "args": {},
+     "ret": "{'sector_profiles': {'coal': {'fossil_employment_m': 7.2, 'green_employment_potential_m': 4.5, 'skills_transferability': 2, 'wage_gap_pct': 35.0, 'transition_timeline_years': 15, 'key_transition_risks': ['geographic_concentration', 'limite\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.744,
+   "node_count": 20,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<FullAssessmentRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "region_name",
+     "country",
+     "sector",
+     "just_transition_score",
+     "transition_risk_tier",
+     "ilo_composite_score",
+     "ilo_tier",
+     "eu_jtf_eligible",
+     "eu_jtf_score",
+     "eu_jtf_allocation_estimate_m_eur",
+     "net_jobs_k",
+     "net_jobs_pct",
+     "reskilling_cost_m_usd",
+     "total_transition_cost_m_usd",
+     "community_resilience_score",
+     "vulnerability_tier",
+     "cif_eligible_facilities",
+     "cif_concessional_finance_m",
+     "priority_gaps",
+     "sub_assessments",
+     "methodology"
+    ],
+    "n_keys": 22
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "<lambda>",
+     "qual": "FullAssessmentRequest.<lambda>",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 266,
+     "args": {},
+     "ret": "{'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, 'community_investment': 30.0}",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    },
+    {
+     "id": 6,
+     "name": "<lambda>",
+     "qual": "FullAssessmentRequest.<lambda>",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 278,
+     "args": {},
+     "ret": "{'territorial_jtp': True, 'ghg_emission_dependency': True, 'fossil_fuel_employment': True, 'economic_diversification': False, 'social_partnership_evidence': True, 'green_jobs_target': False, 'just_transition_monitoring': False, 'cross_bord\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    },
+    {
+     "id": 7,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/just_transition.py",
+     "line": 328,
+     "args": {
+      "request": "FullAssessmentRequest(entity_id='ENTITY_001', region_name='Mpumalanga', country='South Africa', sector='coal', principle_scores={'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': \u2026"
+     },
+     "ret": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'just_transition_score': 36.8, 'transition_risk_tier': 'high', 'ilo_composite_score': 42.0, 'ilo_tier': 'early', 'eu_jtf_eligible': True,\u2026",
+     "dur_ms": 1.097,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "run_full_assessment",
+       "qual": "JustTransitionEngine.run_full_assessment",
+       "file": "services/just_transition_engine.py",
+       "line": 972,
+       "args": {
+        "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+       },
+       "ret": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'just_transition_score': 36.8, 'transition_risk_tier': 'high', 'ilo_composite_score': 42.0, 'ilo_tier': 'early', 'eu_jtf_eligible': True,\u2026",
+       "dur_ms": 0.896,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "assess_ilo_principles",
+         "qual": "JustTransitionEngine.assess_ilo_principles",
+         "file": "services/just_transition_engine.py",
+         "line": 523,
+         "args": {
+          "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+         },
+         "ret": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_results': {'social_dialogue': {'description': 'Inclusive tripartite social dialogue between governments, employers and workers\u2026",
+         "dur_ms": 0.098,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 10,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_ilo_principles.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 592,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CDE90>"
+           },
+           "ret": "1",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_ilo_principles.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 592,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CDE90>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 12,
+         "name": "assess_eu_jtf_eligibility",
+         "qual": "JustTransitionEngine.assess_eu_jtf_eligibility",
+         "file": "services/just_transition_engine.py",
+         "line": 602,
+         "args": {
+          "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+         },
+         "ret": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'nuts2_code': 'ZA00', 'criteria_results': {'territorial_jtp': {'description': 'Territorial Just Transition Plan (JTP) adopted at NUTS2 level', 'threshold':\u2026",
+         "dur_ms": 0.165,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 13,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "20",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 14,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "15",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "15",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "10",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "10",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "10",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "10",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "10",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 21,
+           "name": "<genexpr>",
+           "qual": "JustTransitionEngine.assess_eu_jtf_eligibility.<locals>.<genexpr>",
+           "file": "services/just_transition_engine.py",
+           "line": 623,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000201628CE020>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 22,
+         "name": "model_workforce_transition",
+         "qual": "JustTransitionEngine.model_workforce_transition",
+         "file": "services/just_transition_engine.py",
+         "line": 672,
+         "args": {
+          "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+         },
+         "ret": "{'entity_id': 'ENTITY_001', 'sector': 'coal', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'fossil_workers_k': 90.0, 'green_jobs_pipeline_k': 60.0, 'net_jobs_k': -30.0, 'net_jobs_pct': -33.33, 'workers_displaced_pa_k': 6.0, 'gre\u2026",
+         "dur_ms": 0.027,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 23,
+         "name": "assess_community_resilience",
+         "qual": "JustTransitionEngine.assess_community_resilience",
+         "file": "services/just_transition_engine.py",
+         "line": 779,
+         "args": {
+          "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+         },
+         "ret": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'coal_profile': None, 'gdp_fossil_dependency_pct': 25.0, 'gdp_dependency_score': 25.0, 'infrastructure_score': 45.0, 'alternative_employer_count': 3, 'empl\u2026",
+         "dur_ms": 0.019,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "assess_cif_eligibility",
+         "qual": "JustTransitionEngine.assess_cif_eligibility",
+         "file": "services/just_transition_engine.py",
+         "line": 870,
+         "args": {
+          "entity_data": "{'entity_id': 'ENTITY_001', 'region_name': 'Mpumalanga', 'country': 'South Africa', 'sector': 'coal', 'principle_scores': {'social_dialogue': 45.0, 'skills_reskilling': 40.0, 'social_protection': 55.0, 'active_labour_market_policy': 35.0, \u2026"
+         },
+         "ret": "{'entity_id': 'ENTITY_001', 'country': 'South Africa', 'sector': 'coal', 'project_type': 'renewable_energy', 'project_cost_m': 100.0, 'income_group': 'lower_middle', 'has_national_climate_plan': True, 'facility_results': {'CTF': {'name': '\u2026",
+         "dur_ms": 0.129,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/cif-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/community-resilience",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/eu-jtf-eligibility",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/ilo-principles",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "just-transition",
+   "label": "POST /api/v1/just-transition/workforce-transition",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

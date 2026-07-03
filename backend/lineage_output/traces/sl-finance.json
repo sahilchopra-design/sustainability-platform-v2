@@ -1,0 +1,436 @@
+{
+ "domain": "sl-finance",
+ "meta": {
+  "ts": "2026-06-30T14:05:09",
+  "module": "api.v1.routes.sl_finance",
+  "router_prefix": "/api/v1/sl-finance",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "sl-finance",
+   "label": "GET /api/v1/sl-finance/ref/coupon-guidance",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.39,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "typical_range_bps",
+     "max_step_up_bps",
+     "trigger_mechanism",
+     "remedy_period",
+     "use_of_step_up"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_coupon_guidance",
+     "qual": "ref_coupon_guidance",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 204,
+     "args": {},
+     "ret": "{'typical_range_bps': '12.5\u201325 bps increase per missed SPT', 'max_step_up_bps': 50, 'trigger_mechanism': 'SPT assessment date (typically 1-2 dates over bond tenor)', 'remedy_period': 'Some structures allow cure period; ICMA recommends no c\u2026",
+     "dur_ms": 0.063,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_coupon_guidance",
+       "qual": "SLFinanceEngine.get_coupon_guidance",
+       "file": "services/sl_finance_engine.py",
+       "line": 677,
+       "args": {},
+       "ret": "{'typical_range_bps': '12.5\u201325 bps increase per missed SPT', 'max_step_up_bps': 50, 'trigger_mechanism': 'SPT assessment date (typically 1-2 dates over bond tenor)', 'remedy_period': 'Some structures allow cure period; ICMA recommends no c\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "GET /api/v1/sl-finance/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.238,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "csrd_esrs",
+     "sbti",
+     "tcfd",
+     "gri",
+     "eu_taxonomy"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 196,
+     "args": {},
+     "ret": "{'csrd_esrs': 'SLB/SLL KPIs should be aligned with CSRD ESRS material topic disclosures (E1 climate, S1 workforce, G1 governance)', 'sbti': 'GHG intensity KPIs with SPTs should reference SBTi sector pathways for ambition calibration', 'tcf\u2026",
+     "dur_ms": 0.045,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_cross_framework",
+       "qual": "SLFinanceEngine.get_cross_framework",
+       "file": "services/sl_finance_engine.py",
+       "line": 674,
+       "args": {},
+       "ret": "{'csrd_esrs': 'SLB/SLL KPIs should be aligned with CSRD ESRS material topic disclosures (E1 climate, S1 workforce, G1 governance)', 'sbti': 'GHG intensity KPIs with SPTs should reference SBTi sector pathways for ambition calibration', 'tcf\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "GET /api/v1/sl-finance/ref/icma-components",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.259,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "id",
+     "name",
+     "description",
+     "blocking",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_icma_components",
+     "qual": "ref_icma_components",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 182,
+     "args": {},
+     "ret": "[{'id': 'slb_c1', 'name': 'KPI Selection', 'description': 'KPIs must be material to core business, measurable/quantifiable, externally verifiable, and able to be benchmarked', 'blocking': True, 'article': 'ICMA SLB Principles 2023 \u00a71'}, {'\u2026",
+     "dur_ms": 0.075,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_icma_components",
+       "qual": "SLFinanceEngine.get_icma_components",
+       "file": "services/sl_finance_engine.py",
+       "line": 668,
+       "args": {},
+       "ret": "[{'id': 'slb_c1', 'name': 'KPI Selection', 'description': 'KPIs must be material to core business, measurable/quantifiable, externally verifiable, and able to be benchmarked', 'blocking': True, 'article': 'ICMA SLB Principles 2023 \u00a71'}, {'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "GET /api/v1/sl-finance/ref/kpi-library",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.245,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ghg_scope1_2_intensity",
+     "ghg_scope3_intensity",
+     "renewable_energy_pct",
+     "water_intensity",
+     "waste_recycling_pct",
+     "women_in_leadership_pct",
+     "employee_injury_rate",
+     "supply_chain_sustainability_pct",
+     "board_diversity_pct",
+     "esg_rating_score"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_kpi_library",
+     "qual": "ref_kpi_library",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 174,
+     "args": {},
+     "ret": "{'ghg_scope1_2_intensity': {'id': 'ghg_scope1_2_intensity', 'name': 'GHG Scope 1+2 Intensity', 'unit': 'tCO2e/unit', 'category': 'environmental', 'widely_recognized': True, 'measurable': True, 'typical_spt_improvement_pct': 25, 'benchmark_\u2026",
+     "dur_ms": 0.066,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_kpi_library",
+       "qual": "SLFinanceEngine.get_kpi_library",
+       "file": "services/sl_finance_engine.py",
+       "line": 665,
+       "args": {},
+       "ret": "{'ghg_scope1_2_intensity': {'id': 'ghg_scope1_2_intensity', 'name': 'GHG Scope 1+2 Intensity', 'unit': 'tCO2e/unit', 'category': 'environmental', 'widely_recognized': True, 'measurable': True, 'typical_spt_improvement_pct': 25, 'benchmark_\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "GET /api/v1/sl-finance/ref/lma-components",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.246,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 5,
+    "item0_keys": [
+     "id",
+     "name",
+     "description",
+     "blocking",
+     "article"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_lma_components",
+     "qual": "ref_lma_components",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 189,
+     "args": {},
+     "ret": "[{'id': 'sll_c1', 'name': \"Relationship to Borrower's Sustainability Strategy\", 'description': \"KPIs aligned with borrower's overall ESG strategy and sector context\", 'blocking': True, 'article': 'LMA SLL Principles 2023 \u00a71'}, {'id': 'sll_\u2026",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_lma_components",
+       "qual": "SLFinanceEngine.get_lma_components",
+       "file": "services/sl_finance_engine.py",
+       "line": 671,
+       "args": {},
+       "ret": "[{'id': 'sll_c1', 'name': \"Relationship to Borrower's Sustainability Strategy\", 'description': \"KPIs aligned with borrower's overall ESG strategy and sector context\", 'blocking': True, 'article': 'LMA SLL Principles 2023 \u00a71'}, {'id': 'sll_\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "POST /api/v1/sl-finance/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'instrument_id'",
+   "dur_ms": 0.271,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 126,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_to_slb_input",
+       "qual": "_to_slb_input",
+       "file": "api/v1/routes/sl_finance.py",
+       "line": 105,
+       "args": {
+        "body": "'TEST_body'"
+       },
+       "ret": "None",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "POST /api/v1/sl-finance/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'instrument_id'",
+   "dur_ms": 0.216,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/sl_finance.py",
+     "line": 139,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.031,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_to_slb_input",
+       "qual": "_to_slb_input",
+       "file": "api/v1/routes/sl_finance.py",
+       "line": 105,
+       "args": {
+        "body": "'T'"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sl-finance",
+   "label": "POST /api/v1/sl-finance/calibrate-spt",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sl-finance",
+   "label": "POST /api/v1/sl-finance/validate-kpi",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

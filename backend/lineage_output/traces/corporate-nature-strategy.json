@@ -1,0 +1,461 @@
+{
+ "domain": "corporate-nature-strategy",
+ "meta": {
+  "ts": "2026-06-30T14:00:06",
+  "module": "api.v1.routes.corporate_nature_strategy",
+  "router_prefix": "/api/v1/corporate-nature-strategy",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/encore-services",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.416,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "encore_services",
+     "total_services",
+     "source"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_encore_services",
+     "qual": "ref_encore_services",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 337,
+     "args": {},
+     "ret": "{'status': 'ok', 'encore_services': {'biomass': {'full_name': 'Biomass provisioning', 'category': 'provisioning', 'financial_dependency_weight': 0.12, 'high_dependency_sectors': ['agriculture_and_forestry', 'food_and_beverage', 'pharmaceut\u2026",
+     "dur_ms": 0.108,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "ref_encore_services",
+       "qual": "CorporateNatureStrategyEngine.ref_encore_services",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1239,
+       "args": {},
+       "ret": "{'biomass': {'full_name': 'Biomass provisioning', 'category': 'provisioning', 'financial_dependency_weight': 0.12, 'high_dependency_sectors': ['agriculture_and_forestry', 'food_and_beverage', 'pharmaceuticals_and_healthcare'], 'encore_code\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/gbf-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.283,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "gbf_target3_countries",
+     "total_countries",
+     "target"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_gbf_countries",
+     "qual": "ref_gbf_countries",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 357,
+     "args": {},
+     "ret": "{'status': 'ok', 'gbf_target3_countries': {'DE': {'name': 'Germany', 'land_protected_pct': 38.4, 'sea_protected_pct': 45.2, 'gbf_committed': True, 'eu_member': True}, 'FR': {'name': 'France', 'land_protected_pct': 33.2, 'sea_protected_pct'\u2026",
+     "dur_ms": 0.073,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "ref_gbf_countries",
+       "qual": "CorporateNatureStrategyEngine.ref_gbf_countries",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1242,
+       "args": {},
+       "ret": "{'DE': {'name': 'Germany', 'land_protected_pct': 38.4, 'sea_protected_pct': 45.2, 'gbf_committed': True, 'eu_member': True}, 'FR': {'name': 'France', 'land_protected_pct': 33.2, 'sea_protected_pct': 23.1, 'gbf_committed': True, 'eu_member'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/maturity-tiers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.205,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "maturity_tiers"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_maturity_tiers",
+     "qual": "ref_maturity_tiers",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 376,
+     "args": {},
+     "ret": "{'status': 'ok', 'maturity_tiers': {'leading': {'min_score': 80, 'max_score': 100, 'description': 'Best-in-class nature strategy; science-based targets set and in progress; TNFD-aligned disclosures; NRL/GBF compliant', 'typical_profile': '\u2026",
+     "dur_ms": 0.054,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "ref_maturity_tiers",
+       "qual": "CorporateNatureStrategyEngine.ref_maturity_tiers",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1245,
+       "args": {},
+       "ret": "{'leading': {'min_score': 80, 'max_score': 100, 'description': 'Best-in-class nature strategy; science-based targets set and in progress; TNFD-aligned disclosures; NRL/GBF compliant', 'typical_profile': 'SBTN targets set; TNFD full-disclos\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/nrl-habitats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.23,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "nrl_habitats",
+     "regulation"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_nrl_habitats",
+     "qual": "ref_nrl_habitats",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 322,
+     "args": {},
+     "ret": "{'status': 'ok', 'nrl_habitats': {'wetlands': {'description': 'Inland and coastal wetland ecosystems including peatlands, marshes', 'restoration_target_2030': 30, 'restoration_target_2040': 60, 'restoration_target_2050': 90, 'deterioration\u2026",
+     "dur_ms": 0.062,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "ref_nrl_habitats",
+       "qual": "CorporateNatureStrategyEngine.ref_nrl_habitats",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1236,
+       "args": {},
+       "ret": "{'wetlands': {'description': 'Inland and coastal wetland ecosystems including peatlands, marshes', 'restoration_target_2030': 30, 'restoration_target_2040': 60, 'restoration_target_2050': 90, 'deterioration_standstill': '2024', 'key_articl\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/sbtn-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.239,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "sbtn_sector_impact_map"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_sbtn_sectors",
+     "qual": "ref_sbtn_sectors",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 292,
+     "args": {},
+     "ret": "{'status': 'ok', 'sbtn_sector_impact_map': {'food_and_beverage': {'description': 'Food production, processing and beverages', 'primary_impact_drivers': ['land_use', 'water_extraction', 'pollution', 'overexploitation'], 'secondary_impact_dr\u2026",
+     "dur_ms": 0.065,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "ref_sbtn_sectors",
+       "qual": "CorporateNatureStrategyEngine.ref_sbtn_sectors",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1230,
+       "args": {},
+       "ret": "{'food_and_beverage': {'description': 'Food production, processing and beverages', 'primary_impact_drivers': ['land_use', 'water_extraction', 'pollution', 'overexploitation'], 'secondary_impact_drivers': ['climate_change', 'invasive_specie\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "GET /api/v1/corporate-nature-strategy/ref/tnfd-metrics",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.198,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "tnfd_metrics",
+     "total_metrics"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "ref_tnfd_metrics",
+     "qual": "ref_tnfd_metrics",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 307,
+     "args": {},
+     "ret": "{'status': 'ok', 'tnfd_metrics': [{'id': 'G1', 'pillar': 'governance', 'metric': 'Board oversight', 'description': 'Describe board-level oversight of nature-related dependencies, impacts, risks and opportunities', 'disclosure_type': 'quali\u2026",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "ref_tnfd_metrics",
+       "qual": "CorporateNatureStrategyEngine.ref_tnfd_metrics",
+       "file": "services/corporate_nature_strategy_engine.py",
+       "line": 1233,
+       "args": {},
+       "ret": "[{'id': 'G1', 'pillar': 'governance', 'metric': 'Board oversight', 'description': 'Describe board-level oversight of nature-related dependencies, impacts, risks and opportunities', 'disclosure_type': 'qualitative', 'mandatory': True, 'refe\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/encore-dependencies",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/full-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.191,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/corporate_nature_strategy.py",
+     "line": 265,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/gbf-target3",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/nrl-exposure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/sbtn-steps",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "corporate-nature-strategy",
+   "label": "POST /api/v1/corporate-nature-strategy/tnfd-disclosure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

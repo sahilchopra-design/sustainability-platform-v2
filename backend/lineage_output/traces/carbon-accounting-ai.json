@@ -1,0 +1,2660 @@
+{
+ "domain": "carbon-accounting-ai",
+ "meta": {
+  "ts": "2026-06-30T13:59:31",
+  "module": "api.v1.routes.carbon_accounting_ai",
+  "router_prefix": "/api/v1/carbon-accounting-ai",
+  "endpoints": 12
+ },
+ "transactions": [
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "GET /api/v1/carbon-accounting-ai/ref/cdp-questionnaire",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.477,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "questionnaire",
+     "total_sections",
+     "scoring_reference",
+     "a_list_threshold_pct",
+     "bands"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cdp_questionnaire",
+     "qual": "ref_cdp_questionnaire",
+     "file": "api/v1/routes/carbon_accounting_ai.py",
+     "line": 441,
+     "args": {},
+     "ret": "{'questionnaire': {'C0': {'section': 'Introduction', 'questions': ['C0.1', 'C0.2', 'C0.3'], 'weight': 0.0, 'mandatory': True, 'description': 'Company details and reporting boundary'}, 'C1': {'section': 'Governance', 'questions': ['C1.1', '\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "GET /api/v1/carbon-accounting-ai/ref/ef-databases",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.196,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "databases",
+     "total_databases",
+     "total_activity_categories",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_ef_databases",
+     "qual": "ref_ef_databases",
+     "file": "api/v1/routes/carbon_accounting_ai.py",
+     "line": 381,
+     "args": {},
+     "ret": "{'databases': {'IPCC_AR6': {'name': 'IPCC Sixth Assessment Report Annex II', 'version': 'AR6 2021', 'coverage': 'global', 'update_frequency': 'per_assessment_cycle', 'dqs_tier': 2, 'factors_count': 1200, 'units': 'kgCO2e per unit', 'url': \u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "GET /api/v1/carbon-accounting-ai/ref/scope3-classification-rules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.358,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "categories",
+     "total_categories",
+     "reference",
+     "flag_note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_scope3_classification_rules",
+     "qual": "ref_scope3_classification_rules",
+     "file": "api/v1/routes/carbon_accounting_ai.py",
+     "line": 399,
+     "args": {},
+     "ret": "{'categories': {'C1_purchased_goods_services': {'category': 1, 'name': 'Purchased Goods and Services', 'keywords': ['purchase', 'supplier', 'raw material', 'ingredient', 'component', 'procurement', 'vendor', 'buy', 'goods', 'material', 'st\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "GET /api/v1/carbon-accounting-ai/ref/xbrl-concepts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.238,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_concepts",
+     "mandatory_count",
+     "optional_count",
+     "mandatory_concepts",
+     "optional_concepts",
+     "taxonomy_reference",
+     "format"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "ref_xbrl_concepts",
+     "qual": "ref_xbrl_concepts",
+     "file": "api/v1/routes/carbon_accounting_ai.py",
+     "line": 418,
+     "args": {},
+     "ret": "{'total_concepts': 43, 'mandatory_count': 25, 'optional_count': 18, 'mandatory_concepts': {'esrs:GrossScope1GHGEmissions': {'label': 'Gross Scope 1 GHG Emissions', 'datatype': 'xbrli:decimal', 'unit': 'Metric tons CO2 equivalent', 'mandato\u2026",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.368,
+   "node_count": 154,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<GHGDisclosureRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_name",
+     "reporting_year",
+     "overall_readiness_score",
+     "priority_actions",
+     "ghg_compliance",
+     "ef_matching",
+     "scope3_classification",
+     "dqs_score",
+     "xbrl_tagging",
+     "cdp_scoring",
+     "data_gaps"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "full_assessment",
+     "qual": "full_assessment",
+     "file": "api/v1/routes/carbon_accounting_ai.py",
+     "line": 127,
+     "args": {
+      "request": "GHGDisclosureRequest(entity_name='TEST_request_entity_name', reporting_year=1, scope1_tco2e=None, scope2_location_tco2e=None, scope2_market_tco2e=None, scope3_categories=None, base_year=None, consolidation_approach=None, boundary_descripti\u2026"
+     },
+     "ret": "{'entity_name': 'TEST_request_entity_name', 'reporting_year': 1, 'overall_readiness_score': 7.6, 'priority_actions': ['Declare GHG consolidation approach per GHG Protocol \u00a73.', 'Set base year \u22652015 with documented recalculation policy.', '\u2026",
+     "dur_ms": 3.909,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "full_assessment",
+       "qual": "CarbonAccountingAIEngine.full_assessment",
+       "file": "services/carbon_accounting_ai_engine.py",
+       "line": 1855,
+       "args": {
+        "d": "GHGDisclosureInput(entity_name='TEST_request_entity_name', reporting_year=1, scope1_tco2e=None, scope2_location_tco2e=None, scope2_market_tco2e=None, scope3_categories=None, base_year=None, consolidation_approach=None, boundary_description\u2026"
+       },
+       "ret": "CarbonAccountingAIResult(entity_name='TEST_request_entity_name', reporting_year=1, ghg_compliance={'compliance_pct': 19.0, 'status': 'non_compliant', 'criterion_scores': {'boundary_setting': 20.0, 'base_year': 20.0, 'scope1_completeness': \u2026",
+       "dur_ms": 3.76,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 7,
+         "name": "check_ghg_compliance",
+         "qual": "CarbonAccountingAIEngine.check_ghg_compliance",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1239,
+         "args": {
+          "d": "GHGDisclosureInput(entity_name='TEST_request_entity_name', reporting_year=1, scope1_tco2e=None, scope2_location_tco2e=None, scope2_market_tco2e=None, scope3_categories=None, base_year=None, consolidation_approach=None, boundary_description\u2026"
+         },
+         "ret": "{'compliance_pct': 19.0, 'status': 'non_compliant', 'criterion_scores': {'boundary_setting': 20.0, 'base_year': 20.0, 'scope1_completeness': 40.0, 'scope2_dual_method': 0.0, 'scope3_coverage': 20.0, 'verification_status': 0.0, 'biogenic_ca\u2026",
+         "dur_ms": 0.174,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 8,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.04000000000000001",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 9,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.03",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 10,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.06",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.03",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 14,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.010000000000000002",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "0.020000000000000004",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.check_ghg_compliance.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1353,
+           "args": {
+            ".0": "<dict_keyiterator object at 0x00000216FCA1FD30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 17,
+         "name": "auto_tag_xbrl",
+         "qual": "CarbonAccountingAIEngine.auto_tag_xbrl",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1612,
+         "args": {
+          "d": "GHGDisclosureInput(entity_name='TEST_request_entity_name', reporting_year=1, scope1_tco2e=None, scope2_location_tco2e=None, scope2_market_tco2e=None, scope3_categories=None, base_year=None, consolidation_approach=None, boundary_description\u2026"
+         },
+         "ret": "{'tagged_concepts': [], 'untagged_mandatory': ['scope1_tco2e \u2192 esrs:GrossScope1GHGEmissions (MANDATORY \u2014 value absent)', 'scope2_location_tco2e \u2192 esrs:GrossScope2LocationBasedGHGEmissions (MANDATORY \u2014 value absent)', 'base_year \u2192 esrs:Base\u2026",
+         "dur_ms": 0.41,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 18,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1703,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FC850550>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 21,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 22,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 23,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 24,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 26,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 27,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 28,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 29,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 30,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 31,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 32,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 33,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 34,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 35,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 36,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 37,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 38,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 39,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 40,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 41,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 43,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 44,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.auto_tag_xbrl.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1704,
+           "args": {
+            ".0": "<dict_valueiterator object at 0x00000216FCA3C450>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 45,
+         "name": "analyse_data_gaps",
+         "qual": "CarbonAccountingAIEngine.analyse_data_gaps",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1787,
+         "args": {
+          "d": "GHGDisclosureInput(entity_name='TEST_request_entity_name', reporting_year=1, scope1_tco2e=None, scope2_location_tco2e=None, scope2_market_tco2e=None, scope3_categories=None, base_year=None, consolidation_approach=None, boundary_description\u2026"
+         },
+         "ret": "{'identified_gaps': [{'field': 'scope1_tco2e', 'label': 'Scope 1 total', 'proxy_methodology': 'direct_measurement', 'priority': 'high', 'materiality_weight': 0.2, 'dqs_improvement_potential': 'DQS 5\u21923 with proxy; DQS 3\u21921 with primary data'\u2026",
+         "dur_ms": 0.204,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 46,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1849,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 47,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1849,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 48,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1849,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 49,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1849,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 50,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1849,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 51,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1850,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 52,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1850,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 53,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1850,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 54,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1850,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 55,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1850,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 56,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1851,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1851,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 58,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.analyse_data_gaps.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1851,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA321D0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 59,
+         "name": "score_cdp_response",
+         "qual": "CarbonAccountingAIEngine.score_cdp_response",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1716,
+         "args": {
+          "cdp_input": "{'responses': {}}"
+         },
+         "ret": "{'overall_score': 0.0, 'cdp_band': 'D-', 'section_scores': {'C1': 0.0, 'C2': 0.0, 'C3': 0.0, 'C4': 0.0, 'C5': 0.0, 'C6': 0.0, 'C7': 0.0, 'C8': 0.0, 'C9': 0.0, 'C10': 0.0, 'C11': 0.0, 'C12': 0.0}, 'gaps': ['C1 (Governance): 3 questions unan\u2026",
+         "dur_ms": 0.612,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 60,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.125",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 61,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.125",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 62,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 63,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.125",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 64,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.05",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 65,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.125",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 66,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.05",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 67,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 68,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.025",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 69,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.075",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 70,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.05",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 71,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.075",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1749,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 73,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 74,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 75,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 76,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 77,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 78,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 79,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 80,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 81,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 82,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 83,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 84,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 85,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1753,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x00000216FCA3D2B0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 86,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C1', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 87,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C2', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 88,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C3', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 89,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C4', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 90,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C5', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 91,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C6', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 92,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C7', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 93,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C8', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 94,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C9', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 95,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C10', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 96,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C11', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 97,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.score_cdp_response.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1782,
+           "args": {
+            "x": "('C12', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 98,
+         "name": "derive_dqs_score",
+         "qual": "CarbonAccountingAIEngine.derive_dqs_score",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1517,
+         "args": {
+          "metadata_input": "{'data_source': 'industry_average', 'verification_status': 'unverified', 'measurement_approach': 'spend_proxy', 'coverage_pct': 30, 'recency_yrs': 2024}"
+         },
+         "ret": "{'dqs_score': 4, 'dqs_label': 'Estimated or spend-based with limited verification', 'composite_quality_index': 0.282, 'dimension_scores': {'data_source': 0.55, 'verification': 0.1, 'measurement_approach': 0.25, 'coverage_pct': 0.3, 'recenc\u2026",
+         "dur_ms": 0.016,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 99,
+         "name": "match_emission_factor",
+         "qual": "CarbonAccountingAIEngine.match_emission_factor",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1367,
+         "args": {
+          "query": "EmissionFactorQuery(activity_description='electricity grid consumption UK', quantity=1.0, unit='kWh', country='UK', year=None, preferred_database=None)"
+         },
+         "ret": "{'matched_activity': 'electricity_grid_uk', 'description': 'UK grid electricity consumption', 'confidence': 0.9, 'emission_factor_kgco2e_per_unit': 0.20493, 'unit': 'kWh', 'matched_database': 'DEFRA_2023', 'total_emissions_kgco2e': 0.2, 't\u2026",
+         "dur_ms": 0.404,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 100,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "1",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 101,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 102,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 103,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 104,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 105,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 106,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 107,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 108,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 109,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 110,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 111,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 112,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 113,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 114,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 115,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 116,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 117,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 118,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 119,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 120,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 121,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 122,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 123,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 124,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.match_emission_factor.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1401,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA31F30>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 125,
+         "name": "classify_scope3_category",
+         "qual": "CarbonAccountingAIEngine.classify_scope3_category",
+         "file": "services/carbon_accounting_ai_engine.py",
+         "line": 1447,
+         "args": {
+          "tx": "Scope3TransactionInput(supplier_name='Generic Supplier', spend_amount=100000, currency='USD', sic_code=None, description='procurement of goods and services', transaction_type=None)"
+         },
+         "ret": "{'primary_category': 1, 'category_name': 'Purchased Goods and Services', 'confidence': 0.21, 'default_method': 'spend_based', 'flag_land_use': False, 'dqs_auto_assigned': 3, 'alternatives': [], 'spend_amount': 100000, 'currency': 'USD', 'n\u2026",
+         "dur_ms": 1.629,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 126,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 127,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 128,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 129,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 130,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 131,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 132,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 133,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 134,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 135,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 136,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 137,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 138,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 139,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 140,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 141,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 142,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 143,
+           "name": "<genexpr>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<genexpr>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1460,
+           "args": {
+            ".0": "<list_iterator object at 0x00000216FCA32BF0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 144,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C1_purchased_goods_services', 0.175)"
+           },
+           "ret": "0.175",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 145,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C2_capital_goods', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 146,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C3_fuel_energy', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.015,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 147,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C4_upstream_transport', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 148,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C5_waste', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 149,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C6_business_travel', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 150,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C7_employee_commute', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 151,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C8_upstream_leased', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 152,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C9_downstream_transport', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 153,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C10_processing', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 154,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C11_use_of_sold_products', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 155,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C12_end_of_life', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.185,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 156,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C13_downstream_leased', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.01,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 157,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C14_franchises', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 158,
+           "name": "<lambda>",
+           "qual": "CarbonAccountingAIEngine.classify_scope3_category.<locals>.<lambda>",
+           "file": "services/carbon_accounting_ai_engine.py",
+           "line": 1473,
+           "args": {
+            "x": "('C15_investments', 0.0)"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/cdp-scoring",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/data-gaps",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/dqs-derivation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/ef-matching",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/ghg-compliance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/scope3-classify",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "carbon-accounting-ai",
+   "label": "POST /api/v1/carbon-accounting-ai/xbrl-tagging",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

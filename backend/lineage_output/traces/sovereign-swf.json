@@ -1,0 +1,302 @@
+{
+ "domain": "sovereign-swf",
+ "meta": {
+  "ts": "2026-06-30T14:05:15",
+  "module": "api.v1.routes.sovereign_swf",
+  "router_prefix": "/api/v1/sovereign-swf",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "sovereign-swf",
+   "label": "GET /api/v1/sovereign-swf/ref/divestment-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.416,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "pathways",
+     "npv_methodology_note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_divestment_pathways",
+     "qual": "get_divestment_pathways",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 473,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 4, 'pathways': {'immediate': {'name': 'Immediate Full Divestment', 'description': 'All fossil fuel holdings liquidated within 12 months.', 'timeline_years': 1, 'annual_divestment_schedule_pct': [100], 'market\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "GET /api/v1/sovereign-swf/ref/gpfg-exclusion-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.278,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "exclusion_criteria",
+     "sample_excluded_companies",
+     "process"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_gpfg_exclusion_criteria",
+     "qual": "get_gpfg_exclusion_criteria",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 436,
+     "args": {},
+     "ret": "{'status': 'success', 'exclusion_criteria': {'coal': {'criterion': 'Coal mining or coal-based power production', 'threshold': 'Revenue >30% from coal mining OR >30% coal power capacity', 'legal_basis': 'Government Pension Fund Act \u00a7 2 + GP\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "GET /api/v1/sovereign-swf/ref/santiago-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.267,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "pillars",
+     "principles",
+     "scoring_methodology"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_santiago_principles",
+     "qual": "get_santiago_principles",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 400,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 24, 'pillars': {'legal_framework': {'gapp_range': 'GAPP-01 to GAPP-08', 'count': 8}, 'institutional_governance': {'gapp_range': 'GAPP-09 to GAPP-15', 'count': 7}, 'investment_policies': {'gapp_range': 'GAPP-1\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "GET /api/v1/sovereign-swf/ref/swf-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.368,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "profiles",
+     "climate_commitment_tiers"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_swf_profiles",
+     "qual": "get_swf_profiles",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 369,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 25, 'profiles': {'GPFG': {'full_name': 'Government Pension Fund Global (Norway)', 'country': 'NO', 'manager': 'Norges Bank Investment Management (NBIM)', 'aum_usd_bn': 1700, 'established_year': 1990, 'mandate\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "POST /api/v1/sovereign-swf/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Assessment error: 'str' object has no attribute 'fund_name'",
+   "dur_ms": 0.252,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_swf_endpoint",
+     "qual": "assess_swf_endpoint",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 208,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "POST /api/v1/sovereign-swf/divestment-pathway",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "POST /api/v1/sovereign-swf/exclusion-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Screening error: 'str' object has no attribute 'holdings'",
+   "dur_ms": 0.209,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "exclusion_screen_endpoint",
+     "qual": "exclusion_screen_endpoint",
+     "file": "api/v1/routes/sovereign_swf.py",
+     "line": 243,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "POST /api/v1/sovereign-swf/intergenerational-equity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sovereign-swf",
+   "label": "POST /api/v1/sovereign-swf/portfolio-temperature",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

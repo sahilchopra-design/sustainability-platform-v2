@@ -1,0 +1,243 @@
+{
+ "domain": "sfdr-annex",
+ "meta": {
+  "ts": "2026-06-30T14:05:05",
+  "module": "api.v1.routes.sfdr_annex",
+  "router_prefix": "/api/v1/sfdr-annex",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "sfdr-annex",
+   "label": "GET /api/v1/sfdr-annex/ref/frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.261,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "reference"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_frameworks",
+     "qual": "ref_frameworks",
+     "file": "api/v1/routes/sfdr_annex.py",
+     "line": 346,
+     "args": {},
+     "ret": "{'frameworks': {'SFDR_Level1': {'title': 'SFDR \u2014 Sustainable Finance Disclosure Regulation', 'regulation': 'EU Regulation 2019/2088', 'key_articles': {'Art_3': 'Transparency of sustainability risk policies', 'Art_4': 'Transparency of adver\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "GET /api/v1/sfdr-annex/ref/pai-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.264,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mandatory_count",
+     "optional_count",
+     "mandatory_indicators",
+     "optional_indicators",
+     "reference"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_pai_indicators",
+     "qual": "ref_pai_indicators",
+     "file": "api/v1/routes/sfdr_annex.py",
+     "line": 288,
+     "args": {},
+     "ret": "{'mandatory_count': 14, 'optional_count': 4, 'mandatory_indicators': [{'indicator_id': '1', 'description': 'GHG emissions \u2014 Scope 1, 2 and 3', 'metric': 'tCO\u2082e / EUR million invested (EVIC)', 'mandatory': True, 'category': 'climate_environ\u2026",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "GET /api/v1/sfdr-annex/ref/template-fields",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.154,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "annex_I",
+     "annex_II",
+     "annex_III",
+     "annex_IV",
+     "annex_V",
+     "reference"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_template_fields",
+     "qual": "ref_template_fields",
+     "file": "api/v1/routes/sfdr_annex.py",
+     "line": 311,
+     "args": {},
+     "ret": "{'annex_I': {'title': 'PAI Statement (Art 4 entity-level)', 'mandatory_fields': ['entity_name', 'statement_date', 'reference_period_start', 'reference_period_end', 'total_investments_covered_eur', 'pai_policy_description', 'pai_considerati\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/generate/annex-i",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/generate/annex-ii",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/generate/annex-iii",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/generate/annex-iv",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/generate/annex-v",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-annex",
+   "label": "POST /api/v1/sfdr-annex/validate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

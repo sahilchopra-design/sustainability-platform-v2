@@ -1,0 +1,423 @@
+{
+ "domain": "energy-transition",
+ "meta": {
+  "ts": "2026-06-30T14:01:33",
+  "module": "api.v1.routes.energy_transition",
+  "router_prefix": "/api/v1/energy-transition",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "energy-transition",
+   "label": "GET /api/v1/energy-transition/ref/fuel-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.322,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "coal_subcritical",
+     "coal_supercritical",
+     "coal_usc",
+     "gas_ocgt",
+     "gas_ccgt",
+     "gas_ccgt_ccs",
+     "oil",
+     "biomass",
+     "nuclear",
+     "wind_onshore",
+     "wind_offshore",
+     "solar_pv",
+     "hydro",
+     "battery"
+    ],
+    "n_keys": 14
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_fuel_types",
+     "qual": "ref_fuel_types",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'coal_subcritical': {'ef': 1.1, 'label': 'Coal Subcritical', 'capex_eur_kw': 1800, 'opex_eur_kw_yr': 40}, 'coal_supercritical': {'ef': 0.9, 'label': 'Coal Supercritical', 'capex_eur_kw': 2200, 'opex_eur_kw_yr': 45}, 'coal_usc': {'ef': 0.7\u2026",
+     "dur_ms": 0.062,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_fuel_types",
+       "qual": "GenerationTransitionPlanner.get_fuel_types",
+       "file": "services/generation_transition.py",
+       "line": 323,
+       "args": {},
+       "ret": "{'coal_subcritical': {'ef': 1.1, 'label': 'Coal Subcritical', 'capex_eur_kw': 1800, 'opex_eur_kw_yr': 40}, 'coal_supercritical': {'ef': 0.9, 'label': 'Coal Supercritical', 'capex_eur_kw': 2200, 'opex_eur_kw_yr': 45}, 'coal_usc': {'ef': 0.7\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "GET /api/v1/energy-transition/ref/grid-ef-countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.179,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "DE",
+     "FR",
+     "NL",
+     "PL",
+     "ES",
+     "IT",
+     "GB",
+     "SE",
+     "US",
+     "CN",
+     "IN",
+     "JP",
+     "AU",
+     "BR",
+     "ZA",
+     "KR",
+     "CA",
+     "MX",
+     "ID",
+     "SA",
+     "AE",
+     "NG",
+     "EG",
+     "TH",
+     "VN"
+    ],
+    "n_keys": 25
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_grid_countries",
+     "qual": "ref_grid_countries",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 243,
+     "args": {},
+     "ret": "{'DE': {'ef_2023': 0.38, 'label': 'Germany', 'region': 'EU'}, 'FR': {'ef_2023': 0.06, 'label': 'France', 'region': 'EU'}, 'NL': {'ef_2023': 0.34, 'label': 'Netherlands', 'region': 'EU'}, 'PL': {'ef_2023': 0.66, 'label': 'Poland', 'region':\u2026",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_countries",
+       "qual": "GridEFTrajectoryEngine.get_countries",
+       "file": "services/grid_ef_trajectory.py",
+       "line": 284,
+       "args": {},
+       "ret": "{'DE': {'ef_2023': 0.38, 'label': 'Germany', 'region': 'EU'}, 'FR': {'ef_2023': 0.06, 'label': 'France', 'region': 'EU'}, 'NL': {'ef_2023': 0.34, 'label': 'Netherlands', 'region': 'EU'}, 'PL': {'ef_2023': 0.66, 'label': 'Poland', 'region':\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "GET /api/v1/energy-transition/ref/grid-ef-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.151,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "current_policies",
+     "stated_policies",
+     "nze_2050",
+     "ngfs_orderly",
+     "ngfs_disorderly",
+     "ngfs_hot_house"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_grid_scenarios",
+     "qual": "ref_grid_scenarios",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 248,
+     "args": {},
+     "ret": "{'current_policies': {'label': 'Current Policies', 'annual_reduction_pct': 1.5, 'target_2030_factor': 0.88, 'target_2050_factor': 0.55}, 'stated_policies': {'label': 'Stated Policies (STEPS)', 'annual_reduction_pct': 2.5, 'target_2030_fact\u2026",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_scenarios",
+       "qual": "GridEFTrajectoryEngine.get_scenarios",
+       "file": "services/grid_ef_trajectory.py",
+       "line": 287,
+       "args": {},
+       "ret": "{'current_policies': {'label': 'Current Policies', 'annual_reduction_pct': 1.5, 'target_2030_factor': 0.88, 'target_2050_factor': 0.55}, 'stated_policies': {'label': 'Stated Policies (STEPS)', 'annual_reduction_pct': 2.5, 'target_2030_fact\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "GET /api/v1/energy-transition/ref/nze-milestones",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.135,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     2025,
+     2030,
+     2035,
+     2040,
+     2050
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_nze_milestones",
+     "qual": "ref_nze_milestones",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 233,
+     "args": {},
+     "ret": "{2025: {'coal_share_pct': 25, 'renewables_share_pct': 45, 'grid_ef_tco2_mwh': 0.4}, 2030: {'coal_share_pct': 10, 'renewables_share_pct': 60, 'grid_ef_tco2_mwh': 0.25}, 2035: {'coal_share_pct': 2, 'renewables_share_pct': 75, 'grid_ef_tco2_m\u2026",
+     "dur_ms": 0.027,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_nze_milestones",
+       "qual": "GenerationTransitionPlanner.get_nze_milestones",
+       "file": "services/generation_transition.py",
+       "line": 326,
+       "args": {},
+       "ret": "{2025: {'coal_share_pct': 25, 'renewables_share_pct': 45, 'grid_ef_tco2_mwh': 0.4}, 2030: {'coal_share_pct': 10, 'renewables_share_pct': 60, 'grid_ef_tco2_mwh': 0.25}, 2035: {'coal_share_pct': 2, 'renewables_share_pct': 75, 'grid_ef_tco2_m\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "GET /api/v1/energy-transition/ref/replacement-options",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.758,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_replacement_options",
+     "qual": "ref_replacement_options",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 238,
+     "args": {},
+     "ret": "['solar_pv', 'wind_onshore', 'wind_offshore', 'battery', 'gas_ccgt', 'gas_ccgt_ccs', 'hydro', 'nuclear']",
+     "dur_ms": 0.092,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_replacement_options",
+       "qual": "GenerationTransitionPlanner.get_replacement_options",
+       "file": "services/generation_transition.py",
+       "line": 329,
+       "args": {},
+       "ret": "['solar_pv', 'wind_onshore', 'wind_offshore', 'battery', 'gas_ccgt', 'gas_ccgt_ccs', 'hydro', 'nuclear']",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "POST /api/v1/energy-transition/avoided-emissions",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "energy-transition",
+   "label": "POST /api/v1/energy-transition/country-comparison",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'countries'",
+   "dur_ms": 0.643,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "country_comparison",
+     "qual": "country_comparison",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 215,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.039,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "energy-transition",
+   "label": "POST /api/v1/energy-transition/fleet-transition",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "energy-transition",
+   "label": "POST /api/v1/energy-transition/grid-ef-projection",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'country'",
+   "dur_ms": 0.581,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "grid_ef_projection",
+     "qual": "grid_ef_projection",
+     "file": "api/v1/routes/energy_transition.py",
+     "line": 192,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.025,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

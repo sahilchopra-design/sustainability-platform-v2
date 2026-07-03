@@ -1,0 +1,477 @@
+{
+ "domain": "nonv1-portfolios",
+ "meta": {
+  "ts": "2026-06-30T14:26:22",
+  "endpoints": 14,
+  "source": "server.app",
+  "predicate": "nonv1-portfolios"
+ },
+ "transactions": [
+  {
+   "domain": "nonv1-portfolios",
+   "label": "GET /api/portfolios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'NoneType' object has no attribute 'isoformat'",
+   "dur_ms": 1899.969,
+   "node_count": 0,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "assets_pg",
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg ORDER BY portfolios_pg.created_at DESC LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 3,
+     "dur_ms": 690.609,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT assets_pg.id AS assets_pg_id, assets_pg.portfolio_id AS assets_pg_portfolio_id, assets_pg.asset_type AS assets_pg_asset_type, assets_pg.company_name AS assets_pg_company_name, assets_pg.company_sector AS assets_pg_company_sector, assets_pg.company_subsector AS assets_pg_company_subsector, assets_pg.exposure AS assets_pg_exposure, assets_pg.market_value AS assets_pg_market_value, assets_pg\u2026",
+     "tables": [
+      "assets_pg"
+     ],
+     "rowcount": 10,
+     "dur_ms": 305.244,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "GET /api/portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 329.917,
+   "node_count": 0,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg WHERE portfolios_pg.id = %(id_1)s LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 55.879,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "GET /portfolios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'Depends' object has no attribute 'skip'",
+   "dur_ms": 0.351,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 162,
+     "name": "list_portfolios",
+     "qual": "list_portfolios",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 18,
+     "args": {
+      "pagination": "Depends(NoneType)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E4C20>"
+     },
+     "ret": "None",
+     "dur_ms": 0.034,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 163,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E4C20>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "GET /portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 1318.779,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios.id AS portfolios_id, portfolios.name AS portfolios_name, portfolios.description AS portfolios_description, portfolios.created_at AS portfolios_created_at, portfolios.updated_at AS portfolios_updated_at FROM portfolios WHERE portfolios.id = %(id_1)s LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 229.935,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 164,
+     "name": "get_portfolio",
+     "qual": "get_portfolio",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 55,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E6750>"
+     },
+     "ret": "None",
+     "dur_ms": 1278.621,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 165,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E6750>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 166,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 1278.569,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "GET /portfolios/{portfolio_id}/holdings",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 698.127,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios.id AS portfolios_id, portfolios.name AS portfolios_name, portfolios.description AS portfolios_description, portfolios.created_at AS portfolios_created_at, portfolios.updated_at AS portfolios_updated_at FROM portfolios WHERE portfolios.id = %(id_1)s LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 58.617,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 167,
+     "name": "list_holdings",
+     "qual": "list_holdings",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 177,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E76E0>"
+     },
+     "ret": "None",
+     "dur_ms": 668.758,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 168,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002B6569E76E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 169,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 668.703,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "POST /api/portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "PUT /api/portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "DELETE /api/portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "POST /api/portfolios/{portfolio_id}/assets",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "DELETE /api/portfolios/{portfolio_id}/assets/{asset_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "POST /portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "PATCH /portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "DELETE /portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "nonv1-portfolios",
+   "label": "POST /portfolios/{portfolio_id}/holdings",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

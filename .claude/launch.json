@@ -20,6 +20,13 @@
       "runtimeArgs": ["frontend/node_modules/serve/build/main.js", "-s", "frontend/build", "-l", "4001"],
       "port": 4001,
       "autoPort": false
+    },
+    {
+      "name": "lineage-dashboard",
+      "runtimeExecutable": "C:\\Users\\SahilChopra\\AppData\\Local\\Programs\\Python\\Python312\\python",
+      "runtimeArgs": ["-m", "http.server", "4505", "--directory", "lineage_dashboard"],
+      "port": 4505,
+      "autoPort": true
     }
   ]
 }

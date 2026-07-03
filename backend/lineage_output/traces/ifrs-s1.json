@@ -1,0 +1,439 @@
+{
+ "domain": "ifrs-s1",
+ "meta": {
+  "ts": "2026-06-30T14:02:43",
+  "module": "api.v1.routes.ifrs_s1",
+  "router_prefix": "/api/v1/ifrs-s1",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "ifrs-s1",
+   "label": "GET /api/v1/ifrs-s1/ref/cross-framework",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.483,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ifrs_s2",
+     "csrd_esrs",
+     "tcfd",
+     "gri",
+     "sasb",
+     "sec_climate"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_cross_framework",
+     "qual": "ref_cross_framework",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 176,
+     "args": {},
+     "ret": "{'ifrs_s2': 'IFRS S2 is the climate-specific companion standard; S1 governs process, S2 provides climate metrics/disclosures', 'csrd_esrs': 'ESRS 1 (general requirements) and ESRS 2 (general disclosures) are the EU equivalent; interoperabi\u2026",
+     "dur_ms": 0.073,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_cross_framework",
+       "qual": "IFRSS1Engine.get_cross_framework",
+       "file": "services/ifrs_s1_engine.py",
+       "line": 521,
+       "args": {},
+       "ret": "{'ifrs_s2': 'IFRS S2 is the climate-specific companion standard; S1 governs process, S2 provides climate metrics/disclosures', 'csrd_esrs': 'ESRS 1 (general requirements) and ESRS 2 (general disclosures) are the EU equivalent; interoperabi\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "GET /api/v1/ifrs-s1/ref/disclosure-requirements",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.455,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "S1.15",
+     "S1.16",
+     "S1.22",
+     "S1.23",
+     "S1.24",
+     "S1.25",
+     "S1.33",
+     "S1.34",
+     "S1.35",
+     "S1.38",
+     "S1.39",
+     "S1.40",
+     "S1.42"
+    ],
+    "n_keys": 13
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_disclosure_requirements",
+     "qual": "ref_disclosure_requirements",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 162,
+     "args": {},
+     "ret": "{'S1.15': {'id': 'S1.15', 'pillar': 'governance', 'name': 'Board Oversight', 'description': 'Governance body(ies) or individual(s) responsible for oversight of sustainability-related risks and opportunities', 'blocking': True}, 'S1.16': {'\u2026",
+     "dur_ms": 0.144,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_disclosure_requirements",
+       "qual": "IFRSS1Engine.get_disclosure_requirements",
+       "file": "services/ifrs_s1_engine.py",
+       "line": 515,
+       "args": {},
+       "ret": "{'S1.15': {'id': 'S1.15', 'pillar': 'governance', 'name': 'Board Oversight', 'description': 'Governance body(ies) or individual(s) responsible for oversight of sustainability-related risks and opportunities', 'blocking': True}, 'S1.16': {'\u2026",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "GET /api/v1/ifrs-s1/ref/industry-sasb-mapping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.264,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "financial_services",
+     "energy",
+     "real_estate",
+     "technology",
+     "healthcare",
+     "consumer_goods",
+     "industrials"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_industry_sasb_mapping",
+     "qual": "ref_industry_sasb_mapping",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 169,
+     "args": {},
+     "ret": "{'financial_services': ['FN-AC', 'FN-CB', 'FN-CF', 'FN-IB', 'FN-IN', 'FN-MF', 'FN-MS', 'FN-EX'], 'energy': ['EM-CO', 'EM-EP', 'EM-MD', 'EM-RM', 'EM-SV', 'EM-NR'], 'real_estate': ['IF-RE'], 'technology': ['TC-HW', 'TC-IM', 'TC-SC', 'TC-SE',\u2026",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_industry_sasb_mapping",
+       "qual": "IFRSS1Engine.get_industry_sasb_mapping",
+       "file": "services/ifrs_s1_engine.py",
+       "line": 518,
+       "args": {},
+       "ret": "{'financial_services': ['FN-AC', 'FN-CB', 'FN-CF', 'FN-IB', 'FN-IN', 'FN-MF', 'FN-MS', 'FN-EX'], 'energy': ['EM-CO', 'EM-EP', 'EM-MD', 'EM-RM', 'EM-SV', 'EM-NR'], 'real_estate': ['IF-RE'], 'technology': ['TC-HW', 'TC-IM', 'TC-SC', 'TC-SE',\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "GET /api/v1/ifrs-s1/ref/pillars",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.742,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "governance",
+     "strategy",
+     "risk_management",
+     "metrics_targets"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_pillars",
+     "qual": "ref_pillars",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 155,
+     "args": {},
+     "ret": "{'governance': {'pillar_id': 'governance', 'name': 'Governance', 'description': 'Governance processes, controls and procedures used to monitor, manage and oversee sustainability-related risks and opportunities', 'paragraphs': ['S1.15', 'S1\u2026",
+     "dur_ms": 0.518,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "get_pillars",
+       "qual": "IFRSS1Engine.get_pillars",
+       "file": "services/ifrs_s1_engine.py",
+       "line": 512,
+       "args": {},
+       "ret": "{'governance': {'pillar_id': 'governance', 'name': 'Governance', 'description': 'Governance processes, controls and procedures used to monitor, manage and oversee sustainability-related risks and opportunities', 'paragraphs': ['S1.15', 'S1\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "GET /api/v1/ifrs-s1/ref/reliefs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.265,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "prior_period_comparative",
+     "scope3_grace_period",
+     "industry_metrics_grace"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_reliefs",
+     "qual": "ref_reliefs",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 183,
+     "args": {},
+     "ret": "{'prior_period_comparative': {'relief': 'In the first year of applying IFRS S1, entities are not required to provide comparative information', 'applicable_period': 'First annual reporting period', 'paragraph': 'S1.BC125'}, 'scope3_grace_pe\u2026",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "get_reliefs",
+       "qual": "IFRSS1Engine.get_reliefs",
+       "file": "services/ifrs_s1_engine.py",
+       "line": 524,
+       "args": {},
+       "ret": "{'prior_period_comparative': {'relief': 'In the first year of applying IFRS S1, entities are not required to provide comparative information', 'applicable_period': 'First annual reporting period', 'paragraph': 'S1.BC125'}, 'scope3_grace_pe\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "POST /api/v1/ifrs-s1/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.511,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 117,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.11,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_to_assessment_input",
+       "qual": "_to_assessment_input",
+       "file": "api/v1/routes/ifrs_s1.py",
+       "line": 102,
+       "args": {
+        "body": "'TEST_body'"
+       },
+       "ret": "None",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "POST /api/v1/ifrs-s1/assess/batch",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.301,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "assess_batch",
+     "qual": "assess_batch",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 146,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.044,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "_to_assessment_input",
+       "qual": "_to_assessment_input",
+       "file": "api/v1/routes/ifrs_s1.py",
+       "line": 102,
+       "args": {
+        "body": "'T'"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ifrs-s1",
+   "label": "POST /api/v1/ifrs-s1/assess/pillar",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'disclosures'",
+   "dur_ms": 0.255,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "'TEST_body' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 15,
+     "name": "assess_pillar",
+     "qual": "assess_pillar",
+     "file": "api/v1/routes/ifrs_s1.py",
+     "line": 130,
+     "args": {
+      "body": "'TEST_body'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

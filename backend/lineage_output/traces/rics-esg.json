@@ -1,0 +1,158 @@
+{
+ "domain": "rics-esg",
+ "meta": {
+  "ts": "2026-06-30T14:04:42",
+  "module": "api.v1.routes.rics_esg",
+  "router_prefix": "/api/v1/rics-esg",
+  "endpoints": 3
+ },
+ "transactions": [
+  {
+   "domain": "rics-esg",
+   "label": "GET /api/v1/rics-esg/checklist",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.598,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "PS1",
+     "PS2",
+     "VPS4",
+     "VPGA12",
+     "VPG3",
+     "IVS"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_checklist",
+     "qual": "get_checklist",
+     "file": "api/v1/routes/rics_esg.py",
+     "line": 105,
+     "args": {},
+     "ret": "{'PS1': [{'item_id': 'PS1-01', 'section': 'PS 1 \u2014 Terms of Engagement', 'requirement': 'Confirm scope of ESG considerations in engagement letter', 'guidance': 'State whether sustainability factors will be explicitly reflected in the valuat\u2026",
+     "dur_ms": 0.168,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_full_checklist",
+       "qual": "RICSESGEngine.get_full_checklist",
+       "file": "services/rics_esg_engine.py",
+       "line": 343,
+       "args": {},
+       "ret": "{'PS1': [{'item_id': 'PS1-01', 'section': 'PS 1 \u2014 Terms of Engagement', 'requirement': 'Confirm scope of ESG considerations in engagement letter', 'guidance': 'State whether sustainability factors will be explicitly reflected in the valuat\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "rics-esg",
+   "label": "GET /api/v1/rics-esg/materiality",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.673,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "environmental",
+     "social",
+     "governance"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_materiality_factors",
+     "qual": "get_materiality_factors",
+     "file": "api/v1/routes/rics_esg.py",
+     "line": 111,
+     "args": {},
+     "ret": "{'environmental': [{'factor': 'Energy performance (EPC rating)', 'data_source': 'EPC Register', 'weight': 0.25}, {'factor': 'Carbon emissions (Scope 1+2)', 'data_source': 'CRREM / GHG Protocol', 'weight': 0.2}, {'factor': 'Flood risk expos\u2026",
+     "dur_ms": 0.151,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_materiality_factors",
+       "qual": "RICSESGEngine.get_materiality_factors",
+       "file": "services/rics_esg_engine.py",
+       "line": 347,
+       "args": {},
+       "ret": "{'environmental': [{'factor': 'Energy performance (EPC rating)', 'data_source': 'EPC Register', 'weight': 0.25}, {'factor': 'Carbon emissions (Scope 1+2)', 'data_source': 'CRREM / GHG Protocol', 'weight': 0.2}, {'factor': 'Flood risk expos\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "rics-esg",
+   "label": "POST /api/v1/rics-esg/compliance",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'property_id'",
+   "dur_ms": 0.367,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "assess_compliance",
+     "qual": "assess_compliance",
+     "file": "api/v1/routes/rics_esg.py",
+     "line": 54,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,473 @@
+{
+ "domain": "health-climate",
+ "meta": {
+  "ts": "2026-06-30T14:02:43",
+  "module": "api.v1.routes.health_climate",
+  "router_prefix": "/api/v1/health-climate",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "health-climate",
+   "label": "GET /api/v1/health-climate/ref/country-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.532,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "note",
+     "profiles",
+     "wbgt_thresholds"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_country_profiles",
+     "qual": "get_country_profiles",
+     "file": "api/v1/routes/health_climate.py",
+     "line": 298,
+     "args": {},
+     "ret": "{'source': 'WHO Climate Change and Health Country Profiles 2023; Lancet Countdown 2023', 'note': 'CCS = Climate-Sensitive disease burden Score (0-100, higher = more burden); health_resilience (0-100, higher = more resilient)', 'profiles': \u2026",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "health-climate",
+   "label": "GET /api/v1/health-climate/ref/lancet-indicators",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.302,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "publication",
+     "indicator_domains"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_lancet_indicators",
+     "qual": "get_lancet_indicators",
+     "file": "api/v1/routes/health_climate.py",
+     "line": 260,
+     "args": {},
+     "ret": "{'source': 'Lancet Countdown on Health and Climate Change \u2014 2023 Report', 'publication': 'The Lancet, November 2023', 'indicator_domains': [{'domain': '1. Climate Change Impacts, Exposures and Vulnerabilities', 'indicators': [{'id': '1.1',\u2026",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "health-climate",
+   "label": "GET /api/v1/health-climate/ref/who-guidelines",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.233,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "publication_date",
+     "eu_directive",
+     "pollutants",
+     "notes"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_who_guidelines",
+     "qual": "get_who_guidelines",
+     "file": "api/v1/routes/health_climate.py",
+     "line": 211,
+     "args": {},
+     "ret": "{'source': 'WHO Global Air Quality Guidelines 2021', 'publication_date': '2021-09-22', 'eu_directive': 'EU Air Quality Directive 2024/2881 (revised 2024)', 'pollutants': [{'pollutant': 'PM2.5', 'who_annual_guideline_ugm3': 5.0, 'eu_annual_\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/air-quality",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/composite",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/financial-impact",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/food-security-health",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/heat-stress",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.897,
+   "node_count": 12,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<HeatStressRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "country_code",
+     "wbgt_max_c",
+     "heat_stress_risk_score",
+     "productivity_loss_pct",
+     "mortality_per_100k",
+     "rcp45_mortality_increase_pct",
+     "rcp85_mortality_increase_pct",
+     "osha_compliant",
+     "outdoor_worker_fraction",
+     "adaptation_measures",
+     "source"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "heat_stress_endpoint",
+     "qual": "heat_stress_endpoint",
+     "file": "api/v1/routes/health_climate.py",
+     "line": 90,
+     "args": {
+      "req": "HeatStressRequest(entity_id='TEST_req_entity_id', country_code='IN', outdoor_worker_pct=30.0, sector='construction')"
+     },
+     "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.4, 'heat_stress_risk_score': 90.0, 'productivity_loss_pct': 40.5, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
+     "dur_ms": 0.479,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "assess_heat_stress_risk",
+       "qual": "assess_heat_stress_risk",
+       "file": "services/health_climate_engine.py",
+       "line": 104,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "country_code": "'IN'",
+        "outdoor_worker_pct": "30.0",
+        "sector": "'construction'"
+       },
+       "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.4, 'heat_stress_risk_score': 90.0, 'productivity_loss_pct': 40.5, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
+       "dur_ms": 0.39,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 6,
+         "name": "_rng",
+         "qual": "_rng",
+         "file": "services/health_climate_engine.py",
+         "line": 84,
+         "args": {
+          "entity_id": "'TEST_req_entity_idheat'"
+         },
+         "ret": "<random.Random object at 0x000001CE61D26180>",
+         "dur_ms": 0.048,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "_country_profile",
+         "qual": "_country_profile",
+         "file": "services/health_climate_engine.py",
+         "line": 96,
+         "args": {
+          "country_code": "'IN'"
+         },
+         "ret": "{'heat_mortality_100k': 3.5, 'pm25_ugm3': 58.0, 'who_ccs_score': 72.0, 'health_resilience': 38.0, 'ncchap': True, 'ndc_health': True}",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "31.422945044240763",
+          "digits": "1"
+         },
+         "ret": "31.4",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "_clamp",
+         "qual": "_clamp",
+         "file": "services/health_climate_engine.py",
+         "line": 88,
+         "args": {
+          "val": "89.99999999999999",
+          "lo": "0.0",
+          "hi": "100.0"
+         },
+         "ret": "89.99999999999999",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "89.99999999999999",
+          "digits": "1"
+         },
+         "ret": "90.0",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "40.499999999999986",
+          "digits": "1"
+         },
+         "ret": "40.5",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "4.2875000000000005",
+          "digits": "2"
+         },
+         "ret": "4.29",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "1.287",
+          "digits": "2"
+         },
+         "ret": "1.29",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "2.574",
+          "digits": "2"
+         },
+         "ret": "2.57",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 92,
+         "args": {
+          "val": "0.75",
+          "digits": "2"
+         },
+         "ret": "0.75",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/vector-disease",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "health-climate",
+   "label": "POST /api/v1/health-climate/who-climate-health",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

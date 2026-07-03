@@ -1,0 +1,1787 @@
+{
+ "domain": "company-profiles",
+ "meta": {
+  "ts": "2026-06-30T14:00:08",
+  "module": "api.v1.routes.company_profiles",
+  "router_prefix": "/api/v1/company-profiles",
+  "endpoints": 5
+ },
+ "transactions": [
+  {
+   "domain": "company-profiles",
+   "label": "GET /api/v1/company-profiles/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3206.12,
+   "node_count": 100,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "company_profiles"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, legal_name, trading_name, entity_lei, isin_primary, ticker_symbol, primary_sector, institution_type, listing_status, headquarters_country, headquarters_city, gics_sector, total_assets_eur_bn, annual_revenue_eur_mn, employees_fte, is_financial_institution, systemic_importance, cet1_ratio_pct, lcr_pct, nsfr_pct, p3_gar_pct, p3_waci_tco2e_meur, scope1_tco2e, ghg_intensity_tco2e_meur_reve\u2026",
+     "tables": [
+      "company_profiles"
+     ],
+     "rowcount": 97,
+     "dur_ms": 270.145,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM company_profiles WHERE 1=1'",
+     "tables": [
+      "company_profiles"
+     ],
+     "rowcount": 1,
+     "dur_ms": 168.888,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "search": "None (default)",
+    "sector": "None (default)",
+    "institution_type": "None (default)",
+    "country": "None (default)",
+    "systemic": "None (default)",
+    "is_fi": "None (default)",
+    "limit": "100 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "profiles",
+     "total",
+     "limit",
+     "offset"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_profiles",
+     "qual": "list_profiles",
+     "file": "api/v1/routes/company_profiles.py",
+     "line": 181,
+     "args": {
+      "search": "None",
+      "sector": "None",
+      "institution_type": "None",
+      "country": "None",
+      "systemic": "None",
+      "is_fi": "None",
+      "limit": "100",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A8413F8260>"
+     },
+     "ret": "{'profiles': [{'id': UUID('1bf1962e-79c4-49dc-b8cb-4a3aa3eec4a1'), 'legal_name': 'ABN AMRO', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'financial_institution', 'institution_typ\u2026",
+     "dur_ms": 3172.25,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_list_company_profiles_columns",
+       "qual": "_list_company_profiles_columns",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 162,
+       "args": {},
+       "ret": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "_list_company_profiles_columns",
+       "qual": "_list_company_profiles_columns",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 162,
+       "args": {},
+       "ret": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('1bf1962e-79c4-49dc-b8cb-4a3aa3eec4a1'), 'ABN AMRO', None, None, None, None, 'financial_institution', 'Bank', None, 'NLD', None, None, None, None, 2023, True, None, None, None, None, None, Decimal('2.0000'), None, Decimal('40.0000'),\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('1bf1962e-79c4-49dc-b8cb-4a3aa3eec4a1'), 'legal_name': 'ABN AMRO', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'financial_institution', 'institution_type': 'Bank', 'l\u2026",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('ae0349ea-7709-4402-aed3-833d3b7cf9fa'), 'ADNOC (Abu Dhabi National Oil Company)', None, None, None, None, None, 'Corporate', 'Unlisted', 'ARE', None, None, Decimal('290.00'), None, None, False, None, None, None, None, None, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('ae0349ea-7709-4402-aed3-833d3b7cf9fa'), 'legal_name': 'ADNOC (Abu Dhabi National Oil Company)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type':\u2026",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0a0ff194-bd37-47da-adca-fad7e37614d9'), 'Al Rajhi Bank', None, None, None, None, None, 'Corporate', 'Unlisted', 'SAU', None, None, Decimal('185.00'), None, None, False, None, None, None, None, None, None, None, None, 2060, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0a0ff194-bd37-47da-adca-fad7e37614d9'), 'legal_name': 'Al Rajhi Bank', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_st\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('5bf3c146-ff3c-42a7-9da2-472d890186cb'), 'Allianz SE', None, None, None, None, None, 'Corporate', 'Unlisted', 'DEU', None, None, Decimal('1050.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('5bf3c146-ff3c-42a7-9da2-472d890186cb'), 'legal_name': 'Allianz SE', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_statu\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('9195c75b-c95f-45a5-bd51-2d70771e6853'), 'Alphabet Inc. (Google)', None, None, None, None, None, 'Technology', 'Unlisted', 'USA', None, None, Decimal('430.00'), None, None, False, None, None, None, None, None, None, None, None, 2030,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('9195c75b-c95f-45a5-bd51-2d70771e6853'), 'legal_name': 'Alphabet Inc. (Google)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Technology', '\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('72ec44c5-26bf-4661-aade-3650c28f7748'), 'Amazon.com Inc.', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('465.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('72ec44c5-26bf-4661-aade-3650c28f7748'), 'legal_name': 'Amazon.com Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('3a8b1894-f234-4f3b-a414-e51a1b73c5cd'), 'American Tower Corporation', None, None, None, None, None, 'REIT', 'Unlisted', 'US', None, None, Decimal('69.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('3a8b1894-f234-4f3b-a414-e51a1b73c5cd'), 'legal_name': 'American Tower Corporation', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', 'li\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('3e413c00-4931-4547-bc00-798296fe7527'), 'Amundi Asset Management', None, None, None, None, None, 'Asset Manager', 'Unlisted', 'FRA', None, None, Decimal('2100.00'), None, None, True, None, None, None, None, None, None, None, None, 2\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('3e413c00-4931-4547-bc00-798296fe7527'), 'legal_name': 'Amundi Asset Management', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Asset Manager\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('47588151-8f40-4a57-9527-89ab642331a4'), 'Apple Inc.', None, None, None, None, None, 'Technology', 'Unlisted', 'USA', None, None, Decimal('375.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, None, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('47588151-8f40-4a57-9527-89ab642331a4'), 'legal_name': 'Apple Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Technology', 'listing_stat\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('da1393fb-ddd1-4dbd-81ed-34dd0e21387f'), 'AXA S.A.', None, None, None, None, None, 'Corporate', 'Unlisted', 'FRA', None, None, Decimal('870.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, None, Fa\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('da1393fb-ddd1-4dbd-81ed-34dd0e21387f'), 'legal_name': 'AXA S.A.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_status'\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('49673726-e54b-4a4d-91cd-43df0beb95a0'), 'Bancolombia S.A.', None, None, None, None, None, 'Bank', 'Unlisted', 'COL', None, None, Decimal('42.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, T\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('49673726-e54b-4a4d-91cd-43df0beb95a0'), 'legal_name': 'Bancolombia S.A.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_stat\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('a772f1e2-b859-4399-82d6-61ae8bce43e1'), 'Barclays', None, None, None, None, None, 'Bank', 'Unlisted', 'GBR', None, None, Decimal('1700.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, True, T\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('a772f1e2-b859-4399-82d6-61ae8bce43e1'), 'legal_name': 'Barclays', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status': 'Un\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('a8061f9b-d742-4052-951a-362f0f0c062a'), 'Bayer AG', 'Bayer', '549300J4RHPEPVTUS631', 'DE000BAY0017', 'BAYN.DE', None, 'Corporate', None, 'DEU', 'Leverkusen', 'Health Care', Decimal('113.00'), Decimal('47600.00'), 100000, False, 'Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('a8061f9b-d742-4052-951a-362f0f0c062a'), 'legal_name': 'Bayer AG', 'trading_name': 'Bayer', 'entity_lei': '549300J4RHPEPVTUS631', 'isin_primary': 'DE000BAY0017', 'ticker_symbol': 'BAYN.DE', 'primary_sector': None, 'institution_\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('6e559bef-6ed7-4405-bd5f-5952b51f3ed4'), 'BlackRock Inc.', None, None, None, None, None, 'Asset Manager', 'Unlisted', 'USA', None, None, Decimal('10000.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('6e559bef-6ed7-4405-bd5f-5952b51f3ed4'), 'legal_name': 'BlackRock Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Asset Manager', 'listi\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('01ca6ff6-f91e-4546-9746-dea5c9907f60'), 'BlackRock Inc.', 'BlackRock', 'PGM4UUPT7P1VZ6VBN918', 'US09247X1019', 'BLK', None, 'Asset Manager', None, 'USA', 'New York', 'Financials', Decimal('42.00'), Decimal('17900.00'), 19800, True, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('01ca6ff6-f91e-4546-9746-dea5c9907f60'), 'legal_name': 'BlackRock Inc.', 'trading_name': 'BlackRock', 'entity_lei': 'PGM4UUPT7P1VZ6VBN918', 'isin_primary': 'US09247X1019', 'ticker_symbol': 'BLK', 'primary_sector': None, 'instit\u2026",
+       "dur_ms": 0.035,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('ca46bf7e-a197-415b-b49b-f8b3761039c7'), 'Blackstone Inc.', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('1100.00'), None, None, False, None, None, None, None, None, None, None, None, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('ca46bf7e-a197-415b-b49b-f8b3761039c7'), 'legal_name': 'Blackstone Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('3c005114-058d-4030-a451-23d9c695bcb8'), 'BNP Paribas', None, None, None, None, 'financial_institution', 'Bank', None, 'FRA', None, None, Decimal('0.03'), None, 2024, True, None, None, None, None, None, None, Decimal('0.51'), Decimal\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('3c005114-058d-4030-a451-23d9c695bcb8'), 'legal_name': 'BNP Paribas', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'financial_institution', 'institution_type': 'Bank',\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('939ebbcf-503c-4d9b-a971-bb00d760a077'), 'Breakthrough Energy Ventures', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('3.00'), None, None, False, None, None, None, None, None, None, None, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('939ebbcf-503c-4d9b-a971-bb00d760a077'), 'legal_name': 'Breakthrough Energy Ventures', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporat\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('a4303ce8-9594-4ac2-bbea-7c8428bcf936'), 'Brookfield Asset Management Ltd', None, None, None, None, None, 'Asset Manager', 'Unlisted', 'CA', None, None, Decimal('900.00'), None, None, True, None, None, None, None, None, None, None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('a4303ce8-9594-4ac2-bbea-7c8428bcf936'), 'legal_name': 'Brookfield Asset Management Ltd', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Asset\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('acbc94b5-4269-4560-afcb-fa7562ec57d2'), 'Brookfield Asset Management Ltd', 'Brookfield', 'C6J3FGIWG6MBDGTE8Q02', 'CA1130041058', 'BAM', None, 'Asset Manager', None, 'CAN', 'Toronto', 'Financials', Decimal('900.00'), Decimal('93200.0\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('acbc94b5-4269-4560-afcb-fa7562ec57d2'), 'legal_name': 'Brookfield Asset Management Ltd', 'trading_name': 'Brookfield', 'entity_lei': 'C6J3FGIWG6MBDGTE8Q02', 'isin_primary': 'CA1130041058', 'ticker_symbol': 'BAM', 'primary_sect\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('7f4fd6f6-6973-4bed-bda4-e5ab07feaa7c'), 'Brookfield Renewable Partners', None, None, None, None, None, 'Corporate', 'Unlisted', 'CAN', None, None, Decimal('100.00'), None, None, False, None, None, None, None, None, None, None, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('7f4fd6f6-6973-4bed-bda4-e5ab07feaa7c'), 'legal_name': 'Brookfield Renewable Partners', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corpora\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('9adb08b3-be7d-4976-be3e-b42869db0421'), 'Cathay Financial Holdings', None, None, None, None, None, 'Bank', 'Unlisted', 'TWN', None, None, Decimal('370.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('9adb08b3-be7d-4976-be3e-b42869db0421'), 'legal_name': 'Cathay Financial Holdings', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'lis\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('079b0ace-e3e6-4fa9-adb1-cce1cc5dda8a'), 'CBRE Group Inc.', None, None, None, None, None, 'Real Estate', 'Unlisted', 'US', None, None, Decimal('26.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('079b0ace-e3e6-4fa9-adb1-cce1cc5dda8a'), 'legal_name': 'CBRE Group Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Real Estate', 'listin\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('26ac3a07-3fdb-4ac7-979f-b016931d51dc'), 'Congruent Ventures', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('0.80'), None, None, False, None, None, None, None, None, None, None, None, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('26ac3a07-3fdb-4ac7-979f-b016931d51dc'), 'legal_name': 'Congruent Ventures', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listi\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('fd784628-2e05-4fef-8ebb-045f73a2cb6a'), 'Deutsche Bank AG', 'Deutsche Bank', '7LTWFZYICNSX8D621K86', 'DE0005140008', 'DBK.DE', None, 'Bank', None, 'DEU', 'Frankfurt', 'Financials', Decimal('1312.00'), Decimal('28900.00'), 87000, Tru\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('fd784628-2e05-4fef-8ebb-045f73a2cb6a'), 'legal_name': 'Deutsche Bank AG', 'trading_name': 'Deutsche Bank', 'entity_lei': '7LTWFZYICNSX8D621K86', 'isin_primary': 'DE0005140008', 'ticker_symbol': 'DBK.DE', 'primary_sector': None\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('81e8483b-4e10-47a2-b012-236920c64a95'), 'Dexus Property Group', None, None, None, None, None, 'REIT', 'Unlisted', 'AU', None, None, Decimal('19.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('81e8483b-4e10-47a2-b012-236920c64a95'), 'legal_name': 'Dexus Property Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', 'listing_\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('8e59bbfe-da18-4b5f-8872-5903a4673149'), 'Ecopetrol S.A.', None, None, None, None, None, 'Corporate', 'Unlisted', 'COL', None, None, Decimal('62.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('8e59bbfe-da18-4b5f-8872-5903a4673149'), 'legal_name': 'Ecopetrol S.A.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_s\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('a861d8f8-1479-42bf-a63c-929ae69f4091'), 'EDP \u2014 Energias de Portugal', None, None, None, None, None, 'Corporate', 'Unlisted', 'PRT', None, None, Decimal('48.00'), None, None, False, None, None, None, None, None, None, None, None, 204\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('a861d8f8-1479-42bf-a63c-929ae69f4091'), 'legal_name': 'EDP \u2014 Energias de Portugal', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate'\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('3a0dfbc7-1daa-44d9-86d8-20a66a83b872'), 'EDP Energias de Portugal', None, None, None, None, 'energy_developer', 'Energy', None, 'PRT', None, None, None, Decimal('88.00'), 3636, False, None, None, None, None, None, None, None, Decima\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('3a0dfbc7-1daa-44d9-86d8-20a66a83b872'), 'legal_name': 'EDP Energias de Portugal', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'energy_developer', 'institution_type':\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('14e5b040-4f17-4dad-9920-1a542c627878'), 'Emirates NBD', None, None, None, None, None, 'Bank', 'Unlisted', 'ARE', None, None, Decimal('235.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, Fals\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('14e5b040-4f17-4dad-9920-1a542c627878'), 'legal_name': 'Emirates NBD', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status':\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('10f1ba9f-87fa-471d-9841-34800f6f36a9'), 'Enel SpA', 'Enel', 'WOCKAN83NVMCFH2SZ775', 'IT0003128367', 'ENEL.MI', None, 'Energy', None, 'ITA', 'Rome', 'Utilities', Decimal('166.00'), Decimal('92900.00'), 65000, False, 'None', None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('10f1ba9f-87fa-471d-9841-34800f6f36a9'), 'legal_name': 'Enel SpA', 'trading_name': 'Enel', 'entity_lei': 'WOCKAN83NVMCFH2SZ775', 'isin_primary': 'IT0003128367', 'ticker_symbol': 'ENEL.MI', 'primary_sector': None, 'institution_t\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('9ec70fd1-dd3d-4c4d-8036-c84371abf36e'), 'ENGIE', None, None, None, None, 'energy_developer', 'Energy', None, 'FRA', None, None, None, None, 97967, False, None, None, None, None, None, None, None, Decimal('0.1210'), None, 'Committed'\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('9ec70fd1-dd3d-4c4d-8036-c84371abf36e'), 'legal_name': 'ENGIE', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'energy_developer', 'institution_type': 'Energy', 'listing\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('2fe438d2-b5d9-4d75-825c-081553e623dd'), 'ENGIE SA', None, None, None, None, None, 'Corporate', 'Unlisted', 'FRA', None, None, Decimal('90.00'), None, None, False, None, None, None, None, None, None, None, None, 2045, None, None, Fal\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('2fe438d2-b5d9-4d75-825c-081553e623dd'), 'legal_name': 'ENGIE SA', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_status'\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('35c0c567-b442-44f2-991d-fa485f0e2a98'), 'Equinix Inc.', 'Equinix', '549300EVUN2BTLJ3GT74', 'US29444U7000', 'EQIX', None, 'RE', None, 'USA', 'Redwood City', 'Real Estate', Decimal('32.00'), Decimal('7800.00'), 13100, False, 'None', N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('35c0c567-b442-44f2-991d-fa485f0e2a98'), 'legal_name': 'Equinix Inc.', 'trading_name': 'Equinix', 'entity_lei': '549300EVUN2BTLJ3GT74', 'isin_primary': 'US29444U7000', 'ticker_symbol': 'EQIX', 'primary_sector': None, 'instituti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('2d661fb3-4fe2-4b85-8830-5cc213739d00'), 'Equinor ASA', 'Equinor', 'OW6OFBNCKXC8UI1WBEMG', 'NO0010096985', 'EQNR.OL', None, 'Energy', None, 'NOR', 'Stavanger', 'Energy', Decimal('142.00'), Decimal('105300.00'), 22000, False, 'None', \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('2d661fb3-4fe2-4b85-8830-5cc213739d00'), 'legal_name': 'Equinor ASA', 'trading_name': 'Equinor', 'entity_lei': 'OW6OFBNCKXC8UI1WBEMG', 'isin_primary': 'NO0010096985', 'ticker_symbol': 'EQNR.OL', 'primary_sector': None, 'institu\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0b1ec049-7ed0-47fc-8444-54ffdc40a239'), 'Glencore plc', 'Glencore', '2138002658CPO9NBH955', 'JE00B4T3BW64', 'GLEN.L', None, 'Corporate', None, 'CHE', 'Baar', 'Materials', Decimal('109.00'), Decimal('217500.00'), 152000, False, 'None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0b1ec049-7ed0-47fc-8444-54ffdc40a239'), 'legal_name': 'Glencore plc', 'trading_name': 'Glencore', 'entity_lei': '2138002658CPO9NBH955', 'isin_primary': 'JE00B4T3BW64', 'ticker_symbol': 'GLEN.L', 'primary_sector': None, 'instit\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('edc472c4-0548-4b94-9896-f2ad66cb8fa4'), 'Goldman Sachs', None, None, None, None, None, 'Bank', 'Unlisted', 'USA', None, None, Decimal('1600.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, Tr\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('edc472c4-0548-4b94-9896-f2ad66cb8fa4'), 'legal_name': 'Goldman Sachs', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status'\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('8115581a-c2b1-487f-ac91-9c3b1e01deca'), 'HDFC Bank', None, None, None, None, None, 'Bank', 'Unlisted', 'IND', None, None, Decimal('300.00'), None, None, True, None, None, None, None, None, None, None, None, 2032, None, None, False, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('8115581a-c2b1-487f-ac91-9c3b1e01deca'), 'legal_name': 'HDFC Bank', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status': 'U\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('63511dbd-a86d-4440-8f20-28d70c118e61'), 'Holcim Ltd', 'Holcim', '529900EHPFPYHV6IYO98', 'CH0012214059', 'HOLN.SW', None, 'Corporate', None, 'CHE', 'Zug', 'Materials', Decimal('56.00'), Decimal('26900.00'), 63000, False, 'None', None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('63511dbd-a86d-4440-8f20-28d70c118e61'), 'legal_name': 'Holcim Ltd', 'trading_name': 'Holcim', 'entity_lei': '529900EHPFPYHV6IYO98', 'isin_primary': 'CH0012214059', 'ticker_symbol': 'HOLN.SW', 'primary_sector': None, 'instituti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('9a2f7082-23e8-41d9-a03a-6def2cf5a91a'), 'HSBC (Hong Kong)', None, None, None, None, None, 'Bank', 'Unlisted', 'HKG', None, None, Decimal('800.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('9a2f7082-23e8-41d9-a03a-6def2cf5a91a'), 'legal_name': 'HSBC (Hong Kong)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_stat\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('25dfb748-bcec-4d54-ab10-65257f9fa4d1'), 'HSBC Holdings plc', 'HSBC', 'MLU0ZO3ML4LN2LL2TL40', 'GB0005405286', 'HSBA.L', None, 'Bank', None, 'GBR', 'London', 'Financials', Decimal('2640.00'), Decimal('52400.00'), 221000, True, 'G-SIB'\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('25dfb748-bcec-4d54-ab10-65257f9fa4d1'), 'legal_name': 'HSBC Holdings plc', 'trading_name': 'HSBC', 'entity_lei': 'MLU0ZO3ML4LN2LL2TL40', 'isin_primary': 'GB0005405286', 'ticker_symbol': 'HSBA.L', 'primary_sector': None, 'insti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('715c7550-fa38-4f5d-bbfc-ba34ed3f41fc'), 'Iberdrola SA', 'Iberdrola', '5QK37QC7NWOJ8D7WVQ45', 'ES0144580Y14', 'IBE.MC', None, 'Energy', None, 'ESP', 'Bilbao', 'Utilities', Decimal('153.00'), Decimal('49300.00'), 42000, False, 'None',\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('715c7550-fa38-4f5d-bbfc-ba34ed3f41fc'), 'legal_name': 'Iberdrola SA', 'trading_name': 'Iberdrola', 'entity_lei': '5QK37QC7NWOJ8D7WVQ45', 'isin_primary': 'ES0144580Y14', 'ticker_symbol': 'IBE.MC', 'primary_sector': None, 'insti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('d2b936ed-4af0-454e-96dd-f576610b15db'), 'ICICI Bank', None, None, None, None, None, 'Corporate', 'Unlisted', 'IND', None, None, Decimal('295.00'), None, None, False, None, None, None, None, None, None, None, None, None, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('d2b936ed-4af0-454e-96dd-f576610b15db'), 'legal_name': 'ICICI Bank', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_statu\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('473a5b21-54dd-4ec4-9669-edf830b75b50'), 'Infosys Limited', None, None, None, None, None, 'Corporate', 'Unlisted', 'IND', None, None, Decimal('38.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('473a5b21-54dd-4ec4-9669-edf830b75b50'), 'legal_name': 'Infosys Limited', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('5730e4c4-6f62-4cea-abb3-192622bf099c'), 'ING Group', None, None, None, None, 'financial_institution', 'Bank', None, 'NLD', None, None, None, None, 2024, True, None, None, None, None, None, None, None, Decimal('2030.0000'), None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('5730e4c4-6f62-4cea-abb3-192622bf099c'), 'legal_name': 'ING Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'financial_institution', 'institution_type': 'Bank', '\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('fc28b481-637d-4604-ae4b-7124f2d252ab'), 'Ita\u00fa Unibanco', None, None, None, None, None, 'Bank', 'Unlisted', 'BRA', None, None, Decimal('355.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, Tru\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('fc28b481-637d-4604-ae4b-7124f2d252ab'), 'legal_name': 'Ita\u00fa Unibanco', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status'\u2026",
+       "dur_ms": 0.037,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('2d6b3702-ba0d-472a-91ad-444bc37332ee'), 'JPMorgan Chase', None, None, None, None, None, 'Bank', 'Unlisted', 'USA', None, None, Decimal('3700.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None, T\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('2d6b3702-ba0d-472a-91ad-444bc37332ee'), 'legal_name': 'JPMorgan Chase', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_status\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('829d15e2-567b-48a8-adb1-6890505af713'), 'KB Financial Group', None, None, None, None, None, 'Bank', 'Unlisted', 'KOR', None, None, Decimal('620.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('829d15e2-567b-48a8-adb1-6890505af713'), 'legal_name': 'KB Financial Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_st\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('7d118523-85f5-4431-959c-9ba7b8f7867e'), 'KKR & Co. Inc.', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('553.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('7d118523-85f5-4431-959c-9ba7b8f7867e'), 'legal_name': 'KKR & Co. Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_s\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('e2fe6ced-a133-4fde-a303-26df374cd7e4'), 'Land Securities Group PLC', None, None, None, None, None, 'REIT', 'Unlisted', 'GB', None, None, Decimal('11.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('e2fe6ced-a133-4fde-a303-26df374cd7e4'), 'legal_name': 'Land Securities Group PLC', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', 'lis\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('1db50dac-d077-4f65-acf3-d9159e3552e2'), 'Larsen & Toubro (L&T)', None, None, None, None, None, 'Corporate', 'Unlisted', 'IND', None, None, Decimal('52.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('1db50dac-d077-4f65-acf3-d9159e3552e2'), 'legal_name': 'Larsen & Toubro (L&T)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'li\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('d1bb1293-1db6-421d-93a3-5528617a32e4'), 'Link Real Estate Investment Trust', None, None, None, None, None, 'REIT', 'Unlisted', 'HK', None, None, Decimal('24.00'), None, None, False, None, None, None, None, None, None, None, None, 20\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('d1bb1293-1db6-421d-93a3-5528617a32e4'), 'legal_name': 'Link Real Estate Investment Trust', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REI\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('30dadbd5-c46a-4cc4-8fcb-a56b3bfeab49'), 'Lowercarbon Capital', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('1.20'), None, None, False, None, None, None, None, None, None, None, None, None, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('30dadbd5-c46a-4cc4-8fcb-a56b3bfeab49'), 'legal_name': 'Lowercarbon Capital', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'list\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0a2ee3ff-d7ed-452d-bad5-4ecffb962152'), 'Maersk A/S', 'Maersk', '549300D2K6PKKKXVNN73', 'DK0010244508', 'MAERSK-B.CO', None, 'Corporate', None, 'DNK', 'Copenhagen', 'Industrials', Decimal('62.00'), Decimal('51100.00'), 100000, False\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0a2ee3ff-d7ed-452d-bad5-4ecffb962152'), 'legal_name': 'Maersk A/S', 'trading_name': 'Maersk', 'entity_lei': '549300D2K6PKKKXVNN73', 'isin_primary': 'DK0010244508', 'ticker_symbol': 'MAERSK-B.CO', 'primary_sector': None, 'insti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('a5659933-74ad-46fb-817b-57e3f784eb6e'), 'Meta Platforms Inc.', None, None, None, None, None, 'Technology', 'Unlisted', 'USA', None, None, Decimal('232.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('a5659933-74ad-46fb-817b-57e3f784eb6e'), 'legal_name': 'Meta Platforms Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Technology', 'lis\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('729de295-ef94-468b-9964-7cb7f47c19bd'), 'Microsoft Corporation', None, None, None, None, None, 'Technology', 'Unlisted', 'USA', None, None, Decimal('485.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('729de295-ef94-468b-9964-7cb7f47c19bd'), 'legal_name': 'Microsoft Corporation', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Technology', 'l\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('f28ea7ad-92d5-44e2-987e-faadf1817e14'), 'Munich Re Group', None, None, None, None, None, 'Insurance', 'Unlisted', 'DEU', None, None, Decimal('290.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('f28ea7ad-92d5-44e2-987e-faadf1817e14'), 'legal_name': 'Munich Re Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Insurance', 'listing_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('7f5e556e-f17e-4a75-bc15-34479607407f'), 'Nestl\u00e9 SA', 'Nestl\u00e9', 'KY37F86X1O3V4N3LPZ03', 'CH0038863350', 'NESN.SW', None, 'Corporate', None, 'CHE', 'Vevey', 'Consumer Staples', Decimal('120.00'), Decimal('92100.00'), 270000, False, 'N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('7f5e556e-f17e-4a75-bc15-34479607407f'), 'legal_name': 'Nestl\u00e9 SA', 'trading_name': 'Nestl\u00e9', 'entity_lei': 'KY37F86X1O3V4N3LPZ03', 'isin_primary': 'CH0038863350', 'ticker_symbol': 'NESN.SW', 'primary_sector': None, 'institutio\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0464f57c-2d22-42ca-8596-41bba4a65dbd'), 'NVIDIA Corporation', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('65.00'), None, None, False, None, None, None, None, None, None, None, None, 2025, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0464f57c-2d22-42ca-8596-41bba4a65dbd'), 'legal_name': 'NVIDIA Corporation', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listi\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('346030e9-d944-48eb-9069-02a85050aed2'), '\u00d8rsted', None, None, None, None, 'energy_developer', 'Energy', None, 'DNK', None, None, None, None, 31, False, None, None, None, None, None, None, None, Decimal('16.0000'), None, 'Committed',\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('346030e9-d944-48eb-9069-02a85050aed2'), 'legal_name': '\u00d8rsted', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'energy_developer', 'institution_type': 'Energy', 'listin\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('24af75bc-944d-49b8-bcda-30b441af5404'), 'Partners Group AG', None, None, None, None, None, 'Corporate', 'Unlisted', 'CHE', None, None, Decimal('149.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('24af75bc-944d-49b8-bcda-30b441af5404'), 'legal_name': 'Partners Group AG', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listin\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('cc267263-7819-4a92-89c9-d4d4bad997cc'), 'Petrobras (Petr\u00f3leo Brasileiro)', None, None, None, None, None, 'Corporate', 'Unlisted', 'BRA', None, None, Decimal('245.00'), None, None, False, None, None, None, None, None, None, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('cc267263-7819-4a92-89c9-d4d4bad997cc'), 'legal_name': 'Petrobras (Petr\u00f3leo Brasileiro)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corpo\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('fd62bb4f-a7a0-4fc5-92a8-a34722b0dd47'), 'PIMCO (Pacific Investment Management)', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('1900.00'), None, None, False, None, None, None, None, None, None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('fd62bb4f-a7a0-4fc5-92a8-a34722b0dd47'), 'legal_name': 'PIMCO (Pacific Investment Management)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': \u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('3f706c0e-7972-43e7-8dd3-c497cc73c401'), 'Prologis Inc.', None, None, None, None, None, 'REIT', 'Unlisted', 'US', None, None, Decimal('187.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, None, Fal\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('3f706c0e-7972-43e7-8dd3-c497cc73c401'), 'legal_name': 'Prologis Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', 'listing_status'\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('b52ebb51-003d-4c58-aea4-1e451dcc5ca0'), 'Rabobank', None, None, None, None, 'financial_institution', 'Bank', None, 'NLD', None, None, Decimal('0.00'), None, 49272, True, None, None, None, None, None, None, None, Decimal('2050.0000')\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('b52ebb51-003d-4c58-aea4-1e451dcc5ca0'), 'legal_name': 'Rabobank', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'financial_institution', 'institution_type': 'Bank', 'l\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('bbe9e730-a6cc-4f61-a946-4ba068f78211'), 'Reliance Industries Limited', None, None, None, None, None, 'Corporate', 'Unlisted', 'IND', None, None, Decimal('260.00'), None, None, False, None, None, None, None, None, None, None, None, 2\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('bbe9e730-a6cc-4f61-a946-4ba068f78211'), 'legal_name': 'Reliance Industries Limited', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('e10ff138-2e65-4d24-a14c-af6ee2546770'), 'Rio Tinto Group', 'Rio Tinto', '213800YOEO5OQ72G2R82', 'GB0007188757', 'RIO.L', None, 'Corporate', None, 'GBR', 'London', 'Materials', Decimal('92.00'), Decimal('52200.00'), 49000, False, 'No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('e10ff138-2e65-4d24-a14c-af6ee2546770'), 'legal_name': 'Rio Tinto Group', 'trading_name': 'Rio Tinto', 'entity_lei': '213800YOEO5OQ72G2R82', 'isin_primary': 'GB0007188757', 'ticker_symbol': 'RIO.L', 'primary_sector': None, 'ins\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('c79c123a-c425-4886-95ad-786a596fdb6e'), 'Royal Bank of Canada', None, None, None, None, None, 'Bank', 'Unlisted', 'CAN', None, None, Decimal('1700.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('c79c123a-c425-4886-95ad-786a596fdb6e'), 'legal_name': 'Royal Bank of Canada', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('e8bf3c83-e022-45ca-ad53-a714a993f1ad'), 'RWE AG', None, None, None, None, None, 'Corporate', 'Unlisted', 'DEU', None, None, Decimal('65.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, None, False\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('e8bf3c83-e022-45ca-ad53-a714a993f1ad'), 'legal_name': 'RWE AG', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_status': \u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('d578b49e-e59d-4221-a4d3-e78b07696de7'), 'RWE Group', None, None, None, None, 'energy_developer', 'Energy', None, 'DEU', None, None, Decimal('98.44'), Decimal('1.00'), 22098, False, None, None, None, None, None, None, None, Decimal('\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('d578b49e-e59d-4221-a4d3-e78b07696de7'), 'legal_name': 'RWE Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': 'energy_developer', 'institution_type': 'Energy', 'lis\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('65feea13-34f8-4b72-8622-4942bf9abb94'), 'Salesforce Inc.', None, None, None, None, None, 'Corporate', 'Unlisted', 'US', None, None, Decimal('63.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('65feea13-34f8-4b72-8622-4942bf9abb94'), 'legal_name': 'Salesforce Inc.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('c0844ea2-9d67-4db5-b56d-4efad7d49fed'), 'Samsung Electronics', None, None, None, None, None, 'Corporate', 'Unlisted', 'KOR', None, None, Decimal('330.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('c0844ea2-9d67-4db5-b56d-4efad7d49fed'), 'legal_name': 'Samsung Electronics', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'list\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('ded6eb9b-b4bd-49be-93bb-77c76409c928'), 'SAP SE', None, None, None, None, None, 'Corporate', 'Unlisted', 'DEU', None, None, Decimal('68.00'), None, None, False, None, None, None, None, None, None, None, None, 2030, None, None, False\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('ded6eb9b-b4bd-49be-93bb-77c76409c928'), 'legal_name': 'SAP SE', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_status': \u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('ea3b3189-9305-4c0d-96ad-97d81e5aa782'), 'SAP SE', 'SAP', '529900D6BF99LW9R2E68', 'DE0007164600', 'SAP.DE', None, 'Corporate', None, 'DEU', 'Walldorf', 'Information Technology', Decimal('72.00'), Decimal('31200.00'), 107000, False, '\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('ea3b3189-9305-4c0d-96ad-97d81e5aa782'), 'legal_name': 'SAP SE', 'trading_name': 'SAP', 'entity_lei': '529900D6BF99LW9R2E68', 'isin_primary': 'DE0007164600', 'ticker_symbol': 'SAP.DE', 'primary_sector': None, 'institution_type'\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('80748c99-d0da-44b5-832e-7f7cd5ae7043'), 'Saudi Aramco', None, None, None, None, None, 'Corporate', 'Unlisted', 'SAU', None, None, Decimal('610.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('80748c99-d0da-44b5-832e-7f7cd5ae7043'), 'legal_name': 'Saudi Aramco', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_sta\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('6821f186-e264-4a0c-93f6-1ed4d3b2b491'), 'Schroders plc', None, None, None, None, None, 'Asset Manager', 'Unlisted', 'GBR', None, None, Decimal('980.00'), None, None, True, None, None, None, None, None, None, None, None, 2040, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('6821f186-e264-4a0c-93f6-1ed4d3b2b491'), 'legal_name': 'Schroders plc', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Asset Manager', 'listin\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('4d04f9f2-882a-4970-8f61-6eca75266626'), 'Segro plc', 'SEGRO', '213800XC35KGM9NHF679', 'GB00B5ZN1N88', 'SGRO.L', None, 'RE', None, 'GBR', 'Slough', 'Real Estate', Decimal('19.00'), Decimal('710.00'), 460, False, 'None', None, None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('4d04f9f2-882a-4970-8f61-6eca75266626'), 'legal_name': 'Segro plc', 'trading_name': 'SEGRO', 'entity_lei': '213800XC35KGM9NHF679', 'isin_primary': 'GB00B5ZN1N88', 'ticker_symbol': 'SGRO.L', 'primary_sector': None, 'institution_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('cab42b5a-f299-4f86-a95b-65a9c228357a'), 'Segro PLC', None, None, None, None, None, 'REIT', 'Unlisted', 'GB', None, None, Decimal('20.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, None, None, False, F\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('cab42b5a-f299-4f86-a95b-65a9c228357a'), 'legal_name': 'Segro PLC', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', 'listing_status': 'U\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 82,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('73f01648-747c-446d-bc5a-d42e06d9aabd'), 'Shell plc', 'Shell', '21380068P1DRHMJ8KU70', 'GB00BP6MXD84', 'SHEL.L', None, 'Energy', None, 'GBR', 'London', 'Energy', Decimal('376.00'), Decimal('316400.00'), 86000, False, 'None', None, No\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('73f01648-747c-446d-bc5a-d42e06d9aabd'), 'legal_name': 'Shell plc', 'trading_name': 'Shell', 'entity_lei': '21380068P1DRHMJ8KU70', 'isin_primary': 'GB00BP6MXD84', 'ticker_symbol': 'SHEL.L', 'primary_sector': None, 'institution_\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('c59717de-e6be-4281-a814-09e65de9bd92'), 'Siemens AG', 'Siemens', 'W38RGI023J3WT1HWRP32', 'DE0007236101', 'SIE.DE', None, 'Corporate', None, 'DEU', 'Munich', 'Industrials', Decimal('105.00'), Decimal('77800.00'), 311000, False, 'None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('c59717de-e6be-4281-a814-09e65de9bd92'), 'legal_name': 'Siemens AG', 'trading_name': 'Siemens', 'entity_lei': 'W38RGI023J3WT1HWRP32', 'isin_primary': 'DE0007236101', 'ticker_symbol': 'SIE.DE', 'primary_sector': None, 'instituti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 84,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('caac3af6-af31-429c-b2a3-542a93547bda'), 'Soci\u00e9t\u00e9 G\u00e9n\u00e9rale', None, None, None, None, None, 'Bank', 'Unlisted', 'FRA', None, None, Decimal('1450.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('caac3af6-af31-429c-b2a3-542a93547bda'), 'legal_name': 'Soci\u00e9t\u00e9 G\u00e9n\u00e9rale', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Bank', 'listing_stat\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 85,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('b06c1399-09a8-4620-988e-5a8da221835e'), 'Sumitomo Mitsui Banking Corp. (SMBC Group)', None, None, None, None, None, 'Bank', 'Unlisted', 'JPN', None, None, Decimal('2100.00'), None, None, True, None, None, None, None, None, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('b06c1399-09a8-4620-988e-5a8da221835e'), 'legal_name': 'Sumitomo Mitsui Banking Corp. (SMBC Group)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_ty\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('359cbf6b-7039-4525-a037-5f9864565c35'), 'Swiss Re Ltd.', None, None, None, None, None, 'Insurance', 'Unlisted', 'CHE', None, None, Decimal('195.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, None, None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('359cbf6b-7039-4525-a037-5f9864565c35'), 'legal_name': 'Swiss Re Ltd.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Insurance', 'listing_st\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('7e83b5f9-13a4-49e9-a4a4-4f7a9579e204'), 'Taiwan Semiconductor Manufacturing Company (TSMC)', None, None, None, None, None, 'Corporate', 'Unlisted', 'TWN', None, None, Decimal('148.00'), None, None, False, None, None, None, None, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('7e83b5f9-13a4-49e9-a4a4-4f7a9579e204'), 'legal_name': 'Taiwan Semiconductor Manufacturing Company (TSMC)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institu\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('275c590a-e2fd-4192-849d-b26328ee5b90'), 'Tata Consultancy Services (TCS)', None, None, None, None, None, 'Corporate', 'Unlisted', 'IND', None, None, Decimal('55.00'), None, None, False, None, None, None, None, None, None, None, None\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('275c590a-e2fd-4192-849d-b26328ee5b90'), 'legal_name': 'Tata Consultancy Services (TCS)', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corpo\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('d370e3a6-9237-4f54-aa2e-dbb09a96b2c0'), 'The Carlyle Group', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('426.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('d370e3a6-9237-4f54-aa2e-dbb09a96b2c0'), 'legal_name': 'The Carlyle Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listin\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0afca28c-1851-4f4e-8dba-c61959a6da69'), 'The Vanguard Group', None, None, None, None, None, 'Asset Manager', 'Unlisted', 'USA', None, None, Decimal('8100.00'), None, None, True, None, None, None, None, None, None, None, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0afca28c-1851-4f4e-8dba-c61959a6da69'), 'legal_name': 'The Vanguard Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Asset Manager', 'l\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('cba24e1c-9076-4464-a963-68c84ba7b779'), 'TotalEnergies SE', 'TotalEnergies', '529900S21EQ1BO4ESM68', 'FR0000120271', 'TTE.PA', None, 'Energy', None, 'FRA', 'Paris', 'Energy', Decimal('295.00'), Decimal('218700.00'), 101000, False, '\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('cba24e1c-9076-4464-a963-68c84ba7b779'), 'legal_name': 'TotalEnergies SE', 'trading_name': 'TotalEnergies', 'entity_lei': '529900S21EQ1BO4ESM68', 'isin_primary': 'FR0000120271', 'ticker_symbol': 'TTE.PA', 'primary_sector': None\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('36623bac-0a50-487d-9c8c-4e4a7bf1b9be'), 'TPG Rise Climate Fund', None, None, None, None, None, 'Corporate', 'Unlisted', 'USA', None, None, Decimal('7.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, Non\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('36623bac-0a50-487d-9c8c-4e4a7bf1b9be'), 'legal_name': 'TPG Rise Climate Fund', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'li\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0c00eda4-9dd4-40d2-b078-1787d577809c'), 'Unibail-Rodamco-Westfield NV', None, None, None, None, None, 'REIT', 'Unlisted', 'NL', None, None, Decimal('52.00'), None, None, False, None, None, None, None, None, None, None, None, 2040, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0c00eda4-9dd4-40d2-b078-1787d577809c'), 'legal_name': 'Unibail-Rodamco-Westfield NV', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'REIT', '\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('0a6e9080-e331-4074-95fe-59768472e78a'), 'Vale S.A.', None, None, None, None, None, 'Corporate', 'Unlisted', 'BRA', None, None, Decimal('98.00'), None, None, False, None, None, None, None, None, None, None, None, 2050, None, None, Fa\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('0a6e9080-e331-4074-95fe-59768472e78a'), 'legal_name': 'Vale S.A.', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Corporate', 'listing_status\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('8eb41643-7017-4fe1-892b-9def710036d8'), 'Vestas Wind Systems A/S', 'Vestas', '549300DYMC8BGZZC8844', 'DK0061539921', 'VWS.CO', None, 'Corporate', None, 'DNK', 'Aarhus', 'Industrials', Decimal('22.00'), Decimal('15200.00'), 28600, Fa\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('8eb41643-7017-4fe1-892b-9def710036d8'), 'legal_name': 'Vestas Wind Systems A/S', 'trading_name': 'Vestas', 'entity_lei': '549300DYMC8BGZZC8844', 'isin_primary': 'DK0061539921', 'ticker_symbol': 'VWS.CO', 'primary_sector': None\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('2fc0fcf2-d181-4184-ac9f-454e0d8d5958'), 'Volkswagen AG', 'Volkswagen', '529900NNUPAGGOMPXZ31', 'DE0007664039', 'VOW3.DE', None, 'Corporate', None, 'DEU', 'Wolfsburg', 'Consumer Discretionary', Decimal('564.00'), Decimal('322300.00')\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('2fc0fcf2-d181-4184-ac9f-454e0d8d5958'), 'legal_name': 'Volkswagen AG', 'trading_name': 'Volkswagen', 'entity_lei': '529900NNUPAGGOMPXZ31', 'isin_primary': 'DE0007664039', 'ticker_symbol': 'VOW3.DE', 'primary_sector': None, 'in\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('c7eed703-3990-4940-8889-ac2aa9f89fed'), 'Vonovia SE', None, None, None, None, None, 'Real Estate', 'Unlisted', 'DE', None, None, Decimal('93.00'), None, None, False, None, None, None, None, None, None, None, None, 2045, None, None, \u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('c7eed703-3990-4940-8889-ac2aa9f89fed'), 'legal_name': 'Vonovia SE', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Real Estate', 'listing_sta\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('176cd8b6-f3bc-4de8-92f5-dc4963d77fd0'), 'Vonovia SE', 'Vonovia', '5299005A2ZEP6AP7GG81', 'DE000A1ML7J1', 'VNA.DE', None, 'RE', None, 'DEU', 'Bochum', 'Real Estate', Decimal('88.00'), Decimal('6200.00'), 15700, False, 'None', None, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('176cd8b6-f3bc-4de8-92f5-dc4963d77fd0'), 'legal_name': 'Vonovia SE', 'trading_name': 'Vonovia', 'entity_lei': '5299005A2ZEP6AP7GG81', 'isin_primary': 'DE000A1ML7J1', 'ticker_symbol': 'VNA.DE', 'primary_sector': None, 'instituti\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('b5bc3402-5652-4583-a37f-38b6b938a850'), 'Zurich Insurance Group', None, None, None, None, None, 'Insurance', 'Unlisted', 'CHE', None, None, Decimal('220.00'), None, None, True, None, None, None, None, None, None, None, None, 2050, N\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('b5bc3402-5652-4583-a37f-38b6b938a850'), 'legal_name': 'Zurich Insurance Group', 'trading_name': None, 'entity_lei': None, 'isin_primary': None, 'ticker_symbol': None, 'primary_sector': None, 'institution_type': 'Insurance', 'l\u2026",
+       "dur_ms": 0.032,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "_profile_row_to_dict",
+       "qual": "_profile_row_to_dict",
+       "file": "api/v1/routes/company_profiles.py",
+       "line": 156,
+       "args": {
+        "row": "(UUID('177f78ee-3d3a-445b-8df0-c5f8b8c8cf09'), 'Zurich Insurance Group AG', 'Zurich', '529900QVNRBND50TXP03', 'CH0011075394', 'ZURN.SW', None, 'Insurance', None, 'CHE', 'Zurich', 'Financials', Decimal('402.00'), Decimal('49200.00'), 60000,\u2026",
+        "columns": "['id', 'legal_name', 'trading_name', 'entity_lei', 'isin_primary', 'ticker_symbol', 'primary_sector', 'institution_type', 'listing_status', 'headquarters_country', 'headquarters_city', 'gics_sector', 'total_assets_eur_bn', 'annual_revenue_\u2026"
+       },
+       "ret": "{'id': UUID('177f78ee-3d3a-445b-8df0-c5f8b8c8cf09'), 'legal_name': 'Zurich Insurance Group AG', 'trading_name': 'Zurich', 'entity_lei': '529900QVNRBND50TXP03', 'isin_primary': 'CH0011075394', 'ticker_symbol': 'ZURN.SW', 'primary_sector': N\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "company-profiles",
+   "label": "GET /api/v1/company-profiles/{profile_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Profile '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 713.326,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "company_profiles"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM company_profiles WHERE id = %(id)s'",
+     "tables": [
+      "company_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 197.991,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "profile_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 101,
+     "name": "get_profile",
+     "qual": "get_profile",
+     "file": "api/v1/routes/company_profiles.py",
+     "line": 248,
+     "args": {
+      "profile_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A8413F81A0>"
+     },
+     "ret": "None",
+     "dur_ms": 674.529,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "company-profiles",
+   "label": "POST /api/v1/company-profiles/extract-from-reports",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "company-profiles",
+   "label": "POST /api/v1/company-profiles/seed-from-engine",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "company-profiles",
+   "label": "PUT /api/v1/company-profiles/{profile_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

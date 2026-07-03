@@ -1,0 +1,245 @@
+{
+ "domain": "parameter-governance",
+ "meta": {
+  "ts": "2026-07-01T10:15:57",
+  "endpoints": 6,
+  "module": "api.v1.routes.parameter_governance",
+  "router_prefix": "/api/v1/parameters"
+ },
+ "transactions": [
+  {
+   "domain": "parameter-governance",
+   "label": "GET /api/v1/parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 706.296,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "calculation_parameters"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, parameter_name, category AS parameter_category, notes AS description, value AS value_numeric, NULL AS value_text, unit, source, status AS approval_status, version, effective_date, expiry_date, created_at, org_id FROM calculation_parameters WHERE status = %(status)s ORDER BY category, parameter_name, version DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "calculation_parameters"
+     ],
+     "rowcount": 0,
+     "dur_ms": 88.523,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "category": "None (default)",
+    "status": "'approved' (default)",
+    "limit": "100 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_parameters",
+     "qual": "list_parameters",
+     "file": "api/v1/routes/parameter_governance.py",
+     "line": 97,
+     "args": {
+      "category": "None",
+      "status": "'approved'",
+      "limit": "100",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF760EF0>"
+     },
+     "ret": "[]",
+     "dur_ms": 670.305,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "parameter-governance",
+   "label": "GET /api/v1/parameters/change-requests",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 331.163,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "parameter_change_requests"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id AS request_id, parameter_id, parameter_name, parameter_category, requested_value_numeric, requested_value_text, justification, approval_status, requested_at, reviewer_comment, reviewed_at FROM parameter_change_requests WHERE approval_status = %(status)s ORDER BY requested_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "tables": [
+      "parameter_change_requests"
+     ],
+     "rowcount": null,
+     "dur_ms": 74.2,
+     "is_reference": false,
+     "error": "UndefinedColumn('column \"parameter_name\" does not exist\\nLINE 2: ...           SELECT id AS request_id, parameter_id, parameter_...\\n                                                             ^\\n')"
+    }
+   ],
+   "inputs": {
+    "status": "'pending' (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_change_requests",
+     "qual": "list_change_requests",
+     "file": "api/v1/routes/parameter_governance.py",
+     "line": 228,
+     "args": {
+      "status": "'pending'",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF761400>"
+     },
+     "ret": "[]",
+     "dur_ms": 297.044,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "parameter-governance",
+   "label": "GET /api/v1/parameters/{param_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Parameter not found",
+   "dur_ms": 334.379,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "calculation_parameters"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, parameter_name, category AS parameter_category, notes AS description, value AS value_numeric, NULL AS value_text, unit, source, status AS approval_status, version, effective_date, expiry_date, NULL AS justification, created_at, org_id FROM calculation_parameters WHERE id = %(pid)s'",
+     "tables": [
+      "calculation_parameters"
+     ],
+     "rowcount": 0,
+     "dur_ms": 71.553,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "param_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_parameter",
+     "qual": "get_parameter",
+     "file": "api/v1/routes/parameter_governance.py",
+     "line": 256,
+     "args": {
+      "param_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF6E6D50>"
+     },
+     "ret": "None",
+     "dur_ms": 298.917,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "parameter-governance",
+   "label": "POST /api/v1/parameters",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "parameter-governance",
+   "label": "POST /api/v1/parameters/{param_id}/approve",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "parameter-governance",
+   "label": "POST /api/v1/parameters/{param_id}/reject",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,82 @@
+{
+ "domain": "exports",
+ "meta": {
+  "ts": "2026-06-30T14:02:04",
+  "module": "api.v1.routes.exports",
+  "router_prefix": "/exports",
+  "endpoints": 1
+ },
+ "transactions": [
+  {
+   "domain": "exports",
+   "label": "GET /exports/portfolios/{portfolio_id}/report",
+   "status": "failed",
+   "http_status": 500,
+   "error": "InvalidRequestError: When initializing mapper Mapper[Portfolio(portfolios)], expression 'FileUpload' failed to locate a name ('FileUpload'). If this is a class name, consider adding this relationship() to the <class 'db.models_sql.Portfolio'> class after both dependent classes have been defined.",
+   "dur_ms": 13.374,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "format": "'json' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "download_portfolio_report",
+     "qual": "download_portfolio_report",
+     "file": "api/v1/routes/exports.py",
+     "line": 15,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "format": "'json'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000027E79BEF3B0>"
+     },
+     "ret": "None",
+     "dur_ms": 12.043,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000027E79BEF3B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 11.936,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

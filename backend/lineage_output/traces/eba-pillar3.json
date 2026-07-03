@@ -1,0 +1,507 @@
+{
+ "domain": "eba-pillar3",
+ "meta": {
+  "ts": "2026-06-30T14:01:01",
+  "module": "api.v1.routes.eba_pillar3",
+  "router_prefix": "/api/v1/eba-pillar3",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "eba-pillar3",
+   "label": "GET /api/v1/eba-pillar3/ref/climate-hazards",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.365,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 8,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_climate_hazards",
+     "qual": "ref_climate_hazards",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 79,
+     "args": {},
+     "ret": "['heat_stress', 'cold_wave', 'drought', 'wildfire', 'coastal_flood', 'riverine_flood', 'wind_storm', 'sea_level_rise']",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "ref_climate_hazards",
+       "qual": "EBAPillar3Engine.ref_climate_hazards",
+       "file": "services/eba_pillar3_engine.py",
+       "line": 254,
+       "args": {},
+       "ret": "['heat_stress', 'cold_wave', 'drought', 'wildfire', 'coastal_flood', 'riverine_flood', 'wind_storm', 'sea_level_rise']",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "GET /api/v1/eba-pillar3/ref/institution-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.234,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "G-SII",
+     "O-SII",
+     "Other"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_institution_types",
+     "qual": "ref_institution_types",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 69,
+     "args": {},
+     "ret": "{'G-SII': {'min_assets_bn': 300, 'mandatory_templates': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}, 'O-SII': {'min_assets_bn': 30, 'mandatory_templates': [1, 2, 3, 4, 5, 6, 7, 8]}, 'Other': {'min_assets_bn': 0, 'mandatory_templates': [1, 3, 7]}}",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "ref_institution_types",
+       "qual": "EBAPillar3Engine.ref_institution_types",
+       "file": "services/eba_pillar3_engine.py",
+       "line": 248,
+       "args": {},
+       "ret": "{'G-SII': {'min_assets_bn': 300, 'mandatory_templates': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}, 'O-SII': {'min_assets_bn': 30, 'mandatory_templates': [1, 2, 3, 4, 5, 6, 7, 8]}, 'Other': {'min_assets_bn': 0, 'mandatory_templates': [1, 3, 7]}}",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "GET /api/v1/eba-pillar3/ref/nace-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.293,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 15,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_nace_sectors",
+     "qual": "ref_nace_sectors",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 74,
+     "args": {},
+     "ret": "['A01', 'B05', 'C10', 'C20', 'C24', 'C25', 'D35', 'E36', 'F41', 'G45', 'H49', 'I55', 'J58', 'K64', 'L68']",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "ref_nace_sectors",
+       "qual": "EBAPillar3Engine.ref_nace_sectors",
+       "file": "services/eba_pillar3_engine.py",
+       "line": 251,
+       "args": {},
+       "ret": "['A01', 'B05', 'C10', 'C20', 'C24', 'C25', 'D35', 'E36', 'F41', 'G45', 'H49', 'I55', 'J58', 'K64', 'L68']",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "GET /api/v1/eba-pillar3/ref/regulatory-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.168,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "effective_date",
+     "applies_to",
+     "mandatory_templates_gsii",
+     "mandatory_templates_osii",
+     "reporting_frequency",
+     "t7_financed_emissions_from",
+     "t9_t10_from"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ref_regulatory_timeline",
+     "qual": "ref_regulatory_timeline",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 84,
+     "args": {},
+     "ret": "{'regulation': 'EBA GL/2022/03 + CRR Art 449a', 'effective_date': '2022-06-28', 'applies_to': 'Large institutions (>EUR 30bn total assets)', 'mandatory_templates_gsii': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 'mandatory_templates_osii': [1, 2, 3,\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "GET /api/v1/eba-pillar3/ref/templates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.197,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "T1",
+     "T2",
+     "T3",
+     "T4",
+     "T5",
+     "T6",
+     "T7",
+     "T8",
+     "T9",
+     "T10"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_templates",
+     "qual": "ref_templates",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 64,
+     "args": {},
+     "ret": "{'T1': {'name': 'Physical Climate Risk Heatmap', 'mandatory': True, 'effective': 'Jun-2022'}, 'T2': {'name': 'Non-Financial KPIs', 'mandatory': True, 'effective': 'Jun-2022'}, 'T3': {'name': 'Carbon-Related Assets', 'mandatory': True, 'eff\u2026",
+     "dur_ms": 0.041,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "ref_templates",
+       "qual": "EBAPillar3Engine.ref_templates",
+       "file": "services/eba_pillar3_engine.py",
+       "line": 245,
+       "args": {},
+       "ret": "{'T1': {'name': 'Physical Climate Risk Heatmap', 'mandatory': True, 'effective': 'Jun-2022'}, 'T2': {'name': 'Non-Financial KPIs', 'mandatory': True, 'effective': 'Jun-2022'}, 'T3': {'name': 'Carbon-Related Assets', 'mandatory': True, 'eff\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "POST /api/v1/eba-pillar3/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.278,
+   "node_count": 11,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "<AssessRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "assessment"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "assess",
+     "qual": "assess",
+     "file": "api/v1/routes/eba_pillar3.py",
+     "line": 25,
+     "args": {
+      "req": "AssessRequest(entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', institution_type='G-SII', total_assets_bn=1.0, templates_submitted=[], portfolio_data=None)"
+     },
+     "ret": "{'status': 'ok', 'assessment': {'assessment_id': 'EBA-P3-TEST_REQ-2024', 'entity_id': 'TEST_req_entity_id', 'entity_name': 'TEST_req_entity_name', 'institution_type': 'G-SII', 'total_assets_bn': 1.0, 'templates_completed': [], 'compliance_\u2026",
+     "dur_ms": 0.842,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "assess",
+       "qual": "EBAPillar3Engine.assess",
+       "file": "services/eba_pillar3_engine.py",
+       "line": 108,
+       "args": {
+        "entity_id": "'TEST_req_entity_id'",
+        "entity_name": "'TEST_req_entity_name'",
+        "institution_type": "'G-SII'",
+        "total_assets_bn": "1.0",
+        "templates_submitted": "[]",
+        "portfolio_data": "None"
+       },
+       "ret": "EBAPillar3Assessment(assessment_id='EBA-P3-TEST_REQ-2024', entity_id='TEST_req_entity_id', entity_name='TEST_req_entity_name', institution_type='G-SII', total_assets_bn=1.0, templates_completed=[], compliance_score=0.0, missing_mandatory=[\u2026",
+       "dur_ms": 0.665,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.562625",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.46625",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.41225",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.48425",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.4605",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.51925",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.522875",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 19,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "0.389375",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 20,
+         "name": "<genexpr>",
+         "qual": "EBAPillar3Engine.assess.<locals>.<genexpr>",
+         "file": "services/eba_pillar3_engine.py",
+         "line": 156,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x00000224E605EFC0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "POST /api/v1/eba-pillar3/physical-risk-heatmap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "eba-pillar3",
+   "label": "POST /api/v1/eba-pillar3/template-completeness",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

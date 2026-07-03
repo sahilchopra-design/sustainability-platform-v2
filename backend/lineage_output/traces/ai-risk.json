@@ -1,0 +1,440 @@
+{
+ "domain": "ai-risk",
+ "meta": {
+  "ts": "2026-06-30T13:59:06",
+  "module": "api.v1.routes.ai_risk",
+  "router_prefix": "/api/v1/ai-risk",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "ai-risk",
+   "label": "GET /api/v1/ai-risk/ref/annex3-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.313,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "annex",
+     "categories_count",
+     "categories"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_annex3_categories",
+     "qual": "get_annex3_categories",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 226,
+     "args": {},
+     "ret": "{'regulation': 'EU AI Act Regulation (EU) 2024/1689', 'annex': 'Annex III \u2014 High-Risk AI Systems', 'categories_count': 23, 'categories': [{'id': 'A3-01', 'category': 'Critical Infrastructure', 'description': 'Safety components of infrastru\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "GET /api/v1/ai-risk/ref/bias-metrics",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.254,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "regulatory_basis",
+     "metrics_count",
+     "metrics",
+     "intersectionality_note"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_bias_metrics",
+     "qual": "get_bias_metrics",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 276,
+     "args": {},
+     "ret": "{'framework': 'NIST SP 1270 Towards a Standard for Identifying and Managing Bias in AI + IEEE P7003', 'regulatory_basis': 'GDPR Article 22, EU AI Act Articles 9-10, EU Equal Treatment Directives', 'metrics_count': 6, 'metrics': [{'metric':\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "GET /api/v1/ai-risk/ref/enforcement-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.194,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "entry_into_force",
+     "general_application",
+     "milestones",
+     "penalty_regime"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_enforcement_timeline",
+     "qual": "get_enforcement_timeline",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 290,
+     "args": {},
+     "ret": "{'regulation': 'Regulation (EU) 2024/1689 \u2014 EU AI Act', 'entry_into_force': '2024-08-01', 'general_application': '2026-08-02', 'milestones': [{'date': '2024-08-01', 'milestone': 'AI Act entry into force', 'detail': 'Regulation (EU) 2024/16\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "GET /api/v1/ai-risk/ref/nist-functions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.261,
+   "node_count": 6,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "version",
+     "published",
+     "total_subcategories",
+     "functions"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_nist_functions",
+     "qual": "get_nist_functions",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 254,
+     "args": {},
+     "ret": "{'framework': 'NIST AI Risk Management Framework', 'version': '1.0', 'published': '2023-01-26', 'total_subcategories': 63, 'functions': {'GOVERN': {'description': 'Establish AI risk governance culture and oversight', 'subcategory_count': 1\u2026",
+     "dur_ms": 0.118,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "get_nist_functions.<locals>.<genexpr>",
+       "file": "api/v1/routes/ai_risk.py",
+       "line": 259,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000021C5C0B85E0>"
+       },
+       "ret": "17",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "get_nist_functions.<locals>.<genexpr>",
+       "file": "api/v1/routes/ai_risk.py",
+       "line": 259,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000021C5C0B85E0>"
+       },
+       "ret": "18",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "get_nist_functions.<locals>.<genexpr>",
+       "file": "api/v1/routes/ai_risk.py",
+       "line": 259,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000021C5C0B85E0>"
+       },
+       "ret": "16",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "<genexpr>",
+       "qual": "get_nist_functions.<locals>.<genexpr>",
+       "file": "api/v1/routes/ai_risk.py",
+       "line": 259,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000021C5C0B85E0>"
+       },
+       "ret": "12",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "get_nist_functions.<locals>.<genexpr>",
+       "file": "api/v1/routes/ai_risk.py",
+       "line": 259,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000021C5C0B85E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "GET /api/v1/ai-risk/ref/prohibited-practices",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.064,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulation",
+     "article",
+     "effective_date",
+     "practices_count",
+     "practices"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_prohibited_practices",
+     "qual": "get_prohibited_practices",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 239,
+     "args": {},
+     "ret": "{'regulation': 'EU AI Act Regulation (EU) 2024/1689', 'article': 'Article 5 \u2014 Prohibited AI Practices', 'effective_date': '2025-02-02', 'practices_count': 8, 'practices': [{'id': 'PP-01', 'practice': 'Subliminal Manipulation', 'article': '\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "POST /api/v1/ai-risk/assess-nist-rmf",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.455,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "assess_nist_rmf_endpoint",
+     "qual": "assess_nist_rmf_endpoint",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 162,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "POST /api/v1/ai-risk/calculate-liability",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 2.628,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "calculate_liability",
+     "qual": "calculate_liability",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 209,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.042,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ai-risk",
+   "label": "POST /api/v1/ai-risk/classify-system",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ai-risk",
+   "label": "POST /api/v1/ai-risk/detect-bias",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ai-risk",
+   "label": "POST /api/v1/ai-risk/score-explainability",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 1.52,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "score_explainability_endpoint",
+     "qual": "score_explainability_endpoint",
+     "file": "api/v1/routes/ai_risk.py",
+     "line": 194,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

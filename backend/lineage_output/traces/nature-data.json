@@ -1,0 +1,643 @@
+{
+ "domain": "nature-data",
+ "meta": {
+  "ts": "2026-06-30T14:03:31",
+  "module": "api.v1.routes.nature_data",
+  "router_prefix": "/api/v1/nature-data",
+  "endpoints": 9
+ },
+ "transactions": [
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/gfw",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2217.56,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gfw_tree_cover_loss"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, country_iso3, country_name, year, tree_cover_loss_ha, tree_cover_extent_ha, primary_forest_loss_ha, co2_emissions_mt, driver_category, threshold_pct FROM dh_gfw_tree_cover_loss ORDER BY country_iso3, year LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 0,
+     "dur_ms": 328.005,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_gfw_tree_cover_loss'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.835,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "year_start": "None (default)",
+    "year_end": "None (default)",
+    "limit": "100 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "search_gfw",
+     "qual": "search_gfw",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 148,
+     "args": {
+      "country": "None",
+      "year_start": "None",
+      "year_end": "None",
+      "limit": "100",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904C3F38F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5D300>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [], 'total': 0}",
+     "dur_ms": 2188.309,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/gfw/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1227.427,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gfw_tree_cover_loss"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT country_iso3 AS iso3, country_name AS name, COUNT(DISTINCT year) AS years, SUM(tree_cover_loss_ha) AS total_loss_ha FROM dh_gfw_tree_cover_loss WHERE country_iso3 IS NOT NULL GROUP BY country_iso3, country_name ORDER BY total_loss_ha DESC NULLS LAST'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 0,
+     "dur_ms": 218.721,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "gfw_countries",
+     "qual": "gfw_countries",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 192,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DC3AA80>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5D800>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': []}",
+     "dur_ms": 811.624,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/gfw/{iso3}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No GFW data for 550e8400-e29b-41d4-a716-446655440001",
+   "dur_ms": 784.166,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_gfw_tree_cover_loss"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT year, tree_cover_loss_ha, tree_cover_extent_ha, primary_forest_loss_ha, co2_emissions_mt, driver_category FROM dh_gfw_tree_cover_loss WHERE country_iso3 = %(iso3)s ORDER BY year'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 0,
+     "dur_ms": 82.987,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "iso3": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "gfw_country_timeseries",
+     "qual": "gfw_country_timeseries",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 210,
+     "args": {
+      "iso3": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DC3A870>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DA80>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 752.794,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/overlaps",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 351.464,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_nature_spatial_overlaps"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, asset_id, protected_area_id, wdpa_id, protected_area_name, iucn_cat, overlap_km2, overlap_pct, distance_km, gfw_loss_ha, calculation_method FROM dh_nature_spatial_overlaps ORDER BY distance_km ASC NULLS LAST LIMIT %(limit)s'",
+     "tables": [
+      "dh_nature_spatial_overlaps"
+     ],
+     "rowcount": 0,
+     "dur_ms": 91.023,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "asset_id": "None (default)",
+    "wdpa_id": "None (default)",
+    "limit": "50 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "overlaps",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "nature_overlaps",
+     "qual": "nature_overlaps",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 232,
+     "args": {
+      "asset_id": "None",
+      "wdpa_id": "None",
+      "limit": "50",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90B00>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DD00>, use_cache=True, scope=None)"
+     },
+     "ret": "{'overlaps': [], 'total': 0}",
+     "dur_ms": 320.335,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1558.572,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_gfw_tree_cover_loss",
+    "dh_nature_spatial_overlaps",
+    "dh_wdpa_protected_areas"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM dh_wdpa_protected_areas'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": 1,
+     "dur_ms": 479.461,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_wdpa_protected_areas'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": 1,
+     "dur_ms": 43.781,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(*) FROM dh_gfw_tree_cover_loss'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 1,
+     "dur_ms": 27.883,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_gfw_tree_cover_loss'",
+     "tables": [
+      "dh_gfw_tree_cover_loss"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.23,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(*) FROM dh_nature_spatial_overlaps'",
+     "tables": [
+      "dh_nature_spatial_overlaps"
+     ],
+     "rowcount": 1,
+     "dur_ms": 422.86,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "wdpa",
+     "gfw",
+     "overlaps"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "nature_data_stats",
+     "qual": "nature_data_stats",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 268,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90D10>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DEE0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'wdpa': {'records': 0, 'countries': 0}, 'gfw': {'records': 0, 'countries': 0}, 'overlaps': {'records': 0}}",
+     "dur_ms": 1374.247,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/wdpa",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 592.598,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_wdpa_protected_areas"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT id, wdpa_id, name, country_iso3, country_name, desig, desig_type, iucn_cat, marine, rep_area_km2, gis_area_km2, status, status_yr, latitude, longitude FROM dh_wdpa_protected_areas ORDER BY rep_area_km2 DESC NULLS LAST LIMIT %(limit)s OFFSET %(offset)s'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.727,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT COUNT(*) FROM dh_wdpa_protected_areas'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": 1,
+     "dur_ms": 28.17,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "iucn_cat": "None (default)",
+    "status": "None (default)",
+    "search": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "records",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "search_wdpa",
+     "qual": "search_wdpa",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 33,
+     "args": {
+      "country": "None",
+      "iucn_cat": "None",
+      "status": "None",
+      "search": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90F80>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DADFA60>, use_cache=True, scope=None)"
+     },
+     "ret": "{'records': [], 'total': 0}",
+     "dur_ms": 563.901,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/wdpa/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1484.341,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_wdpa_protected_areas"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT country_iso3 AS iso3, country_name AS name, COUNT(*) AS count, SUM(rep_area_km2) AS total_area_km2 FROM dh_wdpa_protected_areas WHERE country_iso3 IS NOT NULL GROUP BY country_iso3, country_name ORDER BY count DESC'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": 0,
+     "dur_ms": 460.226,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "wdpa_countries",
+     "qual": "wdpa_countries",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 80,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD91820>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD13100>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': []}",
+     "dur_ms": 1159.025,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/wdpa/nearby",
+   "status": "failed",
+   "http_status": 500,
+   "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"TEST_lat\"\nLINE 6:                        LEAST(1.0, cos(radians('TEST_lat')) *...\n                                                      ^\n\n[SQL: \n        SELECT * FROM (\n            SELECT id, wdpa_id, name, country_iso3, iucn_cat, rep_area_km2, status,\n                   latitude, longitude,\n  ",
+   "dur_ms": 1484.216,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_wdpa_protected_areas"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM ( SELECT id, wdpa_id, name, country_iso3, iucn_cat, rep_area_km2, status, latitude, longitude, (6371 * acos( LEAST(1.0, cos(radians(%(lat)s)) * cos(radians(latitude)) * cos(radians(longitude) - radians(%(lng)s)) + sin(radians(%(lat)s)) * sin(radians(latitude))) )) AS distance_km FROM dh_wdpa_protected_areas WHERE latitude IS NOT NULL AND longitude IS NOT NULL ) sub WHERE sub.distan\u2026",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": null,
+     "dur_ms": 97.992,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type double precision: \"TEST_lat\"\\nLINE 6:                        LEAST(1.0, cos(radians(\\'TEST_lat\\')) *...\\n                                     \u2026"
+    }
+   ],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lng": "'TEST_lng' (mock-required)",
+    "radius_km": "50 (default)",
+    "limit": "20 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "wdpa_nearby",
+     "qual": "wdpa_nearby",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 97,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lng": "'TEST_lng'",
+      "radius_km": "50",
+      "limit": "20",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD908F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5CA40>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1341.587,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nature-data",
+   "label": "GET /api/v1/nature-data/wdpa/{wdpa_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\nLINE 2: ...CT * FROM dh_wdpa_protected_areas WHERE wdpa_id = '550e8400-...\n                                                             ^\n\n[SQL: \n        SELECT * FROM dh_wdpa_protected_areas WHERE wdpa_id = %(wdpa_id)s\n    ]\n[parameters: {'wdpa_id': '550e8400-e29b-4",
+   "dur_ms": 1552.169,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_wdpa_protected_areas"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM dh_wdpa_protected_areas WHERE wdpa_id = %(wdpa_id)s'",
+     "tables": [
+      "dh_wdpa_protected_areas"
+     ],
+     "rowcount": null,
+     "dur_ms": 62.945,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\\nLINE 2: ...CT * FROM dh_wdpa_protected_areas WHERE wdpa_id = \\'550e8400-...\\n                \u2026"
+    }
+   ],
+   "inputs": {
+    "wdpa_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "get_wdpa_by_id",
+     "qual": "get_wdpa_by_id",
+     "file": "api/v1/routes/nature_data.py",
+     "line": 130,
+     "args": {
+      "wdpa_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD91F40>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5CF40>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1519.221,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

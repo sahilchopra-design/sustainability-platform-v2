@@ -1,0 +1,3249 @@
+{
+ "domain": "analyst-portfolios",
+ "meta": {
+  "ts": "2026-06-30T13:59:08",
+  "module": "api.v1.routes.analyst_portfolios",
+  "router_prefix": "/api/v1/analyst-portfolios",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "analyst-portfolios",
+   "label": "GET /api/v1/analyst-portfolios/",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.813,
+   "node_count": 206,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "portfolios"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_analyst_portfolios",
+     "qual": "list_analyst_portfolios",
+     "file": "api/v1/routes/analyst_portfolios.py",
+     "line": 1663,
+     "args": {},
+     "ret": "{'portfolios': [{'id': 'demo-eu-banking-sfdr', 'name': 'EU Banking Sustainability Leaders', 'description': 'SFDR Article 8 fund tracking European bank climate commitments. Focused on PCAF financed emissions, NZBA glidepath alignment, and E\u2026",
+     "dur_ms": 3.402,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1200",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1500",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "800",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "900",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'ing'"
+       },
+       "ret": "{'name': 'ING Group', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Netherlands', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 80.3, 'peer_slug': 'ing', 'nzba_member': True, 'pcaf_member': True,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'bnp_paribas'"
+       },
+       "ret": "{'name': 'BNP Paribas', 'sector': 'Banking', 'subsector': 'Universal Banking', 'country': 'France', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 74.8, 'peer_slug': 'bnp_paribas', 'nzba_member': True, 'pcaf_member': True, 'sbt\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'rabobank'"
+       },
+       "ret": "{'name': 'Rabobank', 'sector': 'Banking', 'subsector': 'Cooperative Banking', 'country': 'Netherlands', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 72.1, 'peer_slug': 'rabobank', 'nzba_member': True, 'pcaf_member': True, 'sb\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'abn_amro'"
+       },
+       "ret": "{'name': 'ABN AMRO', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Netherlands', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 68.5, 'peer_slug': 'abn_amro', 'nzba_member': True, 'pcaf_member': T\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'hsbc'"
+       },
+       "ret": "{'name': 'HSBC', 'sector': 'Banking', 'subsector': 'Global Banking & Markets', 'country': 'United Kingdom', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 71.5, 'peer_slug': 'hsbc', 'nzba_member': True, 'pcaf_member': True, 's\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "80.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "74.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "72.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "68.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "71.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "700",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "750",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "900",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'orsted'"
+       },
+       "ret": "{'name': '\u00d8rsted', 'sector': 'Utilities', 'subsector': 'Renewable Energy', 'country': 'Denmark', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 82.6, 'peer_slug': 'orsted', 'nzba_member': False, 'pcaf_member': False, 'sbti_stat\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'engie'"
+       },
+       "ret": "{'name': 'ENGIE', 'sector': 'Utilities', 'subsector': 'Integrated Energy', 'country': 'France', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 71.2, 'peer_slug': 'engie', 'nzba_member': False, 'pcaf_member': False, 'sbti_status\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'rwe'"
+       },
+       "ret": "{'name': 'RWE', 'sector': 'Utilities', 'subsector': 'Integrated Energy', 'country': 'Germany', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 67.4, 'peer_slug': 'rwe', 'nzba_member': False, 'pcaf_member': False, 'sbti_status': \u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'edp'"
+       },
+       "ret": "{'name': 'EDP', 'sector': 'Utilities', 'subsector': 'Renewable Energy', 'country': 'Portugal', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 65.8, 'peer_slug': 'edp', 'nzba_member': False, 'pcaf_member': False, 'sbti_status': \u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "82.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "71.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "67.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "65.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "400",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "450",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "380",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "350",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "300",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'standard_chartered'"
+       },
+       "ret": "{'name': 'Standard Chartered', 'sector': 'Banking', 'subsector': 'Emerging Markets Banking', 'country': 'United Kingdom', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 61.3, 'peer_slug': 'standard_chartered', 'nzba_memb\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'dbs'"
+       },
+       "ret": "{'name': 'DBS Bank', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Singapore', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 58.2, 'peer_slug': 'dbs', 'nzba_member': True, 'pcaf_member': F\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'mizuho'"
+       },
+       "ret": "{'name': 'Mizuho Financial Group', 'sector': 'Banking', 'subsector': 'Universal Banking', 'country': 'Japan', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 52.4, 'peer_slug': 'mizuho', 'nzba_member': True, 'pcaf_member'\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'smbc'"
+       },
+       "ret": "{'name': 'Sumitomo Mitsui', 'sector': 'Banking', 'subsector': 'Universal Banking', 'country': 'Japan', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 49.7, 'peer_slug': 'smbc', 'nzba_member': False, 'pcaf_member': False,\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'westpac'"
+       },
+       "ret": "{'name': 'Westpac', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Australia', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 53.1, 'peer_slug': 'westpac', 'nzba_member': True, 'pcaf_member'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'nab'"
+       },
+       "ret": "{'name': 'National Australia Bank', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Australia', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 55.6, 'peer_slug': 'nab', 'nzba_member': True, '\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "61.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "58.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "52.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "49.7",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "53.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "55.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "750",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "800",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "400",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "350",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'orsted'"
+       },
+       "ret": "{'name': '\u00d8rsted', 'sector': 'Utilities', 'subsector': 'Renewable Energy', 'country': 'Denmark', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 82.6, 'peer_slug': 'orsted', 'nzba_member': False, 'pcaf_member': False, 'sbti_stat\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 72,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'ing'"
+       },
+       "ret": "{'name': 'ING Group', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Netherlands', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 80.3, 'peer_slug': 'ing', 'nzba_member': True, 'pcaf_member': True,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 73,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'engie'"
+       },
+       "ret": "{'name': 'ENGIE', 'sector': 'Utilities', 'subsector': 'Integrated Energy', 'country': 'France', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 71.2, 'peer_slug': 'engie', 'nzba_member': False, 'pcaf_member': False, 'sbti_status\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'bnp_paribas'"
+       },
+       "ret": "{'name': 'BNP Paribas', 'sector': 'Banking', 'subsector': 'Universal Banking', 'country': 'France', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 74.8, 'peer_slug': 'bnp_paribas', 'nzba_member': True, 'pcaf_member': True, 'sbt\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 75,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'edp'"
+       },
+       "ret": "{'name': 'EDP', 'sector': 'Utilities', 'subsector': 'Renewable Energy', 'country': 'Portugal', 'region': 'Europe', 'has_csrd_report': True, 'peer_score': 65.8, 'peer_slug': 'edp', 'nzba_member': False, 'pcaf_member': False, 'sbti_status': \u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 76,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'dbs'"
+       },
+       "ret": "{'name': 'DBS Bank', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Singapore', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 58.2, 'peer_slug': 'dbs', 'nzba_member': True, 'pcaf_member': F\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 78,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 79,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 81,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 82,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "82.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 84,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "80.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 85,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "71.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "74.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 87,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "65.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 88,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "58.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 90,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 91,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "400",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "800",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 93,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 94,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "350",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 96,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'emirates_nbd'"
+       },
+       "ret": "{'name': 'Emirates NBD', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'UAE', 'region': 'Middle East', 'has_csrd_report': False, 'peer_score': 52.4, 'peer_slug': 'emirates_nbd', 'nzba_member': False, 'pcaf_mem\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 97,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'al_rajhi_bank'"
+       },
+       "ret": "{'name': 'Al Rajhi Bank', 'sector': 'Banking', 'subsector': 'Islamic Banking', 'country': 'Saudi Arabia', 'region': 'Middle East', 'has_csrd_report': False, 'peer_score': 35.6, 'peer_slug': 'al_rajhi_bank', 'nzba_member': False, 'pcaf_memb\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 98,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'adnoc'"
+       },
+       "ret": "{'name': 'ADNOC', 'sector': 'Oil & Gas', 'subsector': 'Integrated National Oil Company', 'country': 'UAE', 'region': 'Middle East', 'has_csrd_report': False, 'peer_score': 48.2, 'peer_slug': 'adnoc', 'nzba_member': False, 'pcaf_member': Fa\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 99,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'saudi_aramco'"
+       },
+       "ret": "{'name': 'Saudi Aramco', 'sector': 'Oil & Gas', 'subsector': 'Integrated National Oil Company', 'country': 'Saudi Arabia', 'region': 'Middle East', 'has_csrd_report': False, 'peer_score': 44.5, 'peer_slug': 'saudi_aramco', 'nzba_member': F\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 100,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'fab'"
+       },
+       "ret": "{'name': 'First Abu Dhabi Bank', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'UAE', 'region': 'Middle East', 'has_csrd_report': False, 'peer_score': 42.8, 'peer_slug': 'fab', 'nzba_member': False, 'pcaf_memb\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "52.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 103,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "35.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 104,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "48.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 105,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "44.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 106,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "42.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 107,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 108,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "700",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 109,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 110,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 111,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "400",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 112,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "350",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 113,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 114,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'petrobras'"
+       },
+       "ret": "{'name': 'Petrobras', 'sector': 'Oil & Gas', 'subsector': 'Integrated National Oil Company', 'country': 'Brazil', 'region': 'Latin America', 'has_csrd_report': False, 'peer_score': 58.3, 'peer_slug': 'petrobras', 'nzba_member': False, 'pca\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 115,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'itau_unibanco'"
+       },
+       "ret": "{'name': 'Ita\u00fa Unibanco', 'sector': 'Banking', 'subsector': 'Universal Banking', 'country': 'Brazil', 'region': 'Latin America', 'has_csrd_report': False, 'peer_score': 65.2, 'peer_slug': 'itau_unibanco', 'nzba_member': True, 'pcaf_member'\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 116,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'vale'"
+       },
+       "ret": "{'name': 'Vale', 'sector': 'Mining', 'subsector': 'Iron Ore & Base Metals', 'country': 'Brazil', 'region': 'Latin America', 'has_csrd_report': False, 'peer_score': 62.8, 'peer_slug': 'vale', 'nzba_member': False, 'pcaf_member': False, 'sbt\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 117,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'ecopetrol'"
+       },
+       "ret": "{'name': 'Ecopetrol', 'sector': 'Oil & Gas', 'subsector': 'National Oil Company', 'country': 'Colombia', 'region': 'Latin America', 'has_csrd_report': False, 'peer_score': 55.4, 'peer_slug': 'ecopetrol', 'nzba_member': False, 'pcaf_member'\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 118,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'bancolombia'"
+       },
+       "ret": "{'name': 'Bancolombia', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'Colombia', 'region': 'Latin America', 'has_csrd_report': False, 'peer_score': 52.8, 'peer_slug': 'bancolombia', 'nzba_member': True, 'pcaf\u2026",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 119,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 120,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "58.3",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 121,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "65.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 122,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "62.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 123,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "55.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 124,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "52.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 125,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 126,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 127,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 128,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "700",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 129,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "450",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 130,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "400",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 131,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 132,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'reliance_industries'"
+       },
+       "ret": "{'name': 'Reliance Industries', 'sector': 'Conglomerates', 'subsector': 'Energy & Petrochemicals', 'country': 'India', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 56.2, 'peer_slug': 'reliance_industries', 'nzba_member\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 133,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'tata_consultancy'"
+       },
+       "ret": "{'name': 'Tata Consultancy Services', 'sector': 'Technology', 'subsector': 'IT Services', 'country': 'India', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 78.5, 'peer_slug': 'tata_consultancy', 'nzba_member': False, 'p\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 134,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'hdfc_bank'"
+       },
+       "ret": "{'name': 'HDFC Bank', 'sector': 'Banking', 'subsector': 'Retail & Commercial Banking', 'country': 'India', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 58.4, 'peer_slug': 'hdfc_bank', 'nzba_member': False, 'pcaf_member\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 135,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'infosys'"
+       },
+       "ret": "{'name': 'Infosys', 'sector': 'Technology', 'subsector': 'IT Services', 'country': 'India', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 75.8, 'peer_slug': 'infosys', 'nzba_member': False, 'pcaf_member': False, 'sbti_s\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 136,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'larsen_toubro'"
+       },
+       "ret": "{'name': 'Larsen & Toubro', 'sector': 'Industrials', 'subsector': 'Engineering & Construction', 'country': 'India', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 62.4, 'peer_slug': 'larsen_toubro', 'nzba_member': False,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 137,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 138,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "56.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 139,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "78.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 140,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "58.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 141,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "75.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 142,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "62.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 143,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 144,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 145,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 146,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "800",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 147,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 148,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "900",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 149,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 150,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'blackrock'"
+       },
+       "ret": "{'name': 'BlackRock', 'sector': 'Asset Management', 'subsector': 'Global Asset Manager', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 74.8, 'peer_slug': 'blackrock', 'nzba_member': False, '\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 151,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'vanguard'"
+       },
+       "ret": "{'name': 'Vanguard', 'sector': 'Asset Management', 'subsector': 'Index Fund Manager', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 42.5, 'peer_slug': 'vanguard', 'nzba_member': False, 'pcaf\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 152,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'pimco'"
+       },
+       "ret": "{'name': 'PIMCO', 'sector': 'Asset Management', 'subsector': 'Fixed Income Manager', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 68.2, 'peer_slug': 'pimco', 'nzba_member': False, 'pcaf_mem\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 153,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'schroders'"
+       },
+       "ret": "{'name': 'Schroders', 'sector': 'Asset Management', 'subsector': 'Active Asset Manager', 'country': 'United Kingdom', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 79.5, 'peer_slug': 'schroders', 'nzba_member': False, 'pcaf_m\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 154,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'amundi'"
+       },
+       "ret": "{'name': 'Amundi', 'sector': 'Asset Management', 'subsector': 'Active Asset Manager', 'country': 'France', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 76.4, 'peer_slug': 'amundi', 'nzba_member': False, 'pcaf_member': True, \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 155,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 156,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "74.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 157,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "42.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 158,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "68.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 159,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "79.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 160,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "76.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 161,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 162,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 163,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "900",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 164,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "800",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 165,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 166,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 167,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "700",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 168,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 169,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'microsoft'"
+       },
+       "ret": "{'name': 'Microsoft', 'sector': 'Technology', 'subsector': 'Cloud & Enterprise Software', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 88.4, 'peer_slug': 'microsoft', 'nzba_member': False, \u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 170,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'apple'"
+       },
+       "ret": "{'name': 'Apple', 'sector': 'Technology', 'subsector': 'Consumer Electronics & Software', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 84.6, 'peer_slug': 'apple', 'nzba_member': False, 'pca\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 171,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'alphabet'"
+       },
+       "ret": "{'name': 'Alphabet (Google)', 'sector': 'Technology', 'subsector': 'Internet & Cloud Services', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 82.4, 'peer_slug': 'alphabet', 'nzba_member': Fa\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 172,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'sap'"
+       },
+       "ret": "{'name': 'SAP', 'sector': 'Technology', 'subsector': 'Enterprise Software', 'country': 'Germany', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 82.5, 'peer_slug': 'sap', 'nzba_member': False, 'pcaf_member': False, 'sbti_statu\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 173,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'nvidia'"
+       },
+       "ret": "{'name': 'NVIDIA', 'sector': 'Technology', 'subsector': 'Semiconductors & AI Hardware', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 74.2, 'peer_slug': 'nvidia', 'nzba_member': False, 'pcaf\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 174,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'tsmc'"
+       },
+       "ret": "{'name': 'TSMC', 'sector': 'Technology', 'subsector': 'Semiconductor Foundry', 'country': 'Taiwan', 'region': 'Asia Pacific', 'has_csrd_report': False, 'peer_score': 72.8, 'peer_slug': 'tsmc', 'nzba_member': False, 'pcaf_member': False, 's\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 175,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 176,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "88.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 177,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "84.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 178,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "82.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 179,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "82.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 180,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "74.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 181,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "72.8",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 182,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 183,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "500",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 184,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 185,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 186,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "1000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 187,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "700",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 188,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 189,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "150",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 190,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1668,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 191,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'tpg_rise'"
+       },
+       "ret": "{'name': 'TPG Rise Climate', 'sector': 'Private Equity', 'subsector': 'Climate-Focused PE', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 82.4, 'peer_slug': 'tpg_rise', 'nzba_member': False,\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 192,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'partners_group'"
+       },
+       "ret": "{'name': 'Partners Group', 'sector': 'Private Equity', 'subsector': 'Global Private Markets', 'country': 'Switzerland', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 74.2, 'peer_slug': 'partners_group', 'nzba_member': False, \u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 193,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'allianz'"
+       },
+       "ret": "{'name': 'Allianz', 'sector': 'Insurance', 'subsector': 'Diversified Insurance & Asset Management', 'country': 'Germany', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 85.6, 'peer_slug': 'allianz', 'nzba_member': False, 'pcaf\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 194,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'axa'"
+       },
+       "ret": "{'name': 'AXA', 'sector': 'Insurance', 'subsector': 'Diversified Insurance & Asset Management', 'country': 'France', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 84.5, 'peer_slug': 'axa', 'nzba_member': False, 'pcaf_member':\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 195,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'swiss_re'"
+       },
+       "ret": "{'name': 'Swiss Re', 'sector': 'Insurance', 'subsector': 'Reinsurance', 'country': 'Switzerland', 'region': 'Europe', 'has_csrd_report': False, 'peer_score': 83.2, 'peer_slug': 'swiss_re', 'nzba_member': False, 'pcaf_member': False, 'sbti_\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 196,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'breakthrough_energy'"
+       },
+       "ret": "{'name': 'Breakthrough Energy Ventures', 'sector': 'Venture Capital', 'subsector': 'Climate Technology VC', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 72.5, 'peer_slug': 'breakthrough_ene\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 197,
+       "name": "_entity_by_slug",
+       "qual": "_entity_by_slug",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1616,
+       "args": {
+        "slug": "'lowercarbon'"
+       },
+       "ret": "{'name': 'Lowercarbon Capital', 'sector': 'Venture Capital', 'subsector': 'Climate Technology VC', 'country': 'United States', 'region': 'North America', 'has_csrd_report': False, 'peer_score': 68.4, 'peer_slug': 'lowercarbon', 'nzba_membe\u2026",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 198,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1684,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 199,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "82.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 200,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "74.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 201,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "85.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 202,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "84.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 203,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "83.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 204,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "72.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 205,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "68.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 206,
+       "name": "<genexpr>",
+       "qual": "list_analyst_portfolios.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1686,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DC02D70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analyst-portfolios",
+   "label": "GET /api/v1/analyst-portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 0.212,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 207,
+     "name": "get_analyst_portfolio",
+     "qual": "get_analyst_portfolio",
+     "file": "api/v1/routes/analyst_portfolios.py",
+     "line": 1704,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.04,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 208,
+       "name": "<genexpr>",
+       "qual": "get_analyst_portfolio.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1707,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DD32740>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analyst-portfolios",
+   "label": "GET /api/v1/analyst-portfolios/{portfolio_id}/gap-assessment",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio '550e8400-e29b-41d4-a716-446655440001' not found",
+   "dur_ms": 0.593,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 209,
+     "name": "get_portfolio_gap_assessment",
+     "qual": "get_portfolio_gap_assessment",
+     "file": "api/v1/routes/analyst_portfolios.py",
+     "line": 1748,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002A30DD32720>"
+     },
+     "ret": "None",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 210,
+       "name": "<genexpr>",
+       "qual": "get_portfolio_gap_assessment.<locals>.<genexpr>",
+       "file": "api/v1/routes/analyst_portfolios.py",
+       "line": 1761,
+       "args": {
+        ".0": "<list_iterator object at 0x000002A30DD329E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analyst-portfolios",
+   "label": "POST /api/v1/analyst-portfolios/seed",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,1037 @@
+{
+ "domain": "regulatory-penalties",
+ "meta": {
+  "ts": "2026-06-30T14:04:35",
+  "module": "api.v1.routes.regulatory_penalties",
+  "router_prefix": "/api/v1/regulatory-penalties",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "regulatory-penalties",
+   "label": "GET /api/v1/regulatory-penalties/assessment/{assessment_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 3.515,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "assessment_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_assessment",
+     "qual": "get_assessment",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 221,
+     "args": {
+      "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "GET /api/v1/regulatory-penalties/assessments/{entity_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 1.966,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "entity_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "list_assessments",
+     "qual": "list_assessments",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 194,
+     "args": {
+      "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "GET /api/v1/regulatory-penalties/ref/authorities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.708,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "supervisory_authorities"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_authorities",
+     "qual": "get_authorities",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 261,
+     "args": {},
+     "ret": "{'supervisory_authorities': {'csrd': {'EU_level': 'EFRAG (standard setter); national enforcement bodies', 'DE': 'Bundesamt f\u00fcr Justiz + APAS (audit oversight)', 'FR': 'AMF + H3C (audit oversight)', 'UK': 'FCA / Financial Reporting Council'\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "GET /api/v1/regulatory-penalties/ref/enforcement-timeline",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.74,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "enforcement_timeline",
+     "high_risk_jurisdictions"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_enforcement_timeline",
+     "qual": "get_enforcement_timeline",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 252,
+     "args": {},
+     "ret": "{'enforcement_timeline': [{'date': '2024-01-01', 'event': 'CSRD applies to large PIEs (FY2024 reporting)'}, {'date': '2024-07-25', 'event': 'CSDDD published in Official Journal of EU'}, {'date': '2025-01-01', 'event': 'CSRD first reports d\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "GET /api/v1/regulatory-penalties/ref/regulations",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.872,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "regulations",
+     "violation_severity"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_regulations",
+     "qual": "get_regulations",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 243,
+     "args": {},
+     "ret": "{'regulations': {'csrd': {'name': 'Corporate Sustainability Reporting Directive', 'short': 'CSRD', 'regulation': 'Directive (EU) 2022/2464', 'max_penalty_pct_turnover': 5.0, 'fixed_max_mn': 10.0, 'supervisory_authority': 'National Competen\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "POST /api/v1/regulatory-penalties/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 5.592,
+   "node_count": 43,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<PenaltyAssessRequest (mock)>",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "run_full_assessment",
+     "qual": "run_full_assessment",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 129,
+     "args": {
+      "body": "PenaltyAssessRequest(entity_id='TEST_body_entity_id', entity_name='TEST_body_entity_name', annual_turnover_mn=1.0, csrd_compliance_pct=None, sfdr_compliance_pct=None, taxonomy_compliance_pct=None, eudr_compliance_pct=None, csddd_compliance\u2026",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 2.849,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "_build_compliance_scores",
+       "qual": "_build_compliance_scores",
+       "file": "api/v1/routes/regulatory_penalties.py",
+       "line": 111,
+       "args": {
+        "body": "PenaltyAssessRequest(entity_id='TEST_body_entity_id', entity_name='TEST_body_entity_name', annual_turnover_mn=1.0, csrd_compliance_pct=None, sfdr_compliance_pct=None, taxonomy_compliance_pct=None, eudr_compliance_pct=None, csddd_compliance\u2026"
+       },
+       "ret": "{}",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "run_full_assessment",
+       "qual": "RegulatoryPenaltiesEngine.run_full_assessment",
+       "file": "services/regulatory_penalties_engine.py",
+       "line": 442,
+       "args": {
+        "entity_id": "'TEST_body_entity_id'",
+        "entity_name": "'TEST_body_entity_name'",
+        "annual_turnover_mn": "1.0",
+        "compliance_scores": "{}"
+       },
+       "ret": "{'assessment_id': '1acb2715-4261-478a-baa0-fae828c64719', 'entity_id': 'TEST_body_entity_id', 'entity_name': 'TEST_body_entity_name', 'annual_turnover_mn': 1.0, 'reporting_period': None, 'sector': None, 'jurisdiction': None, 'compliance_sc\u2026",
+       "dur_ms": 2.596,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "_rng",
+         "qual": "RegulatoryPenaltiesEngine._rng",
+         "file": "services/regulatory_penalties_engine.py",
+         "line": 186,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'"
+         },
+         "ret": "<random.Random object at 0x000002E86E7716D0>",
+         "dur_ms": 0.041,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "assess_all_regulations",
+         "qual": "RegulatoryPenaltiesEngine.assess_all_regulations",
+         "file": "services/regulatory_penalties_engine.py",
+         "line": 253,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "annual_turnover_mn": "1.0",
+          "compliance_scores": "{}"
+         },
+         "ret": "{'entity_id': 'TEST_body_entity_id', 'annual_turnover_mn': 1.0, 'penalty_by_regulation': {'csrd': {'regulation': 'csrd', 'regulation_name': 'Corporate Sustainability Reporting Directive', 'compliance_pct': 68.04325126801302, 'violation_sev\u2026",
+         "dur_ms": 1.335,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11,
+           "name": "_rng",
+           "qual": "RegulatoryPenaltiesEngine._rng",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 186,
+           "args": {
+            "entity_id": "'TEST_body_entity_id:all'"
+           },
+           "ret": "<random.Random object at 0x000002E86E7720D0>",
+           "dur_ms": 0.024,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "calculate_regulation_penalty",
+           "qual": "RegulatoryPenaltiesEngine.calculate_regulation_penalty",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 208,
+           "args": {
+            "entity_id": "'TEST_body_entity_id'",
+            "regulation": "'csrd'",
+            "annual_turnover_mn": "1.0",
+            "compliance_pct": "68.04325126801302",
+            "violation_details": "None"
+           },
+           "ret": "{'regulation': 'csrd', 'regulation_name': 'Corporate Sustainability Reporting Directive', 'compliance_pct': 68.04325126801302, 'violation_severity': 'moderate', 'max_penalty_mn': 0.05, 'expected_penalty_mn': 0.002, 'penalty_pct_of_turnover\u2026",
+           "dur_ms": 0.155,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 13,
+             "name": "_rng",
+             "qual": "RegulatoryPenaltiesEngine._rng",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 186,
+             "args": {
+              "entity_id": "'TEST_body_entity_id:csrd'"
+             },
+             "ret": "<random.Random object at 0x000002E86E772AD0>",
+             "dur_ms": 0.021,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 14,
+             "name": "_compliance_to_violation_severity",
+             "qual": "RegulatoryPenaltiesEngine._compliance_to_violation_severity",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 190,
+             "args": {
+              "compliance_pct": "68.04325126801302"
+             },
+             "ret": "'moderate'",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 15,
+             "name": "_expected_penalty_factor",
+             "qual": "RegulatoryPenaltiesEngine._expected_penalty_factor",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 199,
+             "args": {
+              "compliance_pct": "68.04325126801302",
+              "rng": "<random.Random object at 0x000002E86E772AD0>"
+             },
+             "ret": "0.1492054653825848",
+             "dur_ms": 0.008,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 16,
+           "name": "calculate_regulation_penalty",
+           "qual": "RegulatoryPenaltiesEngine.calculate_regulation_penalty",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 208,
+           "args": {
+            "entity_id": "'TEST_body_entity_id'",
+            "regulation": "'sfdr'",
+            "annual_turnover_mn": "1.0",
+            "compliance_pct": "87.46234433312087",
+            "violation_details": "None"
+           },
+           "ret": "{'regulation': 'sfdr', 'regulation_name': 'Sustainable Finance Disclosure Regulation', 'compliance_pct': 87.46234433312087, 'violation_severity': 'minor', 'max_penalty_mn': 0.1, 'expected_penalty_mn': 0.0, 'penalty_pct_of_turnover': 0.0, '\u2026",
+           "dur_ms": 0.133,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 17,
+             "name": "_rng",
+             "qual": "RegulatoryPenaltiesEngine._rng",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 186,
+             "args": {
+              "entity_id": "'TEST_body_entity_id:sfdr'"
+             },
+             "ret": "<random.Random object at 0x000002E86E772AD0>",
+             "dur_ms": 0.022,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 18,
+             "name": "_compliance_to_violation_severity",
+             "qual": "RegulatoryPenaltiesEngine._compliance_to_violation_severity",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 190,
+             "args": {
+              "compliance_pct": "87.46234433312087"
+             },
+             "ret": "'minor'",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 19,
+             "name": "_expected_penalty_factor",
+             "qual": "RegulatoryPenaltiesEngine._expected_penalty_factor",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 199,
+             "args": {
+              "compliance_pct": "87.46234433312087",
+              "rng": "<random.Random object at 0x000002E86E772AD0>"
+             },
+             "ret": "0.02354658589758056",
+             "dur_ms": 0.008,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 20,
+           "name": "calculate_regulation_penalty",
+           "qual": "RegulatoryPenaltiesEngine.calculate_regulation_penalty",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 208,
+           "args": {
+            "entity_id": "'TEST_body_entity_id'",
+            "regulation": "'taxonomy'",
+            "annual_turnover_mn": "1.0",
+            "compliance_pct": "65.43011986171476",
+            "violation_details": "None"
+           },
+           "ret": "{'regulation': 'taxonomy', 'regulation_name': 'EU Taxonomy Regulation', 'compliance_pct': 65.43011986171476, 'violation_severity': 'moderate', 'max_penalty_mn': 0.04, 'expected_penalty_mn': 0.001, 'penalty_pct_of_turnover': 0.1, 'violation\u2026",
+           "dur_ms": 0.121,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 21,
+             "name": "_rng",
+             "qual": "RegulatoryPenaltiesEngine._rng",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 186,
+             "args": {
+              "entity_id": "'TEST_body_entity_id:taxonomy'"
+             },
+             "ret": "<random.Random object at 0x000002E86E772AD0>",
+             "dur_ms": 0.021,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 22,
+             "name": "_compliance_to_violation_severity",
+             "qual": "RegulatoryPenaltiesEngine._compliance_to_violation_severity",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 190,
+             "args": {
+              "compliance_pct": "65.43011986171476"
+             },
+             "ret": "'moderate'",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 23,
+             "name": "_expected_penalty_factor",
+             "qual": "RegulatoryPenaltiesEngine._expected_penalty_factor",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 199,
+             "args": {
+              "compliance_pct": "65.43011986171476",
+              "rng": "<random.Random object at 0x000002E86E772AD0>"
+             },
+             "ret": "0.06485049008415243",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 24,
+           "name": "calculate_regulation_penalty",
+           "qual": "RegulatoryPenaltiesEngine.calculate_regulation_penalty",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 208,
+           "args": {
+            "entity_id": "'TEST_body_entity_id'",
+            "regulation": "'eudr'",
+            "annual_turnover_mn": "1.0",
+            "compliance_pct": "65.4756008971189",
+            "violation_details": "None"
+           },
+           "ret": "{'regulation': 'eudr', 'regulation_name': 'EU Deforestation Regulation', 'compliance_pct': 65.4756008971189, 'violation_severity': 'moderate', 'max_penalty_mn': 0.04, 'expected_penalty_mn': 0.002, 'penalty_pct_of_turnover': 0.2, 'violation\u2026",
+           "dur_ms": 0.116,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 25,
+             "name": "_rng",
+             "qual": "RegulatoryPenaltiesEngine._rng",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 186,
+             "args": {
+              "entity_id": "'TEST_body_entity_id:eudr'"
+             },
+             "ret": "<random.Random object at 0x000002E86E772AD0>",
+             "dur_ms": 0.02,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 26,
+             "name": "_compliance_to_violation_severity",
+             "qual": "RegulatoryPenaltiesEngine._compliance_to_violation_severity",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 190,
+             "args": {
+              "compliance_pct": "65.4756008971189"
+             },
+             "ret": "'moderate'",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 27,
+             "name": "_expected_penalty_factor",
+             "qual": "RegulatoryPenaltiesEngine._expected_penalty_factor",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 199,
+             "args": {
+              "compliance_pct": "65.4756008971189",
+              "rng": "<random.Random object at 0x000002E86E772AD0>"
+             },
+             "ret": "0.18007245493066545",
+             "dur_ms": 0.006,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 28,
+           "name": "calculate_regulation_penalty",
+           "qual": "RegulatoryPenaltiesEngine.calculate_regulation_penalty",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 208,
+           "args": {
+            "entity_id": "'TEST_body_entity_id'",
+            "regulation": "'csddd'",
+            "annual_turnover_mn": "1.0",
+            "compliance_pct": "50.34257184049696",
+            "violation_details": "None"
+           },
+           "ret": "{'regulation': 'csddd', 'regulation_name': 'Corporate Sustainability Due Diligence Directive', 'compliance_pct': 50.34257184049696, 'violation_severity': 'major', 'max_penalty_mn': 0.05, 'expected_penalty_mn': 0.004, 'penalty_pct_of_turnov\u2026",
+           "dur_ms": 0.12,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 29,
+             "name": "_rng",
+             "qual": "RegulatoryPenaltiesEngine._rng",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 186,
+             "args": {
+              "entity_id": "'TEST_body_entity_id:csddd'"
+             },
+             "ret": "<random.Random object at 0x000002E86E772AD0>",
+             "dur_ms": 0.02,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 30,
+             "name": "_compliance_to_violation_severity",
+             "qual": "RegulatoryPenaltiesEngine._compliance_to_violation_severity",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 190,
+             "args": {
+              "compliance_pct": "50.34257184049696"
+             },
+             "ret": "'major'",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 31,
+             "name": "_expected_penalty_factor",
+             "qual": "RegulatoryPenaltiesEngine._expected_penalty_factor",
+             "file": "services/regulatory_penalties_engine.py",
+             "line": 199,
+             "args": {
+              "compliance_pct": "50.34257184049696",
+              "rng": "<random.Random object at 0x000002E86E772AD0>"
+             },
+             "ret": "0.1227464047475708",
+             "dur_ms": 0.006,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 32,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.assess_all_regulations.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 293,
+           "args": {
+            "r": "'csrd'"
+           },
+           "ret": "0.002",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 33,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.assess_all_regulations.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 293,
+           "args": {
+            "r": "'sfdr'"
+           },
+           "ret": "0.0",
+           "dur_ms": 0.028,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 34,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.assess_all_regulations.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 293,
+           "args": {
+            "r": "'taxonomy'"
+           },
+           "ret": "0.001",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 35,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.assess_all_regulations.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 293,
+           "args": {
+            "r": "'eudr'"
+           },
+           "ret": "0.002",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 36,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.assess_all_regulations.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 293,
+           "args": {
+            "r": "'csddd'"
+           },
+           "ret": "0.004",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 37,
+         "name": "assess_whistleblower_risk",
+         "qual": "RegulatoryPenaltiesEngine.assess_whistleblower_risk",
+         "file": "services/regulatory_penalties_engine.py",
+         "line": 299,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "compliance_scores": "{}",
+          "sector": "None"
+         },
+         "ret": "{'entity_id': 'TEST_body_entity_id', 'whistleblower_risk': 'low', 'risk_score': 27.5, 'average_compliance_pct': 75.7, 'risk_factors': ['No material whistleblower risk factors identified at current compliance levels'], 'mitigation_actions':\u2026",
+         "dur_ms": 0.179,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 38,
+           "name": "_rng",
+           "qual": "RegulatoryPenaltiesEngine._rng",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 186,
+           "args": {
+            "entity_id": "'TEST_body_entity_id:whistleblower'"
+           },
+           "ret": "<random.Random object at 0x000002E86E7720D0>",
+           "dur_ms": 0.031,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 39,
+         "name": "generate_remediation_priorities",
+         "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities",
+         "file": "services/regulatory_penalties_engine.py",
+         "line": 359,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "penalty_assessment": "{'entity_id': 'TEST_body_entity_id', 'annual_turnover_mn': 1.0, 'penalty_by_regulation': {'csrd': {'regulation': 'csrd', 'regulation_name': 'Corporate Sustainability Reporting Directive', 'compliance_pct': 68.04325126801302, 'violation_sev\u2026"
+         },
+         "ret": "[{'action_id': 'be5efe9b', 'regulation': 'csddd', 'action': 'Develop adverse impact prevention action plan (Art 7)', 'priority': 'Major', 'effort': 'High', 'impact_score': 78, 'expected_penalty_avoided_mn': 0.002, 'timeframe': 'Medium-term\u2026",
+         "dur_ms": 0.567,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 40,
+           "name": "_rng",
+           "qual": "RegulatoryPenaltiesEngine._rng",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 186,
+           "args": {
+            "entity_id": "'TEST_body_entity_id:remediation'"
+           },
+           "ret": "<random.Random object at 0x000002E86E7720D0>",
+           "dur_ms": 0.029,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 41,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 371,
+           "args": {
+            "v": "{'regulation': 'csrd', 'compliance_pct': 68.04325126801302, 'severity': 'moderate', 'expected_penalty_mn': 0.002}"
+           },
+           "ret": "0.002",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 371,
+           "args": {
+            "v": "{'regulation': 'taxonomy', 'compliance_pct': 65.43011986171476, 'severity': 'moderate', 'expected_penalty_mn': 0.001}"
+           },
+           "ret": "0.001",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 43,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 371,
+           "args": {
+            "v": "{'regulation': 'eudr', 'compliance_pct': 65.4756008971189, 'severity': 'moderate', 'expected_penalty_mn': 0.002}"
+           },
+           "ret": "0.002",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 44,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 371,
+           "args": {
+            "v": "{'regulation': 'csddd', 'compliance_pct': 50.34257184049696, 'severity': 'major', 'expected_penalty_mn': 0.004}"
+           },
+           "ret": "0.004",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 45,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 438,
+           "args": {
+            "a": "{'action_id': 'be5efe9b', 'regulation': 'csddd', 'action': 'Develop adverse impact prevention action plan (Art 7)', 'priority': 'Major', 'effort': 'High', 'impact_score': 78, 'expected_penalty_avoided_mn': 0.002, 'timeframe': 'Medium-term \u2026"
+           },
+           "ret": "78",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 46,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 438,
+           "args": {
+            "a": "{'action_id': '7dd0b838', 'regulation': 'csrd', 'action': 'Ensure Scope 3 GHG data collection covers all material categories', 'priority': 'Moderate', 'effort': 'Medium', 'impact_score': 38, 'expected_penalty_avoided_mn': 0.002, 'timeframe\u2026"
+           },
+           "ret": "38",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 47,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 438,
+           "args": {
+            "a": "{'action_id': '81ed1ec4', 'regulation': 'eudr', 'action': 'Implement geolocation verification for all regulated commodity suppliers', 'priority': 'Moderate', 'effort': 'Medium', 'impact_score': 48, 'expected_penalty_avoided_mn': 0.002, 'ti\u2026"
+           },
+           "ret": "48",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 48,
+           "name": "<lambda>",
+           "qual": "RegulatoryPenaltiesEngine.generate_remediation_priorities.<locals>.<lambda>",
+           "file": "services/regulatory_penalties_engine.py",
+           "line": 438,
+           "args": {
+            "a": "{'action_id': '65fc8bf5', 'regulation': 'taxonomy', 'action': 'Complete DNSH technical screening criteria assessment', 'priority': 'Moderate', 'effort': 'Medium', 'impact_score': 38, 'expected_penalty_avoided_mn': 0.001, 'timeframe': 'Shor\u2026"
+           },
+           "ret": "38",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "POST /api/v1/regulatory-penalties/regulation-penalty",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: Unknown regulation 'TEST_body_regulation'. Valid: ['csrd', 'sfdr', 'taxonomy', 'eudr', 'csddd']",
+   "dur_ms": 3.069,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<SingleRegulationRequest (mock)>",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 49,
+     "name": "calculate_regulation_penalty",
+     "qual": "calculate_regulation_penalty",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 157,
+     "args": {
+      "body": "SingleRegulationRequest(entity_id='TEST_body_entity_id', regulation='TEST_body_regulation', annual_turnover_mn=1.0, compliance_pct=1.0, violation_details=None)",
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.028,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "regulatory-penalties",
+   "label": "POST /api/v1/regulatory-penalties/whistleblower-risk",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.388,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<WhistleblowerRiskRequest (mock)>",
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "entity_id",
+     "whistleblower_risk",
+     "risk_score",
+     "average_compliance_pct",
+     "risk_factors",
+     "mitigation_actions",
+     "eu_directive_coverage",
+     "assessed_at"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 50,
+     "name": "assess_whistleblower_risk",
+     "qual": "assess_whistleblower_risk",
+     "file": "api/v1/routes/regulatory_penalties.py",
+     "line": 179,
+     "args": {
+      "body": "WhistleblowerRiskRequest(entity_id='TEST_body_entity_id', compliance_scores=None, sector=None)",
+      "request": "'TEST_request'"
+     },
+     "ret": "{'entity_id': 'TEST_body_entity_id', 'whistleblower_risk': 'low', 'risk_score': 27.5, 'average_compliance_pct': 75.7, 'risk_factors': ['No material whistleblower risk factors identified at current compliance levels'], 'mitigation_actions':\u2026",
+     "dur_ms": 0.273,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 51,
+       "name": "assess_whistleblower_risk",
+       "qual": "RegulatoryPenaltiesEngine.assess_whistleblower_risk",
+       "file": "services/regulatory_penalties_engine.py",
+       "line": 299,
+       "args": {
+        "entity_id": "'TEST_body_entity_id'",
+        "compliance_scores": "{}",
+        "sector": "None"
+       },
+       "ret": "{'entity_id': 'TEST_body_entity_id', 'whistleblower_risk': 'low', 'risk_score': 27.5, 'average_compliance_pct': 75.7, 'risk_factors': ['No material whistleblower risk factors identified at current compliance levels'], 'mitigation_actions':\u2026",
+       "dur_ms": 0.157,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 52,
+         "name": "_rng",
+         "qual": "RegulatoryPenaltiesEngine._rng",
+         "file": "services/regulatory_penalties_engine.py",
+         "line": 186,
+         "args": {
+          "entity_id": "'TEST_body_entity_id:whistleblower'"
+         },
+         "ret": "<random.Random object at 0x000002E86E773730>",
+         "dur_ms": 0.032,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

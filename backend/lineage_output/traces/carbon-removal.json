@@ -1,0 +1,595 @@
+{
+ "domain": "carbon-removal",
+ "meta": {
+  "ts": "2026-06-30T13:59:37",
+  "module": "api.v1.routes.carbon_removal",
+  "router_prefix": "/api/v1/carbon-removal",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "carbon-removal",
+   "label": "GET /api/v1/carbon-removal/ref/frontier-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.18,
+   "node_count": 7,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frontier_eligibility_criteria",
+     "criteria_count",
+     "total_weight",
+     "eligibility_threshold",
+     "founding_members",
+     "commitment_size_usd",
+     "source",
+     "excluded_project_types"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_frontier_criteria",
+     "qual": "get_frontier_criteria",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 426,
+     "args": {},
+     "ret": "{'frontier_eligibility_criteria': {'novel_technology': {'description': 'Technology must be novel or pre-commercial; mature natural solutions excluded', 'threshold': 'TRL <= 7 at time of application; not afforestation/reforestation or REDD+\u2026",
+     "dur_ms": 0.146,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "0.2",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "0.25",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "0.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "0.2",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "0.15",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<genexpr>",
+       "qual": "get_frontier_criteria.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 435,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "GET /api/v1/carbon-removal/ref/market-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.539,
+   "node_count": 8,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "market_benchmarks",
+     "buyer_count",
+     "article_64_eligibility",
+     "total_vcm_volume_2024_tco2",
+     "source"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "get_market_benchmarks",
+     "qual": "get_market_benchmarks",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 405,
+     "args": {},
+     "ret": "{'market_benchmarks': {'corporate_net_zero': {'buyer_description': 'Corporates with SBTi net-zero targets using CDR for residual emissions', 'typical_price_usd': 50, 'price_range_usd': (15, 200), 'volume_tco2_yr_2024': 25000000, 'growth_ra\u2026",
+     "dur_ms": 0.125,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "25000000",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "80000000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "35000000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "5000000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "500000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "3000000",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<genexpr>",
+       "qual": "get_market_benchmarks.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_removal.py",
+       "line": 415,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "GET /api/v1/carbon-removal/ref/oxford-principles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.324,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "oxford_cdr_principles",
+     "source",
+     "quality_tiers",
+     "article_64_synergy"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "get_oxford_principles",
+     "qual": "get_oxford_principles",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 383,
+     "args": {},
+     "ret": "{'oxford_cdr_principles': {'additionality': {'description': 'Carbon removal would not have occurred without the carbon credit incentive', 'sub_criteria': ['financial_additionality', 'regulatory_additionality', 'common_practice_test', 'base\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "GET /api/v1/carbon-removal/ref/technology-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.12,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "technology_profiles",
+     "count",
+     "source",
+     "trl_scale",
+     "scalability_ratings",
+     "ipcc_categories"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "get_technology_profiles",
+     "qual": "get_technology_profiles",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 362,
+     "args": {},
+     "ret": "{'technology_profiles': {'beccs': {'name': 'Bioenergy with Carbon Capture and Storage', 'ipcc_category': 'technological', 'trl_level': 6, 'cost_usd_tco2_current': 100, 'cost_usd_tco2_2030': 80, 'cost_usd_tco2_2050': 60, 'permanence_years':\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/article-64",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 1.159,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 18,
+     "name": "assess_article64",
+     "qual": "assess_article64",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 265,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 1.017,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "run_full_assessment",
+     "qual": "run_full_assessment",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 163,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/cdr-economics",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 1.011,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "calculate_economics",
+     "qual": "calculate_economics",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 292,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/market-eligibility",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 3.0,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 21,
+     "name": "assess_market_eligibility",
+     "qual": "assess_market_eligibility",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 326,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.881,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/oxford-principles",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 2.065,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "score_oxford_principles",
+     "qual": "score_oxford_principles",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 241,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "carbon-removal",
+   "label": "POST /api/v1/carbon-removal/technology-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'model_dump'",
+   "dur_ms": 1.099,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 23,
+     "name": "assess_technology",
+     "qual": "assess_technology",
+     "file": "api/v1/routes/carbon_removal.py",
+     "line": 210,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.011,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

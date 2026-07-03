@@ -1,0 +1,877 @@
+{
+ "domain": "rbac-admin",
+ "meta": {
+  "ts": "2026-06-30T14:04:26",
+  "module": "api.v1.routes.rbac_admin",
+  "router_prefix": "/api/v1/admin/rbac",
+  "endpoints": 14
+ },
+ "transactions": [
+  {
+   "domain": "rbac-admin",
+   "label": "GET /api/v1/admin/rbac/invites",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2049.265,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "rbac_access_invites"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT rbac_access_invites.id AS rbac_access_invites_id, rbac_access_invites.invite_token AS rbac_access_invites_invite_token, rbac_access_invites.email AS rbac_access_invites_email, rbac_access_invites.rbac_role AS rbac_access_invites_rbac_role, rbac_access_invites.preset_id AS rbac_access_invites_preset_id, rbac_access_invites.module_overrides AS rbac_access_invites_module_overrides, rbac_acce\u2026",
+     "tables": [
+      "rbac_access_invites"
+     ],
+     "rowcount": 1,
+     "dur_ms": 246.858,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "status": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "invites"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_invites",
+     "qual": "list_invites",
+     "file": "api/v1/routes/rbac_admin.py",
+     "line": 396,
+     "args": {
+      "status": "None",
+      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEBE13440>"
+     },
+     "ret": "{'invites': [{'id': 'c72d24b7-2e21-434e-a502-eef391cf6b46', 'invite_token': 'D4-5iumc_6A6DOT6fJXQowPepIuts3b34inPEmmsKTA', 'email': 'testclient@acmecapital.com', 'rbac_role': 'demo', 'status': 'pending', 'display_org': 'Acme Capital', 'inv\u2026",
+     "dur_ms": 2018.372,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "GET /api/v1/admin/rbac/module-access/{user_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: User not found",
+   "dur_ms": 420.797,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "users_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT users_pg.user_id AS users_pg_user_id, users_pg.email AS users_pg_email, users_pg.name AS users_pg_name, users_pg.picture AS users_pg_picture, users_pg.password_hash AS users_pg_password_hash, users_pg.created_at AS users_pg_created_at, users_pg.org_id AS users_pg_org_id, users_pg.role AS users_pg_role, users_pg.is_active AS users_pg_is_active, users_pg.last_login AS users_pg_last_login FR\u2026",
+     "tables": [
+      "users_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.764,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "user_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_module_access",
+     "qual": "get_module_access",
+     "file": "api/v1/routes/rbac_admin.py",
+     "line": 482,
+     "args": {
+      "user_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC38A9C0>"
+     },
+     "ret": "None",
+     "dur_ms": 391.063,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "GET /api/v1/admin/rbac/presets",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 297.832,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "rbac_role_presets"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT rbac_role_presets.id AS rbac_role_presets_id, rbac_role_presets.name AS rbac_role_presets_name, rbac_role_presets.description AS rbac_role_presets_description, rbac_role_presets.role_type AS rbac_role_presets_role_type, rbac_role_presets.module_paths AS rbac_role_presets_module_paths, rbac_role_presets.domain_groups AS rbac_role_presets_domain_groups, rbac_role_presets.is_active AS rbac_r\u2026",
+     "tables": [
+      "rbac_role_presets"
+     ],
+     "rowcount": 7,
+     "dur_ms": 68.537,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "presets"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "list_presets",
+     "qual": "list_presets",
+     "file": "api/v1/routes/rbac_admin.py",
+     "line": 246,
+     "args": {
+      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC1FC2F0>"
+     },
+     "ret": "{'presets': [{'id': '1f1452e6-4bab-41dd-be11-11653cc4bfd5', 'name': 'Test Preset', 'description': None, 'role_type': 'demo', 'module_paths': ['/eu-taxonomy', '/sfdr-classification'], 'domain_groups': [], 'created_at': '2026-04-08T00:28:51.\u2026",
+     "dur_ms": 266.526,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "GET /api/v1/admin/rbac/users",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4801.678,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "rbac_user_profiles",
+    "users_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT users_pg.user_id AS users_pg_user_id, users_pg.email AS users_pg_email, users_pg.name AS users_pg_name, users_pg.picture AS users_pg_picture, users_pg.password_hash AS users_pg_password_hash, users_pg.created_at AS users_pg_created_at, users_pg.org_id AS users_pg_org_id, users_pg.role AS users_pg_role, users_pg.is_active AS users_pg_is_active, users_pg.last_login AS users_pg_last_login FR\u2026",
+     "tables": [
+      "users_pg"
+     ],
+     "rowcount": 36,
+     "dur_ms": 77.026,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 319.636,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 707.485,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 200.516,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 43.674,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.376,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 51.714,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 549.557,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 308.929,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 50.484,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 44.317,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.352,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 41.675,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 43.344,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.432,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.765,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.148,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.92,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.408,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.047,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.564,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.099,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.787,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.857,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 280.877,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.731,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 139.689,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.31,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.251,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 141.434,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.42,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 31,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.105,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 32,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.999,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 33,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 28.14,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 34,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 1,
+     "dur_ms": 157.329,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 35,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.015,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 36,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 287.51,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 37,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT users_pg.user_id AS users_pg_user_id, users_pg.email AS users_pg_email, users_pg.name AS users_pg_name, users_pg.picture AS users_pg_picture, users_pg.password_hash AS users_pg_password_hash, users_pg.created_at AS users_pg_created_at, users_pg.org_id AS users_pg_org_id, users_pg.role AS users_pg_role, users_pg.is_active AS users_pg_is_active, users_pg.las\u2026",
+     "tables": [
+      "users_pg"
+     ],
+     "rowcount": 1,
+     "dur_ms": 58.06,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "users",
+     "total",
+     "limit",
+     "offset"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "list_users",
+     "qual": "list_users",
+     "file": "api/v1/routes/rbac_admin.py",
+     "line": 99,
+     "args": {
+      "limit": "50",
+      "offset": "0",
+      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC3C3E90>"
+     },
+     "ret": "{'users': [{'user_id': 'user_fc3e7003593a', 'email': 'pg@test.com', 'name': 'PG User', 'is_active': True, 'created_at': '2026-02-14T17:51:22.452768+00:00', 'rbac_role': 'viewer', 'preset_id': None, 'display_org': None, 'access_expires_at':\u2026",
+     "dur_ms": 4651.849,
+     "sql": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "POST /api/v1/admin/rbac/invites",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "DELETE /api/v1/admin/rbac/invites/{invite_id}/revoke",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "POST /api/v1/admin/rbac/module-access/{user_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "DELETE /api/v1/admin/rbac/module-access/{user_id}/{module_path:path}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "POST /api/v1/admin/rbac/presets",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "PATCH /api/v1/admin/rbac/presets/{preset_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "DELETE /api/v1/admin/rbac/presets/{preset_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "POST /api/v1/admin/rbac/users",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "PATCH /api/v1/admin/rbac/users/{user_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "rbac-admin",
+   "label": "DELETE /api/v1/admin/rbac/users/{user_id}/revoke",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

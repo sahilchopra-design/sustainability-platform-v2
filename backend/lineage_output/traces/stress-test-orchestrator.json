@@ -1,0 +1,1175 @@
+{
+ "domain": "stress-test-orchestrator",
+ "meta": {
+  "ts": "2026-06-30T14:05:20",
+  "module": "api.v1.routes.stress_test_orchestrator",
+  "router_prefix": "/api/v1/stress-test-orchestrator",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "GET /api/v1/stress-test-orchestrator/ref/ngfs-phase4-scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.577,
+   "node_count": 18,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "vintage",
+     "published_by",
+     "publication_date",
+     "scenarios",
+     "scenario_count",
+     "temperature_range_c",
+     "types"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_ngfs_phase4_ref",
+     "qual": "get_ngfs_phase4_ref",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 66,
+     "args": {},
+     "ret": "{'vintage': 'NGFS Phase IV (2024)', 'published_by': 'Network for Greening the Financial System', 'publication_date': '2024-Q1', 'scenarios': {'net_zero_2050': {'name': 'Net Zero 2050', 'description': 'Immediate, coordinated global action \u2014\u2026",
+     "dur_ms": 0.577,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_ngfs_phase4_scenarios",
+       "qual": "get_ngfs_phase4_scenarios",
+       "file": "services/stress_test_orchestrator_engine.py",
+       "line": 1218,
+       "args": {},
+       "ret": "{'vintage': 'NGFS Phase IV (2024)', 'published_by': 'Network for Greening the Financial System', 'publication_date': '2024-Q1', 'scenarios': {'net_zero_2050': {'name': 'Net Zero 2050', 'description': 'Immediate, coordinated global action \u2014\u2026",
+       "dur_ms": 0.416,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.5",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "2.5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 6,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.8",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 7,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 8,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "2.9",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.4",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1227,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.5",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.8",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "2.5",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 14,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.8",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 15,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.5",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 16,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "2.9",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 17,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "1.4",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 18,
+         "name": "<genexpr>",
+         "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
+         "file": "services/stress_test_orchestrator_engine.py",
+         "line": 1228,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "GET /api/v1/stress-test-orchestrator/ref/regulatory-frameworks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.991,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "frameworks",
+     "framework_count",
+     "framework_ids",
+     "jurisdictions_covered"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "get_regulatory_frameworks_ref",
+     "qual": "get_regulatory_frameworks_ref",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 79,
+     "args": {},
+     "ret": "{'frameworks': {'ECB_2022': {'name': 'ECB Climate Stress Test 2022', 'supervisor': 'European Central Bank', 'jurisdiction': ['EU', 'Euro Area'], 'cet1_threshold_pct': 4.5, 'capital_metric': 'CET1', 'time_horizon_years': [2025, 2030, 2050],\u2026",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "GET /api/v1/stress-test-orchestrator/ref/sector-risk-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.451,
+   "node_count": 41,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors",
+     "sector_count",
+     "sector_ids",
+     "highest_carbon_intensity",
+     "highest_stranded_asset_risk"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "get_sector_risk_profiles_ref",
+     "qual": "get_sector_risk_profiles_ref",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 102,
+     "args": {},
+     "ret": "{'sectors': {'energy_fossil': {'nace_code': 'B06/B09/D35.11', 'description': 'Fossil fuel extraction & conventional power generation', 'carbon_intensity_kg_keur': 2800, 'stranded_asset_pct': 35.0, 'revenue_at_risk_pct': 42.0, 'baseline_pd_\u2026",
+     "dur_ms": 1.327,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('energy_fossil', {'nace_code': 'B06/B09/D35.11', 'description': 'Fossil fuel extraction & conventional power generation', 'carbon_intensity_kg_keur': 2800, 'stranded_asset_pct': 35.0, 'revenue_at_risk_pct': 42.0, 'baseline_pd_pct': 1.8, '\u2026"
+       },
+       "ret": "2800",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('energy_renewable', {'nace_code': 'D35.11-R', 'description': 'Renewable power generation (wind, solar, hydro)', 'carbon_intensity_kg_keur': 45, 'stranded_asset_pct': 2.0, 'revenue_at_risk_pct': 5.0, 'baseline_pd_pct': 0.6, 'baseline_lgd_p\u2026"
+       },
+       "ret": "45",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('mining', {'nace_code': 'B05-B09', 'description': 'Coal, metal ore and other mining', 'carbon_intensity_kg_keur': 1950, 'stranded_asset_pct': 28.0, 'revenue_at_risk_pct': 34.0, 'baseline_pd_pct': 2.1, 'baseline_lgd_pct': 45.0, 'pd_uplift_\u2026"
+       },
+       "ret": "1950",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('utilities_gas', {'nace_code': 'D35.22', 'description': 'Gas distribution and gas-fired utilities', 'carbon_intensity_kg_keur': 1400, 'stranded_asset_pct': 22.0, 'revenue_at_risk_pct': 28.0, 'baseline_pd_pct': 1.2, 'baseline_lgd_pct': 38.\u2026"
+       },
+       "ret": "1400",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('transport_aviation', {'nace_code': 'H51', 'description': 'Air transport \u2014 airlines and airports', 'carbon_intensity_kg_keur': 1800, 'stranded_asset_pct': 15.0, 'revenue_at_risk_pct': 22.0, 'baseline_pd_pct': 2.5, 'baseline_lgd_pct': 48.0\u2026"
+       },
+       "ret": "1800",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('transport_road', {'nace_code': 'H49', 'description': 'Road transport \u2014 freight and passenger', 'carbon_intensity_kg_keur': 980, 'stranded_asset_pct': 12.0, 'revenue_at_risk_pct': 16.0, 'baseline_pd_pct': 1.5, 'baseline_lgd_pct': 40.0, 'p\u2026"
+       },
+       "ret": "980",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('transport_shipping', {'nace_code': 'H50', 'description': 'Maritime transport \u2014 international shipping', 'carbon_intensity_kg_keur': 1250, 'stranded_asset_pct': 18.0, 'revenue_at_risk_pct': 25.0, 'baseline_pd_pct': 2.0, 'baseline_lgd_pct'\u2026"
+       },
+       "ret": "1250",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('manufacturing_steel', {'nace_code': 'C24.1', 'description': 'Iron and steel production', 'carbon_intensity_kg_keur': 2200, 'stranded_asset_pct': 20.0, 'revenue_at_risk_pct': 26.0, 'baseline_pd_pct': 1.6, 'baseline_lgd_pct': 42.0, 'pd_upl\u2026"
+       },
+       "ret": "2200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('manufacturing_cement', {'nace_code': 'C23.5', 'description': 'Cement and concrete production', 'carbon_intensity_kg_keur': 2600, 'stranded_asset_pct': 24.0, 'revenue_at_risk_pct': 30.0, 'baseline_pd_pct': 1.8, 'baseline_lgd_pct': 43.0, '\u2026"
+       },
+       "ret": "2600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('manufacturing_chemicals', {'nace_code': 'C20', 'description': 'Chemical and petrochemical manufacturing', 'carbon_intensity_kg_keur': 1600, 'stranded_asset_pct': 18.0, 'revenue_at_risk_pct': 22.0, 'baseline_pd_pct': 1.3, 'baseline_lgd_pc\u2026"
+       },
+       "ret": "1600",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('construction', {'nace_code': 'F', 'description': 'Construction and real estate development', 'carbon_intensity_kg_keur': 680, 'stranded_asset_pct': 10.0, 'revenue_at_risk_pct': 14.0, 'baseline_pd_pct': 1.8, 'baseline_lgd_pct': 38.0, 'pd_\u2026"
+       },
+       "ret": "680",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('agriculture', {'nace_code': 'A01', 'description': 'Crop and animal production, hunting', 'carbon_intensity_kg_keur': 1100, 'stranded_asset_pct': 8.0, 'revenue_at_risk_pct': 18.0, 'baseline_pd_pct': 2.2, 'baseline_lgd_pct': 35.0, 'pd_upli\u2026"
+       },
+       "ret": "1100",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('real_estate_commercial', {'nace_code': 'L68-COM', 'description': 'Commercial real estate \u2014 offices, retail, logistics', 'carbon_intensity_kg_keur': 420, 'stranded_asset_pct': 12.0, 'revenue_at_risk_pct': 15.0, 'baseline_pd_pct': 1.4, 'ba\u2026"
+       },
+       "ret": "420",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('real_estate_residential', {'nace_code': 'L68-RES', 'description': 'Residential real estate \u2014 mortgages and housing', 'carbon_intensity_kg_keur': 320, 'stranded_asset_pct': 8.0, 'revenue_at_risk_pct': 10.0, 'baseline_pd_pct': 1.0, 'baseli\u2026"
+       },
+       "ret": "320",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('financial_services', {'nace_code': 'K64-K66', 'description': 'Banking, insurance and financial services', 'carbon_intensity_kg_keur': 85, 'stranded_asset_pct': 3.0, 'revenue_at_risk_pct': 6.0, 'baseline_pd_pct': 0.8, 'baseline_lgd_pct': \u2026"
+       },
+       "ret": "85",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('technology', {'nace_code': 'J58-J63', 'description': 'Information and communication technology', 'carbon_intensity_kg_keur': 120, 'stranded_asset_pct': 4.0, 'revenue_at_risk_pct': 7.0, 'baseline_pd_pct': 0.7, 'baseline_lgd_pct': 28.0, 'p\u2026"
+       },
+       "ret": "120",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('healthcare', {'nace_code': 'Q86-Q88', 'description': 'Healthcare, hospitals and pharmaceuticals', 'carbon_intensity_kg_keur': 210, 'stranded_asset_pct': 3.0, 'revenue_at_risk_pct': 5.0, 'baseline_pd_pct': 0.6, 'baseline_lgd_pct': 32.0, '\u2026"
+       },
+       "ret": "210",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('food_beverage', {'nace_code': 'C10-C12', 'description': 'Food and beverage manufacturing and processing', 'carbon_intensity_kg_keur': 560, 'stranded_asset_pct': 7.0, 'revenue_at_risk_pct': 12.0, 'baseline_pd_pct': 1.2, 'baseline_lgd_pct'\u2026"
+       },
+       "ret": "560",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('retail_wholesale', {'nace_code': 'G45-G47', 'description': 'Retail and wholesale trade', 'carbon_intensity_kg_keur': 340, 'stranded_asset_pct': 5.0, 'revenue_at_risk_pct': 9.0, 'baseline_pd_pct': 1.5, 'baseline_lgd_pct': 38.0, 'pd_uplift\u2026"
+       },
+       "ret": "340",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 120,
+       "args": {
+        "x": "('automotive', {'nace_code': 'C29', 'description': 'Motor vehicle manufacturing and supply chain', 'carbon_intensity_kg_keur': 820, 'stranded_asset_pct': 16.0, 'revenue_at_risk_pct': 20.0, 'baseline_pd_pct': 1.4, 'baseline_lgd_pct': 40.0, \u2026"
+       },
+       "ret": "820",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('energy_fossil', {'nace_code': 'B06/B09/D35.11', 'description': 'Fossil fuel extraction & conventional power generation', 'carbon_intensity_kg_keur': 2800, 'stranded_asset_pct': 35.0, 'revenue_at_risk_pct': 42.0, 'baseline_pd_pct': 1.8, '\u2026"
+       },
+       "ret": "35.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('energy_renewable', {'nace_code': 'D35.11-R', 'description': 'Renewable power generation (wind, solar, hydro)', 'carbon_intensity_kg_keur': 45, 'stranded_asset_pct': 2.0, 'revenue_at_risk_pct': 5.0, 'baseline_pd_pct': 0.6, 'baseline_lgd_p\u2026"
+       },
+       "ret": "2.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('mining', {'nace_code': 'B05-B09', 'description': 'Coal, metal ore and other mining', 'carbon_intensity_kg_keur': 1950, 'stranded_asset_pct': 28.0, 'revenue_at_risk_pct': 34.0, 'baseline_pd_pct': 2.1, 'baseline_lgd_pct': 45.0, 'pd_uplift_\u2026"
+       },
+       "ret": "28.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('utilities_gas', {'nace_code': 'D35.22', 'description': 'Gas distribution and gas-fired utilities', 'carbon_intensity_kg_keur': 1400, 'stranded_asset_pct': 22.0, 'revenue_at_risk_pct': 28.0, 'baseline_pd_pct': 1.2, 'baseline_lgd_pct': 38.\u2026"
+       },
+       "ret": "22.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('transport_aviation', {'nace_code': 'H51', 'description': 'Air transport \u2014 airlines and airports', 'carbon_intensity_kg_keur': 1800, 'stranded_asset_pct': 15.0, 'revenue_at_risk_pct': 22.0, 'baseline_pd_pct': 2.5, 'baseline_lgd_pct': 48.0\u2026"
+       },
+       "ret": "15.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('transport_road', {'nace_code': 'H49', 'description': 'Road transport \u2014 freight and passenger', 'carbon_intensity_kg_keur': 980, 'stranded_asset_pct': 12.0, 'revenue_at_risk_pct': 16.0, 'baseline_pd_pct': 1.5, 'baseline_lgd_pct': 40.0, 'p\u2026"
+       },
+       "ret": "12.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('transport_shipping', {'nace_code': 'H50', 'description': 'Maritime transport \u2014 international shipping', 'carbon_intensity_kg_keur': 1250, 'stranded_asset_pct': 18.0, 'revenue_at_risk_pct': 25.0, 'baseline_pd_pct': 2.0, 'baseline_lgd_pct'\u2026"
+       },
+       "ret": "18.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('manufacturing_steel', {'nace_code': 'C24.1', 'description': 'Iron and steel production', 'carbon_intensity_kg_keur': 2200, 'stranded_asset_pct': 20.0, 'revenue_at_risk_pct': 26.0, 'baseline_pd_pct': 1.6, 'baseline_lgd_pct': 42.0, 'pd_upl\u2026"
+       },
+       "ret": "20.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('manufacturing_cement', {'nace_code': 'C23.5', 'description': 'Cement and concrete production', 'carbon_intensity_kg_keur': 2600, 'stranded_asset_pct': 24.0, 'revenue_at_risk_pct': 30.0, 'baseline_pd_pct': 1.8, 'baseline_lgd_pct': 43.0, '\u2026"
+       },
+       "ret": "24.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('manufacturing_chemicals', {'nace_code': 'C20', 'description': 'Chemical and petrochemical manufacturing', 'carbon_intensity_kg_keur': 1600, 'stranded_asset_pct': 18.0, 'revenue_at_risk_pct': 22.0, 'baseline_pd_pct': 1.3, 'baseline_lgd_pc\u2026"
+       },
+       "ret": "18.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('construction', {'nace_code': 'F', 'description': 'Construction and real estate development', 'carbon_intensity_kg_keur': 680, 'stranded_asset_pct': 10.0, 'revenue_at_risk_pct': 14.0, 'baseline_pd_pct': 1.8, 'baseline_lgd_pct': 38.0, 'pd_\u2026"
+       },
+       "ret": "10.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('agriculture', {'nace_code': 'A01', 'description': 'Crop and animal production, hunting', 'carbon_intensity_kg_keur': 1100, 'stranded_asset_pct': 8.0, 'revenue_at_risk_pct': 18.0, 'baseline_pd_pct': 2.2, 'baseline_lgd_pct': 35.0, 'pd_upli\u2026"
+       },
+       "ret": "8.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('real_estate_commercial', {'nace_code': 'L68-COM', 'description': 'Commercial real estate \u2014 offices, retail, logistics', 'carbon_intensity_kg_keur': 420, 'stranded_asset_pct': 12.0, 'revenue_at_risk_pct': 15.0, 'baseline_pd_pct': 1.4, 'ba\u2026"
+       },
+       "ret": "12.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('real_estate_residential', {'nace_code': 'L68-RES', 'description': 'Residential real estate \u2014 mortgages and housing', 'carbon_intensity_kg_keur': 320, 'stranded_asset_pct': 8.0, 'revenue_at_risk_pct': 10.0, 'baseline_pd_pct': 1.0, 'baseli\u2026"
+       },
+       "ret": "8.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('financial_services', {'nace_code': 'K64-K66', 'description': 'Banking, insurance and financial services', 'carbon_intensity_kg_keur': 85, 'stranded_asset_pct': 3.0, 'revenue_at_risk_pct': 6.0, 'baseline_pd_pct': 0.8, 'baseline_lgd_pct': \u2026"
+       },
+       "ret": "3.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('technology', {'nace_code': 'J58-J63', 'description': 'Information and communication technology', 'carbon_intensity_kg_keur': 120, 'stranded_asset_pct': 4.0, 'revenue_at_risk_pct': 7.0, 'baseline_pd_pct': 0.7, 'baseline_lgd_pct': 28.0, 'p\u2026"
+       },
+       "ret": "4.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('healthcare', {'nace_code': 'Q86-Q88', 'description': 'Healthcare, hospitals and pharmaceuticals', 'carbon_intensity_kg_keur': 210, 'stranded_asset_pct': 3.0, 'revenue_at_risk_pct': 5.0, 'baseline_pd_pct': 0.6, 'baseline_lgd_pct': 32.0, '\u2026"
+       },
+       "ret": "3.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('food_beverage', {'nace_code': 'C10-C12', 'description': 'Food and beverage manufacturing and processing', 'carbon_intensity_kg_keur': 560, 'stranded_asset_pct': 7.0, 'revenue_at_risk_pct': 12.0, 'baseline_pd_pct': 1.2, 'baseline_lgd_pct'\u2026"
+       },
+       "ret": "7.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('retail_wholesale', {'nace_code': 'G45-G47', 'description': 'Retail and wholesale trade', 'carbon_intensity_kg_keur': 340, 'stranded_asset_pct': 5.0, 'revenue_at_risk_pct': 9.0, 'baseline_pd_pct': 1.5, 'baseline_lgd_pct': 38.0, 'pd_uplift\u2026"
+       },
+       "ret": "5.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "<lambda>",
+       "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
+       "file": "api/v1/routes/stress_test_orchestrator.py",
+       "line": 124,
+       "args": {
+        "x": "('automotive', {'nace_code': 'C29', 'description': 'Motor vehicle manufacturing and supply chain', 'carbon_intensity_kg_keur': 820, 'stranded_asset_pct': 16.0, 'revenue_at_risk_pct': 20.0, 'baseline_pd_pct': 1.4, 'baseline_lgd_pct': 40.0, \u2026"
+       },
+       "ret": "16.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "GET /api/v1/stress-test-orchestrator/ref/transmission-channels",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.641,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "channels",
+     "channel_count",
+     "channel_ids",
+     "primary_risks"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 61,
+     "name": "get_transmission_channels_ref",
+     "qual": "get_transmission_channels_ref",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 132,
+     "args": {},
+     "ret": "{'channels': {'carbon_price_channel': {'name': 'Carbon Price \u2192 Operating Cost Channel', 'mechanism': 'Rising carbon prices increase energy and input costs, compressing EBITDA margins and raising PD probabilities for carbon-intensive sector\u2026",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "POST /api/v1/stress-test-orchestrator/pd-migration",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'sector'",
+   "dur_ms": 2.154,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 62,
+     "name": "compute_pd_migration",
+     "qual": "compute_pd_migration",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 210,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "POST /api/v1/stress-test-orchestrator/run",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'regulatory_framework'",
+   "dur_ms": 33.15,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 63,
+     "name": "run_full_stress_test",
+     "qual": "run_full_stress_test",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 158,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 31.108,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 64,
+       "name": "run_stress_test",
+       "qual": "run_stress_test",
+       "file": "services/stress_test_orchestrator_engine.py",
+       "line": 1077,
+       "args": {
+        "request": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "stress-test-orchestrator",
+   "label": "POST /api/v1/stress-test-orchestrator/scenario-comparison",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'sectors'",
+   "dur_ms": 12.593,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 65,
+     "name": "compare_all_scenarios",
+     "qual": "compare_all_scenarios",
+     "file": "api/v1/routes/stress_test_orchestrator.py",
+     "line": 187,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 8.532,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 66,
+       "name": "run_scenario_comparison",
+       "qual": "run_scenario_comparison",
+       "file": "services/stress_test_orchestrator_engine.py",
+       "line": 1142,
+       "args": {
+        "request": "'TEST_request'"
+       },
+       "ret": "None",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

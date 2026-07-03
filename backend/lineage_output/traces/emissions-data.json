@@ -1,0 +1,609 @@
+{
+ "domain": "emissions-data",
+ "meta": {
+  "ts": "2026-06-30T14:01:33",
+  "module": "api.v1.routes.emissions_data",
+  "router_prefix": "/api/v1/emissions",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/by-lei/{lei}",
+   "status": "failed",
+   "http_status": 400,
+   "error": "HTTPException: 400: LEI must be a 20-character alphanumeric string",
+   "dur_ms": 18.571,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lei": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "emissions_by_lei",
+     "qual": "emissions_by_lei",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 32,
+     "args": {
+      "lei": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E1FF57AA0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E21613A60>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 17.75,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "db/models/entity_resolution.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 15.813,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "EntityLei",
+         "qual": "EntityLei",
+         "file": "db/models/entity_resolution.py",
+         "line": 23,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.555,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 4,
+         "name": "EntitySanction",
+         "qual": "EntitySanction",
+         "file": "db/models/entity_resolution.py",
+         "line": 61,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.402,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 5,
+         "name": "EntityScreeningResult",
+         "qual": "EntityScreeningResult",
+         "file": "db/models/entity_resolution.py",
+         "line": 90,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.497,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/climate-trace",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 15436.796,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_climate_trace_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_climate_trace_emissions.id AS dh_climate_trace_emissions_id, dh_climate_trace_emissions.source_id AS dh_climate_trace_emissions_source_id, dh_climate_trace_emissions.country_iso3 AS dh_climate_trace_emissions_country_iso3, dh_climate_trace_emissions.country_name AS dh_climate_trace_emissions_country_name, dh_climate_trace_emissions.sector AS dh_climate_\u2026",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 931.639,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_climate_trace_emissions.id AS dh_climate_trace_emissions_id, dh_climate_trace_emissions.source_id AS dh_climate_trace_emissions_source_id, dh_climate_trace_emissions.country_iso3 AS dh_climate_trace_emissions_country_iso3, dh_climate_trace_emissions.country_name AS dh_climate_trace_emissions_country_name, dh_climate_trace_emissions.sector AS dh_climate_trace_emissions_sector, dh_climat\u2026",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 191.034,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "sector": "None (default)",
+    "gas": "None (default)",
+    "year_min": "None (default)",
+    "year_max": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "search_climate_trace",
+     "qual": "search_climate_trace",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 153,
+     "args": {
+      "country": "None",
+      "sector": "None",
+      "gas": "None",
+      "year_min": "None",
+      "year_max": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E218EBD10>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E21872FC0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 50, 'records': []}",
+     "dur_ms": 15350.718,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/climate-trace/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1558.786,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_climate_trace_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_climate_trace_emissions.country_iso3 AS dh_climate_trace_emissions_country_iso3, dh_climate_trace_emissions.country_name AS dh_climate_trace_emissions_country_name, count(dh_climate_trace_emissions.id) AS count FROM dh_climate_trace_emissions GROUP BY dh_climate_trace_emissions.country_iso3, dh_climate_trace_emissions.country_name ORDER BY dh_climate_trace_emissions.country_iso3'",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 579.044,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "ct_countries",
+     "qual": "ct_countries",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 211,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E21A0F680>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CCEA0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': []}",
+     "dur_ms": 1371.645,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/climate-trace/sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 482.88,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_climate_trace_emissions"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_climate_trace_emissions.sector AS dh_climate_trace_emissions_sector, count(dh_climate_trace_emissions.id) AS count FROM dh_climate_trace_emissions GROUP BY dh_climate_trace_emissions.sector ORDER BY dh_climate_trace_emissions.sector'",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 0,
+     "dur_ms": 89.656,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ct_sectors",
+     "qual": "ct_sectors",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 193,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E1FF578F0>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CCA40>, use_cache=True, scope=None)"
+     },
+     "ret": "{'sectors': []}",
+     "dur_ms": 443.166,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/owid",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1915.008,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_owid_co2_energy"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT dh_owid_co2_energy.id AS dh_owid_co2_energy_id, dh_owid_co2_energy.source_id AS dh_owid_co2_energy_source_id, dh_owid_co2_energy.country_iso3 AS dh_owid_co2_energy_country_iso3, dh_owid_co2_energy.country_name AS dh_owid_co2_energy_country_name, dh_owid_co2_energy.year AS dh_owid_co2_energy_year, dh_owid_co2_energy.population AS dh_owid_co2_energy_populati\u2026",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 1,
+     "dur_ms": 77.866,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT dh_owid_co2_energy.id AS dh_owid_co2_energy_id, dh_owid_co2_energy.source_id AS dh_owid_co2_energy_source_id, dh_owid_co2_energy.country_iso3 AS dh_owid_co2_energy_country_iso3, dh_owid_co2_energy.country_name AS dh_owid_co2_energy_country_name, dh_owid_co2_energy.year AS dh_owid_co2_energy_year, dh_owid_co2_energy.population AS dh_owid_co2_energy_population, dh_owid_co2_energy.gdp AS dh_\u2026",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.454,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "country": "None (default)",
+    "year_min": "None (default)",
+    "year_max": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total",
+     "offset",
+     "limit",
+     "records"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "search_owid",
+     "qual": "search_owid",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 236,
+     "args": {
+      "country": "None",
+      "year_min": "None",
+      "year_max": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E21A3B560>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CD120>, use_cache=True, scope=None)"
+     },
+     "ret": "{'total': 0, 'offset': 0, 'limit': 50, 'records': []}",
+     "dur_ms": 1615.721,
+     "sql": [
+      0,
+      1
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/owid/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1227.768,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_owid_co2_energy"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_owid_co2_energy.country_iso3 AS dh_owid_co2_energy_country_iso3, dh_owid_co2_energy.country_name AS dh_owid_co2_energy_country_name, count(dh_owid_co2_energy.id) AS count, min(dh_owid_co2_energy.year) AS year_min, max(dh_owid_co2_energy.year) AS year_max FROM dh_owid_co2_energy GROUP BY dh_owid_co2_energy.country_iso3, dh_owid_co2_energy.country_name ORDER BY dh_owid_co2_energy.country\u2026",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 0,
+     "dur_ms": 189.888,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "countries"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "owid_countries",
+     "qual": "owid_countries",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 270,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E21DB4560>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CD4E0>, use_cache=True, scope=None)"
+     },
+     "ret": "{'countries': []}",
+     "dur_ms": 1195.582,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/owid/{iso3}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No OWID data for country 550E8400-E29B-41D4-A716-446655440001",
+   "dur_ms": 1321.463,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "dh_owid_co2_energy"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT dh_owid_co2_energy.id AS dh_owid_co2_energy_id, dh_owid_co2_energy.source_id AS dh_owid_co2_energy_source_id, dh_owid_co2_energy.country_iso3 AS dh_owid_co2_energy_country_iso3, dh_owid_co2_energy.country_name AS dh_owid_co2_energy_country_name, dh_owid_co2_energy.year AS dh_owid_co2_energy_year, dh_owid_co2_energy.population AS dh_owid_co2_energy_population, dh_owid_co2_energy.gdp AS dh_\u2026",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 0,
+     "dur_ms": 68.373,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "iso3": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "year_min": "None (default)",
+    "year_max": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "owid_country_series",
+     "qual": "owid_country_series",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 299,
+     "args": {
+      "iso3": "'550e8400-e29b-41d4-a716-446655440001'",
+      "year_min": "None",
+      "year_max": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E21DFE120>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CD8A0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 1274.538,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "emissions-data",
+   "label": "GET /api/v1/emissions/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 445.647,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "dh_climate_trace_emissions",
+    "dh_owid_co2_energy"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(dh_climate_trace_emissions.id) AS count_1 FROM dh_climate_trace_emissions'",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 66.414,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(DISTINCT dh_climate_trace_emissions.country_iso3) AS count_1 FROM dh_climate_trace_emissions'",
+     "tables": [
+      "dh_climate_trace_emissions"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.53,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(dh_owid_co2_energy.id) AS count_1 FROM dh_owid_co2_energy'",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.034,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(DISTINCT dh_owid_co2_energy.country_iso3) AS count_1 FROM dh_owid_co2_energy'",
+     "tables": [
+      "dh_owid_co2_energy"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.869,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "climate_trace",
+     "owid"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12,
+     "name": "emissions_stats",
+     "qual": "emissions_stats",
+     "file": "api/v1/routes/emissions_data.py",
+     "line": 330,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000021E21DFE420>",
+      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000021E218CDC60>, use_cache=True, scope=None)"
+     },
+     "ret": "{'climate_trace': {'records': 0, 'countries': 0}, 'owid': {'records': 0, 'countries': 0}}",
+     "dur_ms": 411.637,
+     "sql": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

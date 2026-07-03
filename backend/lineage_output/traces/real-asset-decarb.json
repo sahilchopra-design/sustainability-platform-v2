@@ -1,0 +1,293 @@
+{
+ "domain": "real-asset-decarb",
+ "meta": {
+  "ts": "2026-06-30T14:04:22",
+  "module": "api.v1.routes.real_asset_decarb",
+  "router_prefix": "/api/v1/real-asset-decarb",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "real-asset-decarb",
+   "label": "GET /api/v1/real-asset-decarb/ref/abatement-costs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.085,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "abatement_technologies",
+     "carbon_price_scenarios"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_abatement_costs",
+     "qual": "get_abatement_costs",
+     "file": "api/v1/routes/real_asset_decarb.py",
+     "line": 240,
+     "args": {},
+     "ret": "{'abatement_technologies': {'energy_efficiency': {'abatement_cost_usd_per_tco2e_range': [5.0, 40.0], 'max_emissions_reduction_pct': 30.0, 'deployment_time_years': 1}, 'fuel_switch': {'abatement_cost_usd_per_tco2e_range': [20.0, 80.0], 'max\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "GET /api/v1/real-asset-decarb/ref/asset-types",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.162,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "asset_types"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_asset_types",
+     "qual": "get_asset_types",
+     "file": "api/v1/routes/real_asset_decarb.py",
+     "line": 179,
+     "args": {},
+     "ret": "{'asset_types': {'office': {'sector': 'buildings', 'typical_life_years': 40, 'capex_cycle_years': 15, 'sbti_decarb_rate_pa_pct': 7.0, 'crrem_2030_intensity_kgco2_m2': 15.0, 'current_avg_intensity_kgco2_m2': 55.0, 'green_premium_pct_range':\u2026",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "GET /api/v1/real-asset-decarb/ref/crrem-pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.084,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "crrem_pathways"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_crrem_pathways",
+     "qual": "get_crrem_pathways",
+     "file": "api/v1/routes/real_asset_decarb.py",
+     "line": 217,
+     "args": {},
+     "ret": "{'crrem_pathways': {'1_5C': {'description': '1.5\u00b0C Paris-aligned decarbonisation pathway', '2025_pct_of_2019': 85.0, '2030_pct_of_2019': 60.0, '2035_pct_of_2019': 40.0, '2040_pct_of_2019': 20.0, '2050_pct_of_2019': 0.0}, '2C': {'descriptio\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "GET /api/v1/real-asset-decarb/ref/retrofit-measures",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.058,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "retrofit_measures"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_retrofit_measures",
+     "qual": "get_retrofit_measures",
+     "file": "api/v1/routes/real_asset_decarb.py",
+     "line": 199,
+     "args": {},
+     "ret": "{'retrofit_measures': {'insulation': {'description': 'External wall / roof / floor insulation upgrade', 'applicable_types': ['office', 'retail', 'residential'], 'energy_saving_pct_range': [10.0, 25.0], 'capex_per_m2_usd_range': [30.0, 80.0\u2026",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "GET /api/v1/real-asset-decarb/ref/sbti-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.008,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sbti_sector_rates",
+     "sbti_nz_standard"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_sbti_sectors",
+     "qual": "get_sbti_sectors",
+     "file": "api/v1/routes/real_asset_decarb.py",
+     "line": 223,
+     "args": {},
+     "ret": "{'sbti_sector_rates': {'buildings': {'rate_pa_pct': 7.0, 'standard': 'SBTi Buildings Sector Guidance 2022'}, 'industry': {'rate_pa_pct': 4.2, 'standard': 'SBTi Industry Sector Guidance 2021'}, 'transport': {'rate_pa_pct': 3.8, 'standard': \u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "POST /api/v1/real-asset-decarb/brown-to-green",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "POST /api/v1/real-asset-decarb/capex-transition",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "POST /api/v1/real-asset-decarb/decarb-roadmap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "POST /api/v1/real-asset-decarb/lock-in-risk",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "real-asset-decarb",
+   "label": "POST /api/v1/real-asset-decarb/retrofit-npv",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,274 @@
+{
+ "domain": "portfolios",
+ "meta": {
+  "ts": "2026-06-30T14:04:11",
+  "module": "api.v1.routes.portfolios",
+  "router_prefix": "/portfolios",
+  "endpoints": 7
+ },
+ "transactions": [
+  {
+   "domain": "portfolios",
+   "label": "GET /portfolios",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'Depends' object has no attribute 'skip'",
+   "dur_ms": 2.264,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_portfolios",
+     "qual": "list_portfolios",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 18,
+     "args": {
+      "pagination": "Depends(dependency=None, use_cache=True, scope=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDA90>"
+     },
+     "ret": "None",
+     "dur_ms": 0.078,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDA90>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolios",
+   "label": "GET /portfolios/{portfolio_id}",
+   "status": "failed",
+   "http_status": 500,
+   "error": "InvalidRequestError: When initializing mapper Mapper[Portfolio(portfolios)], expression 'FileUpload' failed to locate a name ('FileUpload'). If this is a class name, consider adding this relationship() to the <class 'db.models_sql.Portfolio'> class after both dependent classes have been defined.",
+   "dur_ms": 9.847,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_portfolio",
+     "qual": "get_portfolio",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 55,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDBB0>"
+     },
+     "ret": "None",
+     "dur_ms": 9.196,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDBB0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 8.948,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolios",
+   "label": "GET /portfolios/{portfolio_id}/holdings",
+   "status": "failed",
+   "http_status": 500,
+   "error": "InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Portfolio(portfolios)]'. Original exception was: When initializing mapper Mapper[Portfolio(portfolios)], expression 'FileUpload' failed to locate a name ('FileUpload'). If this is a class name, consider adding this relationship() to the <class 'db.models_sq",
+   "dur_ms": 0.65,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "portfolio_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "list_holdings",
+     "qual": "list_holdings",
+     "file": "api/v1/routes/portfolios.py",
+     "line": 177,
+     "args": {
+      "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDB80>"
+     },
+     "ret": "None",
+     "dur_ms": 0.286,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 7,
+       "name": "__init__",
+       "qual": "PortfolioRepository.__init__",
+       "file": "api/v1/repositories.py",
+       "line": 16,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000001BDE6AEDB80>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 8,
+       "name": "get_by_id",
+       "qual": "PortfolioRepository.get_by_id",
+       "file": "api/v1/repositories.py",
+       "line": 33,
+       "args": {
+        "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 0.195,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "portfolios",
+   "label": "POST /portfolios",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolios",
+   "label": "PATCH /portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolios",
+   "label": "DELETE /portfolios/{portfolio_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "portfolios",
+   "label": "POST /portfolios/{portfolio_id}/holdings",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

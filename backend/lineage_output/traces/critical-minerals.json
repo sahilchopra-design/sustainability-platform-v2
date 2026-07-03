@@ -1,0 +1,1731 @@
+{
+ "domain": "critical-minerals",
+ "meta": {
+  "ts": "2026-06-30T14:00:08",
+  "module": "api.v1.routes.critical_minerals",
+  "router_prefix": "/api/v1/critical-minerals",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/country-concentration",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.608,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "mineral_count",
+     "concentration_analysis",
+     "eu_65pct_limit_breaches",
+     "breach_count",
+     "hhi_classification_thresholds",
+     "conflict_high_risk_countries"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_country_concentration",
+     "qual": "get_country_concentration",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 252,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'IEA Critical Minerals 2024; EU CRM Act 2024/1252 Art 5', 'mineral_count': 15, 'concentration_analysis': {'lithium': {'top3_country_share_pct': {'Australia': 47, 'Chile': 26, 'China': 15}, 'supply_concentrat\u2026",
+     "dur_ms": 0.066,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/eu-crm-act",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.569,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "effective_date",
+     "strategic_mineral_count",
+     "critical_mineral_count",
+     "strategic_minerals",
+     "critical_minerals",
+     "eu_benchmark_targets",
+     "mineral_detail",
+     "compliance_obligations"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "get_eu_crm_act",
+     "qual": "get_eu_crm_act",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 175,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'EU Critical Raw Materials Act \u2014 Regulation (EU) 2024/1252', 'effective_date': '2024-05-23', 'strategic_mineral_count': 15, 'critical_mineral_count': 32, 'strategic_minerals': ['lithium', 'cobalt', 'nickel',\u2026",
+     "dur_ms": 0.037,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/iea-minerals",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.346,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "reference_year",
+     "mineral_count",
+     "minerals",
+     "transition_mineral_intensity",
+     "criticality_composite_methodology"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_iea_minerals",
+     "qual": "get_iea_minerals",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 152,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'IEA Critical Minerals 2024 \u2014 https://www.iea.org/reports/critical-minerals-2024', 'reference_year': 2024, 'mineral_count': 15, 'minerals': {'lithium': {'iea_criticality_composite': 88, 'demand_growth_score'\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/irma-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.335,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "standard_version",
+     "chapter_count",
+     "certification_tiers",
+     "chapters",
+     "applicability",
+     "third_party_verification",
+     "conflict_mineral_overlap"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_irma_criteria",
+     "qual": "get_irma_criteria",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'IRMA Standard for Responsible Mining v1.0 \u2014 https://responsiblemining.net', 'standard_version': 'v1.0', 'chapter_count': 6, 'certification_tiers': {'tier_1': {'min_score': 0.5, 'label': 'IRMA Tier 1 \u2014 Basic\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/mineral-profile/{mineral_name}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Mineral '550e8400-e29b-41d4-a716-446655440001' not found in IEA or EU CRM Act databases.",
+   "dur_ms": 1.352,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "mineral_name": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_single_mineral_profile",
+     "qual": "get_single_mineral_profile",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 301,
+     "args": {
+      "mineral_name": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 6,
+       "name": "get_mineral_profile",
+       "qual": "get_mineral_profile",
+       "file": "services/critical_minerals_engine.py",
+       "line": 1028,
+       "args": {
+        "mineral_name": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "{'error': \"Mineral '550e8400-e29b-41d4-a716-446655440001' not found in IEA or EU CRM Act databases.\"}",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "GET /api/v1/critical-minerals/ref/oecd-5step",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.529,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "source",
+     "regulatory_underpinning",
+     "step_count",
+     "steps",
+     "conflict_high_risk_countries",
+     "recognised_certification_schemes",
+     "minimum_compliance_score"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_oecd_5step",
+     "qual": "get_oecd_5step",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 223,
+     "args": {},
+     "ret": "{'status': 'success', 'source': 'OECD DDG for Responsible Mineral Supply Chains \u2014 3rd Edition (2016) + 2023 Update', 'regulatory_underpinning': ['US Dodd-Frank Act Section 1502 (SEC Form SD \u2014 3TG conflict minerals)', 'EU Regulation 2017/82\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "POST /api/v1/critical-minerals/assess",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 5.738,
+   "node_count": 88,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "<CriticalMineralsAssessRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "entity_id",
+     "entity_name",
+     "sector",
+     "minerals_assessed",
+     "iea_crm_2024",
+     "eu_crm_act",
+     "irma",
+     "oecd_ddg",
+     "transition_exposure",
+     "supply_chain_metrics",
+     "overall",
+     "key_findings",
+     "recommendations",
+     "standards_applied"
+    ],
+    "n_keys": 15
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "assess_critical_minerals_endpoint",
+     "qual": "assess_critical_minerals_endpoint",
+     "file": "api/v1/routes/critical_minerals.py",
+     "line": 31,
+     "args": {
+      "request": "CriticalMineralsAssessRequest(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='manufacturing', minerals_exposed=None, ev_battery_exposure_m=None, solar_pv_exposure_m=None, wind_turbine_exposure_m=None, grid_storage\u2026"
+     },
+     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'manufacturing', 'minerals_assessed': ['lithium', 'cobalt', 'nickel', 'graphite', 'copper'], 'iea_crm_2024': {'demand_growth_score': 77\u2026",
+     "dur_ms": 3.346,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 9,
+       "name": "assess_critical_minerals",
+       "qual": "assess_critical_minerals",
+       "file": "services/critical_minerals_engine.py",
+       "line": 769,
+       "args": {
+        "request_data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'manufacturing', 'minerals_exposed': None, 'ev_battery_exposure_m': None, 'solar_pv_exposure_m': None, 'wind_turbine_exposure_m': None, 'grid_storage_exposu\u2026"
+       },
+       "ret": "CriticalMineralsResult(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='manufacturing', minerals_assessed=['lithium', 'cobalt', 'nickel', 'graphite', 'copper'], iea_demand_growth_score=77.0, iea_supply_concentratio\u2026",
+       "dur_ms": 3.131,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 10,
+         "name": "_iea_mineral_composite",
+         "qual": "_iea_mineral_composite",
+         "file": "services/critical_minerals_engine.py",
+         "line": 739,
+         "args": {
+          "minerals": "['lithium', 'cobalt', 'nickel', 'graphite', 'copper']"
+         },
+         "ret": "{'demand_growth_score': 77.0, 'supply_concentration': 57.2, 'geopolitical_risk': 66.2, 'substitutability': 27.0, 'composite': 81.2}",
+         "dur_ms": 0.514,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "95",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "72",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "68",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 14,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "88",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 15,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "62",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 16,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 747,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 17,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "72.0",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 18,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "89.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 19,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "28.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 20,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "78.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 21,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "19.0",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 22,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 748,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 23,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "62",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 24,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "88",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 25,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "55",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 26,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "78",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 27,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "48",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 28,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 749,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 29,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "18",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 30,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "22",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 31,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "38",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 32,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "15",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 33,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "42",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 34,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 750,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 35,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "88",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 36,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "91",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 37,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "74",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 38,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "82",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 39,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "71",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 40,
+           "name": "<genexpr>",
+           "qual": "_iea_mineral_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 751,
+           "args": {
+            ".0": "<list_iterator object at 0x000002184ACB77C0>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 41,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 805,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 805,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 43,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 805,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 44,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 805,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 805,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 806,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 829,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "True",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 829,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ACB77C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 54,
+         "name": "_weighted_irma_score",
+         "qual": "_weighted_irma_score",
+         "file": "services/critical_minerals_engine.py",
+         "line": 688,
+         "args": {
+          "data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'manufacturing', 'minerals_exposed': None, 'ev_battery_exposure_m': None, 'solar_pv_exposure_m': None, 'wind_turbine_exposure_m': None, 'grid_storage_exposu\u2026",
+          "eid": "'TEST_request_entity_id'"
+         },
+         "ret": "0.568",
+         "dur_ms": 0.14,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 55,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_p'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.621",
+           "dur_ms": 0.006,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 56,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_cr'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.461",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 57,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_ir'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.503",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 58,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_cw'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.394",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 59,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_en'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.802",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 60,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'irma_lr'",
+            "lo": "0.35",
+            "hi": "0.88"
+           },
+           "ret": "0.506",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 61,
+         "name": "_irma_tier",
+         "qual": "_irma_tier",
+         "file": "services/critical_minerals_engine.py",
+         "line": 704,
+         "args": {
+          "score": "0.568"
+         },
+         "ret": "'tier_1'",
+         "dur_ms": 0.037,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 62,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'irma_ir'",
+          "lo": "0.35",
+          "hi": "0.88"
+         },
+         "ret": "0.503",
+         "dur_ms": 0.021,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 63,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'irma_en'",
+          "lo": "0.35",
+          "hi": "0.88"
+         },
+         "ret": "0.802",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 64,
+         "name": "_oecd_5step_scores",
+         "qual": "_oecd_5step_scores",
+         "file": "services/critical_minerals_engine.py",
+         "line": 714,
+         "args": {
+          "data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'manufacturing', 'minerals_exposed': None, 'ev_battery_exposure_m': None, 'solar_pv_exposure_m': None, 'wind_turbine_exposure_m': None, 'grid_storage_exposu\u2026",
+          "eid": "'TEST_request_entity_id'"
+         },
+         "ret": "{'step_1_management_systems': 0.692, 'step_2_risk_identification': 0.482, 'step_3_risk_response': 0.713, 'step_4_third_party_audit': 0.612, 'step_5_reporting': 0.493}",
+         "dur_ms": 0.727,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 65,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'oecd_s1'",
+            "lo": "0.3",
+            "hi": "0.88"
+           },
+           "ret": "0.692",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 66,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'oecd_s2'",
+            "lo": "0.3",
+            "hi": "0.88"
+           },
+           "ret": "0.482",
+           "dur_ms": 0.019,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 67,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'oecd_s3'",
+            "lo": "0.3",
+            "hi": "0.88"
+           },
+           "ret": "0.713",
+           "dur_ms": 0.348,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 68,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'oecd_s4'",
+            "lo": "0.3",
+            "hi": "0.88"
+           },
+           "ret": "0.612",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 69,
+           "name": "_seed_float",
+           "qual": "_seed_float",
+           "file": "services/critical_minerals_engine.py",
+           "line": 682,
+           "args": {
+            "entity_id": "'TEST_request_entity_id'",
+            "key": "'oecd_s5'",
+            "lo": "0.3",
+            "hi": "0.88"
+           },
+           "ret": "0.493",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 70,
+         "name": "_oecd_composite",
+         "qual": "_oecd_composite",
+         "file": "services/critical_minerals_engine.py",
+         "line": 728,
+         "args": {
+          "step_scores": "{'step_1_management_systems': 0.692, 'step_2_risk_identification': 0.482, 'step_3_risk_response': 0.713, 'step_4_third_party_audit': 0.612, 'step_5_reporting': 0.493}"
+         },
+         "ret": "0.609",
+         "dur_ms": 0.218,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 71,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "0.1384",
+           "dur_ms": 0.007,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 72,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "0.0964",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 73,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "0.17825",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 74,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "0.12240000000000001",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 75,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "0.07395",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 76,
+           "name": "<genexpr>",
+           "qual": "_oecd_composite.<locals>.<genexpr>",
+           "file": "services/critical_minerals_engine.py",
+           "line": 736,
+           "args": {
+            ".0": "<dict_itemiterator object at 0x000002184AE0BF60>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 77,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 845,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEF790>"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 78,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'ev_m'",
+          "lo": "10.0",
+          "hi": "500.0"
+         },
+         "ret": "17.824",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 79,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'sol_m'",
+          "lo": "5.0",
+          "hi": "300.0"
+         },
+         "ret": "143.537",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 80,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'wnd_m'",
+          "lo": "5.0",
+          "hi": "200.0"
+         },
+         "ret": "102.78",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 81,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'grd_m'",
+          "lo": "2.0",
+          "hi": "150.0"
+         },
+         "ret": "123.726",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 82,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "7200",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 83,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "8900",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 84,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "2800",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 85,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "7800",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 86,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "1900",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 87,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 856,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 88,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "88",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 89,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "81",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 90,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "68",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 91,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "85",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 92,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "48",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 93,
+         "name": "<genexpr>",
+         "qual": "assess_critical_minerals.<locals>.<genexpr>",
+         "file": "services/critical_minerals_engine.py",
+         "line": 859,
+         "args": {
+          ".0": "<list_iterator object at 0x000002184ADEFEE0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 94,
+         "name": "_seed_float",
+         "qual": "_seed_float",
+         "file": "services/critical_minerals_engine.py",
+         "line": 682,
+         "args": {
+          "entity_id": "'TEST_request_entity_id'",
+          "key": "'pvol'",
+          "lo": "35.0",
+          "hi": "85.0"
+         },
+         "ret": "37.099",
+         "dur_ms": 0.018,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 95,
+         "name": "_crm_tier",
+         "qual": "_crm_tier",
+         "file": "services/critical_minerals_engine.py",
+         "line": 755,
+         "args": {
+          "score": "61.4"
+         },
+         "ret": "'high'",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "critical-minerals",
+   "label": "POST /api/v1/critical-minerals/supply-chain-map",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

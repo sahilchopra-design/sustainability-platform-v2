@@ -1,0 +1,195 @@
+{
+ "domain": "sfdr-exclusion",
+ "meta": {
+  "ts": "2026-06-30T14:05:07",
+  "module": "api.v1.routes.sfdr_exclusion",
+  "router_prefix": "/api/v1/sfdr-compliance",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "sfdr-exclusion",
+   "label": "GET /api/v1/sfdr-compliance/exclusion-rules",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.358,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "sfdr": "'art8' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sfdr_classification",
+     "rules"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_exclusion_rules",
+     "qual": "get_exclusion_rules",
+     "file": "api/v1/routes/sfdr_exclusion.py",
+     "line": 253,
+     "args": {
+      "sfdr": "'art8'"
+     },
+     "ret": "{'sfdr_classification': 'art8', 'rules': [{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, \u2026",
+     "dur_ms": 0.109,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "ExclusionListEngine.__init__",
+       "file": "services/exclusion_list_engine.py",
+       "line": 177,
+       "args": {
+        "custom_rules": "None"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "get_rules",
+       "qual": "ExclusionListEngine.get_rules",
+       "file": "services/exclusion_list_engine.py",
+       "line": 225,
+       "args": {
+        "sfdr_classification": "'art8'"
+       },
+       "ret": "[{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, 'applies_to': ['art6', 'art8', 'art8plus'\u2026",
+       "dur_ms": 0.05,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 4,
+         "name": "_get_applicable_rules",
+         "qual": "ExclusionListEngine._get_applicable_rules",
+         "file": "services/exclusion_list_engine.py",
+         "line": 233,
+         "args": {
+          "sfdr": "'art8'"
+         },
+         "ret": "[{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, 'applies_to': ['art6', 'art8', 'art8plus'\u2026",
+         "dur_ms": 0.012,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-exclusion",
+   "label": "GET /api/v1/sfdr-compliance/pai-reference",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.163,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pai_indicators",
+     "art8_report_sections",
+     "art9_report_sections"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "get_pai_reference",
+     "qual": "get_pai_reference",
+     "file": "api/v1/routes/sfdr_exclusion.py",
+     "line": 263,
+     "args": {},
+     "ret": "{'pai_indicators': [{'id': 'PAI_1', 'name': 'GHG Emissions Scope 1', 'unit': 'tCO2e'}, {'id': 'PAI_2', 'name': 'GHG Emissions Scope 2', 'unit': 'tCO2e'}, {'id': 'PAI_3', 'name': 'GHG Emissions Scope 3', 'unit': 'tCO2e'}, {'id': 'PAI_4', 'n\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sfdr-exclusion",
+   "label": "POST /api/v1/sfdr-compliance/periodic-report",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "sfdr-exclusion",
+   "label": "POST /api/v1/sfdr-compliance/screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'custom_rules'",
+   "dur_ms": 0.153,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "screen_holdings",
+     "qual": "screen_holdings",
+     "file": "api/v1/routes/sfdr_exclusion.py",
+     "line": 222,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

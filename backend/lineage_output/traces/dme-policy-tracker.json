@@ -1,0 +1,157 @@
+{
+ "domain": "dme-policy-tracker",
+ "meta": {
+  "ts": "2026-06-30T14:00:55",
+  "module": "api.v1.routes.dme_policy_tracker",
+  "router_prefix": "/api/v1/dme-policy-tracker",
+  "endpoints": 4
+ },
+ "transactions": [
+  {
+   "domain": "dme-policy-tracker",
+   "label": "GET /api/v1/dme-policy-tracker/ref/components",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.025,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "array",
+    "len": 4,
+    "item0_keys": [
+     "id",
+     "description"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_components",
+     "qual": "get_components",
+     "file": "api/v1/routes/dme_policy_tracker.py",
+     "line": 32,
+     "args": {},
+     "ret": "[{'id': 'carbon_price', 'description': 'd(ETS_Price)/dt \u00d7 Embedded_Emissions_Volume'}, {'id': 'regulatory_pipeline', 'description': 'Stage-weighted bill activity (introduced 0.2, committee 0.3, enacted 0.5)'}, {'id': 'enforcement', 'descri\u2026",
+     "dur_ms": 0.262,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "get_reference_data",
+       "qual": "PolicyTrackerEngine.get_reference_data",
+       "file": "services/dme_policy_tracker_engine.py",
+       "line": 214,
+       "args": {},
+       "ret": "{'components': [{'id': 'carbon_price', 'description': 'd(ETS_Price)/dt \u00d7 Embedded_Emissions_Volume'}, {'id': 'regulatory_pipeline', 'description': 'Stage-weighted bill activity (introduced 0.2, committee 0.3, enacted 0.5)'}, {'id': 'enforc\u2026",
+       "dur_ms": 0.149,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-policy-tracker",
+   "label": "GET /api/v1/dme-policy-tracker/ref/sector-weights",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.414,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "6419",
+     "0610",
+     "3510",
+     "2410",
+     "4100",
+     "default"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "get_sector_weights",
+     "qual": "get_sector_weights",
+     "file": "api/v1/routes/dme_policy_tracker.py",
+     "line": 26,
+     "args": {},
+     "ret": "{'6419': {'carbon_price': 0.2, 'regulatory_pipeline': 0.35, 'enforcement': 0.3, 'disclosure_mandate': 0.15}, '0610': {'carbon_price': 0.4, 'regulatory_pipeline': 0.25, 'enforcement': 0.15, 'disclosure_mandate': 0.2}, '3510': {'carbon_price\u2026",
+     "dur_ms": 0.172,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_reference_data",
+       "qual": "PolicyTrackerEngine.get_reference_data",
+       "file": "services/dme_policy_tracker_engine.py",
+       "line": 214,
+       "args": {},
+       "ret": "{'components': [{'id': 'carbon_price', 'description': 'd(ETS_Price)/dt \u00d7 Embedded_Emissions_Volume'}, {'id': 'regulatory_pipeline', 'description': 'Stage-weighted bill activity (introduced 0.2, committee 0.3, enacted 0.5)'}, {'id': 'enforc\u2026",
+       "dur_ms": 0.116,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "dme-policy-tracker",
+   "label": "POST /api/v1/dme-policy-tracker/composite-velocity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "dme-policy-tracker",
+   "label": "POST /api/v1/dme-policy-tracker/from-events",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

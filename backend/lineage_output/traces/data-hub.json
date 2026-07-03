@@ -1,0 +1,4922 @@
+{
+ "domain": "data-hub",
+ "meta": {
+  "ts": "2026-06-30T14:00:38",
+  "module": "api.v1.routes.data_hub",
+  "router_prefix": "/api/v1/data-hub",
+  "endpoints": 25
+ },
+ "transactions": [
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/analytics/carbon-price-range",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1803.318,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 107,
+     "dur_ms": 158.838,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "min",
+     "max",
+     "scenarios"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "get_carbon_price_range",
+     "qual": "get_carbon_price_range",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 296,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333C270BF0>"
+     },
+     "ret": "{'count': 107, 'min': 0.0, 'max': 4027.05, 'scenarios': [{'scenario_id': '48ef80d0-2dad-4ebe-bdf0-bca7bb9ad1b9', 'region': 'World', 'unit': 'USD/tCO2', 'min_price': 212.7, 'max_price': 744.45, 'latest_price': 744.45}, {'scenario_id': '9a8c\u2026",
+     "dur_ms": 1773.436,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333C270BF0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "get_carbon_price_analytics",
+       "qual": "DataHubService.get_carbon_price_analytics",
+       "file": "services/data_hub_service.py",
+       "line": 320,
+       "args": {},
+       "ret": "{'count': 107, 'min': 0.0, 'max': 4027.05, 'scenarios': [{'scenario_id': '48ef80d0-2dad-4ebe-bdf0-bca7bb9ad1b9', 'region': 'World', 'unit': 'USD/tCO2', 'min_price': 212.7, 'max_price': 744.45, 'latest_price': 744.45}, {'scenario_id': '9a8c\u2026",
+       "dur_ms": 1772.807,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/analytics/coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1201.117,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_scenarios",
+    "hub_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 20,
+     "dur_ms": 86.079,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 102,
+     "dur_ms": 325.576,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "by_tier",
+     "by_category",
+     "total_variables",
+     "total_regions",
+     "variables",
+     "regions"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "get_coverage_analytics",
+     "qual": "get_coverage_analytics",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 282,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD56AE0>"
+     },
+     "ret": "{'by_tier': {'SourceTier.TIER_1': {'sources': 6, 'scenarios': 75}, 'SourceTier.TIER_2': {'sources': 6, 'scenarios': 8}, 'SourceTier.TIER_3': {'sources': 5, 'scenarios': 7}, 'SourceTier.TIER_4': {'sources': 1, 'scenarios': 5}, 'SourceTier.T\u2026",
+     "dur_ms": 1019.738,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD56AE0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "get_coverage_analytics",
+       "qual": "DataHubService.get_coverage_analytics",
+       "file": "services/data_hub_service.py",
+       "line": 259,
+       "args": {},
+       "ret": "{'by_tier': {'SourceTier.TIER_1': {'sources': 6, 'scenarios': 75}, 'SourceTier.TIER_2': {'sources': 6, 'scenarios': 8}, 'SourceTier.TIER_3': {'sources': 5, 'scenarios': 7}, 'SourceTier.TIER_4': {'sources': 1, 'scenarios': 5}, 'SourceTier.T\u2026",
+       "dur_ms": 1018.989,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/analytics/temperature-range",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 817.929,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 71,
+     "dur_ms": 120.372,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "buckets",
+     "total_with_target",
+     "details"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_temperature_range",
+     "qual": "get_temperature_range",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 289,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DB3C680>"
+     },
+     "ret": "{'buckets': {'<1.5C': 1, '1.5-2.0C': 49, '2.0-3.0C': 17, '3.0-4.0C': 2, '>4.0C': 2}, 'total_with_target': 71, 'details': [{'id': '582c230e-b8ae-4665-9851-ab9fcdcd17a1', 'name': 'SSP1-1.9', 'temperature_target': 1.4, 'source_id': 'd8c791bc-\u2026",
+     "dur_ms": 784.281,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DB3C680>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "get_temperature_analytics",
+       "qual": "DataHubService.get_temperature_analytics",
+       "file": "services/data_hub_service.py",
+       "line": 294,
+       "args": {},
+       "ret": "{'buckets': {'<1.5C': 1, '1.5-2.0C': 49, '2.0-3.0C': 17, '3.0-4.0C': 2, '>4.0C': 2}, 'total_with_target': 71, 'details': [{'id': '582c230e-b8ae-4665-9851-ab9fcdcd17a1', 'name': 'SSP1-1.9', 'temperature_target': 1.4, 'source_id': 'd8c791bc-\u2026",
+       "dur_ms": 783.869,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/comparisons",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 324.224,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 3,
+     "dur_ms": 69.423,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 3,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "list_comparisons",
+     "qual": "list_comparisons",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 219,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EDE0>"
+     },
+     "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002333E13CE90>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CEF0>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CFE0>]",
+     "dur_ms": 284.066,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EDE0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "list_comparisons",
+       "qual": "DataHubService.list_comparisons",
+       "file": "services/data_hub_service.py",
+       "line": 139,
+       "args": {},
+       "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002333E13CE90>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CEF0>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CFE0>]",
+       "dur_ms": 284.015,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/comparisons/{comparison_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Comparison not found",
+   "dur_ms": 352.524,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 0,
+     "dur_ms": 79.177,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comparison_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_comparison",
+     "qual": "get_comparison",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 233,
+     "args": {
+      "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EE70>"
+     },
+     "ret": "None",
+     "dur_ms": 315.982,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EE70>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "get_comparison",
+       "qual": "DataHubService.get_comparison",
+       "file": "services/data_hub_service.py",
+       "line": 149,
+       "args": {
+        "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 315.921,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/favorites",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 360.03,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_favorites"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_favorites.id AS hub_favorites_id, hub_favorites.user_id AS hub_favorites_user_id, hub_favorites.scenario_id AS hub_favorites_scenario_id, hub_favorites.folder AS hub_favorites_folder, hub_favorites.notes AS hub_favorites_notes, hub_favorites.created_at AS hub_favorites_created_at FROM hub_favorites WHERE hub_favorites.user_id = %(user_id_1)s ORDER BY hub_favorites.created_at DESC'",
+     "tables": [
+      "hub_favorites"
+     ],
+     "rowcount": 1,
+     "dur_ms": 70.564,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "user_id": "'default_user' (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 1,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "list_favorites",
+     "qual": "list_favorites",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 255,
+     "args": {
+      "user_id": "'default_user'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13DB50>"
+     },
+     "ret": "[<db.models.data_hub.DataHubFavorite object at 0x000002333E13DD30>]",
+     "dur_ms": 328.112,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13DB50>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "list_favorites",
+       "qual": "DataHubService.list_favorites",
+       "file": "services/data_hub_service.py",
+       "line": 191,
+       "args": {
+        "user_id": "'default_user'"
+       },
+       "ret": "[<db.models.data_hub.DataHubFavorite object at 0x000002333E13DD30>]",
+       "dur_ms": 328.004,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2694.128,
+   "node_count": 53,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_scenarios",
+    "hub_sources",
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_sc\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.826,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 50,
+     "dur_ms": 66.658,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 40.406,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.199,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 30.742,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.721,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 37.449,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 42.109,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 35.487,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.021,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 29.184,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.674,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 35.002,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.135,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 31.677,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 42.982,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 32.577,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 31.882,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 34.288,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 30.85,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 33.619,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 30.982,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 30.924,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.412,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 29.49,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 24,
+     "dur_ms": 31.405,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.884,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 44.059,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 29.856,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.055,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.198,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 31,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.024,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 32,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 37.963,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 33,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.035,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 34,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 37.934,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 35,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.323,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 36,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 31.202,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 37,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.595,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 38,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 32.414,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 39,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.214,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 40,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 32.357,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 41,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.292,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 42,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 35.46,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 43,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.941,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 44,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 34.127,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 45,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 36.505,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 46,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.633,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 47,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 20,
+     "dur_ms": 30.342,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 48,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.12,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 49,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 28.327,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 50,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 30.601,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 51,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 37.054,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 52,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 38.921,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 53,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 32.913,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 54,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 37.071,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 55,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 37.66,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 56,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.214,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 57,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 36.729,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 58,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 9,
+     "dur_ms": 31.899,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 59,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.375,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 60,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 39.92,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 61,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 31.682,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 62,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 35.171,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 63,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 37.192,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 64,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 38.342,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 65,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.114,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 66,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.442,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "None (default)",
+    "category": "None (default)",
+    "limit": "50 (default)",
+    "offset": "0 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "total",
+     "limit",
+     "offset"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 19,
+     "name": "list_scenarios",
+     "qual": "list_scenarios",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 150,
+     "args": {
+      "source_id": "None",
+      "category": "None",
+      "limit": "50",
+      "offset": "0",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13CFB0>"
+     },
+     "ret": "{'scenarios': [DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', d\u2026",
+     "dur_ms": 2660.548,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 20,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13CFB0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "list_scenarios",
+       "qual": "DataHubService.list_scenarios",
+       "file": "services/data_hub_service.py",
+       "line": 45,
+       "args": {
+        "source_id": "None",
+        "category": "None",
+        "limit": "50",
+        "offset": "0"
+       },
+       "ret": "([<db.models.data_hub.DataHubScenario object at 0x000002333E11CC20>, <db.models.data_hub.DataHubScenario object at 0x000002333E11C890>, <db.models.data_hub.DataHubScenario object at 0x000002333E11CCB0>, <db.models.data_hub.DataHubScenario \u2026",
+       "dur_ms": 344.545,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CC20>"
+       },
+       "ret": "DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', description='FEE\u2026",
+       "dur_ms": 80.268,
+       "sql": [
+        2,
+        3
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C890>"
+       },
+       "ret": "DataHubScenarioResponse(id='f38206c0-482d-485e-886f-04167c84817b', source_id='ab41ff6d-c6e0-4119-93f5-ac9253486654', source_name='International Renewable Energy Agency', external_id='irena_15c', name='1.5C Pathway', display_name='IRENA 1.5\u2026",
+       "dur_ms": 67.081,
+       "sql": [
+        4,
+        5
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CCB0>"
+       },
+       "ret": "DataHubScenarioResponse(id='47526e8d-bfcf-4857-8e8a-58b5371bd05c', source_id='195466a6-7dcb-4fe1-93a7-9a2a873a255c', source_name='TIAM-ECN', external_id='tiam_2c', name='2C Scenario (TIAM)', display_name='TIAM-ECN 2C', description='ETSAP T\u2026",
+       "dur_ms": 82.418,
+       "sql": [
+        6,
+        7
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C800>"
+       },
+       "ret": "DataHubScenarioResponse(id='81184d3a-8137-404e-b698-8d6e22ba4910', source_id='b6be7213-2787-45e5-b2f1-cf3d849c0ad0', source_name='GCAM', external_id='gcam_2c', name='2C Target (GCAM)', display_name='GCAM 2C', description='GCAM 2\u00b0C policy s\u2026",
+       "dur_ms": 67.658,
+       "sql": [
+        8,
+        9
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C7D0>"
+       },
+       "ret": "DataHubScenarioResponse(id='ea25c079-f05a-46c9-a310-fe98b0d60e06', source_id='d1ef24b9-83bd-4b85-930c-b69e7e719212', source_name='Japan Strategic Energy Plan', external_id='jp_sep6', name='6th Strategic Energy Plan', display_name='Japan SE\u2026",
+       "dur_ms": 63.618,
+       "sql": [
+        10,
+        11
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C920>"
+       },
+       "ret": "DataHubScenarioResponse(id='6a600c98-6334-43c5-a945-085c2f667f2f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_1.5C-2100', name='ADVANCE_2020_1.5C-2100', displ\u2026",
+       "dur_ms": 73.524,
+       "sql": [
+        12,
+        13
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C770>"
+       },
+       "ret": "DataHubScenarioResponse(id='a7ce5ade-fda9-49fc-b7b2-1a2e502821f3', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_Med2C', name='ADVANCE_2020_Med2C', display_name=\u2026",
+       "dur_ms": 34.57,
+       "sql": [
+        14
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C830>"
+       },
+       "ret": "DataHubScenarioResponse(id='54c653c6-7e51-492f-a006-17a078683ff2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_WB2C', name='ADVANCE_2020_WB2C', display_name='A\u2026",
+       "dur_ms": 44.894,
+       "sql": [
+        15
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB30>"
+       },
+       "ret": "DataHubScenarioResponse(id='8ebbe960-236e-446e-9aa1-5115c66cb25c', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Med2C', name='ADVANCE_2030_Med2C', display_name=\u2026",
+       "dur_ms": 34.303,
+       "sql": [
+        16
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB60>"
+       },
+       "ret": "DataHubScenarioResponse(id='fdff2913-ad3f-4081-ad8b-b9702ec6cb48', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Price1.5C', name='ADVANCE_2030_Price1.5C', displ\u2026",
+       "dur_ms": 33.08,
+       "sql": [
+        17
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CBF0>"
+       },
+       "ret": "DataHubScenarioResponse(id='1e41bb6f-8254-4436-a657-498722a9451d', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_WB2C', name='ADVANCE_2030_WB2C', display_name='A\u2026",
+       "dur_ms": 36.543,
+       "sql": [
+        18
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CBC0>"
+       },
+       "ret": "DataHubScenarioResponse(id='952fbd2d-d6ac-4d03-af36-2162a07cb81a', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_INDC', name='ADVANCE_INDC', display_name='ADVANCE_IND\u2026",
+       "dur_ms": 32.228,
+       "sql": [
+        19
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C9B0>"
+       },
+       "ret": "DataHubScenarioResponse(id='f38e0825-c4d8-451d-8a3a-eb2645d4738f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_NoPolicy', name='ADVANCE_NoPolicy', display_name='ADV\u2026",
+       "dur_ms": 35.968,
+       "sql": [
+        20
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 35,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CC50>"
+       },
+       "ret": "DataHubScenarioResponse(id='c0d7baaa-349f-4be8-b5b9-3499e9ac7ad2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_Reference', name='ADVANCE_Reference', display_name='A\u2026",
+       "dur_ms": 32.467,
+       "sql": [
+        21
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 36,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CA40>"
+       },
+       "ret": "DataHubScenarioResponse(id='5fa2375a-1f4f-4a79-942d-e018bac483f6', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_lowren', name='AEO Low Renewables Cost', display_name='US AEO\u2026",
+       "dur_ms": 64.587,
+       "sql": [
+        22,
+        23
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB00>"
+       },
+       "ret": "DataHubScenarioResponse(id='f4913e92-6e39-4a1d-91fc-054489494f93', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_ref', name='AEO Reference Case', display_name='US AEO Referen\u2026",
+       "dur_ms": 32.7,
+       "sql": [
+        24
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 38,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CAA0>"
+       },
+       "ret": "DataHubScenarioResponse(id='830ba862-af6c-4afc-b841-53a576de2130', source_id='d44d85b1-f110-4199-afed-aef21441bad7', source_name='International Energy Agency', external_id='iea_aps', name='Announced Pledges Scenario', display_name='IEA APS\u2026",
+       "dur_ms": 70.348,
+       "sql": [
+        25,
+        26
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CAD0>"
+       },
+       "ret": "DataHubScenarioResponse(id='e08a88a0-d17c-475f-9d9f-8fcc54017fb2', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_aviation', name='Aviation Decarbonization', display_name='IEA Aviation\u2026",
+       "dur_ms": 76.763,
+       "sql": [
+        27,
+        28
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB90>"
+       },
+       "ret": "DataHubScenarioResponse(id='3eb14397-9aa2-495b-9e0e-478e88738334', source_id='2b8735bf-a044-44c5-936e-2404e65c648e', source_name='UK Carbon Budget (CCC)', external_id='uk_6cb_balanced', name='Balanced Net Zero', display_name='UK 6CB Balanc\u2026",
+       "dur_ms": 64.229,
+       "sql": [
+        29,
+        30
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 41,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CDD0>"
+       },
+       "ret": "DataHubScenarioResponse(id='9a8ca79f-203d-4964-8afe-c83ef4c3ea3b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Below 2\u00b0C', name='Below 2\u00b0C', \u2026",
+       "dur_ms": 73.855,
+       "sql": [
+        31,
+        32
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE00>"
+       },
+       "ret": "DataHubScenarioResponse(id='2037dee8-0d63-4e4d-9a5c-c6a15a4de0c1', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Below 2\u00b0C', name='Below 2\u00b0C', display_\u2026",
+       "dur_ms": 33.87,
+       "sql": [
+        33
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CF50>"
+       },
+       "ret": "DataHubScenarioResponse(id='567ef7e9-2788-41c8-a973-967dff2eb10d', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Below 2\u00b0C', name='B\u2026",
+       "dur_ms": 39.44,
+       "sql": [
+        34
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 44,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CEC0>"
+       },
+       "ret": "DataHubScenarioResponse(id='cad7d13a-e0b7-4ab0-ba37-54acbede873e', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_below_2c', name='Below 2C', display_name=None, \u2026",
+       "dur_ms": 34.296,
+       "sql": [
+        35
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 45,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE60>"
+       },
+       "ret": "DataHubScenarioResponse(id='47ab6cc1-eb0e-4a69-87af-4e58dfce926f', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi', name='CD-LINKS_NPi', disp\u2026",
+       "dur_ms": 65.128,
+       "sql": [
+        36,
+        37
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 46,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE90>"
+       },
+       "ret": "DataHubScenarioResponse(id='b8829a7d-ecec-45af-8ba1-ddcdaaaa6b43', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi2020_1600', name='CD-LINKS_N\u2026",
+       "dur_ms": 33.928,
+       "sql": [
+        38
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 47,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CA70>"
+       },
+       "ret": "DataHubScenarioResponse(id='6463c291-8c46-4f37-92f1-e730b5494a5b', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_cement', name='Cement Technology Roadmap', display_name='IEA Cement Ro\u2026",
+       "dur_ms": 33.454,
+       "sql": [
+        39
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 48,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CEF0>"
+       },
+       "ret": "DataHubScenarioResponse(id='ef2ecba6-6e5b-47ce-b105-847752d3bf9c', source_id='7780a1ff-54cb-42bf-8682-356473973dfe', source_name='China Energy Scenarios', external_id='cn_carbon_peak', name='China Carbon Peak 2030', display_name='China Pea\u2026",
+       "dur_ms": 68.028,
+       "sql": [
+        40,
+        41
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 49,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CDA0>"
+       },
+       "ret": "DataHubScenarioResponse(id='f727b9d4-bcc6-4812-8e6b-6b43b2306348', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp126', name='CMIP6 SSP1-2.6', display_name='CMIP6 SSP1-2.6', d\u2026",
+       "dur_ms": 69.137,
+       "sql": [
+        42,
+        43
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 50,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CD70>"
+       },
+       "ret": "DataHubScenarioResponse(id='bf843f87-17e0-45eb-8a2f-44e0f55c8c55', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp245', name='CMIP6 SSP2-4.5', display_name='CMIP6 SSP2-4.5', d\u2026",
+       "dur_ms": 35.905,
+       "sql": [
+        44
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 51,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D070>"
+       },
+       "ret": "DataHubScenarioResponse(id='259559bb-fc91-4919-9cf4-23a487ffaab2', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp585', name='CMIP6 SSP5-8.5', display_name='CMIP6 SSP5-8.5', d\u2026",
+       "dur_ms": 38.571,
+       "sql": [
+        45
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 52,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D100>"
+       },
+       "ret": "DataHubScenarioResponse(id='966e2a7d-90d7-4a27-8cfc-349eb843800a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|CO_Bridge', name='CO_Bridge', display_name\u2026",
+       "dur_ms": 34.61,
+       "sql": [
+        46
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 53,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D130>"
+       },
+       "ret": "DataHubScenarioResponse(id='57cc30e9-b21e-4fbd-90a6-f016a3e70b78', source_id='196d7022-18df-431d-9e82-3f76a41301c9', source_name='Carbon Pricing Dashboard', external_id='wb_current_trend', name='Current Carbon Price Trends', display_name='\u2026",
+       "dur_ms": 68.806,
+       "sql": [
+        47,
+        48
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 54,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D1F0>"
+       },
+       "ret": "DataHubScenarioResponse(id='1b8bab4e-c8bc-46e7-85a3-a17ade4a95de', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_current_policies', name='Current Policies', dis\u2026",
+       "dur_ms": 29.103,
+       "sql": [
+        49
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 55,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CF80>"
+       },
+       "ret": "DataHubScenarioResponse(id='2ff7debd-9333-436e-b000-481ccaec456a', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Current Policies', name='Curre\u2026",
+       "dur_ms": 32.749,
+       "sql": [
+        50
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CFE0>"
+       },
+       "ret": "DataHubScenarioResponse(id='1ae611b7-f19d-4690-a982-9e6fd8bb4fbc', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Current Policies', name='Current Polic\u2026",
+       "dur_ms": 38.823,
+       "sql": [
+        51
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D0D0>"
+       },
+       "ret": "DataHubScenarioResponse(id='a50d2ae7-7571-4153-8f2a-2eb08d9a55bd', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Current Policies', \u2026",
+       "dur_ms": 40.738,
+       "sql": [
+        52
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 58,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D370>"
+       },
+       "ret": "DataHubScenarioResponse(id='fe819f37-e850-4653-bd56-04a6bd12f37b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Delayed transition', name='Del\u2026",
+       "dur_ms": 35.252,
+       "sql": [
+        53
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 59,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D3D0>"
+       },
+       "ret": "DataHubScenarioResponse(id='ed20924b-3cc4-4b73-966b-f28d827669d2', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Delayed transition', name='Delayed tra\u2026",
+       "dur_ms": 39.65,
+       "sql": [
+        54
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CFB0>"
+       },
+       "ret": "DataHubScenarioResponse(id='9c74b5c8-75e7-435e-87ec-78c77c98bfde', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Delayed transition'\u2026",
+       "dur_ms": 39.343,
+       "sql": [
+        55
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 61,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D430>"
+       },
+       "ret": "DataHubScenarioResponse(id='ce7ae98e-04c0-42f6-ae9f-24a47dc175ef', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_delayed_transition', name='Delayed Transition',\u2026",
+       "dur_ms": 33.459,
+       "sql": [
+        56
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 62,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D280>"
+       },
+       "ret": "DataHubScenarioResponse(id='e4f2caf8-1656-40ca-89af-399ac838b019', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_divergent_net_zero', name='Divergent Net Zero',\u2026",
+       "dur_ms": 37.506,
+       "sql": [
+        57
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 63,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D2E0>"
+       },
+       "ret": "DataHubScenarioResponse(id='b55e9fae-0a55-4bdb-9a16-f5b51f32b5c6', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Baseline', name='EMF30_Baseline', \u2026",
+       "dur_ms": 33.053,
+       "sql": [
+        58
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 64,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D4F0>"
+       },
+       "ret": "DataHubScenarioResponse(id='c5c52b49-d76e-44ce-8298-ac1f2ac5c887', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster', name='EMF30_Slo\u2026",
+       "dur_ms": 35.376,
+       "sql": [
+        59
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 65,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D5E0>"
+       },
+       "ret": "DataHubScenarioResponse(id='aa194a5f-82ff-4baa-ab61-e7212cc4af8a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster+SLCF+HFC', name='\u2026",
+       "dur_ms": 41.298,
+       "sql": [
+        60
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 66,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D250>"
+       },
+       "ret": "DataHubScenarioResponse(id='50a8dfa3-7c98-489f-a37f-05757e936249', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_1000', name='EN_INDCi2030_100\u2026",
+       "dur_ms": 33.093,
+       "sql": [
+        61
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 67,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D640>"
+       },
+       "ret": "DataHubScenarioResponse(id='8f304f76-73e4-4f00-ba38-f775516d3d2e', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1000f_COV_NDCp', \u2026",
+       "dur_ms": 37.071,
+       "sql": [
+        62
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D9A0>"
+       },
+       "ret": "DataHubScenarioResponse(id='a3b16578-8fb8-4467-8c88-751783540ec1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1800f', name='EN_\u2026",
+       "dur_ms": 38.835,
+       "sql": [
+        63
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 69,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D4C0>"
+       },
+       "ret": "DataHubScenarioResponse(id='0b61229f-aea7-4c44-911d-81319bf1820d', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f', name='EN_INDCi2030_25\u2026",
+       "dur_ms": 39.11,
+       "sql": [
+        64
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 70,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D850>"
+       },
+       "ret": "DataHubScenarioResponse(id='7ef2a143-d626-4ad8-bf0f-44f2ad10fafb', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f_NDCp', name='EN_INDCi20\u2026",
+       "dur_ms": 34.98,
+       "sql": [
+        65
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 71,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D910>"
+       },
+       "ret": "DataHubScenarioResponse(id='6482245c-c952-4956-b4a9-0e40817e5ac1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_600f_NDCp', name=\u2026",
+       "dur_ms": 33.23,
+       "sql": [
+        66
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/scenarios/{scenario_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 600.434,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 93.01,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 72,
+     "name": "get_scenario",
+     "qual": "get_scenario",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 174,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD86F00>"
+     },
+     "ret": "None",
+     "dur_ms": 566.985,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 73,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD86F00>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 74,
+       "name": "get_scenario",
+       "qual": "DataHubService.get_scenario",
+       "file": "services/data_hub_service.py",
+       "line": 85,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 566.926,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/scenarios/{scenario_id}/trajectories",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 333.775,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 72.855,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "variable": "None (default)",
+    "region": "None (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 75,
+     "name": "get_scenario_trajectories",
+     "qual": "get_scenario_trajectories",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 188,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "variable": "None",
+      "region": "None",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0170>"
+     },
+     "ret": "None",
+     "dur_ms": 295.715,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 76,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0170>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 77,
+       "name": "get_scenario",
+       "qual": "DataHubService.get_scenario",
+       "file": "services/data_hub_service.py",
+       "line": 85,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 295.654,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2407.308,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 20,
+     "dur_ms": 1907.997,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "active_only": "False (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 20,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 78,
+     "name": "list_sources",
+     "qual": "list_sources",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 67,
+     "args": {
+      "active_only": "False",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0260>"
+     },
+     "ret": "[<db.models.data_hub.DataHubSource object at 0x000002333E1B1220>, <db.models.data_hub.DataHubSource object at 0x000002333E1B1640>, <db.models.data_hub.DataHubSource object at 0x000002333E1B14F0>, <db.models.data_hub.DataHubSource object at\u2026",
+     "dur_ms": 2350.621,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 79,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0260>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 80,
+       "name": "list_sources",
+       "qual": "DataHubService.list_sources",
+       "file": "services/data_hub_service.py",
+       "line": 24,
+       "args": {
+        "active_only": "False"
+       },
+       "ret": "[<db.models.data_hub.DataHubSource object at 0x000002333E1B1220>, <db.models.data_hub.DataHubSource object at 0x000002333E1B1640>, <db.models.data_hub.DataHubSource object at 0x000002333E1B14F0>, <db.models.data_hub.DataHubSource object at\u2026",
+       "dur_ms": 2350.507,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/sources/{source_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Source not found",
+   "dur_ms": 309.472,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_sources"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.112,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 81,
+     "name": "get_source",
+     "qual": "get_source",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 74,
+     "args": {
+      "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+     },
+     "ret": "None",
+     "dur_ms": 280.149,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 82,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 83,
+       "name": "get_source",
+       "qual": "DataHubService.get_source",
+       "file": "services/data_hub_service.py",
+       "line": 30,
+       "args": {
+        "source_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 279.91,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 550.95,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_comparisons",
+    "hub_scenarios",
+    "hub_sources",
+    "hub_sync_logs",
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(hub_sources.id) AS count_1 FROM hub_sources'",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 61.625,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT count(hub_sources.id) AS count_1 FROM hub_sources WHERE hub_sources.is_active IS true'",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.765,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT count(hub_scenarios.id) AS count_1 FROM hub_scenarios'",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 36.449,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT count(hub_trajectories.id) AS count_1 FROM hub_trajectories'",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 1,
+     "dur_ms": 47.154,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT count(hub_comparisons.id) AS count_1 FROM hub_comparisons'",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.352,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT hub_sources.tier AS hub_sources_tier, count(hub_sources.id) AS count_1 FROM hub_sources GROUP BY hub_sources.tier'",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 6,
+     "dur_ms": 33.634,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT hub_sync_logs.id AS hub_sync_logs_id, hub_sync_logs.source_id AS hub_sync_logs_source_id, hub_sync_logs.sync_type AS hub_sync_logs_sync_type, hub_sync_logs.status AS hub_sync_logs_status, hub_sync_logs.started_at AS hub_sync_logs_started_at, hub_sync_logs.completed_at AS hub_sync_logs_completed_at, hub_sync_logs.scenarios_added AS hub_sync_logs_scenarios_added, hub_sync_logs.scenarios_upd\u2026",
+     "tables": [
+      "hub_sync_logs"
+     ],
+     "rowcount": 5,
+     "dur_ms": 44.197,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "total_sources",
+     "active_sources",
+     "total_scenarios",
+     "total_trajectories",
+     "total_comparisons",
+     "sources_by_tier",
+     "recent_syncs"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 84,
+     "name": "get_hub_stats",
+     "qual": "get_hub_stats",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 56,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD866C0>"
+     },
+     "ret": "{'total_sources': 20, 'active_sources': 20, 'total_scenarios': 102, 'total_trajectories': 884, 'total_comparisons': 3, 'sources_by_tier': {'SourceTier.TIER_1': 6, 'SourceTier.TIER_3': 5, 'SourceTier.TIER_2': 6, 'SourceTier.TIER_6': 1, 'Sou\u2026",
+     "dur_ms": 517.747,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 85,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD866C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 86,
+       "name": "get_stats",
+       "qual": "DataHubService.get_stats",
+       "file": "services/data_hub_service.py",
+       "line": 213,
+       "args": {},
+       "ret": "{'total_sources': 20, 'active_sources': 20, 'total_scenarios': 102, 'total_trajectories': 884, 'total_comparisons': 3, 'sources_by_tier': {'SourceTier.TIER_1': 6, 'SourceTier.TIER_3': 5, 'SourceTier.TIER_2': 6, 'SourceTier.TIER_6': 1, 'Sou\u2026",
+       "dur_ms": 517.644,
+       "sql": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/sync-logs",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 321.162,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_sync_logs"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_sync_logs.id AS hub_sync_logs_id, hub_sync_logs.source_id AS hub_sync_logs_source_id, hub_sync_logs.sync_type AS hub_sync_logs_sync_type, hub_sync_logs.status AS hub_sync_logs_status, hub_sync_logs.started_at AS hub_sync_logs_started_at, hub_sync_logs.completed_at AS hub_sync_logs_completed_at, hub_sync_logs.scenarios_added AS hub_sync_logs_scenarios_added, hub_sync_logs.scenarios_upd\u2026",
+     "tables": [
+      "hub_sync_logs"
+     ],
+     "rowcount": 20,
+     "dur_ms": 70.032,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "source_id": "None (default)",
+    "limit": "20 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 20,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 87,
+     "name": "get_sync_logs",
+     "qual": "get_sync_logs",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 135,
+     "args": {
+      "source_id": "None",
+      "limit": "20",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+     },
+     "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20F0>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B2180>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20C0>, <db.models.data_hub.DataHubSyncLog objec\u2026",
+     "dur_ms": 291.65,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 88,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 89,
+       "name": "get_sync_logs",
+       "qual": "DataHubService.get_sync_logs",
+       "file": "services/data_hub_service.py",
+       "line": 183,
+       "args": {
+        "source_id": "None",
+        "limit": "20"
+       },
+       "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20F0>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B2180>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20C0>, <db.models.data_hub.DataHubSyncLog objec\u2026",
+       "dur_ms": 291.562,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "GET /api/v1/data-hub/trajectories/available-variables",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 594.113,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.unit AS hub_trajectories_unit, count(hub_trajectories.id) AS count_1 FROM hub_trajectories GROUP BY hub_trajectories.variable_name, hub_trajectories.unit'",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 62,
+     "dur_ms": 64.179,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 62,
+    "item0_keys": [
+     "variable",
+     "unit",
+     "count"
+    ]
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 90,
+     "name": "get_available_variables",
+     "qual": "get_available_variables",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 303,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B16D0>"
+     },
+     "ret": "[{'variable': 'GDP|PPP', 'unit': 'billion US$2010/yr', 'count': 17}, {'variable': 'Energy Intensity', 'unit': 'MJ/USD', 'count': 5}, {'variable': 'Emissions|CO2|Power', 'unit': 'MtCO2e/yr', 'count': 1}, {'variable': 'Emissions|CO2', 'unit'\u2026",
+     "dur_ms": 564.98,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 91,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B16D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 92,
+       "name": "get_available_variables",
+       "qual": "DataHubService.get_available_variables",
+       "file": "services/data_hub_service.py",
+       "line": 351,
+       "args": {},
+       "ret": "[{'variable': 'GDP|PPP', 'unit': 'billion US$2010/yr', 'count': 17}, {'variable': 'Energy Intensity', 'unit': 'MJ/USD', 'count': 5}, {'variable': 'Emissions|CO2|Power', 'unit': 'MtCO2e/yr', 'count': 1}, {'variable': 'Emissions|CO2', 'unit'\u2026",
+       "dur_ms": 564.681,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/comparisons",
+   "status": "failed",
+   "http_status": 500,
+   "error": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) is not present in table \"hub_scenarios\".\n\n[SQL: INSERT INTO hub_comparisons (id, name, description, base_scenario_id, compare_scenario_ids, variable_filter, region_filte",
+   "dur_ms": 1281.909,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO hub_comparisons (id, name, description, base_scenario_id, compare_scenario_ids, variable_filter, region_filter, sector_filter, time_range, is_public, created_by, created_at, updated_at) VALUES (%(id)s, %(name)s, %(description)s, %(base_scenario_id)s, %(compare_scenario_ids)s, %(variable_filter)s, %(region_filter)s, %(sector_filter)s, %(time_range)s, %(is_public)s, %(created_by)s, %(c\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": null,
+     "dur_ms": 354.275,
+     "is_reference": false,
+     "error": "ForeignKeyViolation('insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) \u2026"
+    }
+   ],
+   "inputs": {
+    "body": "<DataHubComparisonCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 93,
+     "name": "create_comparison",
+     "qual": "create_comparison",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 226,
+     "args": {
+      "body": "DataHubComparisonCreate(name='TEST_body_name', description=None, base_scenario_id='TEST_body_base_scenario_id', compare_scenario_ids=[], variable_filter=[], region_filter=[], created_by=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B1790>"
+     },
+     "ret": "None",
+     "dur_ms": 1280.878,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 94,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B1790>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 95,
+       "name": "create_comparison",
+       "qual": "DataHubService.create_comparison",
+       "file": "services/data_hub_service.py",
+       "line": 142,
+       "args": {
+        "data": "{'name': 'TEST_body_name', 'description': None, 'base_scenario_id': 'TEST_body_base_scenario_id', 'compare_scenario_ids': [], 'variable_filter': [], 'region_filter': [], 'created_by': None}"
+       },
+       "ret": "None",
+       "dur_ms": 1280.703,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 96,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 134,
+         "args": {},
+         "ret": "'0956ba25-83c4-4cc7-8595-33f2382d04dd'",
+         "dur_ms": 0.074,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 97,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 145,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 18, 0, 28, 739385, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.011,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 98,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 146,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 18, 0, 28, 739385, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "DELETE /api/v1/data-hub/comparisons/{comparison_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/favorites",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "DELETE /api/v1/data-hub/favorites/{favorite_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/scenarios/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 8681.611,
+   "node_count": 53,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_scenarios",
+    "hub_sources",
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT count(*) AS count_1 FROM (SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_sc\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.687,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 50,
+     "dur_ms": 66.18,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 31.297,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.461,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 30.958,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 41.009,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 35.301,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 60.263,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 699.248,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 77.881,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 3,
+     "dur_ms": 435.951,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.668,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 157.415,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 50.179,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 34.452,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 37.268,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 34.544,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 32.685,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 35.576,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 35.687,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 20,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 5,
+     "dur_ms": 32.696,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 21,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 6,
+     "dur_ms": 34.505,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 22,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 35.942,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 23,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 42.26,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 24,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 34.119,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 25,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 24,
+     "dur_ms": 35.157,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 26,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 33.08,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 27,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 289.008,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 28,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 181.376,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 29,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 42.11,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 30,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 548.371,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 31,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 884.756,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 32,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.874,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 33,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 185.24,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 34,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 168.645,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 35,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 30.246,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 36,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 34.051,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 37,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.903,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 38,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 30.599,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 39,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 419.32,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 40,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 4,
+     "dur_ms": 258.207,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 41,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 84.661,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 42,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 167.835,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 43,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 167.165,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 44,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 42.937,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 45,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 28,
+     "dur_ms": 277.253,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 46,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 458.009,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 47,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 20,
+     "dur_ms": 275.447,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 48,
+     "sql": "'SELECT hub_sources.id AS hub_sources_id, hub_sources.name AS hub_sources_name, hub_sources.short_name AS hub_sources_short_name, hub_sources.organization AS hub_sources_organization, hub_sources.description AS hub_sources_description, hub_sources.url AS hub_sources_url, hub_sources.api_endpoint AS hub_sources_api_endpoint, hub_sources.tier AS hub_sources_tier, hub_sources.logo_url AS hub_sources\u2026",
+     "tables": [
+      "hub_sources"
+     ],
+     "rowcount": 1,
+     "dur_ms": 276.547,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 49,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 50.783,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 50,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 177.056,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 51,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 49.6,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 52,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 224.774,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 53,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 45.701,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 54,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 43.591,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 55,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 19,
+     "dur_ms": 155.982,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 56,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 41.052,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 57,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.602,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 58,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 9,
+     "dur_ms": 37.4,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 59,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.816,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 60,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 34.186,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 61,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 33.017,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 62,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 44.809,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 63,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 10,
+     "dur_ms": 31.977,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 64,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.347,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 65,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.368,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 66,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.112,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<DataHubScenarioSearch (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "total"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 99,
+     "name": "search_scenarios",
+     "qual": "search_scenarios",
+     "file": "api/v1/routes/data_hub.py",
+     "line": 165,
+     "args": {
+      "body": "DataHubScenarioSearch(query=None, source_ids=[], categories=[], tags=[], regions=[], variables=[], temperature_min=None, temperature_max=None, limit=50, offset=0)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B2990>"
+     },
+     "ret": "{'scenarios': [DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', d\u2026",
+     "dur_ms": 8646.882,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 100,
+       "name": "__init__",
+       "qual": "DataHubService.__init__",
+       "file": "services/data_hub_service.py",
+       "line": 19,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B2990>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 101,
+       "name": "search_scenarios",
+       "qual": "DataHubService.search_scenarios",
+       "file": "services/data_hub_service.py",
+       "line": 61,
+       "args": {
+        "params": "{'query': None, 'source_ids': [], 'categories': [], 'tags': [], 'regions': [], 'variables': [], 'temperature_min': None, 'temperature_max': None, 'limit': 50, 'offset': 0}"
+       },
+       "ret": "([<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDD0>, <db.models.data_hub.DataHubScenario object at 0x000002333E1CCDA0>, <db.models.data_hub.DataHubScenario object at 0x000002333E1CCD70>, <db.models.data_hub.DataHubScenario \u2026",
+       "dur_ms": 362.104,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 102,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDD0>"
+       },
+       "ret": "DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', description='FEE\u2026",
+       "dur_ms": 65.19,
+       "sql": [
+        2,
+        3
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 103,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDA0>"
+       },
+       "ret": "DataHubScenarioResponse(id='f38206c0-482d-485e-886f-04167c84817b', source_id='ab41ff6d-c6e0-4119-93f5-ac9253486654', source_name='International Renewable Energy Agency', external_id='irena_15c', name='1.5C Pathway', display_name='IRENA 1.5\u2026",
+       "dur_ms": 75.186,
+       "sql": [
+        4,
+        5
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 104,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCD70>"
+       },
+       "ret": "DataHubScenarioResponse(id='47526e8d-bfcf-4857-8e8a-58b5371bd05c', source_id='195466a6-7dcb-4fe1-93a7-9a2a873a255c', source_name='TIAM-ECN', external_id='tiam_2c', name='2C Scenario (TIAM)', display_name='TIAM-ECN 2C', description='ETSAP T\u2026",
+       "dur_ms": 98.489,
+       "sql": [
+        6,
+        7
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 105,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CC920>"
+       },
+       "ret": "DataHubScenarioResponse(id='81184d3a-8137-404e-b698-8d6e22ba4910', source_id='b6be7213-2787-45e5-b2f1-cf3d849c0ad0', source_name='GCAM', external_id='gcam_2c', name='2C Target (GCAM)', display_name='GCAM 2C', description='GCAM 2\u00b0C policy s\u2026",
+       "dur_ms": 780.371,
+       "sql": [
+        8,
+        9
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 106,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD910>"
+       },
+       "ret": "DataHubScenarioResponse(id='ea25c079-f05a-46c9-a310-fe98b0d60e06', source_id='d1ef24b9-83bd-4b85-930c-b69e7e719212', source_name='Japan Strategic Energy Plan', external_id='jp_sep6', name='6th Strategic Energy Plan', display_name='Japan SE\u2026",
+       "dur_ms": 470.051,
+       "sql": [
+        10,
+        11
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 107,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD310>"
+       },
+       "ret": "DataHubScenarioResponse(id='6a600c98-6334-43c5-a945-085c2f667f2f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_1.5C-2100', name='ADVANCE_2020_1.5C-2100', displ\u2026",
+       "dur_ms": 211.34,
+       "sql": [
+        12,
+        13
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 108,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD220>"
+       },
+       "ret": "DataHubScenarioResponse(id='a7ce5ade-fda9-49fc-b7b2-1a2e502821f3', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_Med2C', name='ADVANCE_2020_Med2C', display_name=\u2026",
+       "dur_ms": 35.963,
+       "sql": [
+        14
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 109,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD1F0>"
+       },
+       "ret": "DataHubScenarioResponse(id='54c653c6-7e51-492f-a006-17a078683ff2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_WB2C', name='ADVANCE_2020_WB2C', display_name='A\u2026",
+       "dur_ms": 39.312,
+       "sql": [
+        15
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 110,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD1C0>"
+       },
+       "ret": "DataHubScenarioResponse(id='8ebbe960-236e-446e-9aa1-5115c66cb25c', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Med2C', name='ADVANCE_2030_Med2C', display_name=\u2026",
+       "dur_ms": 36.165,
+       "sql": [
+        16
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 111,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD190>"
+       },
+       "ret": "DataHubScenarioResponse(id='fdff2913-ad3f-4081-ad8b-b9702ec6cb48', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Price1.5C', name='ADVANCE_2030_Price1.5C', displ\u2026",
+       "dur_ms": 33.942,
+       "sql": [
+        17
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 112,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD160>"
+       },
+       "ret": "DataHubScenarioResponse(id='1e41bb6f-8254-4436-a657-498722a9451d', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_WB2C', name='ADVANCE_2030_WB2C', display_name='A\u2026",
+       "dur_ms": 37.691,
+       "sql": [
+        18
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 113,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD130>"
+       },
+       "ret": "DataHubScenarioResponse(id='952fbd2d-d6ac-4d03-af36-2162a07cb81a', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_INDC', name='ADVANCE_INDC', display_name='ADVANCE_IND\u2026",
+       "dur_ms": 37.359,
+       "sql": [
+        19
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 114,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD100>"
+       },
+       "ret": "DataHubScenarioResponse(id='f38e0825-c4d8-451d-8a3a-eb2645d4738f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_NoPolicy', name='ADVANCE_NoPolicy', display_name='ADV\u2026",
+       "dur_ms": 34.148,
+       "sql": [
+        20
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 115,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD0D0>"
+       },
+       "ret": "DataHubScenarioResponse(id='c0d7baaa-349f-4be8-b5b9-3499e9ac7ad2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_Reference', name='ADVANCE_Reference', display_name='A\u2026",
+       "dur_ms": 36.556,
+       "sql": [
+        21
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 116,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD0A0>"
+       },
+       "ret": "DataHubScenarioResponse(id='5fa2375a-1f4f-4a79-942d-e018bac483f6', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_lowren', name='AEO Low Renewables Cost', display_name='US AEO\u2026",
+       "dur_ms": 80.899,
+       "sql": [
+        22,
+        23
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 117,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD070>"
+       },
+       "ret": "DataHubScenarioResponse(id='f4913e92-6e39-4a1d-91fc-054489494f93', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_ref', name='AEO Reference Case', display_name='US AEO Referen\u2026",
+       "dur_ms": 36.496,
+       "sql": [
+        24
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 118,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD040>"
+       },
+       "ret": "DataHubScenarioResponse(id='830ba862-af6c-4afc-b841-53a576de2130', source_id='d44d85b1-f110-4199-afed-aef21441bad7', source_name='International Energy Agency', external_id='iea_aps', name='Announced Pledges Scenario', display_name='IEA APS\u2026",
+       "dur_ms": 71.542,
+       "sql": [
+        25,
+        26
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 119,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD010>"
+       },
+       "ret": "DataHubScenarioResponse(id='e08a88a0-d17c-475f-9d9f-8fcc54017fb2', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_aviation', name='Aviation Decarbonization', display_name='IEA Aviation\u2026",
+       "dur_ms": 473.847,
+       "sql": [
+        27,
+        28
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 120,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCFE0>"
+       },
+       "ret": "DataHubScenarioResponse(id='3eb14397-9aa2-495b-9e0e-478e88738334', source_id='2b8735bf-a044-44c5-936e-2404e65c648e', source_name='UK Carbon Budget (CCC)', external_id='uk_6cb_balanced', name='Balanced Net Zero', display_name='UK 6CB Balanc\u2026",
+       "dur_ms": 593.404,
+       "sql": [
+        29,
+        30
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 121,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCFB0>"
+       },
+       "ret": "DataHubScenarioResponse(id='9a8ca79f-203d-4964-8afe-c83ef4c3ea3b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Below 2\u00b0C', name='Below 2\u00b0C', \u2026",
+       "dur_ms": 926.877,
+       "sql": [
+        31,
+        32
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 122,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF80>"
+       },
+       "ret": "DataHubScenarioResponse(id='2037dee8-0d63-4e4d-9a5c-c6a15a4de0c1', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Below 2\u00b0C', name='Below 2\u00b0C', display_\u2026",
+       "dur_ms": 187.428,
+       "sql": [
+        33
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 123,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF50>"
+       },
+       "ret": "DataHubScenarioResponse(id='567ef7e9-2788-41c8-a973-967dff2eb10d', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Below 2\u00b0C', name='B\u2026",
+       "dur_ms": 170.736,
+       "sql": [
+        34
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 124,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF20>"
+       },
+       "ret": "DataHubScenarioResponse(id='cad7d13a-e0b7-4ab0-ba37-54acbede873e', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_below_2c', name='Below 2C', display_name=None, \u2026",
+       "dur_ms": 31.22,
+       "sql": [
+        35
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 125,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCEF0>"
+       },
+       "ret": "DataHubScenarioResponse(id='47ab6cc1-eb0e-4a69-87af-4e58dfce926f', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi', name='CD-LINKS_NPi', disp\u2026",
+       "dur_ms": 71.099,
+       "sql": [
+        36,
+        37
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 126,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCEC0>"
+       },
+       "ret": "DataHubScenarioResponse(id='b8829a7d-ecec-45af-8ba1-ddcdaaaa6b43', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi2020_1600', name='CD-LINKS_N\u2026",
+       "dur_ms": 32.019,
+       "sql": [
+        38
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 127,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE90>"
+       },
+       "ret": "DataHubScenarioResponse(id='6463c291-8c46-4f37-92f1-e730b5494a5b', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_cement', name='Cement Technology Roadmap', display_name='IEA Cement Ro\u2026",
+       "dur_ms": 420.942,
+       "sql": [
+        39
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 128,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE60>"
+       },
+       "ret": "DataHubScenarioResponse(id='ef2ecba6-6e5b-47ce-b105-847752d3bf9c', source_id='7780a1ff-54cb-42bf-8682-356473973dfe', source_name='China Energy Scenarios', external_id='cn_carbon_peak', name='China Carbon Peak 2030', display_name='China Pea\u2026",
+       "dur_ms": 347.977,
+       "sql": [
+        40,
+        41
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 129,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD2B0>"
+       },
+       "ret": "DataHubScenarioResponse(id='f727b9d4-bcc6-4812-8e6b-6b43b2306348', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp126', name='CMIP6 SSP1-2.6', display_name='CMIP6 SSP1-2.6', d\u2026",
+       "dur_ms": 339.33,
+       "sql": [
+        42,
+        43
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 130,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD280>"
+       },
+       "ret": "DataHubScenarioResponse(id='bf843f87-17e0-45eb-8a2f-44e0f55c8c55', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp245', name='CMIP6 SSP2-4.5', display_name='CMIP6 SSP2-4.5', d\u2026",
+       "dur_ms": 45.251,
+       "sql": [
+        44
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 131,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD250>"
+       },
+       "ret": "DataHubScenarioResponse(id='259559bb-fc91-4919-9cf4-23a487ffaab2', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp585', name='CMIP6 SSP5-8.5', display_name='CMIP6 SSP5-8.5', d\u2026",
+       "dur_ms": 279.939,
+       "sql": [
+        45
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 132,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE00>"
+       },
+       "ret": "DataHubScenarioResponse(id='966e2a7d-90d7-4a27-8cfc-349eb843800a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|CO_Bridge', name='CO_Bridge', display_name\u2026",
+       "dur_ms": 458.847,
+       "sql": [
+        46
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 133,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD970>"
+       },
+       "ret": "DataHubScenarioResponse(id='57cc30e9-b21e-4fbd-90a6-f016a3e70b78', source_id='196d7022-18df-431d-9e82-3f76a41301c9', source_name='Carbon Pricing Dashboard', external_id='wb_current_trend', name='Current Carbon Price Trends', display_name='\u2026",
+       "dur_ms": 555.6,
+       "sql": [
+        47,
+        48
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 134,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD7F0>"
+       },
+       "ret": "DataHubScenarioResponse(id='1b8bab4e-c8bc-46e7-85a3-a17ade4a95de', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_current_policies', name='Current Policies', dis\u2026",
+       "dur_ms": 51.578,
+       "sql": [
+        49
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 135,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD700>"
+       },
+       "ret": "DataHubScenarioResponse(id='2ff7debd-9333-436e-b000-481ccaec456a', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Current Policies', name='Curre\u2026",
+       "dur_ms": 178.599,
+       "sql": [
+        50
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 136,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD6D0>"
+       },
+       "ret": "DataHubScenarioResponse(id='1ae611b7-f19d-4690-a982-9e6fd8bb4fbc', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Current Policies', name='Current Polic\u2026",
+       "dur_ms": 51.185,
+       "sql": [
+        51
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 137,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD6A0>"
+       },
+       "ret": "DataHubScenarioResponse(id='a50d2ae7-7571-4153-8f2a-2eb08d9a55bd', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Current Policies', \u2026",
+       "dur_ms": 227.657,
+       "sql": [
+        52
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 138,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD670>"
+       },
+       "ret": "DataHubScenarioResponse(id='fe819f37-e850-4653-bd56-04a6bd12f37b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Delayed transition', name='Del\u2026",
+       "dur_ms": 47.678,
+       "sql": [
+        53
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 139,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD640>"
+       },
+       "ret": "DataHubScenarioResponse(id='ed20924b-3cc4-4b73-966b-f28d827669d2', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Delayed transition', name='Delayed tra\u2026",
+       "dur_ms": 45.475,
+       "sql": [
+        54
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 140,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD610>"
+       },
+       "ret": "DataHubScenarioResponse(id='9c74b5c8-75e7-435e-87ec-78c77c98bfde', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Delayed transition'\u2026",
+       "dur_ms": 157.719,
+       "sql": [
+        55
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 141,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD5E0>"
+       },
+       "ret": "DataHubScenarioResponse(id='ce7ae98e-04c0-42f6-ae9f-24a47dc175ef', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_delayed_transition', name='Delayed Transition',\u2026",
+       "dur_ms": 41.952,
+       "sql": [
+        56
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 142,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD5B0>"
+       },
+       "ret": "DataHubScenarioResponse(id='e4f2caf8-1656-40ca-89af-399ac838b019', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_divergent_net_zero', name='Divergent Net Zero',\u2026",
+       "dur_ms": 35.669,
+       "sql": [
+        57
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 143,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD580>"
+       },
+       "ret": "DataHubScenarioResponse(id='b55e9fae-0a55-4bdb-9a16-f5b51f32b5c6', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Baseline', name='EMF30_Baseline', \u2026",
+       "dur_ms": 39.878,
+       "sql": [
+        58
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 144,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD550>"
+       },
+       "ret": "DataHubScenarioResponse(id='c5c52b49-d76e-44ce-8298-ac1f2ac5c887', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster', name='EMF30_Slo\u2026",
+       "dur_ms": 36.001,
+       "sql": [
+        59
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 145,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD520>"
+       },
+       "ret": "DataHubScenarioResponse(id='aa194a5f-82ff-4baa-ab61-e7212cc4af8a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster+SLCF+HFC', name='\u2026",
+       "dur_ms": 35.131,
+       "sql": [
+        60
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 146,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD4F0>"
+       },
+       "ret": "DataHubScenarioResponse(id='50a8dfa3-7c98-489f-a37f-05757e936249', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_1000', name='EN_INDCi2030_100\u2026",
+       "dur_ms": 33.799,
+       "sql": [
+        61
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 147,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD4C0>"
+       },
+       "ret": "DataHubScenarioResponse(id='8f304f76-73e4-4f00-ba38-f775516d3d2e', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1000f_COV_NDCp', \u2026",
+       "dur_ms": 46.304,
+       "sql": [
+        62
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 148,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD490>"
+       },
+       "ret": "DataHubScenarioResponse(id='a3b16578-8fb8-4467-8c88-751783540ec1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1800f', name='EN_\u2026",
+       "dur_ms": 33.257,
+       "sql": [
+        63
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 149,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD460>"
+       },
+       "ret": "DataHubScenarioResponse(id='0b61229f-aea7-4c44-911d-81319bf1820d', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f', name='EN_INDCi2030_25\u2026",
+       "dur_ms": 33.502,
+       "sql": [
+        64
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 150,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD430>"
+       },
+       "ret": "DataHubScenarioResponse(id='7ef2a143-d626-4ad8-bf0f-44f2ad10fafb', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f_NDCp', name='EN_INDCi20\u2026",
+       "dur_ms": 33.672,
+       "sql": [
+        65
+       ],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 151,
+       "name": "_scenario_to_response",
+       "qual": "_scenario_to_response",
+       "file": "api/v1/routes/data_hub.py",
+       "line": 25,
+       "args": {
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD400>"
+       },
+       "ret": "DataHubScenarioResponse(id='6482245c-c952-4956-b4a9-0e40817e5ac1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_600f_NDCp', name=\u2026",
+       "dur_ms": 33.083,
+       "sql": [
+        66
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/sources",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/sources/seed",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/sources/{source_id}/sync",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/sync-all",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/sync-synthetic",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "data-hub",
+   "label": "POST /api/v1/data-hub/trajectories/query",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

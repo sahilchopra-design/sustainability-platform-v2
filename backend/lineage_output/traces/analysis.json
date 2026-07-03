@@ -1,0 +1,1744 @@
+{
+ "domain": "analysis",
+ "meta": {
+  "ts": "2026-06-30T13:59:21",
+  "module": "api.v1.routes.analysis",
+  "router_prefix": "/api/v1/analysis",
+  "endpoints": 19
+ },
+ "transactions": [
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/alerts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 691.886,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_alerts"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_alerts.id AS hub_alerts_id, hub_alerts.user_id AS hub_alerts_user_id, hub_alerts.alert_type AS hub_alerts_alert_type, hub_alerts.ref_scenario_id AS hub_alerts_ref_scenario_id, hub_alerts.ref_source_id AS hub_alerts_ref_source_id, hub_alerts.title AS hub_alerts_title, hub_alerts.message AS hub_alerts_message, hub_alerts.is_read AS hub_alerts_is_read, hub_alerts.created_at AS hub_alerts\u2026",
+     "tables": [
+      "hub_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 85.84,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "user_id": "'default_user' (default)",
+    "unread_only": "False (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 1,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "list_alerts",
+     "qual": "list_alerts",
+     "file": "api/v1/routes/analysis.py",
+     "line": 208,
+     "args": {
+      "user_id": "'default_user'",
+      "unread_only": "False",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280D5C6D80>"
+     },
+     "ret": "[<db.models.data_hub.ScenarioAlert object at 0x000002280F165580>]",
+     "dur_ms": 661.539,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280D5C6D80>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "list_alerts",
+       "qual": "ScenarioComparisonService.list_alerts",
+       "file": "services/scenario_comparison_service.py",
+       "line": 448,
+       "args": {
+        "user_id": "'default_user'",
+        "unread_only": "False"
+       },
+       "ret": "[<db.models.data_hub.ScenarioAlert object at 0x000002280F165580>]",
+       "dur_ms": 661.468,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/comparisons",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 538.027,
+   "node_count": 3,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 3,
+     "dur_ms": 76.854,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 3,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 4,
+     "name": "list_comparisons",
+     "qual": "list_comparisons",
+     "file": "api/v1/routes/analysis.py",
+     "line": 111,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1338C0>"
+     },
+     "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002280F166A50>, <db.models.data_hub.DataHubComparison object at 0x000002280F166A80>, <db.models.data_hub.DataHubComparison object at 0x000002280F166AB0>]",
+     "dur_ms": 505.554,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 5,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1338C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "list_comparisons",
+       "qual": "ScenarioComparisonService.list_comparisons",
+       "file": "services/scenario_comparison_service.py",
+       "line": 35,
+       "args": {},
+       "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002280F166A50>, <db.models.data_hub.DataHubComparison object at 0x000002280F166A80>, <db.models.data_hub.DataHubComparison object at 0x000002280F166AB0>]",
+       "dur_ms": 505.494,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/comparisons/{comp_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Comparison not found",
+   "dur_ms": 888.983,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 0,
+     "dur_ms": 61.691,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comp_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "get_comparison",
+     "qual": "get_comparison",
+     "file": "api/v1/routes/analysis.py",
+     "line": 125,
+     "args": {
+      "comp_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F0FE120>"
+     },
+     "ret": "None",
+     "dur_ms": 857.334,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F0FE120>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 9,
+       "name": "get_comparison",
+       "qual": "ScenarioComparisonService.get_comparison",
+       "file": "services/scenario_comparison_service.py",
+       "line": 32,
+       "args": {
+        "comp_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 857.263,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/comparisons/{comp_id}/data",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Comparison not found",
+   "dur_ms": 278.561,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 0,
+     "dur_ms": 60.708,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comp_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10,
+     "name": "get_comparison_data",
+     "qual": "get_comparison_data",
+     "file": "api/v1/routes/analysis.py",
+     "line": 135,
+     "args": {
+      "comp_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1663C0>"
+     },
+     "ret": "None",
+     "dur_ms": 247.493,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1663C0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "build_comparison_data",
+       "qual": "ScenarioComparisonService.build_comparison_data",
+       "file": "services/scenario_comparison_service.py",
+       "line": 50,
+       "args": {
+        "comp_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 247.416,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/comparisons/{comp_id}/gap-analysis",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 843.77,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_gap_analyses"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_gap_analyses.id AS hub_gap_analyses_id, hub_gap_analyses.comparison_id AS hub_gap_analyses_comparison_id, hub_gap_analyses.gap_type AS hub_gap_analyses_gap_type, hub_gap_analyses.variable AS hub_gap_analyses_variable, hub_gap_analyses.region AS hub_gap_analyses_region, hub_gap_analyses.base_value AS hub_gap_analyses_base_value, hub_gap_analyses.target_value AS hub_gap_analyses_target_\u2026",
+     "tables": [
+      "hub_gap_analyses"
+     ],
+     "rowcount": 0,
+     "dur_ms": 70.596,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comp_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13,
+     "name": "get_gap_analysis",
+     "qual": "get_gap_analysis",
+     "file": "api/v1/routes/analysis.py",
+     "line": 176,
+     "args": {
+      "comp_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F166F60>"
+     },
+     "ret": "[]",
+     "dur_ms": 811.204,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 14,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F166F60>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "get_gap_analyses",
+       "qual": "ScenarioComparisonService.get_gap_analyses",
+       "file": "services/scenario_comparison_service.py",
+       "line": 285,
+       "args": {
+        "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "[]",
+       "dur_ms": 811.152,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/reports/download/{filename}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Report not found",
+   "dur_ms": 3.608,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "filename": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "download_report",
+     "qual": "download_report",
+     "file": "api/v1/routes/analysis.py",
+     "line": 454,
+     "args": {
+      "filename": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.661,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "GET /api/v1/analysis/scenarios/{scenario_id}/consistency-check",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 303.252,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_consistency_checks"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_consistency_checks.id AS hub_consistency_checks_id, hub_consistency_checks.scenario_id AS hub_consistency_checks_scenario_id, hub_consistency_checks.check_type AS hub_consistency_checks_check_type, hub_consistency_checks.status AS hub_consistency_checks_status, hub_consistency_checks.score AS hub_consistency_checks_score, hub_consistency_checks.issues AS hub_consistency_checks_issues,\u2026",
+     "tables": [
+      "hub_consistency_checks"
+     ],
+     "rowcount": 0,
+     "dur_ms": 65.893,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "array",
+    "len": 0,
+    "item0_keys": null
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 17,
+     "name": "get_consistency_checks",
+     "qual": "get_consistency_checks",
+     "file": "api/v1/routes/analysis.py",
+     "line": 197,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F167380>"
+     },
+     "ret": "[]",
+     "dur_ms": 273.663,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 18,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F167380>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "get_consistency_checks",
+       "qual": "ScenarioComparisonService.get_consistency_checks",
+       "file": "services/scenario_comparison_service.py",
+       "line": 441,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "[]",
+       "dur_ms": 273.611,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/alerts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 609.768,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "hub_alerts"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO hub_alerts (id, user_id, alert_type, ref_scenario_id, ref_source_id, title, message, is_read, created_at) VALUES (%(id)s, %(user_id)s, %(alert_type)s, %(ref_scenario_id)s, %(ref_source_id)s, %(title)s, %(message)s, %(is_read)s, %(created_at)s)'",
+     "tables": [
+      "hub_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.873,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_alerts.id, hub_alerts.user_id, hub_alerts.alert_type, hub_alerts.ref_scenario_id, hub_alerts.ref_source_id, hub_alerts.title, hub_alerts.message, hub_alerts.is_read, hub_alerts.created_at FROM hub_alerts WHERE hub_alerts.id = %(pk_1)s'",
+     "tables": [
+      "hub_alerts"
+     ],
+     "rowcount": 1,
+     "dur_ms": 64.686,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<AlertCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "ScenarioAlert",
+    "repr": "<db.models.data_hub.ScenarioAlert object at 0x000002280F1A0080>"
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "create_alert",
+     "qual": "create_alert",
+     "file": "api/v1/routes/analysis.py",
+     "line": 239,
+     "args": {
+      "body": "AlertCreate(alert_type='TEST_body_alert_type', title='TEST_body_title', message=None, user_id='default_user', ref_scenario_id=None, ref_source_id=None)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A06E0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002280EE5FEC0>, use_cache=True, scope=None)"
+     },
+     "ret": "<db.models.data_hub.ScenarioAlert object at 0x000002280F1A0080>",
+     "dur_ms": 574.859,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A06E0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "create_alert",
+       "qual": "ScenarioComparisonService.create_alert",
+       "file": "services/scenario_comparison_service.py",
+       "line": 461,
+       "args": {
+        "data": "{'alert_type': 'TEST_body_alert_type', 'title': 'TEST_body_title', 'message': None, 'user_id': 'default_user', 'ref_scenario_id': None, 'ref_source_id': None}"
+       },
+       "ret": "<db.models.data_hub.ScenarioAlert object at 0x000002280F1A0080>",
+       "dur_ms": 574.764,
+       "sql": [
+        0,
+        1
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 23,
+         "name": "<lambda>",
+         "qual": "ScenarioAlert.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 227,
+         "args": {},
+         "ret": "'53387407-5e23-461d-a061-e2151c40473d'",
+         "dur_ms": 0.194,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 24,
+         "name": "<lambda>",
+         "qual": "ScenarioAlert.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 235,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 17, 59, 12, 584309, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.158,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "PATCH /api/v1/analysis/alerts/{alert_id}/read",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/compare",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2214.848,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios",
+    "hub_trajectories"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 201.457,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT hub_trajectories.id AS hub_trajectories_id, hub_trajectories.scenario_id AS hub_trajectories_scenario_id, hub_trajectories.variable_name AS hub_trajectories_variable_name, hub_trajectories.variable_code AS hub_trajectories_variable_code, hub_trajectories.unit AS hub_trajectories_unit, hub_trajectories.region AS hub_trajectories_region, hub_trajectories.sector AS hub_trajectories_sector, h\u2026",
+     "tables": [
+      "hub_trajectories"
+     ],
+     "rowcount": 0,
+     "dur_ms": 164.441,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<AdhocComparisonRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "scenarios",
+     "groups",
+     "total_groups"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 25,
+     "name": "adhoc_compare",
+     "qual": "adhoc_compare",
+     "file": "api/v1/routes/analysis.py",
+     "line": 153,
+     "args": {
+      "body": "AdhocComparisonRequest(scenario_ids=['TEST_body_scenario_ids'], variables=[], regions=[], time_range={})",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A1820>"
+     },
+     "ret": "{'scenarios': [], 'groups': [], 'total_groups': 0}",
+     "dur_ms": 2159.917,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 26,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A1820>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "build_adhoc_comparison",
+       "qual": "ScenarioComparisonService.build_adhoc_comparison",
+       "file": "services/scenario_comparison_service.py",
+       "line": 60,
+       "args": {
+        "scenario_ids": "['TEST_body_scenario_ids']",
+        "variables": "[]",
+        "regions": "[]",
+        "time_range": "{}"
+       },
+       "ret": "{'scenarios': [], 'groups': [], 'total_groups': 0}",
+       "dur_ms": 2159.859,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 28,
+         "name": "_build_data",
+         "qual": "ScenarioComparisonService._build_data",
+         "file": "services/scenario_comparison_service.py",
+         "line": 67,
+         "args": {
+          "scenario_ids": "['TEST_body_scenario_ids']",
+          "variables": "[]",
+          "regions": "[]",
+          "time_range": "{}"
+         },
+         "ret": "{'scenarios': [], 'groups': [], 'total_groups': 0}",
+         "dur_ms": 2159.811,
+         "sql": [
+          0,
+          1
+         ],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/comparisons",
+   "status": "failed",
+   "http_status": 500,
+   "error": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) is not present in table \"hub_scenarios\".\n\n[SQL: INSERT INTO hub_comparisons (id, name, description, base_scenario_id, compare_scenario_ids, variable_filter, region_filte",
+   "dur_ms": 3327.602,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO hub_comparisons (id, name, description, base_scenario_id, compare_scenario_ids, variable_filter, region_filter, sector_filter, time_range, is_public, created_by, created_at, updated_at) VALUES (%(id)s, %(name)s, %(description)s, %(base_scenario_id)s, %(compare_scenario_ids)s, %(variable_filter)s, %(region_filter)s, %(sector_filter)s, %(time_range)s, %(is_public)s, %(created_by)s, %(c\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": null,
+     "dur_ms": 122.738,
+     "is_reference": false,
+     "error": "ForeignKeyViolation('insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) \u2026"
+    }
+   ],
+   "inputs": {
+    "body": "<ComparisonCreate (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29,
+     "name": "create_comparison",
+     "qual": "create_comparison",
+     "file": "api/v1/routes/analysis.py",
+     "line": 118,
+     "args": {
+      "body": "ComparisonCreate(name='TEST_body_name', description=None, base_scenario_id='TEST_body_base_scenario_id', compare_scenario_ids=[], variable_filter=[], region_filter=[], sector_filter=[], time_range={}, is_public=False, created_by='default_u\u2026",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A28D0>",
+      "_user": "Depends(dependency=<function get_current_user at 0x000002280EE5FEC0>, use_cache=True, scope=None)"
+     },
+     "ret": "None",
+     "dur_ms": 3326.054,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 30,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A28D0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "create_comparison",
+       "qual": "ScenarioComparisonService.create_comparison",
+       "file": "services/scenario_comparison_service.py",
+       "line": 25,
+       "args": {
+        "data": "{'name': 'TEST_body_name', 'description': None, 'base_scenario_id': 'TEST_body_base_scenario_id', 'compare_scenario_ids': [], 'variable_filter': [], 'region_filter': [], 'sector_filter': [], 'time_range': {}, 'is_public': False, 'created_b\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 3325.892,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 32,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 134,
+         "args": {},
+         "ret": "'47450b9a-7094-4fb8-bbe9-13378b7bbfb6'",
+         "dur_ms": 0.042,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 33,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 145,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 17, 59, 18, 369409, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 34,
+         "name": "<lambda>",
+         "qual": "DataHubComparison.<lambda>",
+         "file": "db/models/data_hub.py",
+         "line": 146,
+         "args": {},
+         "ret": "datetime.datetime(2026, 6, 30, 17, 59, 18, 369409, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "DELETE /api/v1/analysis/comparisons/{comp_id}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/comparisons/{comp_id}/gap-analysis",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Comparison or base scenario not found",
+   "dur_ms": 330.641,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_comparisons"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_comparisons.id AS hub_comparisons_id, hub_comparisons.name AS hub_comparisons_name, hub_comparisons.description AS hub_comparisons_description, hub_comparisons.base_scenario_id AS hub_comparisons_base_scenario_id, hub_comparisons.compare_scenario_ids AS hub_comparisons_compare_scenario_ids, hub_comparisons.variable_filter AS hub_comparisons_variable_filter, hub_comparisons.region_filt\u2026",
+     "tables": [
+      "hub_comparisons"
+     ],
+     "rowcount": 0,
+     "dur_ms": 62.546,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "comp_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "run_gap_analysis",
+     "qual": "run_gap_analysis",
+     "file": "api/v1/routes/analysis.py",
+     "line": 166,
+     "args": {
+      "comp_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1D6A80>"
+     },
+     "ret": "None",
+     "dur_ms": 297.456,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 36,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1D6A80>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 37,
+       "name": "run_gap_analysis",
+       "qual": "ScenarioComparisonService.run_gap_analysis",
+       "file": "services/scenario_comparison_service.py",
+       "line": 190,
+       "args": {
+        "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 297.368,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/custom-scenarios",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Base scenario not found",
+   "dur_ms": 550.347,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 87.936,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<CustomScenarioRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 38,
+     "name": "create_custom_scenario",
+     "qual": "create_custom_scenario",
+     "file": "api/v1/routes/analysis.py",
+     "line": 303,
+     "args": {
+      "body": "CustomScenarioRequest(name='TEST_body_name', description='', base_scenario_id='TEST_body_base_scenario_id', overrides=[])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A3110>"
+     },
+     "ret": "None",
+     "dur_ms": 520.849,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 39,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/custom_scenario_builder.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.147,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 40,
+       "name": "build_custom_scenario",
+       "qual": "build_custom_scenario",
+       "file": "services/custom_scenario_builder.py",
+       "line": 14,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A3110>",
+        "name": "'TEST_body_name'",
+        "description": "''",
+        "base_scenario_id": "'TEST_body_base_scenario_id'",
+        "overrides": "[]",
+        "created_by": "'default_user'"
+       },
+       "ret": "None",
+       "dur_ms": 496.141,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/impact",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 984.897,
+   "node_count": 13,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg WHERE portfolios_pg.id = %(pk_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 69.449,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<ImpactRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 41,
+     "name": "calculate_impact",
+     "qual": "calculate_impact",
+     "file": "api/v1/routes/analysis.py",
+     "line": 257,
+     "args": {
+      "body": "ImpactRequest(scenario_id='TEST_body_scenario_id', portfolio_id='TEST_body_portfolio_id', horizons=[2030, 2040, 2050])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1D5E20>"
+     },
+     "ret": "None",
+     "dur_ms": 695.464,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 42,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/impact_calculator.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.236,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 43,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "models.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 22.78,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 44,
+         "name": "AssetType",
+         "qual": "AssetType",
+         "file": "models.py",
+         "line": 7,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.061,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 45,
+         "name": "Sector",
+         "qual": "Sector",
+         "file": "models.py",
+         "line": 13,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.18,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 46,
+         "name": "Scenario",
+         "qual": "Scenario",
+         "file": "models.py",
+         "line": 22,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.057,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 47,
+         "name": "Company",
+         "qual": "Company",
+         "file": "models.py",
+         "line": 28,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.022,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 48,
+         "name": "Asset",
+         "qual": "Asset",
+         "file": "models.py",
+         "line": 35,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 49,
+         "name": "Portfolio",
+         "qual": "Portfolio",
+         "file": "models.py",
+         "line": 48,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.603,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 50,
+         "name": "ScenarioSeries",
+         "qual": "ScenarioSeries",
+         "file": "models.py",
+         "line": 58,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.04,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 51,
+         "name": "RatingMigration",
+         "qual": "RatingMigration",
+         "file": "models.py",
+         "line": 71,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.028,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 52,
+         "name": "ScenarioResult",
+         "qual": "ScenarioResult",
+         "file": "models.py",
+         "line": 77,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.026,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 53,
+         "name": "AnalysisRun",
+         "qual": "AnalysisRun",
+         "file": "models.py",
+         "line": 91,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.262,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/portfolio-upload/create",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'get'",
+   "dur_ms": 361.882,
+   "node_count": 4,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'INSERT INTO portfolios_pg (id, name, description, org_id, created_at, updated_at) VALUES (%(id)s, %(name)s, %(description)s, %(org_id)s::UUID, %(created_at)s, %(updated_at)s)'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 1,
+     "dur_ms": 84.147,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<PortfolioCreateFromUpload (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 54,
+     "name": "create_portfolio_from_upload",
+     "qual": "create_portfolio_from_upload",
+     "file": "api/v1/routes/analysis.py",
+     "line": 337,
+     "args": {
+      "body": "PortfolioCreateFromUpload(name='TEST_body_name', description='', assets=['TEST_body_assets'])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1D7C50>"
+     },
+     "ret": "None",
+     "dur_ms": 329.03,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 55,
+       "name": "<lambda>",
+       "qual": "PortfolioPG.<lambda>",
+       "file": "db/models/portfolio_pg.py",
+       "line": 69,
+       "args": {},
+       "ret": "'a4572ef2-f0c9-4bc1-91be-379e025caf11'",
+       "dur_ms": 0.069,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 56,
+       "name": "<lambda>",
+       "qual": "PortfolioPG.<lambda>",
+       "file": "db/models/portfolio_pg.py",
+       "line": 74,
+       "args": {},
+       "ret": "datetime.datetime(2026, 6, 30, 17, 59, 20, 635058, tzinfo=datetime.timezone.utc)",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 57,
+       "name": "<lambda>",
+       "qual": "PortfolioPG.<lambda>",
+       "file": "db/models/portfolio_pg.py",
+       "line": 75,
+       "args": {},
+       "ret": "datetime.datetime(2026, 6, 30, 17, 59, 20, 635058, tzinfo=datetime.timezone.utc)",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/portfolio-upload/parse",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 23.197,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "body": "<UploadParseRequest (mock)>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "assets",
+     "errors",
+     "warnings",
+     "raw_columns",
+     "column_mapping",
+     "total_rows",
+     "valid_rows"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 58,
+     "name": "parse_portfolio_file",
+     "qual": "parse_portfolio_file",
+     "file": "api/v1/routes/analysis.py",
+     "line": 330,
+     "args": {
+      "body": "UploadParseRequest(content='TEST_body_content', column_mapping=None)"
+     },
+     "ret": "{'assets': [], 'errors': [{'row': 0, 'error': 'No data rows found in file'}], 'warnings': [], 'raw_columns': ['TEST_body_content'], 'column_mapping': {}, 'total_rows': 1, 'valid_rows': 0}",
+     "dur_ms": 22.787,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 59,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/portfolio_upload.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.195,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 60,
+       "name": "parse_portfolio_csv",
+       "qual": "parse_portfolio_csv",
+       "file": "services/portfolio_upload.py",
+       "line": 32,
+       "args": {
+        "content": "'TEST_body_content'",
+        "column_mapping": "None"
+       },
+       "ret": "{'assets': [], 'errors': [{'row': 0, 'error': 'No data rows found in file'}], 'warnings': [], 'raw_columns': ['TEST_body_content'], 'column_mapping': {}, 'total_rows': 1, 'valid_rows': 0}",
+       "dur_ms": 0.961,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 61,
+         "name": "_auto_map_columns",
+         "qual": "_auto_map_columns",
+         "file": "services/portfolio_upload.py",
+         "line": 76,
+         "args": {
+          "columns": "['TEST_body_content']"
+         },
+         "ret": "{}",
+         "dur_ms": 0.038,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/reports/generate",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Portfolio not found",
+   "dur_ms": 382.902,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "portfolios_pg"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios_pg.id AS portfolios_pg_id, portfolios_pg.name AS portfolios_pg_name, portfolios_pg.description AS portfolios_pg_description, portfolios_pg.org_id AS portfolios_pg_org_id, portfolios_pg.created_at AS portfolios_pg_created_at, portfolios_pg.updated_at AS portfolios_pg_updated_at FROM portfolios_pg WHERE portfolios_pg.id = %(pk_1)s'",
+     "tables": [
+      "portfolios_pg"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.199,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "body": "<ReportRequest (mock)>",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 62,
+     "name": "generate_report",
+     "qual": "generate_report",
+     "file": "api/v1/routes/analysis.py",
+     "line": 381,
+     "args": {
+      "body": "ReportRequest(scenario_id='TEST_body_scenario_id', portfolio_id='TEST_body_portfolio_id', format='pdf', horizons=[2030, 2040, 2050])",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F1A2660>"
+     },
+     "ret": "None",
+     "dur_ms": 343.437,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 63,
+       "name": "<module>",
+       "qual": "<module>",
+       "file": "services/report_generator.py",
+       "line": 1,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 35.643,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 64,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/narrative_templates.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.322,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 65,
+           "name": "_SafeDict",
+           "qual": "_SafeDict",
+           "file": "services/narrative_templates.py",
+           "line": 48,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "analysis",
+   "label": "POST /api/v1/analysis/scenarios/{scenario_id}/consistency-check",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Scenario not found",
+   "dur_ms": 725.209,
+   "node_count": 3,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "hub_scenarios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT hub_scenarios.id AS hub_scenarios_id, hub_scenarios.source_id AS hub_scenarios_source_id, hub_scenarios.external_id AS hub_scenarios_external_id, hub_scenarios.name AS hub_scenarios_name, hub_scenarios.display_name AS hub_scenarios_display_name, hub_scenarios.description AS hub_scenarios_description, hub_scenarios.category AS hub_scenarios_category, hub_scenarios.model AS hub_scenarios_mo\u2026",
+     "tables": [
+      "hub_scenarios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 78.203,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "scenario_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 66,
+     "name": "run_consistency_check",
+     "qual": "run_consistency_check",
+     "file": "api/v1/routes/analysis.py",
+     "line": 187,
+     "args": {
+      "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x000002280F539640>"
+     },
+     "ret": "None",
+     "dur_ms": 693.543,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 67,
+       "name": "__init__",
+       "qual": "ScenarioComparisonService.__init__",
+       "file": "services/scenario_comparison_service.py",
+       "line": 20,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x000002280F539640>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 68,
+       "name": "run_consistency_check",
+       "qual": "ScenarioComparisonService.run_consistency_check",
+       "file": "services/scenario_comparison_service.py",
+       "line": 292,
+       "args": {
+        "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 693.469,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,796 @@
+{
+ "domain": "pe-deals",
+ "meta": {
+  "ts": "2026-07-01T10:05:42",
+  "endpoints": 12,
+  "module": "api.v1.routes.pe_deals",
+  "router_prefix": "/api/v1/pe-deals"
+ },
+ "transactions": [
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/db/deals",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 576.327,
+   "node_count": 6,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pe_deals"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM pe_deals WHERE 1=1 ORDER BY created_at DESC LIMIT %(lim)s'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 0,
+     "dur_ms": 73.92,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund_id": "None (default)",
+    "stage": "None (default)",
+    "sector": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "deals"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "db_list_deals",
+     "qual": "db_list_deals",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 296,
+     "args": {
+      "fund_id": "None",
+      "stage": "None",
+      "sector": "None"
+     },
+     "ret": "{'count': 0, 'deals': []}",
+     "dur_ms": 576.099,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 228,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000001C9B69C6870>",
+       "dur_ms": 2.071,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 3,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/pe_db_service.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.08,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 4,
+           "name": "PEDBService",
+           "qual": "PEDBService",
+           "file": "services/pe_db_service.py",
+           "line": 36,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.005,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 5,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 6,
+       "name": "list_deals",
+       "qual": "PEDBService.list_deals",
+       "file": "services/pe_db_service.py",
+       "line": 113,
+       "args": {
+        "fund_id": "None",
+        "stage": "None",
+        "sector": "None",
+        "limit": "100"
+       },
+       "ret": "[]",
+       "dur_ms": 573.976,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/db/deals/{deal_id}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: Deal 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 275.749,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pe_deals"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT * FROM pe_deals WHERE deal_id = %(did)s'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 0,
+     "dur_ms": 56.869,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "deal_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 7,
+     "name": "db_get_deal",
+     "qual": "db_get_deal",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 308,
+     "args": {
+      "deal_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 275.559,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 8,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 228,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000001C9B80DF2F0>",
+       "dur_ms": 0.039,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 9,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 10,
+       "name": "get_deal",
+       "qual": "PEDBService.get_deal",
+       "file": "services/pe_db_service.py",
+       "line": 104,
+       "args": {
+        "deal_id": "'550e8400-e29b-41d4-a716-446655440001'"
+       },
+       "ret": "None",
+       "dur_ms": 275.459,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/db/pipeline-summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 410.608,
+   "node_count": 5,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "pe_deals"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT stage, COUNT(*) as count, COALESCE(SUM(deal_size_eur), 0) as total_deal_size FROM pe_deals WHERE 1=1 GROUP BY stage ORDER BY count DESC'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 0,
+     "dur_ms": 71.944,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT sector, COUNT(*) as count, COALESCE(SUM(deal_size_eur), 0) as total_deal_size FROM pe_deals WHERE 1=1 GROUP BY sector ORDER BY count DESC'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.04,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT esg_screening_status, COUNT(*) as count FROM pe_deals WHERE 1=1 GROUP BY esg_screening_status'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.505,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT COUNT(*) as total_deals, COALESCE(SUM(deal_size_eur), 0) as total_pipeline_eur, COALESCE(AVG(entry_multiple), 0) as avg_entry_multiple FROM pe_deals WHERE 1=1'",
+     "tables": [
+      "pe_deals"
+     ],
+     "rowcount": 1,
+     "dur_ms": 34.588,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "fund_id": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "totals",
+     "by_stage",
+     "by_sector",
+     "by_screening_status"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11,
+     "name": "db_pipeline_summary",
+     "qual": "db_pipeline_summary",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 328,
+     "args": {
+      "fund_id": "None"
+     },
+     "ret": "{'totals': {'total_deals': 0.0, 'total_pipeline_eur': Decimal('0'), 'avg_entry_multiple': 0.0}, 'by_stage': [], 'by_sector': [], 'by_screening_status': []}",
+     "dur_ms": 410.368,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 228,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000001C9B80DFD70>",
+       "dur_ms": 0.044,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 13,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 14,
+       "name": "pipeline_summary",
+       "qual": "PEDBService.pipeline_summary",
+       "file": "services/pe_db_service.py",
+       "line": 465,
+       "args": {
+        "fund_id": "None"
+       },
+       "ret": "{'totals': {'total_deals': 0.0, 'total_pipeline_eur': Decimal('0'), 'avg_entry_multiple': 0.0}, 'by_stage': [], 'by_sector': [], 'by_screening_status': []}",
+       "dur_ms": 410.264,
+       "sql": [
+        0,
+        1,
+        2,
+        3
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 15,
+         "name": "_row_to_dict",
+         "qual": "_row_to_dict",
+         "file": "services/pe_db_service.py",
+         "line": 642,
+         "args": {
+          "row": "{'total_deals': 0, 'total_pipeline_eur': Decimal('0'), 'avg_entry_multiple': 0.0}"
+         },
+         "ret": "{'total_deals': 0.0, 'total_pipeline_eur': Decimal('0'), 'avg_entry_multiple': 0.0}",
+         "dur_ms": 0.031,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/db/sector-heatmap",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 270.108,
+   "node_count": 4,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "pe_sector_risk_heatmap"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT sector, environmental_risk, social_risk, governance_risk, transition_risk, physical_risk, overall_risk, rationale FROM pe_sector_risk_heatmap ORDER BY overall_risk DESC, sector'",
+     "tables": [
+      "pe_sector_risk_heatmap"
+     ],
+     "rowcount": 0,
+     "dur_ms": 56.29,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "sectors"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 16,
+     "name": "db_sector_heatmap",
+     "qual": "db_sector_heatmap",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 337,
+     "args": {},
+     "ret": "{'count': 0, 'sectors': []}",
+     "dur_ms": 269.953,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 17,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 228,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000001C9B80DFCE0>",
+       "dur_ms": 0.036,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 18,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 19,
+       "name": "get_sector_heatmap",
+       "qual": "PEDBService.get_sector_heatmap",
+       "file": "services/pe_db_service.py",
+       "line": 447,
+       "args": {},
+       "ret": "[]",
+       "dur_ms": 269.876,
+       "sql": [
+        0
+       ],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/sector-heatmap",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.198,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 20,
+     "name": "get_sector_heatmap",
+     "qual": "get_sector_heatmap",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'sectors': [{'sector': 'Energy', 'environmental': 5, 'social': 3, 'governance': 3, 'transition_risk': 5, 'physical_risk': 4, 'overall_risk': 4}, {'sector': 'Materials', 'environmental': 4, 'social': 3, 'governance': 3, 'transition_risk': \u2026",
+     "dur_ms": 0.056,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 21,
+       "name": "get_sector_heatmap",
+       "qual": "PEDealEngine.get_sector_heatmap",
+       "file": "services/pe_deal_engine.py",
+       "line": 392,
+       "args": {},
+       "ret": "[{'sector': 'Energy', 'environmental': 5, 'social': 3, 'governance': 3, 'transition_risk': 5, 'physical_risk': 4, 'overall_risk': 4}, {'sector': 'Materials', 'environmental': 4, 'social': 3, 'governance': 3, 'transition_risk': 4, 'physical\u2026",
+       "dur_ms": 0.022,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "GET /api/v1/pe-deals/sub-dimensions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.115,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "dimensions"
+    ],
+    "n_keys": 1
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 22,
+     "name": "get_sub_dimensions",
+     "qual": "get_sub_dimensions",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 217,
+     "args": {},
+     "ret": "{'dimensions': {'environmental': ['carbon_intensity', 'resource_efficiency', 'pollution_prevention', 'biodiversity_impact'], 'social': ['labor_practices', 'human_rights', 'community_impact', 'product_safety'], 'governance': ['board_structu\u2026",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 23,
+       "name": "get_sub_dimensions",
+       "qual": "PEDealEngine.get_sub_dimensions",
+       "file": "services/pe_deal_engine.py",
+       "line": 404,
+       "args": {},
+       "ret": "{'environmental': ['carbon_intensity', 'resource_efficiency', 'pollution_prevention', 'biodiversity_impact'], 'social': ['labor_practices', 'human_rights', 'community_impact', 'product_safety'], 'governance': ['board_structure', 'anti_corr\u2026",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "POST /api/v1/pe-deals/compare",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-deals",
+   "label": "PATCH /api/v1/pe-deals/db/deals/{deal_id}/stage",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-deals",
+   "label": "POST /api/v1/pe-deals/db/screen-and-persist",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'deal'",
+   "dur_ms": 0.169,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 24,
+     "name": "db_screen_and_persist",
+     "qual": "db_screen_and_persist",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 275,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.051,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 25,
+       "name": "_get_pe_db",
+       "qual": "_get_pe_db",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 228,
+       "args": {},
+       "ret": "<services.pe_db_service.PEDBService object at 0x000001C9B8144320>",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 26,
+         "name": "__init__",
+         "qual": "PEDBService.__init__",
+         "file": "services/pe_db_service.py",
+         "line": 43,
+         "args": {
+          "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "pe-deals",
+   "label": "POST /api/v1/pe-deals/db/seed-heatmap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-deals",
+   "label": "POST /api/v1/pe-deals/pipeline-summary",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "pe-deals",
+   "label": "POST /api/v1/pe-deals/screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'deal_id'",
+   "dur_ms": 0.123,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 27,
+     "name": "screen_deal",
+     "qual": "screen_deal",
+     "file": "api/v1/routes/pe_deals.py",
+     "line": 183,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.019,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 28,
+       "name": "_to_deal",
+       "qual": "_to_deal",
+       "file": "api/v1/routes/pe_deals.py",
+       "line": 78,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

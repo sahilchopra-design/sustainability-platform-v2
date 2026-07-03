@@ -1,0 +1,244 @@
+{
+ "domain": "nbs-finance",
+ "meta": {
+  "ts": "2026-06-30T14:03:23",
+  "module": "api.v1.routes.nbs_finance",
+  "router_prefix": "/api/v1/nbs-finance",
+  "endpoints": 6
+ },
+ "transactions": [
+  {
+   "domain": "nbs-finance",
+   "label": "GET /api/v1/nbs-finance/ref/gbf-target-2",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.713,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "gbf_target_2",
+     "gcf_nbs_support",
+     "cross_framework_links"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_gbf_target_2",
+     "qual": "ref_gbf_target_2",
+     "file": "api/v1/routes/nbs_finance.py",
+     "line": 144,
+     "args": {},
+     "ret": "{'gbf_target_2': {'target': 'Target 2', 'name': 'Restore 30% of Degraded Ecosystems by 2030 (30\u00d730 Restoration)', 'adopted': 'COP15, Kunming-Montreal, December 2022', 'headline': 'By 2030, ensure that at least 30% of areas of degraded terr\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nbs-finance",
+   "label": "GET /api/v1/nbs-finance/ref/iucn-criteria",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.684,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standard",
+     "edition",
+     "total_criteria",
+     "scoring_note",
+     "criteria"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_iucn_criteria",
+     "qual": "ref_iucn_criteria",
+     "file": "api/v1/routes/nbs_finance.py",
+     "line": 86,
+     "args": {},
+     "ret": "{'standard': 'IUCN Global Standard for Nature-based Solutions v2.0', 'edition': '2024', 'total_criteria': 8, 'scoring_note': 'Each criterion scored 0-100; composite = weighted average. Tiers: <40=not_eligible, 40-59=bronze, 60-74=silver, \u2265\u2026",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nbs-finance",
+   "label": "GET /api/v1/nbs-finance/ref/nbs-categories",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.463,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "nbs_categories",
+     "carbon_credit_standards",
+     "global_nbs_market"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_nbs_categories",
+     "qual": "ref_nbs_categories",
+     "file": "api/v1/routes/nbs_finance.py",
+     "line": 105,
+     "args": {},
+     "ret": "{'nbs_categories': {'reforestation': {'name': 'Reforestation & Afforestation', 'description': 'Planting trees on degraded or previously forested land', 'iucn_ecosystem': 'Terrestrial forests', 'sequestration_tco2_ha_yr': {'min': 3.0, 'max'\u2026",
+     "dur_ms": 0.167,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 4,
+       "name": "get_nbs_benchmarks",
+       "qual": "get_nbs_benchmarks",
+       "file": "services/nbs_finance_engine.py",
+       "line": 993,
+       "args": {},
+       "ret": "{'nbs_categories': {'reforestation': {'name': 'Reforestation & Afforestation', 'description': 'Planting trees on degraded or previously forested land', 'iucn_ecosystem': 'Terrestrial forests', 'sequestration_tco2_ha_yr': {'min': 3.0, 'max'\u2026",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nbs-finance",
+   "label": "GET /api/v1/nbs-finance/ref/vcmi-claims",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.315,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "framework",
+     "version",
+     "published",
+     "purpose",
+     "integrity_score_range",
+     "claims"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 5,
+     "name": "ref_vcmi_claims",
+     "qual": "ref_vcmi_claims",
+     "file": "api/v1/routes/nbs_finance.py",
+     "line": 120,
+     "args": {},
+     "ret": "{'framework': 'VCMI Core Carbon Claims Framework', 'version': 'v1.0', 'published': '2023', 'purpose': 'Provides guidance for companies making credible carbon claims beyond regulatory compliance, linked to high-quality carbon credit retirem\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nbs-finance",
+   "label": "POST /api/v1/nbs-finance/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'nbs_category'",
+   "dur_ms": 0.561,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 6,
+     "name": "assess_nbs",
+     "qual": "assess_nbs",
+     "file": "api/v1/routes/nbs_finance.py",
+     "line": 31,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "nbs-finance",
+   "label": "POST /api/v1/nbs-finance/blended-finance",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

@@ -1,0 +1,263 @@
+{
+ "domain": "food-system",
+ "meta": {
+  "ts": "2026-06-30T14:02:09",
+  "module": "api.v1.routes.food_system",
+  "router_prefix": "/api/v1/food-system",
+  "endpoints": 10
+ },
+ "transactions": [
+  {
+   "domain": "food-system",
+   "label": "GET /api/v1/food-system/ref/crop-regions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.423,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "crops",
+     "regions",
+     "combinations",
+     "source",
+     "rcp_scenarios",
+     "projection_year"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_crop_regions",
+     "qual": "ref_crop_regions",
+     "file": "api/v1/routes/food_system.py",
+     "line": 211,
+     "args": {},
+     "ret": "{'crops': ['wheat', 'maize', 'rice', 'soy', 'coffee', 'cocoa', 'sugarcane'], 'regions': ['south_asia', 'sub_saharan_africa', 'latin_america', 'southeast_asia', 'europe'], 'combinations': [{'crop': 'wheat', 'region': 'south_asia'}, {'crop':\u2026",
+     "dur_ms": 0.029,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "food-system",
+   "label": "GET /api/v1/food-system/ref/eudr-commodities",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.221,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "eudr_food_commodities",
+     "commodity_details",
+     "regulation",
+     "enforcement_date_large_operators",
+     "enforcement_date_sme"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2,
+     "name": "ref_eudr_commodities",
+     "qual": "ref_eudr_commodities",
+     "file": "api/v1/routes/food_system.py",
+     "line": 228,
+     "args": {},
+     "ret": "{'eudr_food_commodities': ['cattle', 'cocoa', 'coffee', 'oil_palm', 'soy'], 'commodity_details': [{'commodity': 'cattle', 'regulation_article': 'Annex I', 'cutoff_date': '2020-12-31', 'derived_products': ['beef', 'leather', 'tallow']}, {'c\u2026",
+     "dur_ms": 0.01,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "food-system",
+   "label": "GET /api/v1/food-system/ref/flag-sectors",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.252,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sectors",
+     "standard",
+     "scope",
+     "sbti_website"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 3,
+     "name": "ref_flag_sectors",
+     "qual": "ref_flag_sectors",
+     "file": "api/v1/routes/food_system.py",
+     "line": 190,
+     "args": {},
+     "ret": "{'sectors': [{'sector': 'cattle', 'flag_scope': True, 'required_reduction_pct': 30.0, 'removal_target_pct': 5.0, 'target_year': 2030, 'base_year': 2020}, {'sector': 'poultry_pigs', 'flag_scope': True, 'required_reduction_pct': 30.0, 'remov\u2026",
+     "dur_ms": 0.05,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/agricultural-emissions",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/eudr-food",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/fao-crop-yield",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/flag-targets",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/land-degradation",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/sbti-flag",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "food-system",
+   "label": "POST /api/v1/food-system/tnfd-food-leap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

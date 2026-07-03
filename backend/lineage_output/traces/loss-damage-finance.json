@@ -1,0 +1,734 @@
+{
+ "domain": "loss-damage-finance",
+ "meta": {
+  "ts": "2026-06-30T14:03:03",
+  "module": "api.v1.routes.loss_damage_finance",
+  "router_prefix": "/api/v1/loss-damage",
+  "endpoints": 8
+ },
+ "transactions": [
+  {
+   "domain": "loss-damage-finance",
+   "label": "GET /api/v1/loss-damage/ref/attribution-science",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.203,
+   "node_count": 7,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "framework",
+     "description",
+     "count",
+     "data"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 1,
+     "name": "ref_attribution_science",
+     "qual": "ref_attribution_science",
+     "file": "api/v1/routes/loss_damage_finance.py",
+     "line": 257,
+     "args": {},
+     "ret": "{'status': 'success', 'framework': 'World Weather Attribution (WWA) \u2014 Fraction of Attributable Risk (FAR)', 'description': 'FAR measures the fraction of observed hazard probability attributable to anthropogenic climate change. FAR = 1 \u2212 (P\u2026",
+     "dur_ms": 0.474,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'heat_wave', 'far': 0.9, 'far_pct': 90.0, 'confidence_level': 'very_high', 'method': 'FAR counterfactual modelling', 'reference': 'WWA 2021; IPCC AR6 WG1 Ch11.3', 'notes': 'Extreme heat events \u22655\u00d7 more likely due to human in\u2026"
+       },
+       "ret": "0.9",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'cyclone_intensification', 'far': 0.72, 'far_pct': 72.0, 'confidence_level': 'high', 'method': 'Rapid intensification probability shift \u2014 ensemble', 'reference': 'WWA / Kossin et al. 2020; AR6 WG1 Ch11.7', 'notes': 'Climate \u2026"
+       },
+       "ret": "0.72",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 4,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'drought', 'far': 0.55, 'far_pct': 55.0, 'confidence_level': 'medium', 'method': 'PDSI observational trend attribution', 'reference': 'WWA 2023; IPCC AR6 WG2 Ch16.2', 'notes': 'Lower confidence due to ENSO natural variabilit\u2026"
+       },
+       "ret": "0.55",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 5,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'coastal_flooding', 'far': 0.65, 'far_pct': 65.0, 'confidence_level': 'high', 'method': 'Sea level rise contribution \u2014 tide gauge + altimetry', 'reference': 'IPCC AR6 WG1 Ch9; SROCC 2019', 'notes': 'Climate SLR significantly\u2026"
+       },
+       "ret": "0.65",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 6,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'wildfire', 'far': 0.6, 'far_pct': 60.0, 'confidence_level': 'medium_high', 'method': 'Fire weather index trend attribution \u2014 reanalysis', 'reference': 'WWA 2021; Abatzoglou & Williams 2016', 'notes': 'Regional variation sig\u2026"
+       },
+       "ret": "0.6",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 7,
+       "name": "<lambda>",
+       "qual": "ref_attribution_science.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 278,
+       "args": {
+        "x": "{'event_type': 'crop_failure', 'far': 0.5, 'far_pct': 50.0, 'confidence_level': 'medium', 'method': 'Crop yield sensitivity \u2014 GAEZ climate scenarios', 'reference': 'IPCC AR6 WG2 Ch5; Lobell & Burke 2010', 'notes': 'Confounded by irrigation\u2026"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "GET /api/v1/loss-damage/ref/cop28-fund",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.588,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "data"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 8,
+     "name": "ref_cop28_fund",
+     "qual": "ref_cop28_fund",
+     "file": "api/v1/routes/loss_damage_finance.py",
+     "line": 236,
+     "args": {},
+     "ret": "{'status': 'success', 'data': {'formal_name': 'Fund for responding to Loss and Damage', 'established': 'COP28, Dubai, December 2023', 'legal_basis': 'Decision 5/CP.28; Paris Agreement Article 8', 'initial_pledges_usd_bn': 0.792, 'secretari\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "GET /api/v1/loss-damage/ref/v20-profiles",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.039,
+   "node_count": 26,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "count",
+     "source",
+     "data"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 9,
+     "name": "ref_v20_profiles",
+     "qual": "ref_v20_profiles",
+     "file": "api/v1/routes/loss_damage_finance.py",
+     "line": 171,
+     "args": {},
+     "ret": "{'status': 'success', 'count': 25, 'source': 'V20 Vulnerable Twenty Group; UNFCCC SIDS/LDC registry; World Bank CRED EM-DAT', 'data': [{'iso': 'TUV', 'name': 'Tuvalu', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.02, 'insured_loss\u2026",
+     "dur_ms": 0.752,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'BGD', 'name': 'Bangladesh', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 3.72, 'insured_loss_pct': 3.0, 'climate_vulnerability_score': 88, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, 'L\u2026"
+       },
+       "ret": "88",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'PHL', 'name': 'Philippines', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 4.1, 'insured_loss_pct': 6.5, 'climate_vulnerability_score': 85, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member'\u2026"
+       },
+       "ret": "85",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'VNM', 'name': 'Vietnam', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 3.25, 'insured_loss_pct': 5.0, 'climate_vulnerability_score': 80, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, '\u2026"
+       },
+       "ret": "80",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'IDN', 'name': 'Indonesia', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 2.9, 'insured_loss_pct': 7.0, 'climate_vulnerability_score': 77, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, \u2026"
+       },
+       "ret": "77",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 14,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'MDV', 'name': 'Maldives', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 0.38, 'insured_loss_pct': 4.0, 'climate_vulnerability_score': 95, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': True, 'LDC_\u2026"
+       },
+       "ret": "95",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 15,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'FJI', 'name': 'Fiji', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.22, 'insured_loss_pct': 5.5, 'climate_vulnerability_score': 83, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': True, 'LDC_\u2026"
+       },
+       "ret": "83",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 16,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'HTI', 'name': 'Haiti', 'region': 'Caribbean', 'annual_economic_loss_usd_bn': 0.85, 'insured_loss_pct': 1.5, 'climate_vulnerability_score': 91, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': False, '\u2026"
+       },
+       "ret": "91",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 17,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'ETH', 'name': 'Ethiopia', 'region': 'Sub-Saharan Africa', 'annual_economic_loss_usd_bn': 1.65, 'insured_loss_pct': 1.0, 'climate_vulnerability_score': 84, 'primary_peril': 'drought', 'V20_member': True, 'SIDS_member': False, 'LDC_\u2026"
+       },
+       "ret": "84",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 18,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'KEN', 'name': 'Kenya', 'region': 'Sub-Saharan Africa', 'annual_economic_loss_usd_bn': 1.3, 'insured_loss_pct': 3.0, 'climate_vulnerability_score': 76, 'primary_peril': 'drought', 'V20_member': True, 'SIDS_member': False, 'LDC_memb\u2026"
+       },
+       "ret": "76",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 19,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'GHA', 'name': 'Ghana', 'region': 'Sub-Saharan Africa', 'annual_economic_loss_usd_bn': 0.72, 'insured_loss_pct': 2.5, 'climate_vulnerability_score': 70, 'primary_peril': 'drought', 'V20_member': True, 'SIDS_member': False, 'LDC_mem\u2026"
+       },
+       "ret": "70",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 20,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'MOZ', 'name': 'Mozambique', 'region': 'Sub-Saharan Africa', 'annual_economic_loss_usd_bn': 0.95, 'insured_loss_pct': 1.2, 'climate_vulnerability_score': 87, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_mem\u2026"
+       },
+       "ret": "87",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 21,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'NPL', 'name': 'Nepal', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 0.48, 'insured_loss_pct': 2.0, 'climate_vulnerability_score': 79, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, 'LDC_me\u2026"
+       },
+       "ret": "79",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 22,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'BTN', 'name': 'Bhutan', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 0.12, 'insured_loss_pct': 1.5, 'climate_vulnerability_score': 72, 'primary_peril': 'coastal_flooding', 'V20_member': False, 'SIDS_member': False, 'LDC_\u2026"
+       },
+       "ret": "72",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 23,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'KHM', 'name': 'Cambodia', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 0.55, 'insured_loss_pct': 1.8, 'climate_vulnerability_score': 75, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, \u2026"
+       },
+       "ret": "75",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 24,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'MMR', 'name': 'Myanmar', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 1.05, 'insured_loss_pct': 1.5, 'climate_vulnerability_score': 82, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': F\u2026"
+       },
+       "ret": "82",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 25,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'LAO', 'name': 'Laos', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 0.3, 'insured_loss_pct': 1.0, 'climate_vulnerability_score': 71, 'primary_peril': 'coastal_flooding', 'V20_member': False, 'SIDS_member': False, 'LDC\u2026"
+       },
+       "ret": "71",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 26,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'HND', 'name': 'Honduras', 'region': 'Central America', 'annual_economic_loss_usd_bn': 0.62, 'insured_loss_pct': 4.0, 'climate_vulnerability_score': 78, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member':\u2026"
+       },
+       "ret": "78",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 27,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'NIC', 'name': 'Nicaragua', 'region': 'Central America', 'annual_economic_loss_usd_bn': 0.45, 'insured_loss_pct': 3.5, 'climate_vulnerability_score': 76, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member'\u2026"
+       },
+       "ret": "76",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 28,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'SLV', 'name': 'El Salvador', 'region': 'Central America', 'annual_economic_loss_usd_bn': 0.38, 'insured_loss_pct': 5.0, 'climate_vulnerability_score': 73, 'primary_peril': 'drought', 'V20_member': True, 'SIDS_member': False, 'LDC_\u2026"
+       },
+       "ret": "73",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 29,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'BLZ', 'name': 'Belize', 'region': 'Caribbean', 'annual_economic_loss_usd_bn': 0.14, 'insured_loss_pct': 6.0, 'climate_vulnerability_score': 74, 'primary_peril': 'cyclone_intensification', 'V20_member': False, 'SIDS_member': True, \u2026"
+       },
+       "ret": "74",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'JAM', 'name': 'Jamaica', 'region': 'Caribbean', 'annual_economic_loss_usd_bn': 0.28, 'insured_loss_pct': 7.0, 'climate_vulnerability_score': 72, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': True, \u2026"
+       },
+       "ret": "72",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 31,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'VUT', 'name': 'Vanuatu', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.09, 'insured_loss_pct': 3.0, 'climate_vulnerability_score': 86, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': True, 'L\u2026"
+       },
+       "ret": "86",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 32,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'SLB', 'name': 'Solomon Islands', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.07, 'insured_loss_pct': 2.0, 'climate_vulnerability_score': 84, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': True, '\u2026"
+       },
+       "ret": "84",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 33,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'KIR', 'name': 'Kiribati', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.04, 'insured_loss_pct': 1.5, 'climate_vulnerability_score': 97, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': True, 'LDC_mem\u2026"
+       },
+       "ret": "97",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 34,
+       "name": "<lambda>",
+       "qual": "ref_v20_profiles.<locals>.<lambda>",
+       "file": "api/v1/routes/loss_damage_finance.py",
+       "line": 196,
+       "args": {
+        "x": "{'iso': 'TUV', 'name': 'Tuvalu', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.02, 'insured_loss_pct': 1.0, 'climate_vulnerability_score': 99, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': True, 'LDC_membe\u2026"
+       },
+       "ret": "99",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "GET /api/v1/loss-damage/ref/wim-structure",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.329,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "mechanism",
+     "established",
+     "legal_basis",
+     "executive_committee",
+     "count",
+     "data"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 35,
+     "name": "ref_wim_structure",
+     "qual": "ref_wim_structure",
+     "file": "api/v1/routes/loss_damage_finance.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'status': 'success', 'mechanism': 'Warsaw International Mechanism for Loss and Damage (WIM)', 'established': 'COP19, Warsaw, November 2013 \u2014 Decision 2/CP.19', 'legal_basis': 'Paris Agreement Article 8', 'executive_committee': 'WIM ExCom \u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "POST /api/v1/loss-damage/assess",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: Internal server error during L&D assessment.",
+   "dur_ms": 11.603,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "request": "'TEST_request' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 36,
+     "name": "assess_loss_damage",
+     "qual": "assess_loss_damage",
+     "file": "api/v1/routes/loss_damage_finance.py",
+     "line": 50,
+     "args": {
+      "request": "'TEST_request'"
+     },
+     "ret": "None",
+     "dur_ms": 11.259,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "POST /api/v1/loss-damage/parametric-trigger",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "POST /api/v1/loss-damage/protection-gap",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "loss-damage-finance",
+   "label": "POST /api/v1/loss-damage/regional-mechanism",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}
