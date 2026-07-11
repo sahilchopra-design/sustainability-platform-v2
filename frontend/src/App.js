@@ -159,6 +159,7 @@ import LiveFeedManagerPage from './features/live-feed-manager/pages/LiveFeedMana
 import DataLineagePage from './features/data-lineage/pages/DataLineagePage';
 import BrsrBridgePage from './features/brsr-bridge/pages/BrsrBridgePage';
 import DataInfraHubPage from './features/data-infra-hub/pages/DataInfraHubPage';
+import TeamAccessHubPage from './features/team-access-hub/pages/TeamAccessHubPage';
 // Sprint Q — Taxonomy & Classification Engine
 import EuTaxonomyEnginePage from './features/eu-taxonomy-engine/pages/EuTaxonomyEnginePage';
 import SfdrClassificationPage from './features/sfdr-classification/pages/SfdrClassificationPage';
@@ -571,6 +572,7 @@ const NAV_GROUPS = [
     { path: '/data-governance',            label: 'Data Governance',            badge: '15 Policies · 8 Domains · Ownership',  code: 'EP-S5' },
   ]},
   { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
+    { path: '/team-access-hub',           label: 'Team Access Hub',            badge: 'All Modules · Supabase Registry · Access · Deployments', code: 'EP-OPS1' },
     { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
     { path: '/api-orchestration',         label: 'API Orchestration',          badge: '10 Sources · 6 Pipelines',       code: 'EP-P1' },
     { path: '/data-quality-monitor',      label: 'Data Quality Monitor',       badge: '656 Companies · 6 Dimensions',   code: 'EP-P2' },
@@ -1160,6 +1162,7 @@ function AppContent() {
             <Route path="/data-lineage"              element={<DataLineagePage />} />
             <Route path="/brsr-bridge"               element={<BrsrBridgePage />} />
             <Route path="/data-infra-hub"            element={<DataInfraHubPage />} />
+            <Route path="/team-access-hub"           element={<TeamAccessHubPage />} />
             {/* Sprint Q — Taxonomy & Classification */}
             <Route path="/eu-taxonomy-engine"        element={<EuTaxonomyEnginePage />} />
             <Route path="/sfdr-classification"       element={<SfdrClassificationPage />} />
