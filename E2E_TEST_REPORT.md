@@ -109,7 +109,65 @@ complete multi-hop `LineageChain` (~71 KB) across the now fully-consistent 88-no
 Referential integrity restored (0 orphan edges, was 27) means gap detection and quality propagation
 now traverse the entire platform instead of silently stopping at missing nodes.
 
-## 7. How to Re-run
+## 7. Phase 2 — Live Backend Integration Run (567 previously-blocked tests)
+
+Executed by provisioning the full stack inside the test environment: local PostgreSQL 16 +
+PostGIS, the complete alembic chain, and uvicorn serving all 258 routers on `:8001`, then running
+the entire suite with `REACT_APP_BACKEND_URL` set.
+
+**Result: 2,152 passed / 129 failed / 37 skipped** — up from 1,604 passed / 567 environment-blocked.
+548 additional tests now execute and pass against the live API.
+
+### Migration chain: 9 more defects found & fixed (the chain had NEVER been fresh-replayable)
+
+| # | Migration | Defect | Fix |
+|---|---|---|---|
+| 12 | `057` (EIOPA/SFDR) | Python `SyntaxError` ×3 — positional `sa.ForeignKey` after `nullable=False` keyword; the file could not even be imported, so `alembic upgrade` crashed on any machine | Argument order corrected |
+| 13 | `056` | `down_revision = "055_add_org_id_to_portfolios_pg"` — revision id is actually `"055"`; broken revision map (KeyError) | Points to `"055"` |
+| 14 | `059` | `down_revision = "058c"` — no migration 058\* exists at all | Points to `057_add_eiopa_sfdr_assurance_tables` |
+| 15 | `055` | Unconditionally re-adds `portfolios_pg.org_id`, which guarded migration `025` already adds → `DuplicateColumn` on every fresh replay | Rewritten idempotent (guarded adds + `IF NOT EXISTS` indexes) |
+| 16 | `061` vs `009` | Both create `tcfd_assessments` with incompatible schemas → `DuplicateTable` | 061 renames any legacy 009 table to `tcfd_assessments_legacy_009` first |
+| 17 | `080/081/082/086` vs `067/068/069/071` | Same duplicate-table collision for `just_transition_assessments`, `water_risk_assessments`, `green_hydrogen_assessments`, `social_taxonomy_assessments`, `forced_labour_assessments` | Same rename-aside guard, keyed on a column unique to the newer schema |
+| 18 | `061` | `eu_gbs_reports.bond_id` FK references `eu_gbs_issuances.bond_id`, which had no unique constraint → `InvalidForeignKey` on every PostgreSQL | `bond_id` made unique |
+| 19 | `025` | Seed INSERT relied on table-level defaults for `is_active`/timestamps → fails when the table pre-exists from ORM `create_all` (server booted before migrating) | INSERT specifies all NOT NULL columns explicitly |
+| 20 | `026` | Partitioned `audit_log` creation fails permanently if the server ever booted before migrating (plain ORM table blocks it) | Non-partitioned pre-existing table renamed aside |
+
+### New: migration `088_reconcile_orm_schema_drift`
+
+A live model-vs-database diff found **50 columns declared in `db/models/` that no migration ever
+created** (the production DB was patched by hand): 6 on `audit_log`, 17 across four `cbam_*` tables,
+27 on `dh_data_sources`. Additionally `cbam_certificate_price.price_date` was `DATE` in migration 001
+but `String(10)` in the model (year-only seeds crashed), and migration 002 created
+`fossil_fuel_reserve` with **quoted mixed-case columns** (`"proven_reserves_mmBOE"`) that the
+stranded-assets service queries unquoted — every `/api/v1/stranded-assets/*` endpoint returned 500
+on a fresh database. Migration 088 adds all drifted columns idempotently, folds the mixed-case
+columns to lowercase, converts the price-date type, and backfills — a no-op on already-patched DBs.
+
+### Defect 21: rate limiter blocks the platform's own test suite
+
+The first live run returned **482 failures, almost all HTTP 429**: `middleware/rate_limiter.py`
+had no off-switch, so the suite tripped the per-IP sliding window within seconds. Added a
+`RATE_LIMIT_ENABLED` env gate (default **on** — production behaviour unchanged); with
+`RATE_LIMIT_ENABLED=false` the suite runs cleanly.
+
+### Remaining 129 failures — classified, not defects fixed here
+
+Dominated by tests asserting on **production data snapshots** a fresh database cannot have
+(portfolios with pre-loaded properties, seeded NGFS scenario libraries, company registries —
+e.g. `test_portfolio_analytics` expects `total_properties > 0` on the production book), plus a
+long tail of the same ORM-vs-raw-SQL drift class in less-used engine tables, and some
+order-dependent tests (`test_ngfs_scenarios` passes standalone). Next step for full green:
+a seed-data fixture pack or an anonymised production snapshot for CI.
+
+### Verified end-state
+
+- Fresh PostgreSQL + the 4 documented pre-existing tables (`counterparty`, `scenario`,
+  `dh_data_sources`, wide `alembic_version`) → **`alembic upgrade head` completes in one shot to
+  `088`** (81 migrations + reconciliation) — previously impossible.
+- `uvicorn server:app` boots all 258 routers; `/docs` 200; CBAM seed, stranded-assets dashboard
+  and reserves endpoints verified returning live data end-to-end.
+
+## 8. How to Re-run
 
 ```bash
 # Frontend route sweep + engine tests (Node, headless Chromium)
@@ -121,5 +179,13 @@ cd backend && python -m pytest tests/test_data_lineage.py tests/test_climate_phy
   tests/test_climate_transition_risk.py tests/test_stress_test_pd_backtest.py \
   tests/test_lgd_vintage.py tests/test_schemas.py -q
 
-# Full suite (requires running backend + DB): set REACT_APP_BACKEND_URL and start uvicorn first
+# Full live-server integration suite (validated recipe from Phase 2)
+initdb -D ./pgdata -U postgres --auth=trust && pg_ctl -D ./pgdata -o "-p 5433" start
+createdb -h 127.0.0.1 -p 5433 -U postgres platform
+psql ... # create the 4 pre-existing prerequisites (see §7: counterparty, scenario,
+         # dh_data_sources, wide alembic_version) — install postgresql-16-postgis-3 first
+cd backend
+DATABASE_URL=postgresql://postgres@127.0.0.1:5433/platform alembic upgrade head
+DATABASE_URL=... REQUIRE_AUTH=false RATE_LIMIT_ENABLED=false uvicorn server:app --port 8001 &
+REACT_APP_BACKEND_URL=http://127.0.0.1:8001 DATABASE_URL=... python -m pytest tests/ -q
 ```

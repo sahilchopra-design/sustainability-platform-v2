@@ -27,7 +27,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID
 
 revision = "056_add_ets_product_benchmarks"
-down_revision = "055_add_org_id_to_portfolios_pg"
+down_revision = "055"
 branch_labels = None
 depends_on = None
 

@@ -31,6 +31,14 @@ from starlette.responses import JSONResponse
 
 WINDOW_SECONDS = 60
 
+# Env gate — set RATE_LIMIT_ENABLED=false in test/CI environments so the
+# integration suite can exercise the API without tripping the limiter.
+# Defaults to enabled; production behaviour is unchanged.
+import os
+RATE_LIMIT_ENABLED: bool = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() not in (
+    "false", "0", "no", "off",
+)
+
 # Path prefix -> (max_requests_per_window, label)
 RATE_TIERS = [
     # Tier 1: Heavy calculation endpoints (most restrictive)
@@ -173,6 +181,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(self, request: Request, call_next):
+        if not RATE_LIMIT_ENABLED:
+            return await call_next(request)
+
         path = request.url.path
         method = request.method
 

@@ -96,6 +96,21 @@ def upgrade():
 
     # ── E89: Just Transition Finance ─────────────────────────────────────────
     # ILO Just Transition Guidelines 2015 · EU JTF Reg 2021/1056 · OECD · PPCA · CIF
+    # Migration 069 (E44-E47) already creates a just_transition_assessments table
+    # with an incompatible schema (no country_code). Preserve it under a legacy
+    # suffix so this table and its indexes create cleanly on fresh replays.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.just_transition_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'just_transition_assessments' AND column_name = 'country_code'
+            ) THEN
+                ALTER TABLE just_transition_assessments RENAME TO just_transition_assessments_legacy_069;
+            END IF;
+        END
+        $$;
+    """)
     op.execute("""
         CREATE TABLE IF NOT EXISTS just_transition_assessments (
             id                          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
