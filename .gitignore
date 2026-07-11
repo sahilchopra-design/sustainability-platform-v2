@@ -7,3 +7,4 @@ nul
 frontend/scripts/module_seed.sql
 __pycache__/
 *.pyc
+backend/reports_output/analysis_export_*
