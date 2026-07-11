@@ -80,9 +80,12 @@ const HOLDINGS = [
 const TOTAL_PORTFOLIO = HOLDINGS.reduce((s, h) => s + h.marketCap * h.weight, 0);
 
 // ─── Credit sector mapping ────────────────────────────────────────────────────
+// SECTOR_LGD_UPLIFT covers only 10 of the 20 PD sectors and is not index-aligned —
+// match by sector name; sectors without collateral-haircut data get zero LGD uplift.
+const LGD_ZERO = { nz2050:0, b2c:0, dnz:0, dt:0, ndc:0, cp:0 };
 const CREDIT_SECTORS = SECTOR_PD_UPLIFT.map((pd, i) => ({
   ...pd,
-  lgd: SECTOR_LGD_UPLIFT[i],
+  lgd: SECTOR_LGD_UPLIFT.find(l => l.sector === pd.sector) || LGD_ZERO,
   exposure: +(sr(i * 7) * 100 + 50).toFixed(1),
 }));
 

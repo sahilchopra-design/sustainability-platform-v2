@@ -59,7 +59,12 @@ class TestModuleSignatures:
                  "scenarios", "nature", "risk", "regulatory", "valuation",
                  "real_estate", "private_equity", "infrastructure",
                  "geopolitical", "insurance", "banking", "mining", "agriculture",
-                 "sustainability", "climate_risk"}
+                 "sustainability", "climate_risk",
+                 # categories added by later sprints (kept in sync with
+                 # services/data_lineage_service.py MODULE_SIGNATURES)
+                 "asset_management", "overlay", "cross_cutting", "sector",
+                 "governance", "banking_risk", "regulatory_taxonomy",
+                 "climate_transition", "dme", "sentiment"}
         for mod_id, sig in MODULE_SIGNATURES.items():
             assert sig["category"] in known, f"{mod_id} has unknown category: {sig['category']}"
 
