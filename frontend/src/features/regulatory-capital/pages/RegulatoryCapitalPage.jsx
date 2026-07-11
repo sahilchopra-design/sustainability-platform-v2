@@ -52,7 +52,7 @@ function Tab1({institutionType, totalAssets, approach}) {
 
   const run = useCallback(async()=>{
     setLoading(true); setError(null);
-    try { const r=await axios.post('http://localhost:8001/api/v1/regulatory-capital/calculate-ratios',{institution_type:institutionType,total_assets_eur_bn:totalAssets,approach}); setResult(r.data); }
+    try { const r=await axios.post((process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001') + '/api/v1/regulatory-capital/calculate-ratios',{institution_type:institutionType,total_assets_eur_bn:totalAssets,approach}); setResult(r.data); }
     catch(e){ setError('API unavailable — showing deterministic demo data.'); setResult({}); }
     setLoading(false);
   },[institutionType,totalAssets,approach]);
@@ -111,7 +111,7 @@ function Tab2({approach}) {
 
   const run = useCallback(async()=>{
     setLoading(true); setError(null);
-    try { await axios.post('http://localhost:8001/api/v1/regulatory-capital/calculate-ratios',{approach}); }
+    try { await axios.post((process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001') + '/api/v1/regulatory-capital/calculate-ratios',{approach}); }
     catch { setError('API unavailable — demo mode.'); }
     setLoading(false);
   },[approach]);

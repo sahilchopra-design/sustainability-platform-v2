@@ -6,7 +6,7 @@ import {
   LineChart, Line, PieChart, Pie, Cell,
 } from 'recharts';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const hashStr = (s) => s.split('').reduce((a, c) => (Math.imul(31, a) + c.charCodeAt(0)) | 0, 0);
 const seededRandom = (seed) => { let x = Math.sin(Math.abs(seed) * 9301 + 49297) * 233280; return x - Math.floor(x); };
 const sr = (seed, offset = 0) => seededRandom(seed + offset);

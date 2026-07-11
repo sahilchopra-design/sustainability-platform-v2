@@ -7,7 +7,7 @@ import {
 import DataUploadPanel from '../../../components/DataUploadPanel';
 import { useTestData } from '../../../context/TestDataContext';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const T = {
   bg: '#f6f4f0', navy: '#1b3a5c', gold: '#c5a96a', sage: '#5a8a6a',
   card: '#ffffff', border: '#e2ddd5', text: '#2c2c2c', sub: '#6b7280',

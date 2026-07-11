@@ -4,7 +4,7 @@ import {
   CartesianGrid, Cell
 } from 'recharts';
 
-const API = 'http://localhost:8000';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 // ── Theme ──────────────────────────────────────────────────────────────────
 const T = {
