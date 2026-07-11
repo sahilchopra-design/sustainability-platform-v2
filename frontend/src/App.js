@@ -240,6 +240,7 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+import ClimateCollateralFrameworkPage from './features/climate-collateral-framework/pages/ClimateCollateralFrameworkPage';
 // Sprint AH — Regulatory Reporting & Disclosure Automation
 import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
 import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
@@ -477,6 +478,7 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+    { path: '/climate-collateral-framework', label: 'Climate Collateral Framework',  badge: 'Haircuts · LTV · LGD · ECB E8.4 · EBA LOM §7 · 60 Items · 9 Classes', code: 'EP-AJ7' },
   ]},
   { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
     { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
@@ -1241,6 +1243,7 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            <Route path="/climate-collateral-framework"  element={<ClimateCollateralFrameworkPage />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
             <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
             <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
