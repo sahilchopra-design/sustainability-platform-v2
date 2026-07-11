@@ -82,7 +82,22 @@ def upgrade() -> None:
 
     # ------------------------------------------------------------------
     # E13 — TCFD: tcfd_assessments
+    # Migration 009 already created a legacy table with this name and an
+    # incompatible schema (UUID id, regulatory_entities FK). Preserve it
+    # under a _legacy_009 suffix so this create succeeds on fresh replays.
     # ------------------------------------------------------------------
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.tcfd_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'tcfd_assessments' AND column_name = 'assessment_id'
+            ) THEN
+                ALTER TABLE tcfd_assessments RENAME TO tcfd_assessments_legacy_009;
+            END IF;
+        END
+        $$;
+    """)
     op.create_table(
         "tcfd_assessments",
         sa.Column(
@@ -184,7 +199,7 @@ def upgrade() -> None:
             server_default=sa.text("gen_random_uuid()::text"),
         ),
         sa.Column("assessment_id", sa.Text, nullable=False, unique=True),
-        sa.Column("bond_id", sa.Text, nullable=False),
+        sa.Column("bond_id", sa.Text, nullable=False, unique=True),
         sa.Column("issuer_name", sa.Text, nullable=False),
         sa.Column("bond_type", sa.Text, nullable=True),
         sa.Column("principal_amount", sa.Float, nullable=True),

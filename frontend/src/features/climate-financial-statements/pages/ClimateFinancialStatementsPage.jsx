@@ -7,7 +7,7 @@ import {
   ComposedChart,
 } from 'recharts';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const seed = (s) => { let x = Math.sin(s * 2.7 + 1) * 10000; return x - Math.floor(x); };
 
 const KpiCard = ({ label, value, sub, accent }) => (

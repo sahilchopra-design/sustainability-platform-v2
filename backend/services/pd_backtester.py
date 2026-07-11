@@ -334,7 +334,7 @@ class PDBacktester:
         fpr_arr = np.concatenate([[0.0], fpr_arr])
 
         # AUROC via trapezoidal rule
-        auroc = float(np.trapz(tpr_arr, fpr_arr))
+        auroc = float(np.trapezoid(tpr_arr, fpr_arr))  # np.trapz removed in NumPy 2.0
         auroc = max(0.0, min(1.0, auroc))
 
         # Sample up to 100 points for curve

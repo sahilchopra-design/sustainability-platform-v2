@@ -33,6 +33,23 @@ depends_on = None
 
 
 def upgrade():
+    # If the server ever booted before migrations ran, SQLAlchemy
+    # Base.metadata.create_all() will have created a plain (non-partitioned)
+    # audit_log from the ORM model, which blocks the partitioned table below.
+    # Preserve any such table aside instead of failing the whole chain.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.audit_log') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM pg_partitioned_table pt
+                JOIN pg_class c ON c.oid = pt.partrelid
+                WHERE c.relname = 'audit_log'
+            ) THEN
+                ALTER TABLE audit_log RENAME TO audit_log_prepartition;
+            END IF;
+        END
+        $$;
+    """)
     # ── audit_log: append-only, partitioned by timestamp ──────────────────────
     op.execute("""
         CREATE TABLE IF NOT EXISTS audit_log (

@@ -357,8 +357,10 @@ class TestDownturnFloors:
     def test_residential_mortgage_floor(self):
         """Residential mortgage floor = 10%."""
         engine = LGDDownturnEngine()
+        # base low enough that base + downturn add-on (~7.2%) stays below the
+        # 10% floor, so the CRR Art. 164(4) floor genuinely binds
         inp = _make_downturn_input(
-            long_run_avg_lgd=0.05,
+            long_run_avg_lgd=0.02,
             collateral_type="real_estate_residential",
             asset_class="RETAIL_MORTGAGE",
         )

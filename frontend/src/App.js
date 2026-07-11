@@ -159,6 +159,7 @@ import LiveFeedManagerPage from './features/live-feed-manager/pages/LiveFeedMana
 import DataLineagePage from './features/data-lineage/pages/DataLineagePage';
 import BrsrBridgePage from './features/brsr-bridge/pages/BrsrBridgePage';
 import DataInfraHubPage from './features/data-infra-hub/pages/DataInfraHubPage';
+import TeamAccessHubPage from './features/team-access-hub/pages/TeamAccessHubPage';
 // Sprint Q — Taxonomy & Classification Engine
 import EuTaxonomyEnginePage from './features/eu-taxonomy-engine/pages/EuTaxonomyEnginePage';
 import SfdrClassificationPage from './features/sfdr-classification/pages/SfdrClassificationPage';
@@ -240,6 +241,7 @@ import GreenAssetRatioPage from './features/green-asset-ratio/pages/GreenAssetRa
 import PortfolioTemperatureScorePage from './features/portfolio-temperature-score/pages/PortfolioTemperatureScorePage';
 import ClimateCreditRiskPage from './features/climate-credit-risk-analytics/pages/ClimateCreditRiskPage';
 import ClimateBankingHubPage from './features/climate-banking-hub/pages/ClimateBankingHubPage';
+import ClimateCollateralFrameworkPage from './features/climate-collateral-framework/pages/ClimateCollateralFrameworkPage';
 // Sprint AH — Regulatory Reporting & Disclosure Automation
 import CsrdEsrsAutomationPage from './features/csrd-esrs-automation/pages/CsrdEsrsAutomationPage';
 import SfdrV2ReportingPage from './features/sfdr-v2-reporting/pages/SfdrV2ReportingPage';
@@ -477,6 +479,7 @@ const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+    { path: '/climate-collateral-framework', label: 'Climate Collateral Framework',  badge: 'Haircuts · LTV · LGD · ECB E8.4 · EBA LOM §7 · 60 Items · 9 Classes', code: 'EP-AJ7' },
   ]},
   { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
     { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
@@ -569,6 +572,7 @@ const NAV_GROUPS = [
     { path: '/data-governance',            label: 'Data Governance',            badge: '15 Policies · 8 Domains · Ownership',  code: 'EP-S5' },
   ]},
   { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
+    { path: '/team-access-hub',           label: 'Team Access Hub',            badge: 'All Modules · Supabase Registry · Access · Deployments', code: 'EP-OPS1' },
     { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
     { path: '/api-orchestration',         label: 'API Orchestration',          badge: '10 Sources · 6 Pipelines',       code: 'EP-P1' },
     { path: '/data-quality-monitor',      label: 'Data Quality Monitor',       badge: '656 Companies · 6 Dimensions',   code: 'EP-P2' },
@@ -1158,6 +1162,7 @@ function AppContent() {
             <Route path="/data-lineage"              element={<DataLineagePage />} />
             <Route path="/brsr-bridge"               element={<BrsrBridgePage />} />
             <Route path="/data-infra-hub"            element={<DataInfraHubPage />} />
+            <Route path="/team-access-hub"           element={<TeamAccessHubPage />} />
             {/* Sprint Q — Taxonomy & Classification */}
             <Route path="/eu-taxonomy-engine"        element={<EuTaxonomyEnginePage />} />
             <Route path="/sfdr-classification"       element={<SfdrClassificationPage />} />
@@ -1241,6 +1246,7 @@ function AppContent() {
             <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
             <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
             <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            <Route path="/climate-collateral-framework"  element={<ClimateCollateralFrameworkPage />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
             <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
             <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />

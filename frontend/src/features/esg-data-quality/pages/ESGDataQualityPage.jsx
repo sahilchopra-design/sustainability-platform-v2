@@ -7,7 +7,7 @@ import {
   RadialBarChart, RadialBar,
 } from 'recharts';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
 const seededRandom = (seed) => { let x = Math.sin(seed * 9301 + 49297) * 233280; return x - Math.floor(x); };
 

@@ -5,6 +5,7 @@ Pydantic schemas for scenario API validation and serialization.
 from pydantic import BaseModel, Field, validator
 from typing import Optional, Dict, Any, List
 from datetime import datetime
+from decimal import Decimal
 from enum import Enum
 
 
@@ -64,6 +65,19 @@ class ScenarioCreate(BaseModel):
     base_scenario_id: Optional[str] = None
     parameters: ScenarioParametersBase
     created_by: Optional[str] = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "Net Zero 2050",
+                "description": "Immediate coordinated policy action limiting warming to 1.5C",
+                "source": "custom",
+                "parameters": {
+                    "carbon_price": {"2030": 100.0, "2040": 250.0, "2050": 500.0},
+                    "temperature_pathway": {"2050": 1.5},
+                },
+            }
+        }
 
 
 class ScenarioUpdate(BaseModel):
@@ -186,3 +200,18 @@ class ScenarioImpactPreviewRequest(BaseModel):
     """Request impact preview calculation."""
     portfolio_id: str = Field(..., description="Portfolio ID to calculate impact for")
     parameters: Optional[ScenarioParametersBase] = Field(None, description="Override parameters for preview")
+
+
+class ScenarioVariable(BaseModel):
+    """Climate data time series for a single scenario variable (e.g. Price|Carbon)."""
+    variable_name: str = Field(..., description="IAM variable name, e.g. 'Price|Carbon'")
+    region: str = Field(default="World", description="IAM region")
+    unit: str = Field(..., description="Unit of measure, e.g. 'USD/tCO2'")
+    values: Dict[int, Decimal] = Field(default_factory=dict, description="Year -> value time series")
+
+
+class ScenarioDataRefreshRequest(BaseModel):
+    """Request to re-pull scenario data from an upstream provider (e.g. NGFS)."""
+    force: bool = Field(default=False, description="Re-fetch even if a fresh copy is cached")
+    source: Optional[str] = Field(None, description="Upstream source identifier, e.g. 'NGFS_Phase5'")
+    variables: Optional[List[str]] = Field(None, description="Subset of variables to refresh; None = all")

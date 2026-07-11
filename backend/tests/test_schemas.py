@@ -17,7 +17,7 @@ from schemas.counterparty import (
 )
 from schemas.scenario import (
     ScenarioCreate, ScenarioUpdate, ScenarioVariable,
-    ScenarioDataRefreshRequest
+    ScenarioDataRefreshRequest, ScenarioParametersBase
 )
 from schemas.analysis import (
     RunScenarioAnalysisRequest, PortfolioMetrics as AnalysisPortfolioMetrics,
@@ -255,19 +255,15 @@ class TestScenarioSchemas:
         """Test creating valid scenario"""
         scenario = ScenarioCreate(
             name="Net Zero 2050",
-            scenario_type=ScenarioType.ORDERLY,
             description="Immediate policy action",
-            temperature_target=Decimal("1.5"),
-            carbon_price_trajectory={
-                2030: Decimal("100.00"),
-                2040: Decimal("250.00"),
-                2050: Decimal("500.00")
-            },
-            is_active=True
+            parameters=ScenarioParametersBase(
+                carbon_price={"2030": 100.0, "2040": 250.0, "2050": 500.0},
+                temperature_pathway={"2050": 1.5},
+            ),
         )
         assert scenario.name == "Net Zero 2050"
-        assert scenario.temperature_target == Decimal("1.5")
-        assert scenario.carbon_price_trajectory[2050] == Decimal("500.00")
+        assert scenario.parameters.temperature_pathway["2050"] == 1.5
+        assert scenario.parameters.carbon_price["2050"] == 500.0
     
     def test_scenario_create_invalid_temperature(self):
         """Test scenario with invalid temperature target"""

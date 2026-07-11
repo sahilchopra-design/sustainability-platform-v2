@@ -13,6 +13,11 @@ import {
 /* ── Deterministic seed ──────────────────────────────────────────────────────── */
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
+/* PHYSICAL_MULTIPLIERS is keyed hazard-first ({flood:{'SSP1-2.6':..}}); build an SSP-first view */
+const sspMult = s => Object.fromEntries(Object.entries(PHYSICAL_MULTIPLIERS).map(([hz, m]) => [hz, m[s]]));
+/* NGFS scenarios carry no sspEquiv field — map by end-of-century temperature */
+const sspEquivFor = scen => (scen.temp <= 1.7 ? 'SSP1-2.6' : scen.temp <= 2.6 ? 'SSP2-4.5' : scen.temp <= 3.2 ? 'SSP3-7.0' : 'SSP5-8.5');
+
 /* ── Theme ───────────────────────────────────────────────────────────────────── */
 const T = {
   bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
@@ -161,14 +166,25 @@ export default function ClimatePhysicalRiskPage() {
     'Asset-Level Exposure',
   ];
 
-  /* Computed country table for Tab 1 */
-  const countryRows = COUNTRY_PHYSICAL_RISK.map(c => getCountryPhysicalRisk(c.country, ssp))
-    .filter(Boolean)
+  /* Computed hazard multipliers for the selected SSP */
+  const mult = sspMult(ssp);
+
+  /* Computed country table for Tab 1 — SSP-adjusted EAL per hazard + composite score */
+  const countryRows = COUNTRY_PHYSICAL_RISK.map(c => ({
+    country: c.name,
+    region: c.region,
+    ndgain: c.ndGain,
+    composite: +getCountryPhysicalRisk(c.iso, ssp),
+    floodAdj: c.flood * mult.flood,
+    cycloneAdj: c.cyclone * mult.cyclone,
+    heatwaveAdj: c.heatwave * mult.heatwave,
+    droughtAdj: c.drought * mult.drought,
+    sealevelAdj: c.sealevel * mult.sealevel,
+  }))
     .sort((a, b) => b.composite - a.composite)
     .slice(0, 15);
 
   /* Computed hazard card data for Tab 2 */
-  const mult = PHYSICAL_MULTIPLIERS[ssp];
   const hazardCards = HAZARD_META.map(h => ({
     ...h,
     multiplier: mult[h.id].toFixed(2),
@@ -179,11 +195,11 @@ export default function ClimatePhysicalRiskPage() {
   const top10Flood = [...COUNTRY_PHYSICAL_RISK]
     .sort((a, b) => (b.flood * mult.flood) - (a.flood * mult.flood))
     .slice(0, 10)
-    .map(c => ({ name: c.country, value: +((c.flood * mult.flood) * 10).toFixed(2) }));
+    .map(c => ({ name: c.name, value: +((c.flood * mult.flood) * 10).toFixed(2) }));
 
   /* SSP × hazard matrix */
   const sspHazardMatrix = SSPS.map(s => {
-    const m = PHYSICAL_MULTIPLIERS[s];
+    const m = sspMult(s);
     return { ssp: s, flood: m.flood, cyclone: m.cyclone, wildfire: m.wildfire, heatwave: m.heatwave, drought: m.drought, sealevel: m.sealevel };
   });
 
@@ -193,16 +209,16 @@ export default function ClimatePhysicalRiskPage() {
   );
 
   /* NGFS bar data */
-  const ngfsBarData = NGFS_PHASE4.map(s => ({ name: s.name.replace(' ', '\n'), score: s.physicalRisk, cat: s.category }));
+  const ngfsBarData = NGFS_PHASE4.map(s => ({ name: s.name.replace(' ', '\n'), score: s.physicalRiskScore, cat: s.category }));
 
   /* Adaptation table */
   const adaptRows = [...COUNTRY_PHYSICAL_RISK]
-    .sort((a, b) => a.ndgain - b.ndgain)
+    .sort((a, b) => a.ndGain - b.ndGain)
     .slice(0, 20)
     .map(c => ({
-      country: c.country, ndgain: c.ndgain, gdpExposed: c.gdpExposed,
-      adaptCapacity: Math.round(c.ndgain * 0.92),
-      resilGap: Math.round(100 - c.ndgain * 0.92),
+      country: c.name, ndgain: c.ndGain, gdpExposed: c.gdpExposed,
+      adaptCapacity: c.adaptCapacity,
+      resilGap: Math.round(100 - c.adaptCapacity),
     }));
 
   const adaptBarData = adaptRows.map(r => ({ name: r.country, gap: r.resilGap }));
@@ -476,10 +492,10 @@ export default function ClimatePhysicalRiskPage() {
                       }}>{s.category}</span>
                     </TD>
                     <TD style={{ color: T.red, fontWeight: 600 }}>{s.temp}°C</TD>
-                    <TD><Badge val={s.physicalRisk} fmt={v => v.toFixed(1)} /></TD>
-                    <TD style={{ color: T.textSec }}>{s.sspEquiv}</TD>
+                    <TD><Badge val={s.physicalRiskScore} fmt={v => v.toFixed(1)} /></TD>
+                    <TD style={{ color: T.textSec }}>{sspEquivFor(s)}</TD>
                     <TD style={{ color: T.red, fontWeight: 600 }}>{s.gdpImpact2050}%</TD>
-                    <TD style={{ color: T.amber, fontWeight: 600 }}>{s.sovereignSpread}</TD>
+                    <TD style={{ color: T.amber, fontWeight: 600 }}>{s.sovereignSpreadBp}</TD>
                   </tr>
                 ))}
               </tbody>
@@ -507,11 +523,12 @@ export default function ClimatePhysicalRiskPage() {
           {/* Cross-reference panel */}
           {(() => {
             const sel = NGFS_PHASE4[ngfsIdx];
-            const m = PHYSICAL_MULTIPLIERS[sel.sspEquiv] || PHYSICAL_MULTIPLIERS['SSP2-4.5'];
+            const sspEq = sspEquivFor(sel);
+            const m = sspMult(sspEq);
             return (
               <Card style={{ borderLeft: `4px solid ${ACCENT}` }}>
                 <div style={{ fontWeight: 700, color: ACCENT, marginBottom: 10 }}>
-                  Cross-Reference: {sel.name} → {sel.sspEquiv}
+                  Cross-Reference: {sel.name} → {sspEq}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
                   {Object.entries(m).map(([h, v]) => (

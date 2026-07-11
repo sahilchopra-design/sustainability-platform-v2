@@ -17,7 +17,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers
 revision = "059"
-down_revision = "058c"
+down_revision = "057_add_eiopa_sfdr_assurance_tables"
 branch_labels = None
 depends_on = None
 

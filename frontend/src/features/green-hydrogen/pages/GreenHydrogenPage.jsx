@@ -6,7 +6,7 @@ import {
   LineChart, Line, Cell, ReferenceLine,
 } from 'recharts';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const seededRandom = (seed) => {
   let x = Math.sin(seed * 9301 + 49297) * 233280;
