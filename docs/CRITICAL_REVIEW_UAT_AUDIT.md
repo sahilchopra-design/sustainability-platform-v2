@@ -172,6 +172,7 @@ energy (EPC), physical-risk exposure of plants (Global Physical Risk Atlas E121)
 | 5 | `scenarios/{id}/preview` | `ModuleNotFoundError: No module named 'backend'` — an absolute-import assuming a different working directory | sweep | P2 — breaks under uvicorn from repo root |
 | 6 | `valuation/cost/replacement` + `valuation/income/direct-capitalization` | `TypeError: unsupported operand for *: Decimal and float` — Pydantic Decimal fields multiplied by float constants; fails on real payloads, not just mocks | sweep | P2 — real-estate persona calculators |
 | 7 | `valuation/map-data` | `float(None)` crash — same defensive-input class as bug #1 | sweep (real-db provenance) | P2 |
+| 8 | `bess_stacking._daily_dp_dispatch` (BESS module) | "DP-optimal" dispatch is only optimal at `cycles_cap=1.0`; at `cycles_cap>1.0` it under-utilises the quantised multi-cycle budget and **underperforms greedy** (−14% at 1.5cyc / −11% at 2.0cyc, delivers fewer cycles) — so `dispatch_compare.uplift_pct` can be negative, contradicting the "measured uplift" claim | found by new `bench_bess_dispatch_invariants` in `bench_quant.py` (2026-07-12) | P2 — refine the DP budget/SoC quantisation for multi-cycle batteries |
 
 *(The 6 bugs found in the 2026-07-05 sweep — portfolio analytics ×2, climate-risk
 import, data-lineage keys ×3-sites, regulatory-calendar ×3-endpoints, exposure SQL
