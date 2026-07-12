@@ -368,6 +368,7 @@ export const NAV_GROUPS = [
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
     { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
+    { path: '/climate-collateral-framework', label: 'Climate-Adjusted Collateral Framework', badge: 'Physical/Transition Haircuts · LTV Adjustment · Stranded Asset Screen · Revaluation Triggers', code: 'EP-AJ7' },
   ]},
   { label: 'Platform Administration', icon: '⚙️', color: '#475569', items: [
     { path: '/module-navigator',          label: '🗺 Module Navigator',        badge: '530+ Modules · Search · Domains · Sprints · Quick-Nav',              code: 'ADM-00' },
@@ -379,6 +380,7 @@ export const NAV_GROUPS = [
     { path: '/data-quality-dashboard',    label: 'Data Quality',              badge: 'Quality Scores · Completeness · Freshness · 50 Validation Rules',     code: 'ADM-06' },
     { path: '/calculation-engine-monitor',label: 'Engine Monitor',            badge: '30 Engines · Execution History · Shadow Model · Config · Drift',      code: 'ADM-07' },
     { path: '/platform-settings',         label: 'Platform Settings',         badge: 'Theme · Integrations · Feature Flags · System Health',                code: 'ADM-08' },
+    { path: '/team-access-hub',           label: 'Team Access Hub',           badge: 'Module Sharing · Team Access Flags · Usage Telemetry · Supabase',      code: 'ADM-09' },
   ]},
   { label: 'Geopolitical Risk & Climate Security', icon: '🌐', color: '#7f1d1d', items: [
     { path: '/geopolitical-esg-hub',          label: 'Geopolitical ESG Hub',          badge: 'Hub · Sanctions+Energy+Minerals+Trade+Migration · Scenarios',       code: 'EP-AV6' },
