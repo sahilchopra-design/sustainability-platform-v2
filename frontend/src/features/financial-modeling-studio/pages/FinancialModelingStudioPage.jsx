@@ -111,21 +111,6 @@ const SLL_DEFAULT = {
   enabled: false, kpi: 'emissions_intensity', target_start: 0.05, target_end: 0.02,
   step_up_bp: 25, step_down_bp: 10,
 };
-const withEngineDefaults = (raw) => {
-  const inp = withClimateDefaults(raw);
-  return {
-    ...inp,
-    refinancing: inp.refinancing || {
-      enabled: false, year: 7, new_rate_pct: 4.5, new_tenor_years: 12,
-      new_gearing_pct: null, fees_pct: 1.5, new_amort_type: 'annuity', new_target_dscr: 1.3,
-    },
-    working_capital: inp.working_capital || { receivable_days: 0, payable_days: 0 },
-    inflation: inp.inflation || { enabled: false, mode: 'nominal', flat_pct: 2.0, curve_pct: null },
-    sustainability: inp.sustainability || { shadow_carbon_price_usd_t: 50, grid_baseline_intensity_t_per_mwh: 0.45 },
-    tranches: inp.tranches.map((t) => (t.sll ? t : { ...t, sll: { ...SLL_DEFAULT } })),
-  };
-};
-
 // Ensure a climate block exists on template inputs (older cached payloads)
 const withClimateDefaults = (inp) => (inp.climate ? inp : {
   ...inp,
@@ -143,6 +128,36 @@ const withClimateDefaults = (inp) => (inp.climate ? inp : {
     },
   },
 });
+
+const withEngineDefaults = (raw) => {
+  const inp = withClimateDefaults(raw);
+  const tranches = (inp.tranches && inp.tranches.length ? inp.tranches : [{
+    name: 'Senior', sizing: 'gearing', gearing_pct: 70.0, amount_musd: 0.0,
+    amort_type: 'sculpted', target_dscr: 1.3, rate_type: 'fixed', fixed_rate_pct: 5.5,
+    base_rate_pct: 4.0, base_rate_curve_pct: null, margin_pct: 2.0, swap_notional_pct: 0.0,
+    swap_fixed_rate_pct: 3.8, tenor_years: 18, dsra_months: 6,
+  }]);
+  return {
+    ...inp,
+    generation: { renewable_share_pct: 100 , ...inp.generation },
+    revenue: {
+      ppa: { enabled: true, price_usd_mwh: 0, escalation_pct: 0, contracted_pct: 0, tenor_years: 0, ...(inp.revenue && inp.revenue.ppa) },
+      merchant: { enabled: true, price_usd_mwh: 0, escalation_pct: 0, capture_rate_pct: 100, ...(inp.revenue && inp.revenue.merchant) },
+      capacity: { enabled: false, usd_per_mw_yr: 0, escalation_pct: 0, ...(inp.revenue && inp.revenue.capacity) },
+      rec: { enabled: false, usd_per_mwh: 0, tenor_years: 0, ...(inp.revenue && inp.revenue.rec) },
+      carbon: { enabled: false, tonnes_per_yr: 0, usd_per_tonne: 0, escalation_pct: 0, ...(inp.revenue && inp.revenue.carbon) },
+    },
+    opex: { major_maintenance: [], ...inp.opex },
+    refinancing: inp.refinancing || {
+      enabled: false, year: 7, new_rate_pct: 4.5, new_tenor_years: 12,
+      new_gearing_pct: null, fees_pct: 1.5, new_amort_type: 'annuity', new_target_dscr: 1.3,
+    },
+    working_capital: inp.working_capital || { receivable_days: 0, payable_days: 0 },
+    inflation: inp.inflation || { enabled: false, mode: 'nominal', flat_pct: 2.0, curve_pct: null },
+    sustainability: inp.sustainability || { shadow_carbon_price_usd_t: 50, grid_baseline_intensity_t_per_mwh: 0.45 },
+    tranches: tranches.map((t) => (t.sll ? t : { ...t, sll: { ...SLL_DEFAULT } })),
+  };
+};
 
 // deep set on a JSON-cloned inputs object
 const setIn = (obj, path, value) => {
