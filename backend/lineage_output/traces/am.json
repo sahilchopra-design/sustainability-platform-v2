@@ -1,10 +1,10 @@
 {
  "domain": "am",
  "meta": {
-  "ts": "2026-06-30T13:59:08",
+  "ts": "2026-07-05T19:10:27",
+  "endpoints": 7,
   "module": "api.v1.routes.am",
-  "router_prefix": "/api/v1/am",
-  "endpoints": 7
+  "router_prefix": "/api/v1/am"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.35,
+   "dur_ms": 0.219,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -38,26 +38,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 86,
      "name": "reference_data",
      "qual": "reference_data",
      "file": "api/v1/routes/am.py",
      "line": 301,
      "args": {},
      "ret": "{'factor_premia_bps': {'market': 500.0, 'size': 80.0, 'value': 120.0, 'profitability': 150.0, 'investment': 60.0, 'esg_quality': 45.0, 'low_carbon': 30.0}, 'sbti_sector_pathways_pct_pa': {'power_utilities': -7.0, 'steel': -4.0, 'cement': -\u2026",
-     "dur_ms": 0.078,
+     "dur_ms": 0.052,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 87,
        "name": "get_am_reference_data",
        "qual": "get_am_reference_data",
        "file": "services/am_engine.py",
        "line": 945,
        "args": {},
        "ret": "{'factor_premia_bps': {'market': 500.0, 'size': 80.0, 'value': 120.0, 'profitability': 150.0, 'investment': 60.0, 'esg_quality': 45.0, 'low_carbon': 30.0}, 'sbti_sector_pathways_pct_pa': {'power_utilities': -7.0, 'steel': -4.0, 'cement': -\u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -108,7 +108,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'bonds'",
-   "dur_ms": 0.217,
+   "dur_ms": 0.135,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -122,7 +122,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 88,
      "name": "green_bond_screening",
      "qual": "green_bond_screening",
      "file": "api/v1/routes/am.py",
@@ -131,7 +131,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -162,7 +162,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'holdings'",
-   "dur_ms": 0.182,
+   "dur_ms": 0.11,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -176,7 +176,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 89,
      "name": "optimise",
      "qual": "optimise",
      "file": "api/v1/routes/am.py",
@@ -185,7 +185,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

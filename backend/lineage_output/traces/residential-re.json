@@ -1,10 +1,10 @@
 {
  "domain": "residential-re",
  "meta": {
-  "ts": "2026-06-30T14:04:39",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 9,
   "module": "api.v1.routes.residential_re",
-  "router_prefix": "/api/v1/residential-re",
-  "endpoints": 9
+  "router_prefix": "/api/v1/residential-re"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.417,
+   "dur_ms": 0.221,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39682,
      "name": "ref_crrem_pathway",
      "qual": "ref_crrem_pathway",
      "file": "api/v1/routes/residential_re.py",
      "line": 195,
      "args": {},
      "ret": "{'crrem_pathway': {2020: 120, 2025: 100, 2030: 75, 2035: 55, 2040: 40, 2045: 28, 2050: 18}}",
-     "dur_ms": 0.062,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39683,
        "name": "get_crrem_residential_pathway",
        "qual": "ResidentialRealEstateEngine.get_crrem_residential_pathway",
        "file": "services/residential_re_engine.py",
        "line": 549,
        "args": {},
        "ret": "{2020: 120, 2025: 100, 2030: 75, 2035: 55, 2040: 40, 2045: 28, 2050: 18}",
-       "dur_ms": 0.006,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.047,
+   "dur_ms": 0.166,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39684,
      "name": "ref_decarb_measures",
      "qual": "ref_decarb_measures",
      "file": "api/v1/routes/residential_re.py",
      "line": 207,
      "args": {},
      "ret": "{'measures': [{'measure': 'Loft insulation (270mm)', 'cost_eur_m2': 8, 'energy_saving_pct': 0.12, 'applicable_epc': ['D', 'E', 'F', 'G'], 'lifetime_years': 42}, {'measure': 'Cavity wall insulation', 'cost_eur_m2': 12, 'energy_saving_pct': \u2026",
-     "dur_ms": 0.58,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 39685,
        "name": "get_decarb_measures",
        "qual": "ResidentialRealEstateEngine.get_decarb_measures",
        "file": "services/residential_re_engine.py",
        "line": 555,
        "args": {},
        "ret": "[{'measure': 'Loft insulation (270mm)', 'cost_eur_m2': 8, 'energy_saving_pct': 0.12, 'applicable_epc': ['D', 'E', 'F', 'G'], 'lifetime_years': 42}, {'measure': 'Cavity wall insulation', 'cost_eur_m2': 12, 'energy_saving_pct': 0.18, 'applic\u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.738,
+   "dur_ms": 0.126,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39686,
      "name": "ref_epc_energy",
      "qual": "ref_epc_energy",
      "file": "api/v1/routes/residential_re.py",
      "line": 183,
      "args": {},
      "ret": "{'epc_energy_map': {'A': 25, 'B': 55, 'C': 80, 'D': 110, 'E': 145, 'F': 195, 'G': 280}}",
-     "dur_ms": 0.159,
+     "dur_ms": 0.022,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 39687,
        "name": "get_epc_energy_map",
        "qual": "ResidentialRealEstateEngine.get_epc_energy_map",
        "file": "services/residential_re_engine.py",
        "line": 543,
        "args": {},
        "ret": "{'A': 25, 'B': 55, 'C': 80, 'D': 110, 'E': 145, 'F': 195, 'G': 280}",
-       "dur_ms": 0.009,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.265,
+   "dur_ms": 0.479,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,26 +187,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39688,
      "name": "ref_hedonic_coefficients",
      "qual": "ref_hedonic_coefficients",
      "file": "api/v1/routes/residential_re.py",
      "line": 213,
      "args": {},
      "ret": "{'coefficients': {'floor_area_m2': 2800, 'bedrooms': 15000, 'bathrooms': 12000, 'age_years_penalty': -500, 'garden_m2': 120, 'parking_spaces': 20000, 'epc_premium_per_band': 0.03, 'flood_risk_discount': -0.08, 'proximity_transport_km': -50\u2026",
-     "dur_ms": 0.048,
+     "dur_ms": 0.071,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 39689,
        "name": "get_hedonic_coefficients",
        "qual": "ResidentialRealEstateEngine.get_hedonic_coefficients",
        "file": "services/residential_re_engine.py",
        "line": 558,
        "args": {},
        "ret": "{'floor_area_m2': 2800, 'bedrooms': 15000, 'bathrooms': 12000, 'age_years_penalty': -500, 'garden_m2': 120, 'parking_spaces': 20000, 'epc_premium_per_band': 0.03, 'flood_risk_discount': -0.08, 'proximity_transport_km': -5000}",
-       "dur_ms": 0.004,
+       "dur_ms": 0.009,
        "sql": [],
        "error": null,
        "children": []
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.546,
+   "dur_ms": 0.427,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39690,
      "name": "ref_mees_timelines",
      "qual": "ref_mees_timelines",
      "file": "api/v1/routes/residential_re.py",
      "line": 189,
      "args": {},
      "ret": "{'mees_timelines': {'GB': [{'year': 2018, 'min_rating': 'E', 'scope': 'new_lettings'}, {'year': 2020, 'min_rating': 'E', 'scope': 'all_lettings'}, {'year': 2025, 'min_rating': 'C', 'scope': 'new_lettings_proposed'}, {'year': 2028, 'min_rat\u2026",
-     "dur_ms": 0.161,
+     "dur_ms": 0.145,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 39691,
        "name": "get_mees_timelines",
        "qual": "ResidentialRealEstateEngine.get_mees_timelines",
        "file": "services/residential_re_engine.py",
        "line": 546,
        "args": {},
        "ret": "{'GB': [{'year': 2018, 'min_rating': 'E', 'scope': 'new_lettings'}, {'year': 2020, 'min_rating': 'E', 'scope': 'all_lettings'}, {'year': 2025, 'min_rating': 'C', 'scope': 'new_lettings_proposed'}, {'year': 2028, 'min_rating': 'C', 'scope':\u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.011,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.334,
+   "dur_ms": 0.216,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 39692,
      "name": "ref_retrofit_costs",
      "qual": "ref_retrofit_costs",
      "file": "api/v1/routes/residential_re.py",
      "line": 201,
      "args": {},
      "ret": "{'retrofit_costs': {'G_to_F': {'low': 30, 'mid': 55, 'high': 80}, 'F_to_E': {'low': 40, 'mid': 65, 'high': 100}, 'E_to_D': {'low': 60, 'mid': 100, 'high': 160}, 'D_to_C': {'low': 120, 'mid': 200, 'high': 320}, 'C_to_B': {'low': 200, 'mid':\u2026",
-     "dur_ms": 0.055,
+     "dur_ms": 0.038,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 39693,
        "name": "get_retrofit_cost_matrix",
        "qual": "ResidentialRealEstateEngine.get_retrofit_cost_matrix",
        "file": "services/residential_re_engine.py",
        "line": 552,
        "args": {},
        "ret": "{'G_to_F': {'low': 30, 'mid': 55, 'high': 80}, 'F_to_E': {'low': 40, 'mid': 65, 'high': 100}, 'E_to_D': {'low': 60, 'mid': 100, 'high': 160}, 'D_to_C': {'low': 120, 'mid': 200, 'high': 320}, 'C_to_B': {'low': 200, 'mid': 350, 'high': 550},\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -343,7 +343,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'properties'",
-   "dur_ms": 0.442,
+   "dur_ms": 0.158,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -357,7 +357,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 39694,
      "name": "assess_mortgage_portfolio",
      "qual": "assess_mortgage_portfolio",
      "file": "api/v1/routes/residential_re.py",
@@ -366,7 +366,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.017,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

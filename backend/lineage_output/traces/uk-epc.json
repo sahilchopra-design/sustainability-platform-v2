@@ -1,0 +1,194 @@
+{
+ "domain": "uk-epc",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 3,
+  "module": "api.v1.routes.uk_epc",
+  "router_prefix": "/api/v1/uk-epc"
+ },
+ "transactions": [
+  {
+   "domain": "uk-epc",
+   "label": "GET /api/v1/uk-epc/certificates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.424,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "postcode": "'TEST_postcode' (mock-required)",
+    "limit": "20 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "postcode",
+     "mode",
+     "count",
+     "certificates",
+     "upstream_error",
+     "source",
+     "seed_provenance",
+     "retrieved_at",
+     "cache"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42388,
+     "name": "certificates",
+     "qual": "certificates",
+     "file": "api/v1/routes/uk_epc.py",
+     "line": 279,
+     "args": {
+      "postcode": "'TEST_postcode'",
+      "limit": "20"
+     },
+     "ret": "{'postcode': 'TEST_POSTCODE', 'mode': 'demo-seed', 'count': 0, 'certificates': [], 'upstream_error': None, 'source': 'Labeled illustrative seed \u2014 Set EPC_API_BEARER_TOKEN for real, verified EPC data. Do not treat these as real certificates\u2026",
+     "dur_ms": 0.148,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 42389,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/uk_epc.py",
+       "line": 169,
+       "args": {
+        "key": "('certs', 'TEST_POSTCODE', 20, False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42390,
+       "name": "_seed_certificates",
+       "qual": "_seed_certificates",
+       "file": "api/v1/routes/uk_epc.py",
+       "line": 142,
+       "args": {
+        "postcode": "'TEST_POSTCODE'"
+       },
+       "ret": "[]",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42391,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/uk_epc.py",
+       "line": 178,
+       "args": {
+        "key": "('certs', 'TEST_POSTCODE', 20, False)",
+        "value": "{'postcode': 'TEST_POSTCODE', 'mode': 'demo-seed', 'count': 0, 'certificates': [], 'upstream_error': None, 'source': 'Labeled illustrative seed \u2014 Set EPC_API_BEARER_TOKEN for real, verified EPC data. Do not treat these as real certificates\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "uk-epc",
+   "label": "GET /api/v1/uk-epc/seed-postcodes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.123,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "postcodes",
+     "provenance"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42392,
+     "name": "seed_postcodes",
+     "qual": "seed_postcodes",
+     "file": "api/v1/routes/uk_epc.py",
+     "line": 333,
+     "args": {},
+     "ret": "{'postcodes': ['NR9 4JL', 'NR8 6GN', 'NR14 7HD', 'NR9 4RG', 'NR14 8BT', 'NR11 6UR', 'NR14 7SF', 'NR8 6RP', 'NR13 5BN', 'NR15 2UG', 'NR14 8TJ', 'NR8 6LU', 'NR16 2AJ', 'NR14 7LA', 'NR16 2QE', 'NR8 6YY', 'NR13 3BS', 'NR10 5EN', 'NR16 1AB', 'N\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "uk-epc",
+   "label": "GET /api/v1/uk-epc/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.131,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "token_configured",
+     "token_env",
+     "how_to_get_a_token",
+     "note",
+     "seed_provenance",
+     "checked_at"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42393,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/uk_epc.py",
+     "line": 256,
+     "args": {},
+     "ret": "{'source': 'GOV.UK Get energy performance of buildings data \u2014 api.get-energy-performance-data.communities.gov.uk', 'mode': 'demo-seed', 'token_configured': False, 'token_env': 'EPC_API_BEARER_TOKEN', 'how_to_get_a_token': \"Sign in with GOV\u2026",
+     "dur_ms": 0.016,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

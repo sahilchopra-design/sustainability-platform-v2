@@ -1,0 +1,92 @@
+{
+ "domain": "openfema-claims",
+ "meta": {
+  "ts": "2026-07-05T19:15:58",
+  "endpoints": 2,
+  "module": "api.v1.routes.openfema_claims",
+  "router_prefix": "/api/v1/openfema"
+ },
+ "transactions": [
+  {
+   "domain": "openfema-claims",
+   "label": "GET /api/v1/openfema/claims-summary",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Unknown state code 'TEST_STATE'. Valid: sorted 2-letter US state/territory codes.",
+   "dur_ms": 0.33,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "state": "'TEST_state' (mock-required)",
+    "start_year": "1990 (default)",
+    "end_year": "2026 (default)",
+    "max_records": "20000 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13609,
+     "name": "claims_summary",
+     "qual": "claims_summary",
+     "file": "api/v1/routes/openfema_claims.py",
+     "line": 217,
+     "args": {
+      "state": "'TEST_state'",
+      "start_year": "1990",
+      "end_year": "2026",
+      "max_records": "20000"
+     },
+     "ret": "None",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "openfema-claims",
+   "label": "GET /api/v1/openfema/states",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.148,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "states"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13610,
+     "name": "valid_states",
+     "qual": "valid_states",
+     "file": "api/v1/routes/openfema_claims.py",
+     "line": 286,
+     "args": {},
+     "ret": "{'count': 56, 'states': ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM'\u2026",
+     "dur_ms": 0.012,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

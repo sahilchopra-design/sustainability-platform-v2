@@ -1,13 +1,13 @@
 {
- "generated": "2026-07-01 10:16:11",
+ "generated": "2026-07-05 19:17:25",
  "totals": {
-  "transactions": 2510,
-  "passed": 1318,
-  "failed": 531,
-  "skipped": 661,
-  "functions_traced": 33299,
-  "sql_statements": 3220,
-  "domains": 269
+  "transactions": 2662,
+  "passed": 1402,
+  "failed": 558,
+  "skipped": 702,
+  "functions_traced": 42890,
+  "sql_statements": 3273,
+  "domains": 308
  },
  "domains": {
   "adaptation-finance": {
@@ -18,7 +18,7 @@
    "skipped": 6,
    "functions_traced": 38,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:05"
+   "ts": "2026-07-05T19:10:26"
   },
   "agriculture-expanded": {
    "prefix": "/api/v1/agriculture-engine",
@@ -28,7 +28,7 @@
    "skipped": 3,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:05"
+   "ts": "2026-07-05T19:10:27"
   },
   "agriculture": {
    "prefix": "/api/v1/agriculture",
@@ -38,7 +38,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 2,
-   "ts": "2026-07-01T10:02:42"
+   "ts": "2026-07-05T19:10:27"
   },
   "ai-governance": {
    "prefix": "/api/v1/ai-governance",
@@ -48,7 +48,7 @@
    "skipped": 2,
    "functions_traced": 26,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:06"
+   "ts": "2026-07-05T19:10:27"
   },
   "ai-risk": {
    "prefix": "/api/v1/ai-risk",
@@ -58,7 +58,7 @@
    "skipped": 2,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:06"
+   "ts": "2026-07-05T19:10:27"
   },
   "am": {
    "prefix": "/api/v1/am",
@@ -68,7 +68,7 @@
    "skipped": 4,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:08"
+   "ts": "2026-07-05T19:10:27"
   },
   "analysis": {
    "prefix": "/api/v1/analysis",
@@ -78,7 +78,7 @@
    "skipped": 2,
    "functions_traced": 68,
    "sql_statements": 17,
-   "ts": "2026-06-30T13:59:21"
+   "ts": "2026-07-05T19:10:33"
   },
   "analyst-portfolios": {
    "prefix": "/api/v1/analyst-portfolios",
@@ -88,7 +88,7 @@
    "skipped": 1,
    "functions_traced": 210,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:08"
+   "ts": "2026-07-05T19:10:33"
   },
   "asia-regulatory": {
    "prefix": "/api/v1/asia-regulatory",
@@ -96,9 +96,9 @@
    "passed": 19,
    "failed": 0,
    "skipped": 1,
-   "functions_traced": 107,
+   "functions_traced": 105,
    "sql_statements": 13,
-   "ts": "2026-06-30T13:59:22"
+   "ts": "2026-07-05T19:10:38"
   },
   "assurance-readiness": {
    "prefix": "/api/v1/assurance-readiness",
@@ -108,7 +108,7 @@
    "skipped": 0,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:10"
+   "ts": "2026-07-05T19:10:38"
   },
   "attribution-benchmark": {
    "prefix": "/api/v1/attribution",
@@ -118,7 +118,7 @@
    "skipped": 1,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:12"
+   "ts": "2026-07-05T19:10:38"
   },
   "audit-log": {
    "prefix": "/api/v1/audit-log",
@@ -128,7 +128,7 @@
    "skipped": 0,
    "functions_traced": 3,
    "sql_statements": 7,
-   "ts": "2026-06-30T13:59:20"
+   "ts": "2026-07-05T19:10:39"
   },
   "aviation-climate": {
    "prefix": "/api/v1/aviation-climate",
@@ -138,7 +138,7 @@
    "skipped": 6,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:22"
+   "ts": "2026-07-05T19:10:39"
   },
   "avoided-emissions": {
    "prefix": "/api/v1/avoided-emissions",
@@ -148,7 +148,7 @@
    "skipped": 4,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:23"
+   "ts": "2026-07-05T19:10:39"
   },
   "banking-risk": {
    "prefix": "/api/v1/banking-risk",
@@ -158,7 +158,7 @@
    "skipped": 0,
    "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:24"
+   "ts": "2026-07-05T19:10:39"
   },
   "basel-capital": {
    "prefix": "/api/v1/basel-capital",
@@ -168,7 +168,7 @@
    "skipped": 5,
    "functions_traced": 20,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:25"
+   "ts": "2026-07-05T19:10:39"
   },
   "basel3-liquidity": {
    "prefix": "/api/v1/basel3-liquidity",
@@ -178,7 +178,7 @@
    "skipped": 0,
    "functions_traced": 31,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:24"
+   "ts": "2026-07-05T19:10:39"
   },
   "benchmarks": {
    "prefix": "/api/v1/benchmarks",
@@ -188,7 +188,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 9,
-   "ts": "2026-06-30T13:59:29"
+   "ts": "2026-07-05T19:10:41"
   },
   "biodiversity-credits": {
    "prefix": "/api/v1/biodiversity-credits",
@@ -198,7 +198,7 @@
    "skipped": 5,
    "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:25"
+   "ts": "2026-07-05T19:10:41"
   },
   "biodiversity-finance-v2": {
    "prefix": "/api/v1/biodiversity-finance-v2",
@@ -208,7 +208,7 @@
    "skipped": 5,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:27"
+   "ts": "2026-07-05T19:10:41"
   },
   "biodiversity-finance": {
    "prefix": "/api/v1/biodiversity-finance",
@@ -216,9 +216,9 @@
    "passed": 8,
    "failed": 0,
    "skipped": 1,
-   "functions_traced": 19,
+   "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:27"
+   "ts": "2026-07-05T19:10:41"
   },
   "blended-finance": {
    "prefix": "/api/v1/blended-finance",
@@ -228,17 +228,17 @@
    "skipped": 5,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:29"
+   "ts": "2026-07-05T19:10:41"
   },
   "blue-economy": {
    "prefix": "/api/v1/blue-economy",
    "transactions": 11,
-   "passed": 6,
-   "failed": 1,
+   "passed": 7,
+   "failed": 0,
    "skipped": 4,
-   "functions_traced": 16,
+   "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:29"
+   "ts": "2026-07-05T19:10:41"
   },
   "ca100": {
    "prefix": "/api/v1/ca100",
@@ -248,7 +248,7 @@
    "skipped": 0,
    "functions_traced": 10,
    "sql_statements": 8,
-   "ts": "2026-06-30T13:59:33"
+   "ts": "2026-07-05T19:10:43"
   },
   "carbon-accounting-ai": {
    "prefix": "/api/v1/carbon-accounting-ai",
@@ -258,7 +258,7 @@
    "skipped": 7,
    "functions_traced": 158,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:31"
+   "ts": "2026-07-05T19:10:48"
   },
   "carbon-credit-quality": {
    "prefix": "/api/v1/carbon-credit-quality",
@@ -268,7 +268,7 @@
    "skipped": 1,
    "functions_traced": 27,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:33"
+   "ts": "2026-07-05T19:10:48"
   },
   "carbon-markets-intel": {
    "prefix": "/api/v1/carbon-markets-intel",
@@ -278,7 +278,7 @@
    "skipped": 5,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:35"
+   "ts": "2026-07-05T19:10:48"
   },
   "carbon-price-ets": {
    "prefix": "/api/v1/carbon-price-ets",
@@ -288,7 +288,7 @@
    "skipped": 4,
    "functions_traced": 23,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:35"
+   "ts": "2026-07-05T19:10:48"
   },
   "carbon-prices": {
    "prefix": "/api/v1/carbon-prices",
@@ -298,7 +298,7 @@
    "skipped": 0,
    "functions_traced": 8,
    "sql_statements": 10,
-   "ts": "2026-06-30T13:59:38"
+   "ts": "2026-07-05T19:10:49"
   },
   "carbon-removal": {
    "prefix": "/api/v1/carbon-removal",
@@ -308,7 +308,7 @@
    "skipped": 0,
    "functions_traced": 23,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:37"
+   "ts": "2026-07-05T19:10:49"
   },
   "carbon": {
    "prefix": "/api/v1/carbon",
@@ -318,7 +318,7 @@
    "skipped": 7,
    "functions_traced": 37,
    "sql_statements": 16,
-   "ts": "2026-06-30T13:59:38"
+   "ts": "2026-07-05T19:10:48"
   },
   "cbam": {
    "prefix": "/api/v1/cbam",
@@ -328,7 +328,7 @@
    "skipped": 5,
    "functions_traced": 49,
    "sql_statements": 20,
-   "ts": "2026-06-30T13:59:48"
+   "ts": "2026-07-05T19:10:53"
   },
   "cdm-tools": {
    "prefix": "/api/v1/cdm-tools",
@@ -338,7 +338,7 @@
    "skipped": 0,
    "functions_traced": 825,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:40"
+   "ts": "2026-07-05T19:10:53"
   },
   "cdp-scoring": {
    "prefix": "/api/v1/cdp",
@@ -348,7 +348,7 @@
    "skipped": 1,
    "functions_traced": 18,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:41"
+   "ts": "2026-07-05T19:10:53"
   },
   "cdr": {
    "prefix": "/api/v1/cdr",
@@ -356,9 +356,9 @@
    "passed": 4,
    "failed": 0,
    "skipped": 5,
-   "functions_traced": 17,
+   "functions_traced": 16,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:42"
+   "ts": "2026-07-05T19:10:53"
   },
   "china-trade": {
    "prefix": "/api/v1/china-trade",
@@ -366,9 +366,9 @@
    "passed": 24,
    "failed": 1,
    "skipped": 0,
-   "functions_traced": 243,
+   "functions_traced": 241,
    "sql_statements": 19,
-   "ts": "2026-06-30T13:59:57"
+   "ts": "2026-07-05T19:10:59"
   },
   "circular-economy": {
    "prefix": "/api/v1/circular-economy",
@@ -378,7 +378,7 @@
    "skipped": 8,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:44"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-derivatives": {
    "prefix": "/api/v1/climate-derivatives",
@@ -388,7 +388,7 @@
    "skipped": 4,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:47"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-finance": {
    "prefix": "/api/v1/climate-finance",
@@ -398,7 +398,7 @@
    "skipped": 5,
    "functions_traced": 69,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:49"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-financial-statements": {
    "prefix": "/api/v1/climate-financial-statements",
@@ -408,7 +408,7 @@
    "skipped": 4,
    "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:50"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-insurance": {
    "prefix": "/api/v1/climate-insurance",
@@ -418,7 +418,7 @@
    "skipped": 6,
    "functions_traced": 47,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:52"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-litigation": {
    "prefix": "/api/v1/climate-litigation",
@@ -428,7 +428,7 @@
    "skipped": 0,
    "functions_traced": 34,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:53"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-mrv": {
    "prefix": "/api/v1/climate-mrv",
@@ -436,9 +436,9 @@
    "passed": 10,
    "failed": 0,
    "skipped": 1,
-   "functions_traced": 94,
+   "functions_traced": 87,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:55"
+   "ts": "2026-07-05T19:10:59"
   },
   "climate-policy-tracker": {
    "prefix": "/api/v1/climate-policy",
@@ -448,7 +448,7 @@
    "skipped": 3,
    "functions_traced": 24,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:56"
+   "ts": "2026-07-05T19:11:01"
   },
   "climate-risk": {
    "prefix": "/api/v1/climate-risk",
@@ -456,9 +456,9 @@
    "passed": 5,
    "failed": 7,
    "skipped": 9,
-   "functions_traced": 240,
+   "functions_traced": 239,
    "sql_statements": 0,
-   "ts": "2026-06-30T13:59:59"
+   "ts": "2026-07-05T19:11:01"
   },
   "climate-stress-test": {
    "prefix": "/api/v1/climate-stress-test",
@@ -468,7 +468,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:00"
+   "ts": "2026-07-05T19:11:01"
   },
   "climate-tech": {
    "prefix": "/api/v1/climate-tech",
@@ -478,7 +478,7 @@
    "skipped": 0,
    "functions_traced": 109,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:00"
+   "ts": "2026-07-05T19:11:01"
   },
   "commercial-re": {
    "prefix": "/api/v1/commercial-re",
@@ -488,7 +488,7 @@
    "skipped": 7,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:03"
+   "ts": "2026-07-05T19:11:04"
   },
   "company-profiles": {
    "prefix": "/api/v1/company-profiles",
@@ -498,7 +498,7 @@
    "skipped": 3,
    "functions_traced": 101,
    "sql_statements": 3,
-   "ts": "2026-06-30T14:00:08"
+   "ts": "2026-07-05T19:11:05"
   },
   "comprehensive-reporting": {
    "prefix": "/api/v1/comprehensive-reporting",
@@ -508,7 +508,7 @@
    "skipped": 4,
    "functions_traced": 196,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:04"
+   "ts": "2026-07-05T19:11:05"
   },
   "corporate-nature-strategy": {
    "prefix": "/api/v1/corporate-nature-strategy",
@@ -518,7 +518,7 @@
    "skipped": 5,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:06"
+   "ts": "2026-07-05T19:11:05"
   },
   "counterparties": {
    "prefix": "/counterparties",
@@ -527,8 +527,8 @@
    "failed": 2,
    "skipped": 3,
    "functions_traced": 5,
-   "sql_statements": 0,
-   "ts": "2026-06-30T14:00:06"
+   "sql_statements": 1,
+   "ts": "2026-07-05T19:11:05"
   },
   "country-risk": {
    "prefix": "/api/v1/country-risk",
@@ -538,7 +538,7 @@
    "skipped": 0,
    "functions_traced": 6,
    "sql_statements": 7,
-   "ts": "2026-06-30T14:00:12"
+   "ts": "2026-07-05T19:11:07"
   },
   "critical-minerals": {
    "prefix": "/api/v1/critical-minerals",
@@ -548,7 +548,7 @@
    "skipped": 1,
    "functions_traced": 95,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:08"
+   "ts": "2026-07-05T19:11:07"
   },
   "crrem-green-buildings": {
    "prefix": "/api/v1/crrem",
@@ -558,7 +558,7 @@
    "skipped": 2,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:10"
+   "ts": "2026-07-05T19:11:07"
   },
   "crypto-climate": {
    "prefix": "/api/v1/crypto-climate",
@@ -568,7 +568,7 @@
    "skipped": 2,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:10"
+   "ts": "2026-07-05T19:11:07"
   },
   "csddd": {
    "prefix": "/api/v1/csddd",
@@ -578,7 +578,7 @@
    "skipped": 1,
    "functions_traced": 17,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:12"
+   "ts": "2026-07-05T19:11:07"
   },
   "csrd-dma": {
    "prefix": "/api/v1/csrd-dma",
@@ -588,7 +588,7 @@
    "skipped": 3,
    "functions_traced": 11,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:12"
+   "ts": "2026-07-05T19:11:07"
   },
   "csrd-reports": {
    "prefix": "/api/csrd",
@@ -598,7 +598,7 @@
    "skipped": 3,
    "functions_traced": 116,
    "sql_statements": 23,
-   "ts": "2026-06-30T14:00:24"
+   "ts": "2026-07-05T19:11:12"
   },
   "dashboard-analytics": {
    "prefix": "/api/v1/dashboard",
@@ -608,7 +608,7 @@
    "skipped": 0,
    "functions_traced": 47,
    "sql_statements": 45,
-   "ts": "2026-06-30T14:00:22"
+   "ts": "2026-07-05T19:11:18"
   },
   "data-hub-catalog": {
    "prefix": "/api/v1/data-hub-catalog",
@@ -618,7 +618,7 @@
    "skipped": 0,
    "functions_traced": 18,
    "sql_statements": 109,
-   "ts": "2026-06-30T14:00:39"
+   "ts": "2026-07-05T19:11:32"
   },
   "data-hub": {
    "prefix": "/api/v1/data-hub",
@@ -628,17 +628,17 @@
    "skipped": 9,
    "functions_traced": 151,
    "sql_statements": 155,
-   "ts": "2026-06-30T14:00:38"
+   "ts": "2026-07-05T19:11:27"
   },
   "data-intake": {
    "prefix": "/api/v1/data-intake",
    "transactions": 26,
-   "passed": 15,
-   "failed": 2,
+   "passed": 16,
+   "failed": 1,
    "skipped": 9,
    "functions_traced": 27,
    "sql_statements": 33,
-   "ts": "2026-06-30T14:00:41"
+   "ts": "2026-07-05T19:11:37"
   },
   "data-lineage": {
    "prefix": "/api/v1/lineage",
@@ -648,7 +648,7 @@
    "skipped": 3,
    "functions_traced": 150,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:40"
+   "ts": "2026-07-05T19:11:37"
   },
   "data-preview": {
    "prefix": "/api/v1/data-preview",
@@ -656,9 +656,9 @@
    "passed": 4,
    "failed": 1,
    "skipped": 0,
-   "functions_traced": 5847,
-   "sql_statements": 1716,
-   "ts": "2026-07-01T10:05:39"
+   "functions_traced": 5869,
+   "sql_statements": 1737,
+   "ts": "2026-07-05T19:14:32"
   },
   "dcm": {
    "prefix": "/api/v1/dcm",
@@ -668,7 +668,7 @@
    "skipped": 2,
    "functions_traced": 181,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:42"
+   "ts": "2026-07-05T19:14:33"
   },
   "digital-product-passport": {
    "prefix": "/api/v1/digital-product-passport",
@@ -678,7 +678,7 @@
    "skipped": 5,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:43"
+   "ts": "2026-07-05T19:14:33"
   },
   "disclosure-trends": {
    "prefix": "/api/v1/disclosure-trends",
@@ -688,7 +688,7 @@
    "skipped": 0,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:45"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-alerts": {
    "prefix": "/api/v1/dme-alerts",
@@ -698,7 +698,7 @@
    "skipped": 2,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:46"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-contagion": {
    "prefix": "/api/v1/dme-contagion",
@@ -708,7 +708,7 @@
    "skipped": 5,
    "functions_traced": 16,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:47"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-dmi": {
    "prefix": "/api/v1/dme-dmi",
@@ -718,7 +718,7 @@
    "skipped": 3,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:48"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-factor-registry": {
    "prefix": "/api/v1/dme-factor-registry",
@@ -728,7 +728,7 @@
    "skipped": 2,
    "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:50"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-greenwashing": {
    "prefix": "/api/v1/dme-greenwashing",
@@ -738,7 +738,7 @@
    "skipped": 2,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:52"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-nlp-pulse": {
    "prefix": "/api/v1/dme-nlp-pulse",
@@ -748,7 +748,7 @@
    "skipped": 3,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:54"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-policy-tracker": {
    "prefix": "/api/v1/dme-policy-tracker",
@@ -758,7 +758,7 @@
    "skipped": 2,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:55"
+   "ts": "2026-07-05T19:14:33"
   },
   "dme-velocity": {
    "prefix": "/api/v1/dme-velocity",
@@ -768,7 +768,7 @@
    "skipped": 3,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:57"
+   "ts": "2026-07-05T19:14:33"
   },
   "double-materiality": {
    "prefix": "/api/v1/double-materiality",
@@ -778,7 +778,7 @@
    "skipped": 3,
    "functions_traced": 59,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:00:58"
+   "ts": "2026-07-05T19:14:33"
   },
   "ead": {
    "prefix": "/api/v1/ead",
@@ -788,7 +788,7 @@
    "skipped": 0,
    "functions_traced": 17,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:00"
+   "ts": "2026-07-05T19:14:33"
   },
   "eba-pillar3": {
    "prefix": "/api/v1/eba-pillar3",
@@ -796,9 +796,9 @@
    "passed": 6,
    "failed": 0,
    "skipped": 2,
-   "functions_traced": 20,
+   "functions_traced": 11,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:01"
+   "ts": "2026-07-05T19:14:33"
   },
   "ecl-climate": {
    "prefix": "/api/v1",
@@ -808,7 +808,7 @@
    "skipped": 0,
    "functions_traced": 61,
    "sql_statements": 7,
-   "ts": "2026-06-30T14:01:29"
+   "ts": "2026-07-05T19:14:34"
   },
   "ecl-gar-pillar3": {
    "prefix": "/api/v1/ecl-gar-pillar3",
@@ -818,7 +818,7 @@
    "skipped": 3,
    "functions_traced": 2,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:03"
+   "ts": "2026-07-05T19:14:34"
   },
   "eiopa-stress": {
    "prefix": "/api/v1/eiopa-stress",
@@ -828,7 +828,7 @@
    "skipped": 0,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:06"
+   "ts": "2026-07-05T19:14:34"
   },
   "em-climate-risk": {
    "prefix": "/api/v1/em-climate-risk",
@@ -838,7 +838,7 @@
    "skipped": 5,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:09"
+   "ts": "2026-07-05T19:14:34"
   },
   "emissions-data": {
    "prefix": "/api/v1/emissions",
@@ -846,9 +846,9 @@
    "passed": 6,
    "failed": 2,
    "skipped": 0,
-   "functions_traced": 12,
+   "functions_traced": 8,
    "sql_statements": 12,
-   "ts": "2026-06-30T14:01:33"
+   "ts": "2026-07-05T19:14:37"
   },
   "energy-data": {
    "prefix": "/api/v1/energy-data",
@@ -858,7 +858,7 @@
    "skipped": 0,
    "functions_traced": 8,
    "sql_statements": 14,
-   "ts": "2026-06-30T14:01:34"
+   "ts": "2026-07-05T19:14:39"
   },
   "energy-emissions": {
    "prefix": "/api/v1/energy-emissions",
@@ -868,7 +868,7 @@
    "skipped": 3,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:31"
+   "ts": "2026-07-05T19:14:39"
   },
   "energy-transition": {
    "prefix": "/api/v1/energy-transition",
@@ -878,7 +878,7 @@
    "skipped": 2,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:33"
+   "ts": "2026-07-05T19:14:39"
   },
   "engagement": {
    "prefix": "/api/v1/engagement",
@@ -888,7 +888,7 @@
    "skipped": 6,
    "functions_traced": 9,
    "sql_statements": 18,
-   "ts": "2026-06-30T14:01:47"
+   "ts": "2026-07-05T19:14:42"
   },
   "entity-data": {
    "prefix": "/api/v1/entity-data",
@@ -906,9 +906,9 @@
    "passed": 4,
    "failed": 5,
    "skipped": 4,
-   "functions_traced": 9,
+   "functions_traced": 37,
    "sql_statements": 14,
-   "ts": "2026-06-30T14:01:49"
+   "ts": "2026-07-05T19:15:14"
   },
   "entity360": {
    "prefix": "/api/v1/entity360",
@@ -918,7 +918,7 @@
    "skipped": 2,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:35"
+   "ts": "2026-07-05T19:15:14"
   },
   "epc-retrofit": {
    "prefix": "/api/v1/epc-retrofit",
@@ -928,7 +928,7 @@
    "skipped": 1,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:49"
+   "ts": "2026-07-05T19:15:14"
   },
   "esg-controversy": {
    "prefix": "/api/v1/esg-controversy",
@@ -938,7 +938,7 @@
    "skipped": 2,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:51"
+   "ts": "2026-07-05T19:15:14"
   },
   "esg-data-quality-assurance": {
    "prefix": "/api/v1/esg-data-quality",
@@ -948,7 +948,7 @@
    "skipped": 5,
    "functions_traced": 75,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:52"
+   "ts": "2026-07-05T19:15:14"
   },
   "esg-data-quality": {
    "prefix": "/api/v1/esg-data-quality",
@@ -956,9 +956,9 @@
    "passed": 4,
    "failed": 2,
    "skipped": 1,
-   "functions_traced": 39,
+   "functions_traced": 30,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:51"
+   "ts": "2026-07-05T19:15:14"
   },
   "esg-ma": {
    "prefix": "/api/v1/esg-ma",
@@ -968,7 +968,7 @@
    "skipped": 4,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:53"
+   "ts": "2026-07-05T19:15:14"
   },
   "esg-ratings": {
    "prefix": "/api/v1/esg-ratings",
@@ -976,9 +976,9 @@
    "passed": 5,
    "failed": 0,
    "skipped": 5,
-   "functions_traced": 71,
+   "functions_traced": 16,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:53"
+   "ts": "2026-07-05T19:15:14"
   },
   "esma-fund-names": {
    "prefix": "/api/v1/esma-fund-names",
@@ -988,7 +988,7 @@
    "skipped": 1,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:54"
+   "ts": "2026-07-05T19:15:15"
   },
   "esrs-e2-e5": {
    "prefix": "/api/v1/esrs-e2-e5",
@@ -998,7 +998,7 @@
    "skipped": 0,
    "functions_traced": 39,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:55"
+   "ts": "2026-07-05T19:15:15"
   },
   "eu-ets": {
    "prefix": "/api/v1/eu-ets",
@@ -1008,7 +1008,7 @@
    "skipped": 0,
    "functions_traced": 17,
    "sql_statements": 2,
-   "ts": "2026-06-30T14:01:57"
+   "ts": "2026-07-05T19:15:15"
   },
   "eu-gbs": {
    "prefix": "/api/v1/eu-gbs",
@@ -1018,7 +1018,7 @@
    "skipped": 3,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:58"
+   "ts": "2026-07-05T19:15:15"
   },
   "eu-taxonomy-gar": {
    "prefix": "/api/v1/eu-taxonomy-gar",
@@ -1028,7 +1028,7 @@
    "skipped": 0,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:00"
+   "ts": "2026-07-05T19:15:15"
   },
   "eu-taxonomy": {
    "prefix": "/api/v1/eu-taxonomy",
@@ -1038,7 +1038,7 @@
    "skipped": 0,
    "functions_traced": 23,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:01:58"
+   "ts": "2026-07-05T19:15:15"
   },
   "eudr": {
    "prefix": "/api/v1/eudr",
@@ -1048,7 +1048,7 @@
    "skipped": 3,
    "functions_traced": 17,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:01"
+   "ts": "2026-07-05T19:15:15"
   },
   "export-credit-esg": {
    "prefix": "/api/v1/export-credit-esg",
@@ -1058,7 +1058,7 @@
    "skipped": 2,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:02"
+   "ts": "2026-07-05T19:15:15"
   },
   "exports": {
    "prefix": "/exports",
@@ -1067,8 +1067,8 @@
    "failed": 1,
    "skipped": 0,
    "functions_traced": 3,
-   "sql_statements": 0,
-   "ts": "2026-06-30T14:02:04"
+   "sql_statements": 1,
+   "ts": "2026-07-05T19:15:16"
   },
   "facilitated-emissions": {
    "prefix": "/api/v1/facilitated-emissions",
@@ -1098,7 +1098,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 15,
-   "ts": "2026-06-30T14:02:23"
+   "ts": "2026-07-05T19:15:21"
   },
   "food-system": {
    "prefix": "/api/v1/food-system",
@@ -1108,7 +1108,7 @@
    "skipped": 7,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:09"
+   "ts": "2026-07-05T19:15:22"
   },
   "forced-labour": {
    "prefix": "/api/v1/forced-labour",
@@ -1118,7 +1118,7 @@
    "skipped": 2,
    "functions_traced": 20,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:12"
+   "ts": "2026-07-05T19:15:22"
   },
   "fund-management": {
    "prefix": "/api/v1/fund-management",
@@ -1128,7 +1128,7 @@
    "skipped": 0,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:14"
+   "ts": "2026-07-05T19:15:22"
   },
   "gar": {
    "prefix": "/api/v1/gar",
@@ -1138,7 +1138,7 @@
    "skipped": 0,
    "functions_traced": 31,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:02:18"
+   "ts": "2026-07-05T19:15:22"
   },
   "gdelt-controversy": {
    "prefix": "/api/v1/gdelt",
@@ -1148,7 +1148,7 @@
    "skipped": 0,
    "functions_traced": 11,
    "sql_statements": 27,
-   "ts": "2026-06-30T14:02:35"
+   "ts": "2026-07-05T19:15:27"
   },
   "geothermal": {
    "prefix": "/api/v1/geothermal",
@@ -1158,7 +1158,7 @@
    "skipped": 0,
    "functions_traced": 548,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:02:24"
+   "ts": "2026-07-05T19:15:27"
   },
   "glidepath-serve": {
    "prefix": "/api/v1/glidepaths",
@@ -1168,7 +1168,7 @@
    "skipped": 0,
    "functions_traced": 36,
    "sql_statements": 10,
-   "ts": "2026-06-30T14:02:35"
+   "ts": "2026-07-05T19:15:34"
   },
   "glidepath": {
    "prefix": "/api/v1/glidepath",
@@ -1176,9 +1176,9 @@
    "passed": 8,
    "failed": 0,
    "skipped": 0,
-   "functions_traced": 100,
+   "functions_traced": 88,
    "sql_statements": 8,
-   "ts": "2026-06-30T14:02:35"
+   "ts": "2026-07-05T19:15:32"
   },
   "green-hydrogen-engine": {
    "prefix": "/api/v1/green-hydrogen-engine",
@@ -1188,7 +1188,7 @@
    "skipped": 3,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:37"
+   "ts": "2026-07-05T19:15:35"
   },
   "green-hydrogen": {
    "prefix": "/api/v1/green-hydrogen",
@@ -1198,7 +1198,7 @@
    "skipped": 2,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:37"
+   "ts": "2026-07-05T19:15:35"
   },
   "green-premium-tenant": {
    "prefix": "/api/v1/green-premium",
@@ -1208,7 +1208,7 @@
    "skipped": 0,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:37"
+   "ts": "2026-07-05T19:15:35"
   },
   "green-securitisation": {
    "prefix": "/api/v1/green-securitisation",
@@ -1218,7 +1218,7 @@
    "skipped": 4,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:39"
+   "ts": "2026-07-05T19:15:35"
   },
   "greenwashing": {
    "prefix": "/api/v1/greenwashing",
@@ -1228,7 +1228,7 @@
    "skipped": 1,
    "functions_traced": 27,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:39"
+   "ts": "2026-07-05T19:15:35"
   },
   "gri-standards": {
    "prefix": "/api/v1/gri-standards",
@@ -1238,7 +1238,7 @@
    "skipped": 1,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:39"
+   "ts": "2026-07-05T19:15:35"
   },
   "health-climate": {
    "prefix": "/api/v1/health-climate",
@@ -1246,9 +1246,9 @@
    "passed": 4,
    "failed": 0,
    "skipped": 6,
-   "functions_traced": 15,
+   "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:43"
+   "ts": "2026-07-05T19:15:39"
   },
   "hydrogen": {
    "prefix": "/api/v1/hydrogen",
@@ -1258,7 +1258,7 @@
    "skipped": 6,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:43"
+   "ts": "2026-07-05T19:15:39"
   },
   "ifrs-s1": {
    "prefix": "/api/v1/ifrs-s1",
@@ -1268,7 +1268,7 @@
    "skipped": 0,
    "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:43"
+   "ts": "2026-07-05T19:15:41"
   },
   "infrastructure-finance": {
    "prefix": "/api/v1/infrastructure-finance",
@@ -1278,7 +1278,7 @@
    "skipped": 6,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:46"
+   "ts": "2026-07-05T19:15:41"
   },
   "ingestion": {
    "prefix": "/api/v1/ingestion",
@@ -1288,7 +1288,7 @@
    "skipped": 7,
    "functions_traced": 38,
    "sql_statements": 40,
-   "ts": "2026-06-30T14:03:05"
+   "ts": "2026-07-05T19:15:46"
   },
   "insurance-risk": {
    "prefix": "/api/v1/insurance-risk",
@@ -1298,7 +1298,7 @@
    "skipped": 0,
    "functions_traced": 16,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:48"
+   "ts": "2026-07-05T19:15:47"
   },
   "insurance": {
    "prefix": "/api/v1/insurance",
@@ -1308,7 +1308,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 2,
-   "ts": "2026-07-01T10:02:44"
+   "ts": "2026-07-05T19:15:47"
   },
   "internal-carbon-price": {
    "prefix": "/api/v1/internal-carbon-price",
@@ -1318,7 +1318,7 @@
    "skipped": 6,
    "functions_traced": 80,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:50"
+   "ts": "2026-07-05T19:15:47"
   },
   "iorp-pension": {
    "prefix": "/api/v1/iorp-pension",
@@ -1328,7 +1328,7 @@
    "skipped": 0,
    "functions_traced": 17,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:02:56"
+   "ts": "2026-07-05T19:15:47"
   },
   "irena-five-pillars": {
    "prefix": "/api/v1/irena-five-pillars",
@@ -1338,7 +1338,7 @@
    "skipped": 0,
    "functions_traced": 81,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:02:57"
+   "ts": "2026-07-05T19:15:48"
   },
   "issb-s2": {
    "prefix": "/api/v1/issb-s2",
@@ -1348,7 +1348,7 @@
    "skipped": 1,
    "functions_traced": 22,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:58"
+   "ts": "2026-07-05T19:15:48"
   },
   "just-transition-engine": {
    "prefix": "/api/v1/just-transition",
@@ -1358,7 +1358,7 @@
    "skipped": 6,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:59"
+   "ts": "2026-07-05T19:15:48"
   },
   "just-transition": {
    "prefix": "/api/v1/just-transition",
@@ -1368,7 +1368,7 @@
    "skipped": 5,
    "functions_traced": 24,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:02:59"
+   "ts": "2026-07-05T19:15:48"
   },
   "lgd-vintage": {
    "prefix": "/api/v1/lgd-vintage",
@@ -1378,7 +1378,7 @@
    "skipped": 0,
    "functions_traced": 17,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:01"
+   "ts": "2026-07-05T19:15:48"
   },
   "loss-damage-finance": {
    "prefix": "/api/v1/loss-damage",
@@ -1388,17 +1388,17 @@
    "skipped": 3,
    "functions_traced": 36,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:03"
+   "ts": "2026-07-05T19:15:48"
   },
   "loss-damage": {
    "prefix": "/api/v1/loss-damage",
    "transactions": 10,
-   "passed": 5,
-   "failed": 1,
+   "passed": 6,
+   "failed": 0,
    "skipped": 4,
-   "functions_traced": 7,
+   "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:01"
+   "ts": "2026-07-05T19:15:48"
   },
   "maritime": {
    "prefix": "/api/v1/maritime",
@@ -1406,9 +1406,9 @@
    "passed": 5,
    "failed": 1,
    "skipped": 3,
-   "functions_traced": 13,
+   "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:03"
+   "ts": "2026-07-05T19:15:48"
   },
   "mas-regulatory": {
    "prefix": "/api/v1/mas-regulatory",
@@ -1418,7 +1418,7 @@
    "skipped": 2,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:07"
+   "ts": "2026-07-05T19:15:48"
   },
   "methane-fugitive": {
    "prefix": "/api/v1/methane-fugitive",
@@ -1428,7 +1428,7 @@
    "skipped": 7,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:07"
+   "ts": "2026-07-05T19:15:48"
   },
   "mifid-spt": {
    "prefix": "/api/v1/mifid-spt",
@@ -1438,7 +1438,7 @@
    "skipped": 1,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:09"
+   "ts": "2026-07-05T19:15:48"
   },
   "mining": {
    "prefix": "/api/v1/mining",
@@ -1448,7 +1448,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 2,
-   "ts": "2026-07-01T10:02:46"
+   "ts": "2026-07-05T19:15:49"
   },
   "model-validation": {
    "prefix": "/api/v1/model-validation",
@@ -1458,7 +1458,7 @@
    "skipped": 3,
    "functions_traced": 49,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:10"
+   "ts": "2026-07-05T19:15:49"
   },
   "modern-slavery": {
    "prefix": "/api/v1/modern-slavery",
@@ -1468,7 +1468,7 @@
    "skipped": 1,
    "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:12"
+   "ts": "2026-07-05T19:15:49"
   },
   "monte-carlo": {
    "prefix": "/api/v1/monte-carlo",
@@ -1478,7 +1478,7 @@
    "skipped": 1,
    "functions_traced": 99,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:16"
+   "ts": "2026-07-05T19:15:49"
   },
   "mrv": {
    "prefix": "/api/v1/mrv",
@@ -1488,7 +1488,7 @@
    "skipped": 4,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:15"
+   "ts": "2026-07-05T19:15:49"
   },
   "nature-based-solutions": {
    "prefix": "/api/v1/nature-based-solutions",
@@ -1498,17 +1498,17 @@
    "skipped": 6,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:17"
+   "ts": "2026-07-05T19:15:49"
   },
   "nature-capital-accounting": {
    "prefix": "/api/v1/nature-capital-accounting",
    "transactions": 9,
-   "passed": 4,
-   "failed": 1,
+   "passed": 5,
+   "failed": 0,
    "skipped": 4,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:18"
+   "ts": "2026-07-05T19:15:49"
   },
   "nature-capital": {
    "prefix": "/api/v1/nature-capital",
@@ -1518,7 +1518,7 @@
    "skipped": 2,
    "functions_traced": 27,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:18"
+   "ts": "2026-07-05T19:15:49"
   },
   "nature-data": {
    "prefix": "/api/v1/nature-data",
@@ -1528,7 +1528,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 15,
-   "ts": "2026-06-30T14:03:31"
+   "ts": "2026-07-05T19:15:53"
   },
   "nature-re-integration": {
    "prefix": "/api/v1/nature-re",
@@ -1538,17 +1538,17 @@
    "skipped": 0,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:21"
+   "ts": "2026-07-05T19:15:53"
   },
   "nature-risk": {
    "prefix": "/api/v1/nature-risk",
    "transactions": 28,
-   "passed": 16,
-   "failed": 5,
+   "passed": 18,
+   "failed": 3,
    "skipped": 7,
    "functions_traced": 358,
    "sql_statements": 6,
-   "ts": "2026-06-30T14:03:27"
+   "ts": "2026-07-05T19:15:55"
   },
   "nbs-finance": {
    "prefix": "/api/v1/nbs-finance",
@@ -1558,7 +1558,7 @@
    "skipped": 1,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:23"
+   "ts": "2026-07-05T19:15:55"
   },
   "net-zero-targets": {
    "prefix": "/api/v1/net-zero-targets",
@@ -1566,9 +1566,9 @@
    "passed": 4,
    "failed": 3,
    "skipped": 0,
-   "functions_traced": 13,
+   "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:25"
+   "ts": "2026-07-05T19:15:55"
   },
   "ngfs-v2": {
    "prefix": "/api/v1/ngfs-scenarios",
@@ -1576,9 +1576,9 @@
    "passed": 8,
    "failed": 2,
    "skipped": 0,
-   "functions_traced": 20,
+   "functions_traced": 19,
    "sql_statements": 18,
-   "ts": "2026-06-30T14:03:37"
+   "ts": "2026-07-05T19:15:58"
   },
   "nonv1-admin": {
    "prefix": "",
@@ -1738,7 +1738,7 @@
    "skipped": 4,
    "functions_traced": 6,
    "sql_statements": 4,
-   "ts": "2026-06-30T14:03:32"
+   "ts": "2026-07-05T19:15:59"
   },
   "parameter-governance": {
    "prefix": "/api/v1/parameters",
@@ -1748,7 +1748,7 @@
    "skipped": 3,
    "functions_traced": 3,
    "sql_statements": 3,
-   "ts": "2026-07-01T10:15:57"
+   "ts": "2026-07-05T19:16:00"
   },
   "pcaf-advanced": {
    "prefix": "/api/v1/pcaf/advanced",
@@ -1756,9 +1756,9 @@
    "passed": 7,
    "failed": 2,
    "skipped": 1,
-   "functions_traced": 98,
+   "functions_traced": 77,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:34"
+   "ts": "2026-07-05T19:16:00"
   },
   "pcaf-asset-classes": {
    "prefix": "/api/v1/pcaf",
@@ -1768,7 +1768,7 @@
    "skipped": 1,
    "functions_traced": 41,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:36"
+   "ts": "2026-07-05T19:16:00"
   },
   "pcaf-ecl-bridge": {
    "prefix": "/api/v1/pcaf-ecl",
@@ -1778,7 +1778,7 @@
    "skipped": 3,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:38"
+   "ts": "2026-07-05T19:16:00"
   },
   "pcaf-quality": {
    "prefix": "/api/v1/pcaf-quality",
@@ -1788,7 +1788,7 @@
    "skipped": 0,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:38"
+   "ts": "2026-07-05T19:16:00"
   },
   "pcaf-regulatory": {
    "prefix": "/api/v1",
@@ -1798,7 +1798,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 7,
-   "ts": "2026-07-01T10:16:01"
+   "ts": "2026-07-05T19:16:02"
   },
   "pcaf-sovereign": {
    "prefix": "/api/v1/pcaf-sovereign",
@@ -1808,7 +1808,7 @@
    "skipped": 1,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:41"
+   "ts": "2026-07-05T19:16:02"
   },
   "pcaf-unified": {
    "prefix": "/api/v1/pcaf-module",
@@ -1818,7 +1818,7 @@
    "skipped": 4,
    "functions_traced": 18,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:42"
+   "ts": "2026-07-05T19:16:02"
   },
   "pe-deals": {
    "prefix": "/api/v1/pe-deals",
@@ -1828,7 +1828,7 @@
    "skipped": 4,
    "functions_traced": 28,
    "sql_statements": 7,
-   "ts": "2026-07-01T10:05:42"
+   "ts": "2026-07-05T19:16:03"
   },
   "pe-portfolio": {
    "prefix": "/api/v1/pe-portfolio",
@@ -1836,9 +1836,9 @@
    "passed": 4,
    "failed": 0,
    "skipped": 6,
-   "functions_traced": 16,
+   "functions_traced": 14,
    "sql_statements": 3,
-   "ts": "2026-07-01T10:05:44"
+   "ts": "2026-07-05T19:16:04"
   },
   "pe-reporting": {
    "prefix": "/api/v1/pe/reporting",
@@ -1848,7 +1848,7 @@
    "skipped": 2,
    "functions_traced": 67,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:45"
+   "ts": "2026-07-05T19:16:04"
   },
   "peer-benchmark": {
    "prefix": "/api/v1/peer-benchmark",
@@ -1858,7 +1858,7 @@
    "skipped": 0,
    "functions_traced": 14536,
    "sql_statements": 144,
-   "ts": "2026-06-30T14:04:04"
+   "ts": "2026-07-05T19:16:10"
   },
   "physical-hazard": {
    "prefix": "/api/v1/physical-hazard",
@@ -1868,17 +1868,17 @@
    "skipped": 3,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:50"
+   "ts": "2026-07-05T19:16:10"
   },
   "physical-risk-pricing": {
    "prefix": "/api/v1/physical-risk-pricing",
-   "transactions": 8,
+   "transactions": 9,
    "passed": 5,
    "failed": 0,
-   "skipped": 3,
+   "skipped": 4,
    "functions_traced": 580,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:03:50"
+   "ts": "2026-07-05T19:16:10"
   },
   "portfolio-analytics": {
    "prefix": "/api/v1/portfolio-analytics",
@@ -1886,9 +1886,9 @@
    "passed": 3,
    "failed": 7,
    "skipped": 7,
-   "functions_traced": 87,
+   "functions_traced": 84,
    "sql_statements": 23,
-   "ts": "2026-06-30T14:04:10"
+   "ts": "2026-07-05T19:16:17"
   },
   "portfolio-health": {
    "prefix": "/api/v1/portfolio-health",
@@ -1898,7 +1898,7 @@
    "skipped": 2,
    "functions_traced": 48,
    "sql_statements": 15,
-   "ts": "2026-06-30T14:04:06"
+   "ts": "2026-07-05T19:16:22"
   },
   "portfolio-pg": {
    "prefix": "/api/pg",
@@ -1908,7 +1908,7 @@
    "skipped": 6,
    "functions_traced": 2,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:04:08"
+   "ts": "2026-07-05T19:16:22"
   },
   "portfolio-reporting": {
    "prefix": "/api",
@@ -1918,7 +1918,7 @@
    "skipped": 3,
    "functions_traced": 105,
    "sql_statements": 77,
-   "ts": "2026-06-30T14:04:11"
+   "ts": "2026-07-05T19:16:25"
   },
   "portfolios": {
    "prefix": "/portfolios",
@@ -1938,7 +1938,7 @@
    "skipped": 3,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:13"
+   "ts": "2026-07-05T19:16:25"
   },
   "project-finance": {
    "prefix": "/api/v1/project-finance",
@@ -1946,9 +1946,9 @@
    "passed": 1,
    "failed": 3,
    "skipped": 0,
-   "functions_traced": 1059,
+   "functions_traced": 1299,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:14"
+   "ts": "2026-07-05T19:16:25"
   },
   "prudential-climate-risk": {
    "prefix": "/api/v1/prudential-climate-risk",
@@ -1958,7 +1958,7 @@
    "skipped": 6,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:14"
+   "ts": "2026-07-05T19:16:25"
   },
   "public-reference-data": {
    "prefix": "/api/v1/refdata",
@@ -1968,7 +1968,7 @@
    "skipped": 0,
    "functions_traced": 36,
    "sql_statements": 4,
-   "ts": "2026-06-30T14:04:21"
+   "ts": "2026-07-05T19:16:26"
   },
   "rbac-admin": {
    "prefix": "/api/v1/admin/rbac",
@@ -1977,18 +1977,18 @@
    "failed": 1,
    "skipped": 10,
    "functions_traced": 4,
-   "sql_statements": 41,
-   "ts": "2026-06-30T14:04:26"
+   "sql_statements": 43,
+   "ts": "2026-07-05T19:16:29"
   },
   "re-clvar": {
    "prefix": "/api/v1",
    "transactions": 5,
-   "passed": 0,
-   "failed": 4,
+   "passed": 4,
+   "failed": 0,
    "skipped": 1,
-   "functions_traced": 31,
+   "functions_traced": 8079,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:18"
+   "ts": "2026-07-05T19:16:29"
   },
   "re-portfolio": {
    "prefix": "/api/v1/re-portfolio",
@@ -1998,7 +1998,7 @@
    "skipped": 1,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:20"
+   "ts": "2026-07-05T19:16:30"
   },
   "real-asset-decarb": {
    "prefix": "/api/v1/real-asset-decarb",
@@ -2008,7 +2008,7 @@
    "skipped": 5,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:22"
+   "ts": "2026-07-05T19:16:30"
   },
   "real-estate-carbon-analytics": {
    "prefix": "/api/v1/real-estate-carbon-analytics",
@@ -2018,17 +2018,17 @@
    "skipped": 3,
    "functions_traced": 246,
    "sql_statements": 3,
-   "ts": "2026-06-30T14:04:26"
+   "ts": "2026-07-05T19:16:31"
   },
   "real-estate-valuation": {
    "prefix": "/api/v1/valuation",
    "transactions": 16,
-   "passed": 12,
-   "failed": 4,
+   "passed": 11,
+   "failed": 5,
    "skipped": 0,
-   "functions_traced": 310,
+   "functions_traced": 314,
    "sql_statements": 15,
-   "ts": "2026-06-30T14:04:31"
+   "ts": "2026-07-05T19:16:34"
   },
   "reference-catalog": {
    "prefix": "/api/v1/reference-catalog",
@@ -2038,7 +2038,7 @@
    "skipped": 0,
    "functions_traced": 148,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:28"
+   "ts": "2026-07-05T19:16:34"
   },
   "reference-data": {
    "prefix": "/api/v1/reference-data",
@@ -2048,17 +2048,17 @@
    "skipped": 0,
    "functions_traced": 10,
    "sql_statements": 18,
-   "ts": "2026-06-30T14:04:39"
+   "ts": "2026-07-05T19:16:39"
   },
   "regulatory-calendar": {
    "prefix": "/api/v1/regulatory-calendar",
    "transactions": 6,
-   "passed": 2,
-   "failed": 4,
+   "passed": 3,
+   "failed": 3,
    "skipped": 0,
-   "functions_traced": 149,
+   "functions_traced": 147,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:30"
+   "ts": "2026-07-05T19:16:39"
   },
   "regulatory-capital-optimizer": {
    "prefix": "/api/v1/regulatory-capital",
@@ -2068,7 +2068,7 @@
    "skipped": 1,
    "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:32"
+   "ts": "2026-07-05T19:16:39"
   },
   "regulatory-horizon": {
    "prefix": "/api/v1/regulatory-horizon",
@@ -2078,7 +2078,7 @@
    "skipped": 4,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:33"
+   "ts": "2026-07-05T19:16:39"
   },
   "regulatory-penalties": {
    "prefix": "/api/v1/regulatory-penalties",
@@ -2086,9 +2086,9 @@
    "passed": 4,
    "failed": 4,
    "skipped": 0,
-   "functions_traced": 52,
+   "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:35"
+   "ts": "2026-07-05T19:16:39"
   },
   "regulatory-reports": {
    "prefix": "/api/v1/regulatory-reports",
@@ -2098,7 +2098,7 @@
    "skipped": 9,
    "functions_traced": 12,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:36"
+   "ts": "2026-07-05T19:16:39"
   },
   "renewable-ppa": {
    "prefix": "/api/v1/renewable-ppa",
@@ -2108,7 +2108,7 @@
    "skipped": 4,
    "functions_traced": 15,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:39"
+   "ts": "2026-07-05T19:16:39"
   },
   "residential-re": {
    "prefix": "/api/v1/residential-re",
@@ -2118,7 +2118,7 @@
    "skipped": 2,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:39"
+   "ts": "2026-07-05T19:16:39"
   },
   "rics-esg": {
    "prefix": "/api/v1/rics-esg",
@@ -2128,7 +2128,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:42"
+   "ts": "2026-07-05T19:16:39"
   },
   "sasb-industry": {
    "prefix": "/api/v1/sasb",
@@ -2138,7 +2138,7 @@
    "skipped": 1,
    "functions_traced": 38,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:04:42"
+   "ts": "2026-07-05T19:16:39"
   },
   "sat-coal-checker": {
    "prefix": "/api/v1/sat-coal",
@@ -2148,7 +2148,7 @@
    "skipped": 1,
    "functions_traced": 3,
    "sql_statements": 1,
-   "ts": "2026-06-30T14:04:43"
+   "ts": "2026-07-05T19:16:39"
   },
   "scenario-analysis": {
    "prefix": "/api/v1/scenarios",
@@ -2156,9 +2156,9 @@
    "passed": 7,
    "failed": 2,
    "skipped": 0,
-   "functions_traced": 111,
+   "functions_traced": 113,
    "sql_statements": 6,
-   "ts": "2026-06-30T14:04:49"
+   "ts": "2026-07-05T19:16:42"
   },
   "scenario-builder-v2": {
    "prefix": "/api/v1/scenario-builder",
@@ -2168,7 +2168,7 @@
    "skipped": 2,
    "functions_traced": 13,
    "sql_statements": 137,
-   "ts": "2026-06-30T14:04:58"
+   "ts": "2026-07-05T19:16:49"
   },
   "scenario-data": {
    "prefix": "/api/v1/scenario-data",
@@ -2178,7 +2178,7 @@
    "skipped": 0,
    "functions_traced": 60,
    "sql_statements": 22,
-   "ts": "2026-06-30T14:04:56"
+   "ts": "2026-07-05T19:16:54"
   },
   "scenarios": {
    "prefix": "/api/v1/scenarios",
@@ -2188,7 +2188,7 @@
    "skipped": 2,
    "functions_traced": 44,
    "sql_statements": 17,
-   "ts": "2026-06-30T14:05:00"
+   "ts": "2026-07-05T19:16:59"
   },
   "scheduled-reports": {
    "prefix": "/api/v1/scheduled-reports",
@@ -2198,7 +2198,7 @@
    "skipped": 4,
    "functions_traced": 14,
    "sql_statements": 3,
-   "ts": "2026-06-30T14:05:01"
+   "ts": "2026-07-05T19:17:00"
   },
   "scope3-analytics": {
    "prefix": "/api/v1/scope3",
@@ -2208,7 +2208,7 @@
    "skipped": 4,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:00"
+   "ts": "2026-07-05T19:17:00"
   },
   "scope3-categories": {
    "prefix": "/api/v1/scope3-categories",
@@ -2216,9 +2216,9 @@
    "passed": 8,
    "failed": 0,
    "skipped": 0,
-   "functions_traced": 52,
+   "functions_traced": 34,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:02"
+   "ts": "2026-07-05T19:17:00"
   },
   "sec-climate": {
    "prefix": "/api/v1/sec-climate",
@@ -2228,7 +2228,7 @@
    "skipped": 2,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:02"
+   "ts": "2026-07-05T19:17:00"
   },
   "sector-assessments": {
    "prefix": "/api/v1",
@@ -2238,7 +2238,7 @@
    "skipped": 0,
    "functions_traced": 53,
    "sql_statements": 15,
-   "ts": "2026-06-30T14:05:06"
+   "ts": "2026-07-05T19:17:03"
   },
   "sector-calculators": {
    "prefix": "/api/v1/sector-calculators",
@@ -2248,7 +2248,7 @@
    "skipped": 0,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:03"
+   "ts": "2026-07-05T19:17:03"
   },
   "sentiment-analysis": {
    "prefix": "/api/v1/sentiment",
@@ -2258,7 +2258,7 @@
    "skipped": 5,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:03"
+   "ts": "2026-07-05T19:17:03"
   },
   "sfdr-annex": {
    "prefix": "/api/v1/sfdr-annex",
@@ -2268,7 +2268,7 @@
    "skipped": 6,
    "functions_traced": 3,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:05"
+   "ts": "2026-07-05T19:17:03"
   },
   "sfdr-art9": {
    "prefix": "/api/v1/sfdr-art9",
@@ -2278,7 +2278,7 @@
    "skipped": 3,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:05"
+   "ts": "2026-07-05T19:17:03"
   },
   "sfdr-exclusion": {
    "prefix": "/api/v1/sfdr-compliance",
@@ -2288,7 +2288,7 @@
    "skipped": 1,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:07"
+   "ts": "2026-07-05T19:17:03"
   },
   "sfdr-pai": {
    "prefix": "/api/v1/sfdr-pai",
@@ -2296,9 +2296,9 @@
    "passed": 12,
    "failed": 0,
    "skipped": 3,
-   "functions_traced": 256,
+   "functions_traced": 255,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:07"
+   "ts": "2026-07-05T19:17:03"
   },
   "sfdr-product-reporting": {
    "prefix": "/api/v1/sfdr-product-reporting",
@@ -2308,7 +2308,7 @@
    "skipped": 2,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:08"
+   "ts": "2026-07-05T19:17:03"
   },
   "shipping-maritime": {
    "prefix": "/api/v1/shipping-maritime",
@@ -2318,7 +2318,7 @@
    "skipped": 7,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:09"
+   "ts": "2026-07-05T19:17:03"
   },
   "sl-finance": {
    "prefix": "/api/v1/sl-finance",
@@ -2328,7 +2328,7 @@
    "skipped": 2,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:09"
+   "ts": "2026-07-05T19:17:03"
   },
   "sll-slb-v2": {
    "prefix": "/api/v1/sll-slb-v2",
@@ -2338,7 +2338,7 @@
    "skipped": 2,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:10"
+   "ts": "2026-07-05T19:17:03"
   },
   "social-bond": {
    "prefix": "/api/v1/social-bond",
@@ -2348,7 +2348,7 @@
    "skipped": 5,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:12"
+   "ts": "2026-07-05T19:17:03"
   },
   "social-taxonomy": {
    "prefix": "/api/v1/social-taxonomy",
@@ -2358,7 +2358,7 @@
    "skipped": 1,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:12"
+   "ts": "2026-07-05T19:17:03"
   },
   "sovereign-climate-risk": {
    "prefix": "/api/v1/sovereign-climate-risk",
@@ -2368,17 +2368,17 @@
    "skipped": 0,
    "functions_traced": 8,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:13"
+   "ts": "2026-07-05T19:17:03"
   },
   "sovereign-debt-climate": {
    "prefix": "/api/v1/sovereign-debt-climate",
    "transactions": 10,
-   "passed": 5,
-   "failed": 1,
+   "passed": 6,
+   "failed": 0,
    "skipped": 4,
    "functions_traced": 7,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:15"
+   "ts": "2026-07-05T19:17:03"
   },
   "sovereign-swf": {
    "prefix": "/api/v1/sovereign-swf",
@@ -2388,7 +2388,7 @@
    "skipped": 3,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:15"
+   "ts": "2026-07-05T19:17:03"
   },
   "spatial-hazard": {
    "prefix": "/api/v1/spatial-hazard",
@@ -2398,7 +2398,7 @@
    "skipped": 2,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:17"
+   "ts": "2026-07-05T19:17:04"
   },
   "spatial": {
    "prefix": "/api/v1/spatial",
@@ -2408,7 +2408,7 @@
    "skipped": 5,
    "functions_traced": 2,
    "sql_statements": 3,
-   "ts": "2026-06-30T14:05:16"
+   "ts": "2026-07-05T19:17:04"
   },
   "sscf": {
    "prefix": "/api/v1/sscf",
@@ -2418,7 +2418,7 @@
    "skipped": 0,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:17"
+   "ts": "2026-07-05T19:17:04"
   },
   "stewardship": {
    "prefix": "/api/v1/stewardship",
@@ -2428,7 +2428,7 @@
    "skipped": 0,
    "functions_traced": 10,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:19"
+   "ts": "2026-07-05T19:17:04"
   },
   "stranded-assets": {
    "prefix": "/api/v1/stranded-assets",
@@ -2438,7 +2438,7 @@
    "skipped": 3,
    "functions_traced": 1414,
    "sql_statements": 39,
-   "ts": "2026-06-30T14:05:29"
+   "ts": "2026-07-05T19:17:11"
   },
   "stress-test-orchestrator": {
    "prefix": "/api/v1/stress-test-orchestrator",
@@ -2448,7 +2448,7 @@
    "skipped": 0,
    "functions_traced": 66,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:20"
+   "ts": "2026-07-05T19:17:11"
   },
   "stress-testing": {
    "prefix": "/api/v1/stress-testing",
@@ -2458,7 +2458,7 @@
    "skipped": 0,
    "functions_traced": 11,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:24"
+   "ts": "2026-07-05T19:17:11"
   },
   "sub-parameter": {
    "prefix": "/api/v1/sub-parameter",
@@ -2466,9 +2466,9 @@
    "passed": 1,
    "failed": 11,
    "skipped": 4,
-   "functions_traced": 26,
+   "functions_traced": 22,
    "sql_statements": 10,
-   "ts": "2026-06-30T14:05:26"
+   "ts": "2026-07-05T19:17:14"
   },
   "supply-chain-workflow": {
    "prefix": "/api/v1/supply-chain-workflow",
@@ -2478,7 +2478,7 @@
    "skipped": 0,
    "functions_traced": 6,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:28"
+   "ts": "2026-07-05T19:17:16"
   },
   "supply-chain": {
    "prefix": "/api/v1",
@@ -2488,7 +2488,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 5,
-   "ts": "2026-06-30T14:05:28"
+   "ts": "2026-07-05T19:17:16"
   },
   "sustainability": {
    "prefix": "/api/v1/sustainability",
@@ -2498,7 +2498,7 @@
    "skipped": 2,
    "functions_traced": 97,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:30"
+   "ts": "2026-07-05T19:17:16"
   },
   "sustainable-trade-finance": {
    "prefix": "/api/v1/sustainable-trade-finance",
@@ -2506,9 +2506,9 @@
    "passed": 11,
    "failed": 0,
    "skipped": 1,
-   "functions_traced": 22,
+   "functions_traced": 29,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:30"
+   "ts": "2026-07-05T19:17:16"
   },
   "tcfd-metrics": {
    "prefix": "/api/v1/tcfd-metrics",
@@ -2518,7 +2518,7 @@
    "skipped": 0,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:31"
+   "ts": "2026-07-05T19:17:16"
   },
   "technology": {
    "prefix": "/api/v1/technology",
@@ -2528,7 +2528,7 @@
    "skipped": 1,
    "functions_traced": 21,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:32"
+   "ts": "2026-07-05T19:17:16"
   },
   "temperature-alignment": {
    "prefix": "/api/v1/temperature-alignment",
@@ -2538,7 +2538,7 @@
    "skipped": 1,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:32"
+   "ts": "2026-07-05T19:17:16"
   },
   "tnfd-assessment": {
    "prefix": "/api/v1/tnfd",
@@ -2548,7 +2548,7 @@
    "skipped": 0,
    "functions_traced": 19,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:33"
+   "ts": "2026-07-05T19:17:16"
   },
   "tnfd-leap": {
    "prefix": "/api/v1/tnfd-leap",
@@ -2556,9 +2556,9 @@
    "passed": 5,
    "failed": 2,
    "skipped": 0,
-   "functions_traced": 47,
+   "functions_traced": 18,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:35"
+   "ts": "2026-07-05T19:17:16"
   },
   "tpt-transition-plan": {
    "prefix": "/api/v1/tpt-transition-plan",
@@ -2568,7 +2568,7 @@
    "skipped": 0,
    "functions_traced": 21,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:35"
+   "ts": "2026-07-05T19:17:16"
   },
   "trade-finance-esg": {
    "prefix": "/api/v1/trade-finance-esg",
@@ -2578,7 +2578,7 @@
    "skipped": 5,
    "functions_traced": 5,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:35"
+   "ts": "2026-07-05T19:17:16"
   },
   "transition-finance": {
    "prefix": "/api/v1/transition-finance",
@@ -2588,7 +2588,7 @@
    "skipped": 1,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:37"
+   "ts": "2026-07-05T19:17:16"
   },
   "transition-plan": {
    "prefix": "/api/v1/transition-plan",
@@ -2598,7 +2598,7 @@
    "skipped": 2,
    "functions_traced": 27,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:37"
+   "ts": "2026-07-05T19:17:16"
   },
   "uk-sdr": {
    "prefix": "/api/v1/uk-sdr",
@@ -2608,7 +2608,7 @@
    "skipped": 1,
    "functions_traced": 14,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:38"
+   "ts": "2026-07-05T19:17:16"
   },
   "unified-valuation": {
    "prefix": "/api/v1",
@@ -2616,9 +2616,9 @@
    "passed": 2,
    "failed": 3,
    "skipped": 0,
-   "functions_traced": 38,
+   "functions_traced": 37,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:40"
+   "ts": "2026-07-05T19:17:16"
   },
   "universal-exports": {
    "prefix": "/api/v1/exports",
@@ -2626,9 +2626,9 @@
    "passed": 9,
    "failed": 1,
    "skipped": 1,
-   "functions_traced": 70,
+   "functions_traced": 68,
    "sql_statements": 4,
-   "ts": "2026-06-30T14:05:46"
+   "ts": "2026-07-05T19:17:18"
   },
   "uploads": {
    "prefix": "/uploads",
@@ -2638,7 +2638,7 @@
    "skipped": 4,
    "functions_traced": 4,
    "sql_statements": 4,
-   "ts": "2026-07-01T10:16:11"
+   "ts": "2026-07-05T19:17:19"
   },
   "validation-summary": {
    "prefix": "/api/v1/validation",
@@ -2648,7 +2648,7 @@
    "skipped": 1,
    "functions_traced": 4,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:43"
+   "ts": "2026-07-05T19:17:19"
   },
   "vcm-integrity": {
    "prefix": "/api/v1/vcm-integrity",
@@ -2658,7 +2658,7 @@
    "skipped": 0,
    "functions_traced": 9,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:45"
+   "ts": "2026-07-05T19:17:19"
   },
   "violations": {
    "prefix": "/api/v1/violations",
@@ -2668,7 +2668,7 @@
    "skipped": 0,
    "functions_traced": 7,
    "sql_statements": 13,
-   "ts": "2026-06-30T14:05:51"
+   "ts": "2026-07-05T19:17:24"
   },
   "water-risk": {
    "prefix": "/api/v1/water-risk",
@@ -2678,7 +2678,7 @@
    "skipped": 7,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:48"
+   "ts": "2026-07-05T19:17:24"
   },
   "water-stewardship": {
    "prefix": "/api/v1/water-risk",
@@ -2688,7 +2688,7 @@
    "skipped": 1,
    "functions_traced": 37,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:49"
+   "ts": "2026-07-05T19:17:24"
   },
   "xbrl-export": {
    "prefix": "/api/v1/xbrl",
@@ -2698,7 +2698,397 @@
    "skipped": 5,
    "functions_traced": 13,
    "sql_statements": 0,
-   "ts": "2026-06-30T14:05:50"
+   "ts": "2026-07-05T19:17:25"
+  },
+  "bess-stacking": {
+   "prefix": "/api/v1/bess-stacking",
+   "transactions": 7,
+   "passed": 2,
+   "failed": 2,
+   "skipped": 3,
+   "functions_traced": 4,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:10:41"
+  },
+  "climate-policy-radar": {
+   "prefix": "/api/v1/climate-policy",
+   "transactions": 3,
+   "passed": 2,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 66,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:11:01"
+  },
+  "climate-trace": {
+   "prefix": "/api/v1/climate-trace",
+   "transactions": 3,
+   "passed": 2,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 9,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:11:04"
+  },
+  "compliance-carbon": {
+   "prefix": "/api/v1/compliance-carbon",
+   "transactions": 5,
+   "passed": 2,
+   "failed": 0,
+   "skipped": 3,
+   "functions_traced": 2,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:11:05"
+  },
+  "eia-energy": {
+   "prefix": "/api/v1/eia",
+   "transactions": 3,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 7,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:14:34"
+  },
+  "energy-bond-ladder": {
+   "prefix": "/api/v1/energy-bonds",
+   "transactions": 7,
+   "passed": 4,
+   "failed": 0,
+   "skipped": 3,
+   "functions_traced": 972,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:14:37"
+  },
+  "entsoe-grid": {
+   "prefix": "/api/v1/entsoe",
+   "transactions": 3,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 9,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:14"
+  },
+  "financial-model-engine": {
+   "prefix": "/api/v1/financial-model",
+   "transactions": 8,
+   "passed": 1,
+   "failed": 2,
+   "skipped": 5,
+   "functions_traced": 6,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:21"
+  },
+  "fred-spreads": {
+   "prefix": "/api/v1/fred-spreads",
+   "transactions": 3,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 9,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:22"
+  },
+  "gbif-screening": {
+   "prefix": "/api/v1/gbif",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:23"
+  },
+  "gleif-graph": {
+   "prefix": "/api/v1/gleif",
+   "transactions": 6,
+   "passed": 3,
+   "failed": 3,
+   "skipped": 0,
+   "functions_traced": 9,
+   "sql_statements": 1,
+   "ts": "2026-07-05T19:15:30"
+  },
+  "global-physical-risk": {
+   "prefix": "/api/v1/global-physical-risk",
+   "transactions": 4,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 2,
+   "functions_traced": 9,
+   "sql_statements": 20,
+   "ts": "2026-07-05T19:15:35"
+  },
+  "green-bond-analytics": {
+   "prefix": "/api/v1/green-bond-analytics",
+   "transactions": 3,
+   "passed": 0,
+   "failed": 0,
+   "skipped": 3,
+   "functions_traced": 0,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:35"
+  },
+  "green-premium-hedonic": {
+   "prefix": "/api/v1/green-premium-hedonic",
+   "transactions": 1,
+   "passed": 0,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 1,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:35"
+  },
+  "grid-carbon": {
+   "prefix": "/api/v1/grid-carbon",
+   "transactions": 5,
+   "passed": 4,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 189,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:39"
+  },
+  "ibtracs-cyclone": {
+   "prefix": "/api/v1/cyclone-risk",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 3,
+   "ts": "2026-07-05T19:15:41"
+  },
+  "infra-portfolio-analytics": {
+   "prefix": "/api/v1/infra-portfolio",
+   "transactions": 3,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 1,
+   "functions_traced": 2,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:41"
+  },
+  "module-nav": {
+   "prefix": "/api/v1/module-nav",
+   "transactions": 7,
+   "passed": 0,
+   "failed": 4,
+   "skipped": 3,
+   "functions_traced": 6,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:49"
+  },
+  "nasa-power": {
+   "prefix": "/api/v1/nasa-power",
+   "transactions": 2,
+   "passed": 0,
+   "failed": 2,
+   "skipped": 0,
+   "functions_traced": 4,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:49"
+  },
+  "ngfs-scenarios-extract": {
+   "prefix": "/api/v1/ngfs-extract",
+   "transactions": 2,
+   "passed": 2,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 3,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:55"
+  },
+  "open-meteo": {
+   "prefix": "/api/v1/open-meteo",
+   "transactions": 4,
+   "passed": 1,
+   "failed": 3,
+   "skipped": 0,
+   "functions_traced": 6,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:58"
+  },
+  "openfema-claims": {
+   "prefix": "/api/v1/openfema",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:58"
+  },
+  "openfigi": {
+   "prefix": "/api/v1/openfigi",
+   "transactions": 3,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 1,
+   "functions_traced": 5,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:58"
+  },
+  "overture-buildings": {
+   "prefix": "/api/v1/overture-buildings",
+   "transactions": 1,
+   "passed": 1,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 1,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:15:59"
+  },
+  "pf-debt-sizing": {
+   "prefix": "/api/v1/pf-debt-sizing",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 0,
+   "skipped": 1,
+   "functions_traced": 1,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:16:10"
+  },
+  "pf-rating": {
+   "prefix": "/api/v1/pf-rating",
+   "transactions": 3,
+   "passed": 2,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 3,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:16:10"
+  },
+  "ppa-structuring": {
+   "prefix": "/api/v1/ppa-structuring",
+   "transactions": 8,
+   "passed": 3,
+   "failed": 2,
+   "skipped": 3,
+   "functions_traced": 5,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:16:25"
+  },
+  "ppa-xva": {
+   "prefix": "/api/v1/ppa-xva",
+   "transactions": 6,
+   "passed": 4,
+   "failed": 2,
+   "skipped": 0,
+   "functions_traced": 6,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:16:25"
+  },
+  "sanctions-screening": {
+   "prefix": "/api/v1/sanctions",
+   "transactions": 3,
+   "passed": 2,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 3,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:16:39"
+  },
+  "slb-structuring": {
+   "prefix": "/api/v1/slb-structuring",
+   "transactions": 9,
+   "passed": 3,
+   "failed": 1,
+   "skipped": 5,
+   "functions_traced": 4,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:03"
+  },
+  "tax-equity": {
+   "prefix": "/api/v1/tax-equity",
+   "transactions": 5,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 2,
+   "functions_traced": 3,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "transition-credit-analytics": {
+   "prefix": "/api/v1/transition-credit",
+   "transactions": 8,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 5,
+   "functions_traced": 83,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "ucdp-conflict": {
+   "prefix": "/api/v1/ucdp",
+   "transactions": 4,
+   "passed": 3,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 5,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "uk-epc": {
+   "prefix": "/api/v1/uk-epc",
+   "transactions": 3,
+   "passed": 3,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 6,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "uk-land-registry": {
+   "prefix": "/api/v1/uk-land-registry",
+   "transactions": 1,
+   "passed": 0,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 1,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "un-comtrade": {
+   "prefix": "/api/v1/un-comtrade",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:16"
+  },
+  "usgs-earthquake": {
+   "prefix": "/api/v1/usgs-earthquake",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 2,
+   "ts": "2026-07-05T19:17:19"
+  },
+  "vcm-registry": {
+   "prefix": "/api/v1/vcm-registry",
+   "transactions": 4,
+   "passed": 4,
+   "failed": 0,
+   "skipped": 0,
+   "functions_traced": 18,
+   "sql_statements": 0,
+   "ts": "2026-07-05T19:17:22"
+  },
+  "wildfire-risk-status": {
+   "prefix": "/api/v1/wildfire-risk",
+   "transactions": 2,
+   "passed": 1,
+   "failed": 1,
+   "skipped": 0,
+   "functions_traced": 2,
+   "sql_statements": 2,
+   "ts": "2026-07-05T19:17:25"
   }
  }
 }

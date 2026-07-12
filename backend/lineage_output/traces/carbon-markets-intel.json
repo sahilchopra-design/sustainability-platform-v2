@@ -1,10 +1,10 @@
 {
  "domain": "carbon-markets-intel",
  "meta": {
-  "ts": "2026-06-30T13:59:35",
+  "ts": "2026-07-05T19:10:48",
+  "endpoints": 11,
   "module": "api.v1.routes.carbon_markets_intel",
-  "router_prefix": "/api/v1/carbon-markets-intel",
-  "endpoints": 11
+  "router_prefix": "/api/v1/carbon-markets-intel"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.264,
+   "dur_ms": 0.182,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 861,
      "name": "ref_corsia_schemes",
      "qual": "ref_corsia_schemes",
      "file": "api/v1/routes/carbon_markets_intel.py",
      "line": 239,
      "args": {},
      "ret": "{'status': 'success', 'data': {'program': 'CORSIA Phase 2 (2024-2026) \u2014 ICAO Carbon Offsetting and Reduction Scheme', 'approved_schemes': ['American Carbon Registry (ACR)', 'Architecture for REDD+ Transactions (ART TREES)', 'Climate Action\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.143,
+   "dur_ms": 0.121,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 862,
      "name": "ref_icvcm_ccps",
      "qual": "ref_icvcm_ccps",
      "file": "api/v1/routes/carbon_markets_intel.py",
      "line": 221,
      "args": {},
      "ret": "{'status': 'success', 'data': {'standard': 'ICVCM Core Carbon Principles v2.0 (2023)', 'total_ccps': 10, 'ccps': [{'id': 'CCP01', 'name': 'Effective Governance', 'category': 'governance', 'weight': 0.12}, {'id': 'CCP02', 'name': 'Tracking'\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.13,
+   "dur_ms": 0.121,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,7 +110,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 863,
      "name": "ref_price_benchmarks",
      "qual": "ref_price_benchmarks",
      "file": "api/v1/routes/carbon_markets_intel.py",
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.122,
+   "dur_ms": 0.113,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,7 +149,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 864,
      "name": "ref_vcmi_criteria",
      "qual": "ref_vcmi_criteria",
      "file": "api/v1/routes/carbon_markets_intel.py",
@@ -223,7 +223,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.163,
+   "dur_ms": 0.143,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -237,7 +237,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 865,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/carbon_markets_intel.py",
@@ -246,7 +246,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.013,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -277,7 +277,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.16,
+   "dur_ms": 0.109,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -291,7 +291,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 866,
      "name": "portfolio_analysis",
      "qual": "portfolio_analysis",
      "file": "api/v1/routes/carbon_markets_intel.py",

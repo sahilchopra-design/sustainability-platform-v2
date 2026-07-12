@@ -1,10 +1,10 @@
 {
  "domain": "biodiversity-finance-v2",
  "meta": {
-  "ts": "2026-06-30T13:59:27",
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 12,
   "module": "api.v1.routes.biodiversity_finance_v2",
-  "router_prefix": "/api/v1/biodiversity-finance-v2",
-  "endpoints": 12
+  "router_prefix": "/api/v1/biodiversity-finance-v2"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.302,
+   "dur_ms": 0.464,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 608,
      "name": "ref_bng_habitats",
      "qual": "ref_bng_habitats",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
      "line": 275,
      "args": {},
      "ret": "{'status': 'success', 'data': {'standard': 'Natural England Biodiversity Net Gain Metric 4.0 (2023)', 'condition_multipliers': {'outstanding': 6.0, 'good': 4.0, 'moderate': 2.0, 'poor': 1.0, 'very_poor': 0.5, 'n_a': 0.0}, 'land_use_msa_fra\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.197,
+   "dur_ms": 0.295,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 609,
      "name": "ref_ecosystem_services",
      "qual": "ref_ecosystem_services",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
      "line": 228,
      "args": {},
      "ret": "{'status': 'success', 'data': {'total_services': 23, 'services': {'water_flow_regulation': {'name': 'Water Flow Regulation', 'category': 'regulating', 'encore_id': 'ES01', 'default_weight': 0.08}, 'soil_quality': {'name': 'Soil Quality', '\u2026",
-     "dur_ms": 0.033,
+     "dur_ms": 0.071,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.168,
+   "dur_ms": 0.202,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,14 +110,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 610,
      "name": "ref_gbf_targets",
      "qual": "ref_gbf_targets",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
      "line": 247,
      "args": {},
      "ret": "{'status': 'success', 'data': {'framework': 'Kunming-Montreal Global Biodiversity Framework (COP15, Dec 2022)', 'total_targets': 23, 'targets': [{'target_id': 'T01', 'description': '30\u00d730 \u2014 Protect 30% of land and oceans by 2030'}, {'targe\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.09,
+   "dur_ms": 0.166,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,14 +149,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 611,
      "name": "ref_pbaf_methods",
      "qual": "ref_pbaf_methods",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
      "line": 263,
      "args": {},
      "ret": "{'status': 'success', 'data': {'standard': 'PBAF Standard v2 (2023) \u2014 Portfolio Biodiversity Accounting and Assessment', 'methods': {'outstanding_amount': {'description': 'Attribution = (outstanding_amount / total_enterprise_value) \u00d7 expos\u2026",
-     "dur_ms": 0.002,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -169,7 +169,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.432,
+   "dur_ms": 0.198,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -183,7 +183,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 612,
      "name": "bffi_score",
      "qual": "bffi_score",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
@@ -192,7 +192,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.013,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -241,7 +241,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.238,
+   "dur_ms": 0.175,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -255,7 +255,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 613,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
@@ -264,7 +264,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -295,7 +295,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.164,
+   "dur_ms": 0.172,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -309,7 +309,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 614,
      "name": "leap_assessment",
      "qual": "leap_assessment",
      "file": "api/v1/routes/biodiversity_finance_v2.py",
@@ -318,7 +318,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

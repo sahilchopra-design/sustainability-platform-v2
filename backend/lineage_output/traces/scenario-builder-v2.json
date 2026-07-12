@@ -1,10 +1,10 @@
 {
  "domain": "scenario-builder-v2",
  "meta": {
-  "ts": "2026-06-30T14:04:58",
+  "ts": "2026-07-05T19:16:49",
+  "endpoints": 12,
   "module": "api.v1.routes.scenario_builder_v2",
-  "router_prefix": "/api/v1/scenario-builder",
-  "endpoints": 12
+  "router_prefix": "/api/v1/scenario-builder"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 10428.94,
+   "dur_ms": 4403.529,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -31,7 +31,7 @@
       "hub_scenarios"
      ],
      "rowcount": 102,
-     "dur_ms": 143.08,
+     "dur_ms": 128.144,
      "is_reference": false,
      "error": null
     },
@@ -42,7 +42,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 35.933,
+     "dur_ms": 34.861,
      "is_reference": false,
      "error": null
     },
@@ -53,7 +53,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 43.092,
+     "dur_ms": 34.268,
      "is_reference": false,
      "error": null
     },
@@ -64,7 +64,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 29.772,
+     "dur_ms": 29.93,
      "is_reference": false,
      "error": null
     },
@@ -75,7 +75,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 35.342,
+     "dur_ms": 33.306,
      "is_reference": false,
      "error": null
     },
@@ -86,7 +86,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.376,
+     "dur_ms": 28.023,
      "is_reference": false,
      "error": null
     },
@@ -97,7 +97,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 34.187,
+     "dur_ms": 32.276,
      "is_reference": false,
      "error": null
     },
@@ -108,7 +108,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.705,
+     "dur_ms": 27.957,
      "is_reference": false,
      "error": null
     },
@@ -119,7 +119,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 33.929,
+     "dur_ms": 33.553,
      "is_reference": false,
      "error": null
     },
@@ -130,7 +130,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 42.985,
+     "dur_ms": 30.06,
      "is_reference": false,
      "error": null
     },
@@ -141,7 +141,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 30.409,
+     "dur_ms": 28.598,
      "is_reference": false,
      "error": null
     },
@@ -152,7 +152,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 162.903,
+     "dur_ms": 28.557,
      "is_reference": false,
      "error": null
     },
@@ -163,7 +163,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 42.108,
+     "dur_ms": 30.756,
      "is_reference": false,
      "error": null
     },
@@ -174,7 +174,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 33.885,
+     "dur_ms": 31.264,
      "is_reference": false,
      "error": null
     },
@@ -185,7 +185,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 31.244,
+     "dur_ms": 34.604,
      "is_reference": false,
      "error": null
     },
@@ -196,7 +196,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 31.845,
+     "dur_ms": 33.01,
      "is_reference": false,
      "error": null
     },
@@ -207,7 +207,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 31.254,
+     "dur_ms": 31.962,
      "is_reference": false,
      "error": null
     },
@@ -218,7 +218,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 33.812,
+     "dur_ms": 29.746,
      "is_reference": false,
      "error": null
     },
@@ -229,7 +229,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 43.704,
+     "dur_ms": 30.032,
      "is_reference": false,
      "error": null
     },
@@ -240,7 +240,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 31.337,
+     "dur_ms": 30.175,
      "is_reference": false,
      "error": null
     },
@@ -251,7 +251,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 43.973,
+     "dur_ms": 30.142,
      "is_reference": false,
      "error": null
     },
@@ -262,7 +262,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.049,
+     "dur_ms": 28.255,
      "is_reference": false,
      "error": null
     },
@@ -273,7 +273,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 34.908,
+     "dur_ms": 33.005,
      "is_reference": false,
      "error": null
     },
@@ -284,7 +284,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 38.289,
+     "dur_ms": 30.798,
      "is_reference": false,
      "error": null
     },
@@ -295,7 +295,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.776,
+     "dur_ms": 30.236,
      "is_reference": false,
      "error": null
     },
@@ -306,7 +306,7 @@
       "hub_trajectories"
      ],
      "rowcount": 24,
-     "dur_ms": 44.855,
+     "dur_ms": 31.545,
      "is_reference": false,
      "error": null
     },
@@ -317,7 +317,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.409,
+     "dur_ms": 30.021,
      "is_reference": false,
      "error": null
     },
@@ -328,7 +328,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 167.979,
+     "dur_ms": 31.273,
      "is_reference": false,
      "error": null
     },
@@ -339,7 +339,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 62.085,
+     "dur_ms": 28.157,
      "is_reference": false,
      "error": null
     },
@@ -350,7 +350,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 167.753,
+     "dur_ms": 30.164,
      "is_reference": false,
      "error": null
     },
@@ -361,7 +361,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 52.875,
+     "dur_ms": 27.932,
      "is_reference": false,
      "error": null
     },
@@ -372,7 +372,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 34.185,
+     "dur_ms": 34.304,
      "is_reference": false,
      "error": null
     },
@@ -383,7 +383,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 50.277,
+     "dur_ms": 31.886,
      "is_reference": false,
      "error": null
     },
@@ -394,7 +394,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 37.804,
+     "dur_ms": 30.182,
      "is_reference": false,
      "error": null
     },
@@ -405,7 +405,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.366,
+     "dur_ms": 29.327,
      "is_reference": false,
      "error": null
     },
@@ -416,7 +416,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.937,
+     "dur_ms": 28.264,
      "is_reference": false,
      "error": null
     },
@@ -427,7 +427,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 35.465,
+     "dur_ms": 28.953,
      "is_reference": false,
      "error": null
     },
@@ -438,7 +438,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 38.94,
+     "dur_ms": 32.987,
      "is_reference": false,
      "error": null
     },
@@ -449,7 +449,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 32.622,
+     "dur_ms": 28.272,
      "is_reference": false,
      "error": null
     },
@@ -460,7 +460,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.619,
+     "dur_ms": 28.53,
      "is_reference": false,
      "error": null
     },
@@ -471,7 +471,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 33.911,
+     "dur_ms": 28.68,
      "is_reference": false,
      "error": null
     },
@@ -482,7 +482,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.484,
+     "dur_ms": 38.291,
      "is_reference": false,
      "error": null
     },
@@ -493,7 +493,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 39.157,
+     "dur_ms": 30.265,
      "is_reference": false,
      "error": null
     },
@@ -504,7 +504,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 35.578,
+     "dur_ms": 32.171,
      "is_reference": false,
      "error": null
     },
@@ -515,7 +515,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 157.881,
+     "dur_ms": 31.822,
      "is_reference": false,
      "error": null
     },
@@ -526,7 +526,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 37.3,
+     "dur_ms": 28.306,
      "is_reference": false,
      "error": null
     },
@@ -537,7 +537,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.151,
+     "dur_ms": 28.855,
      "is_reference": false,
      "error": null
     },
@@ -548,7 +548,7 @@
       "hub_trajectories"
      ],
      "rowcount": 20,
-     "dur_ms": 419.619,
+     "dur_ms": 31.394,
      "is_reference": false,
      "error": null
     },
@@ -559,7 +559,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 183.28,
+     "dur_ms": 41.67,
      "is_reference": false,
      "error": null
     },
@@ -570,7 +570,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 429.175,
+     "dur_ms": 65.342,
      "is_reference": false,
      "error": null
     },
@@ -581,7 +581,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 57.731,
+     "dur_ms": 51.815,
      "is_reference": false,
      "error": null
     },
@@ -592,7 +592,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 66.088,
+     "dur_ms": 33.908,
      "is_reference": false,
      "error": null
     },
@@ -603,7 +603,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 31.546,
+     "dur_ms": 30.71,
      "is_reference": false,
      "error": null
     },
@@ -614,7 +614,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.247,
+     "dur_ms": 28.146,
      "is_reference": false,
      "error": null
     },
@@ -625,7 +625,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 31.362,
+     "dur_ms": 29.292,
      "is_reference": false,
      "error": null
     },
@@ -636,7 +636,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.192,
+     "dur_ms": 29.536,
      "is_reference": false,
      "error": null
     },
@@ -647,7 +647,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.914,
+     "dur_ms": 28.188,
      "is_reference": false,
      "error": null
     },
@@ -658,7 +658,7 @@
       "hub_trajectories"
      ],
      "rowcount": 9,
-     "dur_ms": 29.956,
+     "dur_ms": 28.007,
      "is_reference": false,
      "error": null
     },
@@ -669,7 +669,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 55.194,
+     "dur_ms": 29.696,
      "is_reference": false,
      "error": null
     },
@@ -680,7 +680,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.552,
+     "dur_ms": 28.38,
      "is_reference": false,
      "error": null
     },
@@ -691,7 +691,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 29.856,
+     "dur_ms": 28.317,
      "is_reference": false,
      "error": null
     },
@@ -702,7 +702,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 30.823,
+     "dur_ms": 29.183,
      "is_reference": false,
      "error": null
     },
@@ -713,7 +713,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 31.14,
+     "dur_ms": 30.59,
      "is_reference": false,
      "error": null
     },
@@ -724,7 +724,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.726,
+     "dur_ms": 28.302,
      "is_reference": false,
      "error": null
     },
@@ -735,7 +735,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.069,
+     "dur_ms": 30.239,
      "is_reference": false,
      "error": null
     },
@@ -746,7 +746,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.684,
+     "dur_ms": 28.9,
      "is_reference": false,
      "error": null
     },
@@ -757,7 +757,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.153,
+     "dur_ms": 27.778,
      "is_reference": false,
      "error": null
     },
@@ -768,7 +768,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.54,
+     "dur_ms": 27.7,
      "is_reference": false,
      "error": null
     },
@@ -779,7 +779,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 29.704,
+     "dur_ms": 28.289,
      "is_reference": false,
      "error": null
     },
@@ -790,7 +790,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 31.989,
+     "dur_ms": 30.194,
      "is_reference": false,
      "error": null
     },
@@ -801,7 +801,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.227,
+     "dur_ms": 30.837,
      "is_reference": false,
      "error": null
     },
@@ -812,7 +812,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.201,
+     "dur_ms": 27.567,
      "is_reference": false,
      "error": null
     },
@@ -823,7 +823,7 @@
       "hub_trajectories"
      ],
      "rowcount": 20,
-     "dur_ms": 32.167,
+     "dur_ms": 30.398,
      "is_reference": false,
      "error": null
     },
@@ -834,7 +834,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.716,
+     "dur_ms": 27.641,
      "is_reference": false,
      "error": null
     },
@@ -845,7 +845,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 32.061,
+     "dur_ms": 28.884,
      "is_reference": false,
      "error": null
     },
@@ -856,7 +856,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 32.293,
+     "dur_ms": 30.116,
      "is_reference": false,
      "error": null
     },
@@ -867,7 +867,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 33.324,
+     "dur_ms": 60.444,
      "is_reference": false,
      "error": null
     },
@@ -878,7 +878,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 34.308,
+     "dur_ms": 42.436,
      "is_reference": false,
      "error": null
     },
@@ -889,7 +889,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 53.602,
+     "dur_ms": 29.267,
      "is_reference": false,
      "error": null
     },
@@ -900,7 +900,7 @@
       "hub_trajectories"
      ],
      "rowcount": 20,
-     "dur_ms": 31.534,
+     "dur_ms": 30.533,
      "is_reference": false,
      "error": null
     },
@@ -911,7 +911,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.501,
+     "dur_ms": 30.27,
      "is_reference": false,
      "error": null
     },
@@ -922,7 +922,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 32.448,
+     "dur_ms": 28.56,
      "is_reference": false,
      "error": null
     },
@@ -933,7 +933,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 30.737,
+     "dur_ms": 27.763,
      "is_reference": false,
      "error": null
     },
@@ -944,7 +944,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.882,
+     "dur_ms": 28.973,
      "is_reference": false,
      "error": null
     },
@@ -955,7 +955,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.121,
+     "dur_ms": 32.961,
      "is_reference": false,
      "error": null
     },
@@ -966,7 +966,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.598,
+     "dur_ms": 30.297,
      "is_reference": false,
      "error": null
     },
@@ -977,7 +977,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.043,
+     "dur_ms": 28.0,
      "is_reference": false,
      "error": null
     },
@@ -988,7 +988,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 29.878,
+     "dur_ms": 27.962,
      "is_reference": false,
      "error": null
     },
@@ -999,7 +999,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 50.326,
+     "dur_ms": 28.449,
      "is_reference": false,
      "error": null
     },
@@ -1010,7 +1010,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 38.266,
+     "dur_ms": 28.976,
      "is_reference": false,
      "error": null
     },
@@ -1021,7 +1021,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 36.335,
+     "dur_ms": 30.853,
      "is_reference": false,
      "error": null
     },
@@ -1032,7 +1032,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 34.674,
+     "dur_ms": 30.103,
      "is_reference": false,
      "error": null
     },
@@ -1043,7 +1043,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 33.238,
+     "dur_ms": 28.285,
      "is_reference": false,
      "error": null
     },
@@ -1054,7 +1054,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 36.294,
+     "dur_ms": 38.135,
      "is_reference": false,
      "error": null
     },
@@ -1065,7 +1065,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 36.177,
+     "dur_ms": 29.596,
      "is_reference": false,
      "error": null
     },
@@ -1076,7 +1076,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.136,
+     "dur_ms": 28.113,
      "is_reference": false,
      "error": null
     },
@@ -1087,7 +1087,7 @@
       "hub_trajectories"
      ],
      "rowcount": 24,
-     "dur_ms": 42.558,
+     "dur_ms": 31.56,
      "is_reference": false,
      "error": null
     },
@@ -1098,7 +1098,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 31.167,
+     "dur_ms": 34.928,
      "is_reference": false,
      "error": null
     },
@@ -1109,7 +1109,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.285,
+     "dur_ms": 28.384,
      "is_reference": false,
      "error": null
     },
@@ -1120,7 +1120,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 687.246,
+     "dur_ms": 31.709,
      "is_reference": false,
      "error": null
     },
@@ -1131,7 +1131,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 1082.403,
+     "dur_ms": 28.637,
      "is_reference": false,
      "error": null
     },
@@ -1142,7 +1142,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 1288.581,
+     "dur_ms": 28.817,
      "is_reference": false,
      "error": null
     },
@@ -1153,7 +1153,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 66.328,
+     "dur_ms": 31.457,
      "is_reference": false,
      "error": null
     },
@@ -1164,7 +1164,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 64.52,
+     "dur_ms": 31.022,
      "is_reference": false,
      "error": null
     },
@@ -1175,7 +1175,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 37.976,
+     "dur_ms": 28.062,
      "is_reference": false,
      "error": null
     },
@@ -1186,7 +1186,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 35.596,
+     "dur_ms": 29.213,
      "is_reference": false,
      "error": null
     },
@@ -1197,7 +1197,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 44.486,
+     "dur_ms": 147.275,
      "is_reference": false,
      "error": null
     },
@@ -1208,7 +1208,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 45.101,
+     "dur_ms": 31.95,
      "is_reference": false,
      "error": null
     },
@@ -1219,7 +1219,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 33.98,
+     "dur_ms": 28.743,
      "is_reference": false,
      "error": null
     },
@@ -1230,7 +1230,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.581,
+     "dur_ms": 29.419,
      "is_reference": false,
      "error": null
     },
@@ -1241,7 +1241,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 164.384,
+     "dur_ms": 28.977,
      "is_reference": false,
      "error": null
     },
@@ -1252,7 +1252,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 296.371,
+     "dur_ms": 28.434,
      "is_reference": false,
      "error": null
     },
@@ -1263,7 +1263,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 44.556,
+     "dur_ms": 29.407,
      "is_reference": false,
      "error": null
     },
@@ -1274,7 +1274,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 36.543,
+     "dur_ms": 28.329,
      "is_reference": false,
      "error": null
     },
@@ -1285,7 +1285,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 33.902,
+     "dur_ms": 28.75,
      "is_reference": false,
      "error": null
     },
@@ -1296,7 +1296,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 180.676,
+     "dur_ms": 34.179,
      "is_reference": false,
      "error": null
     },
@@ -1307,7 +1307,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 47.244,
+     "dur_ms": 28.55,
      "is_reference": false,
      "error": null
     },
@@ -1318,7 +1318,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.133,
+     "dur_ms": 28.466,
      "is_reference": false,
      "error": null
     },
@@ -1329,7 +1329,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 33.959,
+     "dur_ms": 29.103,
      "is_reference": false,
      "error": null
     },
@@ -1340,7 +1340,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 39.045,
+     "dur_ms": 28.443,
      "is_reference": false,
      "error": null
     },
@@ -1351,7 +1351,7 @@
       "hub_trajectories"
      ],
      "rowcount": 24,
-     "dur_ms": 37.805,
+     "dur_ms": 32.325,
      "is_reference": false,
      "error": null
     },
@@ -1362,7 +1362,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 41.293,
+     "dur_ms": 29.813,
      "is_reference": false,
      "error": null
     },
@@ -1373,7 +1373,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 32.733,
+     "dur_ms": 29.199,
      "is_reference": false,
      "error": null
     }
@@ -1397,16 +1397,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39857,
      "name": "list_base_scenarios",
      "qual": "list_base_scenarios",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 394,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BBC6B4A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1AC5C0>"
      },
      "ret": "[{'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_name': 'WITCH (FEEM/CMCC)', 'category': 'Low Emissions', 'temperature_target': 1.5, 'trajectory_count': 3, 'variables': ['Price|Carbon', 'Emissions|CO2', 'GDP|PP\u2026",
-     "dur_ms": 10387.093,
+     "dur_ms": 4370.761,
      "sql": [
       0,
       1,
@@ -1543,7 +1543,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 545.799,
+   "dur_ms": 571.265,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -1562,7 +1562,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 2,
-     "dur_ms": 68.12,
+     "dur_ms": 75.608,
      "is_reference": false,
      "error": null
     },
@@ -1573,7 +1573,7 @@
       "hub_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 42.534,
+     "dur_ms": 46.542,
      "is_reference": false,
      "error": null
     },
@@ -1584,7 +1584,7 @@
       "parameter_customizations"
      ],
      "rowcount": 1,
-     "dur_ms": 38.631,
+     "dur_ms": 49.321,
      "is_reference": false,
      "error": null
     },
@@ -1595,7 +1595,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 32.129,
+     "dur_ms": 39.813,
      "is_reference": false,
      "error": null
     },
@@ -1606,7 +1606,7 @@
       "hub_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 38.079,
+     "dur_ms": 31.303,
      "is_reference": false,
      "error": null
     },
@@ -1617,7 +1617,7 @@
       "parameter_customizations"
      ],
      "rowcount": 1,
-     "dur_ms": 32.539,
+     "dur_ms": 29.451,
      "is_reference": false,
      "error": null
     },
@@ -1628,7 +1628,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 28.726,
+     "dur_ms": 30.422,
      "is_reference": false,
      "error": null
     }
@@ -1658,7 +1658,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 39858,
      "name": "list_custom_scenarios",
      "qual": "list_custom_scenarios",
      "file": "api/v1/routes/scenario_builder_v2.py",
@@ -1666,27 +1666,27 @@
      "args": {
       "user_id": "'default_user'",
       "is_public": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC4D0>"
      },
      "ret": "[{'id': 'a984c43c-0c5b-4ef6-86b6-9323a3395334', 'name': 'E2E Test Scenario', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source\u2026",
-     "dur_ms": 514.765,
+     "dur_ms": 540.296,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 39859,
        "name": "_scenario_response",
        "qual": "_scenario_response",
        "file": "api/v1/routes/scenario_builder_v2.py",
        "line": 75,
        "args": {
-        "cs": "<db.models.custom_builder.CustomScenario object at 0x00000189BEC51B20>",
-        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+        "cs": "<db.models.custom_builder.CustomScenario object at 0x0000013D49B9CF50>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC4D0>"
        },
        "ret": "{'id': 'a984c43c-0c5b-4ef6-86b6-9323a3395334', 'name': 'E2E Test Scenario', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_\u2026",
-       "dur_ms": 126.359,
+       "dur_ms": 141.342,
        "sql": [
         1,
         2,
@@ -1696,17 +1696,17 @@
        "children": []
       },
       {
-       "id": 4,
+       "id": 39860,
        "name": "_scenario_response",
        "qual": "_scenario_response",
        "file": "api/v1/routes/scenario_builder_v2.py",
        "line": 75,
        "args": {
-        "cs": "<db.models.custom_builder.CustomScenario object at 0x00000189BEC51AF0>",
-        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BE4A2330>"
+        "cs": "<db.models.custom_builder.CustomScenario object at 0x0000013D49B9DF40>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC4D0>"
        },
        "ret": "{'id': 'c8aa21a1-e28f-4ea2-83a9-14032aa0a3a7', 'name': 'Test Custom', 'description': '', 'is_public': False, 'is_fork': False, 'tags': [], 'base_scenario': {'id': 'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', 'name': 'WITCH 1.5C', 'source_name':\u2026",
-       "dur_ms": 103.188,
+       "dur_ms": 93.762,
        "sql": [
         4,
         5,
@@ -1725,7 +1725,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Custom scenario not found",
-   "dur_ms": 382.119,
+   "dur_ms": 303.288,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -1741,7 +1741,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 63.766,
+     "dur_ms": 63.399,
      "is_reference": false,
      "error": null
     }
@@ -1754,17 +1754,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39861,
      "name": "get_custom_scenario",
      "qual": "get_custom_scenario",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 273,
      "args": {
       "cs_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC50110>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B70B00>"
      },
      "ret": "None",
-     "dur_ms": 351.492,
+     "dur_ms": 271.938,
      "sql": [
       0
      ],
@@ -1779,7 +1779,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Simulation not found",
-   "dur_ms": 313.608,
+   "dur_ms": 323.161,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -1795,7 +1795,7 @@
       "simulation_runs"
      ],
      "rowcount": 0,
-     "dur_ms": 62.266,
+     "dur_ms": 69.281,
      "is_reference": false,
      "error": null
     }
@@ -1808,17 +1808,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 39862,
      "name": "get_simulation",
      "qual": "get_simulation",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 237,
      "args": {
       "sim_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B72BD0>"
      },
      "ret": "None",
-     "dur_ms": 285.41,
+     "dur_ms": 292.541,
      "sql": [
       0
      ],
@@ -1833,7 +1833,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No trajectory data for base scenario",
-   "dur_ms": 325.644,
+   "dur_ms": 293.961,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -1849,7 +1849,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 55.255,
+     "dur_ms": 62.923,
      "is_reference": false,
      "error": null
     }
@@ -1862,32 +1862,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39863,
      "name": "calc_impacts",
      "qual": "calc_impacts",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 169,
      "args": {
       "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC52FF0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC4D0>"
      },
      "ret": "None",
-     "dur_ms": 296.659,
+     "dur_ms": 264.757,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 39864,
        "name": "_get_base_trajectories",
        "qual": "_get_base_trajectories",
        "file": "api/v1/routes/scenario_builder_v2.py",
        "line": 66,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC52FF0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC4D0>",
         "scenario_id": "'TEST_body_base_scenario_id'"
        },
        "ret": "[]",
-       "dur_ms": 296.555,
+       "dur_ms": 264.715,
        "sql": [
         0
        ],
@@ -1940,7 +1940,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Custom scenario not found",
-   "dur_ms": 298.252,
+   "dur_ms": 311.843,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -1956,7 +1956,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 73.348,
+     "dur_ms": 64.464,
      "is_reference": false,
      "error": null
     }
@@ -1970,7 +1970,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39865,
      "name": "fork_custom_scenario",
      "qual": "fork_custom_scenario",
      "file": "api/v1/routes/scenario_builder_v2.py",
@@ -1978,10 +1978,10 @@
      "args": {
       "cs_id": "'ad7292d6-72cd-4fcd-82a9-1d09fa6163ef'",
       "body": "ForkRequest(new_name='TEST_body_new_name', additional_customizations=[])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9E1B0>"
      },
      "ret": "None",
-     "dur_ms": 263.584,
+     "dur_ms": 279.691,
      "sql": [
       0
      ],
@@ -1996,7 +1996,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Base scenario not found",
-   "dur_ms": 300.467,
+   "dur_ms": 285.089,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -2012,7 +2012,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 62.981,
+     "dur_ms": 63.289,
      "is_reference": false,
      "error": null
     }
@@ -2025,17 +2025,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 39866,
      "name": "create_custom_scenario",
      "qual": "create_custom_scenario",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 123,
      "args": {
       "body": "CustomizeRequest(base_scenario_id='TEST_body_base_scenario_id', name='TEST_body_name', description='', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_va\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC53FE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9C050>"
      },
      "ret": "None",
-     "dur_ms": 271.274,
+     "dur_ms": 253.874,
      "sql": [
       0
      ],
@@ -2050,7 +2050,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Base scenario not found",
-   "dur_ms": 308.628,
+   "dur_ms": 283.809,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -2066,7 +2066,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 70.972,
+     "dur_ms": 57.989,
      "is_reference": false,
      "error": null
     }
@@ -2079,17 +2079,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 39867,
      "name": "preview_impacts",
      "qual": "preview_impacts",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 106,
      "args": {
       "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC538F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1485C0>"
      },
      "ret": "None",
-     "dur_ms": 279.354,
+     "dur_ms": 255.81,
      "sql": [
       0
      ],
@@ -2104,7 +2104,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Custom scenario not found",
-   "dur_ms": 284.808,
+   "dur_ms": 273.064,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -2120,7 +2120,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 61.14,
+     "dur_ms": 57.503,
      "is_reference": false,
      "error": null
     }
@@ -2133,17 +2133,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 39868,
      "name": "run_simulation",
      "qual": "run_simulation",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 186,
      "args": {
       "body": "SimulateRequest(custom_scenario_id='TEST_body_custom_scenario_id', simulation_type='quick', iterations=1000, time_horizons=[2030, 2050, 2100])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC53890>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49EA6150>"
      },
      "ret": "None",
-     "dur_ms": 254.157,
+     "dur_ms": 243.838,
      "sql": [
       0
      ],
@@ -2158,7 +2158,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'dict' object has no attribute 'model_dump'",
-   "dur_ms": 0.537,
+   "dur_ms": 0.419,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -2173,14 +2173,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 39869,
      "name": "validate",
      "qual": "validate",
      "file": "api/v1/routes/scenario_builder_v2.py",
      "line": 179,
      "args": {
       "body": "PreviewRequest(base_scenario_id='TEST_body_base_scenario_id', customizations=[{'variable_name': 'TEST_body_customizations_variable_name', 'customized_values': 'TEST_body_customizations_customized_values'}])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000189BEC520C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A14BD70>"
      },
      "ret": "None",
      "dur_ms": 0.006,

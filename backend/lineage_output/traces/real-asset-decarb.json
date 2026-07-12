@@ -1,10 +1,10 @@
 {
  "domain": "real-asset-decarb",
  "meta": {
-  "ts": "2026-06-30T14:04:22",
+  "ts": "2026-07-05T19:16:30",
+  "endpoints": 10,
   "module": "api.v1.routes.real_asset_decarb",
-  "router_prefix": "/api/v1/real-asset-decarb",
-  "endpoints": 10
+  "router_prefix": "/api/v1/real-asset-decarb"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.085,
+   "dur_ms": 3.353,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 38747,
      "name": "get_abatement_costs",
      "qual": "get_abatement_costs",
      "file": "api/v1/routes/real_asset_decarb.py",
      "line": 240,
      "args": {},
      "ret": "{'abatement_technologies': {'energy_efficiency': {'abatement_cost_usd_per_tco2e_range': [5.0, 40.0], 'max_emissions_reduction_pct': 30.0, 'deployment_time_years': 1}, 'fuel_switch': {'abatement_cost_usd_per_tco2e_range': [20.0, 80.0], 'max\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.014,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.162,
+   "dur_ms": 1.889,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -70,14 +70,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 38748,
      "name": "get_asset_types",
      "qual": "get_asset_types",
      "file": "api/v1/routes/real_asset_decarb.py",
      "line": 179,
      "args": {},
      "ret": "{'asset_types': {'office': {'sector': 'buildings', 'typical_life_years': 40, 'capex_cycle_years': 15, 'sbti_decarb_rate_pa_pct': 7.0, 'crrem_2030_intensity_kgco2_m2': 15.0, 'current_avg_intensity_kgco2_m2': 55.0, 'green_premium_pct_range':\u2026",
-     "dur_ms": 0.018,
+     "dur_ms": 0.016,
      "sql": [],
      "error": null,
      "children": []
@@ -90,7 +90,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.084,
+   "dur_ms": 1.274,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -108,7 +108,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 38749,
      "name": "get_crrem_pathways",
      "qual": "get_crrem_pathways",
      "file": "api/v1/routes/real_asset_decarb.py",
@@ -128,7 +128,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.058,
+   "dur_ms": 1.272,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -146,14 +146,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 38750,
      "name": "get_retrofit_measures",
      "qual": "get_retrofit_measures",
      "file": "api/v1/routes/real_asset_decarb.py",
      "line": 199,
      "args": {},
      "ret": "{'retrofit_measures': {'insulation': {'description': 'External wall / roof / floor insulation upgrade', 'applicable_types': ['office', 'retail', 'residential'], 'energy_saving_pct_range': [10.0, 25.0], 'capex_per_m2_usd_range': [30.0, 80.0\u2026",
-     "dur_ms": 0.013,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []
@@ -166,7 +166,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.008,
+   "dur_ms": 1.201,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -185,14 +185,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 38751,
      "name": "get_sbti_sectors",
      "qual": "get_sbti_sectors",
      "file": "api/v1/routes/real_asset_decarb.py",
      "line": 223,
      "args": {},
      "ret": "{'sbti_sector_rates': {'buildings': {'rate_pa_pct': 7.0, 'standard': 'SBTi Buildings Sector Guidance 2022'}, 'industry': {'rate_pa_pct': 4.2, 'standard': 'SBTi Industry Sector Guidance 2021'}, 'transport': {'rate_pa_pct': 3.8, 'standard': \u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

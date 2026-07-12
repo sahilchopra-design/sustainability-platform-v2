@@ -1,10 +1,10 @@
 {
  "domain": "reference-data",
  "meta": {
-  "ts": "2026-06-30T14:04:39",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 10,
   "module": "api.v1.routes.reference_data",
-  "router_prefix": "/api/v1/reference-data",
-  "endpoints": 10
+  "router_prefix": "/api/v1/reference-data"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2047.783,
+   "dur_ms": 371.881,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 200,
-     "dur_ms": 110.7,
+     "dur_ms": 101.666,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 1,
-     "dur_ms": 48.412,
+     "dur_ms": 29.012,
      "is_reference": false,
      "error": null
     }
@@ -66,7 +66,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39460,
      "name": "search_crrem",
      "qual": "search_crrem",
      "file": "api/v1/routes/reference_data.py",
@@ -79,11 +79,11 @@
       "year_end": "None",
       "limit": "200",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B743608EF0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744935120>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49493170>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [{'id': UUID('b1f99dbc-132b-520b-8f26-b08a151632e7'), 'property_type': 'Healthcare', 'country_iso3': 'SGP', 'scenario': '1.5C', 'year': 2020, 'energy_intensity_kwh_m2': Decimal('350.00'), 'carbon_intensity_kgco2_m2': Decimal('1\u2026",
-     "dur_ms": 2014.336,
+     "dur_ms": 341.249,
      "sql": [
       0,
       1
@@ -99,7 +99,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No CRREM pathway for TEST_property_type/TEST_scenario",
-   "dur_ms": 322.173,
+   "dur_ms": 307.95,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -115,7 +115,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 0,
-     "dur_ms": 73.98,
+     "dur_ms": 56.686,
      "is_reference": false,
      "error": null
     }
@@ -130,7 +130,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 39461,
      "name": "crrem_pathway",
      "qual": "crrem_pathway",
      "file": "api/v1/routes/reference_data.py",
@@ -139,11 +139,11 @@
       "property_type": "'TEST_property_type'",
       "scenario": "'TEST_scenario'",
       "country": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74480E7E0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B7449358A0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49E5A1E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 286.208,
+     "dur_ms": 278.495,
      "sql": [
       0
      ],
@@ -158,7 +158,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 660.568,
+   "dur_ms": 340.285,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -174,7 +174,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 7,
-     "dur_ms": 222.161,
+     "dur_ms": 112.988,
      "is_reference": false,
      "error": null
     }
@@ -192,17 +192,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39462,
      "name": "crrem_property_types",
      "qual": "crrem_property_types",
      "file": "api/v1/routes/reference_data.py",
      "line": 174,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74499EBD0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744935620>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49E58980>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'property_types': [{'property_type': 'Healthcare', 'countries': 9, 'scenarios': 2, 'data_points': 558}, {'property_type': 'Hotel', 'countries': 9, 'scenarios': 2, 'data_points': 558}, {'property_type': 'Industrial', 'countries': 9, 'scena\u2026",
-     "dur_ms": 576.082,
+     "dur_ms": 312.722,
      "sql": [
       0
      ],
@@ -217,7 +217,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2589.587,
+   "dur_ms": 786.924,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -233,7 +233,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 120,
-     "dur_ms": 359.665,
+     "dur_ms": 99.852,
      "is_reference": false,
      "error": null
     },
@@ -244,7 +244,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 1,
-     "dur_ms": 44.663,
+     "dur_ms": 29.678,
      "is_reference": false,
      "error": null
     }
@@ -268,7 +268,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 39463,
      "name": "search_grid_ef",
      "qual": "search_grid_ef",
      "file": "api/v1/routes/reference_data.py",
@@ -279,11 +279,11 @@
       "year_end": "None",
       "limit": "200",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495D0A0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744935B20>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125700>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [{'id': UUID('619e3472-de6d-5b3e-b451-3dbf513d15db'), 'country_iso3': 'AUS', 'country_name': 'Australia', 'year': 2018, 'grid_ef_kgco2_kwh': Decimal('0.770000'), 'grid_ef_tco2_mwh': Decimal('0.770000'), 'generation_mix_coal_pct\u2026",
-     "dur_ms": 2554.987,
+     "dur_ms": 755.392,
      "sql": [
       0,
       1
@@ -299,7 +299,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 952.721,
+   "dur_ms": 292.83,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -315,7 +315,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 20,
-     "dur_ms": 77.512,
+     "dur_ms": 61.956,
      "is_reference": false,
      "error": null
     }
@@ -333,17 +333,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39464,
      "name": "grid_ef_countries",
      "qual": "grid_ef_countries",
      "file": "api/v1/routes/reference_data.py",
      "line": 268,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495D640>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744935C60>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A127020>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'countries': [{'iso3': 'ZAF', 'name': 'South Africa', 'years': 6, 'min_ef': Decimal('0.890000'), 'max_ef': Decimal('0.950000'), 'first_year': 2018, 'last_year': 2023}, {'iso3': 'POL', 'name': 'Poland', 'years': 6, 'min_ef': Decimal('0.670\u2026",
-     "dur_ms": 542.972,
+     "dur_ms": 257.671,
      "sql": [
       0
      ],
@@ -358,7 +358,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No grid EF data for 550e8400-e29b-41d4-a716-446655440001",
-   "dur_ms": 625.221,
+   "dur_ms": 312.442,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -374,7 +374,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 0,
-     "dur_ms": 203.478,
+     "dur_ms": 61.401,
      "is_reference": false,
      "error": null
     }
@@ -387,18 +387,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 39465,
      "name": "grid_ef_country",
      "qual": "grid_ef_country",
      "file": "api/v1/routes/reference_data.py",
      "line": 287,
      "args": {
       "iso3": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495D0A0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744936020>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125CA0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 457.992,
+     "dur_ms": 282.046,
      "sql": [
       0
      ],
@@ -413,7 +413,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2456.117,
+   "dur_ms": 778.765,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -429,7 +429,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 72,
-     "dur_ms": 82.239,
+     "dur_ms": 121.188,
      "is_reference": false,
      "error": null
     },
@@ -440,7 +440,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 1,
-     "dur_ms": 33.035,
+     "dur_ms": 39.839,
      "is_reference": false,
      "error": null
     }
@@ -465,7 +465,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39466,
      "name": "search_irena_lcoe",
      "qual": "search_irena_lcoe",
      "file": "api/v1/routes/reference_data.py",
@@ -477,11 +477,11 @@
       "country": "None",
       "limit": "100",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495DA90>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B7446BFBA0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125160>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [{'id': UUID('9d43c1a9-d9a9-5343-a492-bab9feefc5c7'), 'technology': 'Bioenergy', 'sub_technology': None, 'year': 2010, 'country_iso3': None, 'region': 'Global', 'lcoe_usd_mwh': Decimal('72.00'), 'lcoe_min_usd_mwh': Decimal('43.\u2026",
-     "dur_ms": 2423.314,
+     "dur_ms": 734.006,
      "sql": [
       0,
       1
@@ -497,7 +497,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 301.616,
+   "dur_ms": 396.29,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -513,7 +513,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 8,
-     "dur_ms": 62.147,
+     "dur_ms": 60.963,
      "is_reference": false,
      "error": null
     }
@@ -531,17 +531,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 39467,
      "name": "irena_technologies",
      "qual": "irena_technologies",
      "file": "api/v1/routes/reference_data.py",
      "line": 77,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495DEB0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B74480BF60>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A126E70>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'technologies': [{'technology': 'Bioenergy', 'sub_technology': None, 'data_points': 9, 'first_year': 2010, 'last_year': 2023, 'min_lcoe': Decimal('60.00'), 'max_lcoe': Decimal('72.00')}, {'technology': 'CSP', 'sub_technology': None, 'data\u2026",
-     "dur_ms": 273.621,
+     "dur_ms": 253.047,
      "sql": [
       0
      ],
@@ -556,7 +556,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No LCOE data for 550e8400-e29b-41d4-a716-446655440001",
-   "dur_ms": 316.902,
+   "dur_ms": 284.241,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -572,7 +572,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 0,
-     "dur_ms": 62.006,
+     "dur_ms": 59.635,
      "is_reference": false,
      "error": null
     }
@@ -586,7 +586,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39468,
      "name": "irena_lcoe_trend",
      "qual": "irena_lcoe_trend",
      "file": "api/v1/routes/reference_data.py",
@@ -594,11 +594,11 @@
      "args": {
       "technology": "'550e8400-e29b-41d4-a716-446655440001'",
       "country": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495DA30>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B744934B80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A124FE0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 286.304,
+     "dur_ms": 255.004,
      "sql": [
       0
      ],
@@ -613,7 +613,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 449.693,
+   "dur_ms": 471.248,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -631,7 +631,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 1,
-     "dur_ms": 60.276,
+     "dur_ms": 61.15,
      "is_reference": false,
      "error": null
     },
@@ -642,7 +642,7 @@
       "dh_irena_lcoe"
      ],
      "rowcount": 1,
-     "dur_ms": 28.594,
+     "dur_ms": 32.922,
      "is_reference": false,
      "error": null
     },
@@ -653,7 +653,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 1,
-     "dur_ms": 31.601,
+     "dur_ms": 31.292,
      "is_reference": false,
      "error": null
     },
@@ -664,7 +664,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 1,
-     "dur_ms": 32.343,
+     "dur_ms": 31.365,
      "is_reference": false,
      "error": null
     },
@@ -675,7 +675,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 1,
-     "dur_ms": 28.273,
+     "dur_ms": 30.96,
      "is_reference": false,
      "error": null
     },
@@ -686,7 +686,7 @@
       "dh_grid_emission_factors"
      ],
      "rowcount": 1,
-     "dur_ms": 29.188,
+     "dur_ms": 31.916,
      "is_reference": false,
      "error": null
     }
@@ -706,17 +706,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 39469,
      "name": "reference_data_stats",
      "qual": "reference_data_stats",
      "file": "api/v1/routes/reference_data.py",
      "line": 312,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002B74495E330>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002B7449362A0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125160>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'irena_lcoe': {'records': 72, 'technologies': 7}, 'crrem_pathways': {'records': 3906, 'property_types': 7}, 'grid_emission_factors': {'records': 120, 'countries': 20}}",
-     "dur_ms": 419.115,
+     "dur_ms": 437.756,
      "sql": [
       0,
       1,

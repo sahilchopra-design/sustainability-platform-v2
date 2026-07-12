@@ -1,10 +1,10 @@
 {
  "domain": "water-stewardship",
  "meta": {
-  "ts": "2026-06-30T14:05:49",
+  "ts": "2026-07-05T19:17:24",
+  "endpoints": 6,
   "module": "api.v1.routes.water_stewardship",
-  "router_prefix": "/api/v1/water-risk",
-  "endpoints": 6
+  "router_prefix": "/api/v1/water-risk"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.016,
+   "dur_ms": 1.921,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -37,14 +37,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42573,
      "name": "get_aqueduct_benchmarks",
      "qual": "get_aqueduct_benchmarks",
      "file": "api/v1/routes/water_stewardship.py",
      "line": 161,
      "args": {},
      "ret": "{'status': 'success', 'source': 'WRI AQUEDUCT 4.0 (2023) \u2014 https://www.wri.org/aqueduct', 'basin_benchmarks': {'Indus': {'baseline_water_stress': 4.8, 'groundwater_depletion': 28.0, 'riverine_flood_risk': 28.0, 'region': 'South Asia', 'cou\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -57,7 +57,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.732,
+   "dur_ms": 1.157,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -84,14 +84,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42574,
      "name": "get_aws_standard",
      "qual": "get_aws_standard",
      "file": "api/v1/routes/water_stewardship.py",
      "line": 197,
      "args": {},
      "ret": "{'status': 'success', 'source': 'Alliance for Water Stewardship Standard v2.0 (2022) \u2014 https://a4ws.org', 'standard_version': 'AWS Standard v2.0', 'effective_date': '2022-01-01', 'pillar_count': 5, 'pillar_weight_each_pct': 20, 'certificat\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -104,7 +104,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.642,
+   "dur_ms": 1.11,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -129,14 +129,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42575,
      "name": "get_cdp_criteria",
      "qual": "get_cdp_criteria",
      "file": "api/v1/routes/water_stewardship.py",
      "line": 178,
      "args": {},
      "ret": "{'status': 'success', 'source': 'CDP Water Security Questionnaire 2024 \u2014 https://www.cdp.net/en/water', 'pillar_count': 4, 'a_list_composite_minimum': 0.8, 'data_verification_bonus': '4% uplift applied to composite when third-party verifie\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -149,7 +149,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.533,
+   "dur_ms": 1.052,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -172,14 +172,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42576,
      "name": "get_stewardship_bond_framework",
      "qual": "get_stewardship_bond_framework",
      "file": "api/v1/routes/water_stewardship.py",
      "line": 218,
      "args": {},
      "ret": "{'status': 'success', 'source': 'ICMA Green Bond Principles 2021; EU Taxonomy Regulation 2020/852 (Delegated Act)', 'framework': {'icma_alignment': 'ICMA Green Bond Principles 2021 \u2014 Water and Wastewater Management Use of Proceeds Category\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -192,7 +192,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.105,
+   "dur_ms": 3.051,
    "node_count": 33,
    "provenance": [
     "computed"
@@ -227,7 +227,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42577,
      "name": "assess_water_risk_endpoint",
      "qual": "assess_water_risk_endpoint",
      "file": "api/v1/routes/water_stewardship.py",
@@ -235,13 +235,13 @@
      "args": {
       "request": "WaterRiskAssessRequest(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='industrial', basin_name=None, baseline_water_stress=None, interannual_variability=None, seasonal_variability=None, groundwater_depletion=None,\u2026"
      },
-     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'aqueduct': {'indicator_scores': {'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 's\u2026",
-     "dur_ms": 1.27,
+     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'aqueduct': {'indicator_scores': {'baseline_water_stress': 45.06, 'interannual_variability': 62.65, '\u2026",
+     "dur_ms": 1.022,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42578,
        "name": "assess_water_risk",
        "qual": "assess_water_risk",
        "file": "services/water_stewardship_engine.py",
@@ -249,13 +249,13 @@
        "args": {
         "request_data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'baseline_water_stress': None, 'interannual_variability': None, 'seasonal_variability': None, 'groundwater_depletion': Non\u2026"
        },
-       "ret": "WaterRiskResult(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='industrial', basin_name=None, aqueduct_indicator_scores={'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 'seasonal_variability': 12.\u2026",
-       "dur_ms": 1.007,
+       "ret": "WaterRiskResult(entity_id='TEST_request_entity_id', entity_name='Unknown Entity', sector='industrial', basin_name=None, aqueduct_indicator_scores={'baseline_water_stress': 45.06, 'interannual_variability': 62.65, 'seasonal_variability': 16\u2026",
+       "dur_ms": 0.758,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 7,
+         "id": 42579,
          "name": "_aqueduct_composite",
          "qual": "_aqueduct_composite",
          "file": "services/water_stewardship_engine.py",
@@ -264,13 +264,13 @@
           "data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': 'Unknown Entity', 'sector': 'industrial', 'basin_name': None, 'baseline_water_stress': None, 'interannual_variability': None, 'seasonal_variability': None, 'groundwater_depletion': Non\u2026",
           "eid": "'TEST_request_entity_id'"
          },
-         "ret": "{'indicator_scores': {'baseline_water_stress': 43.24, 'interannual_variability': 15.3, 'seasonal_variability': 12.05, 'groundwater_depletion': 38.66, 'riverine_flood_risk': 24.78, 'coastal_eutrophication': 73.1}, 'composite': 33.67}",
-         "dur_ms": 0.341,
+         "ret": "{'indicator_scores': {'baseline_water_stress': 45.06, 'interannual_variability': 62.65, 'seasonal_variability': 16.45, 'groundwater_depletion': 27.37, 'riverine_flood_risk': 28.77, 'coastal_eutrophication': 51.6}, 'composite': 38.08}",
+         "dur_ms": 0.261,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 8,
+           "id": 42580,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -281,14 +281,14 @@
             "lo": "0.5",
             "hi": "3.8"
            },
-           "ret": "2.162",
-           "dur_ms": 0.012,
+           "ret": "2.253",
+           "dur_ms": 0.009,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 9,
+           "id": 42581,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -299,14 +299,14 @@
             "lo": "0.2",
             "hi": "1.5"
            },
-           "ret": "0.306",
-           "dur_ms": 0.005,
+           "ret": "1.253",
+           "dur_ms": 0.004,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 10,
+           "id": 42582,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -317,14 +317,14 @@
             "lo": "0.2",
             "hi": "1.6"
            },
-           "ret": "0.241",
-           "dur_ms": 0.004,
+           "ret": "0.329",
+           "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 11,
+           "id": 42583,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -335,14 +335,14 @@
             "lo": "0.0",
             "hi": "22.0"
            },
-           "ret": "11.598",
-           "dur_ms": 0.004,
+           "ret": "8.211",
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 12,
+           "id": 42584,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -353,14 +353,14 @@
             "lo": "2.0",
             "hi": "45.0"
            },
-           "ret": "24.783",
+           "ret": "28.765",
            "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 13,
+           "id": 42585,
            "name": "_seed_float",
            "qual": "_seed_float",
            "file": "services/water_stewardship_engine.py",
@@ -371,110 +371,110 @@
             "lo": "0.5",
             "hi": "4.5"
            },
-           "ret": "3.655",
+           "ret": "2.58",
            "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 14,
+           "id": 42586,
            "name": "_normalise",
            "qual": "_normalise",
            "file": "services/water_stewardship_engine.py",
            "line": 586,
            "args": {
-            "value": "2.162",
+            "value": "2.253",
             "lo": "0.0",
             "hi": "5.0"
            },
-           "ret": "43.24",
-           "dur_ms": 0.007,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 15,
-           "name": "_normalise",
-           "qual": "_normalise",
-           "file": "services/water_stewardship_engine.py",
-           "line": 586,
-           "args": {
-            "value": "0.306",
-            "lo": "0.0",
-            "hi": "2.0"
-           },
-           "ret": "15.3",
+           "ret": "45.06",
            "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 16,
+           "id": 42587,
            "name": "_normalise",
            "qual": "_normalise",
            "file": "services/water_stewardship_engine.py",
            "line": 586,
            "args": {
-            "value": "0.241",
+            "value": "1.253",
             "lo": "0.0",
             "hi": "2.0"
            },
-           "ret": "12.05",
+           "ret": "62.65",
            "dur_ms": 0.004,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 17,
+           "id": 42588,
            "name": "_normalise",
            "qual": "_normalise",
            "file": "services/water_stewardship_engine.py",
            "line": 586,
            "args": {
-            "value": "11.598",
+            "value": "0.329",
+            "lo": "0.0",
+            "hi": "2.0"
+           },
+           "ret": "16.45",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 42589,
+           "name": "_normalise",
+           "qual": "_normalise",
+           "file": "services/water_stewardship_engine.py",
+           "line": 586,
+           "args": {
+            "value": "8.211",
             "lo": "0.0",
             "hi": "30.0"
            },
-           "ret": "38.66",
-           "dur_ms": 0.004,
+           "ret": "27.37",
+           "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 18,
+           "id": 42590,
            "name": "_normalise",
            "qual": "_normalise",
            "file": "services/water_stewardship_engine.py",
            "line": 586,
            "args": {
-            "value": "24.783",
+            "value": "28.765",
             "lo": "0.0",
             "hi": "100.0"
            },
-           "ret": "24.78",
-           "dur_ms": 0.004,
+           "ret": "28.77",
+           "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 19,
+           "id": 42591,
            "name": "_normalise",
            "qual": "_normalise",
            "file": "services/water_stewardship_engine.py",
            "line": 586,
            "args": {
-            "value": "3.655",
+            "value": "2.58",
             "lo": "0.0",
             "hi": "5.0"
            },
-           "ret": "73.1",
-           "dur_ms": 0.004,
+           "ret": "51.6",
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
@@ -482,22 +482,22 @@
          ]
         },
         {
-         "id": 20,
+         "id": 42592,
          "name": "_tier",
          "qual": "_tier",
          "file": "services/water_stewardship_engine.py",
          "line": 614,
          "args": {
-          "score": "33.67"
+          "score": "38.08"
          },
          "ret": "'medium'",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 21,
+         "id": 42593,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -508,14 +508,14 @@
           "lo": "50.0",
           "hi": "2000.0"
          },
-         "ret": "1997.46",
-         "dur_ms": 0.004,
+         "ret": "1845.372",
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 22,
+         "id": 42594,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -526,14 +526,14 @@
           "lo": "0.35",
           "hi": "0.68"
          },
-         "ret": "0.611",
-         "dur_ms": 0.003,
+         "ret": "0.399",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 23,
+         "id": 42595,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -544,14 +544,14 @@
           "lo": "5.0",
           "hi": "40.0"
          },
-         "ret": "26.912",
-         "dur_ms": 0.003,
+         "ret": "11.28",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 24,
+         "id": 42596,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -562,29 +562,29 @@
           "lo": "10.0",
           "hi": "85.0"
          },
-         "ret": "72.42",
-         "dur_ms": 0.005,
+         "ret": "64.489",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 25,
+         "id": 42597,
          "name": "_tnfd_disclosure_score",
          "qual": "_tnfd_disclosure_score",
          "file": "services/water_stewardship_engine.py",
          "line": 638,
          "args": {
-          "data": "{'water_withdrawal_ml_yr': 1997.46, 'water_consumption_ml_yr': 1220.4, 'water_discharge_ml_yr': 777.1, 'water_stressed_ops_pct': 72.42, 'recycled_water_pct': 26.912}"
+          "data": "{'water_withdrawal_ml_yr': 1845.372, 'water_consumption_ml_yr': 736.3, 'water_discharge_ml_yr': 1109.1, 'water_stressed_ops_pct': 64.489, 'recycled_water_pct': 11.28}"
          },
          "ret": "100.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 26,
+         "id": 42598,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -595,14 +595,14 @@
           "lo": "0.38",
           "hi": "0.96"
          },
-         "ret": "0.796",
-         "dur_ms": 0.006,
+         "ret": "0.846",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 27,
+         "id": 42599,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -613,14 +613,14 @@
           "lo": "0.38",
           "hi": "0.96"
          },
-         "ret": "0.6",
-         "dur_ms": 0.003,
+         "ret": "0.491",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 28,
+         "id": 42600,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -631,14 +631,14 @@
           "lo": "0.28",
           "hi": "0.92"
          },
-         "ret": "0.454",
-         "dur_ms": 0.003,
+         "ret": "0.458",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 29,
+         "id": 42601,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -649,29 +649,29 @@
           "lo": "0.32",
           "hi": "0.92"
          },
-         "ret": "0.619",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 30,
-         "name": "_cdp_grade",
-         "qual": "_cdp_grade",
-         "file": "services/water_stewardship_engine.py",
-         "line": 624,
-         "args": {
-          "composite": "0.61725"
-         },
-         "ret": "'C'",
+         "ret": "0.696",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 31,
+         "id": 42602,
+         "name": "_cdp_grade",
+         "qual": "_cdp_grade",
+         "file": "services/water_stewardship_engine.py",
+         "line": 624,
+         "args": {
+          "composite": "0.6227499999999999"
+         },
+         "ret": "'C'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42603,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -682,14 +682,14 @@
           "lo": "0.38",
           "hi": "0.96"
          },
-         "ret": "0.79",
-         "dur_ms": 0.003,
+         "ret": "0.804",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 32,
+         "id": 42604,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -700,14 +700,14 @@
           "lo": "0.38",
           "hi": "0.96"
          },
-         "ret": "0.428",
-         "dur_ms": 0.003,
+         "ret": "0.519",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 33,
+         "id": 42605,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -718,14 +718,14 @@
           "lo": "0.38",
           "hi": "0.92"
          },
-         "ret": "0.77",
-         "dur_ms": 0.003,
+         "ret": "0.714",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 34,
+         "id": 42606,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -736,14 +736,14 @@
           "lo": "0.3",
           "hi": "0.92"
          },
-         "ret": "0.712",
+         "ret": "0.816",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 35,
+         "id": 42607,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -754,14 +754,14 @@
           "lo": "0.3",
           "hi": "0.92"
          },
-         "ret": "0.339",
-         "dur_ms": 0.003,
+         "ret": "0.71",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 36,
+         "id": 42608,
          "name": "_seed_float",
          "qual": "_seed_float",
          "file": "services/water_stewardship_engine.py",
@@ -772,20 +772,20 @@
           "lo": "0.08",
           "hi": "0.38"
          },
-         "ret": "0.086",
-         "dur_ms": 0.003,
+         "ret": "0.25",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 37,
+         "id": 42609,
          "name": "_tier",
          "qual": "_tier",
          "file": "services/water_stewardship_engine.py",
          "line": 614,
          "args": {
-          "score": "20.2"
+          "score": "23.4"
          },
          "ret": "'medium'",
          "dur_ms": 0.001,

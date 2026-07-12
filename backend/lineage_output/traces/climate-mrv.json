@@ -1,10 +1,10 @@
 {
  "domain": "climate-mrv",
  "meta": {
-  "ts": "2026-06-30T13:59:55",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 11,
   "module": "api.v1.routes.climate_mrv",
-  "router_prefix": "/api/v1/climate-mrv",
-  "endpoints": 11
+  "router_prefix": "/api/v1/climate-mrv"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.065,
+   "dur_ms": 1.725,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2237,
      "name": "get_iso14064_checklist",
      "qual": "get_iso14064_checklist",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 256,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'item': '1. Verification scope and boundary', 'standard_ref': 'ISO 14064-3 \u00a75.2', 'weight': 0.08}, {'item': '2. GHG assertion completeness', 'standard_ref': 'ISO 14064-3 \u00a75.3', 'weight': 0.1}, {'item': '3. M\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.944,
+   "dur_ms": 1.118,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -73,14 +73,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2238,
      "name": "get_maturity_levels",
      "qual": "get_maturity_levels",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 287,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'level': 1, 'label': 'Manual', 'description': 'Manual data collection via spreadsheets; high risk of error; no audit trail'}, {'level': 2, 'label': 'Automated', 'description': 'System-driven data capture fro\u2026",
-     "dur_ms": 0.014,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -93,7 +93,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.517,
+   "dur_ms": 1.023,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -113,14 +113,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 2239,
      "name": "get_mrv_system_types",
      "qual": "get_mrv_system_types",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 267,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'type': 'manual_spreadsheet', 'display_name': 'Manual Spreadsheet', 'maturity_level': 1, 'maturity_label': 'Manual', 'accuracy_range_pct': [60, 80], 'completeness_range_pct': [55, 75]}, {'type': 'erp_module'\u2026",
-     "dur_ms": 0.033,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": []
@@ -133,7 +133,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.868,
+   "dur_ms": 1.007,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -153,14 +153,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 2240,
      "name": "get_pcaf_dqs",
      "qual": "get_pcaf_dqs",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 303,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'dqs': 1, 'label': 'Verified primary data', 'confidence': 1.0, 'description': 'Third-party verified Scope 1/2/3 data per GHG Protocol'}, {'dqs': 2, 'label': 'Reported primary data', 'confidence': 0.9, 'descr\u2026",
-     "dur_ms": 0.018,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -173,7 +173,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.463,
+   "dur_ms": 1.167,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -193,14 +193,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 2241,
      "name": "get_satellite_systems",
      "qual": "get_satellite_systems",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 243,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'name': 'TROPOMI', 'full_name': 'TROPOspheric Monitoring Instrument (Sentinel-5P)', 'operator': 'ESA / Copernicus', 'species': ['CH4', 'NO2', 'CO', 'SO2', 'O3'], 'spatial_resolution_km': 5.5, 'revisit_days':\u2026",
-     "dur_ms": 0.022,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -213,7 +213,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.006,
+   "dur_ms": 1.23,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -233,14 +233,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 2242,
      "name": "get_sector_emission_factors",
      "qual": "get_sector_emission_factors",
      "file": "api/v1/routes/climate_mrv.py",
      "line": 319,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'sector': 'steel', 'scope1_intensity_tco2_t': 1.85, 'eu_ets_covered': True}, {'sector': 'cement', 'scope1_intensity_tco2_t': 0.64, 'eu_ets_covered': True}, {'sector': 'chemicals', 'scope1_intensity_tco2_t': \u2026",
-     "dur_ms": 0.012,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -253,8 +253,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.857,
-   "node_count": 60,
+   "dur_ms": 2.346,
+   "node_count": 56,
    "provenance": [
     "computed"
    ],
@@ -274,7 +274,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 2243,
      "name": "post_assess_digital_mrv_maturity",
      "qual": "post_assess_digital_mrv_maturity",
      "file": "api/v1/routes/climate_mrv.py",
@@ -282,49 +282,35 @@
      "args": {
       "req": "DigitalMRVMaturityRequest(entity_id='TEST_req_entity_id', current_systems=None)"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'current_maturity_level': 2, 'current_maturity_label': 'Automated', 'target_maturity_level': 4, 'gap_analysis': [('Data collection automation', {'current': 2, 'required_leve\u2026",
-     "dur_ms": 1.885,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'current_maturity_level': 2, 'current_maturity_label': 'Automated', 'target_maturity_level': 4, 'gap_analysis': [('API connectivity to source systems', {'current': 2, 'requi\u2026",
+     "dur_ms": 1.105,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 2244,
        "name": "assess_digital_mrv_maturity",
        "qual": "assess_digital_mrv_maturity",
        "file": "services/climate_mrv_engine.py",
-       "line": 579,
+       "line": 706,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
-        "current_systems": "None"
+        "current_systems": "None",
+        "cost_overrides_usd": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'current_maturity_level': 2, 'current_maturity_label': 'Automated', 'target_maturity_level': 4, 'gap_analysis': [('Data collection automation', {'current': 2, 'required_level': 4, 'gap': 2, 'priority': '\u2026",
-       "dur_ms": 1.736,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'current_maturity_level': 2, 'current_maturity_label': 'Automated', 'target_maturity_level': 4, 'gap_analysis': [('API connectivity to source systems', {'current': 2, 'required_level': 3, 'gap': 1, 'prio\u2026",
+       "dur_ms": 1.011,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 9,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/climate_mrv_engine.py",
-         "line": 237,
-         "args": {
-          "entity_id": "'TEST_req_entity_idmaturity'"
-         },
-         "ret": "<random.Random object at 0x000001F4E512BF50>",
-         "dur_ms": 0.041,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 10,
+         "id": 2245,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 604,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
          "ret": "True",
          "dur_ms": 0.004,
@@ -333,448 +319,13 @@
          "children": []
         },
         {
-         "id": 11,
+         "id": 2246,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 604,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 12,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 13,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 14,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 15,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 16,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 17,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 18,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 19,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 20,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 21,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 22,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 23,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 24,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 25,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 26,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 27,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 28,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 29,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 30,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 31,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 32,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 33,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 34,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 35,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 36,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 37,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 38,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 39,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "True",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 40,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
          "ret": "None",
          "dur_ms": 0.002,
@@ -783,13 +334,13 @@
          "children": []
         },
         {
-         "id": 41,
+         "id": 2247,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 604,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
          "ret": "False",
          "dur_ms": 0.002,
@@ -798,330 +349,418 @@
          "children": []
         },
         {
-         "id": 42,
+         "id": 2248,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 604,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
          "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 43,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 44,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 45,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 46,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 47,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 48,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 49,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 50,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 51,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 52,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 53,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 54,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 55,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 56,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 57,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "False",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 58,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 604,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042440>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 59,
-         "name": "_roadmap_actions",
-         "qual": "_roadmap_actions",
-         "file": "services/climate_mrv_engine.py",
-         "line": 680,
-         "args": {
-          "from_level": "2",
-          "to_level": "3"
-         },
-         "ret": "['Implement dedicated ESG/MRV platform', 'Configure API connections to utility providers', 'Build Scope 3 supplier data collection portal', 'Establish verification workflow']",
          "dur_ms": 0.005,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 60,
-         "name": "_roadmap_actions",
-         "qual": "_roadmap_actions",
-         "file": "services/climate_mrv_engine.py",
-         "line": 680,
-         "args": {
-          "from_level": "2",
-          "to_level": "4"
-         },
-         "ret": "['Deploy IoT sensors on major emission sources', 'Build real-time GHG dashboard', 'Configure AI anomaly detection', 'Integrate smart building management systems']",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 61,
+         "id": 2249,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 655,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
-         "ret": "281032.0",
+         "ret": "False",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 62,
+         "id": 2250,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 655,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
-         "ret": "1200271.0",
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2251,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2252,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 63,
+         "id": 2253,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 655,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2254,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2255,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2256,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2257,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2258,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2259,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2260,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2261,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2262,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2263,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2264,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2265,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2266,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2267,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2268,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2269,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2270,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2271,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2272,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2273,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2274,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "True",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2275,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
          "ret": "None",
          "dur_ms": 0.002,
@@ -1130,43 +769,345 @@
          "children": []
         },
         {
-         "id": 64,
+         "id": 2276,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 656,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
          },
-         "ret": "6",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 65,
-         "name": "<genexpr>",
-         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 656,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
-         },
-         "ret": "12",
+         "ret": "False",
          "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 66,
+         "id": 2277,
          "name": "<genexpr>",
          "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 656,
+         "line": 740,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E6042170>"
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2278,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2279,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2280,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2281,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2282,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2283,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2284,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2285,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2286,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2287,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2288,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2289,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2290,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2291,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2292,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "False",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2293,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 740,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802950>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2294,
+         "name": "_roadmap_actions",
+         "qual": "_roadmap_actions",
+         "file": "services/climate_mrv_engine.py",
+         "line": 814,
+         "args": {
+          "from_level": "2",
+          "to_level": "3"
+         },
+         "ret": "['Implement dedicated ESG/MRV platform', 'Configure API connections to utility providers', 'Build Scope 3 supplier data collection portal', 'Establish verification workflow']",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2295,
+         "name": "_roadmap_actions",
+         "qual": "_roadmap_actions",
+         "file": "services/climate_mrv_engine.py",
+         "line": 814,
+         "args": {
+          "from_level": "2",
+          "to_level": "4"
+         },
+         "ret": "['Deploy IoT sensors on major emission sources', 'Build real-time GHG dashboard', 'Configure AI anomaly detection', 'Integrate smart building management systems']",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2296,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 790,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D488007C0>"
+         },
+         "ret": "6",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2297,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 790,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D488007C0>"
+         },
+         "ret": "12",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2298,
+         "name": "<genexpr>",
+         "qual": "assess_digital_mrv_maturity.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 790,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D488007C0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1186,8 +1127,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.955,
-   "node_count": 3,
+   "dur_ms": 2.187,
+   "node_count": 2,
    "provenance": [
     "computed"
    ],
@@ -1207,7 +1148,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 67,
+     "id": 2299,
      "name": "post_assess_mrv_system",
      "qual": "post_assess_mrv_system",
      "file": "api/v1/routes/climate_mrv.py",
@@ -1215,45 +1156,36 @@
      "args": {
       "req": "MRVSystemRequest(entity_id='TEST_req_entity_id', facility_name='Main Facility', sector='manufacturing', mrv_type='dedicated_esg_platform', annual_emissions_tco2e=50000.0)"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'facility_name': 'Main Facility', 'sector': 'manufacturing', 'mrv_system_type': 'dedicated_esg_platform', 'annual_emissions_tco2e': 50000.0, 'iso14064_level': 'Level_2_Limit\u2026",
-     "dur_ms": 0.412,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'facility_name': 'Main Facility', 'sector': 'manufacturing', 'mrv_system_type': 'dedicated_esg_platform', 'annual_emissions_tco2e': 50000.0, 'iso14064_level': 'insufficient_\u2026",
+     "dur_ms": 0.513,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 68,
+       "id": 2300,
        "name": "assess_mrv_system",
        "qual": "assess_mrv_system",
        "file": "services/climate_mrv_engine.py",
-       "line": 244,
+       "line": 264,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "facility_name": "'Main Facility'",
         "sector": "'manufacturing'",
         "mrv_type": "'dedicated_esg_platform'",
-        "annual_emissions_tco2e": "50000.0"
+        "annual_emissions_tco2e": "50000.0",
+        "measured_accuracy_pct": "None",
+        "measured_completeness_pct": "None",
+        "measured_timeliness_score": "None",
+        "checklist_scores": "None",
+        "scope2_location_tco2e": "None",
+        "scope2_market_tco2e": "None",
+        "scope3_material_tco2e": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'facility_name': 'Main Facility', 'sector': 'manufacturing', 'mrv_system_type': 'dedicated_esg_platform', 'annual_emissions_tco2e': 50000.0, 'iso14064_level': 'Level_2_Limited_Assurance', 'data_quality_s\u2026",
-       "dur_ms": 0.256,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'facility_name': 'Main Facility', 'sector': 'manufacturing', 'mrv_system_type': 'dedicated_esg_platform', 'annual_emissions_tco2e': 50000.0, 'iso14064_level': 'insufficient_data', 'data_quality_score': N\u2026",
+       "dur_ms": 0.347,
        "sql": [],
        "error": null,
-       "children": [
-        {
-         "id": 69,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/climate_mrv_engine.py",
-         "line": 237,
-         "args": {
-          "entity_id": "'TEST_req_entity_idMain Facility'"
-         },
-         "ret": "<random.Random object at 0x000001F4E512BF50>",
-         "dur_ms": 0.03,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
+       "children": []
       }
      ]
     }
@@ -1265,8 +1197,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.056,
-   "node_count": 3,
+   "dur_ms": 2.503,
+   "node_count": 2,
    "provenance": [
     "computed"
    ],
@@ -1286,7 +1218,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 70,
+     "id": 2301,
      "name": "post_calculate_data_quality",
      "qual": "post_calculate_data_quality",
      "file": "api/v1/routes/climate_mrv.py",
@@ -1294,42 +1226,28 @@
      "args": {
       "req": "DataQualityRequest(entity_id='TEST_req_entity_id', data_sources=None)"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'pcaf_dqs': 3, 'pcaf_dqs_label': 'Physical activity based', 'confidence_weight': 0.7, 'cdp_completeness_pct': 64.4, 'ipcc_tier': 2, 'ipcc_tier_label': 'Country/sector specif\u2026",
-     "dur_ms": 0.443,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'pcaf_dqs': 3, 'pcaf_dqs_label': 'Physical activity based', 'confidence_weight': 0.7, 'cdp_completeness_pct': 73.3, 'ipcc_tier': 2, 'ipcc_tier_label': 'Country/sector specif\u2026",
+     "dur_ms": 0.219,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 71,
+       "id": 2302,
        "name": "calculate_data_quality_score",
        "qual": "calculate_data_quality_score",
        "file": "services/climate_mrv_engine.py",
-       "line": 475,
+       "line": 574,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
-        "data_sources": "None"
+        "data_sources": "None",
+        "measured_timeliness_pct": "None",
+        "measured_uncertainty_pct": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'pcaf_dqs': 3, 'pcaf_dqs_label': 'Physical activity based', 'confidence_weight': 0.7, 'cdp_completeness_pct': 64.4, 'ipcc_tier': 2, 'ipcc_tier_label': 'Country/sector specific emission factors', 'third_p\u2026",
-       "dur_ms": 0.333,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'pcaf_dqs': 3, 'pcaf_dqs_label': 'Physical activity based', 'confidence_weight': 0.7, 'cdp_completeness_pct': 73.3, 'ipcc_tier': 2, 'ipcc_tier_label': 'Country/sector specific emission factors', 'third_p\u2026",
+       "dur_ms": 0.125,
        "sql": [],
        "error": null,
-       "children": [
-        {
-         "id": 72,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/climate_mrv_engine.py",
-         "line": 237,
-         "args": {
-          "entity_id": "'TEST_req_entity_iddqs'"
-         },
-         "ret": "<random.Random object at 0x000001F4E512BF50>",
-         "dur_ms": 0.037,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
+       "children": []
       }
      ]
     }
@@ -1359,8 +1277,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.337,
-   "node_count": 22,
+   "dur_ms": 2.081,
+   "node_count": 21,
    "provenance": [
     "computed"
    ],
@@ -1380,7 +1298,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 73,
+     "id": 2303,
      "name": "post_score_satellite_coverage",
      "qual": "post_score_satellite_coverage",
      "file": "api/v1/routes/climate_mrv.py",
@@ -1388,66 +1306,37 @@
      "args": {
       "req": "SatelliteCoverageRequest(entity_id='TEST_req_entity_id', lat=51.5, lng=-0.12, facility_type='manufacturing')"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'lat': 51.5, 'lng': -0.12, 'facility_type': 'manufacturing', 'tropomi_detection_probability_pct': 60.4, 'ghgsat_point_source_resolution_m': 25.0, 'carbonmapper_sensitivity_p\u2026",
-     "dur_ms": 1.044,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'lat': 51.5, 'lng': -0.12, 'facility_type': 'manufacturing', 'tropomi_detection_probability_pct': 60.0, 'ghgsat_point_source_resolution_m': 25.0, 'carbonmapper_sensitivity_p\u2026",
+     "dur_ms": 0.502,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 74,
+       "id": 2304,
        "name": "score_satellite_coverage",
        "qual": "score_satellite_coverage",
        "file": "services/climate_mrv_engine.py",
-       "line": 369,
+       "line": 452,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "lat": "51.5",
         "lng": "-0.12",
-        "facility_type": "'manufacturing'"
+        "facility_type": "'manufacturing'",
+        "co2_detection_threshold_kt_yr": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'lat': 51.5, 'lng': -0.12, 'facility_type': 'manufacturing', 'tropomi_detection_probability_pct': 60.4, 'ghgsat_point_source_resolution_m': 25.0, 'carbonmapper_sensitivity_ppb': 0.05, 'overpass_frequency\u2026",
-       "dur_ms": 0.862,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'lat': 51.5, 'lng': -0.12, 'facility_type': 'manufacturing', 'tropomi_detection_probability_pct': 60.0, 'ghgsat_point_source_resolution_m': 25.0, 'carbonmapper_sensitivity_ppb': 0.05, 'overpass_frequency\u2026",
+       "dur_ms": 0.434,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 75,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/climate_mrv_engine.py",
-         "line": 237,
-         "args": {
-          "entity_id": "'TEST_req_entity_id51.5-0.12'"
-         },
-         "ret": "<random.Random object at 0x000001F4E512BF50>",
-         "dur_ms": 0.033,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 76,
+         "id": 2305,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 427,
+         "line": 512,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "1",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 77,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 427,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "1",
          "dur_ms": 0.002,
@@ -1456,43 +1345,58 @@
          "children": []
         },
         {
-         "id": 78,
+         "id": 2306,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 427,
+         "line": 512,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "1",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 79,
+         "id": 2307,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 427,
+         "line": 512,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "1",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 80,
+         "id": 2308,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 427,
+         "line": 512,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2309,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 512,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1501,133 +1405,43 @@
          "children": []
         },
         {
-         "id": 81,
+         "id": 2310,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 446,
+         "line": 531,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "False",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 82,
+         "id": 2311,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 446,
+         "line": 531,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "True",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 83,
+         "id": 2312,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 446,
+         "line": 531,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "None",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 84,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 450,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "{'satellite': 'TROPOMI', 'full_name': 'TROPOspheric Monitoring Instrument (Sentinel-5P)', 'operator': 'ESA / Copernicus', 'species_detected': ['CH4', 'NO2', 'CO', 'SO2', 'O3'], 'spatial_resolution': 5.5, 'resolution_unit': 'km', 'revisit_d\u2026",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 85,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 450,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "None",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 86,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 451,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "{'satellite': 'GHGSat', 'full_name': 'GHGSat Constellation', 'operator': 'GHGSat Inc.', 'species_detected': ['CH4', 'CO2'], 'spatial_resolution': 25.0, 'resolution_unit': 'm', 'revisit_days': 3, 'detection_threshold_kg_hr': 50.0, 'detectio\u2026",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 87,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 451,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "None",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 88,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 452,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
-         },
-         "ret": "{'satellite': 'CarbonMapper', 'full_name': 'CarbonMapper / AVIRIS-NG', 'operator': 'Carbon Mapper / NASA JPL', 'species_detected': ['CH4', 'CO2'], 'spatial_resolution': 3.0, 'resolution_unit': 'm', 'revisit_days': 14, 'detection_threshold_\u2026",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 89,
-         "name": "<genexpr>",
-         "qual": "score_satellite_coverage.<locals>.<genexpr>",
-         "file": "services/climate_mrv_engine.py",
-         "line": 452,
-         "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1636,13 +1450,103 @@
          "children": []
         },
         {
-         "id": 90,
+         "id": 2313,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 463,
+         "line": 535,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "{'satellite': 'TROPOMI', 'full_name': 'TROPOspheric Monitoring Instrument (Sentinel-5P)', 'operator': 'ESA / Copernicus', 'species_detected': ['CH4', 'NO2', 'CO', 'SO2', 'O3'], 'spatial_resolution': 5.5, 'resolution_unit': 'km', 'revisit_d\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2314,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 535,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2315,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 536,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "{'satellite': 'GHGSat', 'full_name': 'GHGSat Constellation', 'operator': 'GHGSat Inc.', 'species_detected': ['CH4', 'CO2'], 'spatial_resolution': 25.0, 'resolution_unit': 'm', 'revisit_days': 3, 'detection_threshold_kg_hr': 50.0, 'detectio\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2316,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 536,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2317,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 537,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "{'satellite': 'CarbonMapper', 'full_name': 'CarbonMapper / AVIRIS-NG', 'operator': 'Carbon Mapper / NASA JPL', 'species_detected': ['CH4', 'CO2'], 'spatial_resolution': 3.0, 'resolution_unit': 'm', 'revisit_days': 14, 'detection_threshold_\u2026",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2318,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 537,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2319,
+         "name": "<genexpr>",
+         "qual": "score_satellite_coverage.<locals>.<genexpr>",
+         "file": "services/climate_mrv_engine.py",
+         "line": 548,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "1",
          "dur_ms": 0.001,
@@ -1651,43 +1555,43 @@
          "children": []
         },
         {
-         "id": 91,
+         "id": 2320,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 463,
+         "line": 548,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "3",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 92,
+         "id": 2321,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 463,
+         "line": 548,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "14",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 93,
+         "id": 2322,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 463,
+         "line": 548,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "7",
          "dur_ms": 0.001,
@@ -1696,13 +1600,13 @@
          "children": []
         },
         {
-         "id": 94,
+         "id": 2323,
          "name": "<genexpr>",
          "qual": "score_satellite_coverage.<locals>.<genexpr>",
          "file": "services/climate_mrv_engine.py",
-         "line": 463,
+         "line": 548,
          "args": {
-          ".0": "<list_iterator object at 0x000001F4E618A4A0>"
+          ".0": "<list_iterator object at 0x0000013D48802DA0>"
          },
          "ret": "None",
          "dur_ms": 0.001,

@@ -1,10 +1,10 @@
 {
  "domain": "energy-data",
  "meta": {
-  "ts": "2026-06-30T14:01:34",
+  "ts": "2026-07-05T19:14:39",
+  "endpoints": 8,
   "module": "api.v1.routes.energy_data",
-  "router_prefix": "/api/v1/energy-data",
-  "endpoints": 8
+  "router_prefix": "/api/v1/energy-data"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4156.659,
+   "dur_ms": 334.801,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 0,
-     "dur_ms": 761.286,
+     "dur_ms": 75.747,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 562.915,
+     "dur_ms": 29.937,
      "is_reference": false,
      "error": null
     }
@@ -67,7 +67,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11032,
      "name": "search_coal_plants",
      "qual": "search_coal_plants",
      "file": "api/v1/routes/energy_data.py",
@@ -81,11 +81,11 @@
       "search": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE4F9E71A0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE510AF9C0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48786450>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [], 'total': 0}",
-     "dur_ms": 4087.281,
+     "dur_ms": 304.497,
      "sql": [
       0,
       1
@@ -101,7 +101,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 625.333,
+   "dur_ms": 295.977,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -117,7 +117,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 0,
-     "dur_ms": 344.861,
+     "dur_ms": 63.22,
      "is_reference": false,
      "error": null
     }
@@ -135,17 +135,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11033,
      "name": "coal_plant_countries",
      "qual": "coal_plant_countries",
      "file": "api/v1/routes/energy_data.py",
      "line": 88,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51202840>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE512DEFC0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A914F0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'countries': []}",
-     "dur_ms": 592.871,
+     "dur_ms": 259.511,
      "sql": [
       0
      ],
@@ -160,7 +160,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"TEST_lat\"\nLINE 6:                        LEAST(1.0, cos(radians('TEST_lat')) *...\n                                                      ^\n\n[SQL: \n        SELECT * FROM (\n            SELECT id, gem_id, plant_name, country_iso3, status, capacity_mw,\n                   annual_co2_mt, latitude, long",
-   "dur_ms": 1631.987,
+   "dur_ms": 290.382,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -176,7 +176,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": null,
-     "dur_ms": 449.836,
+     "dur_ms": 65.496,
      "is_reference": false,
      "error": "InvalidTextRepresentation('invalid input syntax for type double precision: \"TEST_lat\"\\nLINE 6:                        LEAST(1.0, cos(radians(\\'TEST_lat\\')) *...\\n                                     \u2026"
     }
@@ -192,7 +192,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11034,
      "name": "coal_plants_nearby",
      "qual": "coal_plants_nearby",
      "file": "api/v1/routes/energy_data.py",
@@ -202,11 +202,11 @@
       "lng": "'TEST_lng'",
       "radius_km": "100",
       "limit": "20",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51202990>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324E00>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A936B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 1587.824,
+     "dur_ms": 258.475,
      "sql": [
       0
      ],
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 868.751,
+   "dur_ms": 272.281,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -237,7 +237,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 0,
-     "dur_ms": 71.674,
+     "dur_ms": 52.276,
      "is_reference": false,
      "error": null
     }
@@ -256,18 +256,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11035,
      "name": "coal_plant_owners",
      "qual": "coal_plant_owners",
      "file": "api/v1/routes/energy_data.py",
      "line": 109,
      "args": {
       "limit": "30",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE5133FA70>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324860>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A91B50>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'owners': []}",
-     "dur_ms": 836.461,
+     "dur_ms": 245.458,
      "sql": [
       0
      ],
@@ -282,7 +282,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 323.004,
+   "dur_ms": 266.049,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -298,7 +298,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 0,
-     "dur_ms": 61.61,
+     "dur_ms": 56.327,
      "is_reference": false,
      "error": null
     }
@@ -317,17 +317,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11036,
      "name": "coal_plant_pipeline",
      "qual": "coal_plant_pipeline",
      "file": "api/v1/routes/energy_data.py",
      "line": 161,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368440>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51324F40>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47555CA0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'pipeline': [], 'total': 0}",
-     "dur_ms": 289.337,
+     "dur_ms": 238.478,
      "sql": [
       0
      ],
@@ -342,7 +342,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: GEM ID 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 792.876,
+   "dur_ms": 285.324,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -358,7 +358,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 0,
-     "dur_ms": 57.357,
+     "dur_ms": 56.604,
      "is_reference": false,
      "error": null
     }
@@ -371,18 +371,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 11037,
      "name": "get_coal_plant",
      "qual": "get_coal_plant",
      "file": "api/v1/routes/energy_data.py",
      "line": 179,
      "args": {
       "gem_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE513686E0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325440>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475549B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 763.655,
+     "dur_ms": 256.285,
      "sql": [
       0
      ],
@@ -397,7 +397,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 315.993,
+   "dur_ms": 291.338,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -413,7 +413,7 @@
       "dh_gem_coal_plant_units"
      ],
      "rowcount": 0,
-     "dur_ms": 65.23,
+     "dur_ms": 58.66,
      "is_reference": false,
      "error": null
     }
@@ -433,18 +433,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11038,
      "name": "coal_plant_units",
      "qual": "coal_plant_units",
      "file": "api/v1/routes/energy_data.py",
      "line": 197,
      "args": {
       "plant_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368980>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325800>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475562D0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'units': [], 'total': 0}",
-     "dur_ms": 279.474,
+     "dur_ms": 263.135,
      "sql": [
       0
      ],
@@ -459,7 +459,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 491.223,
+   "dur_ms": 439.447,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -476,7 +476,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 62.015,
+     "dur_ms": 60.45,
      "is_reference": false,
      "error": null
     },
@@ -487,7 +487,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 27.346,
+     "dur_ms": 30.563,
      "is_reference": false,
      "error": null
     },
@@ -498,7 +498,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 41.511,
+     "dur_ms": 32.08,
      "is_reference": false,
      "error": null
     },
@@ -509,7 +509,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 29.292,
+     "dur_ms": 30.134,
      "is_reference": false,
      "error": null
     },
@@ -520,7 +520,7 @@
       "dh_gem_coal_plants"
      ],
      "rowcount": 1,
-     "dur_ms": 28.145,
+     "dur_ms": 29.704,
      "is_reference": false,
      "error": null
     },
@@ -531,7 +531,7 @@
       "dh_gem_coal_plant_units"
      ],
      "rowcount": 1,
-     "dur_ms": 28.782,
+     "dur_ms": 29.755,
      "is_reference": false,
      "error": null
     }
@@ -550,17 +550,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 11039,
      "name": "energy_data_stats",
      "qual": "energy_data_stats",
      "file": "api/v1/routes/energy_data.py",
      "line": 214,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001DE51368D10>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001DE51325A80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47679820>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'coal_plants': {'total': 0, 'countries': 0, 'total_capacity_mw': 0.0, 'operating': 0, 'pipeline': 0}, 'coal_units': {'total': 0}}",
-     "dur_ms": 463.005,
+     "dur_ms": 407.284,
      "sql": [
       0,
       1,

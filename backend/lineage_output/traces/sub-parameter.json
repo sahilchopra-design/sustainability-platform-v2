@@ -1,10 +1,10 @@
 {
  "domain": "sub-parameter",
  "meta": {
-  "ts": "2026-06-30T14:05:26",
+  "ts": "2026-07-05T19:17:14",
+  "endpoints": 16,
   "module": "api.v1.routes.sub_parameter",
-  "router_prefix": "/api/v1/sub-parameter",
-  "endpoints": 16
+  "router_prefix": "/api/v1/sub-parameter"
  },
  "transactions": [
   {
@@ -13,8 +13,8 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Custom scenario not found",
-   "dur_ms": 672.189,
-   "node_count": 5,
+   "dur_ms": 315.526,
+   "node_count": 1,
    "provenance": [
     "db-empty"
    ],
@@ -29,7 +29,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 63.537,
+     "dur_ms": 80.55,
      "is_reference": false,
      "error": null
     }
@@ -42,76 +42,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 41982,
      "name": "custom_key_drivers",
      "qual": "custom_key_drivers",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 266,
      "args": {
       "cs_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389808920>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A215C10>"
      },
      "ret": "None",
-     "dur_ms": 642.401,
+     "dur_ms": 286.419,
      "sql": [
       0
      ],
      "error": null,
-     "children": [
-      {
-       "id": 2,
-       "name": "<module>",
-       "qual": "<module>",
-       "file": "db/models/custom_builder.py",
-       "line": 1,
-       "args": {},
-       "ret": "None",
-       "dur_ms": 12.347,
-       "sql": [],
-       "error": null,
-       "children": [
-        {
-         "id": 3,
-         "name": "CustomScenario",
-         "qual": "CustomScenario",
-         "file": "db/models/custom_builder.py",
-         "line": 16,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 1.654,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 4,
-         "name": "ParameterCustomization",
-         "qual": "ParameterCustomization",
-         "file": "db/models/custom_builder.py",
-         "line": 38,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.563,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 5,
-         "name": "SimulationRun",
-         "qual": "SimulationRun",
-         "file": "db/models/custom_builder.py",
-         "line": 53,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.638,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
-      }
-     ]
+     "children": []
     }
    ]
   },
@@ -121,7 +67,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 324.455,
+   "dur_ms": 290.165,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -137,7 +83,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 63.843,
+     "dur_ms": 71.073,
      "is_reference": false,
      "error": null
     }
@@ -151,7 +97,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 41983,
      "name": "interaction_analysis",
      "qual": "interaction_analysis",
      "file": "api/v1/routes/sub_parameter.py",
@@ -159,25 +105,25 @@
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "parameter_set": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B38985F890>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2146B0>"
      },
      "ret": "None",
-     "dur_ms": 292.206,
+     "dur_ms": 261.804,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 41984,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B38985F890>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2146B0>",
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 292.168,
+       "dur_ms": 261.776,
        "sql": [
         0
        ],
@@ -194,7 +140,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.266,
+   "dur_ms": 0.217,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -212,14 +158,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 41985,
      "name": "list_analyzable_parameters",
      "qual": "list_analyzable_parameters",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 72,
      "args": {},
      "ret": "{'parameters': [{'name': 'Emissions|CO2', 'label': 'CO2 Emissions', 'unit': 'Gt/yr', 'default_range': 0.3}, {'name': 'Price|Carbon', 'label': 'Carbon Price', 'unit': 'USD/tCO2', 'default_range': 0.4}, {'name': 'GDP|PPP', 'label': 'GDP', 'u\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -232,7 +178,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 287.813,
+   "dur_ms": 284.976,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -248,7 +194,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 59.949,
+     "dur_ms": 56.663,
      "is_reference": false,
      "error": null
     }
@@ -263,7 +209,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 41986,
      "name": "viz_tornado",
      "qual": "viz_tornado",
      "file": "api/v1/routes/sub_parameter.py",
@@ -272,25 +218,25 @@
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "target_metric": "'temperature'",
       "top_n": "10",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DA6AB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2177D0>"
      },
      "ret": "None",
-     "dur_ms": 255.802,
+     "dur_ms": 256.875,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 41987,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DA6AB0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2177D0>",
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 255.769,
+       "dur_ms": 256.846,
        "sql": [
         0
        ],
@@ -307,7 +253,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 305.392,
+   "dur_ms": 263.576,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -323,7 +269,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 65.756,
+     "dur_ms": 59.278,
      "is_reference": false,
      "error": null
     }
@@ -336,32 +282,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 41988,
      "name": "viz_waterfall",
      "qual": "viz_waterfall",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 149,
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDDF70>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A216FC0>"
      },
      "ret": "None",
-     "dur_ms": 273.629,
+     "dur_ms": 234.825,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 41989,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDDF70>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A216FC0>",
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 273.502,
+       "dur_ms": 234.798,
        "sql": [
         0
        ],
@@ -378,7 +324,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 303.721,
+   "dur_ms": 278.027,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -394,7 +340,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 64.446,
+     "dur_ms": 62.518,
      "is_reference": false,
      "error": null
     }
@@ -407,32 +353,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 41990,
      "name": "attribution_analysis",
      "qual": "attribution_analysis",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 109,
      "args": {
       "body": "AttributionRequest(scenario_id='TEST_body_scenario_id', outcome_metric='temperature')",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC230>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B9D30>"
      },
      "ret": "None",
-     "dur_ms": 271.803,
+     "dur_ms": 248.655,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 41991,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC230>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B9D30>",
         "scenario_id": "'TEST_body_scenario_id'"
        },
        "ret": "None",
-       "dur_ms": 271.74,
+       "dur_ms": 248.626,
        "sql": [
         0
        ],
@@ -449,7 +395,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Custom scenario not found",
-   "dur_ms": 371.376,
+   "dur_ms": 284.452,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -465,7 +411,7 @@
       "custom_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 79.423,
+     "dur_ms": 56.825,
      "is_reference": false,
      "error": null
     }
@@ -478,17 +424,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 41992,
      "name": "analyze_custom_scenario",
      "qual": "analyze_custom_scenario",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 244,
      "args": {
       "cs_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDC1D0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A215DC0>"
      },
      "ret": "None",
-     "dur_ms": 338.044,
+     "dur_ms": 256.595,
      "sql": [
       0
      ],
@@ -503,7 +449,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 318.021,
+   "dur_ms": 278.046,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -519,7 +465,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 76.278,
+     "dur_ms": 60.251,
      "is_reference": false,
      "error": null
     }
@@ -532,32 +478,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 41993,
      "name": "elasticity_analysis",
      "qual": "elasticity_analysis",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 177,
      "args": {
       "body": "ElasticityRequest(scenario_id='TEST_body_scenario_id', target_metric='temperature', parameters=[], delta_pct=1.0)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE3C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2163C0>"
      },
      "ret": "None",
-     "dur_ms": 287.84,
+     "dur_ms": 249.775,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 17,
+       "id": 41994,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE3C0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2163C0>",
         "scenario_id": "'TEST_body_scenario_id'"
        },
        "ret": "None",
-       "dur_ms": 287.805,
+       "dur_ms": 249.744,
        "sql": [
         0
        ],
@@ -574,7 +520,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'get'",
-   "dur_ms": 796.391,
+   "dur_ms": 5.89,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -589,35 +535,35 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 41995,
      "name": "export_analyses",
      "qual": "export_analyses",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 221,
      "args": {
       "body": "ExportRequest(analyses=['TEST_body_analyses'], format='excel')",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A216AB0>"
      },
      "ret": "None",
-     "dur_ms": 795.736,
+     "dur_ms": 5.5,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 19,
+       "id": 41996,
        "name": "<module>",
        "qual": "<module>",
        "file": "services/analysis_export.py",
        "line": 1,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.709,
+       "dur_ms": 0.418,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 20,
+       "id": 41997,
        "name": "export_analysis_excel",
        "qual": "export_analysis_excel",
        "file": "services/analysis_export.py",
@@ -626,7 +572,7 @@
         "analyses": "['TEST_body_analyses']"
        },
        "ret": "None",
-       "dur_ms": 771.705,
+       "dur_ms": 3.728,
        "sql": [],
        "error": null,
        "children": []
@@ -695,7 +641,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 286.348,
+   "dur_ms": 277.39,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -711,7 +657,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 63.718,
+     "dur_ms": 53.449,
      "is_reference": false,
      "error": null
     }
@@ -724,32 +670,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 41998,
      "name": "sensitivity_analysis",
      "qual": "sensitivity_analysis",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 78,
      "args": {
       "body": "SensitivityRequest(scenario_id='TEST_body_scenario_id', target_metric='temperature', parameters=[], variation_range=0.2, analysis_type='tornado')",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B39830D4F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2164B0>"
      },
      "ret": "None",
-     "dur_ms": 257.626,
+     "dur_ms": 250.491,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 22,
+       "id": 41999,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B39830D4F0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2164B0>",
         "scenario_id": "'TEST_body_scenario_id'"
        },
        "ret": "None",
-       "dur_ms": 257.591,
+       "dur_ms": 250.446,
        "sql": [
         0
        ],
@@ -784,7 +730,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 283.739,
+   "dur_ms": 279.22,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -800,7 +746,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 56.246,
+     "dur_ms": 57.83,
      "is_reference": false,
      "error": null
     }
@@ -813,32 +759,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 42000,
      "name": "what_if_analysis",
      "qual": "what_if_analysis",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 88,
      "args": {
       "body": "WhatIfRequest(base_scenario_id='TEST_body_base_scenario_id', changes=[WhatIfChange(parameter='TEST_body_changes_parameter', change_type='relative', change_value=0, apply_year=2050)])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1683B0>"
      },
      "ret": "None",
-     "dur_ms": 255.337,
+     "dur_ms": 251.194,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 24,
+       "id": 42001,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B389DDE150>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1683B0>",
         "scenario_id": "'TEST_body_base_scenario_id'"
        },
        "ret": "None",
-       "dur_ms": 255.28,
+       "dur_ms": 251.163,
        "sql": [
         0
        ],
@@ -855,7 +801,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 288.755,
+   "dur_ms": 290.016,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -871,7 +817,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 58.468,
+     "dur_ms": 57.576,
      "is_reference": false,
      "error": null
     }
@@ -884,32 +830,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 42002,
      "name": "what_if_batch",
      "qual": "what_if_batch",
      "file": "api/v1/routes/sub_parameter.py",
      "line": 96,
      "args": {
       "body": "WhatIfBatchRequest(base_scenario_id='TEST_body_base_scenario_id', change_sets=[[WhatIfChange(parameter='TEST_body_change_sets_parameter', change_type='relative', change_value=0, apply_year=2050)]])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001B3982F9DF0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1696A0>"
      },
      "ret": "None",
-     "dur_ms": 260.355,
+     "dur_ms": 260.695,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 26,
+       "id": 42003,
        "name": "_get_trajs",
        "qual": "_get_trajs",
        "file": "api/v1/routes/sub_parameter.py",
        "line": 24,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001B3982F9DF0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1696A0>",
         "scenario_id": "'TEST_body_base_scenario_id'"
        },
        "ret": "None",
-       "dur_ms": 260.026,
+       "dur_ms": 260.665,
        "sql": [
         0
        ],

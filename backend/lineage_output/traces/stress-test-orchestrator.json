@@ -1,10 +1,10 @@
 {
  "domain": "stress-test-orchestrator",
  "meta": {
-  "ts": "2026-06-30T14:05:20",
+  "ts": "2026-07-05T19:17:11",
+  "endpoints": 7,
   "module": "api.v1.routes.stress_test_orchestrator",
-  "router_prefix": "/api/v1/stress-test-orchestrator",
-  "endpoints": 7
+  "router_prefix": "/api/v1/stress-test-orchestrator"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.577,
+   "dur_ms": 1.962,
    "node_count": 18,
    "provenance": [
     "computed"
@@ -37,52 +37,52 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 41905,
      "name": "get_ngfs_phase4_ref",
      "qual": "get_ngfs_phase4_ref",
      "file": "api/v1/routes/stress_test_orchestrator.py",
      "line": 66,
      "args": {},
      "ret": "{'vintage': 'NGFS Phase IV (2024)', 'published_by': 'Network for Greening the Financial System', 'publication_date': '2024-Q1', 'scenarios': {'net_zero_2050': {'name': 'Net Zero 2050', 'description': 'Immediate, coordinated global action \u2014\u2026",
-     "dur_ms": 0.577,
+     "dur_ms": 0.346,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 41906,
        "name": "get_ngfs_phase4_scenarios",
        "qual": "get_ngfs_phase4_scenarios",
        "file": "services/stress_test_orchestrator_engine.py",
        "line": 1218,
        "args": {},
        "ret": "{'vintage': 'NGFS Phase IV (2024)', 'published_by': 'Network for Greening the Financial System', 'publication_date': '2024-Q1', 'scenarios': {'net_zero_2050': {'name': 'Net Zero 2050', 'description': 'Immediate, coordinated global action \u2014\u2026",
-       "dur_ms": 0.416,
+       "dur_ms": 0.247,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 41907,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.5",
-         "dur_ms": 0.005,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 4,
+         "id": 41908,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.8",
          "dur_ms": 0.002,
@@ -91,73 +91,73 @@
          "children": []
         },
         {
-         "id": 5,
+         "id": 41909,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "2.5",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 6,
+         "id": 41910,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.8",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 7,
+         "id": 41911,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.5",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 8,
+         "id": 41912,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "2.9",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 9,
+         "id": 41913,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.4",
          "dur_ms": 0.001,
@@ -166,13 +166,13 @@
          "children": []
         },
         {
-         "id": 10,
+         "id": 41914,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1227,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -181,28 +181,28 @@
          "children": []
         },
         {
-         "id": 11,
+         "id": 41915,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.5",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 12,
+         "id": 41916,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.8",
          "dur_ms": 0.001,
@@ -211,13 +211,13 @@
          "children": []
         },
         {
-         "id": 13,
+         "id": 41917,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "2.5",
          "dur_ms": 0.001,
@@ -226,13 +226,13 @@
          "children": []
         },
         {
-         "id": 14,
+         "id": 41918,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.8",
          "dur_ms": 0.001,
@@ -241,13 +241,13 @@
          "children": []
         },
         {
-         "id": 15,
+         "id": 41919,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.5",
          "dur_ms": 0.001,
@@ -256,13 +256,13 @@
          "children": []
         },
         {
-         "id": 16,
+         "id": 41920,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "2.9",
          "dur_ms": 0.001,
@@ -271,28 +271,28 @@
          "children": []
         },
         {
-         "id": 17,
+         "id": 41921,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "1.4",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 18,
+         "id": 41922,
          "name": "<genexpr>",
          "qual": "get_ngfs_phase4_scenarios.<locals>.<genexpr>",
          "file": "services/stress_test_orchestrator_engine.py",
          "line": 1228,
          "args": {
-          ".0": "<dict_valueiterator object at 0x0000020A618F9A80>"
+          ".0": "<dict_valueiterator object at 0x0000013D4A9CCD60>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -312,7 +312,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.991,
+   "dur_ms": 1.029,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -333,14 +333,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 41923,
      "name": "get_regulatory_frameworks_ref",
      "qual": "get_regulatory_frameworks_ref",
      "file": "api/v1/routes/stress_test_orchestrator.py",
      "line": 79,
      "args": {},
      "ret": "{'frameworks': {'ECB_2022': {'name': 'ECB Climate Stress Test 2022', 'supervisor': 'European Central Bank', 'jurisdiction': ['EU', 'Euro Area'], 'cet1_threshold_pct': 4.5, 'capital_metric': 'CET1', 'time_horizon_years': [2025, 2030, 2050],\u2026",
-     "dur_ms": 0.015,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []
@@ -353,7 +353,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.451,
+   "dur_ms": 1.863,
    "node_count": 41,
    "provenance": [
     "computed"
@@ -375,19 +375,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 41924,
      "name": "get_sector_risk_profiles_ref",
      "qual": "get_sector_risk_profiles_ref",
      "file": "api/v1/routes/stress_test_orchestrator.py",
      "line": 102,
      "args": {},
      "ret": "{'sectors': {'energy_fossil': {'nace_code': 'B06/B09/D35.11', 'description': 'Fossil fuel extraction & conventional power generation', 'carbon_intensity_kg_keur': 2800, 'stranded_asset_pct': 35.0, 'revenue_at_risk_pct': 42.0, 'baseline_pd_\u2026",
-     "dur_ms": 1.327,
+     "dur_ms": 0.819,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 21,
+       "id": 41925,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -396,13 +396,13 @@
         "x": "('energy_fossil', {'nace_code': 'B06/B09/D35.11', 'description': 'Fossil fuel extraction & conventional power generation', 'carbon_intensity_kg_keur': 2800, 'stranded_asset_pct': 35.0, 'revenue_at_risk_pct': 42.0, 'baseline_pd_pct': 1.8, '\u2026"
        },
        "ret": "2800",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 41926,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -411,13 +411,13 @@
         "x": "('energy_renewable', {'nace_code': 'D35.11-R', 'description': 'Renewable power generation (wind, solar, hydro)', 'carbon_intensity_kg_keur': 45, 'stranded_asset_pct': 2.0, 'revenue_at_risk_pct': 5.0, 'baseline_pd_pct': 0.6, 'baseline_lgd_p\u2026"
        },
        "ret": "45",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 41927,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -426,13 +426,13 @@
         "x": "('mining', {'nace_code': 'B05-B09', 'description': 'Coal, metal ore and other mining', 'carbon_intensity_kg_keur': 1950, 'stranded_asset_pct': 28.0, 'revenue_at_risk_pct': 34.0, 'baseline_pd_pct': 2.1, 'baseline_lgd_pct': 45.0, 'pd_uplift_\u2026"
        },
        "ret": "1950",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 24,
+       "id": 41928,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -447,7 +447,7 @@
        "children": []
       },
       {
-       "id": 25,
+       "id": 41929,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -456,13 +456,13 @@
         "x": "('transport_aviation', {'nace_code': 'H51', 'description': 'Air transport \u2014 airlines and airports', 'carbon_intensity_kg_keur': 1800, 'stranded_asset_pct': 15.0, 'revenue_at_risk_pct': 22.0, 'baseline_pd_pct': 2.5, 'baseline_lgd_pct': 48.0\u2026"
        },
        "ret": "1800",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 26,
+       "id": 41930,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -477,7 +477,7 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 41931,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -492,7 +492,7 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 41932,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -507,7 +507,7 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 41933,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -522,7 +522,7 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 41934,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -537,7 +537,7 @@
        "children": []
       },
       {
-       "id": 31,
+       "id": 41935,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -552,7 +552,7 @@
        "children": []
       },
       {
-       "id": 32,
+       "id": 41936,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -567,7 +567,7 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 41937,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -582,7 +582,7 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 41938,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -597,7 +597,7 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 41939,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -612,7 +612,7 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 41940,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -627,7 +627,7 @@
        "children": []
       },
       {
-       "id": 37,
+       "id": 41941,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -642,7 +642,7 @@
        "children": []
       },
       {
-       "id": 38,
+       "id": 41942,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -657,7 +657,7 @@
        "children": []
       },
       {
-       "id": 39,
+       "id": 41943,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -672,7 +672,7 @@
        "children": []
       },
       {
-       "id": 40,
+       "id": 41944,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -687,7 +687,7 @@
        "children": []
       },
       {
-       "id": 41,
+       "id": 41945,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -702,7 +702,7 @@
        "children": []
       },
       {
-       "id": 42,
+       "id": 41946,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -717,7 +717,7 @@
        "children": []
       },
       {
-       "id": 43,
+       "id": 41947,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -732,7 +732,7 @@
        "children": []
       },
       {
-       "id": 44,
+       "id": 41948,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -747,7 +747,7 @@
        "children": []
       },
       {
-       "id": 45,
+       "id": 41949,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -762,7 +762,7 @@
        "children": []
       },
       {
-       "id": 46,
+       "id": 41950,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -777,7 +777,7 @@
        "children": []
       },
       {
-       "id": 47,
+       "id": 41951,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -792,7 +792,7 @@
        "children": []
       },
       {
-       "id": 48,
+       "id": 41952,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -807,7 +807,7 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 41953,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -822,7 +822,7 @@
        "children": []
       },
       {
-       "id": 50,
+       "id": 41954,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -837,7 +837,7 @@
        "children": []
       },
       {
-       "id": 51,
+       "id": 41955,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -852,7 +852,7 @@
        "children": []
       },
       {
-       "id": 52,
+       "id": 41956,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -867,7 +867,7 @@
        "children": []
       },
       {
-       "id": 53,
+       "id": 41957,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -882,7 +882,7 @@
        "children": []
       },
       {
-       "id": 54,
+       "id": 41958,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -897,7 +897,7 @@
        "children": []
       },
       {
-       "id": 55,
+       "id": 41959,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -912,7 +912,7 @@
        "children": []
       },
       {
-       "id": 56,
+       "id": 41960,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -927,7 +927,7 @@
        "children": []
       },
       {
-       "id": 57,
+       "id": 41961,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -942,7 +942,7 @@
        "children": []
       },
       {
-       "id": 58,
+       "id": 41962,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -957,7 +957,7 @@
        "children": []
       },
       {
-       "id": 59,
+       "id": 41963,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -972,7 +972,7 @@
        "children": []
       },
       {
-       "id": 60,
+       "id": 41964,
        "name": "<lambda>",
        "qual": "get_sector_risk_profiles_ref.<locals>.<lambda>",
        "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -996,7 +996,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.641,
+   "dur_ms": 0.952,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1017,14 +1017,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 61,
+     "id": 41965,
      "name": "get_transmission_channels_ref",
      "qual": "get_transmission_channels_ref",
      "file": "api/v1/routes/stress_test_orchestrator.py",
      "line": 132,
      "args": {},
      "ret": "{'channels': {'carbon_price_channel': {'name': 'Carbon Price \u2192 Operating Cost Channel', 'mechanism': 'Rising carbon prices increase energy and input costs, compressing EBITDA margins and raising PD probabilities for carbon-intensive sector\u2026",
-     "dur_ms": 0.019,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -1037,7 +1037,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'sector'",
-   "dur_ms": 2.154,
+   "dur_ms": 0.919,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1051,7 +1051,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 62,
+     "id": 41966,
      "name": "compute_pd_migration",
      "qual": "compute_pd_migration",
      "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -1060,7 +1060,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -1073,7 +1073,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'regulatory_framework'",
-   "dur_ms": 33.15,
+   "dur_ms": 17.451,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1087,7 +1087,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 63,
+     "id": 41967,
      "name": "run_full_stress_test",
      "qual": "run_full_stress_test",
      "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -1096,12 +1096,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 31.108,
+     "dur_ms": 16.144,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 64,
+       "id": 41968,
        "name": "run_stress_test",
        "qual": "run_stress_test",
        "file": "services/stress_test_orchestrator_engine.py",
@@ -1110,7 +1110,7 @@
         "request": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.01,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -1125,7 +1125,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'sectors'",
-   "dur_ms": 12.593,
+   "dur_ms": 7.178,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1139,7 +1139,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 65,
+     "id": 41969,
      "name": "compare_all_scenarios",
      "qual": "compare_all_scenarios",
      "file": "api/v1/routes/stress_test_orchestrator.py",
@@ -1148,12 +1148,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 8.532,
+     "dur_ms": 5.314,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 66,
+       "id": 41970,
        "name": "run_scenario_comparison",
        "qual": "run_scenario_comparison",
        "file": "services/stress_test_orchestrator_engine.py",
@@ -1162,7 +1162,7 @@
         "request": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.01,
+       "dur_ms": 0.008,
        "sql": [],
        "error": null,
        "children": []

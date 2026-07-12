@@ -1,10 +1,10 @@
 {
  "domain": "biodiversity-credits",
  "meta": {
-  "ts": "2026-06-30T13:59:25",
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 10,
   "module": "api.v1.routes.biodiversity_credits",
-  "router_prefix": "/api/v1/biodiversity-credits",
-  "endpoints": 10
+  "router_prefix": "/api/v1/biodiversity-credits"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.314,
+   "dur_ms": 2.217,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 585,
      "name": "ref_credit_standards",
      "qual": "ref_credit_standards",
      "file": "api/v1/routes/biodiversity_credits.py",
      "line": 385,
      "args": {},
      "ret": "{'credit_standards': {'Verra_VM0033': {'name': 'Verra VM0033 \u2014 Tidal Wetland & Coastal Ecosystems', 'type': 'ecosystem', 'methodology_basis': 'VM0033 v2.0; GHG + biodiversity co-benefits; VCS + CCB Standards', 'accepted_jurisdictions': ['U\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.333,
+   "dur_ms": 1.464,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -73,7 +73,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 586,
      "name": "ref_ecosystem_services",
      "qual": "ref_ecosystem_services",
      "file": "api/v1/routes/biodiversity_credits.py",
@@ -93,7 +93,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.395,
+   "dur_ms": 1.381,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -113,14 +113,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 587,
      "name": "ref_habitat_tiers",
      "qual": "ref_habitat_tiers",
      "file": "api/v1/routes/biodiversity_credits.py",
      "line": 398,
      "args": {},
      "ret": "{'habitat_distinctiveness_tiers': {'high_distinctiveness': {'score_range': (0.7, 1.0), 'description': 'Ancient semi-natural habitats with long ecological continuity, high species richness and irreplaceability (e.g. ancient woodland, lowlan\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -133,7 +133,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.277,
+   "dur_ms": 3.226,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -153,7 +153,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 588,
      "name": "ref_price_benchmarks",
      "qual": "ref_price_benchmarks",
      "file": "api/v1/routes/biodiversity_credits.py",
@@ -173,7 +173,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'NoneType' object has no attribute 'get'",
-   "dur_ms": 1.537,
+   "dur_ms": 2.229,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -187,33 +187,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 589,
      "name": "<lambda>",
      "qual": "FullAssessmentRequest.<lambda>",
      "file": "api/v1/routes/biodiversity_credits.py",
      "line": 258,
      "args": {},
      "ret": "{'governance': 55.0, 'strategy': 40.0, 'risk_management': 45.0, 'metrics_targets': 30.0}",
-     "dur_ms": 0.003,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
     },
     {
-     "id": 6,
+     "id": 590,
      "name": "<lambda>",
      "qual": "FullAssessmentRequest.<lambda>",
      "file": "api/v1/routes/biodiversity_credits.py",
      "line": 273,
      "args": {},
      "ret": "{'a': 30.0, 'b': 20.0, 'c': 15.0, 'd': 25.0, 'e': 10.0, 'f': 20.0}",
-     "dur_ms": 0.002,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
     },
     {
-     "id": 7,
+     "id": 591,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/biodiversity_credits.py",
@@ -227,7 +227,7 @@
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 592,
        "name": "run_full_assessment",
        "qual": "BiodiversityCreditEngine.run_full_assessment",
        "file": "services/biodiversity_credit_engine.py",
@@ -236,12 +236,12 @@
         "entity_data": "{'entity_id': 'ENTITY_001', 'sector': 'financial_services', 'country': 'United Kingdom', 'revenue_usd_m': 500.0, 'project_data': None, 'credit_data': None, 'pillar_scores': {'governance': 55.0, 'strategy': 40.0, 'risk_management': 45.0, 'm\u2026"
        },
        "ret": "None",
-       "dur_ms": 0.036,
+       "dur_ms": 0.051,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 9,
+         "id": 593,
          "name": "assess_bng_metric",
          "qual": "BiodiversityCreditEngine.assess_bng_metric",
          "file": "services/biodiversity_credit_engine.py",
@@ -250,7 +250,7 @@
           "project_data": "None"
          },
          "ret": "None",
-         "dur_ms": 0.006,
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []

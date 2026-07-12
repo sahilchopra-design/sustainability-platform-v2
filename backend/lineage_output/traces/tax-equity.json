@@ -1,0 +1,174 @@
+{
+ "domain": "tax-equity",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 5,
+  "module": "api.v1.routes.tax_equity",
+  "router_prefix": "/api/v1/tax-equity"
+ },
+ "transactions": [
+  {
+   "domain": "tax-equity",
+   "label": "GET /api/v1/tax-equity/ref/adder-checklists",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.212,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "domestic_content",
+     "energy_community"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42145,
+     "name": "ref_adder_checklists",
+     "qual": "ref_adder_checklists",
+     "file": "api/v1/routes/tax_equity.py",
+     "line": 1198,
+     "args": {},
+     "ret": "{'label': 'Real IRA adder-qualification criteria, summarized (statutes / IRS notices cited) \u2014 a screening checklist, not tax advice.', 'domestic_content': {'statute': 'IRC \u00a745(b)(9) / \u00a748(a)(12); IRS Notice 2023-38 (as updated by Notice 20\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "tax-equity",
+   "label": "GET /api/v1/tax-equity/ref/ira-parameters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.158,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "itc",
+     "ptc",
+     "macrs_5yr_pct",
+     "bonus_depreciation_phasedown_pct",
+     "obbba_note",
+     "itc_recapture_schedule_pct",
+     "transferability",
+     "federal_corporate_tax_rate_pct"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42146,
+     "name": "ref_ira_parameters",
+     "qual": "ref_ira_parameters",
+     "file": "api/v1/routes/tax_equity.py",
+     "line": 1188,
+     "args": {},
+     "ret": "{'label': 'Real IRA statutory parameters (IRC \u00a748/\u00a745/\u00a7168/\u00a750(c)(3)/\u00a76418) \u2014 rates as enacted; PTC dollar figure is the IRS 2024 inflation-adjusted published rate.', 'itc': {'statute': 'IRC \u00a748 / \u00a748E (Investment Tax Credit)', 'base_rate_\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "tax-equity",
+   "label": "GET /api/v1/tax-equity/ref/transfer-market",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.137,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "rows",
+     "vintage_adjustment_per_dollar",
+     "notes"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42147,
+     "name": "ref_transfer_market",
+     "qual": "ref_transfer_market",
+     "file": "api/v1/routes/tax_equity.py",
+     "line": 1193,
+     "args": {},
+     "ret": "{'label': 'Hand-authored \u00a76418 transfer-pricing observation table \u2014 market commentary basis (2023-2025 broker reports), APPROXIMATE and user-overridable; not a quote.', 'rows': [{'credit': 'ITC', 'size_tier': '<$25M', 'price_per_dollar': 0\u2026",
+     "dur_ms": 0.002,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "tax-equity",
+   "label": "POST /api/v1/tax-equity/flip",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "tax-equity",
+   "label": "POST /api/v1/tax-equity/structures",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

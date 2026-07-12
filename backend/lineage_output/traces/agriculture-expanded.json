@@ -1,10 +1,10 @@
 {
  "domain": "agriculture-expanded",
  "meta": {
-  "ts": "2026-06-30T13:59:05",
+  "ts": "2026-07-05T19:10:27",
+  "endpoints": 4,
   "module": "api.v1.routes.agriculture_expanded",
-  "router_prefix": "/api/v1/agriculture-engine",
-  "endpoints": 4
+  "router_prefix": "/api/v1/agriculture-engine"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.493,
+   "dur_ms": 0.377,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -48,38 +48,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 44,
      "name": "reference_data",
      "qual": "reference_data",
      "file": "api/v1/routes/agriculture_expanded.py",
      "line": 246,
      "args": {},
      "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
-     "dur_ms": 0.186,
+     "dur_ms": 0.17,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 45,
        "name": "get_agriculture_engine_reference_data",
        "qual": "get_agriculture_engine_reference_data",
        "file": "services/agriculture_risk_engine.py",
        "line": 613,
        "args": {},
        "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
-       "dur_ms": 0.1,
+       "dur_ms": 0.089,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 46,
          "name": "get_reference_data",
          "qual": "get_reference_data",
          "file": "services/agriculture_risk_calculator.py",
          "line": 300,
          "args": {},
          "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
-         "dur_ms": 0.027,
+         "dur_ms": 0.023,
          "sql": [],
          "error": null,
          "children": []

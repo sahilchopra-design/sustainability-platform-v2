@@ -1,10 +1,10 @@
 {
  "domain": "ecl-climate",
  "meta": {
-  "ts": "2026-06-30T14:01:29",
+  "ts": "2026-07-05T19:14:34",
+  "endpoints": 5,
   "module": "api.v1.routes.ecl_climate",
-  "router_prefix": "/api/v1",
-  "endpoints": 5
+  "router_prefix": "/api/v1"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 5204.029,
+   "dur_ms": 307.499,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "ecl_assessments"
      ],
      "rowcount": 6,
-     "dur_ms": 432.909,
+     "dur_ms": 57.099,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "ecl_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 411.467,
+     "dur_ms": 27.502,
      "is_reference": false,
      "error": null
     }
@@ -62,19 +62,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9967,
      "name": "list_ecl_assessments",
      "qual": "list_ecl_assessments",
      "file": "api/v1/routes/ecl_climate.py",
      "line": 614,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FCF4D40>",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48784C50>",
       "limit": "50",
       "offset": "0",
       "status": "None"
      },
      "ret": "{'total': 6, 'assessments': [{'id': '62cc0b19-210c-41e0-a913-9c032c0ff3c4', 'entity_name': 'GS Sustainable Finance Article 8 Fund', 'reporting_date': '2025-12-31', 'total_ead_gbp': 1820000000.0, 'total_ecl_gbp': 12740000.0, 'climate_ecl_up\u2026",
-     "dur_ms": 4253.551,
+     "dur_ms": 278.931,
      "sql": [
       0,
       1
@@ -90,7 +90,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 14489.78,
+   "dur_ms": 273.543,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -106,7 +106,7 @@
       "ecl_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 136.967,
+     "dur_ms": 58.086,
      "is_reference": false,
      "error": null
     }
@@ -119,17 +119,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 9968,
      "name": "get_ecl_assessment",
      "qual": "get_ecl_assessment",
      "file": "api/v1/routes/ecl_climate.py",
      "line": 662,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FDDBC80>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48785760>"
      },
      "ret": "None",
-     "dur_ms": 14413.766,
+     "dur_ms": 242.361,
      "sql": [
       0
      ],
@@ -144,7 +144,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 5082.286,
+   "dur_ms": 359.951,
    "node_count": 17,
    "provenance": [
     "real-db"
@@ -161,7 +161,7 @@
       "ecl_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 582.708,
+     "dur_ms": 84.942,
      "is_reference": false,
      "error": null
     },
@@ -172,7 +172,7 @@
       "ecl_exposures"
      ],
      "rowcount": null,
-     "dur_ms": 183.772,
+     "dur_ms": 33.4,
      "is_reference": false,
      "error": "StringDataRightTruncation('value too long for type character varying(3)\\n')"
     }
@@ -200,22 +200,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 9969,
      "name": "calculate_ecl",
      "qual": "calculate_ecl",
      "file": "api/v1/routes/ecl_climate.py",
      "line": 421,
      "args": {
       "request": "ECLCalculateRequest(base_inputs=ECLBaseInputs(exposure_id='TEST_request_base_inputs_exposure_id', counterparty_id=None, sector='TEST_request_base_inputs_sector', country_iso='TEST_request_base_inputs_country_iso', exposure_at_default_gbp=1\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FD4E930>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEEC00>"
      },
      "ret": "ECLCalculateResponse(assessment_id=None, exposure_id='TEST_request_base_inputs_exposure_id', probability_weighted_ecl_12m_gbp=1.0, probability_weighted_ecl_lifetime_gbp=1.0, determined_stage=1, sicr_triggered=False, sicr_triggers=[], clima\u2026",
-     "dur_ms": 5080.692,
+     "dur_ms": 359.274,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 9970,
        "name": "_compute_single_exposure",
        "qual": "_compute_single_exposure",
        "file": "api/v1/routes/ecl_climate.py",
@@ -225,12 +225,12 @@
         "climate": "{'physical_risk_score': None, 'transition_risk_score': None, 'carbon_intensity_tco2_revenue': None, 'green_revenue_pct': None, 'climate_scenario_weights': None}"
        },
        "ret": "{'exposure_id': 'TEST_request_base_inputs_exposure_id', 'ead': 1.0, 'sector': 'TEST_request_base_inputs_sector', 'pw_ecl_12m': 1.0, 'pw_ecl_life': 1.0, 'baseline_ecl_life': 1.0, 'determined_stage': 1, 'sicr_triggered': False, 'sicr_trigger\u2026",
-       "dur_ms": 1.149,
+       "dur_ms": 0.331,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 5,
+         "id": 9971,
          "name": "_climate_pd_uplift",
          "qual": "_climate_pd_uplift",
          "file": "api/v1/routes/ecl_climate.py",
@@ -240,187 +240,187 @@
           "sector": "'TEST_request_base_inputs_sector'"
          },
          "ret": "0.0",
-         "dur_ms": 0.04,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 6,
+         "id": 9972,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.4",
-         "dur_ms": 0.012,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 7,
+         "id": 9973,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.3",
-         "dur_ms": 0.008,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 8,
+         "id": 9974,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.3",
-         "dur_ms": 0.007,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 9,
+         "id": 9975,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 10,
+         "id": 9976,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.4",
-         "dur_ms": 0.007,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 11,
+         "id": 9977,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.3",
-         "dur_ms": 0.005,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 12,
+         "id": 9978,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "0.3",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 13,
+         "id": 9979,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 14,
+         "id": 9980,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "1",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 15,
+         "id": 9981,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "1",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 16,
+         "id": 9982,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "1",
-         "dur_ms": 0.004,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 17,
+         "id": 9983,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FD4F100>"
+          ".0": "<list_iterator object at 0x0000013D48BEE140>"
          },
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -428,7 +428,7 @@
        ]
       },
       {
-       "id": 18,
+       "id": 9984,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/ecl_climate.py",
@@ -438,19 +438,19 @@
         "missing": "[]"
        },
        "ret": "ValidationSummary(is_valid=True, warnings=['No climate risk scores provided; ECL will equal baseline.'], missing_fields=[], data_quality_score=0.95)",
-       "dur_ms": 0.15,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 9985,
        "name": "_persist_ecl_assessment",
        "qual": "_persist_ecl_assessment",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 299,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FD4E930>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEEC00>",
         "entity_name": "'TEST_request_base_inputs_exposure_id'",
         "reporting_date_str": "None",
         "results": "[{'exposure_id': 'TEST_request_base_inputs_exposure_id', 'ead': 1.0, 'sector': 'TEST_request_base_inputs_sector', 'pw_ecl_12m': 1.0, 'pw_ecl_life': 1.0, 'baseline_ecl_life': 1.0, 'determined_stage': 1, 'sicr_triggered': False, 'sicr_trigge\u2026",
@@ -461,7 +461,7 @@
         "portfolio_totals": "None"
        },
        "ret": "None",
-       "dur_ms": 5077.937,
+       "dur_ms": 358.604,
        "sql": [
         0,
         1
@@ -479,7 +479,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1185.805,
+   "dur_ms": 329.97,
    "node_count": 25,
    "provenance": [
     "real-db"
@@ -496,7 +496,7 @@
       "ecl_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 94.669,
+     "dur_ms": 59.498,
      "is_reference": false,
      "error": null
     },
@@ -507,7 +507,7 @@
       "ecl_exposures"
      ],
      "rowcount": null,
-     "dur_ms": 701.271,
+     "dur_ms": 29.326,
      "is_reference": false,
      "error": "StringDataRightTruncation('value too long for type character varying(3)\\n')"
     }
@@ -535,22 +535,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 9986,
      "name": "calculate_portfolio_ecl",
      "qual": "calculate_portfolio_ecl",
      "file": "api/v1/routes/ecl_climate.py",
      "line": 468,
      "args": {
       "request": "PortfolioECLRequest(exposures=[ECLCalculateRequest(base_inputs=ECLBaseInputs(exposure_id='TEST_request_exposures_base_inputs_exposure_id', counterparty_id=None, sector='TEST_request_exposures_base_inputs_sector', country_iso='TEST_request_\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FC34230>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48785760>"
      },
      "ret": "PortfolioECLResponse(assessment_id=None, total_exposures=1, total_ead_gbp=1.0, total_ecl_baseline_gbp=1.0, total_ecl_climate_adjusted_gbp=1.0, total_ecl_uplift_gbp=0.0, total_ecl_uplift_pct=0.0, stage_distribution=StageDistribution(stage_1\u2026",
-     "dur_ms": 1184.811,
+     "dur_ms": 329.372,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 21,
+       "id": 9987,
        "name": "_compute_single_exposure",
        "qual": "_compute_single_exposure",
        "file": "api/v1/routes/ecl_climate.py",
@@ -560,12 +560,12 @@
         "climate": "{'physical_risk_score': None, 'transition_risk_score': None, 'carbon_intensity_tco2_revenue': None, 'green_revenue_pct': None, 'climate_scenario_weights': None}"
        },
        "ret": "{'exposure_id': 'TEST_request_exposures_base_inputs_exposure_id', 'ead': 1.0, 'sector': 'TEST_request_exposures_base_inputs_sector', 'pw_ecl_12m': 1.0, 'pw_ecl_life': 1.0, 'baseline_ecl_life': 1.0, 'determined_stage': 1, 'sicr_triggered': \u2026",
-       "dur_ms": 0.594,
+       "dur_ms": 0.339,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 22,
+         "id": 9988,
          "name": "_climate_pd_uplift",
          "qual": "_climate_pd_uplift",
          "file": "api/v1/routes/ecl_climate.py",
@@ -575,187 +575,187 @@
           "sector": "'TEST_request_exposures_base_inputs_sector'"
          },
          "ret": "0.0",
-         "dur_ms": 0.015,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 23,
+         "id": 9989,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
          "ret": "0.4",
-         "dur_ms": 0.005,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 24,
-         "name": "<genexpr>",
-         "qual": "_compute_single_exposure.<locals>.<genexpr>",
-         "file": "api/v1/routes/ecl_climate.py",
-         "line": 267,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
-         },
-         "ret": "0.3",
-         "dur_ms": 0.004,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 25,
-         "name": "<genexpr>",
-         "qual": "_compute_single_exposure.<locals>.<genexpr>",
-         "file": "api/v1/routes/ecl_climate.py",
-         "line": 267,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
-         },
-         "ret": "0.3",
          "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 26,
+         "id": 9990,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
-         "ret": "None",
+         "ret": "0.3",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 27,
+         "id": 9991,
+         "name": "<genexpr>",
+         "qual": "_compute_single_exposure.<locals>.<genexpr>",
+         "file": "api/v1/routes/ecl_climate.py",
+         "line": 267,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48787100>"
+         },
+         "ret": "0.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9992,
+         "name": "<genexpr>",
+         "qual": "_compute_single_exposure.<locals>.<genexpr>",
+         "file": "api/v1/routes/ecl_climate.py",
+         "line": 267,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48787100>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 9993,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
          "ret": "0.4",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 28,
+         "id": 9994,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
          "ret": "0.3",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 29,
+         "id": 9995,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
          "ret": "0.3",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 30,
+         "id": 9996,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D48787100>"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 31,
+         "id": 9997,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D488690C0>"
          },
          "ret": "1",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 32,
+         "id": 9998,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D488690C0>"
          },
          "ret": "1",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 33,
+         "id": 9999,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D488690C0>"
          },
          "ret": "1",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 34,
+         "id": 10000,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FE81E40>"
+          ".0": "<list_iterator object at 0x0000013D488690C0>"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -763,110 +763,110 @@
        ]
       },
       {
-       "id": 35,
+       "id": 10001,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 482,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "1.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 36,
+       "id": 10002,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 482,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 37,
+       "id": 10003,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 483,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "1.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 38,
+       "id": 10004,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 483,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 39,
+       "id": 10005,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 484,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "1.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 40,
+       "id": 10006,
        "name": "<genexpr>",
        "qual": "calculate_portfolio_ecl.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 484,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE82770>"
+        ".0": "<list_iterator object at 0x0000013D488F07C0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 41,
+       "id": 10007,
        "name": "<lambda>",
        "qual": "calculate_portfolio_ecl.<locals>.<lambda>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 495,
        "args": {},
        "ret": "{'count': 0, 'ecl': 0.0, 'uplift_sum': 0.0}",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 42,
+       "id": 10008,
        "name": "<lambda>",
        "qual": "calculate_portfolio_ecl.<locals>.<lambda>",
        "file": "api/v1/routes/ecl_climate.py",
@@ -875,13 +875,13 @@
         "x": "('TEST_request_exposures_base_inputs_sector', {'count': 1, 'ecl': 1.0, 'uplift_sum': 0.0})"
        },
        "ret": "-1.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 43,
+       "id": 10009,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/ecl_climate.py",
@@ -891,19 +891,19 @@
         "missing": "[]"
        },
        "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
-       "dur_ms": 0.025,
+       "dur_ms": 0.011,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 44,
+       "id": 10010,
        "name": "_persist_ecl_assessment",
        "qual": "_persist_ecl_assessment",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 299,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FC34230>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48785760>",
         "entity_name": "'Portfolio (1 exposures)'",
         "reporting_date_str": "None",
         "results": "[{'exposure_id': 'TEST_request_exposures_base_inputs_exposure_id', 'ead': 1.0, 'sector': 'TEST_request_exposures_base_inputs_sector', 'pw_ecl_12m': 1.0, 'pw_ecl_life': 1.0, 'baseline_ecl_life': 1.0, 'determined_stage': 1, 'sicr_triggered':\u2026",
@@ -914,7 +914,7 @@
         "portfolio_totals": "{'total_ead': 1.0, 'total_ecl': 1.0, 'uplift_pct': 0.0}"
        },
        "ret": "None",
-       "dur_ms": 1182.804,
+       "dur_ms": 328.56,
        "sql": [
         0,
         1
@@ -932,7 +932,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.017,
+   "dur_ms": 1.636,
    "node_count": 17,
    "provenance": [
     "computed"
@@ -957,22 +957,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 45,
+     "id": 10011,
      "name": "screen_sicr",
      "qual": "screen_sicr",
      "file": "api/v1/routes/ecl_climate.py",
      "line": 557,
      "args": {
       "request": "SICRScreeningRequest(exposures=[ECLCalculateRequest(base_inputs=ECLBaseInputs(exposure_id='TEST_request_exposures_base_inputs_exposure_id', counterparty_id=None, sector='TEST_request_exposures_base_inputs_sector', country_iso='TEST_request\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001FD7FE83C20>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47732DE0>"
      },
      "ret": "SICRScreeningResponse(total_screened=1, sicr_count=0, sicr_pct=0.0, exposures=[SICRExposure(exposure_id='TEST_request_exposures_base_inputs_exposure_id', sector='TEST_request_exposures_base_inputs_sector', current_stage=1, sicr_triggered=F\u2026",
-     "dur_ms": 1.142,
+     "dur_ms": 0.818,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 46,
+       "id": 10012,
        "name": "_compute_single_exposure",
        "qual": "_compute_single_exposure",
        "file": "api/v1/routes/ecl_climate.py",
@@ -982,12 +982,12 @@
         "climate": "{'physical_risk_score': None, 'transition_risk_score': None, 'carbon_intensity_tco2_revenue': None, 'green_revenue_pct': None, 'climate_scenario_weights': None}"
        },
        "ret": "{'exposure_id': 'TEST_request_exposures_base_inputs_exposure_id', 'ead': 1.0, 'sector': 'TEST_request_exposures_base_inputs_sector', 'pw_ecl_12m': 1.0, 'pw_ecl_life': 1.0, 'baseline_ecl_life': 1.0, 'determined_stage': 1, 'sicr_triggered': \u2026",
-       "dur_ms": 0.823,
+       "dur_ms": 0.544,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 47,
+         "id": 10013,
          "name": "_climate_pd_uplift",
          "qual": "_climate_pd_uplift",
          "file": "api/v1/routes/ecl_climate.py",
@@ -997,79 +997,79 @@
           "sector": "'TEST_request_exposures_base_inputs_sector'"
          },
          "ret": "0.0",
-         "dur_ms": 0.033,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 48,
+         "id": 10014,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "0.4",
-         "dur_ms": 0.005,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 49,
+         "id": 10015,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 267,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "0.3",
-         "dur_ms": 0.015,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 50,
-         "name": "<genexpr>",
-         "qual": "_compute_single_exposure.<locals>.<genexpr>",
-         "file": "api/v1/routes/ecl_climate.py",
-         "line": 267,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
-         },
-         "ret": "0.3",
-         "dur_ms": 0.011,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 51,
-         "name": "<genexpr>",
-         "qual": "_compute_single_exposure.<locals>.<genexpr>",
-         "file": "api/v1/routes/ecl_climate.py",
-         "line": 267,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
-         },
-         "ret": "None",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 52,
+         "id": 10016,
+         "name": "<genexpr>",
+         "qual": "_compute_single_exposure.<locals>.<genexpr>",
+         "file": "api/v1/routes/ecl_climate.py",
+         "line": 267,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
+         },
+         "ret": "0.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10017,
+         "name": "<genexpr>",
+         "qual": "_compute_single_exposure.<locals>.<genexpr>",
+         "file": "api/v1/routes/ecl_climate.py",
+         "line": 267,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10018,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "0.4",
          "dur_ms": 0.002,
@@ -1078,13 +1078,28 @@
          "children": []
         },
         {
-         "id": 53,
+         "id": 10019,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
+         },
+         "ret": "0.3",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 10020,
+         "name": "<genexpr>",
+         "qual": "_compute_single_exposure.<locals>.<genexpr>",
+         "file": "api/v1/routes/ecl_climate.py",
+         "line": 270,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "0.3",
          "dur_ms": 0.001,
@@ -1093,91 +1108,76 @@
          "children": []
         },
         {
-         "id": 54,
+         "id": 10021,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 270,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
-         },
-         "ret": "0.3",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 55,
-         "name": "<genexpr>",
-         "qual": "_compute_single_exposure.<locals>.<genexpr>",
-         "file": "api/v1/routes/ecl_climate.py",
-         "line": 270,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "None",
-         "dur_ms": 0.001,
+         "dur_ms": 0.016,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 56,
+         "id": 10022,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "1",
-         "dur_ms": 0.001,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 57,
+         "id": 10023,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "1",
-         "dur_ms": 0.001,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 58,
+         "id": 10024,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "1",
-         "dur_ms": 0.001,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 59,
+         "id": 10025,
          "name": "<genexpr>",
          "qual": "_compute_single_exposure.<locals>.<genexpr>",
          "file": "api/v1/routes/ecl_climate.py",
          "line": 279,
          "args": {
-          ".0": "<list_iterator object at 0x000001FD7FEDD6F0>"
+          ".0": "<list_iterator object at 0x0000013D48A925C0>"
          },
          "ret": "None",
-         "dur_ms": 0.001,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -1185,22 +1185,22 @@
        ]
       },
       {
-       "id": 60,
+       "id": 10026,
        "name": "<genexpr>",
        "qual": "screen_sicr.<locals>.<genexpr>",
        "file": "api/v1/routes/ecl_climate.py",
        "line": 597,
        "args": {
-        ".0": "<list_iterator object at 0x000001FD7FE83E80>"
+        ".0": "<list_iterator object at 0x0000013D47733CD0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 61,
+       "id": 10027,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/ecl_climate.py",
@@ -1210,7 +1210,7 @@
         "missing": "[]"
        },
        "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
-       "dur_ms": 0.013,
+       "dur_ms": 0.019,
        "sql": [],
        "error": null,
        "children": []

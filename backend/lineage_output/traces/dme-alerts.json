@@ -1,10 +1,10 @@
 {
  "domain": "dme-alerts",
  "meta": {
-  "ts": "2026-06-30T14:00:46",
+  "ts": "2026-07-05T19:14:33",
+  "endpoints": 3,
   "module": "api.v1.routes.dme_alerts",
-  "router_prefix": "/api/v1/dme-alerts",
-  "endpoints": 3
+  "router_prefix": "/api/v1/dme-alerts"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.481,
+   "dur_ms": 0.304,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -36,26 +36,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9833,
      "name": "get_thresholds",
      "qual": "get_thresholds",
      "file": "api/v1/routes/dme_alerts.py",
      "line": 29,
      "args": {},
      "ret": "{'tier_thresholds': {'watch': 1.5, 'elevated': 2.0, 'critical': 3.0, 'extreme': 4.0, 'threshold_type': 'z_score'}, 'priority_bands': {'LOW': '0-25', 'MEDIUM': '26-50', 'HIGH': '51-75', 'CRITICAL': '76-100'}, 'sla_hours': {'LOW': 72, 'MEDIU\u2026",
-     "dur_ms": 0.117,
+     "dur_ms": 0.095,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 9834,
        "name": "get_reference_data",
        "qual": "AlertEngine.get_reference_data",
        "file": "services/dme_alert_engine.py",
        "line": 201,
        "args": {},
        "ret": "{'tier_thresholds': {'watch': 1.5, 'elevated': 2.0, 'critical': 3.0, 'extreme': 4.0, 'threshold_type': 'z_score'}, 'priority_bands': {'LOW': '0-25', 'MEDIUM': '26-50', 'HIGH': '51-75', 'CRITICAL': '76-100'}, 'sla_hours': {'LOW': 72, 'MEDIU\u2026",
-       "dur_ms": 0.051,
+       "dur_ms": 0.046,
        "sql": [],
        "error": null,
        "children": []

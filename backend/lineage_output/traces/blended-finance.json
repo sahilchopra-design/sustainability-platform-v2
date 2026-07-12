@@ -1,10 +1,10 @@
 {
  "domain": "blended-finance",
  "meta": {
-  "ts": "2026-06-30T13:59:29",
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 10,
   "module": "api.v1.routes.blended_finance",
-  "router_prefix": "/api/v1/blended-finance",
-  "endpoints": 10
+  "router_prefix": "/api/v1/blended-finance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.186,
+   "dur_ms": 3.9,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -31,7 +31,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 615,
      "name": "get_convergence_benchmarks",
      "qual": "get_convergence_benchmarks",
      "file": "api/v1/routes/blended_finance.py",
@@ -51,7 +51,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 22.757,
+   "dur_ms": 2.114,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -69,14 +69,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 616,
      "name": "get_dac_sectors",
      "qual": "get_dac_sectors",
      "file": "api/v1/routes/blended_finance.py",
      "line": 181,
      "args": {},
      "ret": "{'dac_sector_codes': {'agriculture': '31110', 'energy': '23110', 'infrastructure': '21010', 'health': '12110', 'education': '11110', 'water': '14010', 'climate': '41010', 'financial_inclusion': '24030'}}",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -89,7 +89,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.487,
+   "dur_ms": 2.748,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -108,14 +108,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 617,
      "name": "get_ep_categories",
      "qual": "get_ep_categories",
      "file": "api/v1/routes/blended_finance.py",
      "line": 193,
      "args": {},
      "ret": "{'ep4_categories': {'A': 'Significant adverse E&S impacts \u2014 diverse, irreversible or unprecedented', 'B': 'Limited adverse E&S impacts \u2014 few, site-specific, largely reversible', 'C': 'Minimal or no adverse E&S impacts'}, 'note': 'EP4 appli\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -128,7 +128,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.66,
+   "dur_ms": 3.037,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -146,14 +146,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 618,
      "name": "get_instruments",
      "qual": "get_instruments",
      "file": "api/v1/routes/blended_finance.py",
      "line": 165,
      "args": {},
      "ret": "{'instruments': {'guarantees': {'description': 'Risk guarantee covering private investor losses', 'concessional_share_pct_range': [5.0, 20.0], 'oda_eligible': True, 'risk_mitigant': 'credit_default'}, 'first_loss': {'description': 'First-l\u2026",
-     "dur_ms": 0.029,
+     "dur_ms": 0.043,
      "sql": [],
      "error": null,
      "children": []
@@ -166,7 +166,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.206,
+   "dur_ms": 1.66,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -184,14 +184,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 619,
      "name": "get_mdb_profiles",
      "qual": "get_mdb_profiles",
      "file": "api/v1/routes/blended_finance.py",
      "line": 159,
      "args": {},
      "ret": "{'mdb_profiles': {'IFC': {'full_name': 'International Finance Corporation', 'group': 'World Bank Group', 'focus_sectors': ['infrastructure', 'manufacturing', 'agribusiness', 'financial_markets'], 'min_project_size_usd': 10000000, 'max_proj\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

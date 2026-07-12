@@ -1,10 +1,10 @@
 {
  "domain": "physical-hazard",
  "meta": {
-  "ts": "2026-06-30T14:03:50",
+  "ts": "2026-07-05T19:16:10",
+  "endpoints": 8,
   "module": "api.v1.routes.physical_hazard",
-  "router_prefix": "/api/v1/physical-hazard",
-  "endpoints": 8
+  "router_prefix": "/api/v1/physical-hazard"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.38,
+   "dur_ms": 0.234,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -37,26 +37,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 28465,
      "name": "ref_adaptation_measures",
      "qual": "ref_adaptation_measures",
      "file": "api/v1/routes/physical_hazard.py",
      "line": 185,
      "args": {},
      "ret": "{'flood': 'Install flood barriers, raise critical equipment, waterproof building envelope', 'wildfire': 'Create defensible space, fire-resistant construction materials, vegetation management', 'heat_stress': 'Cool roofs, green infrastructu\u2026",
-     "dur_ms": 0.052,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 28466,
        "name": "get_adaptation_measures",
        "qual": "PhysicalHazardEngine.get_adaptation_measures",
        "file": "services/physical_hazard_engine.py",
-       "line": 502,
+       "line": 570,
        "args": {},
        "ret": "{'flood': 'Install flood barriers, raise critical equipment, waterproof building envelope', 'wildfire': 'Create defensible space, fire-resistant construction materials, vegetation management', 'heat_stress': 'Cool roofs, green infrastructu\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -71,7 +71,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.211,
+   "dur_ms": 0.174,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -103,23 +103,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 28467,
      "name": "ref_country_hazard",
      "qual": "ref_country_hazard",
      "file": "api/v1/routes/physical_hazard.py",
      "line": 179,
      "args": {},
      "ret": "{'BD': {'flood': 90, 'cyclone': 85, 'heat_stress': 70, 'drought': 40, 'sea_level_rise': 88}, 'PH': {'flood': 75, 'cyclone': 90, 'heat_stress': 65, 'drought': 45, 'sea_level_rise': 70}, 'IN': {'flood': 65, 'heat_stress': 75, 'drought': 60, \u2026",
-     "dur_ms": 0.048,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 28468,
        "name": "get_country_base_hazard",
        "qual": "PhysicalHazardEngine.get_country_base_hazard",
        "file": "services/physical_hazard_engine.py",
-       "line": 494,
+       "line": 562,
        "args": {},
        "ret": "{'BD': {'flood': 90, 'cyclone': 85, 'heat_stress': 70, 'drought': 40, 'sea_level_rise': 88}, 'PH': {'flood': 75, 'cyclone': 90, 'heat_stress': 65, 'drought': 45, 'sea_level_rise': 70}, 'IN': {'flood': 65, 'heat_stress': 75, 'drought': 60, \u2026",
        "dur_ms": 0.002,
@@ -137,7 +137,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.203,
+   "dur_ms": 0.39,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -161,23 +161,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 28469,
      "name": "ref_hazard_profiles",
      "qual": "ref_hazard_profiles",
      "file": "api/v1/routes/physical_hazard.py",
      "line": 173,
      "args": {},
      "ret": "{'flood': {'description': 'Riverine and coastal flood risk', 'data_source': 'JRC_EFAS_Global + WRI_Aqueduct_4.0', 'intensity_metric': '1-in-100yr flood depth (m)', 'rcp26_multiplier': 1.1, 'rcp45_multiplier': 1.3, 'rcp85_multiplier': 1.8},\u2026",
-     "dur_ms": 0.053,
+     "dur_ms": 0.05,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 28470,
        "name": "get_hazard_profiles",
        "qual": "PhysicalHazardEngine.get_hazard_profiles",
        "file": "services/physical_hazard_engine.py",
-       "line": 490,
+       "line": 558,
        "args": {},
        "ret": "{'flood': {'description': 'Riverine and coastal flood risk', 'data_source': 'JRC_EFAS_Global + WRI_Aqueduct_4.0', 'intensity_metric': '1-in-100yr flood depth (m)', 'rcp26_multiplier': 1.1, 'rcp45_multiplier': 1.3, 'rcp85_multiplier': 1.8},\u2026",
        "dur_ms": 0.002,
@@ -249,7 +249,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.22,
+   "dur_ms": 0.846,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -263,7 +263,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 28471,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/physical_hazard.py",
@@ -272,7 +272,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.021,
+     "dur_ms": 0.191,
      "sql": [],
      "error": null,
      "children": []
@@ -285,7 +285,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.322,
+   "dur_ms": 0.314,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -299,7 +299,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 28472,
      "name": "score_hazard",
      "qual": "score_hazard",
      "file": "api/v1/routes/physical_hazard.py",
@@ -308,7 +308,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.032,
+     "dur_ms": 0.023,
      "sql": [],
      "error": null,
      "children": []

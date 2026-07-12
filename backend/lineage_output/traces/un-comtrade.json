@@ -1,0 +1,94 @@
+{
+ "domain": "un-comtrade",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 2,
+  "module": "api.v1.routes.un_comtrade",
+  "router_prefix": "/api/v1/un-comtrade"
+ },
+ "transactions": [
+  {
+   "domain": "un-comtrade",
+   "label": "GET /api/v1/un-comtrade/reporters",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.212,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "codes",
+     "note"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42409,
+     "name": "reporters",
+     "qual": "reporters",
+     "file": "api/v1/routes/un_comtrade.py",
+     "line": 145,
+     "args": {},
+     "ret": "{'codes': {'WORLD': 0, 'EU': 97, 'US': 842, 'GB': 826, 'TR': 792, 'IN': 699, 'KR': 410, 'CN': 156, 'UA': 804, 'JP': 392, 'TW': 490, 'VN': 704, 'RU': 643, 'NO': 578, 'AE': 784, 'IS': 352, 'MZ': 508, 'BH': 48, 'DZ': 12, 'EG': 818, 'MA': 504,\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "un-comtrade",
+   "label": "GET /api/v1/un-comtrade/trade-flow",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Unknown reporter 'TEST_reporter'. See GET /reporters or pass a raw M49 numeric code.",
+   "dur_ms": 0.262,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "reporter": "'TEST_reporter' (mock-required)",
+    "partner": "'WORLD' (default)",
+    "period": "'TEST_period' (mock-required)",
+    "hs_code": "'TEST_hs_code' (mock-required)",
+    "freq": "'A' (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42410,
+     "name": "trade_flow",
+     "qual": "trade_flow",
+     "file": "api/v1/routes/un_comtrade.py",
+     "line": 153,
+     "args": {
+      "reporter": "'TEST_reporter'",
+      "partner": "'WORLD'",
+      "period": "'TEST_period'",
+      "hs_code": "'TEST_hs_code'",
+      "freq": "'A'"
+     },
+     "ret": "None",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

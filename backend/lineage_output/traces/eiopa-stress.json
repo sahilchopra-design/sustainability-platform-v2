@@ -1,10 +1,10 @@
 {
  "domain": "eiopa-stress",
  "meta": {
-  "ts": "2026-06-30T14:01:06",
+  "ts": "2026-07-05T19:14:34",
+  "endpoints": 7,
   "module": "api.v1.routes.eiopa_stress",
-  "router_prefix": "/api/v1/eiopa-stress",
-  "endpoints": 7
+  "router_prefix": "/api/v1/eiopa-stress"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.46,
+   "dur_ms": 0.285,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 10037,
      "name": "ref_frameworks",
      "qual": "ref_frameworks",
      "file": "api/v1/routes/eiopa_stress.py",
      "line": 354,
      "args": {},
      "ret": "{'frameworks': {'Solvency_II_Art45a': {'title': 'Solvency II Article 45a \u2014 Climate change in ORSA', 'requirement': 'Insurers must integrate short-term and long-term climate risk scenarios in their ORSA. At least one orderly + one disorderl\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.248,
+   "dur_ms": 0.168,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 10038,
      "name": "ref_insurer_types",
      "qual": "ref_insurer_types",
      "file": "api/v1/routes/eiopa_stress.py",
      "line": 340,
      "args": {},
      "ret": "{'count': 5, 'insurer_types': [{'type_id': 'life', 'label': 'Life Insurer', 'dominant_risk': 'longevity + mortality + lapse', 'tp_sensitivity': 'high', 'natcat_exposure': 'low', 'asset_intensity': 'very_high'}, {'type_id': 'non_life', 'lab\u2026",
-     "dur_ms": 0.012,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.245,
+   "dur_ms": 0.172,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -111,7 +111,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 10039,
      "name": "ref_orsa_checklist",
      "qual": "ref_orsa_checklist",
      "file": "api/v1/routes/eiopa_stress.py",
@@ -131,7 +131,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.256,
+   "dur_ms": 0.188,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -151,14 +151,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 10040,
      "name": "ref_scenarios",
      "qual": "ref_scenarios",
      "file": "api/v1/routes/eiopa_stress.py",
      "line": 280,
      "args": {},
      "ret": "{'count': 4, 'scenarios': [{'scenario_id': 'sudden_transition', 'name': 'Sudden / Disorderly Transition', 'description': 'Abrupt policy tightening at 2030: carbon tax >\u20ac150/tCO\u2082, stranded fossil-fuel assets. Mimics EIOPA 2022 Stress Test S\u2026",
-     "dur_ms": 0.013,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -171,7 +171,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'insurer'",
-   "dur_ms": 0.273,
+   "dur_ms": 0.185,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -185,7 +185,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 10041,
      "name": "assess",
      "qual": "assess",
      "file": "api/v1/routes/eiopa_stress.py",
@@ -194,7 +194,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -207,7 +207,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'assessments'",
-   "dur_ms": 0.172,
+   "dur_ms": 0.157,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -221,7 +221,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 10042,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/eiopa_stress.py",
@@ -243,7 +243,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'insurer'",
-   "dur_ms": 0.156,
+   "dur_ms": 0.146,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -257,7 +257,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 10043,
      "name": "assess_single_scenario",
      "qual": "assess_single_scenario",
      "file": "api/v1/routes/eiopa_stress.py",

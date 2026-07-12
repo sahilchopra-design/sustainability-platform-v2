@@ -1,10 +1,10 @@
 {
  "domain": "portfolio-pg",
  "meta": {
-  "ts": "2026-06-30T14:04:08",
+  "ts": "2026-07-05T19:16:22",
+  "endpoints": 8,
   "module": "api.v1.routes.portfolio_pg",
-  "router_prefix": "/api/pg",
-  "endpoints": 8
+  "router_prefix": "/api/pg"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'state'",
-   "dur_ms": 47.511,
+   "dur_ms": 0.572,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -28,17 +28,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 29185,
      "name": "list_portfolios",
      "qual": "list_portfolios",
      "file": "api/v1/routes/portfolio_pg.py",
      "line": 48,
      "args": {
       "request": "'TEST_request'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000273CC71C350>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9D5E0>"
      },
      "ret": "None",
-     "dur_ms": 46.657,
+     "dur_ms": 0.231,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Portfolio not found",
-   "dur_ms": 1813.489,
+   "dur_ms": 324.599,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -67,7 +67,7 @@
       "portfolios_pg"
      ],
      "rowcount": 0,
-     "dur_ms": 61.877,
+     "dur_ms": 62.094,
      "is_reference": false,
      "error": null
     }
@@ -81,7 +81,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 29186,
      "name": "get_portfolio",
      "qual": "get_portfolio",
      "file": "api/v1/routes/portfolio_pg.py",
@@ -89,10 +89,10 @@
      "args": {
       "pid": "'550e8400-e29b-41d4-a716-446655440001'",
       "request": "'TEST_request'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000273CC876E10>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9E420>"
      },
      "ret": "None",
-     "dur_ms": 1777.826,
+     "dur_ms": 294.262,
      "sql": [
       0
      ],

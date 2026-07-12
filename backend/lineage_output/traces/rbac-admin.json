@@ -1,10 +1,10 @@
 {
  "domain": "rbac-admin",
  "meta": {
-  "ts": "2026-06-30T14:04:26",
+  "ts": "2026-07-05T19:16:29",
+  "endpoints": 14,
   "module": "api.v1.routes.rbac_admin",
-  "router_prefix": "/api/v1/admin/rbac",
-  "endpoints": 14
+  "router_prefix": "/api/v1/admin/rbac"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2049.265,
+   "dur_ms": 286.721,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "rbac_access_invites"
      ],
      "rowcount": 1,
-     "dur_ms": 246.858,
+     "dur_ms": 69.522,
      "is_reference": false,
      "error": null
     }
@@ -48,18 +48,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 30657,
      "name": "list_invites",
      "qual": "list_invites",
      "file": "api/v1/routes/rbac_admin.py",
      "line": 396,
      "args": {
       "status": "None",
-      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEBE13440>"
+      "admin": "Depends(_require_super_admin)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48CBC860>"
      },
      "ret": "{'invites': [{'id': 'c72d24b7-2e21-434e-a502-eef391cf6b46', 'invite_token': 'D4-5iumc_6A6DOT6fJXQowPepIuts3b34inPEmmsKTA', 'email': 'testclient@acmecapital.com', 'rbac_role': 'demo', 'status': 'pending', 'display_org': 'Acme Capital', 'inv\u2026",
-     "dur_ms": 2018.372,
+     "dur_ms": 257.687,
      "sql": [
       0
      ],
@@ -74,7 +74,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: User not found",
-   "dur_ms": 420.797,
+   "dur_ms": 287.173,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -90,7 +90,7 @@
       "users_pg"
      ],
      "rowcount": 0,
-     "dur_ms": 64.764,
+     "dur_ms": 67.155,
      "is_reference": false,
      "error": null
     }
@@ -103,18 +103,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 30658,
      "name": "get_module_access",
      "qual": "get_module_access",
      "file": "api/v1/routes/rbac_admin.py",
      "line": 482,
      "args": {
       "user_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC38A9C0>"
+      "admin": "Depends(_require_super_admin)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A124500>"
      },
      "ret": "None",
-     "dur_ms": 391.063,
+     "dur_ms": 257.83,
      "sql": [
       0
      ],
@@ -129,7 +129,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 297.832,
+   "dur_ms": 321.746,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -145,7 +145,7 @@
       "rbac_role_presets"
      ],
      "rowcount": 7,
-     "dur_ms": 68.537,
+     "dur_ms": 69.335,
      "is_reference": false,
      "error": null
     }
@@ -163,17 +163,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 30659,
      "name": "list_presets",
      "qual": "list_presets",
      "file": "api/v1/routes/rbac_admin.py",
      "line": 246,
      "args": {
-      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC1FC2F0>"
+      "admin": "Depends(_require_super_admin)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49EA6BD0>"
      },
      "ret": "{'presets': [{'id': '1f1452e6-4bab-41dd-be11-11653cc4bfd5', 'name': 'Test Preset', 'description': None, 'role_type': 'demo', 'module_paths': ['/eu-taxonomy', '/sfdr-classification'], 'domain_groups': [], 'created_at': '2026-04-08T00:28:51.\u2026",
-     "dur_ms": 266.526,
+     "dur_ms": 290.386,
      "sql": [
       0
      ],
@@ -188,7 +188,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4801.678,
+   "dur_ms": 1514.485,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -204,8 +204,8 @@
      "tables": [
       "users_pg"
      ],
-     "rowcount": 36,
-     "dur_ms": 77.026,
+     "rowcount": 38,
+     "dur_ms": 62.049,
      "is_reference": false,
      "error": null
     },
@@ -216,7 +216,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 319.636,
+     "dur_ms": 35.91,
      "is_reference": false,
      "error": null
     },
@@ -227,7 +227,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 707.485,
+     "dur_ms": 31.712,
      "is_reference": false,
      "error": null
     },
@@ -238,7 +238,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 200.516,
+     "dur_ms": 34.581,
      "is_reference": false,
      "error": null
     },
@@ -249,7 +249,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 43.674,
+     "dur_ms": 30.116,
      "is_reference": false,
      "error": null
     },
@@ -260,7 +260,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 60.376,
+     "dur_ms": 30.293,
      "is_reference": false,
      "error": null
     },
@@ -271,7 +271,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 51.714,
+     "dur_ms": 29.835,
      "is_reference": false,
      "error": null
     },
@@ -282,7 +282,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 549.557,
+     "dur_ms": 29.387,
      "is_reference": false,
      "error": null
     },
@@ -293,7 +293,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 308.929,
+     "dur_ms": 30.323,
      "is_reference": false,
      "error": null
     },
@@ -304,7 +304,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 50.484,
+     "dur_ms": 31.138,
      "is_reference": false,
      "error": null
     },
@@ -315,7 +315,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 44.317,
+     "dur_ms": 30.191,
      "is_reference": false,
      "error": null
     },
@@ -326,7 +326,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 29.352,
+     "dur_ms": 30.153,
      "is_reference": false,
      "error": null
     },
@@ -337,7 +337,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 41.675,
+     "dur_ms": 29.896,
      "is_reference": false,
      "error": null
     },
@@ -348,7 +348,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 43.344,
+     "dur_ms": 31.921,
      "is_reference": false,
      "error": null
     },
@@ -359,7 +359,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 36.432,
+     "dur_ms": 29.657,
      "is_reference": false,
      "error": null
     },
@@ -370,7 +370,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 30.765,
+     "dur_ms": 29.796,
      "is_reference": false,
      "error": null
     },
@@ -381,7 +381,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 30.148,
+     "dur_ms": 31.426,
      "is_reference": false,
      "error": null
     },
@@ -392,7 +392,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 30.92,
+     "dur_ms": 30.819,
      "is_reference": false,
      "error": null
     },
@@ -403,7 +403,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 29.408,
+     "dur_ms": 30.336,
      "is_reference": false,
      "error": null
     },
@@ -414,7 +414,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 31.047,
+     "dur_ms": 30.809,
      "is_reference": false,
      "error": null
     },
@@ -425,7 +425,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 32.564,
+     "dur_ms": 30.433,
      "is_reference": false,
      "error": null
     },
@@ -436,7 +436,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 33.099,
+     "dur_ms": 29.08,
      "is_reference": false,
      "error": null
     },
@@ -447,7 +447,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 33.787,
+     "dur_ms": 29.183,
      "is_reference": false,
      "error": null
     },
@@ -458,7 +458,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 30.857,
+     "dur_ms": 29.821,
      "is_reference": false,
      "error": null
     },
@@ -469,7 +469,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 280.877,
+     "dur_ms": 29.108,
      "is_reference": false,
      "error": null
     },
@@ -480,7 +480,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 33.731,
+     "dur_ms": 29.322,
      "is_reference": false,
      "error": null
     },
@@ -491,7 +491,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 139.689,
+     "dur_ms": 29.403,
      "is_reference": false,
      "error": null
     },
@@ -502,7 +502,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 34.31,
+     "dur_ms": 29.372,
      "is_reference": false,
      "error": null
     },
@@ -513,7 +513,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 29.251,
+     "dur_ms": 30.018,
      "is_reference": false,
      "error": null
     },
@@ -524,7 +524,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 141.434,
+     "dur_ms": 29.209,
      "is_reference": false,
      "error": null
     },
@@ -535,7 +535,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 34.42,
+     "dur_ms": 30.509,
      "is_reference": false,
      "error": null
     },
@@ -546,7 +546,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 32.105,
+     "dur_ms": 30.744,
      "is_reference": false,
      "error": null
     },
@@ -557,7 +557,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 30.999,
+     "dur_ms": 32.055,
      "is_reference": false,
      "error": null
     },
@@ -568,7 +568,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 28.14,
+     "dur_ms": 29.972,
      "is_reference": false,
      "error": null
     },
@@ -579,7 +579,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 1,
-     "dur_ms": 157.329,
+     "dur_ms": 31.048,
      "is_reference": false,
      "error": null
     },
@@ -590,7 +590,7 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 29.015,
+     "dur_ms": 29.034,
      "is_reference": false,
      "error": null
     },
@@ -601,18 +601,40 @@
       "rbac_user_profiles"
      ],
      "rowcount": 0,
-     "dur_ms": 287.51,
+     "dur_ms": 30.803,
      "is_reference": false,
      "error": null
     },
     {
      "id": 37,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 29.755,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 38,
+     "sql": "'SELECT rbac_user_profiles.id AS rbac_user_profiles_id, rbac_user_profiles.user_id AS rbac_user_profiles_user_id, rbac_user_profiles.rbac_role AS rbac_user_profiles_rbac_role, rbac_user_profiles.preset_id AS rbac_user_profiles_preset_id, rbac_user_profiles.display_org AS rbac_user_profiles_display_org, rbac_user_profiles.access_starts_at AS rbac_user_profiles_access_starts_at, rbac_user_profiles.\u2026",
+     "tables": [
+      "rbac_user_profiles"
+     ],
+     "rowcount": 0,
+     "dur_ms": 32.736,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 39,
      "sql": "'SELECT count(*) AS count_1 FROM (SELECT users_pg.user_id AS users_pg_user_id, users_pg.email AS users_pg_email, users_pg.name AS users_pg_name, users_pg.picture AS users_pg_picture, users_pg.password_hash AS users_pg_password_hash, users_pg.created_at AS users_pg_created_at, users_pg.org_id AS users_pg_org_id, users_pg.role AS users_pg_role, users_pg.is_active AS users_pg_is_active, users_pg.las\u2026",
      "tables": [
       "users_pg"
      ],
      "rowcount": 1,
-     "dur_ms": 58.06,
+     "dur_ms": 29.245,
      "is_reference": false,
      "error": null
     }
@@ -635,7 +657,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 30660,
      "name": "list_users",
      "qual": "list_users",
      "file": "api/v1/routes/rbac_admin.py",
@@ -643,11 +665,11 @@
      "args": {
       "limit": "50",
       "offset": "0",
-      "admin": "Depends(dependency=<function _require_super_admin at 0x000001CEEB923600>, use_cache=True, scope=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CEEC3C3E90>"
+      "admin": "Depends(_require_super_admin)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B23050>"
      },
      "ret": "{'users': [{'user_id': 'user_fc3e7003593a', 'email': 'pg@test.com', 'name': 'PG User', 'is_active': True, 'created_at': '2026-02-14T17:51:22.452768+00:00', 'rbac_role': 'viewer', 'preset_id': None, 'display_org': None, 'access_expires_at':\u2026",
-     "dur_ms": 4651.849,
+     "dur_ms": 1483.632,
      "sql": [
       0,
       1,
@@ -686,7 +708,9 @@
       34,
       35,
       36,
-      37
+      37,
+      38,
+      39
      ],
      "error": null,
      "children": []

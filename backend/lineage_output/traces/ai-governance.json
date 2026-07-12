@@ -1,10 +1,10 @@
 {
  "domain": "ai-governance",
  "meta": {
-  "ts": "2026-06-30T13:59:06",
+  "ts": "2026-07-05T19:10:27",
+  "endpoints": 11,
   "module": "api.v1.routes.ai_governance",
-  "router_prefix": "/api/v1/ai-governance",
-  "endpoints": 11
+  "router_prefix": "/api/v1/ai-governance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.297,
+   "dur_ms": 0.22,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,14 +35,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 47,
      "name": "get_bias_metrics",
      "qual": "get_bias_metrics",
      "file": "api/v1/routes/ai_governance.py",
      "line": 636,
      "args": {},
      "ret": "{'protected_characteristics': [{'id': 'gender', 'legal_basis': 'EU Directive 2006/54/EC; ECHR Art 14'}, {'id': 'race_ethnicity', 'legal_basis': 'EU Directive 2000/43/EC; ECHR Protocol 12'}, {'id': 'age', 'legal_basis': 'EU Directive 2000/7\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.282,
+   "dur_ms": 0.171,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -77,14 +77,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 48,
      "name": "get_eu_ai_act_tiers",
      "qual": "get_eu_ai_act_tiers",
      "file": "api/v1/routes/ai_governance.py",
      "line": 479,
      "args": {},
      "ret": "{'regulation': 'EU AI Act (EU) 2024/1689', 'risk_tiers': {'unacceptable': {'label': 'Unacceptable Risk (Prohibited)', 'article': 'Art 5', 'description': 'AI practices that pose unacceptable risk to fundamental rights.', 'examples': ['Socia\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -97,7 +97,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.146,
+   "dur_ms": 0.123,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -122,7 +122,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 49,
      "name": "get_nist_rmf_functions",
      "qual": "get_nist_rmf_functions",
      "file": "api/v1/routes/ai_governance.py",
@@ -142,7 +142,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.127,
+   "dur_ms": 0.112,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -169,14 +169,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 50,
      "name": "get_oecd_principles",
      "qual": "get_oecd_principles",
      "file": "api/v1/routes/ai_governance.py",
      "line": 601,
      "args": {},
      "ret": "{'framework': 'OECD AI Principles', 'adopted': '2019 (updated 2023)', 'publisher': 'OECD', 'url': 'https://oecd.ai/en/ai-principles', 'principles': {'inclusive_growth': {'label': 'Inclusive Growth, Sustainable Development & Well-being', 'w\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -189,7 +189,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.939,
+   "dur_ms": 0.751,
    "node_count": 13,
    "provenance": [
     "computed"
@@ -218,7 +218,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 51,
      "name": "assess_ai_system",
      "qual": "assess_ai_system",
      "file": "api/v1/routes/ai_governance.py",
@@ -227,12 +227,12 @@
       "request": "AISystemRequest(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_g\u2026"
      },
      "ret": "{'system_id': 'TEST_request_system_id', 'system_name': 'TEST_request_system_name', 'eu_ai_act': {'risk_tier': 'limited_risk', 'score': 60.0, 'gaps': ['transparency_disclosure_art50']}, 'nist_rmf': {'score': 0.0, 'tier': 'initial'}, 'oecd_p\u2026",
-     "dur_ms": 0.687,
+     "dur_ms": 0.524,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 52,
        "name": "assess_ai_system",
        "qual": "AIGovernanceEngine.assess_ai_system",
        "file": "services/ai_governance_engine.py",
@@ -241,12 +241,12 @@
         "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
        },
        "ret": "AIGovernanceResult(system_id='TEST_request_system_id', system_name='TEST_request_system_name', eu_ai_act_risk_tier='limited_risk', eu_ai_act_score=60.0, eu_ai_act_gaps=['transparency_disclosure_art50'], nist_rmf_score=0.0, nist_rmf_tier='i\u2026",
-       "dur_ms": 0.591,
+       "dur_ms": 0.456,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 7,
+         "id": 53,
          "name": "classify_eu_ai_act_risk",
          "qual": "AIGovernanceEngine.classify_eu_ai_act_risk",
          "file": "services/ai_governance_engine.py",
@@ -255,13 +255,13 @@
           "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'ai_act_category': None, 'risk_tier': 'limited_risk', 'tier_description': 'Art 50: Limited risk \u2014 transparency obligations only.', 'compliance_score': 60.0, 'requirements_applicable': ['transparency_\u2026",
-         "dur_ms": 0.016,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 8,
+         "id": 54,
          "name": "score_nist_rmf",
          "qual": "AIGovernanceEngine.score_nist_rmf",
          "file": "services/ai_governance_engine.py",
@@ -270,13 +270,13 @@
           "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'overall_score': 0.0, 'rmf_tier': 'initial', 'function_scores': {'GOVERN': {'label': 'Govern', 'weight': 0.25, 'score_pct': 0.0, 'categories_met': 0.0, 'categories_total': 6, 'category_details': {'GV\u2026",
-         "dur_ms": 0.081,
+         "dur_ms": 0.028,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 9,
+         "id": 55,
          "name": "score_oecd_principles",
          "qual": "AIGovernanceEngine.score_oecd_principles",
          "file": "services/ai_governance_engine.py",
@@ -285,13 +285,13 @@
           "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'overall_score': 0.0, 'principle_scores': {'inclusive_growth': {'label': 'Inclusive Growth, Sustainable Development & Well-being', 'weight': 0.2, 'score_pct': 0.0, 'sub_indicators': {'ig_1': {'descri\u2026",
-         "dur_ms": 0.021,
+         "dur_ms": 0.017,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 10,
+         "id": 56,
          "name": "calculate_ai_energy",
          "qual": "AIGovernanceEngine.calculate_ai_energy",
          "file": "services/ai_governance_engine.py",
@@ -300,13 +300,13 @@
           "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'parameter_scale': '1b_10b', 'model_profile': {'label': '1B\u201310B parameters', 'param_range': '1\u201310 billion', 'training_energy_mwh': 5.0, 'inference_energy_per_query_wh': 0.001, 'examples': ['GPT-2 XL \u2026",
-         "dur_ms": 0.011,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 11,
+         "id": 57,
          "name": "score_model_card",
          "qual": "AIGovernanceEngine.score_model_card",
          "file": "services/ai_governance_engine.py",
@@ -315,13 +315,13 @@
           "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'completeness_pct': 0.0, 'fields_met': 0, 'fields_total': 12, 'missing_fields': ['model_details', 'intended_use', 'factors', 'metrics', 'evaluation_data', 'training_data', 'quantitative_analysis', 'e\u2026",
-         "dur_ms": 0.025,
+         "dur_ms": 0.019,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 12,
+         "id": 58,
          "name": "assess_algorithmic_bias",
          "qual": "AIGovernanceEngine.assess_algorithmic_bias",
          "file": "services/ai_governance_engine.py",
@@ -330,12 +330,12 @@
           "bias_input": "BiasAssessmentInput(system_id='TEST_request_system_id', protected_characteristics=[], metric_values=None, sample_size=None, assessment_date=None, test_dataset_description=None)"
          },
          "ret": "{'system_id': 'TEST_request_system_id', 'characteristics_assessed': ['gender', 'race_ethnicity', 'age', 'disability', 'religion', 'sexual_orientation', 'nationality'], 'characteristic_results': {'gender': {'metrics': {}, 'flags': ['No bias\u2026",
-         "dur_ms": 0.05,
+         "dur_ms": 0.042,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 13,
+           "id": 59,
            "name": "_bias_recommendations",
            "qual": "AIGovernanceEngine._bias_recommendations",
            "file": "services/ai_governance_engine.py",
@@ -345,7 +345,7 @@
             "adverse_flags": "[]"
            },
            "ret": "['Maintain regular bias monitoring cadence.', 'Reference: EU AI Act Art 9/10 (data governance), NIST AI RMF MS-3.']",
-           "dur_ms": 0.003,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
@@ -353,7 +353,7 @@
          ]
         },
         {
-         "id": 14,
+         "id": 60,
          "name": "_governance_pillar",
          "qual": "AIGovernanceEngine._governance_pillar",
          "file": "services/ai_governance_engine.py",
@@ -369,7 +369,7 @@
          "children": []
         },
         {
-         "id": 15,
+         "id": 61,
          "name": "_environmental_pillar",
          "qual": "AIGovernanceEngine._environmental_pillar",
          "file": "services/ai_governance_engine.py",
@@ -385,7 +385,7 @@
          "children": []
         },
         {
-         "id": 16,
+         "id": 62,
          "name": "_social_pillar",
          "qual": "AIGovernanceEngine._social_pillar",
          "file": "services/ai_governance_engine.py",
@@ -396,13 +396,13 @@
           "oecd_score": "0.0"
          },
          "ret": "36.0",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 17,
+         "id": 63,
          "name": "_esg_tier",
          "qual": "AIGovernanceEngine._esg_tier",
          "file": "services/ai_governance_engine.py",
@@ -428,7 +428,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.288,
+   "dur_ms": 0.245,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -456,7 +456,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 64,
      "name": "assess_algorithmic_bias",
      "qual": "assess_algorithmic_bias",
      "file": "api/v1/routes/ai_governance.py",
@@ -465,12 +465,12 @@
       "request": "BiasAssessmentRequest(system_id='TEST_request_system_id', protected_characteristics=[], metric_values=None, sample_size=None, assessment_date=None, test_dataset_description=None)"
      },
      "ret": "{'system_id': 'TEST_request_system_id', 'characteristics_assessed': ['gender', 'race_ethnicity', 'age', 'disability', 'religion', 'sexual_orientation', 'nationality'], 'characteristic_results': {'gender': {'metrics': {}, 'flags': ['No bias\u2026",
-     "dur_ms": 0.087,
+     "dur_ms": 0.081,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 19,
+       "id": 65,
        "name": "assess_algorithmic_bias",
        "qual": "AIGovernanceEngine.assess_algorithmic_bias",
        "file": "services/ai_governance_engine.py",
@@ -479,12 +479,12 @@
         "bias_input": "BiasAssessmentInput(system_id='TEST_request_system_id', protected_characteristics=[], metric_values=None, sample_size=None, assessment_date=None, test_dataset_description=None)"
        },
        "ret": "{'system_id': 'TEST_request_system_id', 'characteristics_assessed': ['gender', 'race_ethnicity', 'age', 'disability', 'religion', 'sexual_orientation', 'nationality'], 'characteristic_results': {'gender': {'metrics': {}, 'flags': ['No bias\u2026",
-       "dur_ms": 0.043,
+       "dur_ms": 0.04,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 20,
+         "id": 66,
          "name": "_bias_recommendations",
          "qual": "AIGovernanceEngine._bias_recommendations",
          "file": "services/ai_governance_engine.py",
@@ -494,7 +494,7 @@
           "adverse_flags": "[]"
          },
          "ret": "['Maintain regular bias monitoring cadence.', 'Reference: EU AI Act Art 9/10 (data governance), NIST AI RMF MS-3.']",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -511,7 +511,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.24,
+   "dur_ms": 0.2,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -544,7 +544,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 67,
      "name": "calculate_energy_footprint",
      "qual": "calculate_energy_footprint",
      "file": "api/v1/routes/ai_governance.py",
@@ -553,12 +553,12 @@
       "request": "EnergyFootprintRequest(system_id='TEST_request_system_id', system_name='TEST_request_system_name', parameter_scale='10b_100b', daily_queries=100000, deployment_grid_carbon_gco2_kwh=311.0, training_complete=True, deployment_region='EU')"
      },
      "ret": "{'system_id': 'TEST_request_system_id', 'parameter_scale': '10b_100b', 'model_profile': {'label': '10B\u2013100B parameters', 'param_range': '10\u2013100 billion', 'training_energy_mwh': 50.0, 'inference_energy_per_query_wh': 0.003, 'examples': ['GP\u2026",
-     "dur_ms": 0.066,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 22,
+       "id": 68,
        "name": "calculate_ai_energy",
        "qual": "AIGovernanceEngine.calculate_ai_energy",
        "file": "services/ai_governance_engine.py",
@@ -567,7 +567,7 @@
         "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='10b_100b', daily_queries=100000, deployment_region='EU', deployment\u2026"
        },
        "ret": "{'system_id': 'TEST_request_system_id', 'parameter_scale': '10b_100b', 'model_profile': {'label': '10B\u2013100B parameters', 'param_range': '10\u2013100 billion', 'training_energy_mwh': 50.0, 'inference_energy_per_query_wh': 0.003, 'examples': ['GP\u2026",
-       "dur_ms": 0.011,
+       "dur_ms": 0.009,
        "sql": [],
        "error": null,
        "children": []
@@ -600,7 +600,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.237,
+   "dur_ms": 0.204,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -629,7 +629,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 69,
      "name": "score_model_card",
      "qual": "score_model_card",
      "file": "api/v1/routes/ai_governance.py",
@@ -638,12 +638,12 @@
       "request": "ModelCardRequest(system_id='TEST_request_system_id', system_name='TEST_request_system_name', model_card_fields=None)"
      },
      "ret": "{'system_id': 'TEST_request_system_id', 'completeness_pct': 0.0, 'fields_met': 0, 'fields_total': 12, 'missing_fields': ['model_details', 'intended_use', 'factors', 'metrics', 'evaluation_data', 'training_data', 'quantitative_analysis', 'e\u2026",
-     "dur_ms": 0.067,
+     "dur_ms": 0.056,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 24,
+       "id": 70,
        "name": "score_model_card",
        "qual": "AIGovernanceEngine.score_model_card",
        "file": "services/ai_governance_engine.py",
@@ -652,7 +652,7 @@
         "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
        },
        "ret": "{'system_id': 'TEST_request_system_id', 'completeness_pct': 0.0, 'fields_met': 0, 'fields_total': 12, 'missing_fields': ['model_details', 'intended_use', 'factors', 'metrics', 'evaluation_data', 'training_data', 'quantitative_analysis', 'e\u2026",
-       "dur_ms": 0.021,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
@@ -667,7 +667,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.251,
+   "dur_ms": 0.22,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -693,7 +693,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 71,
      "name": "score_nist_rmf",
      "qual": "score_nist_rmf",
      "file": "api/v1/routes/ai_governance.py",
@@ -702,12 +702,12 @@
       "request": "NISTRMFRequest(system_id='TEST_request_system_id', system_name='TEST_request_system_name', nist_rmf_scores=None)"
      },
      "ret": "{'system_id': 'TEST_request_system_id', 'overall_score': 0.0, 'rmf_tier': 'initial', 'function_scores': {'GOVERN': {'label': 'Govern', 'weight': 0.25, 'score_pct': 0.0, 'categories_met': 0.0, 'categories_total': 6, 'category_details': {'GV\u2026",
-     "dur_ms": 0.079,
+     "dur_ms": 0.069,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 26,
+       "id": 72,
        "name": "score_nist_rmf",
        "qual": "AIGovernanceEngine.score_nist_rmf",
        "file": "services/ai_governance_engine.py",
@@ -716,7 +716,7 @@
         "system_input": "AISystemInput(system_id='TEST_request_system_id', system_name='TEST_request_system_name', ai_act_category=None, is_gpai=False, is_in_scope_eu_ai_act=True, parameter_scale='1b_10b', daily_queries=None, deployment_region='EU', deployment_gri\u2026"
        },
        "ret": "{'system_id': 'TEST_request_system_id', 'overall_score': 0.0, 'rmf_tier': 'initial', 'function_scores': {'GOVERN': {'label': 'Govern', 'weight': 0.25, 'score_pct': 0.0, 'categories_met': 0.0, 'categories_total': 6, 'category_details': {'GV\u2026",
-       "dur_ms": 0.025,
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": []

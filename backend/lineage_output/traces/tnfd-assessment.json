@@ -1,10 +1,10 @@
 {
  "domain": "tnfd-assessment",
  "meta": {
-  "ts": "2026-06-30T14:05:33",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 11,
   "module": "api.v1.routes.tnfd_assessment",
-  "router_prefix": "/api/v1/tnfd",
-  "endpoints": 11
+  "router_prefix": "/api/v1/tnfd"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.449,
+   "dur_ms": 0.246,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42196,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 128,
      "args": {},
      "ret": "{'cross_framework_mapping': [{'tnfd_disclosure': 'GOV-A', 'issb_s1': 'IFRS S1 para 26(a)', 'csrd_esrs_e4': 'ESRS 2 GOV-1', 'gri': 'GRI 2-12, 2-13', 'cbd_gbf': 'Target 15 (governance and disclosure)'}, {'tnfd_disclosure': 'GOV-B', 'issb_s1'\u2026",
-     "dur_ms": 0.076,
+     "dur_ms": 0.049,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42197,
        "name": "get_cross_framework_map",
        "qual": "TNFDAssessmentEngine.get_cross_framework_map",
        "file": "services/tnfd_assessment_engine.py",
        "line": 838,
        "args": {},
        "ret": "[{'tnfd_disclosure': 'GOV-A', 'issb_s1': 'IFRS S1 para 26(a)', 'csrd_esrs_e4': 'ESRS 2 GOV-1', 'gri': 'GRI 2-12, 2-13', 'cbd_gbf': 'Target 15 (governance and disclosure)'}, {'tnfd_disclosure': 'GOV-B', 'issb_s1': 'IFRS S1 para 26(b)', 'csr\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.503,
+   "dur_ms": 0.165,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42198,
      "name": "ref_ecosystem_services",
      "qual": "ref_ecosystem_services",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 110,
      "args": {},
      "ret": "{'ecosystem_services': [{'id': 'ES01', 'name': 'Animal-based energy', 'category': 'Provisioning'}, {'id': 'ES02', 'name': 'Fibres and other materials', 'category': 'Provisioning'}, {'id': 'ES03', 'name': 'Genetic materials', 'category': 'P\u2026",
-     "dur_ms": 0.159,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42199,
        "name": "get_encore_ecosystem_services",
        "qual": "TNFDAssessmentEngine.get_encore_ecosystem_services",
        "file": "services/tnfd_assessment_engine.py",
        "line": 823,
        "args": {},
        "ret": "[{'id': 'ES01', 'name': 'Animal-based energy', 'category': 'Provisioning'}, {'id': 'ES02', 'name': 'Fibres and other materials', 'category': 'Provisioning'}, {'id': 'ES03', 'name': 'Genetic materials', 'category': 'Provisioning'}, {'id': '\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.296,
+   "dur_ms": 0.174,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42200,
      "name": "ref_leap_phases",
      "qual": "ref_leap_phases",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 104,
      "args": {},
      "ret": "{'leap_phases': {'LOCATE': {'label': 'Locate interface with nature', 'components': [{'id': 'L1', 'title': 'Business footprint', 'description': 'Map direct operations, upstream, downstream locations'}, {'id': 'L2', 'title': 'Nature interfac\u2026",
-     "dur_ms": 0.071,
+     "dur_ms": 0.052,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42201,
        "name": "get_leap_phases",
        "qual": "TNFDAssessmentEngine.get_leap_phases",
        "file": "services/tnfd_assessment_engine.py",
        "line": 818,
        "args": {},
        "ret": "{'LOCATE': {'label': 'Locate interface with nature', 'components': [{'id': 'L1', 'title': 'Business footprint', 'description': 'Map direct operations, upstream, downstream locations'}, {'id': 'L2', 'title': 'Nature interface', 'description\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.631,
+   "dur_ms": 0.134,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,26 +187,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42202,
      "name": "ref_nature_risk_categories",
      "qual": "ref_nature_risk_categories",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 116,
      "args": {},
      "ret": "{'nature_risk_categories': {'physical': {'label': 'Physical Risk', 'sub_types': ['acute_ecosystem_degradation', 'chronic_ecosystem_decline', 'resource_depletion']}, 'transition': {'label': 'Transition Risk', 'sub_types': ['policy_regulatio\u2026",
-     "dur_ms": 0.048,
+     "dur_ms": 0.027,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 42203,
        "name": "get_nature_risk_categories",
        "qual": "TNFDAssessmentEngine.get_nature_risk_categories",
        "file": "services/tnfd_assessment_engine.py",
        "line": 828,
        "args": {},
        "ret": "{'physical': {'label': 'Physical Risk', 'sub_types': ['acute_ecosystem_degradation', 'chronic_ecosystem_decline', 'resource_depletion']}, 'transition': {'label': 'Transition Risk', 'sub_types': ['policy_regulation', 'market_sentiment', 'te\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.529,
+   "dur_ms": 0.17,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 42204,
      "name": "ref_pillar_structure",
      "qual": "ref_pillar_structure",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 134,
      "args": {},
      "ret": "{'pillar_structure': {'Governance': [{'id': 'GOV-A', 'title': 'Board oversight', 'description': 'Board oversight of nature-related dependencies, impacts, risks and opportunities'}, {'id': 'GOV-B', 'title': \"Management's role\", 'description\u2026",
-     "dur_ms": 0.096,
+     "dur_ms": 0.057,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 42205,
        "name": "get_disclosure_pillar_structure",
        "qual": "TNFDAssessmentEngine.get_disclosure_pillar_structure",
        "file": "services/tnfd_assessment_engine.py",
        "line": 843,
        "args": {},
        "ret": "{'Governance': [{'id': 'GOV-A', 'title': 'Board oversight', 'description': 'Board oversight of nature-related dependencies, impacts, risks and opportunities'}, {'id': 'GOV-B', 'title': \"Management's role\", 'description': \"Management's role\u2026",
-       "dur_ms": 0.027,
+       "dur_ms": 0.017,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.441,
+   "dur_ms": 0.136,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 42206,
      "name": "ref_priority_areas",
      "qual": "ref_priority_areas",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 140,
      "args": {},
      "ret": "{'priority_area_criteria': [{'id': 'PA01', 'type': 'Key Biodiversity Areas (KBAs)', 'source': 'IUCN / BirdLife / KBA Partnership', 'description': 'Sites contributing significantly to the global persistence of biodiversity'}, {'id': 'PA02',\u2026",
-     "dur_ms": 0.093,
+     "dur_ms": 0.028,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 42207,
        "name": "get_priority_area_criteria",
        "qual": "TNFDAssessmentEngine.get_priority_area_criteria",
        "file": "services/tnfd_assessment_engine.py",
        "line": 856,
        "args": {},
        "ret": "[{'id': 'PA01', 'type': 'Key Biodiversity Areas (KBAs)', 'source': 'IUCN / BirdLife / KBA Partnership', 'description': 'Sites contributing significantly to the global persistence of biodiversity'}, {'id': 'PA02', 'type': 'Protected areas (\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -325,7 +325,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.464,
+   "dur_ms": 0.145,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -343,26 +343,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42208,
      "name": "ref_recommended_disclosures",
      "qual": "ref_recommended_disclosures",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 98,
      "args": {},
      "ret": "{'recommended_disclosures': [{'id': 'GOV-A', 'pillar': 'Governance', 'title': 'Board oversight', 'description': 'Board oversight of nature-related dependencies, impacts, risks and opportunities'}, {'id': 'GOV-B', 'pillar': 'Governance', 't\u2026",
-     "dur_ms": 0.113,
+     "dur_ms": 0.034,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 42209,
        "name": "get_recommended_disclosures",
        "qual": "TNFDAssessmentEngine.get_recommended_disclosures",
        "file": "services/tnfd_assessment_engine.py",
        "line": 813,
        "args": {},
        "ret": "[{'id': 'GOV-A', 'pillar': 'Governance', 'title': 'Board oversight', 'description': 'Board oversight of nature-related dependencies, impacts, risks and opportunities'}, {'id': 'GOV-B', 'pillar': 'Governance', 'title': \"Management's role\", \u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -377,7 +377,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.34,
+   "dur_ms": 0.164,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -395,26 +395,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 42210,
      "name": "ref_sector_guidance",
      "qual": "ref_sector_guidance",
      "file": "api/v1/routes/tnfd_assessment.py",
      "line": 122,
      "args": {},
      "ret": "{'sector_guidance': {'agriculture': {'label': 'Agriculture, Forestry and Fishing', 'priority_nature_topics': ['Land use change and deforestation', 'Water consumption and pollution', 'Soil degradation and erosion', 'Pollinator decline', 'Pe\u2026",
-     "dur_ms": 0.096,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 42211,
        "name": "get_sector_guidance",
        "qual": "TNFDAssessmentEngine.get_sector_guidance",
        "file": "services/tnfd_assessment_engine.py",
        "line": 833,
        "args": {},
        "ret": "{'agriculture': {'label': 'Agriculture, Forestry and Fishing', 'priority_nature_topics': ['Land use change and deforestation', 'Water consumption and pollution', 'Soil degradation and erosion', 'Pollinator decline', 'Pesticide and fertilis\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -429,7 +429,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.612,
+   "dur_ms": 0.141,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -443,7 +443,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 42212,
      "name": "assess_disclosures",
      "qual": "assess_disclosures",
      "file": "api/v1/routes/tnfd_assessment.py",
@@ -452,7 +452,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.038,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -465,7 +465,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.356,
+   "dur_ms": 0.152,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -479,7 +479,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 42213,
      "name": "assess_leap_readiness",
      "qual": "assess_leap_readiness",
      "file": "api/v1/routes/tnfd_assessment.py",
@@ -488,7 +488,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -501,7 +501,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.218,
+   "dur_ms": 0.118,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -515,7 +515,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 42214,
      "name": "assess_materiality",
      "qual": "assess_materiality",
      "file": "api/v1/routes/tnfd_assessment.py",
@@ -524,7 +524,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

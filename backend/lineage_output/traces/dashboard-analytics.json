@@ -1,10 +1,10 @@
 {
  "domain": "dashboard-analytics",
  "meta": {
-  "ts": "2026-06-30T14:00:22",
+  "ts": "2026-07-05T19:11:18",
+  "endpoints": 8,
   "module": "api.v1.routes.dashboard_analytics",
-  "router_prefix": "/api/v1/dashboard",
-  "endpoints": 8
+  "router_prefix": "/api/v1/dashboard"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4476.817,
+   "dur_ms": 2500.667,
    "node_count": 16,
    "provenance": [
     "real-db"
@@ -35,7 +35,7 @@
       "company_profiles"
      ],
      "rowcount": 1,
-     "dur_ms": 62.658,
+     "dur_ms": 59.526,
      "is_reference": false,
      "error": null
     },
@@ -46,7 +46,7 @@
       "company_profiles"
      ],
      "rowcount": 1,
-     "dur_ms": 37.341,
+     "dur_ms": 29.028,
      "is_reference": false,
      "error": null
     },
@@ -57,7 +57,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 37.485,
+     "dur_ms": 30.967,
      "is_reference": false,
      "error": null
     },
@@ -68,7 +68,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 1229.377,
+     "dur_ms": 1379.385,
      "is_reference": false,
      "error": null
     },
@@ -79,7 +79,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 225.452,
+     "dur_ms": 51.752,
      "is_reference": false,
      "error": null
     },
@@ -90,7 +90,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 243.262,
+     "dur_ms": 32.112,
      "is_reference": false,
      "error": null
     },
@@ -101,7 +101,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 143.213,
+     "dur_ms": 34.165,
      "is_reference": false,
      "error": null
     },
@@ -112,7 +112,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 41.924,
+     "dur_ms": 32.783,
      "is_reference": false,
      "error": null
     },
@@ -123,7 +123,7 @@
       "csrd_kpi_values"
      ],
      "rowcount": 1,
-     "dur_ms": 44.719,
+     "dur_ms": 29.319,
      "is_reference": false,
      "error": null
     },
@@ -134,7 +134,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 1,
-     "dur_ms": 42.451,
+     "dur_ms": 28.726,
      "is_reference": false,
      "error": null
     },
@@ -145,7 +145,7 @@
       "portfolios_pg"
      ],
      "rowcount": 1,
-     "dur_ms": 34.298,
+     "dur_ms": 30.388,
      "is_reference": false,
      "error": null
     },
@@ -156,7 +156,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 15,
-     "dur_ms": 62.719,
+     "dur_ms": 59.097,
      "is_reference": false,
      "error": null
     },
@@ -167,7 +167,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 3,
-     "dur_ms": 46.487,
+     "dur_ms": 37.956,
      "is_reference": false,
      "error": null
     },
@@ -178,7 +178,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 9,
-     "dur_ms": 45.473,
+     "dur_ms": 47.576,
      "is_reference": false,
      "error": null
     },
@@ -189,7 +189,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 12,
-     "dur_ms": 84.077,
+     "dur_ms": 69.365,
      "is_reference": false,
      "error": null
     },
@@ -200,7 +200,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 50,
-     "dur_ms": 127.755,
+     "dur_ms": 176.147,
      "is_reference": false,
      "error": null
     },
@@ -211,7 +211,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 10,
-     "dur_ms": 51.645,
+     "dur_ms": 49.872,
      "is_reference": false,
      "error": null
     },
@@ -222,7 +222,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 4,
-     "dur_ms": 32.929,
+     "dur_ms": 34.481,
      "is_reference": false,
      "error": null
     }
@@ -246,30 +246,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3372,
      "name": "full_dashboard",
      "qual": "full_dashboard",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 36,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
      },
      "ret": "{'kpis': {'total_entities': 97, 'csrd_entities': 8, 'csrd_kpi_values': 105, 'sbti_companies': 14034, 'sbti_net_zero': 2426, 'sbti_aligned_1_5c': 9894, 'ca100_companies': 169, 'country_risk_countries': 255, 'country_risk_indices': 4, 'portf\u2026",
-     "dur_ms": 4438.853,
+     "dur_ms": 2460.423,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 3373,
        "name": "_compute_kpis",
        "qual": "_compute_kpis",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 130,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "{'total_entities': 97, 'csrd_entities': 8, 'csrd_kpi_values': 105, 'sbti_companies': 14034, 'sbti_net_zero': 2426, 'sbti_aligned_1_5c': 9894, 'ca100_companies': 169, 'country_risk_countries': 255, 'country_risk_indices': 4, 'portfolios': 3\u2026",
-       "dur_ms": 3959.478,
+       "dur_ms": 1971.499,
        "sql": [
         2,
         3,
@@ -278,18 +278,18 @@
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 3374,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(*) FROM company_profiles'",
           "default": "0"
          },
          "ret": "97",
-         "dur_ms": 1827.692,
+         "dur_ms": 283.939,
          "sql": [
           0
          ],
@@ -297,18 +297,18 @@
          "children": []
         },
         {
-         "id": 4,
+         "id": 3375,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "\"SELECT COUNT(*) FROM company_profiles WHERE data_source = 'csrd_report'\"",
           "default": "0"
          },
          "ret": "8",
-         "dur_ms": 37.826,
+         "dur_ms": 29.715,
          "sql": [
           1
          ],
@@ -316,18 +316,18 @@
          "children": []
         },
         {
-         "id": 5,
+         "id": 3376,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(*) FROM dh_ca100_assessments'",
           "default": "0"
          },
          "ret": "169",
-         "dur_ms": 243.582,
+         "dur_ms": 32.561,
          "sql": [
           5
          ],
@@ -335,18 +335,18 @@
          "children": []
         },
         {
-         "id": 6,
+         "id": 3377,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_country_risk_indices'",
           "default": "0"
          },
          "ret": "255",
-         "dur_ms": 143.868,
+         "dur_ms": 34.474,
          "sql": [
           6
          ],
@@ -354,18 +354,18 @@
          "children": []
         },
         {
-         "id": 7,
+         "id": 3378,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(DISTINCT index_name) FROM dh_country_risk_indices'",
           "default": "0"
          },
          "ret": "4",
-         "dur_ms": 42.724,
+         "dur_ms": 33.152,
          "sql": [
           7
          ],
@@ -373,18 +373,18 @@
          "children": []
         },
         {
-         "id": 8,
+         "id": 3379,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(*) FROM csrd_kpi_values'",
           "default": "0"
          },
          "ret": "105",
-         "dur_ms": 45.214,
+         "dur_ms": 29.691,
          "sql": [
           8
          ],
@@ -392,18 +392,18 @@
          "children": []
         },
         {
-         "id": 9,
+         "id": 3380,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(*) FROM csrd_entity_registry'",
           "default": "0"
          },
          "ret": "15",
-         "dur_ms": 42.775,
+         "dur_ms": 29.022,
          "sql": [
           9
          ],
@@ -411,18 +411,18 @@
          "children": []
         },
         {
-         "id": 10,
+         "id": 3381,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>",
           "sql": "'SELECT COUNT(*) FROM portfolios_pg'",
           "default": "0"
          },
          "ret": "3",
-         "dur_ms": 34.89,
+         "dur_ms": 30.681,
          "sql": [
           10
          ],
@@ -432,16 +432,16 @@
        ]
       },
       {
-       "id": 11,
+       "id": 3382,
        "name": "_compute_portfolio_exposure",
        "qual": "_compute_portfolio_exposure",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 174,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "[{'sector': 'Professional Services', 'companies': 1407, 'aligned_1_5c': 1153, 'net_zero': 359, 'targets_set': 1173, 'risk_score': 18.1}, {'sector': 'Electrical Equipment and Machinery', 'companies': 1131, 'aligned_1_5c': 919, 'net_zero': 1\u2026",
-       "dur_ms": 71.649,
+       "dur_ms": 62.325,
        "sql": [
         11
        ],
@@ -449,16 +449,16 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 3383,
        "name": "_compute_climate_risk",
        "qual": "_compute_climate_risk",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 204,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "{'target_status_distribution': [{'status': 'Commitment removed', 'count': 1159}, {'status': 'Committed', 'count': 2612}, {'status': 'Targets set', 'count': 10263}], 'ambition_distribution': [{'ambition': '1.5\u00b0C', 'count': 9877}, {'ambition\u2026",
-       "dur_ms": 97.084,
+       "dur_ms": 87.986,
        "sql": [
         12,
         13
@@ -467,16 +467,16 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 3384,
        "name": "_compute_emissions_by_sector",
        "qual": "_compute_emissions_by_sector",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 234,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "[{'sector': 'Professional Services', 'total_companies': 1407, 'aligned_1_5c': 1153, 'well_below_2c': 19, 'aligned_2c': 1, 'net_zero': 359, 'alignment_rate': 83.3, 'paris_aligned': True}, {'sector': 'Electrical Equipment and Machinery', 'to\u2026",
-       "dur_ms": 91.718,
+       "dur_ms": 73.808,
        "sql": [
         14
        ],
@@ -484,16 +484,16 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 3385,
        "name": "_compute_governance_heatmap",
        "qual": "_compute_governance_heatmap",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 265,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "[{'country': 'Afghanistan', 'iso3': 'AFG', 'cpi': 20.0, 'fsi': 106.6, 'fh_fiw': 0.0, 'gii': 0.661, 'composite': 16.3}, {'country': 'Albania', 'iso3': 'ALB', 'cpi': 37.0, 'fsi': 56.8, 'fh_fiw': 8.0, 'gii': 0.107, 'composite': 55.5}, {'count\u2026",
-       "dur_ms": 128.502,
+       "dur_ms": 176.596,
        "sql": [
         15
        ],
@@ -501,16 +501,16 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 3386,
        "name": "_compute_sbti_alignment",
        "qual": "_compute_sbti_alignment",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 312,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "{'top_countries': [{'country': 'Japan', 'total': 2306, 'aligned_1_5c': 2161, 'net_zero': 100, 'alignment_pct': 93.7}, {'country': 'United Kingdom', 'total': 1791, 'aligned_1_5c': 1382, 'net_zero': 598, 'alignment_pct': 77.2}, {'country': '\u2026",
-       "dur_ms": 56.386,
+       "dur_ms": 52.599,
        "sql": [
         16
        ],
@@ -518,16 +518,16 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 3387,
        "name": "_compute_ca100_overview",
        "qual": "_compute_ca100_overview",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 341,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3225CBCE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902390>"
        },
        "ret": "{'sector_clusters': [{'cluster': 'Energy', 'companies': 74, 'disclosure_aligned': 35, 'targets_aligned': 19, 'emissions_aligned': 10, 'avg_alignment_pct': 28.8}, {'cluster': 'Industrials', 'companies': 52, 'disclosure_aligned': 30, 'target\u2026",
-       "dur_ms": 33.326,
+       "dur_ms": 34.976,
        "sql": [
         17
        ],
@@ -544,7 +544,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 489.095,
+   "dur_ms": 447.058,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -561,7 +561,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 3,
-     "dur_ms": 114.868,
+     "dur_ms": 73.551,
      "is_reference": false,
      "error": null
     },
@@ -572,7 +572,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 9,
-     "dur_ms": 50.983,
+     "dur_ms": 38.37,
      "is_reference": false,
      "error": null
     },
@@ -583,7 +583,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 4,
-     "dur_ms": 35.761,
+     "dur_ms": 33.128,
      "is_reference": false,
      "error": null
     }
@@ -602,30 +602,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 3388,
      "name": "dashboard_climate",
      "qual": "dashboard_climate",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 71,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322620D70>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957380>"
      },
      "ret": "{'climate_risk': {'target_status_distribution': [{'status': 'Commitment removed', 'count': 1159}, {'status': 'Committed', 'count': 2612}, {'status': 'Targets set', 'count': 10263}], 'ambition_distribution': [{'ambition': '1.5\u00b0C', 'count': \u2026",
-     "dur_ms": 455.857,
+     "dur_ms": 412.252,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 18,
+       "id": 3389,
        "name": "_compute_climate_risk",
        "qual": "_compute_climate_risk",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 204,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322620D70>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957380>"
        },
        "ret": "{'target_status_distribution': [{'status': 'Commitment removed', 'count': 1159}, {'status': 'Committed', 'count': 2612}, {'status': 'Targets set', 'count': 10263}], 'ambition_distribution': [{'ambition': '1.5\u00b0C', 'count': 9877}, {'ambition\u2026",
-       "dur_ms": 419.179,
+       "dur_ms": 378.532,
        "sql": [
         0,
         1
@@ -634,16 +634,16 @@
        "children": []
       },
       {
-       "id": 19,
+       "id": 3390,
        "name": "_compute_ca100_overview",
        "qual": "_compute_ca100_overview",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 341,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322620D70>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957380>"
        },
        "ret": "{'sector_clusters': [{'cluster': 'Energy', 'companies': 74, 'disclosure_aligned': 35, 'targets_aligned': 19, 'emissions_aligned': 10, 'avg_alignment_pct': 28.8}, {'cluster': 'Industrials', 'companies': 52, 'disclosure_aligned': 30, 'target\u2026",
-       "dur_ms": 36.444,
+       "dur_ms": 33.563,
        "sql": [
         2
        ],
@@ -660,7 +660,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 350.466,
+   "dur_ms": 329.318,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -676,7 +676,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 12,
-     "dur_ms": 102.556,
+     "dur_ms": 100.233,
      "is_reference": false,
      "error": null
     }
@@ -694,30 +694,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 3391,
      "name": "dashboard_emissions",
      "qual": "dashboard_emissions",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 83,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B119A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48901A30>"
      },
      "ret": "{'emissions_by_sector': [{'sector': 'Professional Services', 'total_companies': 1407, 'aligned_1_5c': 1153, 'well_below_2c': 19, 'aligned_2c': 1, 'net_zero': 359, 'alignment_rate': 83.3, 'paris_aligned': True}, {'sector': 'Electrical Equip\u2026",
-     "dur_ms": 319.171,
+     "dur_ms": 301.162,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 21,
+       "id": 3392,
        "name": "_compute_emissions_by_sector",
        "qual": "_compute_emissions_by_sector",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 234,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B119A0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48901A30>"
        },
        "ret": "[{'sector': 'Professional Services', 'total_companies': 1407, 'aligned_1_5c': 1153, 'well_below_2c': 19, 'aligned_2c': 1, 'net_zero': 359, 'alignment_rate': 83.3, 'paris_aligned': True}, {'sector': 'Electrical Equipment and Machinery', 'to\u2026",
-       "dur_ms": 319.07,
+       "dur_ms": 301.037,
        "sql": [
         0
        ],
@@ -734,7 +734,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 310.573,
+   "dur_ms": 314.218,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -750,7 +750,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 50,
-     "dur_ms": 79.207,
+     "dur_ms": 78.102,
      "is_reference": false,
      "error": null
     }
@@ -768,30 +768,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 3393,
      "name": "dashboard_governance",
      "qual": "dashboard_governance",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 92,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F3226206B0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957260>"
      },
      "ret": "{'governance_heatmap': [{'country': 'Afghanistan', 'iso3': 'AFG', 'cpi': 20.0, 'fsi': 106.6, 'fh_fiw': 0.0, 'gii': 0.661, 'composite': 16.3}, {'country': 'Albania', 'iso3': 'ALB', 'cpi': 37.0, 'fsi': 56.8, 'fh_fiw': 8.0, 'gii': 0.107, 'com\u2026",
-     "dur_ms": 279.524,
+     "dur_ms": 283.168,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 23,
+       "id": 3394,
        "name": "_compute_governance_heatmap",
        "qual": "_compute_governance_heatmap",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 265,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F3226206B0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957260>"
        },
        "ret": "[{'country': 'Afghanistan', 'iso3': 'AFG', 'cpi': 20.0, 'fsi': 106.6, 'fh_fiw': 0.0, 'gii': 0.661, 'composite': 16.3}, {'country': 'Albania', 'iso3': 'ALB', 'cpi': 37.0, 'fsi': 56.8, 'fh_fiw': 8.0, 'gii': 0.107, 'composite': 55.5}, {'count\u2026",
-       "dur_ms": 279.372,
+       "dur_ms": 282.994,
        "sql": [
         0
        ],
@@ -808,7 +808,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 642.523,
+   "dur_ms": 641.825,
    "node_count": 10,
    "provenance": [
     "real-db"
@@ -830,7 +830,7 @@
       "company_profiles"
      ],
      "rowcount": 1,
-     "dur_ms": 62.061,
+     "dur_ms": 61.043,
      "is_reference": false,
      "error": null
     },
@@ -841,7 +841,7 @@
       "company_profiles"
      ],
      "rowcount": 1,
-     "dur_ms": 29.576,
+     "dur_ms": 30.48,
      "is_reference": false,
      "error": null
     },
@@ -852,7 +852,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 32.334,
+     "dur_ms": 30.807,
      "is_reference": false,
      "error": null
     },
@@ -863,7 +863,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 39.63,
+     "dur_ms": 35.125,
      "is_reference": false,
      "error": null
     },
@@ -874,7 +874,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 48.401,
+     "dur_ms": 46.247,
      "is_reference": false,
      "error": null
     },
@@ -885,7 +885,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 30.283,
+     "dur_ms": 29.267,
      "is_reference": false,
      "error": null
     },
@@ -896,7 +896,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 32.448,
+     "dur_ms": 31.313,
      "is_reference": false,
      "error": null
     },
@@ -907,7 +907,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 34.52,
+     "dur_ms": 31.367,
      "is_reference": false,
      "error": null
     },
@@ -918,7 +918,7 @@
       "csrd_kpi_values"
      ],
      "rowcount": 1,
-     "dur_ms": 32.208,
+     "dur_ms": 32.353,
      "is_reference": false,
      "error": null
     },
@@ -929,7 +929,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 1,
-     "dur_ms": 31.141,
+     "dur_ms": 33.811,
      "is_reference": false,
      "error": null
     },
@@ -940,7 +940,7 @@
       "portfolios_pg"
      ],
      "rowcount": 1,
-     "dur_ms": 30.331,
+     "dur_ms": 35.201,
      "is_reference": false,
      "error": null
     }
@@ -968,30 +968,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 3395,
      "name": "dashboard_kpis",
      "qual": "dashboard_kpis",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 53,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>"
      },
      "ret": "{'total_entities': 97, 'csrd_entities': 8, 'csrd_kpi_values': 105, 'sbti_companies': 14034, 'sbti_net_zero': 2426, 'sbti_aligned_1_5c': 9894, 'ca100_companies': 169, 'country_risk_countries': 255, 'country_risk_indices': 4, 'portfolios': 3\u2026",
-     "dur_ms": 610.364,
+     "dur_ms": 594.469,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 25,
+       "id": 3396,
        "name": "_compute_kpis",
        "qual": "_compute_kpis",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 130,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>"
        },
        "ret": "{'total_entities': 97, 'csrd_entities': 8, 'csrd_kpi_values': 105, 'sbti_companies': 14034, 'sbti_net_zero': 2426, 'sbti_aligned_1_5c': 9894, 'ca100_companies': 169, 'country_risk_countries': 255, 'country_risk_indices': 4, 'portfolios': 3\u2026",
-       "dur_ms": 610.273,
+       "dur_ms": 594.411,
        "sql": [
         2,
         3,
@@ -1000,18 +1000,18 @@
        "error": null,
        "children": [
         {
-         "id": 26,
+         "id": 3397,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(*) FROM company_profiles'",
           "default": "0"
          },
          "ret": "97",
-         "dur_ms": 260.028,
+         "dur_ms": 251.743,
          "sql": [
           0
          ],
@@ -1019,18 +1019,18 @@
          "children": []
         },
         {
-         "id": 27,
+         "id": 3398,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "\"SELECT COUNT(*) FROM company_profiles WHERE data_source = 'csrd_report'\"",
           "default": "0"
          },
          "ret": "8",
-         "dur_ms": 29.98,
+         "dur_ms": 30.85,
          "sql": [
           1
          ],
@@ -1038,18 +1038,18 @@
          "children": []
         },
         {
-         "id": 28,
+         "id": 3399,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(*) FROM dh_ca100_assessments'",
           "default": "0"
          },
          "ret": "169",
-         "dur_ms": 30.962,
+         "dur_ms": 29.677,
          "sql": [
           5
          ],
@@ -1057,18 +1057,18 @@
          "children": []
         },
         {
-         "id": 29,
+         "id": 3400,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(DISTINCT country_iso3) FROM dh_country_risk_indices'",
           "default": "0"
          },
          "ret": "255",
-         "dur_ms": 33.126,
+         "dur_ms": 31.715,
          "sql": [
           6
          ],
@@ -1076,18 +1076,18 @@
          "children": []
         },
         {
-         "id": 30,
+         "id": 3401,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(DISTINCT index_name) FROM dh_country_risk_indices'",
           "default": "0"
          },
          "ret": "4",
-         "dur_ms": 35.16,
+         "dur_ms": 31.864,
          "sql": [
           7
          ],
@@ -1095,18 +1095,18 @@
          "children": []
         },
         {
-         "id": 31,
+         "id": 3402,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(*) FROM csrd_kpi_values'",
           "default": "0"
          },
          "ret": "105",
-         "dur_ms": 33.043,
+         "dur_ms": 32.905,
          "sql": [
           8
          ],
@@ -1114,18 +1114,18 @@
          "children": []
         },
         {
-         "id": 32,
+         "id": 3403,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(*) FROM csrd_entity_registry'",
           "default": "0"
          },
          "ret": "15",
-         "dur_ms": 31.62,
+         "dur_ms": 34.271,
          "sql": [
           9
          ],
@@ -1133,18 +1133,18 @@
          "children": []
         },
         {
-         "id": 33,
+         "id": 3404,
          "name": "_safe_scalar",
          "qual": "_safe_scalar",
          "file": "api/v1/routes/dashboard_analytics.py",
          "line": 641,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957D70>",
           "sql": "'SELECT COUNT(*) FROM portfolios_pg'",
           "default": "0"
          },
          "ret": "3",
-         "dur_ms": 30.818,
+         "dur_ms": 35.709,
          "sql": [
           10
          ],
@@ -1163,7 +1163,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 359.087,
+   "dur_ms": 324.952,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -1179,7 +1179,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 15,
-     "dur_ms": 96.087,
+     "dur_ms": 88.603,
      "is_reference": false,
      "error": null
     }
@@ -1197,30 +1197,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 34,
+     "id": 3405,
      "name": "dashboard_portfolio",
      "qual": "dashboard_portfolio",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 62,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12BA0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A474A0>"
      },
      "ret": "{'portfolio_exposure': [{'sector': 'Professional Services', 'companies': 1407, 'aligned_1_5c': 1153, 'net_zero': 359, 'targets_set': 1173, 'risk_score': 18.1}, {'sector': 'Electrical Equipment and Machinery', 'companies': 1131, 'aligned_1_\u2026",
-     "dur_ms": 327.336,
+     "dur_ms": 295.06,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 35,
+       "id": 3406,
        "name": "_compute_portfolio_exposure",
        "qual": "_compute_portfolio_exposure",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 174,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12BA0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A474A0>"
        },
        "ret": "[{'sector': 'Professional Services', 'companies': 1407, 'aligned_1_5c': 1153, 'net_zero': 359, 'targets_set': 1173, 'risk_score': 18.1}, {'sector': 'Electrical Equipment and Machinery', 'companies': 1131, 'aligned_1_5c': 919, 'net_zero': 1\u2026",
-       "dur_ms": 327.205,
+       "dur_ms": 294.959,
        "sql": [
         0
        ],
@@ -1237,7 +1237,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 596.431,
+   "dur_ms": 746.484,
    "node_count": 10,
    "provenance": [
     "real-db"
@@ -1256,7 +1256,7 @@
       "ngfs_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 74.885,
+     "dur_ms": 68.593,
      "is_reference": false,
      "error": null
     },
@@ -1267,7 +1267,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 61.897,
+     "dur_ms": 65.641,
      "is_reference": false,
      "error": null
     },
@@ -1278,7 +1278,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 34.289,
+     "dur_ms": 34.762,
      "is_reference": false,
      "error": null
     },
@@ -1289,7 +1289,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 31.845,
+     "dur_ms": 33.197,
      "is_reference": false,
      "error": null
     },
@@ -1300,7 +1300,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 31.393,
+     "dur_ms": 32.596,
      "is_reference": false,
      "error": null
     },
@@ -1311,7 +1311,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 30.789,
+     "dur_ms": 191.296,
      "is_reference": false,
      "error": null
     },
@@ -1322,7 +1322,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 39.272,
+     "dur_ms": 36.604,
      "is_reference": false,
      "error": null
     },
@@ -1333,7 +1333,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 32.113,
+     "dur_ms": 31.827,
      "is_reference": false,
      "error": null
     }
@@ -1351,30 +1351,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 3407,
      "name": "dashboard_sensitivity",
      "qual": "dashboard_sensitivity",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 115,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12AB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A47620>"
      },
      "ret": "{'sensitivity': [{'driver': 'Carbon Price', 'low': -87.58, 'high': 68.94, 'swing': 156.52, 'source': 'NGFS v4'}, {'driver': 'Governance Risk (CPI)', 'low': -13.13, 'high': 8.93, 'swing': 22.06, 'source': 'Transparency International'}, {'dr\u2026",
-     "dur_ms": 557.186,
+     "dur_ms": 711.359,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 37,
+       "id": 3408,
        "name": "_compute_sensitivity_drivers",
        "qual": "_compute_sensitivity_drivers",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 459,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12AB0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A47620>"
        },
        "ret": "[{'driver': 'Carbon Price', 'low': -87.58, 'high': 68.94, 'swing': 156.52, 'source': 'NGFS v4'}, {'driver': 'Governance Risk (CPI)', 'low': -13.13, 'high': 8.93, 'swing': 22.06, 'source': 'Transparency International'}, {'driver': 'Politica\u2026",
-       "dur_ms": 557.107,
+       "dur_ms": 711.271,
        "sql": [
         0,
         1,
@@ -1388,7 +1388,7 @@
        "error": null,
        "children": [
         {
-         "id": 38,
+         "id": 3409,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1397,13 +1397,13 @@
           "d": "{'driver': 'Carbon Price', 'low': -87.58, 'high': 68.94, 'swing': 156.52, 'source': 'NGFS v4'}"
          },
          "ret": "156.52",
-         "dur_ms": 0.006,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 39,
+         "id": 3410,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1412,13 +1412,13 @@
           "d": "{'driver': 'Sector Alignment Rate', 'low': -3.99, 'high': 4.1, 'swing': 8.09, 'source': 'SBTi'}"
          },
          "ret": "8.09",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 40,
+         "id": 3411,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1433,7 +1433,7 @@
          "children": []
         },
         {
-         "id": 41,
+         "id": 3412,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1442,13 +1442,13 @@
           "d": "{'driver': 'State Fragility (FSI)', 'low': -7.8, 'high': 7.02, 'swing': 14.82, 'source': 'Fund for Peace'}"
          },
          "ret": "14.82",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 42,
+         "id": 3413,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1457,13 +1457,13 @@
           "d": "{'driver': 'Gender Inequality (GII)', 'low': -2.62, 'high': 4.06, 'swing': 6.68, 'source': 'UNDP'}"
          },
          "ret": "6.68",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 43,
+         "id": 3414,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1472,13 +1472,13 @@
           "d": "{'driver': 'Political Freedom (FH)', 'low': -9.0, 'high': 7.35, 'swing': 16.35, 'source': 'Freedom House'}"
          },
          "ret": "16.35",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 44,
+         "id": 3415,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1487,13 +1487,13 @@
           "d": "{'driver': 'Net Zero Commitment', 'low': -2.6, 'high': 9.92, 'swing': 12.52, 'source': 'SBTi'}"
          },
          "ret": "12.52",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 45,
+         "id": 3416,
          "name": "<lambda>",
          "qual": "_compute_sensitivity_drivers.<locals>.<lambda>",
          "file": "api/v1/routes/dashboard_analytics.py",
@@ -1519,7 +1519,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 357.372,
+   "dur_ms": 345.488,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -1536,7 +1536,7 @@
       "ngfs_scenarios"
      ],
      "rowcount": 6,
-     "dur_ms": 58.452,
+     "dur_ms": 61.665,
      "is_reference": false,
      "error": null
     },
@@ -1547,7 +1547,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 53.345,
+     "dur_ms": 57.82,
      "is_reference": false,
      "error": null
     }
@@ -1566,32 +1566,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 46,
+     "id": 3417,
      "name": "dashboard_time_series",
      "qual": "dashboard_time_series",
      "file": "api/v1/routes/dashboard_analytics.py",
      "line": 101,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B10>",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A447D0>",
       "horizon": "2050"
      },
      "ret": "{'time_series': [{'year': 2025, 'Below 2\u00b0C': 18.55, 'Current Policies': 2.93, 'Delayed Transition': 4.88, 'Divergent Net Zero': 32.21, 'Nationally Determined Contributions (NDCs)': 6.83, 'Net Zero 2050': 31.24}, {'year': 2030, 'Below 2\u00b0C':\u2026",
-     "dur_ms": 327.207,
+     "dur_ms": 315.199,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 47,
+       "id": 3418,
        "name": "_compute_time_series",
        "qual": "_compute_time_series",
        "file": "api/v1/routes/dashboard_analytics.py",
        "line": 381,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F322B12B10>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A447D0>",
         "horizon": "2050"
        },
        "ret": "[{'year': 2025, 'Below 2\u00b0C': 18.55, 'Current Policies': 2.93, 'Delayed Transition': 4.88, 'Divergent Net Zero': 32.21, 'Nationally Determined Contributions (NDCs)': 6.83, 'Net Zero 2050': 31.24}, {'year': 2030, 'Below 2\u00b0C': 23.18, 'Current\u2026",
-       "dur_ms": 327.067,
+       "dur_ms": 315.09,
        "sql": [
         0,
         1

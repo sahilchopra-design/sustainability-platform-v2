@@ -1,10 +1,10 @@
 {
  "domain": "scheduled-reports",
  "meta": {
-  "ts": "2026-06-30T14:05:01",
+  "ts": "2026-07-05T19:17:00",
+  "endpoints": 9,
   "module": "api.v1.routes.scheduled_reports",
-  "router_prefix": "/api/v1/scheduled-reports",
-  "endpoints": 9
+  "router_prefix": "/api/v1/scheduled-reports"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 372.493,
+   "dur_ms": 477.188,
    "node_count": 4,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "scheduled_reports"
      ],
      "rowcount": 1,
-     "dur_ms": 151.413,
+     "dur_ms": 68.459,
      "is_reference": false,
      "error": null
     }
@@ -48,7 +48,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39974,
      "name": "list_reports",
      "qual": "list_reports",
      "file": "api/v1/routes/scheduled_reports.py",
@@ -57,12 +57,12 @@
       "active_only": "False"
      },
      "ret": "ScheduledReportListResponse(items=[ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@c\u2026",
-     "dur_ms": 370.184,
+     "dur_ms": 475.361,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39975,
        "name": "list_scheduled_reports",
        "qual": "list_scheduled_reports",
        "file": "services/scheduled_reports_service.py",
@@ -72,14 +72,14 @@
         "active_only": "False"
        },
        "ret": "[ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@compan\u2026",
-       "dur_ms": 369.856,
+       "dur_ms": 475.079,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 39976,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scheduled_reports_service.py",
@@ -94,7 +94,7 @@
        ]
       },
       {
-       "id": 4,
+       "id": 39977,
        "name": "report_to_response",
        "qual": "report_to_response",
        "file": "api/v1/routes/scheduled_reports.py",
@@ -118,7 +118,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 293.137,
+   "dur_ms": 281.236,
    "node_count": 4,
    "provenance": [
     "real-db"
@@ -134,7 +134,7 @@
       "scheduled_reports"
      ],
      "rowcount": 1,
-     "dur_ms": 64.037,
+     "dur_ms": 59.634,
      "is_reference": false,
      "error": null
     }
@@ -151,33 +151,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39978,
      "name": "get_due_reports_list",
      "qual": "get_due_reports_list",
      "file": "api/v1/routes/scheduled_reports.py",
      "line": 156,
      "args": {},
      "ret": "{'items': [ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pd\u2026",
-     "dur_ms": 291.467,
+     "dur_ms": 279.109,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 39979,
        "name": "get_due_reports",
        "qual": "get_due_reports",
        "file": "services/scheduled_reports_service.py",
        "line": 317,
        "args": {},
        "ret": "[ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@compan\u2026",
-       "dur_ms": 291.189,
+       "dur_ms": 278.771,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 7,
+         "id": 39980,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scheduled_reports_service.py",
@@ -192,7 +192,7 @@
        ]
       },
       {
-       "id": 8,
+       "id": 39981,
        "name": "report_to_response",
        "qual": "report_to_response",
        "file": "api/v1/routes/scheduled_reports.py",
@@ -201,7 +201,7 @@
         "report": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026"
        },
        "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
-       "dur_ms": 0.051,
+       "dur_ms": 0.074,
        "sql": [],
        "error": null,
        "children": []
@@ -216,7 +216,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.322,
+   "dur_ms": 1.346,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -234,14 +234,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39982,
      "name": "get_frequencies",
      "qual": "get_frequencies",
      "file": "api/v1/routes/scheduled_reports.py",
      "line": 178,
      "args": {},
      "ret": "{'frequencies': [{'value': 'daily', 'label': 'Daily'}, {'value': 'weekly', 'label': 'Weekly'}, {'value': 'monthly', 'label': 'Monthly'}, {'value': 'quarterly', 'label': 'Quarterly'}]}",
-     "dur_ms": 0.036,
+     "dur_ms": 0.039,
      "sql": [],
      "error": null,
      "children": []
@@ -254,7 +254,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.321,
+   "dur_ms": 1.219,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -272,14 +272,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 39983,
      "name": "get_report_types",
      "qual": "get_report_types",
      "file": "api/v1/routes/scheduled_reports.py",
      "line": 167,
      "args": {},
      "ret": "{'types': [{'value': 'portfolio_analytics', 'label': 'Portfolio Analytics'}, {'value': 'carbon_credits', 'label': 'Carbon Credits'}, {'value': 'stranded_assets', 'label': 'Stranded Assets'}, {'value': 'nature_risk', 'label': 'Nature Risk'}\u2026",
-     "dur_ms": 0.053,
+     "dur_ms": 0.056,
      "sql": [],
      "error": null,
      "children": []
@@ -292,7 +292,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 856.286,
+   "dur_ms": 293.198,
    "node_count": 4,
    "provenance": [
     "real-db"
@@ -308,7 +308,7 @@
       "scheduled_reports"
      ],
      "rowcount": 1,
-     "dur_ms": 576.012,
+     "dur_ms": 57.171,
      "is_reference": false,
      "error": null
     }
@@ -336,7 +336,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 39984,
      "name": "get_report",
      "qual": "get_report",
      "file": "api/v1/routes/scheduled_reports.py",
@@ -345,12 +345,12 @@
       "report_id": "'f247b739-108d-4f4e-868d-16ed3958a8e1'"
      },
      "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
-     "dur_ms": 854.61,
+     "dur_ms": 291.889,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 39985,
        "name": "get_scheduled_report",
        "qual": "get_scheduled_report",
        "file": "services/scheduled_reports_service.py",
@@ -359,14 +359,14 @@
         "report_id": "'f247b739-108d-4f4e-868d-16ed3958a8e1'"
        },
        "ret": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026",
-       "dur_ms": 854.311,
+       "dur_ms": 291.633,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 13,
+         "id": 39986,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scheduled_reports_service.py",
@@ -381,7 +381,7 @@
        ]
       },
       {
-       "id": 14,
+       "id": 39987,
        "name": "report_to_response",
        "qual": "report_to_response",
        "file": "api/v1/routes/scheduled_reports.py",
@@ -390,7 +390,7 @@
         "report": "ScheduledReport(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type=<ReportType.PORTFOLIO_ANALYTICS: 'portfolio_analytics'>, frequency=<ReportFrequency.WEEKLY: 'weekly'>, recipients=['stakeholder@company\u2026"
        },
        "ret": "ScheduledReportResponse(id='f247b739-108d-4f4e-868d-16ed3958a8e1', name='Weekly Portfolio Summary', report_type='portfolio_analytics', frequency='weekly', recipients=['stakeholder@company.com', 'analyst@company.com'], format='pdf', paramet\u2026",
-       "dur_ms": 0.048,
+       "dur_ms": 0.05,
        "sql": [],
        "error": null,
        "children": []

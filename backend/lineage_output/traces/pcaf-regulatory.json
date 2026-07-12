@@ -1,7 +1,7 @@
 {
  "domain": "pcaf-regulatory",
  "meta": {
-  "ts": "2026-07-01T10:16:01",
+  "ts": "2026-07-05T19:16:02",
   "endpoints": 9,
   "module": "api.v1.routes.pcaf_regulatory",
   "router_prefix": "/api/v1"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 671.9,
+   "dur_ms": 273.823,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "eu_taxonomy_assessments"
      ],
      "rowcount": 17,
-     "dur_ms": 76.906,
+     "dur_ms": 65.193,
      "is_reference": false,
      "error": null
     }
@@ -58,19 +58,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13770,
      "name": "list_eu_taxonomy_assessments",
      "qual": "list_eu_taxonomy_assessments",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 839,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A445FEB260>",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B42330>",
       "reporting_year": "None",
       "limit": "50",
       "offset": "0"
      },
      "ret": "[{'id': UUID('eecc62f2-0927-4237-a307-32d39fbeb31a'), 'entity_name': 'RWE AG', 'reporting_year': 2025, 'taxonomy_eligible_turnover_pct': Decimal('78.40'), 'taxonomy_aligned_turnover_pct': Decimal('52.30'), 'taxonomy_eligible_capex_pct': De\u2026",
-     "dur_ms": 638.023,
+     "dur_ms": 246.55,
      "sql": [
       0
      ],
@@ -85,7 +85,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 368.713,
+   "dur_ms": 346.132,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -102,7 +102,7 @@
       "eu_taxonomy_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 68.164,
+     "dur_ms": 69.913,
      "is_reference": false,
      "error": null
     },
@@ -113,7 +113,7 @@
       "eu_taxonomy_activities"
      ],
      "rowcount": 3,
-     "dur_ms": 39.87,
+     "dur_ms": 50.353,
      "is_reference": false,
      "error": null
     }
@@ -156,17 +156,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13771,
      "name": "get_eu_taxonomy_assessment",
      "qual": "get_eu_taxonomy_assessment",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 864,
      "args": {
       "assessment_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB2C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9EBA0>"
      },
      "ret": "{'id': UUID('eecc62f2-0927-4237-a307-32d39fbeb31a'), 'entity_id': UUID('57f9613a-3919-42cb-941c-b52095f5a9ff'), 'entity_name': 'RWE AG', 'reporting_year': 2025, 'assessment_type': 'full_assessment', 'total_turnover_gbp': Decimal('470000000\u2026",
-     "dur_ms": 333.204,
+     "dur_ms": 315.617,
      "sql": [
       0,
       1
@@ -182,7 +182,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 387.306,
+   "dur_ms": 278.729,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -198,7 +198,7 @@
       "pcaf_portfolios"
      ],
      "rowcount": 2,
-     "dur_ms": 70.091,
+     "dur_ms": 54.13,
      "is_reference": false,
      "error": null
     }
@@ -229,20 +229,20 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13772,
      "name": "list_pcaf_portfolios",
      "qual": "list_pcaf_portfolios",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 756,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB1A0>",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B4E0F0>",
       "status": "None",
       "reporting_year": "None",
       "limit": "50",
       "offset": "0"
      },
      "ret": "[{'id': UUID('f07fd174-3190-4811-b365-f8c44264dca1'), 'entity_name': 'GS Sustainable Finance Article 8 Fund', 'reporting_year': 2025, 'portfolio_type': 'listed_equity', 'total_financed_emissions_tco2e': Decimal('129412.4000'), 'waci_tco2e_\u2026",
-     "dur_ms": 351.298,
+     "dur_ms": 250.616,
      "sql": [
       0
      ],
@@ -257,7 +257,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: PCAF portfolio not found",
-   "dur_ms": 334.162,
+   "dur_ms": 289.05,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -273,7 +273,7 @@
       "pcaf_portfolios"
      ],
      "rowcount": 0,
-     "dur_ms": 66.496,
+     "dur_ms": 59.548,
      "is_reference": false,
      "error": null
     }
@@ -286,17 +286,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13773,
      "name": "get_pcaf_portfolio",
      "qual": "get_pcaf_portfolio",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 785,
      "args": {
       "portfolio_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A4475FB2C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B71A90>"
      },
      "ret": "None",
-     "dur_ms": 299.768,
+     "dur_ms": 261.447,
      "sql": [
       0
      ],
@@ -311,7 +311,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 307.292,
+   "dur_ms": 391.453,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -327,7 +327,7 @@
       "sfdr_pai_disclosures"
      ],
      "rowcount": 14,
-     "dur_ms": 68.08,
+     "dur_ms": 110.671,
      "is_reference": false,
      "error": null
     }
@@ -358,19 +358,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13774,
      "name": "list_sfdr_disclosures",
      "qual": "list_sfdr_disclosures",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 802,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763E8A0>",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B72BD0>",
       "reporting_year": "None",
       "limit": "50",
       "offset": "0"
      },
      "ret": "[{'id': UUID('fbf6e449-d12b-4c5f-8cad-17f7d7c98623'), 'entity_name': 'GS Sustainable Finance Ltd', 'reporting_period_start': datetime.date(2025, 1, 1), 'reporting_period_end': datetime.date(2025, 12, 31), 'sfdr_article': 8, 'pai_1_scope1_s\u2026",
-     "dur_ms": 270.691,
+     "dur_ms": 361.563,
      "sql": [
       0
      ],
@@ -385,7 +385,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: SFDR PAI disclosure not found",
-   "dur_ms": 316.815,
+   "dur_ms": 275.126,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -401,7 +401,7 @@
       "sfdr_pai_disclosures"
      ],
      "rowcount": 0,
-     "dur_ms": 64.588,
+     "dur_ms": 58.515,
      "is_reference": false,
      "error": null
     }
@@ -414,17 +414,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13775,
      "name": "get_sfdr_disclosure",
      "qual": "get_sfdr_disclosure",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 828,
      "args": {
       "disclosure_id": "'eecc62f2-0927-4237-a307-32d39fbeb31a'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763F440>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B701A0>"
      },
      "ret": "None",
-     "dur_ms": 281.864,
+     "dur_ms": 247.307,
      "sql": [
       0
      ],
@@ -439,7 +439,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: EU Taxonomy engine error: 'dict' object has no attribute 'total_revenue_gbp'",
-   "dur_ms": 7.297,
+   "dur_ms": 3.904,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -454,17 +454,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13776,
      "name": "assess_eu_taxonomy_alignment",
      "qual": "assess_eu_taxonomy_alignment",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 662,
      "args": {
       "request": "TaxonomyAlignmentRequest(entities=[{'entity_id': 'TEST_request_entities_entity_id', 'sector': 'TEST_request_entities_sector', 'country_iso': 'TEST_request_entities_country_iso', 'activities': [{'activity_code': 'TEST_request_entities_activ\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763F350>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49521400>"
      },
      "ret": "None",
-     "dur_ms": 6.213,
+     "dur_ms": 3.372,
      "sql": [],
      "error": null,
      "children": []
@@ -477,7 +477,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: PCAF engine error: 'dict' object has no attribute 'model_dump'",
-   "dur_ms": 6.466,
+   "dur_ms": 4.059,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -492,17 +492,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 13777,
      "name": "calculate_financed_emissions",
      "qual": "calculate_financed_emissions",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 459,
      "args": {
       "request": "PCAFRequest(investees=[{'investee_id': 'TEST_request_investees_investee_id', 'sector': 'TEST_request_investees_sector', 'country_iso': 'TEST_request_investees_country_iso', 'investment_value_gbp': 1.0}], reporting_year=1, asset_class='list\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763FBC0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B72240>"
      },
      "ret": "None",
-     "dur_ms": 5.603,
+     "dur_ms": 3.578,
      "sql": [],
      "error": null,
      "children": []
@@ -515,7 +515,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: SFDR PAI engine error: 'dict' object has no attribute 'model_dump'",
-   "dur_ms": 6.759,
+   "dur_ms": 4.509,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -530,17 +530,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13778,
      "name": "calculate_sfdr_pai",
      "qual": "calculate_sfdr_pai",
      "file": "api/v1/routes/pcaf_regulatory.py",
      "line": 546,
      "args": {
       "request": "SFDRPAIRequest(investees=[{'investee_id': 'TEST_request_investees_investee_id', 'sector': 'TEST_request_investees_sector', 'country_iso': 'TEST_request_investees_country_iso', 'investment_value_gbp': 1.0}], reporting_year=1, reference_year\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002A44763EA20>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D491EA930>"
      },
      "ret": "None",
-     "dur_ms": 5.151,
+     "dur_ms": 3.654,
      "sql": [],
      "error": null,
      "children": []

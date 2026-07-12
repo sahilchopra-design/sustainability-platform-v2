@@ -1,10 +1,10 @@
 {
  "domain": "validation-summary",
  "meta": {
-  "ts": "2026-06-30T14:05:43",
+  "ts": "2026-07-05T19:17:19",
+  "endpoints": 3,
   "module": "api.v1.routes.validation_summary",
-  "router_prefix": "/api/v1/validation",
-  "endpoints": 3
+  "router_prefix": "/api/v1/validation"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.362,
+   "dur_ms": 0.456,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42522,
      "name": "dqs_confidence_map",
      "qual": "dqs_confidence_map",
      "file": "api/v1/routes/validation_summary.py",
      "line": 41,
      "args": {},
      "ret": "{1: 1.0, 2: 0.9, 3: 0.7, 4: 0.5, 5: 0.3}",
-     "dur_ms": 0.056,
+     "dur_ms": 0.042,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42523,
        "name": "get_dqs_confidence_map",
        "qual": "ValidationSummaryEngine.get_dqs_confidence_map",
        "file": "services/validation_summary_engine.py",
        "line": 343,
        "args": {},
        "ret": "{1: 1.0, 2: 0.9, 3: 0.7, 4: 0.5, 5: 0.3}",
-       "dur_ms": 0.005,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.307,
+   "dur_ms": 0.217,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -108,26 +108,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42524,
      "name": "methodology_registry",
      "qual": "methodology_registry",
      "file": "api/v1/routes/validation_summary.py",
      "line": 35,
      "args": {},
      "ret": "{'carbon_calculator': {'reference': 'GHG Protocol Corporate Standard (2004, revised 2015)', 'version': '2.0', 'standards': ['GHG Protocol', 'ISO 14064-1:2018']}, 'carbon_calculator_v2': {'reference': 'GHG Protocol Corporate Standard + Scop\u2026",
-     "dur_ms": 0.091,
+     "dur_ms": 0.072,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42525,
        "name": "get_methodology_registry",
        "qual": "ValidationSummaryEngine.get_methodology_registry",
        "file": "services/validation_summary_engine.py",
        "line": 338,
        "args": {},
        "ret": "{'carbon_calculator': {'reference': 'GHG Protocol Corporate Standard (2004, revised 2015)', 'version': '2.0', 'standards': ['GHG Protocol', 'ISO 14064-1:2018']}, 'carbon_calculator_v2': {'reference': 'GHG Protocol Corporate Standard + Scop\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "sfdr-art9",
  "meta": {
-  "ts": "2026-06-30T14:05:05",
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 8,
   "module": "api.v1.routes.sfdr_art9",
-  "router_prefix": "/api/v1/sfdr-art9",
-  "endpoints": 8
+  "router_prefix": "/api/v1/sfdr-art9"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.325,
+   "dur_ms": 0.258,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40112,
      "name": "ref_art9_requirements",
      "qual": "ref_art9_requirements",
      "file": "api/v1/routes/sfdr_art9.py",
      "line": 207,
      "args": {},
      "ret": "{'regulation': 'SFDR Regulation (EU) 2019/2088 Article 9', 'level_2_rts': 'Commission Delegated Regulation (EU) 2022/1288', 'effective_date': '10 March 2021 (SFDR); 1 January 2023 (RTS Level 2)', 'key_distinction': \"Art 9 ('dark green') fu\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.16,
+   "dur_ms": 0.177,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -78,7 +78,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40113,
      "name": "ref_dnsh_criteria",
      "qual": "ref_dnsh_criteria",
      "file": "api/v1/routes/sfdr_art9.py",
@@ -98,7 +98,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.141,
+   "dur_ms": 0.165,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -122,7 +122,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40114,
      "name": "ref_esma_qa_2023",
      "qual": "ref_esma_qa_2023",
      "file": "api/v1/routes/sfdr_art9.py",
@@ -142,7 +142,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.188,
+   "dur_ms": 0.212,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -167,14 +167,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 40115,
      "name": "ref_pai_indicators",
      "qual": "ref_pai_indicators",
      "file": "api/v1/routes/sfdr_art9.py",
      "line": 149,
      "args": {},
      "ret": "{'regulation': 'SFDR Commission Delegated Regulation (EU) 2022/1288 \u2014 Annex I Table 1', 'reporting_frequency': 'Annual (reference period 1 Jan \u2013 31 Dec; published by 30 June)', 'entity_level_pai_threshold': 'Financial market participants w\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -187,7 +187,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'fund_strategy'",
-   "dur_ms": 0.152,
+   "dur_ms": 0.169,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -201,7 +201,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40116,
      "name": "assess_art9",
      "qual": "assess_art9",
      "file": "api/v1/routes/sfdr_art9.py",

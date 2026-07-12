@@ -1,10 +1,10 @@
 {
  "domain": "scenario-analysis",
  "meta": {
-  "ts": "2026-06-30T14:04:49",
+  "ts": "2026-07-05T19:16:42",
+  "endpoints": 9,
   "module": "api.v1.routes.scenario_analysis",
-  "router_prefix": "/api/v1/scenarios",
-  "endpoints": 9
+  "router_prefix": "/api/v1/scenarios"
  },
  "transactions": [
   {
@@ -13,8 +13,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1059.019,
-   "node_count": 28,
+   "dur_ms": 922.699,
+   "node_count": 30,
    "provenance": [
     "real-db"
    ],
@@ -27,7 +27,7 @@
      "sql": "'SELECT 1'",
      "tables": [],
      "rowcount": 1,
-     "dur_ms": 58.432,
+     "dur_ms": 58.856,
      "is_reference": false,
      "error": null
     },
@@ -37,8 +37,8 @@
      "tables": [
       "scenarios"
      ],
-     "rowcount": 25,
-     "dur_ms": 199.53,
+     "rowcount": 27,
+     "dur_ms": 109.749,
      "is_reference": false,
      "error": null
     }
@@ -58,40 +58,40 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39744,
      "name": "get_dashboard",
      "qual": "get_dashboard",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 47,
      "args": {},
-     "ret": "ScenarioAnalysisDashboard(total_scenarios=25, total_analyses=50, recent_scenarios=[ScenarioResponse(scenario_name='Rising Interest Rates - 20260303', description='Higher discount and exit cap rates scenario', base_property_id=UUID('0000000\u2026",
-     "dur_ms": 1051.815,
+     "ret": "ScenarioAnalysisDashboard(total_scenarios=27, total_analyses=54, recent_scenarios=[ScenarioResponse(scenario_name='TEST_scenario_name', description=None, base_property_id=None, modifications=[], base_value=Decimal('0'), adjusted_value=Deci\u2026",
+     "dur_ms": 920.556,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39745,
        "name": "list_scenarios",
        "qual": "list_scenarios",
        "file": "services/scenario_analysis_engine.py",
        "line": 191,
        "args": {},
-       "ret": "[{'id': '0bd4dce8-2c23-4509-807a-0869600abc57', 'scenario_name': 'Rising Interest Rates - 20260303', 'description': 'Higher discount and exit cap rates scenario', 'base_property_id': '00000000-0000-0000-0000-000000000002', 'modifications':\u2026",
-       "dur_ms": 1049.652,
+       "ret": "[{'id': '0daac82d-714b-4cb6-8df7-1b6dd145b5d7', 'scenario_name': 'TEST_scenario_name', 'description': None, 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'value_change_pct': Deci\u2026",
+       "dur_ms": 919.58,
        "sql": [
         1
        ],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 39746,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scenario_analysis_engine.py",
          "line": 103,
          "args": {},
          "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
-         "dur_ms": 604.178,
+         "dur_ms": 552.583,
          "sql": [
           0
          ],
@@ -101,7 +101,37 @@
        ]
       },
       {
-       "id": 4,
+       "id": 39747,
+       "name": "<lambda>",
+       "qual": "get_dashboard.<locals>.<lambda>",
+       "file": "api/v1/routes/scenario_analysis.py",
+       "line": 53,
+       "args": {
+        "x": "{'id': '0daac82d-714b-4cb6-8df7-1b6dd145b5d7', 'scenario_name': 'TEST_scenario_name', 'description': None, 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'value_change_pct': Decim\u2026"
+       },
+       "ret": "'2026-06-30T18:04:56.992998+00:00'",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39748,
+       "name": "<lambda>",
+       "qual": "get_dashboard.<locals>.<lambda>",
+       "file": "api/v1/routes/scenario_analysis.py",
+       "line": 53,
+       "args": {
+        "x": "{'id': '2f949549-f386-4c2a-b95b-45586985e8dd', 'scenario_name': 'TEST_request_scenario_name', 'description': None, 'base_property_id': '550e8400-e29b-41d4-a716-446655440000', 'modifications': [{'type': 'rent_growth', 'parameter': 'TEST_req\u2026"
+       },
+       "ret": "'2026-06-30T18:04:47.932594+00:00'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39749,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -110,13 +140,13 @@
         "x": "{'id': '0bd4dce8-2c23-4509-807a-0869600abc57', 'scenario_name': 'Rising Interest Rates - 20260303', 'description': 'Higher discount and exit cap rates scenario', 'base_property_id': '00000000-0000-0000-0000-000000000002', 'modifications': \u2026"
        },
        "ret": "'2026-03-04T04:40:59.367718+00:00'",
-       "dur_ms": 0.009,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 39750,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -125,13 +155,13 @@
         "x": "{'id': '2c023c21-6377-4a6b-a72f-fc8919c42937', 'scenario_name': 'TEST_Regression_Scenario_083427', 'description': 'Regression test scenario', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate'\u2026"
        },
        "ret": "'2026-02-17T08:34:28.068580+00:00'",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 39751,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -140,13 +170,13 @@
         "x": "{'id': 'bf566d65-77c8-44db-b174-6e6ced2a7c82', 'scenario_name': 'TEST_Persist_1d2c98c4', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_\u2026"
        },
        "ret": "'2026-02-16T16:53:42.191083+00:00'",
-       "dur_ms": 0.005,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 39752,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -155,13 +185,13 @@
         "x": "{'id': 'fed7e791-4bad-40f4-ac1f-d84272cf910e', 'scenario_name': 'TEST_DataCheck_bbc2f086', 'description': 'Test description for data check', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'vacancy', \u2026"
        },
        "ret": "'2026-02-16T16:53:41.174839+00:00'",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 39753,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -170,13 +200,13 @@
         "x": "{'id': 'd30f3908-ebf0-4339-93ae-474d31326685', 'scenario_name': 'TEST_GetById_1ee2c1b5', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_\u2026"
        },
        "ret": "'2026-02-16T16:53:40.510476+00:00'",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 39754,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -185,13 +215,13 @@
         "x": "{'id': '70f2b033-c515-47ac-a72d-994489808cf7', 'scenario_name': 'TEST_MultiMod_0c7df6a3', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new\u2026"
        },
        "ret": "'2026-02-16T16:53:38.783996+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 39755,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -200,13 +230,13 @@
         "x": "{'id': '08fa2416-6965-4707-a013-bb982da75b1d', 'scenario_name': 'TEST_Values_e8bd2b49', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_v\u2026"
        },
        "ret": "'2026-02-16T16:53:38.457980+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 39756,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -215,13 +245,13 @@
         "x": "{'id': 'ffc2d886-e080-4bed-8416-3eaf90f5823b', 'scenario_name': 'TEST_ScenarioID_517d967c', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'vacancy', 'parameter': 'vacancy_rate',\u2026"
        },
        "ret": "'2026-02-16T16:53:38.111528+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 39757,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -230,13 +260,13 @@
         "x": "{'id': '05826aeb-8045-4c73-a96a-31b6df5d4db2', 'scenario_name': 'TEST_Scenario_fd4dcf9f', 'description': 'Testing scenario persistence', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'pa\u2026"
        },
        "ret": "'2026-02-16T16:53:37.727177+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 13,
+       "id": 39758,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -245,13 +275,13 @@
         "x": "{'id': 'e92df430-e832-4179-bd0e-df69f5e0a5a0', 'scenario_name': 'TEST_Persist_cd1df7e4', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_\u2026"
        },
        "ret": "'2026-02-16T16:52:27.002661+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 14,
+       "id": 39759,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -260,13 +290,13 @@
         "x": "{'id': 'd642b513-f821-40c4-92fe-04ef04850cf2', 'scenario_name': 'TEST_DataCheck_43523701', 'description': 'Test description for data check', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'vacancy', \u2026"
        },
        "ret": "'2026-02-16T16:52:25.943401+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 15,
+       "id": 39760,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -275,13 +305,13 @@
         "x": "{'id': '48d8edbd-daff-4dd9-9744-3748613546dc', 'scenario_name': 'TEST_GetById_98f6089e', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_\u2026"
        },
        "ret": "'2026-02-16T16:52:25.187282+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 39761,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -290,13 +320,13 @@
         "x": "{'id': 'c206f7a6-485e-456e-8895-256ccb902e58', 'scenario_name': 'TEST_MultiMod_76f1e413', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new\u2026"
        },
        "ret": "'2026-02-16T16:52:23.429786+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 17,
+       "id": 39762,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -305,13 +335,13 @@
         "x": "{'id': '6a15c738-a786-46cc-b8fe-ff3b84367211', 'scenario_name': 'TEST_Values_c8c83bf1', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'parameter': 'cap_rate', 'new_v\u2026"
        },
        "ret": "'2026-02-16T16:52:23.066998+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 18,
+       "id": 39763,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -320,13 +350,13 @@
         "x": "{'id': 'ddb969ec-218c-40a8-9f2a-e2145d60b9c9', 'scenario_name': 'TEST_ScenarioID_5ccc7c10', 'description': None, 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'vacancy', 'parameter': 'vacancy_rate',\u2026"
        },
        "ret": "'2026-02-16T16:52:22.689356+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 39764,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -335,13 +365,13 @@
         "x": "{'id': '3fd0f9cd-2897-4e62-a909-2909ba452fdb', 'scenario_name': 'TEST_Scenario_3258c6fe', 'description': 'Testing scenario persistence', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'pa\u2026"
        },
        "ret": "'2026-02-16T16:52:22.280218+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 20,
+       "id": 39765,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -350,13 +380,13 @@
         "x": "{'id': '2ccdb2c2-70af-49d1-ae50-4b124b0ee079', 'scenario_name': 'Final Test - Low Cap Rate', 'description': 'Testing persistence', 'base_property_id': '00000000-0000-0000-0000-000000000001', 'modifications': [{'type': 'cap_rate', 'paramete\u2026"
        },
        "ret": "'2026-02-16T16:46:39.087754+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 21,
+       "id": 39766,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -365,13 +395,13 @@
         "x": "{'id': '8c9cbfde-4e05-4448-99bc-51b771dd614d', 'scenario_name': 'TEST_To Approve', 'description': 'Scenario for approval test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'val\u2026"
        },
        "ret": "'2026-02-14T05:18:52.697924+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 39767,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -380,13 +410,13 @@
         "x": "{'id': '925e4d13-c68a-49c5-8ad7-5fda69e06aae', 'scenario_name': 'TEST_To Publish', 'description': 'Scenario for publish test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'valu\u2026"
        },
        "ret": "'2026-02-14T05:20:19.696134+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 39768,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -395,13 +425,13 @@
         "x": "{'id': '645fbb0d-ff0b-4e5a-a7d4-bd15fd26b971', 'scenario_name': 'TEST_To Reject', 'description': 'Scenario for rejection test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'val\u2026"
        },
        "ret": "'2026-02-14T05:20:18.026409+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 24,
+       "id": 39769,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -410,13 +440,13 @@
         "x": "{'id': '66dfbd6b-81ff-473a-b622-c463ee659e55', 'scenario_name': 'TEST_To Approve', 'description': 'Scenario for approval test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'val\u2026"
        },
        "ret": "'2026-02-14T05:20:16.276635+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 25,
+       "id": 39770,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -425,13 +455,13 @@
         "x": "{'id': 'f56d8aec-adf7-4268-8180-d1f02b9c3e30', 'scenario_name': 'TEST_For Approval', 'description': 'Scenario to submit for approval', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'\u2026"
        },
        "ret": "'2026-02-14T05:20:15.101252+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 26,
+       "id": 39771,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -440,13 +470,13 @@
         "x": "{'id': '186b04fb-f7da-4e71-999e-197c1bd89045', 'scenario_name': 'TEST_To Publish', 'description': 'Scenario for publish test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'valu\u2026"
        },
        "ret": "'2026-02-14T05:18:56.044780+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 27,
+       "id": 39772,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -455,13 +485,13 @@
         "x": "{'id': 'e54c2ac0-2ad1-49b4-88c8-c7eb5e9807a8', 'scenario_name': 'TEST_To Reject', 'description': 'Scenario for rejection test', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'val\u2026"
        },
        "ret": "'2026-02-14T05:18:54.491566+00:00'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 39773,
        "name": "<lambda>",
        "qual": "get_dashboard.<locals>.<lambda>",
        "file": "api/v1/routes/scenario_analysis.py",
@@ -470,7 +500,7 @@
         "x": "{'id': '27a242d1-1efe-4467-bf05-ccf9172eb687', 'scenario_name': 'TEST_For Approval', 'description': 'Scenario to submit for approval', 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'\u2026"
        },
        "ret": "'2026-02-14T05:18:51.700990+00:00'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -485,7 +515,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 366.659,
+   "dur_ms": 327.846,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -500,8 +530,8 @@
      "tables": [
       "scenarios"
      ],
-     "rowcount": 25,
-     "dur_ms": 63.523,
+     "rowcount": 27,
+     "dur_ms": 88.502,
      "is_reference": false,
      "error": null
     }
@@ -521,7 +551,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 29,
+     "id": 39774,
      "name": "list_all_scenarios",
      "qual": "list_all_scenarios",
      "file": "api/v1/routes/scenario_analysis.py",
@@ -530,34 +560,34 @@
       "page": "1",
       "page_size": "20"
      },
-     "ret": "ScenarioListResponse(items=[ScenarioResponse(scenario_name='Rising Interest Rates - 20260303', description='Higher discount and exit cap rates scenario', base_property_id=UUID('00000000-0000-0000-0000-000000000002'), modifications=[{'type'\u2026",
-     "dur_ms": 363.039,
+     "ret": "ScenarioListResponse(items=[ScenarioResponse(scenario_name='TEST_scenario_name', description=None, base_property_id=None, modifications=[], base_value=Decimal('0'), adjusted_value=Decimal('0'), value_change_pct=Decimal('0'), id=UUID('0daac\u2026",
+     "dur_ms": 326.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 30,
+       "id": 39775,
        "name": "list_scenarios",
        "qual": "list_scenarios",
        "file": "services/scenario_analysis_engine.py",
        "line": 191,
        "args": {},
-       "ret": "[{'id': '0bd4dce8-2c23-4509-807a-0869600abc57', 'scenario_name': 'Rising Interest Rates - 20260303', 'description': 'Higher discount and exit cap rates scenario', 'base_property_id': '00000000-0000-0000-0000-000000000002', 'modifications':\u2026",
-       "dur_ms": 362.033,
+       "ret": "[{'id': '0daac82d-714b-4cb6-8df7-1b6dd145b5d7', 'scenario_name': 'TEST_scenario_name', 'description': None, 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'value_change_pct': Deci\u2026",
+       "dur_ms": 325.31,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 31,
+         "id": 39776,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scenario_analysis_engine.py",
          "line": 103,
          "args": {},
          "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -574,7 +604,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.291,
+   "dur_ms": 1.448,
    "node_count": 2,
    "provenance": [
     "mock-sample"
@@ -592,26 +622,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 32,
+     "id": 39777,
      "name": "get_available_properties",
      "qual": "get_available_properties",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 141,
      "args": {},
      "ret": "{'properties': [{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'current_value': 435000000.0, 'noi': 23940000.0, 'cap_rate': 0.055}, {'id': '00000000-0000-0000-0000-000000000002', \u2026",
-     "dur_ms": 0.13,
+     "dur_ms": 0.081,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 33,
+       "id": 39778,
        "name": "get_sample_properties",
        "qual": "get_sample_properties",
        "file": "services/scenario_analysis_engine.py",
        "line": 39,
        "args": {},
        "ret": "{'00000000-0000-0000-0000-000000000001': {'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'm\u2026",
-       "dur_ms": 0.034,
+       "dur_ms": 0.02,
        "sql": [],
        "error": null,
        "children": []
@@ -626,7 +656,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.189,
+   "dur_ms": 1.375,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -645,26 +675,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 34,
+     "id": 39779,
      "name": "get_templates",
      "qual": "get_templates",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 233,
      "args": {},
      "ret": "TemplateListResponse(templates=[ScenarioTemplate(name='Optimistic Growth', description='Strong rent growth, declining vacancy, cap rate compression', modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, p\u2026",
-     "dur_ms": 1.182,
+     "dur_ms": 0.231,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 35,
+       "id": 39780,
        "name": "get_scenario_templates",
        "qual": "get_scenario_templates",
        "file": "services/scenario_analysis_engine.py",
        "line": 892,
        "args": {},
        "ret": "[ScenarioTemplate(name='Optimistic Growth', description='Strong rent growth, declining vacancy, cap rate compression', modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, parameter='rent_growth_rate', ne\u2026",
-       "dur_ms": 0.87,
+       "dur_ms": 0.092,
        "sql": [],
        "error": null,
        "children": []
@@ -679,7 +709,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 627.224,
+   "dur_ms": 281.146,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -695,13 +725,13 @@
       "scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 89.45,
+     "dur_ms": 59.385,
      "is_reference": false,
      "error": null
     }
    ],
    "inputs": {
-    "scenario_id": "0bd4dce8-2c23-4509-807a-0869600abc57 (real id)"
+    "scenario_id": "0daac82d-714b-4cb6-8df7-1b6dd145b5d7 (real id)"
    },
    "output_summary": {
     "type": "object",
@@ -722,37 +752,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 39781,
      "name": "get_scenario_by_id",
      "qual": "get_scenario_by_id",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 160,
      "args": {
-      "scenario_id": "'0bd4dce8-2c23-4509-807a-0869600abc57'"
+      "scenario_id": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'"
      },
-     "ret": "ScenarioResponse(scenario_name='Rising Interest Rates - 20260303', description='Higher discount and exit cap rates scenario', base_property_id=UUID('00000000-0000-0000-0000-000000000002'), modifications=[{'type': 'discount_rate', 'paramete\u2026",
-     "dur_ms": 624.541,
+     "ret": "ScenarioResponse(scenario_name='TEST_scenario_name', description=None, base_property_id=None, modifications=[], base_value=Decimal('0'), adjusted_value=Decimal('0'), value_change_pct=Decimal('0'), id=UUID('0daac82d-714b-4cb6-8df7-1b6dd145b\u2026",
+     "dur_ms": 279.755,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 37,
+       "id": 39782,
        "name": "get_scenario",
        "qual": "get_scenario",
        "file": "services/scenario_analysis_engine.py",
        "line": 158,
        "args": {
-        "scenario_id": "'0bd4dce8-2c23-4509-807a-0869600abc57'"
+        "scenario_id": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'"
        },
-       "ret": "{'id': '0bd4dce8-2c23-4509-807a-0869600abc57', 'scenario_name': 'Rising Interest Rates - 20260303', 'description': 'Higher discount and exit cap rates scenario', 'base_property_id': '00000000-0000-0000-0000-000000000002', 'modifications': \u2026",
-       "dur_ms": 624.351,
+       "ret": "{'id': '0daac82d-714b-4cb6-8df7-1b6dd145b5d7', 'scenario_name': 'TEST_scenario_name', 'description': None, 'base_property_id': None, 'modifications': [], 'base_value': Decimal('0'), 'adjusted_value': Decimal('0'), 'value_change_pct': Decim\u2026",
+       "dur_ms": 279.613,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 38,
+         "id": 39783,
          "name": "_get_db_engine",
          "qual": "_get_db_engine",
          "file": "services/scenario_analysis_engine.py",
@@ -776,7 +806,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "ValidationError: 1 validation error for ScenarioBuildRequest\nmodifications\n  List should have at least 1 item after validation, not 0 [type=too_short, input_value=[], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/too_short",
-   "dur_ms": 7.611,
+   "dur_ms": 2.024,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -790,17 +820,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 39,
+     "id": 39784,
      "name": "batch_create_scenarios",
      "qual": "batch_create_scenarios",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 196,
      "args": {
       "request": "BatchScenarioRequest(base_property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), scenario_templates=[{}])",
-      "_user": "Depends(dependency=<function get_current_user at 0x0000014FE07184A0>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "None",
-     "dur_ms": 0.063,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": []
@@ -813,7 +843,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 330.775,
+   "dur_ms": 311.784,
    "node_count": 49,
    "provenance": [
     "real-db"
@@ -831,7 +861,7 @@
       "set"
      ],
      "rowcount": 1,
-     "dur_ms": 62.602,
+     "dur_ms": 70.96,
      "is_reference": false,
      "error": null
     }
@@ -856,22 +886,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 40,
+     "id": 39785,
      "name": "build_scenario",
      "qual": "build_scenario",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 87,
      "args": {
       "request": "ScenarioBuildRequest(base_property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), scenario_name='TEST_request_scenario_name', description=None, modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, param\u2026",
-      "_user": "Depends(dependency=<function get_current_user at 0x0000014FE07184A0>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
-     "ret": "ScenarioBuildResult(scenario_id=UUID('2f949549-f386-4c2a-b95b-45586985e8dd'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
-     "dur_ms": 325.107,
+     "ret": "ScenarioBuildResult(scenario_id=UUID('7a4edd8e-ea5f-4cb5-94c3-bc8b5743e2e7'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
+     "dur_ms": 309.88,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 41,
+       "id": 39786,
        "name": "build_scenario",
        "qual": "InteractiveScenarioEngine.build_scenario",
        "file": "services/scenario_analysis_engine.py",
@@ -879,13 +909,13 @@
        "args": {
         "request": "ScenarioBuildRequest(base_property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), scenario_name='TEST_request_scenario_name', description=None, modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, param\u2026"
        },
-       "ret": "ScenarioBuildResult(scenario_id=UUID('2f949549-f386-4c2a-b95b-45586985e8dd'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
-       "dur_ms": 324.987,
+       "ret": "ScenarioBuildResult(scenario_id=UUID('7a4edd8e-ea5f-4cb5-94c3-bc8b5743e2e7'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
+       "dur_ms": 309.82,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 42,
+         "id": 39787,
          "name": "build_scenario",
          "qual": "ScenarioBuilderEngine.build_scenario",
          "file": "services/scenario_analysis_engine.py",
@@ -893,13 +923,13 @@
          "args": {
           "request": "ScenarioBuildRequest(base_property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), scenario_name='TEST_request_scenario_name', description=None, modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, param\u2026"
          },
-         "ret": "ScenarioBuildResult(scenario_id=UUID('2f949549-f386-4c2a-b95b-45586985e8dd'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
-         "dur_ms": 324.851,
+         "ret": "ScenarioBuildResult(scenario_id=UUID('7a4edd8e-ea5f-4cb5-94c3-bc8b5743e2e7'), scenario_name='TEST_request_scenario_name', base_value=Decimal('425026301.23'), adjusted_value=Decimal('128503577976.47'), value_change=Decimal('128078551675.24'\u2026",
+         "dur_ms": 309.689,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 43,
+           "id": 39788,
            "name": "get_property",
            "qual": "ScenarioBuilderEngine.get_property",
            "file": "services/scenario_analysis_engine.py",
@@ -908,13 +938,13 @@
             "property_id": "'550e8400-e29b-41d4-a716-446655440000'"
            },
            "ret": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026",
-           "dur_ms": 0.299,
+           "dur_ms": 0.118,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 44,
+           "id": 39789,
            "name": "calculate_property_value",
            "qual": "ScenarioBuilderEngine.calculate_property_value",
            "file": "services/scenario_analysis_engine.py",
@@ -923,12 +953,12 @@
             "property_data": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026"
            },
            "ret": "{'direct_cap_value': Decimal('435272727.27'), 'dcf_value': Decimal('418195350.53'), 'final_value': Decimal('425026301.23'), 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'irr': Decimal('0.0905'), 'expense_ratio': Decimal('0.35'\u2026",
-           "dur_ms": 0.694,
+           "dur_ms": 0.263,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 45,
+             "id": 39790,
              "name": "calculate_value_direct_cap",
              "qual": "calculate_value_direct_cap",
              "file": "services/scenario_analysis_engine.py",
@@ -938,13 +968,13 @@
               "cap_rate": "Decimal('0.055')"
              },
              "ret": "Decimal('435272727.27')",
-             "dur_ms": 0.048,
+             "dur_ms": 0.006,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 46,
+             "id": 39791,
              "name": "calculate_dcf_value",
              "qual": "calculate_dcf_value",
              "file": "services/scenario_analysis_engine.py",
@@ -957,171 +987,171 @@
               "holding_years": "10"
              },
              "ret": "(Decimal('418195350.53'), Decimal('0.0905'))",
-             "dur_ms": 0.484,
+             "dur_ms": 0.196,
              "sql": [],
              "error": null,
              "children": [
               {
-               "id": 47,
+               "id": 39792,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "22720833.33333333",
-               "dur_ms": 0.009,
+               "dur_ms": 0.003,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 48,
+               "id": 39793,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "21563753.858024683",
-               "dur_ms": 0.006,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 49,
+               "id": 39794,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "20465599.726366013",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 50,
+               "id": 39795,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "19423370.110671446",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 51,
+               "id": 39796,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "18434217.003183544",
-               "dur_ms": 0.005,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 52,
+               "id": 39797,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "17495437.43357697",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 53,
+               "id": 39798,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "16604466.082792956",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 54,
+               "id": 39799,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "15758868.27302109",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 55,
+               "id": 39800,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "14956333.314672794",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 56,
+               "id": 39801,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "250772471.39493808",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 57,
+               "id": 39802,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C0D10>"
+                ".0": "<enumerate object at 0x0000013D4A1239C0>"
                },
                "ret": "None",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
@@ -1131,7 +1161,7 @@
            ]
           },
           {
-           "id": 58,
+           "id": 39803,
            "name": "apply_modification",
            "qual": "ScenarioBuilderEngine.apply_modification",
            "file": "services/scenario_analysis_engine.py",
@@ -1141,13 +1171,13 @@
             "mod": "ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, parameter='TEST_request_modifications_parameter', new_value=1.0, description=None)"
            },
            "ret": "({'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy\u2026",
-           "dur_ms": 0.016,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 59,
+           "id": 39804,
            "name": "calculate_property_value",
            "qual": "ScenarioBuilderEngine.calculate_property_value",
            "file": "services/scenario_analysis_engine.py",
@@ -1156,12 +1186,12 @@
             "property_data": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026"
            },
            "ret": "{'direct_cap_value': Decimal('435272727.27'), 'dcf_value': Decimal('213882448142.60'), 'final_value': Decimal('128503577976.47'), 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'irr': Decimal('0.5780'), 'expense_ratio': Decimal(\u2026",
-           "dur_ms": 0.589,
+           "dur_ms": 0.232,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 60,
+             "id": 39805,
              "name": "calculate_value_direct_cap",
              "qual": "calculate_value_direct_cap",
              "file": "services/scenario_analysis_engine.py",
@@ -1171,13 +1201,13 @@
               "cap_rate": "Decimal('0.055')"
              },
              "ret": "Decimal('435272727.27')",
-             "dur_ms": 0.016,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 61,
+             "id": 39806,
              "name": "calculate_dcf_value",
              "qual": "calculate_dcf_value",
              "file": "services/scenario_analysis_engine.py",
@@ -1190,171 +1220,171 @@
               "holding_years": "10"
              },
              "ret": "(Decimal('213882448142.60'), Decimal('0.5780'))",
-             "dur_ms": 0.459,
+             "dur_ms": 0.179,
              "sql": [],
              "error": null,
              "children": [
               {
-               "id": 62,
+               "id": 39807,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "44333333.33333333",
-               "dur_ms": 0.006,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 63,
+               "id": 39808,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "82098765.43209876",
-               "dur_ms": 0.005,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 64,
+               "id": 39809,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "152034750.80018288",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 65,
+               "id": 39810,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "281545834.8151535",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 66,
+               "id": 39811,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "521381175.58361745",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 67,
+               "id": 39812,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "965520695.5252175",
-               "dur_ms": 0.005,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 68,
+               "id": 39813,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "1788001288.0096617",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 69,
+               "id": 39814,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "3311113496.3141885",
-               "dur_ms": 0.005,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 70,
+               "id": 39815,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "6131691659.841089",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 71,
+               "id": 39816,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "200604727142.9492",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 72,
+               "id": 39817,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1990>"
+                ".0": "<enumerate object at 0x0000013D4A120180>"
                },
                "ret": "None",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
@@ -1364,7 +1394,7 @@
            ]
           },
           {
-           "id": 73,
+           "id": 39818,
            "name": "calculate_property_value",
            "qual": "ScenarioBuilderEngine.calculate_property_value",
            "file": "services/scenario_analysis_engine.py",
@@ -1373,12 +1403,12 @@
             "property_data": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026"
            },
            "ret": "{'direct_cap_value': Decimal('435272727.27'), 'dcf_value': Decimal('213882448142.60'), 'final_value': Decimal('128503577976.47'), 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'irr': Decimal('0.5780'), 'expense_ratio': Decimal(\u2026",
-           "dur_ms": 0.525,
+           "dur_ms": 0.221,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 74,
+             "id": 39819,
              "name": "calculate_value_direct_cap",
              "qual": "calculate_value_direct_cap",
              "file": "services/scenario_analysis_engine.py",
@@ -1388,13 +1418,13 @@
               "cap_rate": "Decimal('0.055')"
              },
              "ret": "Decimal('435272727.27')",
-             "dur_ms": 0.008,
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 75,
+             "id": 39820,
              "name": "calculate_dcf_value",
              "qual": "calculate_dcf_value",
              "file": "services/scenario_analysis_engine.py",
@@ -1407,171 +1437,171 @@
               "holding_years": "10"
              },
              "ret": "(Decimal('213882448142.60'), Decimal('0.5780'))",
-             "dur_ms": 0.396,
+             "dur_ms": 0.171,
              "sql": [],
              "error": null,
              "children": [
               {
-               "id": 76,
+               "id": 39821,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "44333333.33333333",
-               "dur_ms": 0.005,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 77,
+               "id": 39822,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "82098765.43209876",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 78,
+               "id": 39823,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "152034750.80018288",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 79,
+               "id": 39824,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "281545834.8151535",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 80,
+               "id": 39825,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "521381175.58361745",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 81,
+               "id": 39826,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "965520695.5252175",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 82,
+               "id": 39827,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "1788001288.0096617",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 83,
+               "id": 39828,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "3311113496.3141885",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 84,
+               "id": 39829,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "6131691659.841089",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 85,
+               "id": 39830,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "200604727142.9492",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 86,
+               "id": 39831,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C1DA0>"
+                ".0": "<enumerate object at 0x0000013D49E958F0>"
                },
                "ret": "None",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
@@ -1581,31 +1611,31 @@
            ]
           },
           {
-           "id": 87,
+           "id": 39832,
            "name": "save_scenario",
            "qual": "save_scenario",
            "file": "services/scenario_analysis_engine.py",
            "line": 119,
            "args": {
-            "scenario_id": "'2f949549-f386-4c2a-b95b-45586985e8dd'",
-            "scenario_data": "{'id': '2f949549-f386-4c2a-b95b-45586985e8dd', 'scenario_name': 'TEST_request_scenario_name', 'description': None, 'base_property_id': '550e8400-e29b-41d4-a716-446655440000', 'modifications': [{'type': <ModificationType.RENT_GROWTH: 'rent_\u2026"
+            "scenario_id": "'7a4edd8e-ea5f-4cb5-94c3-bc8b5743e2e7'",
+            "scenario_data": "{'id': '7a4edd8e-ea5f-4cb5-94c3-bc8b5743e2e7', 'scenario_name': 'TEST_request_scenario_name', 'description': None, 'base_property_id': '550e8400-e29b-41d4-a716-446655440000', 'modifications': [{'type': <ModificationType.RENT_GROWTH: 'rent_\u2026"
            },
            "ret": "None",
-           "dur_ms": 321.434,
+           "dur_ms": 308.327,
            "sql": [
             0
            ],
            "error": null,
            "children": [
             {
-             "id": 88,
+             "id": 39833,
              "name": "_get_db_engine",
              "qual": "_get_db_engine",
              "file": "services/scenario_analysis_engine.py",
              "line": 103,
              "args": {},
              "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
-             "dur_ms": 0.003,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
@@ -1626,7 +1656,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1372.06,
+   "dur_ms": 452.223,
    "node_count": 20,
    "provenance": [
     "db-empty"
@@ -1642,7 +1672,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 193.298,
+     "dur_ms": 63.087,
      "is_reference": false,
      "error": null
     }
@@ -1664,22 +1694,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 89,
+     "id": 39834,
      "name": "compare_scenarios",
      "qual": "compare_scenarios",
      "file": "api/v1/routes/scenario_analysis.py",
      "line": 180,
      "args": {
       "request": "ScenarioComparisonRequest(base_property_id=UUID('550e8400-e29b-41d4-a716-446655440000'), scenario_ids=[UUID('550e8400-e29b-41d4-a716-446655440000')], metrics=['value', 'noi', 'cap_rate', 'irr'])",
-      "_user": "Depends(dependency=<function get_current_user at 0x0000014FE07184A0>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "ScenarioComparisonResult(comparison_table=[ScenarioComparisonRow(scenario_id=UUID('00000000-0000-0000-0000-000000000000'), scenario_name='Base Case', value=Decimal('425026301.23'), value_change_pct=Decimal('0'), noi=Decimal('23940000'), ca\u2026",
-     "dur_ms": 1367.693,
+     "dur_ms": 450.469,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 90,
+       "id": 39835,
        "name": "compare_scenarios",
        "qual": "InteractiveScenarioEngine.compare_scenarios",
        "file": "services/scenario_analysis_engine.py",
@@ -1690,12 +1720,12 @@
         "metrics": "['value', 'noi', 'cap_rate', 'irr']"
        },
        "ret": "ScenarioComparisonResult(comparison_table=[ScenarioComparisonRow(scenario_id=UUID('00000000-0000-0000-0000-000000000000'), scenario_name='Base Case', value=Decimal('425026301.23'), value_change_pct=Decimal('0'), noi=Decimal('23940000'), ca\u2026",
-       "dur_ms": 1367.593,
+       "dur_ms": 450.415,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 91,
+         "id": 39836,
          "name": "compare_scenarios",
          "qual": "ScenarioBuilderEngine.compare_scenarios",
          "file": "services/scenario_analysis_engine.py",
@@ -1706,12 +1736,12 @@
           "metrics": "['value', 'noi', 'cap_rate', 'irr']"
          },
          "ret": "ScenarioComparisonResult(comparison_table=[ScenarioComparisonRow(scenario_id=UUID('00000000-0000-0000-0000-000000000000'), scenario_name='Base Case', value=Decimal('425026301.23'), value_change_pct=Decimal('0'), noi=Decimal('23940000'), ca\u2026",
-         "dur_ms": 1367.447,
+         "dur_ms": 450.327,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 92,
+           "id": 39837,
            "name": "get_property",
            "qual": "ScenarioBuilderEngine.get_property",
            "file": "services/scenario_analysis_engine.py",
@@ -1720,13 +1750,13 @@
             "property_id": "'550e8400-e29b-41d4-a716-446655440000'"
            },
            "ret": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026",
-           "dur_ms": 0.273,
+           "dur_ms": 0.135,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 93,
+           "id": 39838,
            "name": "calculate_property_value",
            "qual": "ScenarioBuilderEngine.calculate_property_value",
            "file": "services/scenario_analysis_engine.py",
@@ -1735,12 +1765,12 @@
             "property_data": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Downtown Office Tower', 'property_type': 'office', 'gross_floor_area_sf': 450000, 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'market_rent_psf': Decimal('65'), 'vacancy_\u2026"
            },
            "ret": "{'direct_cap_value': Decimal('435272727.27'), 'dcf_value': Decimal('418195350.53'), 'final_value': Decimal('425026301.23'), 'noi': Decimal('23940000'), 'cap_rate': Decimal('0.055'), 'irr': Decimal('0.0905'), 'expense_ratio': Decimal('0.35'\u2026",
-           "dur_ms": 0.847,
+           "dur_ms": 0.27,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 94,
+             "id": 39839,
              "name": "calculate_value_direct_cap",
              "qual": "calculate_value_direct_cap",
              "file": "services/scenario_analysis_engine.py",
@@ -1750,13 +1780,13 @@
               "cap_rate": "Decimal('0.055')"
              },
              "ret": "Decimal('435272727.27')",
-             "dur_ms": 0.012,
+             "dur_ms": 0.006,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 95,
+             "id": 39840,
              "name": "calculate_dcf_value",
              "qual": "calculate_dcf_value",
              "file": "services/scenario_analysis_engine.py",
@@ -1769,171 +1799,171 @@
               "holding_years": "10"
              },
              "ret": "(Decimal('418195350.53'), Decimal('0.0905'))",
-             "dur_ms": 0.703,
+             "dur_ms": 0.202,
              "sql": [],
              "error": null,
              "children": [
               {
-               "id": 96,
+               "id": 39841,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "22720833.33333333",
-               "dur_ms": 0.007,
+               "dur_ms": 0.003,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 97,
+               "id": 39842,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "21563753.858024683",
-               "dur_ms": 0.004,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 98,
+               "id": 39843,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "20465599.726366013",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 99,
+               "id": 39844,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "19423370.110671446",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 100,
+               "id": 39845,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "18434217.003183544",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 101,
+               "id": 39846,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "17495437.43357697",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 102,
+               "id": 39847,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "16604466.082792956",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 103,
+               "id": 39848,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "15758868.27302109",
-               "dur_ms": 0.026,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 104,
+               "id": 39849,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "14956333.314672794",
-               "dur_ms": 0.005,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 105,
+               "id": 39850,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "250772471.39493808",
-               "dur_ms": 0.004,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 106,
+               "id": 39851,
                "name": "<genexpr>",
                "qual": "calculate_dcf_value.<locals>.<genexpr>",
                "file": "services/scenario_analysis_engine.py",
                "line": 291,
                "args": {
-                ".0": "<enumerate object at 0x0000014FE08C2D40>"
+                ".0": "<enumerate object at 0x0000013D49E96D40>"
                },
                "ret": "None",
-               "dur_ms": 0.003,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
@@ -1943,7 +1973,7 @@
            ]
           },
           {
-           "id": 107,
+           "id": 39852,
            "name": "get_scenario",
            "qual": "get_scenario",
            "file": "services/scenario_analysis_engine.py",
@@ -1952,21 +1982,21 @@
             "scenario_id": "'550e8400-e29b-41d4-a716-446655440000'"
            },
            "ret": "None",
-           "dur_ms": 1366.006,
+           "dur_ms": 449.674,
            "sql": [
             0
            ],
            "error": null,
            "children": [
             {
-             "id": 108,
+             "id": 39853,
              "name": "_get_db_engine",
              "qual": "_get_db_engine",
              "file": "services/scenario_analysis_engine.py",
              "line": 103,
              "args": {},
              "ret": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)",
-             "dur_ms": 0.003,
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
@@ -1987,7 +2017,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Template 'TEST_template_name' not found",
-   "dur_ms": 3.356,
+   "dur_ms": 1.688,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -2002,7 +2032,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 109,
+     "id": 39854,
      "name": "apply_template",
      "qual": "apply_template",
      "file": "api/v1/routes/scenario_analysis.py",
@@ -2012,31 +2042,31 @@
       "template_name": "'TEST_template_name'"
      },
      "ret": "None",
-     "dur_ms": 0.3,
+     "dur_ms": 0.254,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 110,
+       "id": 39855,
        "name": "get_scenario_templates",
        "qual": "get_scenario_templates",
        "file": "services/scenario_analysis_engine.py",
        "line": 892,
        "args": {},
        "ret": "[ScenarioTemplate(name='Optimistic Growth', description='Strong rent growth, declining vacancy, cap rate compression', modifications=[ScenarioModification(type=<ModificationType.RENT_GROWTH: 'rent_growth'>, parameter='rent_growth_rate', ne\u2026",
-       "dur_ms": 0.089,
+       "dur_ms": 0.078,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 111,
+       "id": 39856,
        "name": "<genexpr>",
        "qual": "apply_template.<locals>.<genexpr>",
        "file": "api/v1/routes/scenario_analysis.py",
        "line": 258,
        "args": {
-        ".0": "<list_iterator object at 0x0000014FE0899CC0>"
+        ".0": "<list_iterator object at 0x0000013D49E58280>"
        },
        "ret": "None",
        "dur_ms": 0.004,

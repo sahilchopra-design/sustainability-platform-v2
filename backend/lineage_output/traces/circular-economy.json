@@ -1,10 +1,10 @@
 {
  "domain": "circular-economy",
  "meta": {
-  "ts": "2026-06-30T13:59:44",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 10,
   "module": "api.v1.routes.circular_economy",
-  "router_prefix": "/api/v1/circular-economy",
-  "endpoints": 10
+  "router_prefix": "/api/v1/circular-economy"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.353,
+   "dur_ms": 0.199,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -37,14 +37,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2070,
      "name": "ref_crm_list",
      "qual": "ref_crm_list",
      "file": "api/v1/routes/circular_economy.py",
      "line": 216,
      "args": {},
      "ret": "{'total_crm_count': 34, 'critical_raw_materials': ['antimony', 'baryte', 'beryllium', 'bismuth', 'boron', 'cobalt', 'coking_coal', 'copper', 'feldspar', 'fluorspar', 'gallium', 'germanium', 'hafnium', 'heavy_rare_earth', 'helium', 'indium'\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -57,7 +57,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.22,
+   "dur_ms": 0.141,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -80,14 +80,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2071,
      "name": "ref_epr_rates",
      "qual": "ref_epr_rates",
      "file": "api/v1/routes/circular_economy.py",
      "line": 230,
      "args": {},
      "ret": "{'rates': [{'country': 'EU', 'category': 'packaging', 'rate_eur_t': 100.0}, {'country': 'DE', 'category': 'packaging', 'rate_eur_t': 130.0}, {'country': 'FR', 'category': 'packaging', 'rate_eur_t': 120.0}, {'country': 'GB', 'category': 'pa\u2026",
-     "dur_ms": 0.022,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []

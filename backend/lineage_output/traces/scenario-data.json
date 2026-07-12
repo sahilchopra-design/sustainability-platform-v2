@@ -1,10 +1,10 @@
 {
  "domain": "scenario-data",
  "meta": {
-  "ts": "2026-06-30T14:04:56",
+  "ts": "2026-07-05T19:16:54",
+  "endpoints": 10,
   "module": "api.v1.routes.scenario_data",
-  "router_prefix": "/api/v1/scenario-data",
-  "endpoints": 10
+  "router_prefix": "/api/v1/scenario-data"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 885.35,
+   "dur_ms": 300.997,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 74.505,
+     "dur_ms": 57.984,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 34.651,
+     "dur_ms": 28.169,
      "is_reference": false,
      "error": null
     }
@@ -70,7 +70,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39870,
      "name": "search_ngfs",
      "qual": "search_ngfs",
      "file": "api/v1/routes/scenario_data.py",
@@ -85,11 +85,11 @@
       "year_max": "None",
       "limit": "100",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADBCB2CF0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADBCCA160>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BEC830>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 0, 'offset': 0, 'limit': 100, 'records': []}",
-     "dur_ms": 842.901,
+     "dur_ms": 272.328,
      "sql": [
       0,
       1
@@ -105,7 +105,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 648.733,
+   "dur_ms": 586.472,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -121,7 +121,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 102.046,
+     "dur_ms": 67.878,
      "is_reference": false,
      "error": null
     }
@@ -144,7 +144,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 39871,
      "name": "ngfs_compare",
      "qual": "ngfs_compare",
      "file": "api/v1/routes/scenario_data.py",
@@ -153,11 +153,11 @@
       "variable": "'TEST_variable'",
       "region": "'World'",
       "model": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD732960>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD658720>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497DBB90>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'variable': 'TEST_variable', 'region': 'World', 'scenarios': []}",
-     "dur_ms": 610.692,
+     "dur_ms": 558.007,
      "sql": [
       0
      ],
@@ -172,7 +172,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 316.988,
+   "dur_ms": 289.644,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -188,7 +188,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 61.345,
+     "dur_ms": 60.821,
      "is_reference": false,
      "error": null
     }
@@ -206,17 +206,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39872,
      "name": "ngfs_models",
      "qual": "ngfs_models",
      "file": "api/v1/routes/scenario_data.py",
      "line": 127,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7329F0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD6584A0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497D89B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'models': []}",
-     "dur_ms": 285.86,
+     "dur_ms": 258.711,
      "sql": [
       0
      ],
@@ -231,7 +231,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 820.404,
+   "dur_ms": 267.257,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -247,7 +247,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 451.748,
+     "dur_ms": 56.169,
      "is_reference": false,
      "error": null
     }
@@ -265,17 +265,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 39873,
      "name": "ngfs_scenarios",
      "qual": "ngfs_scenarios",
      "file": "api/v1/routes/scenario_data.py",
      "line": 80,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7724E0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD533420>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497D92E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'scenarios': []}",
-     "dur_ms": 771.539,
+     "dur_ms": 239.599,
      "sql": [
       0
      ],
@@ -290,7 +290,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 838.673,
+   "dur_ms": 289.346,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -306,7 +306,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 55.025,
+     "dur_ms": 62.146,
      "is_reference": false,
      "error": null
     }
@@ -324,17 +324,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39874,
      "name": "ngfs_variables",
      "qual": "ngfs_variables",
      "file": "api/v1/routes/scenario_data.py",
      "line": 109,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD772E40>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD658040>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497DA180>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'variables': []}",
-     "dur_ms": 810.408,
+     "dur_ms": 259.316,
      "sql": [
       0
      ],
@@ -349,7 +349,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 476.556,
+   "dur_ms": 664.97,
    "node_count": 51,
    "provenance": [
     "real-db"
@@ -365,7 +365,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 104.43,
+     "dur_ms": 246.072,
      "is_reference": false,
      "error": null
     },
@@ -376,7 +376,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 50,
-     "dur_ms": 110.079,
+     "dur_ms": 99.845,
      "is_reference": false,
      "error": null
     }
@@ -405,7 +405,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 39875,
      "name": "search_sbti",
      "qual": "search_sbti",
      "file": "api/v1/routes/scenario_data.py",
@@ -419,11 +419,11 @@
       "net_zero": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7730B0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD658AE0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497D9F10>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 14034, 'offset': 0, 'limit': 50, 'records': [{'id': '37402f7dc8c30d2e3731c2ff', 'company_name': '\"Hytex Plastic\" CJSC', 'isin': None, 'lei': None, 'country': 'Armenia', 'region': 'Europe', 'sector': 'Containers and Packaging', 'i\u2026",
-     "dur_ms": 446.402,
+     "dur_ms": 635.071,
      "sql": [
       0,
       1
@@ -431,298 +431,298 @@
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 39876,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5A930>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C37A0>"
        },
        "ret": "{'id': '37402f7dc8c30d2e3731c2ff', 'company_name': '\"Hytex Plastic\" CJSC', 'isin': None, 'lei': None, 'country': 'Armenia', 'region': 'Europe', 'sector': 'Containers and Packaging', 'industry': None, 'company_type': 'SME', 'target_status':\u2026",
-       "dur_ms": 0.071,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 8,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5A960>"
-       },
-       "ret": "{'id': 'a1059262049243d3867a30c7', 'company_name': '\"Kazakh pharmaceutical company  \"MEDSERVICE PLUS\" LLP', 'isin': None, 'lei': None, 'country': 'Kazakhstan', 'region': 'Asia', 'sector': 'Healthcare Providers and Services, and Healthcare \u2026",
-       "dur_ms": 0.048,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 9,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5A990>"
-       },
-       "ret": "{'id': 'cdc9d9cc6daff9357b88810a', 'company_name': '(ACIP) Alexandria Company for Industrial Packages', 'isin': None, 'lei': None, 'country': 'Egypt', 'region': 'Africa', 'sector': 'Containers and Packaging', 'industry': None, 'company_typ\u2026",
-       "dur_ms": 0.039,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 10,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5A9C0>"
-       },
-       "ret": "{'id': '7272a2fc0525750eb47902ca', 'company_name': '& Co.', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Media', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', 'near_term_target_\u2026",
-       "dur_ms": 0.051,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 11,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5A9F0>"
-       },
-       "ret": "{'id': 'efc3fe1090cf98879a39eaae', 'company_name': '&Tradition', 'isin': None, 'lei': '894500RY226L5NMCTT65', 'country': 'Denmark', 'region': 'Europe', 'sector': 'Consumer Durables, Household and Personal Products', 'industry': None, 'comp\u2026",
-       "dur_ms": 0.039,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 12,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AA20>"
-       },
-       "ret": "{'id': '8fc4655191f65d73f716ab37', 'company_name': '10 to 2 Consulting, LLC', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Professional Services', 'industry': None, 'company_typ\u2026",
-       "dur_ms": 0.035,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 13,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AA50>"
-       },
-       "ret": "{'id': 'bfc7dc1cb2c879f17e9c31c5', 'company_name': '100 Percent Group Limited', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies\u2026",
-       "dur_ms": 0.036,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 14,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AA80>"
-       },
-       "ret": "{'id': '03d5189f05358106e5396809', 'company_name': '10x Genomics', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Pharmaceuticals, Biotechnology and Life Sciences', 'industry': No\u2026",
-       "dur_ms": 0.04,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 15,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AAB0>"
-       },
-       "ret": "{'id': '91848b9a658548c4bb897e4e', 'company_name': '2 Sisters Food Group', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Food and Beverage Processing', 'industry': None, 'company_type': 'Corporate',\u2026",
-       "dur_ms": 0.037,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 16,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AAE0>"
-       },
-       "ret": "{'id': 'd6e294c0e8eeb8c0e2e6c281', 'company_name': '2-Connect', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Consumer Durables, Household and Personal Products', 'industry': None, 'company_type': 'SME', '\u2026",
-       "dur_ms": 0.036,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 17,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AB10>"
-       },
-       "ret": "{'id': 'e53c4a612978cabd2973df39', 'company_name': '20 Microns Limited', 'isin': None, 'lei': None, 'country': 'India', 'region': 'Asia', 'sector': 'Chemicals', 'industry': None, 'company_type': 'Corporate', 'target_status': 'Committed', '\u2026",
-       "dur_ms": 0.036,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 18,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AB40>"
-       },
-       "ret": "{'id': '8b046b9df692c8df28577f3a', 'company_name': '2050 Consulting', 'isin': None, 'lei': None, 'country': 'Sweden', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
-       "dur_ms": 0.033,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 19,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AB70>"
-       },
-       "ret": "{'id': 'ced31f8105f56ba38013b027', 'company_name': '20Cube Logistics Limited', 'isin': None, 'lei': None, 'country': 'Bangladesh', 'region': 'Asia', 'sector': 'Ground Transportation - Trucking Transportation', 'industry': None, 'company_ty\u2026",
-       "dur_ms": 0.03,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 20,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ABA0>"
-       },
-       "ret": "{'id': '3fefdda8be2bd6af035dee36', 'company_name': '24 Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'industry': None\u2026",
-       "dur_ms": 0.03,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 21,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ABD0>"
-       },
-       "ret": "{'id': '23e3de54cc7ca65589a2f153', 'company_name': '28B Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
        "dur_ms": 0.032,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 39877,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AC00>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3770>"
+       },
+       "ret": "{'id': 'a1059262049243d3867a30c7', 'company_name': '\"Kazakh pharmaceutical company  \"MEDSERVICE PLUS\" LLP', 'isin': None, 'lei': None, 'country': 'Kazakhstan', 'region': 'Asia', 'sector': 'Healthcare Providers and Services, and Healthcare \u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39878,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3740>"
+       },
+       "ret": "{'id': 'cdc9d9cc6daff9357b88810a', 'company_name': '(ACIP) Alexandria Company for Industrial Packages', 'isin': None, 'lei': None, 'country': 'Egypt', 'region': 'Africa', 'sector': 'Containers and Packaging', 'industry': None, 'company_typ\u2026",
+       "dur_ms": 0.017,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39879,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3710>"
+       },
+       "ret": "{'id': '7272a2fc0525750eb47902ca', 'company_name': '& Co.', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Media', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', 'near_term_target_\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39880,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C36E0>"
+       },
+       "ret": "{'id': 'efc3fe1090cf98879a39eaae', 'company_name': '&Tradition', 'isin': None, 'lei': '894500RY226L5NMCTT65', 'country': 'Denmark', 'region': 'Europe', 'sector': 'Consumer Durables, Household and Personal Products', 'industry': None, 'comp\u2026",
+       "dur_ms": 0.018,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39881,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C36B0>"
+       },
+       "ret": "{'id': '8fc4655191f65d73f716ab37', 'company_name': '10 to 2 Consulting, LLC', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Professional Services', 'industry': None, 'company_typ\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39882,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3680>"
+       },
+       "ret": "{'id': 'bfc7dc1cb2c879f17e9c31c5', 'company_name': '100 Percent Group Limited', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39883,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3650>"
+       },
+       "ret": "{'id': '03d5189f05358106e5396809', 'company_name': '10x Genomics', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Pharmaceuticals, Biotechnology and Life Sciences', 'industry': No\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39884,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3620>"
+       },
+       "ret": "{'id': '91848b9a658548c4bb897e4e', 'company_name': '2 Sisters Food Group', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Food and Beverage Processing', 'industry': None, 'company_type': 'Corporate',\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39885,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C35F0>"
+       },
+       "ret": "{'id': 'd6e294c0e8eeb8c0e2e6c281', 'company_name': '2-Connect', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Consumer Durables, Household and Personal Products', 'industry': None, 'company_type': 'SME', '\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39886,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C35C0>"
+       },
+       "ret": "{'id': 'e53c4a612978cabd2973df39', 'company_name': '20 Microns Limited', 'isin': None, 'lei': None, 'country': 'India', 'region': 'Asia', 'sector': 'Chemicals', 'industry': None, 'company_type': 'Corporate', 'target_status': 'Committed', '\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39887,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3A10>"
+       },
+       "ret": "{'id': '8b046b9df692c8df28577f3a', 'company_name': '2050 Consulting', 'isin': None, 'lei': None, 'country': 'Sweden', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39888,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C39E0>"
+       },
+       "ret": "{'id': 'ced31f8105f56ba38013b027', 'company_name': '20Cube Logistics Limited', 'isin': None, 'lei': None, 'country': 'Bangladesh', 'region': 'Asia', 'sector': 'Ground Transportation - Trucking Transportation', 'industry': None, 'company_ty\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39889,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C39B0>"
+       },
+       "ret": "{'id': '3fefdda8be2bd6af035dee36', 'company_name': '24 Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'industry': None\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39890,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3560>"
+       },
+       "ret": "{'id': '23e3de54cc7ca65589a2f153', 'company_name': '28B Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39891,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3F50>"
        },
        "ret": "{'id': '4cfeb8d16e28821756c7eb7e', 'company_name': '2degrees', 'isin': None, 'lei': None, 'country': 'New Zealand', 'region': 'Oceania', 'sector': 'Telecommunication Services', 'industry': None, 'company_type': 'Corporate', 'target_status'\u2026",
-       "dur_ms": 0.03,
+       "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 39892,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AC30>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3E60>"
        },
        "ret": "{'id': '206e64862127ddf615866f31', 'company_name': '2pmLab Inc.', 'isin': None, 'lei': None, 'country': 'Korea, Republic of', 'region': 'Asia', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status': 'T\u2026",
-       "dur_ms": 0.029,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 24,
+       "id": 39893,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AC60>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3E30>"
        },
        "ret": "{'id': 'f5384219fa78b72bd9b25dcd', 'company_name': '2Things bv', 'isin': None, 'lei': None, 'country': 'Netherlands', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'industry': Non\u2026",
-       "dur_ms": 0.031,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 25,
+       "id": 39894,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AC90>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3E00>"
        },
        "ret": "{'id': '6519c202786a28b69da64f07', 'company_name': '3 Step IT Group Oy', 'isin': None, 'lei': '7437003F3EH0LSGP6635', 'country': 'Finland', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supp\u2026",
-       "dur_ms": 0.03,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 26,
+       "id": 39895,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ACC0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3DD0>"
        },
        "ret": "{'id': '79d9ca36dad2883264343402', 'company_name': '360 DEGREE CLOUD TECHNOLOGIES PVT LTD', 'isin': None, 'lei': None, 'country': 'India', 'region': 'Asia', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'targe\u2026",
        "dur_ms": 0.015,
@@ -731,43 +731,43 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 39896,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ACF0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3DA0>"
        },
        "ret": "{'id': 'bb2597c351253efeb534868b', 'company_name': '365 Data Centers', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Telecommunication Services', 'industry': None, 'company_type'\u2026",
-       "dur_ms": 0.016,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 39897,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AD20>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3D70>"
        },
        "ret": "{'id': '9f0a62d0c64f4ae9bc4a1281', 'company_name': '37 Interactive Entertainment', 'isin': 'CNE1000010N2', 'lei': '300300BE4IFCPHCUMI94', 'country': 'China', 'region': 'Asia', 'sector': 'Software and Services', 'industry': None, 'company_t\u2026",
-       "dur_ms": 0.018,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 29,
+       "id": 39898,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AD50>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3D40>"
        },
        "ret": "{'id': 'fca28213800c297e2c7b280a', 'company_name': '3B-Fibreglass', 'isin': None, 'lei': '529900UNERQOV61CA912', 'country': 'Belgium', 'region': 'Europe', 'sector': 'Consumer Durables, Household and Personal Products', 'industry': None, 'c\u2026",
        "dur_ms": 0.016,
@@ -776,58 +776,58 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 39899,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AD80>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3D10>"
        },
        "ret": "{'id': 'ca32f7a382567109a1c32a2c', 'company_name': '3Degrees Group Inc', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Professional Services', 'industry': None, 'company_type': '\u2026",
-       "dur_ms": 0.015,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 31,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ADB0>"
-       },
-       "ret": "{'id': '8e38650fa29ca848fa9ba611', 'company_name': '3DEO', 'isin': None, 'lei': None, 'country': 'Ireland', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', 'ne\u2026",
-       "dur_ms": 0.03,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 32,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5ADE0>"
-       },
-       "ret": "{'id': 'd59b4ea3708aa46935803970', 'company_name': '3i Group plc', 'isin': 'GB00B1YW4409', 'lei': '35GDVHRBMFE7NWATNM84', 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Banks, Diverse Financials, Insurance', 'industry': None, \u2026",
        "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 33,
+       "id": 39900,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AE10>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3CE0>"
+       },
+       "ret": "{'id': '8e38650fa29ca848fa9ba611', 'company_name': '3DEO', 'isin': None, 'lei': None, 'country': 'Ireland', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', 'ne\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39901,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3CB0>"
+       },
+       "ret": "{'id': 'd59b4ea3708aa46935803970', 'company_name': '3i Group plc', 'isin': 'GB00B1YW4409', 'lei': '35GDVHRBMFE7NWATNM84', 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Banks, Diverse Financials, Insurance', 'industry': None, \u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39902,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3C80>"
        },
        "ret": "{'id': '0b575748eac901e30c051af9', 'company_name': '3KM TECHNOLOGY LIMITED', 'isin': None, 'lei': None, 'country': 'New Zealand', 'region': 'Oceania', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'i\u2026",
        "dur_ms": 0.016,
@@ -836,13 +836,13 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 39903,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AE40>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3C50>"
        },
        "ret": "{'id': '64818ffc1fb398329eec4408', 'company_name': '3M', 'isin': 'US88579Y1010', 'lei': 'LUZQVYP4VS22CLWDAR65', 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Chemicals', 'industry': None, 'company_type': '\u2026",
        "dur_ms": 0.015,
@@ -851,13 +851,13 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 39904,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AE70>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3C20>"
        },
        "ret": "{'id': '0d09402f38b523bf10a49aa7', 'company_name': '3P Innovation Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Construction and Engineering', 'industry': None, 'company_type': 'SME', 'target_\u2026",
        "dur_ms": 0.015,
@@ -866,28 +866,28 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 39905,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AEA0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3BF0>"
        },
        "ret": "{'id': '3d8a6127053d29f0a4e0e342', 'company_name': '3xper Innoventure Limited', 'isin': None, 'lei': None, 'country': 'India', 'region': 'Asia', 'sector': 'Pharmaceuticals, Biotechnology and Life Sciences', 'industry': None, 'company_type'\u2026",
-       "dur_ms": 0.016,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 37,
+       "id": 39906,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AED0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3BC0>"
        },
        "ret": "{'id': '160650aab2d95d94a7ba6ecf', 'company_name': '42 Technology', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'T\u2026",
        "dur_ms": 0.015,
@@ -896,286 +896,286 @@
        "children": []
       },
       {
-       "id": 38,
+       "id": 39907,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AF00>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3B90>"
        },
        "ret": "{'id': '78f172b5423058da08e5533e', 'company_name': '4flow Group', 'isin': None, 'lei': None, 'country': 'Germany', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corporate', 'target_status': 'Comm\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39908,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3B60>"
+       },
+       "ret": "{'id': 'ec67e640b3bbca1150ca2fe0', 'company_name': '4G Clinical', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corpora\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39909,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3B30>"
+       },
+       "ret": "{'id': '99d8d29617817b5ba030ccd9', 'company_name': '4MOD Technology', 'isin': None, 'lei': None, 'country': 'France', 'region': 'Europe', 'sector': 'Technology Hardware and Equipment', 'industry': None, 'company_type': 'SME', 'target_statu\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39910,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3B00>"
+       },
+       "ret": "{'id': 'a55749373f125aa21c231f73', 'company_name': '4most', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets s\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39911,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3AD0>"
+       },
+       "ret": "{'id': 'e976a4745987e99608ea627d', 'company_name': '5CA', 'isin': None, 'lei': None, 'country': 'Netherlands', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', \u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39912,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3AA0>"
+       },
+       "ret": "{'id': '909c07dc30742b05e50111de', 'company_name': '74Software', 'isin': 'FR0011040500', 'lei': '96950022O6SP7FQONJ77', 'country': 'France', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corporat\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39913,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3EF0>"
+       },
+       "ret": "{'id': 'e130d4cdac56253f39143a9c', 'company_name': '7N A/S', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corporate', 'target_status': 'Committed\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39914,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3EC0>"
+       },
+       "ret": "{'id': '5de33a3485da980f6bbd5d94', 'company_name': '7R S.A.', 'isin': None, 'lei': '2594001Y7REP4ZD5GU17', 'country': 'Poland', 'region': 'Europe', 'sector': 'Real Estate', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39915,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3E90>"
+       },
+       "ret": "{'id': 'eb5c435b4bc1b86abbd9f355', 'company_name': '80 Acres Urban Agriculture, Inc', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Food Production - Agricultural Production', 'i\u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39916,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3A40>"
+       },
+       "ret": "{'id': '58a15c6439a53b645ec75f6d', 'company_name': '94 Minutes s.r.o.', 'isin': None, 'lei': None, 'country': 'Czechia', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'industry': \u2026",
+       "dur_ms": 0.016,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39917,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3FE0>"
+       },
+       "ret": "{'id': 'a9feecc0ce235c2b1fbda69f', 'company_name': 'A C Goatham And Son Limited', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Food Production - Agricultural Production', 'industry': None, 'company\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39918,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3FB0>"
+       },
+       "ret": "{'id': 'fd4f3c465f4fd876c02ed2af', 'company_name': 'A E Yates Group', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Construction and Engineering', 'industry': None, 'company_type': 'SME', 'target_st\u2026",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39919,
+       "name": "_sbti_to_dict",
+       "qual": "_sbti_to_dict",
+       "file": "api/v1/routes/scenario_data.py",
+       "line": 360,
+       "args": {
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3F80>"
+       },
+       "ret": "{'id': '7b4202a32def489ecb0ed927', 'company_name': '\u00c5 Energi', 'isin': 'NO0010895378', 'lei': '549300NUQ6SAINRW8Q86', 'country': 'Norway', 'region': 'Europe', 'sector': 'Electric Utilities and Independent Power Producers and Energy Traders\u2026",
        "dur_ms": 0.017,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 39,
+       "id": 39920,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AF30>"
-       },
-       "ret": "{'id': 'ec67e640b3bbca1150ca2fe0', 'company_name': '4G Clinical', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corpora\u2026",
-       "dur_ms": 0.028,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 40,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AF60>"
-       },
-       "ret": "{'id': '99d8d29617817b5ba030ccd9', 'company_name': '4MOD Technology', 'isin': None, 'lei': None, 'country': 'France', 'region': 'Europe', 'sector': 'Technology Hardware and Equipment', 'industry': None, 'company_type': 'SME', 'target_statu\u2026",
-       "dur_ms": 0.029,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 41,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AF90>"
-       },
-       "ret": "{'id': 'a55749373f125aa21c231f73', 'company_name': '4most', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets s\u2026",
-       "dur_ms": 0.028,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 42,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5AFF0>"
-       },
-       "ret": "{'id': 'e976a4745987e99608ea627d', 'company_name': '5CA', 'isin': None, 'lei': None, 'country': 'Netherlands', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets set', \u2026",
-       "dur_ms": 0.03,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 43,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B050>"
-       },
-       "ret": "{'id': '909c07dc30742b05e50111de', 'company_name': '74Software', 'isin': 'FR0011040500', 'lei': '96950022O6SP7FQONJ77', 'country': 'France', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corporat\u2026",
-       "dur_ms": 0.028,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 44,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B0B0>"
-       },
-       "ret": "{'id': 'e130d4cdac56253f39143a9c', 'company_name': '7N A/S', 'isin': None, 'lei': None, 'country': 'Denmark', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'Corporate', 'target_status': 'Committed\u2026",
-       "dur_ms": 0.028,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 45,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B110>"
-       },
-       "ret": "{'id': '5de33a3485da980f6bbd5d94', 'company_name': '7R S.A.', 'isin': None, 'lei': '2594001Y7REP4ZD5GU17', 'country': 'Poland', 'region': 'Europe', 'sector': 'Real Estate', 'industry': None, 'company_type': 'SME', 'target_status': 'Targets\u2026",
-       "dur_ms": 0.035,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 46,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B170>"
-       },
-       "ret": "{'id': 'eb5c435b4bc1b86abbd9f355', 'company_name': '80 Acres Urban Agriculture, Inc', 'isin': None, 'lei': None, 'country': 'United States of America', 'region': 'Northern America', 'sector': 'Food Production - Agricultural Production', 'i\u2026",
-       "dur_ms": 0.035,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 47,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B1D0>"
-       },
-       "ret": "{'id': '58a15c6439a53b645ec75f6d', 'company_name': '94 Minutes s.r.o.', 'isin': None, 'lei': None, 'country': 'Czechia', 'region': 'Europe', 'sector': 'Trading Companies and Distributors, and Commercial Services and Supplies', 'industry': \u2026",
-       "dur_ms": 0.035,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 48,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B230>"
-       },
-       "ret": "{'id': 'a9feecc0ce235c2b1fbda69f', 'company_name': 'A C Goatham And Son Limited', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Food Production - Agricultural Production', 'industry': None, 'company\u2026",
-       "dur_ms": 0.035,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 49,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B290>"
-       },
-       "ret": "{'id': 'fd4f3c465f4fd876c02ed2af', 'company_name': 'A E Yates Group', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Construction and Engineering', 'industry': None, 'company_type': 'SME', 'target_st\u2026",
-       "dur_ms": 0.036,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 50,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B2F0>"
-       },
-       "ret": "{'id': '7b4202a32def489ecb0ed927', 'company_name': '\u00c5 Energi', 'isin': 'NO0010895378', 'lei': '549300NUQ6SAINRW8Q86', 'country': 'Norway', 'region': 'Europe', 'sector': 'Electric Utilities and Independent Power Producers and Energy Traders\u2026",
-       "dur_ms": 0.037,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 51,
-       "name": "_sbti_to_dict",
-       "qual": "_sbti_to_dict",
-       "file": "api/v1/routes/scenario_data.py",
-       "line": 360,
-       "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B350>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1C3F20>"
        },
        "ret": "{'id': '6815df88999c7d3dfb2cb9c8', 'company_name': 'A G OF C LIMITED', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Professional Services', 'industry': None, 'company_type': 'SME', 'target_status':\u2026",
-       "dur_ms": 0.035,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 52,
+       "id": 39921,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B3B0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1BA5A0>"
        },
        "ret": "{'id': 'faf7e1ab008af2912a08521c', 'company_name': 'A P I Software Ltd', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Software and Services', 'industry': None, 'company_type': 'SME', 'target_status\u2026",
-       "dur_ms": 0.039,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 53,
+       "id": 39922,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B410>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1BA600>"
        },
        "ret": "{'id': 'fefc2c3e2bd370a64559ec90', 'company_name': 'A-Gas International', 'isin': None, 'lei': None, 'country': 'United Kingdom', 'region': 'Europe', 'sector': 'Chemicals', 'industry': None, 'company_type': 'Corporate', 'target_status': 'C\u2026",
-       "dur_ms": 0.035,
+       "dur_ms": 0.022,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 54,
+       "id": 39923,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B470>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1B8440>"
        },
        "ret": "{'id': '99731bd3875231239dbe5336', 'company_name': 'A-Insin\u00f6\u00f6rit Oy', 'isin': None, 'lei': '743700WWG9QFS8KQ7R79', 'country': 'Finland', 'region': 'Europe', 'sector': 'Construction and Engineering', 'industry': None, 'company_type': 'Corpo\u2026",
-       "dur_ms": 0.036,
+       "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 55,
+       "id": 39924,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B4D0>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1B84A0>"
        },
        "ret": "{'id': '2ee3220e51f2e008140484e0', 'company_name': 'A-Star Alliance', 'isin': None, 'lei': None, 'country': 'India', 'region': 'Asia', 'sector': 'Textiles, Apparel, Footwear and Luxury Goods', 'industry': None, 'company_type': 'Corporate',\u2026",
-       "dur_ms": 0.035,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 56,
+       "id": 39925,
        "name": "_sbti_to_dict",
        "qual": "_sbti_to_dict",
        "file": "api/v1/routes/scenario_data.py",
        "line": 360,
        "args": {
-        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000012ADDB5B530>"
+        "r": "<db.models.scenario_ingest.SbtiCompany object at 0x0000013D4A1B84D0>"
        },
        "ret": "{'id': '4a7a31dcafdd1e164729f511', 'company_name': 'A. Espersen A/S', 'isin': None, 'lei': '549300I9OR0MMWWMBB61', 'country': 'Denmark', 'region': 'Europe', 'sector': 'Food Production - Animal Source Food Production', 'industry': None, 'co\u2026",
-       "dur_ms": 0.035,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
@@ -1190,7 +1190,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2999.664,
+   "dur_ms": 1568.388,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1206,7 +1206,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 109,
-     "dur_ms": 2014.327,
+     "dur_ms": 1325.928,
      "is_reference": false,
      "error": null
     }
@@ -1224,17 +1224,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 57,
+     "id": 39926,
      "name": "sbti_countries",
      "qual": "sbti_countries",
      "file": "api/v1/routes/scenario_data.py",
      "line": 257,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD773CB0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD659260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A168770>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'countries': [{'country': 'Japan', 'companies': 2306, 'net_zero_committed': 100}, {'country': 'United Kingdom', 'companies': 1791, 'net_zero_committed': 598}, {'country': 'United States of America', 'companies': 1547, 'net_zero_committed'\u2026",
-     "dur_ms": 2230.38,
+     "dur_ms": 1539.522,
      "sql": [
       0
      ],
@@ -1249,7 +1249,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1476.192,
+   "dur_ms": 310.418,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1265,7 +1265,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 51,
-     "dur_ms": 91.529,
+     "dur_ms": 85.072,
      "is_reference": false,
      "error": null
     }
@@ -1283,17 +1283,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 58,
+     "id": 39927,
      "name": "sbti_sectors",
      "qual": "sbti_sectors",
      "file": "api/v1/routes/scenario_data.py",
      "line": 229,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7ED460>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD658F40>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A16BB90>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'sectors': [{'sector': 'Professional Services', 'companies': 1407, 'aligned_1_5c': 1153, 'net_zero_committed': 359}, {'sector': 'Electrical Equipment and Machinery', 'companies': 1131, 'aligned_1_5c': 919, 'net_zero_committed': 140}, {'se\u2026",
-     "dur_ms": 1445.092,
+     "dur_ms": 278.153,
      "sql": [
       0
      ],
@@ -1308,7 +1308,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1251.923,
+   "dur_ms": 609.944,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1324,7 +1324,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 165.707,
+     "dur_ms": 115.508,
      "is_reference": false,
      "error": null
     },
@@ -1335,7 +1335,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 45.548,
+     "dur_ms": 41.289,
      "is_reference": false,
      "error": null
     },
@@ -1346,7 +1346,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 50.467,
+     "dur_ms": 40.772,
      "is_reference": false,
      "error": null
     },
@@ -1357,7 +1357,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 40.877,
+     "dur_ms": 33.115,
      "is_reference": false,
      "error": null
     },
@@ -1368,7 +1368,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 57.712,
+     "dur_ms": 47.157,
      "is_reference": false,
      "error": null
     },
@@ -1379,7 +1379,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 61.699,
+     "dur_ms": 54.746,
      "is_reference": false,
      "error": null
     },
@@ -1390,7 +1390,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 50.082,
+     "dur_ms": 43.782,
      "is_reference": false,
      "error": null
     }
@@ -1414,17 +1414,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 59,
+     "id": 39928,
      "name": "sbti_stats",
      "qual": "sbti_stats",
      "file": "api/v1/routes/scenario_data.py",
      "line": 281,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7EE5A0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD6594E0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D476AB110>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total_companies': 14034, 'committed': 2612, 'targets_set': 10263, 'net_zero_committed': 2426, 'aligned_1_5c': 9894, 'sectors': 51, 'countries': 109}",
-     "dur_ms": 1218.324,
+     "dur_ms": 581.033,
      "sql": [
       0,
       1,
@@ -1445,7 +1445,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 465.935,
+   "dur_ms": 427.404,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1462,7 +1462,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 69.825,
+     "dur_ms": 60.854,
      "is_reference": false,
      "error": null
     },
@@ -1473,7 +1473,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 32.092,
+     "dur_ms": 30.508,
      "is_reference": false,
      "error": null
     },
@@ -1484,7 +1484,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 34.602,
+     "dur_ms": 30.872,
      "is_reference": false,
      "error": null
     },
@@ -1495,7 +1495,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 34.989,
+     "dur_ms": 33.141,
      "is_reference": false,
      "error": null
     },
@@ -1506,7 +1506,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 32.521,
+     "dur_ms": 32.515,
      "is_reference": false,
      "error": null
     }
@@ -1525,17 +1525,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 60,
+     "id": 39929,
      "name": "combined_stats",
      "qual": "combined_stats",
      "file": "api/v1/routes/scenario_data.py",
      "line": 317,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000012ADD7EEBA0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000012ADD659760>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D492409B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'ngfs': {'data_points': 0, 'scenarios': 0, 'variables': 0}, 'sbti': {'companies': 14034, 'sectors': 51}}",
-     "dur_ms": 432.367,
+     "dur_ms": 396.323,
      "sql": [
       0,
       1,

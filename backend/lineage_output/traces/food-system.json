@@ -1,10 +1,10 @@
 {
  "domain": "food-system",
  "meta": {
-  "ts": "2026-06-30T14:02:09",
+  "ts": "2026-07-05T19:15:22",
+  "endpoints": 10,
   "module": "api.v1.routes.food_system",
-  "router_prefix": "/api/v1/food-system",
-  "endpoints": 10
+  "router_prefix": "/api/v1/food-system"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.423,
+   "dur_ms": 0.325,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11486,
      "name": "ref_crop_regions",
      "qual": "ref_crop_regions",
      "file": "api/v1/routes/food_system.py",
-     "line": 211,
+     "line": 258,
      "args": {},
      "ret": "{'crops': ['wheat', 'maize', 'rice', 'soy', 'coffee', 'cocoa', 'sugarcane'], 'regions': ['south_asia', 'sub_saharan_africa', 'latin_america', 'southeast_asia', 'europe'], 'combinations': [{'crop': 'wheat', 'region': 'south_asia'}, {'crop':\u2026",
-     "dur_ms": 0.029,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.221,
+   "dur_ms": 0.239,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -78,14 +78,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11487,
      "name": "ref_eudr_commodities",
      "qual": "ref_eudr_commodities",
      "file": "api/v1/routes/food_system.py",
-     "line": 228,
+     "line": 275,
      "args": {},
      "ret": "{'eudr_food_commodities': ['cattle', 'cocoa', 'coffee', 'oil_palm', 'soy'], 'commodity_details': [{'commodity': 'cattle', 'regulation_article': 'Annex I', 'cutoff_date': '2020-12-31', 'derived_products': ['beef', 'leather', 'tallow']}, {'c\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []
@@ -98,7 +98,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.252,
+   "dur_ms": 0.293,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -119,14 +119,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11488,
      "name": "ref_flag_sectors",
      "qual": "ref_flag_sectors",
      "file": "api/v1/routes/food_system.py",
-     "line": 190,
+     "line": 237,
      "args": {},
      "ret": "{'sectors': [{'sector': 'cattle', 'flag_scope': True, 'required_reduction_pct': 30.0, 'removal_target_pct': 5.0, 'target_year': 2030, 'base_year': 2020}, {'sector': 'poultry_pigs', 'flag_scope': True, 'required_reduction_pct': 30.0, 'remov\u2026",
-     "dur_ms": 0.05,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "benchmarks",
  "meta": {
-  "ts": "2026-06-30T13:59:29",
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 4,
   "module": "api.v1.routes.benchmarks",
-  "router_prefix": "/api/v1/benchmarks",
-  "endpoints": 4
+  "router_prefix": "/api/v1/benchmarks"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1371.393,
+   "dur_ms": 370.483,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 587.756,
+     "dur_ms": 81.405,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 0,
-     "dur_ms": 34.654,
+     "dur_ms": 29.611,
      "is_reference": false,
      "error": null
     }
@@ -62,34 +62,34 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 576,
      "name": "get_sector_benchmark",
      "qual": "get_sector_benchmark",
      "file": "api/v1/routes/benchmarks.py",
      "line": 31,
      "args": {
       "sector": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D1367F82F0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D134FC9F80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AD7F0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'companies': 0, 'message': \"No market data found for sector '550e8400-e29b-41d4-a716-446655440001'\", 'available_sectors': []}",
-     "dur_ms": 1340.481,
+     "dur_ms": 338.989,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 577,
        "name": "_get_available_sectors",
        "qual": "_get_available_sectors",
        "file": "api/v1/routes/benchmarks.py",
        "line": 262,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001D1367F82F0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AD7F0>"
        },
        "ret": "[]",
-       "dur_ms": 36.298,
+       "dur_ms": 31.381,
        "sql": [
         1
        ],
@@ -106,7 +106,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 319.874,
+   "dur_ms": 273.446,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -122,7 +122,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 0,
-     "dur_ms": 60.926,
+     "dur_ms": 57.657,
      "is_reference": false,
      "error": null
     }
@@ -141,17 +141,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 578,
      "name": "list_sector_benchmarks",
      "qual": "list_sector_benchmarks",
      "file": "api/v1/routes/benchmarks.py",
      "line": 122,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D1369C1CD0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D136897D80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47654890>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'sectors': [], 'total_sectors': 0}",
-     "dur_ms": 285.918,
+     "dur_ms": 243.638,
      "sql": [
       0
      ],
@@ -166,7 +166,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 888.15,
+   "dur_ms": 582.14,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -184,7 +184,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 63.646,
+     "dur_ms": 58.684,
      "is_reference": false,
      "error": null
     },
@@ -195,7 +195,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 31.249,
+     "dur_ms": 31.678,
      "is_reference": false,
      "error": null
     },
@@ -206,7 +206,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 49.558,
+     "dur_ms": 47.978,
      "is_reference": false,
      "error": null
     },
@@ -217,7 +217,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 184.892,
+     "dur_ms": 167.188,
      "is_reference": false,
      "error": null
     }
@@ -237,17 +237,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 579,
      "name": "benchmark_stats",
      "qual": "benchmark_stats",
      "file": "api/v1/routes/benchmarks.py",
      "line": 232,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D136E3A5A0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D1369B8EA0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475276B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'market_data': {'sectors': 0, 'companies': 0}, 'edgar': {'companies_with_filings': 0}, 'sbti': {'companies_with_targets': 14034}}",
-     "dur_ms": 791.823,
+     "dur_ms": 550.917,
      "sql": [
       0,
       1,
@@ -265,7 +265,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1144.504,
+   "dur_ms": 331.062,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -282,7 +282,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 0,
-     "dur_ms": 78.173,
+     "dur_ms": 60.738,
      "is_reference": false,
      "error": null
     },
@@ -293,7 +293,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 0,
-     "dur_ms": 38.283,
+     "dur_ms": 29.103,
      "is_reference": false,
      "error": null
     }
@@ -315,18 +315,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 580,
      "name": "calculate_waci",
      "qual": "calculate_waci",
      "file": "api/v1/routes/benchmarks.py",
      "line": 164,
      "args": {
       "tickers": "'TEST_tickers'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D136E3B170>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001D1369B8AE0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E29D30>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'tickers': ['TEST_TICKERS'], 'total_evic': 0.0, 'companies': [{'ticker': 'TEST_TICKERS', 'company_name': None, 'evic': None, 'market_cap': None, 'revenue': None, 'sector': None, 'weight': None, 'carbon_intensity_proxy': None}], 'note': 'W\u2026",
-     "dur_ms": 1113.345,
+     "dur_ms": 302.174,
      "sql": [
       0,
       1

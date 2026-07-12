@@ -1,0 +1,250 @@
+{
+ "domain": "ppa-xva",
+ "meta": {
+  "ts": "2026-07-05T19:16:25",
+  "endpoints": 6,
+  "module": "api.v1.routes.ppa_xva",
+  "router_prefix": "/api/v1/ppa-xva"
+ },
+ "transactions": [
+  {
+   "domain": "ppa-xva",
+   "label": "GET /api/v1/ppa-xva/ref/collateral-haircuts",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.246,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "haircuts_pct"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29297,
+     "name": "ref_collateral_haircuts",
+     "qual": "ref_collateral_haircuts",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 992,
+     "args": {},
+     "ret": "{'label': 'CRE22-style standard supervisory haircut basis \u2014 hand-authored, rounded, APPROXIMATE (cash 0%, sovereigns ~2%, IG corporates ~6%, main-index equities ~20%). Collateral value = amount called x (1 - haircut).', 'haircuts_pct': {'c\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-xva",
+   "label": "GET /api/v1/ppa-xva/ref/migration-matrix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.205,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "states",
+     "annual_transition_pct",
+     "row_sums_check",
+     "usage"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29298,
+     "name": "ref_migration_matrix",
+     "qual": "ref_migration_matrix",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 968,
+     "args": {},
+     "ret": "{'label': \"Hand-authored annual rating-migration matrix \u2014 long-term average one-year corporate transition rates per published S&P/Moody's agency studies, rounded and APPROXIMATE (NR withdrawals reallocated to the diagonal; D absorbing). Cu\u2026",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-xva",
+   "label": "GET /api/v1/ppa-xva/ref/pd-curves",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.17,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "tenors_years",
+     "cumulative_pd_pct",
+     "interpolation",
+     "source_basis"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29299,
+     "name": "ref_pd_curves",
+     "qual": "ref_pd_curves",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 957,
+     "args": {},
+     "ret": "{'label': \"Hand-authored cumulative PD curve derived from published rating-agency long-term corporate default studies (S&P Global 1981-2023 / Moody's 1983-2023 average cumulative default rates) \u2014 APPROXIMATE, rounded; linear interpolation \u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-xva",
+   "label": "GET /api/v1/ppa-xva/ref/sa-ccr-params",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.148,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "alpha",
+     "alpha_basis",
+     "commodity_supervisory_factors_pct",
+     "sf_basis",
+     "maturity_factor",
+     "capital"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29300,
+     "name": "ref_sa_ccr_params",
+     "qual": "ref_sa_ccr_params",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 979,
+     "args": {},
+     "ret": "{'label': 'SA-CCR-style EAD = alpha x (RC + PFE add-on) with the real Basel alpha = 1.4 and the CRE52 commodity supervisory-factor table (electricity 40%). RC is proxied by the residual expected exposure along the profile and the add-on by\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-xva",
+   "label": "POST /api/v1/ppa-xva/cva",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'annual_vol_pct'",
+   "dur_ms": 0.231,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29301,
+     "name": "compute_cva",
+     "qual": "compute_cva",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 441,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.013,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-xva",
+   "label": "POST /api/v1/ppa-xva/netting",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'annual_vol_pct'",
+   "dur_ms": 0.179,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29302,
+     "name": "compute_netting",
+     "qual": "compute_netting",
+     "file": "api/v1/routes/ppa_xva.py",
+     "line": 861,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

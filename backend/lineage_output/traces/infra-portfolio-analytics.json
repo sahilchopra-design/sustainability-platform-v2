@@ -1,0 +1,108 @@
+{
+ "domain": "infra-portfolio-analytics",
+ "meta": {
+  "ts": "2026-07-05T19:15:41",
+  "endpoints": 3,
+  "module": "api.v1.routes.infra_portfolio_analytics",
+  "router_prefix": "/api/v1/infra-portfolio"
+ },
+ "transactions": [
+  {
+   "domain": "infra-portfolio-analytics",
+   "label": "GET /api/v1/infra-portfolio/ref/mappings",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.239,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "pd_table_pct",
+     "ngfs_sector_sensitivity",
+     "pcaf_proxy_intensity_tco2e_per_musd",
+     "sector_classification",
+     "asset_correlation_default",
+     "note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12562,
+     "name": "ref_mappings",
+     "qual": "ref_mappings",
+     "file": "api/v1/routes/infra_portfolio_analytics.py",
+     "line": 667,
+     "args": {},
+     "ret": "{'pd_table_pct': {'tenors_years': [1, 3, 5, 7, 10], 'by_rating': {'BBB+': [0.1, 0.45, 0.9, 1.4, 2.0], 'BBB': [0.16, 0.65, 1.3, 2.0, 2.9], 'BBB-': [0.25, 1.0, 1.95, 2.95, 4.2], 'BB+': [0.45, 1.7, 3.2, 4.7, 6.5], 'BB': [0.7, 2.6, 4.8, 6.9, 9\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infra-portfolio-analytics",
+   "label": "POST /api/v1/infra-portfolio/analyze",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'lgd_pct'",
+   "dur_ms": 0.161,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12563,
+     "name": "analyze",
+     "qual": "analyze",
+     "file": "api/v1/routes/infra_portfolio_analytics.py",
+     "line": 428,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "infra-portfolio-analytics",
+   "label": "POST /api/v1/infra-portfolio/ngfs-overlay",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

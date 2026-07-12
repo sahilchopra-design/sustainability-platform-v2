@@ -1,0 +1,134 @@
+{
+ "domain": "sanctions-screening",
+ "meta": {
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 3,
+  "module": "api.v1.routes.sanctions_screening",
+  "router_prefix": "/api/v1/sanctions"
+ },
+ "transactions": [
+  {
+   "domain": "sanctions-screening",
+   "label": "GET /api/v1/sanctions/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.464,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "csl_search_api",
+     "csl_bulk_download",
+     "csl_snapshot_loaded",
+     "csl_snapshot_rows",
+     "csl_snapshot_origin",
+     "csl_snapshot_on_disk",
+     "csl_last_error",
+     "csl_source_lists",
+     "uflpa",
+     "matching_logic",
+     "checked_at"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39700,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/sanctions_screening.py",
+     "line": 461,
+     "args": {},
+     "ret": "{'csl_search_api': 'requires free subscription key \u2014 not set (HTTP 401 without it)', 'csl_bulk_download': 'keyless (verified) \u2014 https://data.trade.gov/downloadable_consolidated_screening_list/v1/consolidated.csv', 'csl_snapshot_loaded': Fa\u2026",
+     "dur_ms": 0.254,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sanctions-screening",
+   "label": "GET /api/v1/sanctions/uflpa-list",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.182,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "meta",
+     "entities"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39701,
+     "name": "uflpa_list",
+     "qual": "uflpa_list",
+     "file": "api/v1/routes/sanctions_screening.py",
+     "line": 572,
+     "args": {},
+     "ret": "{'meta': {'list_name': 'DHS UFLPA Entity List (seeded real extract)', 'extract_size': 23, 'full_list_size_approx': '~144 entities (as of mid-2024 revisions)', 'revision_coverage': 'June 2022 inaugural list through June 2024 additions', 'so\u2026",
+     "dur_ms": 0.023,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "sanctions-screening",
+   "label": "POST /api/v1/sanctions/screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'names'",
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 39702,
+     "name": "screen",
+     "qual": "screen",
+     "file": "api/v1/routes/sanctions_screening.py",
+     "line": 486,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

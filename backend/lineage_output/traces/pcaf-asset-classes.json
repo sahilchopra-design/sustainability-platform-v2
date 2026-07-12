@@ -1,10 +1,10 @@
 {
  "domain": "pcaf-asset-classes",
  "meta": {
-  "ts": "2026-06-30T14:03:36",
+  "ts": "2026-07-05T19:16:00",
+  "endpoints": 15,
   "module": "api.v1.routes.pcaf_asset_classes",
-  "router_prefix": "/api/v1/pcaf",
-  "endpoints": 15
+  "router_prefix": "/api/v1/pcaf"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.246,
+   "dur_ms": 0.226,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13703,
      "name": "list_asset_classes",
      "qual": "list_asset_classes",
      "file": "api/v1/routes/pcaf_asset_classes.py",
      "line": 1551,
      "args": {},
      "ret": "{'standard': 'PCAF Global GHG Accounting & Reporting Standard v2.0 (Dec 2022)', 'publisher': 'Partnership for Carbon Accounting Financials (PCAF)', 'effective_date': '2022-12-01', 'asset_classes': [{'id': 'listed_equity', 'label': 'Listed \u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.165,
+   "dur_ms": 0.13,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -76,14 +76,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13704,
      "name": "dqs_improvement_guidance",
      "qual": "dqs_improvement_guidance",
      "file": "api/v1/routes/pcaf_asset_classes.py",
      "line": 1701,
      "args": {},
      "ret": "{'principle': 'Material exposures should target DQS <= 2 within 3 reporting cycles', 'priority_order': ['1. High-exposure assets with DQS 5 (proxy) -- immediate engagement', '2. High-emitting sectors with DQS 4 (sector average) -- CDP ques\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -117,7 +117,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13705,
      "name": "list_epc_benchmarks",
      "qual": "list_epc_benchmarks",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -137,7 +137,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.115,
+   "dur_ms": 0.125,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -161,14 +161,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13706,
      "name": "get_methodology",
      "qual": "get_methodology",
      "file": "api/v1/routes/pcaf_asset_classes.py",
      "line": 1607,
      "args": {},
      "ret": "{'standard': {'name': 'PCAF Global GHG Accounting & Reporting Standard', 'version': '2nd Edition (Part A)', 'date': 'December 2022', 'publisher': 'Partnership for Carbon Accounting Financials', 'url': 'https://carbonaccountingfinancials.co\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -181,7 +181,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.114,
+   "dur_ms": 0.11,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -202,7 +202,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13707,
      "name": "list_sector_emission_factors",
      "qual": "list_sector_emission_factors",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -222,7 +222,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.27,
+   "dur_ms": 0.207,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -241,14 +241,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13708,
      "name": "list_sovereign_data",
      "qual": "list_sovereign_data",
      "file": "api/v1/routes/pcaf_asset_classes.py",
      "line": 1684,
      "args": {},
      "ret": "{'source': 'EDGAR v8.0 / UNFCCC CRF / IMF WEO / World Bank WDI (2022-2023)', 'countries': {'AE': {'emissions_mtco2e': 190.0, 'gdp_ppp_usd_tn': 0.74, 'intensity_tco2e_per_usdm_gdp': 256.76}, 'AR': {'emissions_mtco2e': 167.0, 'gdp_ppp_usd_tn\u2026",
-     "dur_ms": 0.117,
+     "dur_ms": 0.059,
      "sql": [],
      "error": null,
      "children": []
@@ -261,7 +261,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.106,
+   "dur_ms": 0.1,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -281,7 +281,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13709,
      "name": "list_vehicle_benchmarks",
      "qual": "list_vehicle_benchmarks",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -301,7 +301,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.785,
+   "dur_ms": 0.635,
    "node_count": 6,
    "provenance": [
     "computed"
@@ -344,7 +344,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 13710,
      "name": "assess_business_loans",
      "qual": "assess_business_loans",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -353,12 +353,12 @@
       "req": "BusinessLoanRequest(assets=[BusinessLoanAsset(asset_id='TEST_req_assets_asset_id', name=None, lei=None, sector='Default', nace_code=None, country_iso='US', outstanding_eur=1.0, total_equity_eur=None, total_debt_eur=None, annual_revenue_eur\u2026"
      },
      "ret": "PortfolioSummary(asset_class='business_loans', asset_class_label='Business Loans & Unlisted Equity', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=300.0, total_fina\u2026",
-     "dur_ms": 0.4,
+     "dur_ms": 0.329,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 13711,
        "name": "_auto_dqs_corporate",
        "qual": "_auto_dqs_corporate",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -376,7 +376,7 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 13712,
        "name": "_calc_waci",
        "qual": "_calc_waci",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -386,13 +386,13 @@
         "total_outstanding": "1.0"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 13713,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -419,36 +419,36 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='business_loans', asset_class_label='Business Loans & Unlisted Equity', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=300.0, total_fina\u2026",
-       "dur_ms": 0.114,
+       "dur_ms": 0.081,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 12,
+         "id": 13714,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D23220>"
+          ".0": "<list_iterator object at 0x0000013D48DF95A0>"
          },
          "ret": "0.0",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 13,
+         "id": 13715,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D23220>"
+          ".0": "<list_iterator object at 0x0000013D48DF95A0>"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -465,7 +465,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.068,
+   "dur_ms": 0.491,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -508,7 +508,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 13716,
      "name": "assess_commercial_real_estate",
      "qual": "assess_commercial_real_estate",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -517,12 +517,12 @@
       "req": "CRERequest(assets=[CREAsset(asset_id='TEST_req_assets_asset_id', name=None, country_iso='DE', outstanding_eur=1.0, property_value_eur=1.0, floor_area_m2=1.0, building_type='office', year_built=None, epc_rating=None, energy_intensity_kwh_m2\u2026"
      },
      "ret": "PortfolioSummary(asset_class='commercial_real_estate', asset_class_label='Commercial Real Estate', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=0.02, total_finance\u2026",
-     "dur_ms": 0.754,
+     "dur_ms": 0.226,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 15,
+       "id": 13717,
        "name": "_auto_dqs_real_estate",
        "qual": "_auto_dqs_real_estate",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -533,13 +533,13 @@
         "has_epc": "False"
        },
        "ret": "5",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 13718,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -566,18 +566,18 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='commercial_real_estate', asset_class_label='Commercial Real Estate', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=0.02, total_finance\u2026",
-       "dur_ms": 0.088,
+       "dur_ms": 0.067,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 17,
+         "id": 13719,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F31530DF0>"
+          ".0": "<list_iterator object at 0x0000013D4928B0A0>"
          },
          "ret": "0.0",
          "dur_ms": 0.002,
@@ -586,13 +586,13 @@
          "children": []
         },
         {
-         "id": 18,
+         "id": 13720,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F31530DF0>"
+          ".0": "<list_iterator object at 0x0000013D4928B0A0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -612,7 +612,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.723,
+   "dur_ms": 0.566,
    "node_count": 7,
    "provenance": [
     "computed"
@@ -655,7 +655,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 13721,
      "name": "evic_positive",
      "qual": "ListedEquityAsset.evic_positive",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -664,13 +664,13 @@
       "v": "1.0"
      },
      "ret": "1.0",
-     "dur_ms": 0.007,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
     },
     {
-     "id": 20,
+     "id": 13722,
      "name": "assess_listed_equity",
      "qual": "assess_listed_equity",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -679,12 +679,12 @@
       "req": "ListedEquityRequest(assets=[ListedEquityAsset(asset_id='TEST_req_assets_asset_id', name=None, isin=None, lei=None, sector='Default', nace_code=None, country_iso='US', currency='EUR', outstanding_eur=1.0, evic_eur=1.0, market_cap_eur=None, \u2026"
      },
      "ret": "PortfolioSummary(asset_class='listed_equity', asset_class_label='Listed Equity & Corporate Bonds', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=600.0, total_financ\u2026",
-     "dur_ms": 0.422,
+     "dur_ms": 0.277,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 21,
+       "id": 13723,
        "name": "_auto_dqs_corporate",
        "qual": "_auto_dqs_corporate",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -696,13 +696,13 @@
         "has_revenue": "False"
        },
        "ret": "5",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 13724,
        "name": "_calc_waci",
        "qual": "_calc_waci",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -712,13 +712,13 @@
         "total_outstanding": "1.0"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 13725,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -745,18 +745,18 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='listed_equity', asset_class_label='Listed Equity & Corporate Bonds', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=600.0, total_financ\u2026",
-       "dur_ms": 0.121,
+       "dur_ms": 0.066,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 24,
+         "id": 13726,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92530>"
+          ".0": "<list_iterator object at 0x0000013D48BEC820>"
          },
          "ret": "16.7",
          "dur_ms": 0.002,
@@ -765,13 +765,13 @@
          "children": []
         },
         {
-         "id": 25,
+         "id": 13727,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92530>"
+          ".0": "<list_iterator object at 0x0000013D48BEC820>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -791,7 +791,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.556,
+   "dur_ms": 0.463,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -834,7 +834,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 26,
+     "id": 13728,
      "name": "assess_mortgages",
      "qual": "assess_mortgages",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -843,12 +843,12 @@
       "req": "MortgageRequest(assets=[MortgageAsset(asset_id='TEST_req_assets_asset_id', name=None, country_iso='GB', outstanding_eur=1.0, property_value_eur=1.0, floor_area_m2=100, property_type='residential', epc_rating=None, energy_intensity_kwh_m2=N\u2026"
      },
      "ret": "PortfolioSummary(asset_class='mortgages', asset_class_label='Mortgages', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=2.2, total_financed_scope2_tco2e=3.3, total_f\u2026",
-     "dur_ms": 0.257,
+     "dur_ms": 0.216,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 27,
+       "id": 13729,
        "name": "_auto_dqs_real_estate",
        "qual": "_auto_dqs_real_estate",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -859,13 +859,13 @@
         "has_epc": "False"
        },
        "ret": "5",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 13730,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -892,18 +892,18 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='mortgages', asset_class_label='Mortgages', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=2.2, total_financed_scope2_tco2e=3.3, total_f\u2026",
-       "dur_ms": 0.072,
+       "dur_ms": 0.065,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 29,
+         "id": 13731,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92860>"
+          ".0": "<list_iterator object at 0x0000013D46933BB0>"
          },
          "ret": "0.0",
          "dur_ms": 0.002,
@@ -912,13 +912,13 @@
          "children": []
         },
         {
-         "id": 30,
+         "id": 13732,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92860>"
+          ".0": "<list_iterator object at 0x0000013D46933BB0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -956,7 +956,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.82,
+   "dur_ms": 0.434,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -999,7 +999,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 31,
+     "id": 13733,
      "name": "assess_project_finance",
      "qual": "assess_project_finance",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1008,12 +1008,12 @@
       "req": "ProjectFinanceRequest(assets=[ProjectFinanceAsset(asset_id='TEST_req_assets_asset_id', name=None, sector='Energy', country_iso='US', outstanding_eur=1.0, total_project_cost_eur=1.0, project_scope1_tco2e=None, project_scope2_tco2e=None, pro\u2026"
      },
      "ret": "PortfolioSummary(asset_class='project_finance', asset_class_label='Project Finance', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=0.0, total_financed_scope2_tco2e=\u2026",
-     "dur_ms": 0.228,
+     "dur_ms": 0.196,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 32,
+       "id": 13734,
        "name": "_auto_dqs_project_finance",
        "qual": "_auto_dqs_project_finance",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1030,7 +1030,7 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 13735,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1057,33 +1057,33 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='project_finance', asset_class_label='Project Finance', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=0.0, total_financed_scope2_tco2e=\u2026",
-       "dur_ms": 0.069,
+       "dur_ms": 0.06,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 34,
+         "id": 13736,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32B9D7E0>"
+          ".0": "<list_iterator object at 0x0000013D476A8BB0>"
          },
          "ret": "0.0",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 35,
+         "id": 13737,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32B9D7E0>"
+          ".0": "<list_iterator object at 0x0000013D476A8BB0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1103,7 +1103,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'dict' object has no attribute 'country_iso'",
-   "dur_ms": 0.422,
+   "dur_ms": 0.246,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1117,7 +1117,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 13738,
      "name": "assess_sovereign_bonds",
      "qual": "assess_sovereign_bonds",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1126,7 +1126,7 @@
       "req": "SovereignBondRequest(assets=[{'asset_id': 'TEST_req_assets_asset_id', 'country_iso': 'TEST_req_assets_country_iso', 'outstanding_eur': 1.0}], reporting_year=2024, reporting_date=None)"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -1139,7 +1139,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.579,
+   "dur_ms": 0.43,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -1182,7 +1182,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 13739,
      "name": "assess_vehicle_loans",
      "qual": "assess_vehicle_loans",
      "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1191,12 +1191,12 @@
       "req": "VehicleLoanRequest(assets=[VehicleLoanAsset(asset_id='TEST_req_assets_asset_id', name=None, country_iso='DE', outstanding_eur=1.0, vehicle_value_eur=1.0, vehicle_type='ICE_petrol', make=None, model=None, year=None, annual_distance_km=15000\u2026"
      },
      "ret": "PortfolioSummary(asset_class='vehicle_loans', asset_class_label='Motor Vehicle Loans', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=2.33, total_financed_scope2_tco\u2026",
-     "dur_ms": 0.268,
+     "dur_ms": 0.206,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 38,
+       "id": 13740,
        "name": "_auto_dqs_vehicle",
        "qual": "_auto_dqs_vehicle",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1206,13 +1206,13 @@
         "has_type_class": "True"
        },
        "ret": "3",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 39,
+       "id": 13741,
        "name": "_build_summary",
        "qual": "_build_summary",
        "file": "api/v1/routes/pcaf_asset_classes.py",
@@ -1239,36 +1239,36 @@
         "req_include_scope3": "False"
        },
        "ret": "PortfolioSummary(asset_class='vehicle_loans', asset_class_label='Motor Vehicle Loans', reporting_year=2024, reporting_date='2024-12-31', total_assets=1, total_outstanding_eur=1.0, total_financed_scope1_tco2e=2.33, total_financed_scope2_tco\u2026",
-       "dur_ms": 0.084,
+       "dur_ms": 0.063,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 40,
+         "id": 13742,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92EF0>"
+          ".0": "<list_iterator object at 0x0000013D48C43430>"
          },
          "ret": "25.0",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 41,
+         "id": 13743,
          "name": "<genexpr>",
          "qual": "_build_summary.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_asset_classes.py",
          "line": 1771,
          "args": {
-          ".0": "<list_iterator object at 0x0000029F32D92EF0>"
+          ".0": "<list_iterator object at 0x0000013D48C43430>"
          },
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []

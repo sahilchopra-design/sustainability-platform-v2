@@ -1,7 +1,7 @@
 {
  "domain": "insurance",
  "meta": {
-  "ts": "2026-07-01T10:02:44",
+  "ts": "2026-07-05T19:15:47",
   "endpoints": 4,
   "module": "api.v1.routes.insurance",
   "router_prefix": "/api/v1/insurance"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 575.998,
+   "dur_ms": 369.979,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -25,15 +25,15 @@
    "sources": [
     {
      "id": 0,
-     "sql": "'SELECT a.id, e.entity_name, a.scenario, a.horizon_year, a.gross_cat_loss_1in100_climate, a.tp_climate_uplift_eur, a.scr_cat_addon_eur, a.reserve_adequacy_ratio, a.reinsurance_sufficiency, a.assessed_at FROM insurance_climate_assessments a JOIN insurance_climate_entities e ON e.id = a.entity_id ORDER BY a.assessed_at DESC LIMIT %(lim)s OFFSET %(off)s'",
+     "sql": "'SELECT a.id, e.entity_name, a.scenario, a.horizon_year, a.gross_loss_1_in_100_eur, a.climate_adjusted_tp_eur, a.scr_climate_addon_eur, a.reserve_adequacy_2c, a.reinsurance_coverage_adequate, a.created_at FROM insurance_climate_assessments a JOIN insurance_climate_entities e ON e.id = a.entity_id ORDER BY a.created_at DESC LIMIT %(lim)s OFFSET %(off)s'",
      "tables": [
       "insurance_climate_assessments",
       "insurance_climate_entities"
      ],
-     "rowcount": null,
-     "dur_ms": 61.136,
+     "rowcount": 0,
+     "dur_ms": 80.191,
      "is_reference": false,
-     "error": "UndefinedColumn('column a.gross_cat_loss_1in100_climate does not exist\\nLINE 3:                        a.gross_cat_loss_1in100_climate, a.tp...\\n                               ^\\n')"
+     "error": null
     }
    ],
    "inputs": {
@@ -49,18 +49,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12608,
      "name": "list_assessments",
      "qual": "list_assessments",
      "file": "api/v1/routes/insurance.py",
-     "line": 227,
+     "line": 311,
      "args": {
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000023730BC5850>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D72060>"
      },
      "ret": "[]",
-     "dur_ms": 545.315,
+     "dur_ms": 336.985,
      "sql": [
       0
      ],
@@ -75,7 +75,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 292.197,
+   "dur_ms": 279.604,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -87,13 +87,13 @@
    "sources": [
     {
      "id": 0,
-     "sql": "'SELECT a.*, e.entity_name, e.insurer_type AS entity_type, e.country_iso AS domicile_country FROM insurance_climate_assessments a JOIN insurance_climate_entities e ON e.id = a.entity_id WHERE a.id = %(aid)s'",
+     "sql": "'SELECT a.*, e.entity_name, e.insurer_type, e.country_iso AS domicile_country FROM insurance_climate_assessments a JOIN insurance_climate_entities e ON e.id = a.entity_id WHERE a.id = %(aid)s'",
      "tables": [
       "insurance_climate_assessments",
       "insurance_climate_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 68.63,
+     "dur_ms": 61.798,
      "is_reference": false,
      "error": null
     }
@@ -106,17 +106,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12609,
      "name": "get_assessment",
      "qual": "get_assessment",
      "file": "api/v1/routes/insurance.py",
-     "line": 254,
+     "line": 338,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002372F69F8F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D734D0>"
      },
      "ret": "None",
-     "dur_ms": 264.59,
+     "dur_ms": 248.992,
      "sql": [
       0
      ],
@@ -131,7 +131,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.199,
+   "dur_ms": 0.314,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -154,26 +154,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12610,
      "name": "reference_data",
      "qual": "reference_data",
      "file": "api/v1/routes/insurance.py",
-     "line": 221,
+     "line": 305,
      "args": {},
      "ret": "{'cat_loss_multipliers': {'tropical_cyclone': {'1.5C': 1.08, '2C': 1.2, '3C': 1.45}, 'flood': {'1.5C': 1.15, '2C': 1.35, '3C': 1.8}, 'wildfire': {'1.5C': 1.25, '2C': 1.55, '3C': 2.2}, 'drought': {'1.5C': 1.12, '2C': 1.3, '3C': 1.65}, 'wint\u2026",
-     "dur_ms": 0.054,
+     "dur_ms": 0.077,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 12611,
        "name": "get_reference_data",
        "qual": "get_reference_data",
        "file": "services/insurance_climate_risk.py",
        "line": 280,
        "args": {},
        "ret": "{'cat_loss_multipliers': {'tropical_cyclone': {'1.5C': 1.08, '2C': 1.2, '3C': 1.45}, 'flood': {'1.5C': 1.15, '2C': 1.35, '3C': 1.8}, 'wildfire': {'1.5C': 1.25, '2C': 1.55, '3C': 2.2}, 'drought': {'1.5C': 1.12, '2C': 1.3, '3C': 1.65}, 'wint\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
@@ -187,8 +187,8 @@
    "label": "POST /api/v1/insurance/calculate",
    "status": "failed",
    "http_status": 500,
-   "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.208,
+   "error": "AttributeError: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.311,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -203,17 +203,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12612,
      "name": "calculate_insurance",
      "qual": "calculate_insurance",
      "file": "api/v1/routes/insurance.py",
-     "line": 89,
+     "line": 139,
      "args": {
       "req": "'TEST_req'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000023730C418B0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D728D0>"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

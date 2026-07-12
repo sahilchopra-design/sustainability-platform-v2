@@ -1,10 +1,10 @@
 {
  "domain": "esg-controversy",
  "meta": {
-  "ts": "2026-06-30T14:01:51",
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 9,
   "module": "api.v1.routes.esg_controversy",
-  "router_prefix": "/api/v1/esg-controversy",
-  "endpoints": 9
+  "router_prefix": "/api/v1/esg-controversy"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.329,
+   "dur_ms": 0.323,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,14 +35,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11148,
      "name": "ref_controversy_levels",
      "qual": "ref_controversy_levels",
      "file": "api/v1/routes/esg_controversy.py",
      "line": 146,
      "args": {},
      "ret": "{'framework': 'Sustainalytics ESG Risk Rating Controversy Assessment (2023)', 'levels': {1: {'level': 1, 'label': 'Low', 'description': 'No significant controversy; minor isolated incidents with negligible stakeholder impact', 'esg_risk_ra\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.813,
+   "dur_ms": 1.608,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -77,14 +77,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11149,
      "name": "ref_incident_types",
      "qual": "ref_incident_types",
      "file": "api/v1/routes/esg_controversy.py",
      "line": 192,
      "args": {},
      "ret": "{'total_incident_types': 54, 'by_category': {'E': {'oil_spill': {'category': 'E', 'subcategory': 'Pollution', 'description': 'Oil spill or petroleum product release into water bodies or land', 'ungc_violation': True, 'ungc_principles': [7,\u2026",
-     "dur_ms": 0.064,
+     "dur_ms": 0.134,
      "sql": [],
      "error": null,
      "children": []
@@ -97,7 +97,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.17,
+   "dur_ms": 0.274,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -117,14 +117,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11150,
      "name": "ref_reprisk_methodology",
      "qual": "ref_reprisk_methodology",
      "file": "api/v1/routes/esg_controversy.py",
      "line": 169,
      "args": {},
      "ret": "{'methodology': {'rri_definition': {'name': 'RepRisk Index (RRI)', 'scale': '0-100', 'description': 'Quantified reputational risk exposure; 0 = no ESG risk exposure, 100 = maximum risk exposure', 'peak_rri': 'Highest RRI recorded in the pa\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -137,7 +137,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.406,
+   "dur_ms": 0.68,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -162,14 +162,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11151,
      "name": "ref_ungc_violations",
      "qual": "ref_ungc_violations",
      "file": "api/v1/routes/esg_controversy.py",
      "line": 241,
      "args": {},
      "ret": "{'ungc_principles': {1: {'principle': 1, 'area': 'Human Rights', 'text': 'Support and respect the protection of internationally proclaimed human rights'}, 2: {'principle': 2, 'area': 'Human Rights', 'text': 'Make sure they are not complici\u2026",
-     "dur_ms": 0.149,
+     "dur_ms": 0.266,
      "sql": [],
      "error": null,
      "children": []
@@ -182,7 +182,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.224,
+   "dur_ms": 0.259,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -196,7 +196,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11152,
      "name": "assess_entity_controversy",
      "qual": "assess_entity_controversy",
      "file": "api/v1/routes/esg_controversy.py",
@@ -205,12 +205,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.033,
+     "dur_ms": 0.04,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11153,
        "name": "assess",
        "qual": "ESGControversyEngine.assess",
        "file": "services/esg_controversy_engine.py",
@@ -219,7 +219,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.005,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -270,7 +270,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'acknowledgement'",
-   "dur_ms": 0.177,
+   "dur_ms": 0.184,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -284,7 +284,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11154,
      "name": "remediation_score",
      "qual": "remediation_score",
      "file": "api/v1/routes/esg_controversy.py",
@@ -293,12 +293,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.027,
+     "dur_ms": 0.029,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11155,
        "name": "remediation_score",
        "qual": "ESGControversyEngine.remediation_score",
        "file": "services/esg_controversy_engine.py",
@@ -307,7 +307,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -322,7 +322,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'incident_type'",
-   "dur_ms": 0.138,
+   "dur_ms": 0.175,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -336,7 +336,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11156,
      "name": "score_incident",
      "qual": "score_incident",
      "file": "api/v1/routes/esg_controversy.py",
@@ -345,12 +345,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.019,
+     "dur_ms": 0.028,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11157,
        "name": "score_incident",
        "qual": "ESGControversyEngine.score_incident",
        "file": "services/esg_controversy_engine.py",
@@ -359,7 +359,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []

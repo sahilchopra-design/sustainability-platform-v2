@@ -1,10 +1,10 @@
 {
  "domain": "climate-derivatives",
  "meta": {
-  "ts": "2026-06-30T13:59:47",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 9,
   "module": "api.v1.routes.climate_derivatives",
-  "router_prefix": "/api/v1/climate-derivatives",
-  "endpoints": 9
+  "router_prefix": "/api/v1/climate-derivatives"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.261,
+   "dur_ms": 0.238,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2072,
      "name": "get_ccp_eligibility",
      "qual": "get_ccp_eligibility",
      "file": "api/v1/routes/climate_derivatives.py",
      "line": 423,
      "args": {},
      "ret": "{'status': 'success', 'ccp_eligibility': {'ICE': {'full_name': 'Intercontinental Exchange', 'cleared_products': ['EUA_spot', 'EUA_futures', 'EUA_options', 'EUAA_futures', 'weather_index_futures', 'CER_futures', 'ERU_futures'], 'margin_mode\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.136,
+   "dur_ms": 0.128,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -73,14 +73,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2073,
      "name": "get_eua_market",
      "qual": "get_eua_market",
      "file": "api/v1/routes/climate_derivatives.py",
      "line": 363,
      "args": {},
      "ret": "{'status': 'success', 'data': {'spot_eur_t': 65.0, 'historical_vol_pct': 0.35, 'mean_reversion_speed': 0.3, 'long_run_mean_eur_t': 80.0, 'risk_free_rate': 0.035, 'correlations': {'ttf_gas': 0.62, 'brent_crude': 0.38, 'eurostoxx50': 0.22, '\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -93,7 +93,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.171,
+   "dur_ms": 0.14,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -113,7 +113,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 2074,
      "name": "get_peril_models",
      "qual": "get_peril_models",
      "file": "api/v1/routes/climate_derivatives.py",
@@ -133,7 +133,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.273,
+   "dur_ms": 0.254,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -153,23 +153,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 2075,
      "name": "get_product_templates_endpoint",
      "qual": "get_product_templates_endpoint",
      "file": "api/v1/routes/climate_derivatives.py",
      "line": 378,
      "args": {},
      "ret": "{'status': 'success', 'count': 12, 'templates': [{'id': 'cat_bond', 'name': 'Catastrophe Bond (Cat Bond)', 'asset_class': 'insurance_linked_security', 'typical_tenor_years': 3, 'typical_notional_usd_m': 250, 'trigger_types': ['parametric',\u2026",
-     "dur_ms": 0.109,
+     "dur_ms": 0.102,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 2076,
        "name": "get_product_templates",
        "qual": "get_product_templates",
        "file": "services/climate_derivatives_engine.py",
-       "line": 1134,
+       "line": 1136,
        "args": {},
        "ret": "[{'id': 'cat_bond', 'name': 'Catastrophe Bond (Cat Bond)', 'asset_class': 'insurance_linked_security', 'typical_tenor_years': 3, 'typical_notional_usd_m': 250, 'trigger_types': ['parametric', 'modelled_loss', 'indemnity', 'industry_index']\u2026",
        "dur_ms": 0.002,
@@ -187,7 +187,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.379,
+   "dur_ms": 0.318,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -207,14 +207,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 2077,
      "name": "get_weather_stations",
      "qual": "get_weather_stations",
      "file": "api/v1/routes/climate_derivatives.py",
      "line": 328,
      "args": {},
      "ret": "{'status': 'success', 'count': 20, 'stations': {'london': {'city': 'London', 'country': 'GB', 'lat': 51.5074, 'lon': -0.1278, 'underlyings': {'hdd': {'annual_mean': 2340, 'std_dev': 185, 'seasonal_multipliers': {'Q1': 1.45, 'Q2': 0.75, 'Q3\u2026",
-     "dur_ms": 0.083,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": []

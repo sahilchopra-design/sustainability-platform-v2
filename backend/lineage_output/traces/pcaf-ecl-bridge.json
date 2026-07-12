@@ -1,10 +1,10 @@
 {
  "domain": "pcaf-ecl-bridge",
  "meta": {
-  "ts": "2026-06-30T14:03:38",
+  "ts": "2026-07-05T19:16:00",
+  "endpoints": 6,
   "module": "api.v1.routes.pcaf_ecl_bridge",
-  "router_prefix": "/api/v1/pcaf-ecl",
-  "endpoints": 6
+  "router_prefix": "/api/v1/pcaf-ecl"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.36,
+   "dur_ms": 0.204,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13744,
      "name": "get_dqs_confidence",
      "qual": "get_dqs_confidence",
      "file": "api/v1/routes/pcaf_ecl_bridge.py",
      "line": 261,
      "args": {},
      "ret": "{'description': 'PCAF Data Quality Score to ECL overlay confidence weight', 'methodology': 'Higher DQS = lower data quality = less confidence in transition risk scoring', 'weights': {'DQS_1': {'weight': 1.0, 'label': 'Verified data (audite\u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.015,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.353,
+   "dur_ms": 0.189,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -76,7 +76,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13745,
      "name": "get_scenario_weights",
      "qual": "get_scenario_weights",
      "file": "api/v1/routes/pcaf_ecl_bridge.py",
@@ -85,12 +85,12 @@
       "temperature_c": "2.5"
      },
      "ret": "{'temperature_c': 2.5, 'temperature_bucket': '2.5_to_3.0', 'scenario_weights': {'OPTIMISTIC': 0.15, 'BASE': 0.4, 'ADVERSE': 0.3, 'SEVERE': 0.15}, 'all_buckets': {'below_1.5': {'OPTIMISTIC': 0.35, 'BASE': 0.4, 'ADVERSE': 0.2, 'SEVERE': 0.05\u2026",
-     "dur_ms": 0.05,
+     "dur_ms": 0.03,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 13746,
        "name": "_temperature_bucket",
        "qual": "_temperature_bucket",
        "file": "services/pcaf_ecl_bridge.py",
@@ -99,7 +99,7 @@
         "temp_c": "2.5"
        },
        "ret": "'2.5_to_3.0'",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -114,7 +114,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.514,
+   "dur_ms": 0.247,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -140,7 +140,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13747,
      "name": "get_transition_risk",
      "qual": "get_transition_risk",
      "file": "api/v1/routes/pcaf_ecl_bridge.py",
@@ -150,12 +150,12 @@
       "sector_gics": "''"
      },
      "ret": "{'waci_tco2e_per_meur': 200.0, 'sector_gics': '', 'transition_risk_level': 'high', 'transition_risk_score': 39.5, 'carbon_price_sensitivity': 0.4, 'risk_thresholds': [{'max_waci': 50, 'level': 'low'}, {'max_waci': 150, 'level': 'medium'}, \u2026",
-     "dur_ms": 0.155,
+     "dur_ms": 0.081,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 13748,
        "name": "_waci_to_transition_risk",
        "qual": "_waci_to_transition_risk",
        "file": "services/pcaf_ecl_bridge.py",
@@ -164,13 +164,13 @@
         "waci": "200.0"
        },
        "ret": "'high'",
-       "dur_ms": 0.007,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 13749,
        "name": "_waci_to_transition_score",
        "qual": "_waci_to_transition_score",
        "file": "services/pcaf_ecl_bridge.py",
@@ -179,13 +179,13 @@
         "waci": "200.0"
        },
        "ret": "39.5",
-       "dur_ms": 0.028,
+       "dur_ms": 0.01,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 13750,
        "name": "_carbon_price_sensitivity",
        "qual": "_carbon_price_sensitivity",
        "file": "services/pcaf_ecl_bridge.py",
@@ -195,7 +195,7 @@
         "sector_gics": "''"
        },
        "ret": "0.4",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []

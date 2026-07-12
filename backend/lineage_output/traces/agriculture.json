@@ -1,7 +1,7 @@
 {
  "domain": "agriculture",
  "meta": {
-  "ts": "2026-07-01T10:02:42",
+  "ts": "2026-07-05T19:10:27",
   "endpoints": 4,
   "module": "api.v1.routes.agriculture",
   "router_prefix": "/api/v1/agriculture"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 675.657,
+   "dur_ms": 601.992,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -31,7 +31,7 @@
       "agriculture_risk_assessments"
      ],
      "rowcount": null,
-     "dur_ms": 81.046,
+     "dur_ms": 80.092,
      "is_reference": false,
      "error": "UndefinedColumn('column a.yield_change_pct does not exist\\nLINE 3:                        a.yield_change_pct, a.eudr_compliance...\\n                               ^\\n')"
     }
@@ -49,7 +49,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39,
      "name": "list_assessments",
      "qual": "list_assessments",
      "file": "api/v1/routes/agriculture.py",
@@ -57,10 +57,10 @@
      "args": {
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D56FFB6030>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4719D400>"
      },
      "ret": "[]",
-     "dur_ms": 646.08,
+     "dur_ms": 568.869,
      "sql": [
       0
      ],
@@ -75,7 +75,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 396.738,
+   "dur_ms": 329.213,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -93,7 +93,7 @@
       "agriculture_risk_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 101.185,
+     "dur_ms": 83.845,
      "is_reference": false,
      "error": null
     }
@@ -106,17 +106,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40,
      "name": "get_assessment",
      "qual": "get_assessment",
      "file": "api/v1/routes/agriculture.py",
      "line": 246,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D56EACE0F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D471E5790>"
      },
      "ret": "None",
-     "dur_ms": 364.376,
+     "dur_ms": 297.112,
      "sql": [
       0
      ],
@@ -131,7 +131,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.638,
+   "dur_ms": 0.258,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -156,26 +156,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 41,
      "name": "reference_data",
      "qual": "reference_data",
      "file": "api/v1/routes/agriculture.py",
      "line": 215,
      "args": {},
      "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
-     "dur_ms": 2.326,
+     "dur_ms": 0.083,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42,
        "name": "get_reference_data",
        "qual": "get_reference_data",
        "file": "services/agriculture_risk_calculator.py",
        "line": 300,
        "args": {},
        "ret": "{'crop_yield_sensitivity_pct_per_c': {'wheat': -6.0, 'maize': -7.2, 'rice': -3.0, 'soybean': -5.6, 'sugarcane': -4.0, 'palm_oil': -2.5, 'cocoa': -4.5, 'coffee': -5.5, 'cotton': -3.5, 'barley': -5.0, 'sorghum': 1.0, 'cassava': 0.5, 'potato'\u2026",
-       "dur_ms": 0.026,
+       "dur_ms": 0.025,
        "sql": [],
        "error": null,
        "children": []
@@ -190,7 +190,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.279,
+   "dur_ms": 0.226,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -205,14 +205,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 43,
      "name": "calculate_agriculture",
      "qual": "calculate_agriculture",
      "file": "api/v1/routes/agriculture.py",
      "line": 88,
      "args": {
       "req": "'TEST_req'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001D56FFF3080>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D471E5FA0>"
      },
      "ret": "None",
      "dur_ms": 0.005,

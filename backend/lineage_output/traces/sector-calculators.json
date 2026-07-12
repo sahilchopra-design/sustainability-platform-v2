@@ -1,10 +1,10 @@
 {
  "domain": "sector-calculators",
  "meta": {
-  "ts": "2026-06-30T14:05:03",
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 5,
   "module": "api.v1.routes.sector_calculators",
-  "router_prefix": "/api/v1/sector-calculators",
-  "endpoints": 5
+  "router_prefix": "/api/v1/sector-calculators"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.465,
+   "dur_ms": 2.258,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -31,14 +31,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40094,
      "name": "list_fuel_types",
      "qual": "list_fuel_types",
      "file": "api/v1/routes/sector_calculators.py",
      "line": 230,
      "args": {},
      "ret": "{'fuel_types': {'HFO': 3.114, 'VLSFO': 3.151, 'MDO': 3.206, 'LNG': 2.75, 'LPG_butane': 3.03, 'LPG_propane': 3.0, 'METHANOL': 1.375, 'AMMONIA': 0.0, 'HYDROGEN': 0.0}}",
-     "dur_ms": 0.019,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.346,
+   "dur_ms": 1.725,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -69,14 +69,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40095,
      "name": "list_vessel_types",
      "qual": "list_vessel_types",
      "file": "api/v1/routes/sector_calculators.py",
      "line": 225,
      "args": {},
      "ret": "{'vessel_types': ['bulker', 'tanker', 'container', 'lng_carrier', 'ro_ro', 'cruise', 'general_cargo']}",
-     "dur_ms": 0.006,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -89,7 +89,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.771,
+   "dur_ms": 1.386,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -109,7 +109,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40096,
      "name": "get_steel_glidepath",
      "qual": "get_steel_glidepath",
      "file": "api/v1/routes/sector_calculators.py",
@@ -129,7 +129,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'vessel_name'",
-   "dur_ms": 12.906,
+   "dur_ms": 7.796,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -143,7 +143,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 40097,
      "name": "calculate_shipping",
      "qual": "calculate_shipping",
      "file": "api/v1/routes/sector_calculators.py",
@@ -152,7 +152,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 10.977,
+     "dur_ms": 6.417,
      "sql": [],
      "error": null,
      "children": []
@@ -165,7 +165,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'plant_name'",
-   "dur_ms": 10.959,
+   "dur_ms": 9.677,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -179,7 +179,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40098,
      "name": "calculate_steel",
      "qual": "calculate_steel",
      "file": "api/v1/routes/sector_calculators.py",
@@ -188,7 +188,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 8.909,
+     "dur_ms": 7.934,
      "sql": [],
      "error": null,
      "children": []

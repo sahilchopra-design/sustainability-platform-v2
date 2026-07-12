@@ -1,10 +1,10 @@
 {
  "domain": "eu-gbs",
  "meta": {
-  "ts": "2026-06-30T14:01:58",
+  "ts": "2026-07-05T19:15:15",
+  "endpoints": 10,
   "module": "api.v1.routes.eu_gbs",
-  "router_prefix": "/api/v1/eu-gbs",
-  "endpoints": 10
+  "router_prefix": "/api/v1/eu-gbs"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.974,
+   "dur_ms": 0.291,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -36,26 +36,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11353,
      "name": "ref_bond_types",
      "qual": "ref_bond_types",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 257,
+     "line": 284,
      "args": {},
      "ret": "{'senior_unsecured': {'name': 'Senior Unsecured Green Bond', 'art': 'Art 3', 'taxonomy_requirement': 'full'}, 'covered_bond': {'name': 'EU Green Covered Bond', 'art': 'Art 3 + CBDB Directive', 'taxonomy_requirement': 'full'}, 'sovereign': \u2026",
-     "dur_ms": 0.173,
+     "dur_ms": 0.064,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11354,
        "name": "get_bond_types",
        "qual": "EUGBSEngine.get_bond_types",
        "file": "services/eu_gbs_engine.py",
-       "line": 593,
+       "line": 649,
        "args": {},
        "ret": "{'senior_unsecured': {'name': 'Senior Unsecured Green Bond', 'art': 'Art 3', 'taxonomy_requirement': 'full'}, 'covered_bond': {'name': 'EU Green Covered Bond', 'art': 'Art 3 + CBDB Directive', 'taxonomy_requirement': 'full'}, 'sovereign': \u2026",
-       "dur_ms": 0.01,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
@@ -70,7 +70,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.556,
+   "dur_ms": 0.158,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -92,26 +92,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11355,
      "name": "ref_er_requirements",
      "qual": "ref_er_requirements",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 273,
+     "line": 300,
      "args": {},
      "ret": "{'registration': 'Must be registered with ESMA under Art 22 Regulation 2023/2631', 'independence': 'No conflict of interest with issuer (Art 23)', 'methodology': 'Publicly available, transparent methodology (Art 24)', 'scope': 'Pre-issuanc\u2026",
-     "dur_ms": 0.113,
+     "dur_ms": 0.031,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11356,
        "name": "get_er_requirements",
        "qual": "EUGBSEngine.get_er_requirements",
        "file": "services/eu_gbs_engine.py",
-       "line": 599,
+       "line": 655,
        "args": {},
        "ret": "{'registration': 'Must be registered with ESMA under Art 22 Regulation 2023/2631', 'independence': 'No conflict of interest with issuer (Art 23)', 'methodology': 'Publicly available, transparent methodology (Art 24)', 'scope': 'Pre-issuanc\u2026",
-       "dur_ms": 0.013,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -126,7 +126,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.555,
+   "dur_ms": 0.177,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -147,26 +147,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11357,
      "name": "ref_standards_comparison",
      "qual": "ref_standards_comparison",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 281,
+     "line": 308,
      "args": {},
      "ret": "{'eugbs': {'name': 'EU Green Bond Standard', 'regulator': 'European Commission', 'mandatory_taxonomy_alignment': True, 'external_review': 'Mandatory (ESMA-registered ER)', 'post_issuance_reporting': 'Mandatory', 'sovereign_article': 'Art 2\u2026",
-     "dur_ms": 0.17,
+     "dur_ms": 0.049,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11358,
        "name": "compare_standards",
        "qual": "EUGBSEngine.compare_standards",
        "file": "services/eu_gbs_engine.py",
-       "line": 562,
+       "line": 618,
        "args": {},
        "ret": "{'eugbs': {'name': 'EU Green Bond Standard', 'regulator': 'European Commission', 'mandatory_taxonomy_alignment': True, 'external_review': 'Mandatory (ESMA-registered ER)', 'post_issuance_reporting': 'Mandatory', 'sovereign_article': 'Art 2\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -181,7 +181,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.367,
+   "dur_ms": 0.145,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -204,26 +204,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11359,
      "name": "ref_taxonomy_objectives",
      "qual": "ref_taxonomy_objectives",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 265,
+     "line": 292,
      "args": {},
      "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'delegated_act': '2021/2139'}, 'CCA': {'id': 'CCA', 'name': 'Climate Change Adaptation', 'delegated_act': '2021/2139'}, 'WMR': {'id': 'WMR', 'name': 'Water & Marine Resources', 'de\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.029,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11360,
        "name": "get_taxonomy_objectives",
        "qual": "EUGBSEngine.get_taxonomy_objectives",
        "file": "services/eu_gbs_engine.py",
-       "line": 596,
+       "line": 652,
        "args": {},
        "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'delegated_act': '2021/2139'}, 'CCA': {'id': 'CCA', 'name': 'Climate Change Adaptation', 'delegated_act': '2021/2139'}, 'WMR': {'id': 'WMR', 'name': 'Water & Marine Resources', 'de\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -238,7 +238,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.258,
+   "dur_ms": 0.155,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -258,26 +258,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11361,
      "name": "ref_timeline",
      "qual": "ref_timeline",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 289,
+     "line": 316,
      "args": {},
      "ret": "[{'date': '2023-10-04', 'event': 'Regulation (EU) 2023/2631 published in OJEU', 'article': 'All'}, {'date': '2024-12-21', 'event': 'Regulation enters into force', 'article': 'Art 28'}, {'date': '2025-12-21', 'event': 'ESMA External Reviewe\u2026",
-     "dur_ms": 0.043,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11362,
        "name": "get_timeline",
        "qual": "EUGBSEngine.get_timeline",
        "file": "services/eu_gbs_engine.py",
-       "line": 602,
+       "line": 658,
        "args": {},
        "ret": "[{'date': '2023-10-04', 'event': 'Regulation (EU) 2023/2631 published in OJEU', 'article': 'All'}, {'date': '2024-12-21', 'event': 'Regulation enters into force', 'article': 'Art 28'}, {'date': '2025-12-21', 'event': 'ESMA External Reviewe\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -310,7 +310,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'bond_id'",
-   "dur_ms": 0.489,
+   "dur_ms": 0.161,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -324,16 +324,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 11363,
      "name": "assess_issuance",
      "qual": "assess_issuance",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 121,
+     "line": 140,
      "args": {
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.021,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -346,7 +346,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'bond_id'",
-   "dur_ms": 0.572,
+   "dur_ms": 0.142,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -360,16 +360,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 11364,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/eu_gbs.py",
-     "line": 222,
+     "line": 247,
      "args": {
       "requests": "'TEST_requests'"
      },
      "ret": "None",
-     "dur_ms": 0.02,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

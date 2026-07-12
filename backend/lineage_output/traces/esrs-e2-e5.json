@@ -1,10 +1,10 @@
 {
  "domain": "esrs-e2-e5",
  "meta": {
-  "ts": "2026-06-30T14:01:55",
+  "ts": "2026-07-05T19:15:15",
+  "endpoints": 11,
   "module": "api.v1.routes.esrs_e2_e5",
-  "router_prefix": "/api/v1/esrs-e2-e5",
-  "endpoints": 11
+  "router_prefix": "/api/v1/esrs-e2-e5"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.553,
+   "dur_ms": 0.422,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -36,50 +36,50 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11297,
      "name": "ref_e2_disclosures",
      "qual": "ref_e2_disclosures",
      "file": "api/v1/routes/esrs_e2_e5.py",
      "line": 137,
      "args": {},
      "ret": "{'E2-1': {'name': 'Policies related to pollution', 'description': 'Policies to manage material pollution impacts, risks and opportunities.', 'required_dps': ['policy_scope', 'prevention_approach', 'reduction_targets_set']}, 'E2-2': {'name'\u2026",
-     "dur_ms": 0.173,
+     "dur_ms": 0.163,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11298,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.071,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.068,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 11299,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-         "dur_ms": 0.035,
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+         "dur_ms": 0.033,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 4,
+           "id": 11300,
            "name": "__init__",
            "qual": "ESRSE2E5Engine.__init__",
            "file": "services/esrs_e2_e5_engine.py",
-           "line": 255,
+           "line": 254,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.003,
+           "dur_ms": 0.004,
            "sql": [],
            "error": null,
            "children": []
@@ -89,14 +89,14 @@
        ]
       },
       {
-       "id": 5,
+       "id": 11301,
        "name": "ref_e2_disclosures",
        "qual": "ESRSE2E5Engine.ref_e2_disclosures",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 562,
+       "line": 596,
        "args": {},
        "ret": "{'E2-1': {'name': 'Policies related to pollution', 'description': 'Policies to manage material pollution impacts, risks and opportunities.', 'required_dps': ['policy_scope', 'prevention_approach', 'reduction_targets_set']}, 'E2-2': {'name'\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -111,7 +111,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.276,
+   "dur_ms": 0.242,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -133,37 +133,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 11302,
      "name": "ref_e3_disclosures",
      "qual": "ref_e3_disclosures",
      "file": "api/v1/routes/esrs_e2_e5.py",
      "line": 146,
      "args": {},
      "ret": "{'E3-1': {'name': 'Policies related to water and marine resources', 'description': 'Policies addressing water use, discharge and marine resource impacts.', 'required_dps': ['policy_scope', 'water_stressed_area_approach']}, 'E3-2': {'name':\u2026",
-     "dur_ms": 0.094,
+     "dur_ms": 0.089,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 11303,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
        "dur_ms": 0.025,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 8,
+         "id": 11304,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
@@ -172,14 +172,14 @@
        ]
       },
       {
-       "id": 9,
+       "id": 11305,
        "name": "ref_e3_disclosures",
        "qual": "ESRSE2E5Engine.ref_e3_disclosures",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 565,
+       "line": 599,
        "args": {},
        "ret": "{'E3-1': {'name': 'Policies related to water and marine resources', 'description': 'Policies addressing water use, discharge and marine resource impacts.', 'required_dps': ['policy_scope', 'water_stressed_area_approach']}, 'E3-2': {'name':\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -194,7 +194,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.311,
+   "dur_ms": 0.245,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -217,38 +217,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 11306,
      "name": "ref_e4_disclosures",
      "qual": "ref_e4_disclosures",
      "file": "api/v1/routes/esrs_e2_e5.py",
      "line": 155,
      "args": {},
      "ret": "{'E4-1': {'name': 'Transition plan and considerations of biodiversity and ecosystems in strategy', 'description': 'How strategy addresses biodiversity/ecosystem impacts, risks and opportunities.', 'required_dps': ['biodiversity_targets_ado\u2026",
-     "dur_ms": 0.1,
+     "dur_ms": 0.096,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 11307,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.024,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.022,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 12,
+         "id": 11308,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-         "dur_ms": 0.002,
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -256,11 +256,11 @@
        ]
       },
       {
-       "id": 13,
+       "id": 11309,
        "name": "ref_e4_disclosures",
        "qual": "ESRSE2E5Engine.ref_e4_disclosures",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 568,
+       "line": 602,
        "args": {},
        "ret": "{'E4-1': {'name': 'Transition plan and considerations of biodiversity and ecosystems in strategy', 'description': 'How strategy addresses biodiversity/ecosystem impacts, risks and opportunities.', 'required_dps': ['biodiversity_targets_ado\u2026",
        "dur_ms": 0.001,
@@ -278,7 +278,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.352,
+   "dur_ms": 0.23,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -301,38 +301,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 11310,
      "name": "ref_e5_disclosures",
      "qual": "ref_e5_disclosures",
      "file": "api/v1/routes/esrs_e2_e5.py",
      "line": 164,
      "args": {},
      "ret": "{'E5-1': {'name': 'Policies related to resource use and circular economy', 'description': 'Policies covering resource inflows, circular design and waste management.', 'required_dps': ['policy_scope', 'circularity_principles', 'waste_hierar\u2026",
-     "dur_ms": 0.104,
+     "dur_ms": 0.085,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 15,
+       "id": 11311,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.026,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 16,
+         "id": 11312,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-         "dur_ms": 0.002,
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -340,14 +340,14 @@
        ]
       },
       {
-       "id": 17,
+       "id": 11313,
        "name": "ref_e5_disclosures",
        "qual": "ESRSE2E5Engine.ref_e5_disclosures",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 571,
+       "line": 605,
        "args": {},
        "ret": "{'E5-1': {'name': 'Policies related to resource use and circular economy', 'description': 'Policies covering resource inflows, circular design and waste management.', 'required_dps': ['policy_scope', 'circularity_principles', 'waste_hierar\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -362,7 +362,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.25,
+   "dur_ms": 0.369,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -399,37 +399,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 11314,
      "name": "ref_materiality_triggers",
      "qual": "ref_materiality_triggers",
      "file": "api/v1/routes/esrs_e2_e5.py",
      "line": 173,
      "args": {},
      "ret": "{'A01': {'E2': True, 'E3': True, 'E4': True, 'E5': True}, 'A02': {'E2': False, 'E3': True, 'E4': True, 'E5': True}, 'A03': {'E2': True, 'E3': True, 'E4': True, 'E5': False}, 'B05': {'E2': True, 'E3': True, 'E4': True, 'E5': True}, 'B06': {\u2026",
-     "dur_ms": 0.082,
+     "dur_ms": 0.182,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 19,
+       "id": 11315,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 20,
+         "id": 11316,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
@@ -438,11 +438,11 @@
        ]
       },
       {
-       "id": 21,
+       "id": 11317,
        "name": "ref_materiality_triggers",
        "qual": "ESRSE2E5Engine.ref_materiality_triggers",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 574,
+       "line": 608,
        "args": {},
        "ret": "{'A01': {'E2': True, 'E3': True, 'E4': True, 'E5': True}, 'A02': {'E2': False, 'E3': True, 'E4': True, 'E5': True}, 'A03': {'E2': True, 'E3': True, 'E4': True, 'E5': False}, 'B05': {'E2': True, 'E3': True, 'E4': True, 'E5': True}, 'B06': {\u2026",
        "dur_ms": 0.001,
@@ -460,7 +460,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.313,
+   "dur_ms": 0.33,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -474,7 +474,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 11318,
      "name": "assess",
      "qual": "assess",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -483,30 +483,30 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.066,
+     "dur_ms": 0.075,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 23,
+       "id": 11319,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.03,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 24,
+         "id": 11320,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
@@ -524,7 +524,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.251,
+   "dur_ms": 0.217,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -538,7 +538,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 11321,
      "name": "assess_e2",
      "qual": "assess_e2",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -547,30 +547,30 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.059,
+     "dur_ms": 0.053,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 26,
+       "id": 11322,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.026,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.022,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 27,
+         "id": 11323,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
@@ -588,7 +588,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.253,
+   "dur_ms": 0.202,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -602,7 +602,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 28,
+     "id": 11324,
      "name": "assess_e3",
      "qual": "assess_e3",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -611,30 +611,30 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.072,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 29,
+       "id": 11325,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.02,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 30,
+         "id": 11326,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
@@ -652,7 +652,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.239,
+   "dur_ms": 0.196,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -666,7 +666,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 31,
+     "id": 11327,
      "name": "assess_e4",
      "qual": "assess_e4",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -675,31 +675,31 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.051,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 32,
+       "id": 11328,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.02,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 33,
+         "id": 11329,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-         "dur_ms": 0.002,
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -716,7 +716,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.245,
+   "dur_ms": 0.197,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -730,7 +730,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 34,
+     "id": 11330,
      "name": "assess_e5",
      "qual": "assess_e5",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -739,31 +739,31 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.05,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 35,
+       "id": 11331,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 36,
+         "id": 11332,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-         "dur_ms": 0.002,
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -780,7 +780,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.227,
+   "dur_ms": 0.229,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -794,7 +794,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 11333,
      "name": "assess_materiality",
      "qual": "assess_materiality",
      "file": "api/v1/routes/esrs_e2_e5.py",
@@ -803,30 +803,30 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.054,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 38,
+       "id": 11334,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/esrs_e2_e5_engine.py",
-       "line": 588,
+       "line": 622,
        "args": {},
-       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
-       "dur_ms": 0.022,
+       "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 39,
+         "id": 11335,
          "name": "get_instance",
          "qual": "ESRSE2E5Engine.get_instance",
          "file": "services/esrs_e2_e5_engine.py",
-         "line": 265,
+         "line": 264,
          "args": {},
-         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x00000139D3D84CB0>",
+         "ret": "<services.esrs_e2_e5_engine.ESRSE2E5Engine object at 0x0000013D48785340>",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,

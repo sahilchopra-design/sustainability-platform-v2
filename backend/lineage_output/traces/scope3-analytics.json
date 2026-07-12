@@ -1,10 +1,10 @@
 {
  "domain": "scope3-analytics",
  "meta": {
-  "ts": "2026-06-30T14:05:00",
+  "ts": "2026-07-05T19:17:00",
+  "endpoints": 9,
   "module": "api.v1.routes.scope3_analytics",
-  "router_prefix": "/api/v1/scope3",
-  "endpoints": 9
+  "router_prefix": "/api/v1/scope3"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.163,
+   "dur_ms": 2.225,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39988,
      "name": "ref_categories",
      "qual": "ref_categories",
      "file": "api/v1/routes/scope3_analytics.py",
      "line": 171,
      "args": {},
      "ret": "{'categories': {1: {'name': 'Purchased Goods and Services', 'upstream_downstream': 'upstream', 'typical_methods': ['spend-based', 'average-data', 'supplier-specific'], 'flag_relevant': True, 'sbti_relevant': True, 'materiality_threshold_pc\u2026",
-     "dur_ms": 0.013,
+     "dur_ms": 0.016,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.133,
+   "dur_ms": 2.279,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -76,14 +76,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 39989,
      "name": "ref_ef_databases",
      "qual": "ref_ef_databases",
      "file": "api/v1/routes/scope3_analytics.py",
      "line": 204,
      "args": {},
      "ret": "{'databases': {'ecoinvent': {'version': '3.10', 'scope': 'global LCA', 'coverage': '21,000+ processes', 'license': 'commercial'}, 'defra': {'version': '2024', 'scope': 'UK-focused', 'coverage': 'all GHG categories', 'license': 'free'}, 'ep\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -96,7 +96,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.646,
+   "dur_ms": 1.306,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -118,14 +118,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39990,
      "name": "ref_sector_profiles",
      "qual": "ref_sector_profiles",
      "file": "api/v1/routes/scope3_analytics.py",
      "line": 188,
      "args": {},
      "ret": "{'profiles': {'oil_gas': {'dominant_categories': [11, 1, 3], 'typical_scope3_vs_scope12_ratio': 8.5, 'cat15_materiality': False, 'flag_materiality': False}, 'utilities': {'dominant_categories': [3, 1, 4], 'typical_scope3_vs_scope12_ratio':\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []
@@ -156,7 +156,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.23,
+   "dur_ms": 1.111,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -170,7 +170,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 39991,
      "name": "calculate_scope3",
      "qual": "calculate_scope3",
      "file": "api/v1/routes/scope3_analytics.py",
@@ -228,7 +228,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.142,
+   "dur_ms": 1.072,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -242,7 +242,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39992,
      "name": "dqs_assessment",
      "qual": "dqs_assessment",
      "file": "api/v1/routes/scope3_analytics.py",

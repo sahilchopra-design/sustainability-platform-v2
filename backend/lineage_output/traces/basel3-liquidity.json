@@ -1,10 +1,10 @@
 {
  "domain": "basel3-liquidity",
  "meta": {
-  "ts": "2026-06-30T13:59:24",
+  "ts": "2026-07-05T19:10:39",
+  "endpoints": 15,
   "module": "api.v1.routes.basel3_liquidity",
-  "router_prefix": "/api/v1/basel3-liquidity",
-  "endpoints": 15
+  "router_prefix": "/api/v1/basel3-liquidity"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.276,
+   "dur_ms": 0.25,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,23 +31,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 545,
      "name": "ref_hqla_factors",
      "qual": "ref_hqla_factors",
      "file": "api/v1/routes/basel3_liquidity.py",
      "line": 239,
      "args": {},
      "ret": "{'hqla_haircuts': {'level_1': {'coins_and_banknotes': 0.0, 'central_bank_reserves': 0.0, 'central_govt_bonds_0_rw': 0.0, 'central_bank_bonds': 0.0, 'multilateral_dev_bank_0rw': 0.0, 'description': 'Level 1 HQLA \u2014 0% haircut, unlimited incl\u2026",
-     "dur_ms": 0.054,
+     "dur_ms": 0.051,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 546,
        "name": "get_hqla_factors",
        "qual": "Basel3LiquidityEngine.get_hqla_factors",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 737,
+       "line": 758,
        "args": {},
        "ret": "{'level_1': {'coins_and_banknotes': 0.0, 'central_bank_reserves': 0.0, 'central_govt_bonds_0_rw': 0.0, 'central_bank_bonds': 0.0, 'multilateral_dev_bank_0rw': 0.0, 'description': 'Level 1 HQLA \u2014 0% haircut, unlimited inclusion'}, 'level_2a\u2026",
        "dur_ms": 0.003,
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.147,
+   "dur_ms": 0.125,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -83,7 +83,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 547,
      "name": "ref_hqla_haircuts",
      "qual": "ref_hqla_haircuts",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -103,7 +103,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.168,
+   "dur_ms": 0.159,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -121,23 +121,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 548,
      "name": "ref_monitoring_tools",
      "qual": "ref_monitoring_tools",
      "file": "api/v1/routes/basel3_liquidity.py",
      "line": 265,
      "args": {},
      "ret": "{'bcbs238_monitoring_tools': {'contractual_maturity_mismatch': {'description': 'Map of contractual cash inflows/outflows across time buckets', 'frequency': 'monthly', 'article': 'BCBS 238 para 18'}, 'concentration_of_funding': {'descriptio\u2026",
-     "dur_ms": 0.033,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 549,
        "name": "get_monitoring_tools",
        "qual": "Basel3LiquidityEngine.get_monitoring_tools",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 753,
+       "line": 774,
        "args": {},
        "ret": "{'contractual_maturity_mismatch': {'description': 'Map of contractual cash inflows/outflows across time buckets', 'frequency': 'monthly', 'article': 'BCBS 238 para 18'}, 'concentration_of_funding': {'description': 'Significant counterparti\u2026",
        "dur_ms": 0.002,
@@ -155,7 +155,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.115,
+   "dur_ms": 0.114,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -173,7 +173,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 550,
      "name": "ref_outflow_rates",
      "qual": "ref_outflow_rates",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -193,7 +193,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.1,
+   "dur_ms": 0.103,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -211,14 +211,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 551,
      "name": "ref_rate_shocks",
      "qual": "ref_rate_shocks",
      "file": "api/v1/routes/basel3_liquidity.py",
      "line": 272,
      "args": {},
      "ret": "{'rate_shocks_bps': {'parallel_up': 200, 'parallel_down': -200, 'steepener': 150, 'flattener': -150, 'short_up': 250, 'short_down': -250}}",
-     "dur_ms": 0.002,
+     "dur_ms": 0.001,
      "sql": [],
      "error": null,
      "children": []
@@ -231,7 +231,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.122,
+   "dur_ms": 0.132,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -249,26 +249,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 552,
      "name": "ref_runoff_rates",
      "qual": "ref_runoff_rates",
      "file": "api/v1/routes/basel3_liquidity.py",
      "line": 252,
      "args": {},
      "ret": "{'runoff_rates': {'retail_stable': 0.03, 'retail_less_stable': 0.1, 'small_business_stable': 0.05, 'small_business_less_stable': 0.1, 'wholesale_operational': 0.25, 'wholesale_non_operational_financial': 0.4, 'wholesale_non_operational_non\u2026",
-     "dur_ms": 0.023,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 553,
        "name": "get_runoff_rates",
        "qual": "Basel3LiquidityEngine.get_runoff_rates",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 741,
+       "line": 762,
        "args": {},
        "ret": "{'retail_stable': 0.03, 'retail_less_stable': 0.1, 'small_business_stable': 0.05, 'small_business_less_stable': 0.1, 'wholesale_operational': 0.25, 'wholesale_non_operational_financial': 0.4, 'wholesale_non_operational_non_financial': 0.2,\u2026",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -283,7 +283,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'",
-   "dur_ms": 0.203,
+   "dur_ms": 0.23,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -297,7 +297,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 554,
      "name": "assess_alm_gap",
      "qual": "assess_alm_gap",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -306,19 +306,19 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.061,
+     "dur_ms": 0.076,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 555,
        "name": "__init__",
        "qual": "Basel3LiquidityEngine.__init__",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 255,
+       "line": 254,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.028,
+       "dur_ms": 0.039,
        "sql": [],
        "error": null,
        "children": []
@@ -333,7 +333,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'",
-   "dur_ms": 0.158,
+   "dur_ms": 0.165,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -347,7 +347,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 556,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -356,19 +356,19 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.034,
+     "dur_ms": 0.039,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 557,
        "name": "__init__",
        "qual": "Basel3LiquidityEngine.__init__",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 255,
+       "line": 254,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.011,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
@@ -383,7 +383,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'time_buckets'",
-   "dur_ms": 0.167,
+   "dur_ms": 0.176,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -397,11 +397,127 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 558,
      "name": "irrbb_assessment",
      "qual": "irrbb_assessment",
      "file": "api/v1/routes/basel3_liquidity.py",
      "line": 294,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.053,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 559,
+       "name": "assess_alm_gap",
+       "qual": "assess_alm_gap",
+       "file": "api/v1/routes/basel3_liquidity.py",
+       "line": 151,
+       "args": {
+        "req": "'TEST_req'"
+       },
+       "ret": "None",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 560,
+         "name": "__init__",
+         "qual": "Basel3LiquidityEngine.__init__",
+         "file": "services/basel3_liquidity_engine.py",
+         "line": 254,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel3-liquidity",
+   "label": "POST /api/v1/basel3-liquidity/lcr",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.211,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 561,
+     "name": "assess_lcr",
+     "qual": "assess_lcr",
+     "file": "api/v1/routes/basel3_liquidity.py",
+     "line": 89,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.036,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 562,
+       "name": "__init__",
+       "qual": "Basel3LiquidityEngine.__init__",
+       "file": "services/basel3_liquidity_engine.py",
+       "line": 254,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "basel3-liquidity",
+   "label": "POST /api/v1/basel3-liquidity/lcr-assessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
+   "dur_ms": 0.165,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 563,
+     "name": "lcr_assessment",
+     "qual": "lcr_assessment",
+     "file": "api/v1/routes/basel3_liquidity.py",
+     "line": 282,
      "args": {
       "req": "'TEST_req'"
      },
@@ -411,11 +527,11 @@
      "error": null,
      "children": [
       {
-       "id": 15,
-       "name": "assess_alm_gap",
-       "qual": "assess_alm_gap",
+       "id": 564,
+       "name": "assess_lcr",
+       "qual": "assess_lcr",
        "file": "api/v1/routes/basel3_liquidity.py",
-       "line": 151,
+       "line": 89,
        "args": {
         "req": "'TEST_req'"
        },
@@ -425,11 +541,11 @@
        "error": null,
        "children": [
         {
-         "id": 16,
+         "id": 565,
          "name": "__init__",
          "qual": "Basel3LiquidityEngine.__init__",
          "file": "services/basel3_liquidity_engine.py",
-         "line": 255,
+         "line": 254,
          "args": {},
          "ret": "None",
          "dur_ms": 0.009,
@@ -445,7 +561,7 @@
   },
   {
    "domain": "basel3-liquidity",
-   "label": "POST /api/v1/basel3-liquidity/lcr",
+   "label": "POST /api/v1/basel3-liquidity/liquidity-stress",
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
@@ -463,11 +579,11 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
-     "name": "assess_lcr",
-     "qual": "assess_lcr",
+     "id": 566,
+     "name": "run_liquidity_stress",
+     "qual": "run_liquidity_stress",
      "file": "api/v1/routes/basel3_liquidity.py",
-     "line": 89,
+     "line": 181,
      "args": {
       "req": "'TEST_req'"
      },
@@ -477,130 +593,14 @@
      "error": null,
      "children": [
       {
-       "id": 18,
+       "id": 567,
        "name": "__init__",
        "qual": "Basel3LiquidityEngine.__init__",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 255,
+       "line": 254,
        "args": {},
        "ret": "None",
        "dur_ms": 0.008,
-       "sql": [],
-       "error": null,
-       "children": []
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "domain": "basel3-liquidity",
-   "label": "POST /api/v1/basel3-liquidity/lcr-assessment",
-   "status": "failed",
-   "http_status": 500,
-   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.157,
-   "node_count": 3,
-   "provenance": [
-    "computed"
-   ],
-   "source_tables": [],
-   "sources": [],
-   "inputs": {
-    "req": "'TEST_req' (mock)"
-   },
-   "output_summary": null,
-   "truncated": [],
-   "tree": [
-    {
-     "id": 19,
-     "name": "lcr_assessment",
-     "qual": "lcr_assessment",
-     "file": "api/v1/routes/basel3_liquidity.py",
-     "line": 282,
-     "args": {
-      "req": "'TEST_req'"
-     },
-     "ret": "None",
-     "dur_ms": 0.045,
-     "sql": [],
-     "error": null,
-     "children": [
-      {
-       "id": 20,
-       "name": "assess_lcr",
-       "qual": "assess_lcr",
-       "file": "api/v1/routes/basel3_liquidity.py",
-       "line": 89,
-       "args": {
-        "req": "'TEST_req'"
-       },
-       "ret": "None",
-       "dur_ms": 0.029,
-       "sql": [],
-       "error": null,
-       "children": [
-        {
-         "id": 21,
-         "name": "__init__",
-         "qual": "Basel3LiquidityEngine.__init__",
-         "file": "services/basel3_liquidity_engine.py",
-         "line": 255,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.008,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "domain": "basel3-liquidity",
-   "label": "POST /api/v1/basel3-liquidity/liquidity-stress",
-   "status": "failed",
-   "http_status": 500,
-   "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.137,
-   "node_count": 2,
-   "provenance": [
-    "computed"
-   ],
-   "source_tables": [],
-   "sources": [],
-   "inputs": {
-    "req": "'TEST_req' (mock)"
-   },
-   "output_summary": null,
-   "truncated": [],
-   "tree": [
-    {
-     "id": 22,
-     "name": "run_liquidity_stress",
-     "qual": "run_liquidity_stress",
-     "file": "api/v1/routes/basel3_liquidity.py",
-     "line": 181,
-     "args": {
-      "req": "'TEST_req'"
-     },
-     "ret": "None",
-     "dur_ms": 0.026,
-     "sql": [],
-     "error": null,
-     "children": [
-      {
-       "id": 23,
-       "name": "__init__",
-       "qual": "Basel3LiquidityEngine.__init__",
-       "file": "services/basel3_liquidity_engine.py",
-       "line": 255,
-       "args": {},
-       "ret": "None",
-       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
@@ -615,7 +615,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.138,
+   "dur_ms": 0.142,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -629,7 +629,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 568,
      "name": "assess_nsfr",
      "qual": "assess_nsfr",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -638,16 +638,16 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.027,
+     "dur_ms": 0.029,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 25,
+       "id": 569,
        "name": "__init__",
        "qual": "Basel3LiquidityEngine.__init__",
        "file": "services/basel3_liquidity_engine.py",
-       "line": 255,
+       "line": 254,
        "args": {},
        "ret": "None",
        "dur_ms": 0.007,
@@ -665,7 +665,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.164,
+   "dur_ms": 0.154,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -679,7 +679,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 26,
+     "id": 570,
      "name": "nsfr_assessment",
      "qual": "nsfr_assessment",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -688,12 +688,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.051,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 27,
+       "id": 571,
        "name": "assess_nsfr",
        "qual": "assess_nsfr",
        "file": "api/v1/routes/basel3_liquidity.py",
@@ -702,19 +702,19 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.034,
+       "dur_ms": 0.027,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 28,
+         "id": 572,
          "name": "__init__",
          "qual": "Basel3LiquidityEngine.__init__",
          "file": "services/basel3_liquidity_engine.py",
-         "line": 255,
+         "line": 254,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.016,
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
@@ -731,7 +731,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.166,
+   "dur_ms": 0.162,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -745,7 +745,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 29,
+     "id": 573,
      "name": "stress_test",
      "qual": "stress_test",
      "file": "api/v1/routes/basel3_liquidity.py",
@@ -754,12 +754,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.04,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 30,
+       "id": 574,
        "name": "run_liquidity_stress",
        "qual": "run_liquidity_stress",
        "file": "api/v1/routes/basel3_liquidity.py",
@@ -768,19 +768,19 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.024,
+       "dur_ms": 0.026,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 31,
+         "id": 575,
          "name": "__init__",
          "qual": "Basel3LiquidityEngine.__init__",
          "file": "services/basel3_liquidity_engine.py",
-         "line": 255,
+         "line": 254,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.006,
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []

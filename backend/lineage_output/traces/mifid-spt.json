@@ -1,10 +1,10 @@
 {
  "domain": "mifid-spt",
  "meta": {
-  "ts": "2026-06-30T14:03:09",
+  "ts": "2026-07-05T19:15:48",
+  "endpoints": 8,
   "module": "api.v1.routes.mifid_spt",
-  "router_prefix": "/api/v1/mifid-spt",
-  "endpoints": 8
+  "router_prefix": "/api/v1/mifid-spt"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.016,
+   "dur_ms": 0.276,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12949,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/mifid_spt.py",
      "line": 210,
      "args": {},
      "ret": "{'sfdr_art_8_9': 'SFDR sustainable investment % maps to Category B', 'eu_taxonomy': 'Taxonomy-aligned % maps to Category A', 'pai_sfdr_rts': 'PAI consideration maps to Category C', 'csrd_esrs_e1': 'CSRD climate disclosure informs taxonomy \u2026",
-     "dur_ms": 0.123,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12950,
        "name": "get_cross_framework",
        "qual": "MiFIDSPTEngine.get_cross_framework",
        "file": "services/mifid_spt_engine.py",
        "line": 480,
        "args": {},
        "ret": "{'sfdr_art_8_9': 'SFDR sustainable investment % maps to Category B', 'eu_taxonomy': 'Taxonomy-aligned % maps to Category A', 'pai_sfdr_rts': 'PAI consideration maps to Category C', 'csrd_esrs_e1': 'CSRD climate disclosure informs taxonomy \u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.864,
+   "dur_ms": 0.193,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -89,26 +89,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12951,
      "name": "ref_preference_categories",
      "qual": "ref_preference_categories",
      "file": "api/v1/routes/mifid_spt.py",
      "line": 186,
      "args": {},
      "ret": "{'category_a': {'id': 'category_a', 'name': 'EU Taxonomy-Aligned', 'description': 'Minimum % of investments to be taxonomy-aligned per Regulation (EU) 2020/852', 'article': 'Art 2(7)(a) MiFID II + Art 2(1) EU Taxonomy Regulation', 'metric'\u2026",
-     "dur_ms": 0.161,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 12952,
        "name": "get_preference_categories",
        "qual": "MiFIDSPTEngine.get_preference_categories",
        "file": "services/mifid_spt_engine.py",
        "line": 474,
        "args": {},
        "ret": "{'category_a': {'id': 'category_a', 'name': 'EU Taxonomy-Aligned', 'description': 'Minimum % of investments to be taxonomy-aligned per Regulation (EU) 2020/852', 'article': 'Art 2(7)(a) MiFID II + Art 2(1) EU Taxonomy Regulation', 'metric'\u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -123,7 +123,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.47,
+   "dur_ms": 0.178,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -144,26 +144,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12953,
      "name": "ref_product_esg_types",
      "qual": "ref_product_esg_types",
      "file": "api/v1/routes/mifid_spt.py",
      "line": 194,
      "args": {},
      "ret": "{'article_9': {'sfdr_article': 'art_9', 'min_sustainable_pct': 100, 'pais_considered': True, 'typical_taxonomy_pct': 15}, 'article_8_with_commitment': {'sfdr_article': 'art_8', 'min_sustainable_pct': 10, 'pais_considered': True, 'typical_t\u2026",
-     "dur_ms": 0.084,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 12954,
        "name": "get_product_esg_types",
        "qual": "MiFIDSPTEngine.get_product_esg_types",
        "file": "services/mifid_spt_engine.py",
        "line": 483,
        "args": {},
        "ret": "{'article_9': {'sfdr_article': 'art_9', 'min_sustainable_pct': 100, 'pais_considered': True, 'typical_taxonomy_pct': 15}, 'article_8_with_commitment': {'sfdr_article': 'art_8', 'min_sustainable_pct': 10, 'pais_considered': True, 'typical_t\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -178,7 +178,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.008,
+   "dur_ms": 0.199,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -199,26 +199,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 12955,
      "name": "ref_suitability_process",
      "qual": "ref_suitability_process",
      "file": "api/v1/routes/mifid_spt.py",
      "line": 202,
      "args": {},
      "ret": "[{'step': 1, 'name': 'Collect client preferences', 'description': 'Gather client preferences across all 3 categories (A/B/C)', 'mandatory': True}, {'step': 2, 'name': 'Screen product universe', 'description': 'Filter products meeting minim\u2026",
-     "dur_ms": 0.174,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 12956,
        "name": "get_suitability_process",
        "qual": "MiFIDSPTEngine.get_suitability_process",
        "file": "services/mifid_spt_engine.py",
        "line": 477,
        "args": {},
        "ret": "[{'step': 1, 'name': 'Collect client preferences', 'description': 'Gather client preferences across all 3 categories (A/B/C)', 'mandatory': True}, {'step': 2, 'name': 'Screen product universe', 'description': 'Filter products meeting minim\u2026",
-       "dur_ms": 0.013,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -233,7 +233,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.438,
+   "dur_ms": 0.214,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -253,26 +253,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 12957,
      "name": "ref_timeline",
      "qual": "ref_timeline",
      "file": "api/v1/routes/mifid_spt.py",
      "line": 218,
      "args": {},
      "ret": "[{'date': '2021-07-02', 'event': 'Delegated Regulation 2021/1253 published in OJEU', 'article': 'All'}, {'date': '2022-08-02', 'event': 'Application date \u2014 sustainability preferences integration into suitability process', 'article': 'Art 2\u2026",
-     "dur_ms": 0.101,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 12958,
        "name": "get_timeline",
        "qual": "MiFIDSPTEngine.get_timeline",
        "file": "services/mifid_spt_engine.py",
        "line": 486,
        "args": {},
        "ret": "[{'date': '2021-07-02', 'event': 'Delegated Regulation 2021/1253 published in OJEU', 'article': 'All'}, {'date': '2022-08-02', 'event': 'Application date \u2014 sustainability preferences integration into suitability process', 'article': 'Art 2\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -287,7 +287,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'client'",
-   "dur_ms": 0.559,
+   "dur_ms": 0.197,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -301,7 +301,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 12959,
      "name": "assess",
      "qual": "assess",
      "file": "api/v1/routes/mifid_spt.py",
@@ -310,7 +310,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.024,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -323,7 +323,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'client'",
-   "dur_ms": 0.327,
+   "dur_ms": 0.189,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -337,7 +337,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 12960,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/mifid_spt.py",
@@ -346,7 +346,7 @@
       "requests": "'TEST_requests'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

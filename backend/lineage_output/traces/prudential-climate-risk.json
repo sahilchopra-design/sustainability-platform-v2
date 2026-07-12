@@ -1,10 +1,10 @@
 {
  "domain": "prudential-climate-risk",
  "meta": {
-  "ts": "2026-06-30T14:04:14",
+  "ts": "2026-07-05T19:16:25",
+  "endpoints": 11,
   "module": "api.v1.routes.prudential_climate_risk",
-  "router_prefix": "/api/v1/prudential-climate-risk",
-  "endpoints": 11
+  "router_prefix": "/api/v1/prudential-climate-risk"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.447,
+   "dur_ms": 0.263,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 30616,
      "name": "ref_boe_bes",
      "qual": "ref_boe_bes",
      "file": "api/v1/routes/prudential_climate_risk.py",
      "line": 227,
      "args": {},
      "ret": "{'status': 'success', 'data': {'rounds': {'BES_2021': {'publication_date': '2022-05', 'time_horizon_years': 30, 'scenarios': ['early_action', 'late_action', 'no_additional_action'], 'llt_scenario': {'name': 'late_action', 'temp_pathway_c':\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.381,
+   "dur_ms": 0.199,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 30617,
      "name": "ref_icaap_thresholds",
      "qual": "ref_icaap_thresholds",
      "file": "api/v1/routes/prudential_climate_risk.py",
      "line": 252,
      "args": {},
      "ret": "{'status': 'success', 'data': {'icaap_guidance': {'ss319_thresholds': {'material': '>5% CET1 depletion or >10% RWA impact', 'potentially_material': '1-5% CET1 depletion or 3-10% RWA impact', 'immaterial': '<1% CET1 depletion or <3% RWA imp\u2026",
-     "dur_ms": 0.014,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.304,
+   "dur_ms": 0.175,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,14 +110,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 30618,
      "name": "ref_ngfs_scenarios",
      "qual": "ref_ngfs_scenarios",
      "file": "api/v1/routes/prudential_climate_risk.py",
      "line": 210,
      "args": {},
      "ret": "{'status': 'success', 'data': {'version': 'NGFS Phase IV (June 2023)', 'scenarios_count': 6, 'scenarios': {'net_zero_2050': {'category': 'orderly', 'description': 'Net zero GHG emissions globally by 2050; Paris 1.5\u00b0C goal achieved', '2030_\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.231,
+   "dur_ms": 0.175,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,14 +149,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 30619,
      "name": "ref_sector_risk",
      "qual": "ref_sector_risk",
      "file": "api/v1/routes/prudential_climate_risk.py",
      "line": 239,
      "args": {},
      "ret": "{'status': 'success', 'data': {'transition_risk': {'fossil_fuels': {'rating': 'high', 'pd_uplift_orderly_bps': 85, 'pd_uplift_disorderly_bps': 210}, 'utilities': {'rating': 'high', 'pd_uplift_orderly_bps': 60, 'pd_uplift_disorderly_bps': 1\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -223,7 +223,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.292,
+   "dur_ms": 0.192,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -237,7 +237,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 30620,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/prudential_climate_risk.py",
@@ -246,7 +246,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.012,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "data-hub-catalog",
  "meta": {
-  "ts": "2026-06-30T14:00:39",
+  "ts": "2026-07-05T19:11:32",
+  "endpoints": 5,
   "module": "api.v1.routes.data_hub_catalog",
-  "router_prefix": "/api/v1/data-hub-catalog",
-  "endpoints": 5
+  "router_prefix": "/api/v1/data-hub-catalog"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4097.283,
+   "dur_ms": 1484.833,
    "node_count": 13,
    "provenance": [
     "real-db"
@@ -39,7 +39,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 76.515,
+     "dur_ms": 68.243,
      "is_reference": false,
      "error": null
     },
@@ -50,7 +50,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 31.732,
+     "dur_ms": 30.239,
      "is_reference": false,
      "error": null
     },
@@ -61,7 +61,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 37.466,
+     "dur_ms": 37.232,
      "is_reference": false,
      "error": null
     },
@@ -72,7 +72,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 32.355,
+     "dur_ms": 29.385,
      "is_reference": false,
      "error": null
     },
@@ -83,7 +83,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 45.486,
+     "dur_ms": 33.405,
      "is_reference": false,
      "error": null
     },
@@ -94,7 +94,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 37.272,
+     "dur_ms": 29.24,
      "is_reference": false,
      "error": null
     },
@@ -105,7 +105,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 31.375,
+     "dur_ms": 28.331,
      "is_reference": false,
      "error": null
     },
@@ -116,7 +116,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 33.388,
+     "dur_ms": 28.653,
      "is_reference": false,
      "error": null
     },
@@ -127,7 +127,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 30.652,
+     "dur_ms": 28.395,
      "is_reference": false,
      "error": null
     },
@@ -138,7 +138,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 34.88,
+     "dur_ms": 31.772,
      "is_reference": false,
      "error": null
     },
@@ -149,7 +149,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 31.659,
+     "dur_ms": 28.311,
      "is_reference": false,
      "error": null
     },
@@ -160,7 +160,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 33.005,
+     "dur_ms": 30.044,
      "is_reference": false,
      "error": null
     },
@@ -171,7 +171,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 30.516,
+     "dur_ms": 38.55,
      "is_reference": false,
      "error": null
     },
@@ -182,7 +182,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 32.045,
+     "dur_ms": 34.302,
      "is_reference": false,
      "error": null
     },
@@ -193,7 +193,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 33.641,
+     "dur_ms": 32.17,
      "is_reference": false,
      "error": null
     },
@@ -204,7 +204,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 29.116,
+     "dur_ms": 33.214,
      "is_reference": false,
      "error": null
     },
@@ -215,7 +215,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 30.508,
+     "dur_ms": 27.992,
      "is_reference": false,
      "error": null
     },
@@ -226,7 +226,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 35.701,
+     "dur_ms": 30.281,
      "is_reference": false,
      "error": null
     },
@@ -237,7 +237,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 29.189,
+     "dur_ms": 30.028,
      "is_reference": false,
      "error": null
     },
@@ -248,7 +248,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 34.89,
+     "dur_ms": 30.654,
      "is_reference": false,
      "error": null
     },
@@ -259,7 +259,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 294.879,
+     "dur_ms": 40.032,
      "is_reference": false,
      "error": null
     },
@@ -270,7 +270,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 102.645,
+     "dur_ms": 38.265,
      "is_reference": false,
      "error": null
     },
@@ -281,7 +281,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 28.253,
+     "dur_ms": 29.564,
      "is_reference": false,
      "error": null
     },
@@ -292,7 +292,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 29.322,
+     "dur_ms": 28.668,
      "is_reference": false,
      "error": null
     },
@@ -303,7 +303,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 27.671,
+     "dur_ms": 28.409,
      "is_reference": false,
      "error": null
     },
@@ -314,7 +314,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 29.256,
+     "dur_ms": 30.341,
      "is_reference": false,
      "error": null
     },
@@ -325,7 +325,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 28.405,
+     "dur_ms": 29.397,
      "is_reference": false,
      "error": null
     },
@@ -336,7 +336,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 37.437,
+     "dur_ms": 28.444,
      "is_reference": false,
      "error": null
     },
@@ -347,7 +347,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 39.602,
+     "dur_ms": 28.652,
      "is_reference": false,
      "error": null
     },
@@ -358,7 +358,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 59.866,
+     "dur_ms": 28.296,
      "is_reference": false,
      "error": null
     },
@@ -369,7 +369,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 387.655,
+     "dur_ms": 29.466,
      "is_reference": false,
      "error": null
     },
@@ -380,7 +380,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 159.106,
+     "dur_ms": 28.924,
      "is_reference": false,
      "error": null
     },
@@ -391,7 +391,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 173.771,
+     "dur_ms": 32.255,
      "is_reference": false,
      "error": null
     },
@@ -402,7 +402,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 320.8,
+     "dur_ms": 30.845,
      "is_reference": false,
      "error": null
     },
@@ -413,7 +413,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 30.674,
+     "dur_ms": 29.101,
      "is_reference": false,
      "error": null
     },
@@ -424,7 +424,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 30.866,
+     "dur_ms": 30.533,
      "is_reference": false,
      "error": null
     },
@@ -435,7 +435,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 31.202,
+     "dur_ms": 28.819,
      "is_reference": false,
      "error": null
     },
@@ -446,7 +446,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 29.394,
+     "dur_ms": 29.794,
      "is_reference": false,
      "error": null
     },
@@ -457,7 +457,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 32.21,
+     "dur_ms": 30.291,
      "is_reference": false,
      "error": null
     }
@@ -476,17 +476,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3570,
      "name": "get_coverage",
      "qual": "get_coverage",
      "file": "api/v1/routes/data_hub_catalog.py",
      "line": 245,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000015D7909F8C0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000015D790C4D60>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AD5E0>",
+      "_user": "Depends(_dependency)"
      },
-     "ret": "{'coverage': {'gleif': {'records': 0, 'distinct_jurisdictions': 0}, 'sanctions': {'records': 0, 'distinct_schema_types': 0}, 'climate_trace': {'records': 0, 'distinct_countries': 0, 'distinct_sectors': 0, 'year_range': {'min': None, 'max':\u2026",
-     "dur_ms": 4067.623,
+     "ret": "{'coverage': {'gleif': {'records': 3, 'distinct_jurisdictions': 3}, 'sanctions': {'records': 0, 'distinct_schema_types': 0}, 'climate_trace': {'records': 0, 'distinct_countries': 0, 'distinct_sectors': 0, 'year_range': {'min': None, 'max':\u2026",
+     "dur_ms": 1452.936,
      "sql": [
       0,
       1,
@@ -531,58 +531,28 @@
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 3571,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
-       "ret": "0",
-       "dur_ms": 0.033,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 3,
-       "name": "<genexpr>",
-       "qual": "get_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/data_hub_catalog.py",
-       "line": 351,
-       "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
-       },
-       "ret": "0",
-       "dur_ms": 0.005,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 4,
-       "name": "<genexpr>",
-       "qual": "get_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/data_hub_catalog.py",
-       "line": 351,
-       "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
-       },
-       "ret": "0",
+       "ret": "3",
        "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 3572,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "0",
        "dur_ms": 0.003,
@@ -591,121 +561,151 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 3573,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "0",
-       "dur_ms": 0.005,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 3574,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3575,
+       "name": "<genexpr>",
+       "qual": "get_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_hub_catalog.py",
+       "line": 351,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3576,
+       "name": "<genexpr>",
+       "qual": "get_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/data_hub_catalog.py",
+       "line": 351,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "14034",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 3577,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 3578,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 3579,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "169",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 3580,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "3090",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 3581,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "1120",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 13,
+       "id": 3582,
        "name": "<genexpr>",
        "qual": "get_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 351,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79239BC0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48912070>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -720,7 +720,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1666.025,
+   "dur_ms": 467.108,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -740,7 +740,7 @@
       "entity_lei"
      ],
      "rowcount": 0,
-     "dur_ms": 67.803,
+     "dur_ms": 58.432,
      "is_reference": false,
      "error": null
     },
@@ -751,7 +751,7 @@
       "entity_sanctions"
      ],
      "rowcount": 0,
-     "dur_ms": 35.467,
+     "dur_ms": 30.029,
      "is_reference": false,
      "error": null
     },
@@ -762,7 +762,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 0,
-     "dur_ms": 56.205,
+     "dur_ms": 31.428,
      "is_reference": false,
      "error": null
     },
@@ -773,7 +773,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 0,
-     "dur_ms": 701.589,
+     "dur_ms": 30.088,
      "is_reference": false,
      "error": null
     },
@@ -784,7 +784,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 0,
-     "dur_ms": 465.242,
+     "dur_ms": 63.91,
      "is_reference": false,
      "error": null
     }
@@ -806,18 +806,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 3583,
      "name": "entity_360_view",
      "qual": "entity_360_view",
      "file": "api/v1/routes/data_hub_catalog.py",
      "line": 526,
      "args": {
       "identifier": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000015D7909FAD0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000015D791B58A0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48977B00>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'identifier': '550e8400-e29b-41d4-a716-446655440001', 'sources': {}, 'sources_found': [], 'source_count': 0}",
-     "dur_ms": 1597.624,
+     "dur_ms": 436.932,
      "sql": [
       0,
       1,
@@ -836,7 +836,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4342.346,
+   "dur_ms": 1076.771,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -862,7 +862,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 66.53,
+     "dur_ms": 55.24,
      "is_reference": false,
      "error": null
     },
@@ -873,7 +873,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 33.827,
+     "dur_ms": 28.866,
      "is_reference": false,
      "error": null
     },
@@ -884,7 +884,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 31.717,
+     "dur_ms": 28.934,
      "is_reference": false,
      "error": null
     },
@@ -895,7 +895,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 30.745,
+     "dur_ms": 28.403,
      "is_reference": false,
      "error": null
     },
@@ -906,7 +906,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 35.281,
+     "dur_ms": 27.946,
      "is_reference": false,
      "error": null
     },
@@ -917,7 +917,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 33.408,
+     "dur_ms": 29.934,
      "is_reference": false,
      "error": null
     },
@@ -928,7 +928,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 35.182,
+     "dur_ms": 28.715,
      "is_reference": false,
      "error": null
     },
@@ -939,7 +939,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 34.925,
+     "dur_ms": 29.555,
      "is_reference": false,
      "error": null
     },
@@ -950,7 +950,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 34.327,
+     "dur_ms": 27.986,
      "is_reference": false,
      "error": null
     },
@@ -961,7 +961,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 292.651,
+     "dur_ms": 29.493,
      "is_reference": false,
      "error": null
     },
@@ -972,7 +972,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 177.499,
+     "dur_ms": 30.688,
      "is_reference": false,
      "error": null
     },
@@ -983,7 +983,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 48.336,
+     "dur_ms": 35.348,
      "is_reference": false,
      "error": null
     },
@@ -994,7 +994,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 540.512,
+     "dur_ms": 29.977,
      "is_reference": false,
      "error": null
     },
@@ -1005,7 +1005,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 589.497,
+     "dur_ms": 27.945,
      "is_reference": false,
      "error": null
     },
@@ -1016,7 +1016,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 293.989,
+     "dur_ms": 27.302,
      "is_reference": false,
      "error": null
     },
@@ -1027,7 +1027,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 38.207,
+     "dur_ms": 28.05,
      "is_reference": false,
      "error": null
     },
@@ -1038,7 +1038,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 185.601,
+     "dur_ms": 28.07,
      "is_reference": false,
      "error": null
     },
@@ -1049,7 +1049,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 166.14,
+     "dur_ms": 28.363,
      "is_reference": false,
      "error": null
     },
@@ -1060,7 +1060,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 36.389,
+     "dur_ms": 27.54,
      "is_reference": false,
      "error": null
     },
@@ -1071,7 +1071,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 34.755,
+     "dur_ms": 28.765,
      "is_reference": false,
      "error": null
     },
@@ -1082,7 +1082,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 31.262,
+     "dur_ms": 27.591,
      "is_reference": false,
      "error": null
     },
@@ -1093,7 +1093,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 30.61,
+     "dur_ms": 27.474,
      "is_reference": false,
      "error": null
     },
@@ -1104,7 +1104,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 32.287,
+     "dur_ms": 27.794,
      "is_reference": false,
      "error": null
     },
@@ -1115,7 +1115,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 524.131,
+     "dur_ms": 28.687,
      "is_reference": false,
      "error": null
     },
@@ -1126,7 +1126,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 173.351,
+     "dur_ms": 28.006,
      "is_reference": false,
      "error": null
     },
@@ -1137,7 +1137,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 49.308,
+     "dur_ms": 27.628,
      "is_reference": false,
      "error": null
     },
@@ -1148,7 +1148,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 162.05,
+     "dur_ms": 36.779,
      "is_reference": false,
      "error": null
     },
@@ -1159,7 +1159,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 169.8,
+     "dur_ms": 28.948,
      "is_reference": false,
      "error": null
     }
@@ -1177,17 +1177,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 3584,
      "name": "get_freshness",
      "qual": "get_freshness",
      "file": "api/v1/routes/data_hub_catalog.py",
      "line": 653,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000015D796C2D50>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000015D791B5F80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AFB530>",
+      "_user": "Depends(_dependency)"
      },
-     "ret": "{'freshness': {'gleif': {'source': 'GLEIF LEI Registry', 'key': 'gleif', 'row_count': 0, 'last_ingested': None}, 'sanctions': {'source': 'OpenSanctions Consolidated', 'key': 'sanctions', 'row_count': 0, 'last_ingested': None}, 'climate_tra\u2026",
-     "dur_ms": 4297.945,
+     "ret": "{'freshness': {'gleif': {'source': 'GLEIF LEI Registry', 'key': 'gleif', 'row_count': 3, 'last_ingested': '2026-07-05T04:35:19.431863+00:00'}, 'sanctions': {'source': 'OpenSanctions Consolidated', 'key': 'sanctions', 'row_count': 0, 'last_\u2026",
+     "dur_ms": 1047.591,
      "sql": [
       0,
       1,
@@ -1229,7 +1229,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2239.568,
+   "dur_ms": 607.143,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -1253,7 +1253,7 @@
       "entity_lei"
      ],
      "rowcount": 0,
-     "dur_ms": 75.677,
+     "dur_ms": 73.024,
      "is_reference": false,
      "error": null
     },
@@ -1264,7 +1264,7 @@
       "entity_sanctions"
      ],
      "rowcount": 0,
-     "dur_ms": 200.507,
+     "dur_ms": 32.401,
      "is_reference": false,
      "error": null
     },
@@ -1275,7 +1275,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 0,
-     "dur_ms": 36.365,
+     "dur_ms": 31.297,
      "is_reference": false,
      "error": null
     },
@@ -1286,7 +1286,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 0,
-     "dur_ms": 39.447,
+     "dur_ms": 38.407,
      "is_reference": false,
      "error": null
     },
@@ -1297,7 +1297,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 0,
-     "dur_ms": 168.287,
+     "dur_ms": 52.155,
      "is_reference": false,
      "error": null
     },
@@ -1308,7 +1308,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 0,
-     "dur_ms": 40.336,
+     "dur_ms": 32.01,
      "is_reference": false,
      "error": null
     },
@@ -1319,7 +1319,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 0,
-     "dur_ms": 29.717,
+     "dur_ms": 30.173,
      "is_reference": false,
      "error": null
     },
@@ -1330,7 +1330,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 33.342,
+     "dur_ms": 30.571,
      "is_reference": false,
      "error": null
     },
@@ -1341,7 +1341,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 0,
-     "dur_ms": 36.222,
+     "dur_ms": 34.163,
      "is_reference": false,
      "error": null
     }
@@ -1365,7 +1365,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 3585,
      "name": "cross_source_search",
      "qual": "cross_source_search",
      "file": "api/v1/routes/data_hub_catalog.py",
@@ -1374,11 +1374,11 @@
       "q": "'TEST_q'",
       "sources": "None",
       "limit": "10",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000015D796C3050>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000015D790C4FE0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B23680>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'query': 'TEST_q', 'total_hits': 0, 'sources_matched': [], 'results': {}}",
-     "dur_ms": 2202.734,
+     "dur_ms": 574.795,
      "sql": [
       0,
       1,
@@ -1393,16 +1393,16 @@
      "error": null,
      "children": [
       {
-       "id": 17,
+       "id": 3586,
        "name": "<genexpr>",
        "qual": "cross_source_search.<locals>.<genexpr>",
        "file": "api/v1/routes/data_hub_catalog.py",
        "line": 517,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000015D79797A10>"
+        ".0": "<dict_valueiterator object at 0x0000013D48944FE0>"
        },
        "ret": "None",
-       "dur_ms": 0.01,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -1417,7 +1417,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1818.914,
+   "dur_ms": 1113.491,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1443,7 +1443,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 58.803,
+     "dur_ms": 61.023,
      "is_reference": false,
      "error": null
     },
@@ -1454,7 +1454,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 30.914,
+     "dur_ms": 30.647,
      "is_reference": false,
      "error": null
     },
@@ -1465,7 +1465,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 27.54,
+     "dur_ms": 30.617,
      "is_reference": false,
      "error": null
     },
@@ -1476,7 +1476,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 34.728,
+     "dur_ms": 30.869,
      "is_reference": false,
      "error": null
     },
@@ -1487,7 +1487,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 31.685,
+     "dur_ms": 28.28,
      "is_reference": false,
      "error": null
     },
@@ -1498,7 +1498,7 @@
       "dh_climate_trace_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 158.311,
+     "dur_ms": 29.77,
      "is_reference": false,
      "error": null
     },
@@ -1509,7 +1509,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 159.87,
+     "dur_ms": 30.447,
      "is_reference": false,
      "error": null
     },
@@ -1520,7 +1520,7 @@
       "dh_owid_co2_energy"
      ],
      "rowcount": 1,
-     "dur_ms": 416.973,
+     "dur_ms": 29.22,
      "is_reference": false,
      "error": null
     },
@@ -1531,7 +1531,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 55.235,
+     "dur_ms": 28.901,
      "is_reference": false,
      "error": null
     },
@@ -1542,7 +1542,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 33.862,
+     "dur_ms": 28.852,
      "is_reference": false,
      "error": null
     },
@@ -1553,7 +1553,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 30.58,
+     "dur_ms": 31.777,
      "is_reference": false,
      "error": null
     },
@@ -1564,7 +1564,7 @@
       "dh_sbti_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 37.066,
+     "dur_ms": 37.547,
      "is_reference": false,
      "error": null
     },
@@ -1575,7 +1575,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 28.8,
+     "dur_ms": 29.543,
      "is_reference": false,
      "error": null
     },
@@ -1586,7 +1586,7 @@
       "dh_sec_edgar_filings"
      ],
      "rowcount": 1,
-     "dur_ms": 28.333,
+     "dur_ms": 29.994,
      "is_reference": false,
      "error": null
     },
@@ -1597,7 +1597,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 28.638,
+     "dur_ms": 29.943,
      "is_reference": false,
      "error": null
     },
@@ -1608,7 +1608,7 @@
       "dh_yfinance_market_data"
      ],
      "rowcount": 1,
-     "dur_ms": 29.647,
+     "dur_ms": 29.699,
      "is_reference": false,
      "error": null
     },
@@ -1619,7 +1619,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 28.95,
+     "dur_ms": 29.905,
      "is_reference": false,
      "error": null
     },
@@ -1630,7 +1630,7 @@
       "dh_ca100_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 27.987,
+     "dur_ms": 31.545,
      "is_reference": false,
      "error": null
     },
@@ -1641,7 +1641,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 29.629,
+     "dur_ms": 30.008,
      "is_reference": false,
      "error": null
     },
@@ -1652,7 +1652,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 28.581,
+     "dur_ms": 30.742,
      "is_reference": false,
      "error": null
     },
@@ -1663,7 +1663,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 28.358,
+     "dur_ms": 30.295,
      "is_reference": false,
      "error": null
     },
@@ -1674,7 +1674,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 30.333,
+     "dur_ms": 30.625,
      "is_reference": false,
      "error": null
     },
@@ -1685,7 +1685,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 29.783,
+     "dur_ms": 30.916,
      "is_reference": false,
      "error": null
     },
@@ -1696,7 +1696,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 32.082,
+     "dur_ms": 32.529,
      "is_reference": false,
      "error": null
     },
@@ -1707,7 +1707,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 29.06,
+     "dur_ms": 30.127,
      "is_reference": false,
      "error": null
     },
@@ -1718,7 +1718,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 31.546,
+     "dur_ms": 31.477,
      "is_reference": false,
      "error": null
     },
@@ -1729,7 +1729,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 30.054,
+     "dur_ms": 29.675,
      "is_reference": false,
      "error": null
     },
@@ -1740,7 +1740,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 31.149,
+     "dur_ms": 31.223,
      "is_reference": false,
      "error": null
     }
@@ -1759,17 +1759,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 3587,
      "name": "list_catalog_sources",
      "qual": "list_catalog_sources",
      "file": "api/v1/routes/data_hub_catalog.py",
      "line": 177,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000015D7967DA00>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000015D7779A020>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B226C0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'sources': [{'key': 'gleif', 'name': 'GLEIF LEI Registry', 'category': 'Entity Resolution', 'description': 'Legal Entity Identifiers \u2014 ISO 17442 global company identification', 'table': 'entity_lei', 'access': 'REST API (GLEIF API v2)', '\u2026",
-     "dur_ms": 1788.327,
+     "dur_ms": 1083.037,
      "sql": [
       0,
       1,

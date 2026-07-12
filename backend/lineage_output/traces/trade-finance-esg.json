@@ -1,10 +1,10 @@
 {
  "domain": "trade-finance-esg",
  "meta": {
-  "ts": "2026-06-30T14:05:35",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 10,
   "module": "api.v1.routes.trade_finance_esg",
-  "router_prefix": "/api/v1/trade-finance-esg",
-  "endpoints": 10
+  "router_prefix": "/api/v1/trade-finance-esg"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.281,
+   "dur_ms": 2.013,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42254,
      "name": "get_emission_factors",
      "qual": "get_emission_factors",
      "file": "api/v1/routes/trade_finance_esg.py",
      "line": 229,
      "args": {},
      "ret": "{'transport_emission_factors': {'air_freight': {'kgco2e_per_tonne_km': 0.602, 'scope3_category': 'Cat4_upstream_transport'}, 'sea_freight': {'kgco2e_per_tonne_km': 0.016, 'scope3_category': 'Cat4_upstream_transport'}, 'road_truck_hgv': {'k\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.639,
+   "dur_ms": 2.2,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -75,14 +75,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42255,
      "name": "get_ep4_categories",
      "qual": "get_ep4_categories",
      "file": "api/v1/routes/trade_finance_esg.py",
      "line": 183,
      "args": {},
      "ret": "{'ep4_categories': {'A': {'description': 'Significant adverse social or environmental impacts that are diverse, irreversible or unprecedented', 'esia_required': True, 'independent_consultant': True, 'public_consultation': True, 'monitoring\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -95,7 +95,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.784,
+   "dur_ms": 1.964,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -115,7 +115,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42256,
      "name": "get_esg_tiers",
      "qual": "get_esg_tiers",
      "file": "api/v1/routes/trade_finance_esg.py",
@@ -135,7 +135,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.824,
+   "dur_ms": 1.276,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -155,14 +155,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42257,
      "name": "get_green_instruments",
      "qual": "get_green_instruments",
      "file": "api/v1/routes/trade_finance_esg.py",
      "line": 243,
      "args": {},
      "ret": "{'green_instruments': {'green_lc': {'full_name': 'Green Letter of Credit', 'use_of_proceeds_required': True, 'eligible_sectors': ['renewable_energy', 'clean_tech', 'sustainable_agriculture', 'green_building'], 'icma_gbs_aligned': True, 'ic\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -175,7 +175,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.761,
+   "dur_ms": 1.001,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -196,14 +196,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42258,
      "name": "get_oecd_arrangement",
      "qual": "get_oecd_arrangement",
      "file": "api/v1/routes/trade_finance_esg.py",
      "line": 194,
      "args": {},
      "ret": "{'oecd_arrangement_sectors': {'coal_power': {'climate_change_su': 'RESTRICTED', 'excluded_since': '2022-01-01', 'restriction_type': 'full_exclusion', 'max_repayment_years': 0, 'min_premium_pct': None}, 'renewable_energy': {'climate_change_\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "green-securitisation",
  "meta": {
-  "ts": "2026-06-30T14:02:39",
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 12,
   "module": "api.v1.routes.green_securitisation",
-  "router_prefix": "/api/v1/green-securitisation",
-  "endpoints": 12
+  "router_prefix": "/api/v1/green-securitisation"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.374,
+   "dur_ms": 0.277,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -32,26 +32,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12279,
      "name": "ref_climate_risk_profiles",
      "qual": "ref_climate_risk_profiles",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 420,
      "args": {},
      "ret": "{'status': 'ok', 'climate_risk_profiles': {'residential_mortgage': {'physical_risk_sensitivity': 0.65, 'transition_risk_sensitivity': 0.45, 'key_physical_risks': ['flood', 'heat_stress', 'sea_level_rise'], 'key_transition_risks': ['energy_\u2026",
-     "dur_ms": 0.084,
+     "dur_ms": 0.067,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12280,
        "name": "ref_climate_risk_profiles",
        "qual": "GreenSecuritisationEngine.ref_climate_risk_profiles",
        "file": "services/green_securitisation_engine.py",
        "line": 1113,
        "args": {},
        "ret": "{'residential_mortgage': {'physical_risk_sensitivity': 0.65, 'transition_risk_sensitivity': 0.45, 'key_physical_risks': ['flood', 'heat_stress', 'sea_level_rise'], 'key_transition_risks': ['energy_efficiency_regulation', 'carbon_tax'], 'cr\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -66,7 +66,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.225,
+   "dur_ms": 0.172,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -87,19 +87,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12281,
      "name": "ref_eu_gbs_requirements",
      "qual": "ref_eu_gbs_requirements",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 381,
      "args": {},
      "ret": "{'status': 'ok', 'eu_gbs_requirements': {'taxonomy_alignment': {'article': 'Art 4 EU GBS + EU Taxonomy Reg (EU) 2020/852', 'description': '100% of net proceeds allocated to EU taxonomy-aligned economic activities', 'sub_requirements': ['Ec\u2026",
-     "dur_ms": 0.059,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 12282,
        "name": "ref_eu_gbs_requirements",
        "qual": "GreenSecuritisationEngine.ref_eu_gbs_requirements",
        "file": "services/green_securitisation_engine.py",
@@ -121,7 +121,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.239,
+   "dur_ms": 0.161,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -141,26 +141,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12283,
      "name": "ref_greenium_benchmarks",
      "qual": "ref_greenium_benchmarks",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 401,
      "args": {},
      "ret": "{'status': 'ok', 'greenium_benchmarks': {'eu_gbs_compliant': {'description': 'Full EU GBS-labelled transaction (Art 19 compliant)', 'by_rating': {'AAA': 4, 'AA': 5, 'A': 6, 'BBB': 8, 'BB': 10, 'B': 12}, 'source': 'ECB / BIS Working Paper 1\u2026",
-     "dur_ms": 0.046,
+     "dur_ms": 0.039,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 12284,
        "name": "ref_greenium_benchmarks",
        "qual": "GreenSecuritisationEngine.ref_greenium_benchmarks",
        "file": "services/green_securitisation_engine.py",
        "line": 1110,
        "args": {},
        "ret": "{'eu_gbs_compliant': {'description': 'Full EU GBS-labelled transaction (Art 19 compliant)', 'by_rating': {'AAA': 4, 'AA': 5, 'A': 6, 'BBB': 8, 'BB': 10, 'B': 12}, 'source': 'ECB / BIS Working Paper 1015 (2023); Bloomberg BNEF Green Bond Pr\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -175,7 +175,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.175,
+   "dur_ms": 0.145,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -195,26 +195,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 12285,
      "name": "ref_ngfs_scenarios",
      "qual": "ref_ngfs_scenarios",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 458,
      "args": {},
      "ret": "{'status': 'ok', 'ngfs_scenarios': {'net_zero_2050': {'description': 'Orderly transition achieving net-zero GHG by 2050', 'physical_risk_multiplier': 0.6, 'transition_risk_multiplier': 1.2, 'carbon_price_2030_usd_t': 130, 'carbon_price_205\u2026",
-     "dur_ms": 0.041,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 12286,
        "name": "ref_ngfs_scenarios",
        "qual": "GreenSecuritisationEngine.ref_ngfs_scenarios",
        "file": "services/green_securitisation_engine.py",
        "line": 1119,
        "args": {},
        "ret": "{'net_zero_2050': {'description': 'Orderly transition achieving net-zero GHG by 2050', 'physical_risk_multiplier': 0.6, 'transition_risk_multiplier': 1.2, 'carbon_price_2030_usd_t': 130, 'carbon_price_2050_usd_t': 250, 'temp_increase_by_21\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -229,7 +229,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.189,
+   "dur_ms": 0.162,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -248,26 +248,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 12287,
      "name": "ref_structure_types",
      "qual": "ref_structure_types",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 366,
      "args": {},
      "ret": "{'status': 'ok', 'structure_types': {'ABS': {'full_name': 'Asset-Backed Securities', 'description': 'General ABS backed by consumer loans, auto loans, equipment leases', 'eligible_for_eu_gbs': True, 'typical_rating_range': ['AAA', 'AA', 'A\u2026",
-     "dur_ms": 0.049,
+     "dur_ms": 0.043,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 12288,
        "name": "ref_structure_types",
        "qual": "GreenSecuritisationEngine.ref_structure_types",
        "file": "services/green_securitisation_engine.py",
        "line": 1104,
        "args": {},
        "ret": "{'ABS': {'full_name': 'Asset-Backed Securities', 'description': 'General ABS backed by consumer loans, auto loans, equipment leases', 'eligible_for_eu_gbs': True, 'typical_rating_range': ['AAA', 'AA', 'A', 'BBB'], 'typical_maturity_years':\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -282,7 +282,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.18,
+   "dur_ms": 0.172,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -302,26 +302,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 12289,
      "name": "ref_tranche_standards",
      "qual": "ref_tranche_standards",
      "file": "api/v1/routes/green_securitisation.py",
      "line": 440,
      "args": {},
      "ret": "{'status': 'ok', 'tranche_subordination_standards': {'AAA_senior': {'target_rating': 'AAA', 'tranche_type': 'senior', 'typical_oc_pct': 15.0, 'typical_ce_pct': 20.0, 'description': 'Senior tranche \u2014 highest priority; lowest coupon', 'typic\u2026",
-     "dur_ms": 0.047,
+     "dur_ms": 0.043,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 12290,
        "name": "ref_tranche_standards",
        "qual": "GreenSecuritisationEngine.ref_tranche_standards",
        "file": "services/green_securitisation_engine.py",
        "line": 1116,
        "args": {},
        "ret": "{'AAA_senior': {'target_rating': 'AAA', 'tranche_type': 'senior', 'typical_oc_pct': 15.0, 'typical_ce_pct': 20.0, 'description': 'Senior tranche \u2014 highest priority; lowest coupon', 'typical_size_pct_of_pool': 75.0}, 'AA_mezzanine': {'targe\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -390,7 +390,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.195,
+   "dur_ms": 0.161,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -404,7 +404,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 12291,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/green_securitisation.py",
@@ -413,7 +413,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -444,7 +444,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'deal_name'",
-   "dur_ms": 0.642,
+   "dur_ms": 0.132,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -458,7 +458,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 12292,
      "name": "rmbs_epc_analysis",
      "qual": "rmbs_epc_analysis",
      "file": "api/v1/routes/green_securitisation.py",
@@ -467,7 +467,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.073,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

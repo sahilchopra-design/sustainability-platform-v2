@@ -1,10 +1,10 @@
 {
  "domain": "monte-carlo",
  "meta": {
-  "ts": "2026-06-30T14:03:16",
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 3,
   "module": "api.v1.routes.monte_carlo",
-  "router_prefix": "/api/v1/monte-carlo",
-  "endpoints": 3
+  "router_prefix": "/api/v1/monte-carlo"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.651,
+   "dur_ms": 1.953,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13030,
      "name": "monte_carlo_health",
      "qual": "monte_carlo_health",
      "file": "api/v1/routes/monte_carlo.py",
      "line": 144,
      "args": {},
      "ret": "{'status': 'ok', 'engine': 'MonteCarloEngine v1.0.0', 'method': 'Parameter Uncertainty Monte Carlo', 'scenarios': ['Orderly', 'Disorderly', 'Hot house world']}",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 114.511,
+   "dur_ms": 74.199,
    "node_count": 98,
    "provenance": [
     "computed"
@@ -78,7 +78,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13031,
      "name": "quick_scenario_comparison",
      "qual": "quick_scenario_comparison",
      "file": "api/v1/routes/monte_carlo.py",
@@ -86,13 +86,13 @@
      "args": {
       "req": "QuickComparisonRequest(assets=[AssetInputSchema(id='TEST_req_assets_id', name='TEST_req_assets_name', sector='TEST_req_assets_sector', exposure=1.0, baseline_pd=1.0, lgd=1.0, emission_intensity=None, emissions_trend='Stable', transition_pl\u2026"
      },
-     "ret": "{'success': True, 'time_horizon': 2050, 'n_assets': 1, 'total_exposure': 1.0, 'scenario_comparison': {'Orderly': {'expected_loss_p50': 0.8516, 'expected_loss_p95': 1.0734, 'portfolio_var_999_p50': 0.4673, 'carbon_cost_p50': 0.1319, 'waci_p\u2026",
-     "dur_ms": 110.412,
+     "ret": "{'success': True, 'time_horizon': 2050, 'n_assets': 1, 'total_exposure': 1.0, 'scenario_comparison': {'Orderly': {'expected_loss_p50': 0.8516, 'expected_loss_p95': 1.0734, 'portfolio_var_999_p50': 0.956, 'carbon_cost_p50': 0.1319, 'waci_p5\u2026",
+     "dur_ms": 71.822,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 13032,
        "name": "__init__",
        "qual": "MonteCarloEngine.__init__",
        "file": "services/monte_carlo_engine.py",
@@ -102,13 +102,13 @@
         "random_seed": "42"
        },
        "ret": "None",
-       "dur_ms": 0.201,
+       "dur_ms": 0.2,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 13033,
        "name": "_to_asset_inputs",
        "qual": "_to_asset_inputs",
        "file": "api/v1/routes/monte_carlo.py",
@@ -123,11 +123,11 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 13034,
        "name": "run",
        "qual": "MonteCarloEngine.run",
        "file": "services/monte_carlo_engine.py",
-       "line": 328,
+       "line": 332,
        "args": {
         "assets": "[AssetInput(id='TEST_req_assets_id', name='TEST_req_assets_name', sector='TEST_req_assets_sector', exposure=1.0, baseline_pd=1.0, lgd=1.0, emission_intensity=None, emissions_trend='Stable', transition_plan_score=None, physical_risk_score=N\u2026",
         "scenario": "'Orderly'",
@@ -136,12 +136,12 @@
         "compare_scenarios": "False"
        },
        "ret": "MonteCarloResult(scenario='Orderly', time_horizon=2050, n_simulations=200, n_assets=1, total_exposure=1.0, distributions={'expected_loss': {'p5': 0.5669, 'p25': 0.7145, 'p50': 0.8516, 'p75': 0.9556, 'p95': 1.0734, 'mean': 0.8315, 'std_dev'\u2026",
-       "dur_ms": 43.034,
+       "dur_ms": 25.508,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 6,
+         "id": 13035,
          "name": "_base_pd_adjustments",
          "qual": "MonteCarloEngine._base_pd_adjustments",
          "file": "services/monte_carlo_engine.py",
@@ -152,12 +152,12 @@
           "time_horizon": "2050"
          },
          "ret": "array([1.])",
-         "dur_ms": 6.34,
+         "dur_ms": 0.595,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 7,
+           "id": 13036,
            "name": "__init__",
            "qual": "PDAdjustmentCalculator.__init__",
            "file": "services/pd_calculator.py",
@@ -166,13 +166,13 @@
             "scenario": "'Orderly'"
            },
            "ret": "None",
-           "dur_ms": 0.004,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 8,
+           "id": 13037,
            "name": "calculate",
            "qual": "PDAdjustmentCalculator.calculate",
            "file": "services/pd_calculator.py",
@@ -187,12 +187,12 @@
             "time_horizon": "2050"
            },
            "ret": "PDResult(baseline_pd=1.0, adjusted_pd=1.0, confidence_interval_lower=0.9895, confidence_interval_upper=1.0, contribution_breakdown=PDContribution(transition_risk=0.0, physical_risk=0.0, emissions_impact=0.0, transition_plan_impact=0.0, sec\u2026",
-           "dur_ms": 6.225,
+           "dur_ms": 0.488,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 9,
+             "id": 13038,
              "name": "_calculate_transition_risk",
              "qual": "PDAdjustmentCalculator._calculate_transition_risk",
              "file": "services/pd_calculator.py",
@@ -212,7 +212,7 @@
              "children": []
             },
             {
-             "id": 10,
+             "id": 13039,
              "name": "_calculate_physical_risk",
              "qual": "PDAdjustmentCalculator._calculate_physical_risk",
              "file": "services/pd_calculator.py",
@@ -230,7 +230,7 @@
              "children": []
             },
             {
-             "id": 11,
+             "id": 13040,
              "name": "_calculate_emissions_impact",
              "qual": "PDAdjustmentCalculator._calculate_emissions_impact",
              "file": "services/pd_calculator.py",
@@ -241,13 +241,13 @@
               "emissions_trend": "'Stable'"
              },
              "ret": "0.0",
-             "dur_ms": 0.004,
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 12,
+             "id": 13041,
              "name": "_calculate_transition_plan_impact",
              "qual": "PDAdjustmentCalculator._calculate_transition_plan_impact",
              "file": "services/pd_calculator.py",
@@ -263,7 +263,7 @@
              "children": []
             },
             {
-             "id": 13,
+             "id": 13042,
              "name": "_calculate_sector_multiplier",
              "qual": "PDAdjustmentCalculator._calculate_sector_multiplier",
              "file": "services/pd_calculator.py",
@@ -284,7 +284,7 @@
          ]
         },
         {
-         "id": 14,
+         "id": 13043,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -296,14 +296,14 @@
           "rho": "0.3",
           "quantile": "0.999"
          },
-         "ret": "array([0.33580888, 0.04969389, 1.06550705, 0.9683778 , 0.10739757,        0.30236026, 0.86519166, 0.08069962, 0.30124312, 0.17656465,        0.88131332, 0.65141263, 0.94561883, 0.98285032, 0.73753601,        0.23338731, 1.08699944, 0.20351\u2026",
-         "dur_ms": 2.189,
+         "ret": "array([0.98549437, 1.00720121, 1.06564228, 0.96850071, 0.72038738,        0.97139597, 0.86530147, 0.86857318, 0.72978724, 0.85083595,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92917797,        1.01534321, 1.0871374 , 1.10529\u2026",
+         "dur_ms": 0.888,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 15,
+         "id": 13044,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -315,14 +315,14 @@
           "rho": "0.3",
           "quantile": "0.95"
          },
-         "ret": "array([0.69379609, 0.24287752, 1.06564008, 0.96849871, 0.33337387,        0.65582432, 0.86529968, 0.30715154, 0.55905845, 0.4699513 ,        0.88142335, 0.65149395, 0.94573689, 0.98297303, 0.89319991,        0.59102889, 1.08713515, 0.57335\u2026",
-         "dur_ms": 2.176,
+         "ret": "array([0.98210243, 0.94026777, 1.06564228, 0.96850071, 0.70708793,        0.96714859, 0.86530147, 0.83833672, 0.72838079, 0.84184709,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92913725,        1.00654559, 1.0871374 , 1.09081\u2026",
+         "dur_ms": 0.64,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 16,
+         "id": 13045,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -331,82 +331,82 @@
           "arr": "array([0.89825351, 0.63057932, 1.06564228, 0.96850071, 0.5729658 ,        0.87425774, 0.86530147, 0.62779117, 0.68184111, 0.71839714,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92109666,        0.87211566, 1.0871374 , 0.91397\u2026"
          },
          "ret": "PercentileResult(p5=0.566871532320682, p25=0.7145236369652896, p50=0.8515565279296202, p75=0.9556205397534792, p95=1.0734147216905228, mean=0.8315075797678603, std_dev=0.1575684312403903)",
-         "dur_ms": 0.721,
+         "dur_ms": 0.547,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 17,
+         "id": 13046,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.5669, 'p25': 0.7145, 'p50': 0.8516, 'p75': 0.9556, 'p95': 1.0734, 'mean': 0.8315, 'std_dev': 0.1576}",
-         "dur_ms": 0.015,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 18,
+         "id": 13047,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
          "line": 182,
          "args": {
-          "arr": "array([0.33580888, 0.04969389, 1.06550705, 0.9683778 , 0.10739757,        0.30236026, 0.86519166, 0.08069962, 0.30124312, 0.17656465,        0.88131332, 0.65141263, 0.94561883, 0.98285032, 0.73753601,        0.23338731, 1.08699944, 0.20351\u2026"
+          "arr": "array([0.98549437, 1.00720121, 1.06564228, 0.96850071, 0.72038738,        0.97139597, 0.86530147, 0.86857318, 0.72978724, 0.85083595,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92917797,        1.01534321, 1.0871374 , 1.10529\u2026"
          },
-         "ret": "PercentileResult(p5=0.04460861444716697, p25=0.14169227227497058, p50=0.46726154044137413, p75=0.9370974737841211, p95=1.0645422406494642, mean=0.5427178225584206, std_dev=0.38774787074071176)",
-         "dur_ms": 0.585,
+         "ret": "PercentileResult(p5=0.7293172457713719, p25=0.8683947031114682, p50=0.9560068623909113, p75=1.013079619397995, p95=1.0924986889317538, mean=0.9342416935489323, std_dev=0.11415221755827534)",
+         "dur_ms": 0.475,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 19,
+         "id": 13048,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
-         "ret": "{'p5': 0.0446, 'p25': 0.1417, 'p50': 0.4673, 'p75': 0.9371, 'p95': 1.0645, 'mean': 0.5427, 'std_dev': 0.3877}",
-         "dur_ms": 0.011,
+         "ret": "{'p5': 0.7293, 'p25': 0.8684, 'p50': 0.956, 'p75': 1.0131, 'p95': 1.0925, 'mean': 0.9342, 'std_dev': 0.1142}",
+         "dur_ms": 0.01,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 20,
+         "id": 13049,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
          "line": 182,
          "args": {
-          "arr": "array([0.69379609, 0.24287752, 1.06564008, 0.96849871, 0.33337387,        0.65582432, 0.86529968, 0.30715154, 0.55905845, 0.4699513 ,        0.88142335, 0.65149395, 0.94573689, 0.98297303, 0.89319991,        0.59102889, 1.08713515, 0.57335\u2026"
+          "arr": "array([0.98210243, 0.94026777, 1.06564228, 0.96850071, 0.70708793,        0.96714859, 0.86530147, 0.83833672, 0.72838079, 0.84184709,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92913725,        1.00654559, 1.0871374 , 1.09081\u2026"
          },
-         "ret": "PercentileResult(p5=0.2204771580062664, p25=0.44408961866968666, p50=0.7358991306526957, p75=0.9458033875034413, p95=1.0659492233969545, mean=0.6862544466052941, std_dev=0.28091669235900985)",
-         "dur_ms": 0.575,
+         "ret": "PercentileResult(p5=0.7153155218326123, p25=0.8547997779310189, p50=0.9359629374489161, p75=0.9932411972459845, p95=1.090865750500573, mean=0.920877205212267, std_dev=0.11357242869400856)",
+         "dur_ms": 0.466,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 21,
+         "id": 13050,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
-         "ret": "{'p5': 0.2205, 'p25': 0.4441, 'p50': 0.7359, 'p75': 0.9458, 'p95': 1.0659, 'mean': 0.6863, 'std_dev': 0.2809}",
-         "dur_ms": 0.011,
+         "ret": "{'p5': 0.7153, 'p25': 0.8548, 'p50': 0.936, 'p75': 0.9932, 'p95': 1.0909, 'mean': 0.9209, 'std_dev': 0.1136}",
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 22,
+         "id": 13051,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -415,26 +415,26 @@
           "arr": "array([0.15531025, 0.11531097, 0.21085836, 0.10830945, 0.11617967,        0.15541792, 0.16812451, 0.16467223, 0.06843627, 0.14219298,        0.0872491 , 0.11782678, 0.08329309, 0.16359561, 0.10356927,        0.09333393, 0.18181121, 0.16056\u2026"
          },
          "ret": "PercentileResult(p5=0.07612447243606008, p25=0.10850157721360398, p50=0.13194007039296807, p75=0.16420458510256097, p95=0.22705721942562015, mean=0.13934436768296102, std_dev=0.045394814575368495)",
-         "dur_ms": 0.673,
+         "dur_ms": 0.457,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 23,
+         "id": 13052,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.0761, 'p25': 0.1085, 'p50': 0.1319, 'p75': 0.1642, 'p95': 0.2271, 'mean': 0.1393, 'std_dev': 0.0454}",
-         "dur_ms": 0.01,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 24,
+         "id": 13053,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -443,26 +443,26 @@
           "arr": "array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0\u2026"
          },
          "ret": "PercentileResult(p5=0.8999999999999999, p25=0.9, p50=0.9, p75=0.9, p95=0.9, mean=0.9000000000000002, std_dev=2.277987190955421e-16)",
-         "dur_ms": 0.53,
+         "dur_ms": 0.451,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 25,
+         "id": 13054,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.9, 'p25': 0.9, 'p50': 0.9, 'p75': 0.9, 'p95': 0.9, 'mean': 0.9, 'std_dev': 0.0}",
-         "dur_ms": 0.034,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 26,
+         "id": 13055,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -471,26 +471,26 @@
           "arr": "array([0.9113486 , 0.62080653, 1.        , 1.        , 0.79430118,        0.89983043, 1.        , 0.72043375, 0.93424029, 0.84382113,        1.        , 1.        , 1.        , 1.        , 0.99130217,        0.85853095, 1.        , 0.82621\u2026"
          },
          "ret": "PercentileResult(p5=0.6157262904497399, p25=0.803011210261017, p50=0.9611922599753435, p75=1.0, p95=1.0, mean=0.8907843293333173, std_dev=0.13729157199696168)",
-         "dur_ms": 0.573,
+         "dur_ms": 0.479,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 27,
+         "id": 13056,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.6157, 'p25': 0.803, 'p50': 0.9612, 'p75': 1.0, 'p95': 1.0, 'mean': 0.8908, 'std_dev': 0.1373}",
-         "dur_ms": 0.01,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 28,
+         "id": 13057,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -499,26 +499,26 @@
           "arr": "array([0.9113486 , 0.62080653, 1.        , 1.        , 0.55003306,        0.89325468, 0.87351546, 0.58872264, 0.81117949, 0.80153006,        1.        , 0.80104109, 1.        , 0.92737458, 0.94257871,        0.85853095, 1.        , 0.82621\u2026"
          },
          "ret": "PercentileResult(p5=0.5862055073685654, p25=0.7350708783652925, p50=0.8544822981618826, p75=0.9768985161174227, p95=1.0, mean=0.8359609779438492, std_dev=0.141879697925811)",
-         "dur_ms": 1.228,
+         "dur_ms": 0.454,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 29,
+         "id": 13058,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.5862, 'p25': 0.7351, 'p50': 0.8545, 'p75': 0.9769, 'p95': 1.0, 'mean': 0.836, 'std_dev': 0.1419}",
-         "dur_ms": 0.018,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 30,
+         "id": 13059,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -527,39 +527,39 @@
           "arr": "array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1.,\u2026"
          },
          "ret": "PercentileResult(p5=1.0, p25=1.0, p50=1.0, p75=1.0, p95=1.0, mean=1.0, std_dev=0.0)",
-         "dur_ms": 0.717,
+         "dur_ms": 0.451,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 31,
+         "id": 13060,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 1.0, 'p25': 1.0, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 1.0, 'std_dev': 0.0}",
-         "dur_ms": 0.014,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 32,
+         "id": 13061,
          "name": "to_dict",
          "qual": "AssetLevelResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 143,
          "args": {},
          "ret": "{'id': 'TEST_req_assets_id', 'name': 'TEST_req_assets_name', 'sector': 'TEST_req_assets_sector', 'exposure': 1.0, 'pd': {'p5': 0.615726, 'p25': 0.803011, 'p50': 0.961192, 'p75': 1.0, 'p95': 1.0}, 'el_p50': 0.85, 'el_p95': 1.07}",
-         "dur_ms": 0.012,
+         "dur_ms": 0.01,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 33,
+         "id": 13062,
          "name": "_gelman_rubin_rhat",
          "qual": "_gelman_rubin_rhat",
          "file": "services/monte_carlo_engine.py",
@@ -568,13 +568,13 @@
           "arr": "array([0.89825351, 0.63057932, 1.06564228, 0.96850071, 0.5729658 ,        0.87425774, 0.86530147, 0.62779117, 0.68184111, 0.71839714,        0.88142517, 0.6514953 , 0.94573884, 0.98297506, 0.92109666,        0.87211566, 1.0871374 , 0.91397\u2026"
          },
          "ret": "0.995",
-         "dur_ms": 0.125,
+         "dur_ms": 0.184,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 34,
+         "id": 13063,
          "name": "_effective_n",
          "qual": "_effective_n",
          "file": "services/monte_carlo_engine.py",
@@ -584,20 +584,20 @@
           "max_lag": "20"
          },
          "ret": "171",
-         "dur_ms": 1.344,
+         "dur_ms": 0.909,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 35,
+         "id": 13064,
          "name": "<lambda>",
          "qual": "MonteCarloResult.<lambda>",
          "file": "services/monte_carlo_engine.py",
          "line": 174,
          "args": {},
-         "ret": "'2026-06-30T18:03:16.123217Z'",
-         "dur_ms": 0.01,
+         "ret": "'2026-07-05T23:15:49.343142Z'",
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
@@ -605,11 +605,11 @@
        ]
       },
       {
-       "id": 36,
+       "id": 13065,
        "name": "run",
        "qual": "MonteCarloEngine.run",
        "file": "services/monte_carlo_engine.py",
-       "line": 328,
+       "line": 332,
        "args": {
         "assets": "[AssetInput(id='TEST_req_assets_id', name='TEST_req_assets_name', sector='TEST_req_assets_sector', exposure=1.0, baseline_pd=1.0, lgd=1.0, emission_intensity=None, emissions_trend='Stable', transition_plan_score=None, physical_risk_score=N\u2026",
         "scenario": "'Disorderly'",
@@ -618,12 +618,12 @@
         "compare_scenarios": "False"
        },
        "ret": "MonteCarloResult(scenario='Disorderly', time_horizon=2050, n_simulations=200, n_assets=1, total_exposure=1.0, distributions={'expected_loss': {'p5': 0.6523, 'p25': 0.7896, 'p50': 0.9044, 'p75': 0.9919, 'p95': 1.0921, 'mean': 0.8885, 'std_d\u2026",
-       "dur_ms": 34.572,
+       "dur_ms": 22.633,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 37,
+         "id": 13066,
          "name": "_base_pd_adjustments",
          "qual": "MonteCarloEngine._base_pd_adjustments",
          "file": "services/monte_carlo_engine.py",
@@ -634,12 +634,12 @@
           "time_horizon": "2050"
          },
          "ret": "array([1.])",
-         "dur_ms": 0.284,
+         "dur_ms": 0.3,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 38,
+           "id": 13067,
            "name": "__init__",
            "qual": "PDAdjustmentCalculator.__init__",
            "file": "services/pd_calculator.py",
@@ -648,13 +648,13 @@
             "scenario": "'Disorderly'"
            },
            "ret": "None",
-           "dur_ms": 0.004,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 39,
+           "id": 13068,
            "name": "calculate",
            "qual": "PDAdjustmentCalculator.calculate",
            "file": "services/pd_calculator.py",
@@ -669,12 +669,12 @@
             "time_horizon": "2050"
            },
            "ret": "PDResult(baseline_pd=1.0, adjusted_pd=1.0, confidence_interval_lower=0.9895, confidence_interval_upper=1.0, contribution_breakdown=PDContribution(transition_risk=0.0, physical_risk=0.0, emissions_impact=0.0, transition_plan_impact=0.0, sec\u2026",
-           "dur_ms": 0.194,
+           "dur_ms": 0.198,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 40,
+             "id": 13069,
              "name": "_calculate_transition_risk",
              "qual": "PDAdjustmentCalculator._calculate_transition_risk",
              "file": "services/pd_calculator.py",
@@ -694,7 +694,7 @@
              "children": []
             },
             {
-             "id": 41,
+             "id": 13070,
              "name": "_calculate_physical_risk",
              "qual": "PDAdjustmentCalculator._calculate_physical_risk",
              "file": "services/pd_calculator.py",
@@ -712,7 +712,7 @@
              "children": []
             },
             {
-             "id": 42,
+             "id": 13071,
              "name": "_calculate_emissions_impact",
              "qual": "PDAdjustmentCalculator._calculate_emissions_impact",
              "file": "services/pd_calculator.py",
@@ -723,13 +723,13 @@
               "emissions_trend": "'Stable'"
              },
              "ret": "0.0",
-             "dur_ms": 0.002,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 43,
+             "id": 13072,
              "name": "_calculate_transition_plan_impact",
              "qual": "PDAdjustmentCalculator._calculate_transition_plan_impact",
              "file": "services/pd_calculator.py",
@@ -745,7 +745,7 @@
              "children": []
             },
             {
-             "id": 44,
+             "id": 13073,
              "name": "_calculate_sector_multiplier",
              "qual": "PDAdjustmentCalculator._calculate_sector_multiplier",
              "file": "services/pd_calculator.py",
@@ -766,7 +766,7 @@
          ]
         },
         {
-         "id": 45,
+         "id": 13074,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -778,14 +778,14 @@
           "rho": "0.3",
           "quantile": "0.999"
          },
-         "ret": "array([0.87734259, 0.90292774, 0.98354961, 0.94579214, 0.86038716,        0.52191689, 0.91131883, 0.91321888, 0.99916962, 1.04092388,        0.05566874, 1.09179222, 0.85006298, 0.22544674, 0.66806406,        0.26628041, 0.85820379, 0.71520\u2026",
-         "dur_ms": 0.634,
+         "ret": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.94880718, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.95997756, 1.09193079, 0.85017087, 0.98257814, 0.66814885,        0.73913382, 0.85831271, 0.71529\u2026",
+         "dur_ms": 0.542,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 46,
+         "id": 13075,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -797,14 +797,14 @@
           "rho": "0.3",
           "quantile": "0.95"
          },
-         "ret": "array([0.87745213, 0.90304047, 0.98367241, 0.94591022, 0.86049457,        0.81423383, 0.9114326 , 0.91333289, 0.99929436, 1.04105383,        0.25579542, 1.09192853, 0.85016911, 0.57143016, 0.66814747,        0.53360498, 0.85831094, 0.71529\u2026",
-         "dur_ms": 1.193,
+         "ret": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.94822529, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.90494473, 1.09193079, 0.85017087, 0.97403336, 0.66814885,        0.73696002, 0.85831271, 0.71529\u2026",
+         "dur_ms": 0.416,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 47,
+         "id": 13076,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -813,82 +813,82 @@
           "arr": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.91457024, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.6243874 , 1.09193079, 0.85017087, 0.84372101, 0.66814885,        0.67876127, 0.85831271, 0.71529\u2026"
          },
          "ret": "PercentileResult(p5=0.6523017246649658, p25=0.7896385835978362, p50=0.9044417236649356, p75=0.9918606764210786, p95=1.0921283278054255, mean=0.8885359074809434, std_dev=0.13681867106757573)",
-         "dur_ms": 0.782,
+         "dur_ms": 0.518,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 48,
+         "id": 13077,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.6523, 'p25': 0.7896, 'p50': 0.9044, 'p75': 0.9919, 'p95': 1.0921, 'mean': 0.8885, 'std_dev': 0.1368}",
-         "dur_ms": 0.014,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 49,
+         "id": 13078,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
          "line": 182,
          "args": {
-          "arr": "array([0.87734259, 0.90292774, 0.98354961, 0.94579214, 0.86038716,        0.52191689, 0.91131883, 0.91321888, 0.99916962, 1.04092388,        0.05566874, 1.09179222, 0.85006298, 0.22544674, 0.66806406,        0.26628041, 0.85820379, 0.71520\u2026"
+          "arr": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.94880718, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.95997756, 1.09193079, 0.85017087, 0.98257814, 0.66814885,        0.73913382, 0.85831271, 0.71529\u2026"
          },
-         "ret": "PercentileResult(p5=0.09426287573850702, p25=0.6528992995451576, p50=0.883830790889934, p75=0.9808637513595002, p95=1.0896421369101827, mean=0.7611100164331807, std_dev=0.3110306318271524)",
-         "dur_ms": 0.625,
+         "ret": "PercentileResult(p5=0.7140501232248544, p25=0.8593071634950331, p50=0.9362965737115008, p75=1.0103528968852948, p95=1.0951925963367872, mean=0.9234189011366601, std_dev=0.11723748046399171)",
+         "dur_ms": 0.467,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 50,
+         "id": 13079,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
-         "ret": "{'p5': 0.0943, 'p25': 0.6529, 'p50': 0.8838, 'p75': 0.9809, 'p95': 1.0896, 'mean': 0.7611, 'std_dev': 0.311}",
-         "dur_ms": 0.012,
+         "ret": "{'p5': 0.7141, 'p25': 0.8593, 'p50': 0.9363, 'p75': 1.0104, 'p95': 1.0952, 'mean': 0.9234, 'std_dev': 0.1172}",
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 51,
+         "id": 13080,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
          "line": 182,
          "args": {
-          "arr": "array([0.87745213, 0.90304047, 0.98367241, 0.94591022, 0.86049457,        0.81423383, 0.9114326 , 0.91333289, 0.99929436, 1.04105383,        0.25579542, 1.09192853, 0.85016911, 0.57143016, 0.66814747,        0.53360498, 0.85831094, 0.71529\u2026"
+          "arr": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.94822529, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.90494473, 1.09193079, 0.85017087, 0.97403336, 0.66814885,        0.73696002, 0.85831271, 0.71529\u2026"
          },
-         "ret": "PercentileResult(p5=0.3413026597728297, p25=0.7300416002038017, p50=0.8905512818274045, p75=0.9809862109085615, p95=1.0897781772975854, mean=0.831825924178894, std_dev=0.21467590850322857)",
-         "dur_ms": 0.587,
+         "ret": "PercentileResult(p5=0.7139780230347492, p25=0.858520851603316, p50=0.9337073446627262, p75=1.0016379695551285, p95=1.0946516923823555, mean=0.9198018647972664, std_dev=0.11713977794284207)",
+         "dur_ms": 0.741,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 52,
+         "id": 13081,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
-         "ret": "{'p5': 0.3413, 'p25': 0.73, 'p50': 0.8906, 'p75': 0.981, 'p95': 1.0898, 'mean': 0.8318, 'std_dev': 0.2147}",
-         "dur_ms": 0.012,
+         "ret": "{'p5': 0.714, 'p25': 0.8585, 'p50': 0.9337, 'p75': 1.0016, 'p95': 1.0947, 'mean': 0.9198, 'std_dev': 0.1171}",
+         "dur_ms": 0.019,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 53,
+         "id": 13082,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -897,26 +897,26 @@
           "arr": "array([0.21318873, 0.27091724, 0.28462391, 0.12416497, 0.17191407,        0.31412397, 0.23532242, 0.22089158, 0.1853522 , 0.18371072,        0.20864841, 0.21630602, 0.17096612, 0.22317405, 0.17923437,        0.21643668, 0.55927914, 0.12543\u2026"
          },
          "ret": "PercentileResult(p5=0.11649009029216294, p25=0.1543122573874268, p50=0.19023035641954258, p75=0.23139403180591472, p95=0.32919324130274213, mean=0.2007802351394141, std_dev=0.06989143796556842)",
-         "dur_ms": 0.693,
+         "dur_ms": 0.709,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 54,
+         "id": 13083,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.1165, 'p25': 0.1543, 'p50': 0.1902, 'p75': 0.2314, 'p95': 0.3292, 'mean': 0.2008, 'std_dev': 0.0699}",
-         "dur_ms": 0.014,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 55,
+         "id": 13084,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -925,26 +925,26 @@
           "arr": "array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0\u2026"
          },
          "ret": "PercentileResult(p5=0.9, p25=0.9, p50=0.9, p75=0.9, p95=0.9, mean=0.9000000000000002, std_dev=2.243914268996476e-16)",
-         "dur_ms": 0.632,
+         "dur_ms": 0.495,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 56,
+         "id": 13085,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.9, 'p25': 0.9, 'p50': 0.9, 'p75': 0.9, 'p95': 0.9, 'mean': 0.9, 'std_dev': 0.0}",
-         "dur_ms": 0.011,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 57,
+         "id": 13086,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -953,26 +953,26 @@
           "arr": "array([1.        , 1.        , 1.        , 1.        , 1.        ,        0.96390125, 1.        , 1.        , 1.        , 1.        ,        0.64603467, 1.        , 1.        , 0.85827309, 1.        ,        0.91821617, 1.        , 1.     \u2026"
          },
          "ret": "PercentileResult(p5=0.7357280407765487, p25=0.9966563502942183, p50=1.0, p75=1.0, p95=1.0, mean=0.9622744705689107, std_dev=0.08504493655899724)",
-         "dur_ms": 2.713,
+         "dur_ms": 0.461,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 58,
+         "id": 13087,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.7357, 'p25': 0.9967, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 0.9623, 'std_dev': 0.085}",
-         "dur_ms": 0.016,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 59,
+         "id": 13088,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -981,26 +981,26 @@
           "arr": "array([0.80161883, 0.92707088, 1.        , 0.98464049, 0.90241546,        0.86642012, 0.89314944, 0.86807356, 1.        , 1.        ,        0.64603467, 0.92663838, 0.9721065 , 0.76640946, 0.60224375,        0.72841961, 0.7284072 , 0.66253\u2026"
          },
          "ret": "PercentileResult(p5=0.6451276193848763, p25=0.8266433008358383, p50=0.9413461137443603, p75=1.0, p95=1.0, mean=0.8966403531433133, std_dev=0.12142984183007344)",
-         "dur_ms": 0.668,
+         "dur_ms": 0.463,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 60,
+         "id": 13089,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.6451, 'p25': 0.8266, 'p50': 0.9413, 'p75': 1.0, 'p95': 1.0, 'mean': 0.8966, 'std_dev': 0.1214}",
-         "dur_ms": 0.014,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 61,
+         "id": 13090,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1009,39 +1009,39 @@
           "arr": "array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1.,\u2026"
          },
          "ret": "PercentileResult(p5=1.0, p25=1.0, p50=1.0, p75=1.0, p95=1.0, mean=1.0, std_dev=0.0)",
-         "dur_ms": 0.589,
+         "dur_ms": 0.448,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 62,
+         "id": 13091,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 1.0, 'p25': 1.0, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 1.0, 'std_dev': 0.0}",
-         "dur_ms": 0.011,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 63,
+         "id": 13092,
          "name": "to_dict",
          "qual": "AssetLevelResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 143,
          "args": {},
          "ret": "{'id': 'TEST_req_assets_id', 'name': 'TEST_req_assets_name', 'sector': 'TEST_req_assets_sector', 'exposure': 1.0, 'pd': {'p5': 0.735728, 'p25': 0.996656, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0}, 'el_p50': 0.9, 'el_p95': 1.09}",
-         "dur_ms": 0.012,
+         "dur_ms": 0.01,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 64,
+         "id": 13093,
          "name": "_gelman_rubin_rhat",
          "qual": "_gelman_rubin_rhat",
          "file": "services/monte_carlo_engine.py",
@@ -1050,13 +1050,13 @@
           "arr": "array([0.87745394, 0.90304233, 0.98367444, 0.94591217, 0.86049635,        0.91457024, 0.91143449, 0.91333478, 0.99929642, 1.04105598,        0.6243874 , 1.09193079, 0.85017087, 0.84372101, 0.66814885,        0.67876127, 0.85831271, 0.71529\u2026"
          },
          "ret": "1.0217",
-         "dur_ms": 0.253,
+         "dur_ms": 0.083,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 65,
+         "id": 13094,
          "name": "_effective_n",
          "qual": "_effective_n",
          "file": "services/monte_carlo_engine.py",
@@ -1066,20 +1066,20 @@
           "max_lag": "20"
          },
          "ret": "200",
-         "dur_ms": 0.24,
+         "dur_ms": 0.075,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 66,
+         "id": 13095,
          "name": "<lambda>",
          "qual": "MonteCarloResult.<lambda>",
          "file": "services/monte_carlo_engine.py",
          "line": 174,
          "args": {},
-         "ret": "'2026-06-30T18:03:16.159068Z'",
-         "dur_ms": 0.013,
+         "ret": "'2026-07-05T23:15:49.366792Z'",
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
@@ -1087,11 +1087,11 @@
        ]
       },
       {
-       "id": 67,
+       "id": 13096,
        "name": "run",
        "qual": "MonteCarloEngine.run",
        "file": "services/monte_carlo_engine.py",
-       "line": 328,
+       "line": 332,
        "args": {
         "assets": "[AssetInput(id='TEST_req_assets_id', name='TEST_req_assets_name', sector='TEST_req_assets_sector', exposure=1.0, baseline_pd=1.0, lgd=1.0, emission_intensity=None, emissions_trend='Stable', transition_plan_score=None, physical_risk_score=N\u2026",
         "scenario": "'Hot house world'",
@@ -1100,12 +1100,12 @@
         "compare_scenarios": "False"
        },
        "ret": "MonteCarloResult(scenario='Hot house world', time_horizon=2050, n_simulations=200, n_assets=1, total_exposure=1.0, distributions={'expected_loss': {'p5': 0.6768, 'p25': 0.8631, 'p50': 0.966, 'p75': 1.0436, 'p95': 1.1218, 'mean': 0.9463, 's\u2026",
-       "dur_ms": 31.694,
+       "dur_ms": 22.631,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 68,
+         "id": 13097,
          "name": "_base_pd_adjustments",
          "qual": "MonteCarloEngine._base_pd_adjustments",
          "file": "services/monte_carlo_engine.py",
@@ -1116,12 +1116,12 @@
           "time_horizon": "2050"
          },
          "ret": "array([1.])",
-         "dur_ms": 0.422,
+         "dur_ms": 0.252,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 69,
+           "id": 13098,
            "name": "__init__",
            "qual": "PDAdjustmentCalculator.__init__",
            "file": "services/pd_calculator.py",
@@ -1130,13 +1130,13 @@
             "scenario": "'Hot house world'"
            },
            "ret": "None",
-           "dur_ms": 0.007,
+           "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 70,
+           "id": 13099,
            "name": "calculate",
            "qual": "PDAdjustmentCalculator.calculate",
            "file": "services/pd_calculator.py",
@@ -1151,12 +1151,12 @@
             "time_horizon": "2050"
            },
            "ret": "PDResult(baseline_pd=1.0, adjusted_pd=1.0, confidence_interval_lower=0.9895, confidence_interval_upper=1.0, contribution_breakdown=PDContribution(transition_risk=0.0, physical_risk=0.0, emissions_impact=0.0, transition_plan_impact=0.0, sec\u2026",
-           "dur_ms": 0.279,
+           "dur_ms": 0.171,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 71,
+             "id": 13100,
              "name": "_calculate_transition_risk",
              "qual": "PDAdjustmentCalculator._calculate_transition_risk",
              "file": "services/pd_calculator.py",
@@ -1170,13 +1170,13 @@
               "horizon_mult": "1.4"
              },
              "ret": "0.0",
-             "dur_ms": 0.003,
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 72,
+             "id": 13101,
              "name": "_calculate_physical_risk",
              "qual": "PDAdjustmentCalculator._calculate_physical_risk",
              "file": "services/pd_calculator.py",
@@ -1194,7 +1194,7 @@
              "children": []
             },
             {
-             "id": 73,
+             "id": 13102,
              "name": "_calculate_emissions_impact",
              "qual": "PDAdjustmentCalculator._calculate_emissions_impact",
              "file": "services/pd_calculator.py",
@@ -1205,13 +1205,13 @@
               "emissions_trend": "'Stable'"
              },
              "ret": "0.0",
-             "dur_ms": 0.002,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 74,
+             "id": 13103,
              "name": "_calculate_transition_plan_impact",
              "qual": "PDAdjustmentCalculator._calculate_transition_plan_impact",
              "file": "services/pd_calculator.py",
@@ -1221,13 +1221,13 @@
               "transition_plan_score": "None"
              },
              "ret": "0.0",
-             "dur_ms": 0.002,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 75,
+             "id": 13104,
              "name": "_calculate_sector_multiplier",
              "qual": "PDAdjustmentCalculator._calculate_sector_multiplier",
              "file": "services/pd_calculator.py",
@@ -1238,7 +1238,7 @@
               "time_horizon": "2050"
              },
              "ret": "0.06999999999999999",
-             "dur_ms": 0.007,
+             "dur_ms": 0.005,
              "sql": [],
              "error": null,
              "children": []
@@ -1248,7 +1248,7 @@
          ]
         },
         {
-         "id": 76,
+         "id": 13105,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -1260,14 +1260,14 @@
           "rho": "0.3",
           "quantile": "0.999"
          },
-         "ret": "array([0.88615975, 1.0496729 , 1.0223641 , 0.94407561, 0.9306067 ,        0.82976207, 0.95312282, 0.9715097 , 0.81012154, 0.89469049,        0.92779953, 1.12591131, 0.8636681 , 0.88457967, 0.94717459,        1.10840038, 0.94028203, 0.93534\u2026",
-         "dur_ms": 0.664,
+         "ret": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026",
+         "dur_ms": 0.512,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 77,
+         "id": 13106,
          "name": "_vasicek_var",
          "qual": "MonteCarloEngine._vasicek_var",
          "file": "services/monte_carlo_engine.py",
@@ -1279,14 +1279,14 @@
           "rho": "0.3",
           "quantile": "0.95"
          },
-         "ret": "array([0.88627038, 1.04980395, 1.02249174, 0.94419347, 0.93072289,        0.82986566, 0.95324182, 0.97163099, 0.81022268, 0.89480219,        0.92791536, 1.12605188, 0.86377593, 0.88469011, 0.94729285,        1.10853876, 0.94039942, 0.93546\u2026",
-         "dur_ms": 0.695,
+         "ret": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026",
+         "dur_ms": 2.043,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 78,
+         "id": 13107,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1295,82 +1295,82 @@
           "arr": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026"
          },
          "ret": "PercentileResult(p5=0.6767727484955265, p25=0.8631337616454927, p50=0.9659583260454796, p75=1.0435726517786708, p95=1.1218487966725255, mean=0.9463083655124959, std_dev=0.1306203176302346)",
-         "dur_ms": 0.908,
+         "dur_ms": 0.528,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 79,
+         "id": 13108,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.6768, 'p25': 0.8631, 'p50': 0.966, 'p75': 1.0436, 'p95': 1.1218, 'mean': 0.9463, 'std_dev': 0.1306}",
-         "dur_ms": 0.016,
+         "dur_ms": 0.014,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 80,
+         "id": 13109,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
          "line": 182,
          "args": {
-          "arr": "array([0.88615975, 1.0496729 , 1.0223641 , 0.94407561, 0.9306067 ,        0.82976207, 0.95312282, 0.9715097 , 0.81012154, 0.89469049,        0.92779953, 1.12591131, 0.8636681 , 0.88457967, 0.94717459,        1.10840038, 0.94028203, 0.93534\u2026"
+          "arr": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026"
          },
-         "ret": "PercentileResult(p5=0.6766868667462803, p25=0.8630242308798873, p50=0.9658357469509105, p75=1.0434402235078823, p95=1.1217064352413624, mean=0.94618827997723, std_dev=0.1306037420494505)",
-         "dur_ms": 0.625,
+         "ret": "PercentileResult(p5=0.676772748495522, p25=0.863133761645487, p50=0.9659583260454734, p75=1.043572651778664, p95=1.1218487966725181, mean=0.9463083655124896, std_dev=0.13062031763023374)",
+         "dur_ms": 0.462,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 81,
-         "name": "to_dict",
-         "qual": "PercentileResult.to_dict",
-         "file": "services/monte_carlo_engine.py",
-         "line": 117,
-         "args": {},
-         "ret": "{'p5': 0.6767, 'p25': 0.863, 'p50': 0.9658, 'p75': 1.0434, 'p95': 1.1217, 'mean': 0.9462, 'std_dev': 0.1306}",
-         "dur_ms": 0.012,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 82,
-         "name": "_percentile_result",
-         "qual": "_percentile_result",
-         "file": "services/monte_carlo_engine.py",
-         "line": 182,
-         "args": {
-          "arr": "array([0.88627038, 1.04980395, 1.02249174, 0.94419347, 0.93072289,        0.82986566, 0.95324182, 0.97163099, 0.81022268, 0.89480219,        0.92791536, 1.12605188, 0.86377593, 0.88469011, 0.94729285,        1.10853876, 0.94039942, 0.93546\u2026"
-         },
-         "ret": "PercentileResult(p5=0.676771350211433, p25=0.8631319783198311, p50=0.9659563302733902, p75=1.0435704956471736, p95=1.1218464788142324, mean=0.9463064103393037, std_dev=0.13062004775484018)",
-         "dur_ms": 0.596,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 83,
+         "id": 13110,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.6768, 'p25': 0.8631, 'p50': 0.966, 'p75': 1.0436, 'p95': 1.1218, 'mean': 0.9463, 'std_dev': 0.1306}",
-         "dur_ms": 0.012,
+         "dur_ms": 0.01,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 84,
+         "id": 13111,
+         "name": "_percentile_result",
+         "qual": "_percentile_result",
+         "file": "services/monte_carlo_engine.py",
+         "line": 182,
+         "args": {
+          "arr": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026"
+         },
+         "ret": "PercentileResult(p5=0.6767727484907999, p25=0.8631337616394645, p50=0.9659583260387334, p75=1.0435726517713826, p95=1.1218487966646904, mean=0.9463083655058869, std_dev=0.13062031762932236)",
+         "dur_ms": 0.45,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13112,
+         "name": "to_dict",
+         "qual": "PercentileResult.to_dict",
+         "file": "services/monte_carlo_engine.py",
+         "line": 117,
+         "args": {},
+         "ret": "{'p5': 0.6768, 'p25': 0.8631, 'p50': 0.966, 'p75': 1.0436, 'p95': 1.1218, 'mean': 0.9463, 'std_dev': 0.1306}",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13113,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1379,26 +1379,26 @@
           "arr": "array([0.02948985, 0.05928798, 0.03585248, 0.03614392, 0.04772301,        0.02387754, 0.02734838, 0.0329764 , 0.0373834 , 0.02311434,        0.02025286, 0.05190187, 0.02595036, 0.0283134 , 0.02245582,        0.03255301, 0.03377768, 0.04518\u2026"
          },
          "ret": "PercentileResult(p5=0.022422100748131613, p25=0.029498370725422936, p50=0.035030630510436256, p75=0.045155051918176134, p95=0.05956222754700317, mean=0.03784068970526247, std_dev=0.011969470977776864)",
-         "dur_ms": 0.584,
+         "dur_ms": 0.463,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 85,
+         "id": 13114,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.0224, 'p25': 0.0295, 'p50': 0.035, 'p75': 0.0452, 'p95': 0.0596, 'mean': 0.0378, 'std_dev': 0.012}",
-         "dur_ms": 0.011,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 86,
+         "id": 13115,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1407,26 +1407,26 @@
           "arr": "array([0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,        0.9, 0.9, 0.9, 0\u2026"
          },
          "ret": "PercentileResult(p5=0.8999999999999999, p25=0.9, p50=0.9, p75=0.9, p95=0.9, mean=0.9000000000000002, std_dev=2.277987190955421e-16)",
-         "dur_ms": 0.966,
+         "dur_ms": 0.468,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 87,
+         "id": 13116,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.9, 'p25': 0.9, 'p50': 0.9, 'p75': 0.9, 'p95': 0.9, 'mean': 0.9, 'std_dev': 0.0}",
-         "dur_ms": 0.018,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 88,
+         "id": 13117,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1435,26 +1435,26 @@
           "arr": "array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1.,\u2026"
          },
          "ret": "PercentileResult(p5=1.0, p25=1.0, p50=1.0, p75=1.0, p95=1.0, mean=1.0, std_dev=0.0)",
-         "dur_ms": 0.813,
+         "dur_ms": 0.437,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 89,
+         "id": 13118,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 1.0, 'p25': 1.0, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 1.0, 'std_dev': 0.0}",
-         "dur_ms": 0.015,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 90,
+         "id": 13119,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1463,26 +1463,26 @@
           "arr": "array([0.91906972, 0.97347112, 1.        , 1.        , 1.        ,        0.95584784, 0.93157657, 1.        , 1.        , 0.93486994,        1.        , 1.        , 1.        , 1.        , 0.87003758,        1.        , 1.        , 0.98528\u2026"
          },
          "ret": "PercentileResult(p5=0.7056984280446241, p25=0.9060338457875337, p50=1.0, p75=1.0, p95=1.0, mean=0.9394747260071716, std_dev=0.09728618798561)",
-         "dur_ms": 0.711,
+         "dur_ms": 0.476,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 91,
+         "id": 13120,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 0.7057, 'p25': 0.906, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 0.9395, 'std_dev': 0.0973}",
-         "dur_ms": 0.015,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 92,
+         "id": 13121,
          "name": "_percentile_result",
          "qual": "_percentile_result",
          "file": "services/monte_carlo_engine.py",
@@ -1491,39 +1491,39 @@
           "arr": "array([1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,        1., 1.,\u2026"
          },
          "ret": "PercentileResult(p5=1.0, p25=1.0, p50=1.0, p75=1.0, p95=1.0, mean=1.0, std_dev=0.0)",
-         "dur_ms": 0.57,
+         "dur_ms": 0.458,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 93,
+         "id": 13122,
          "name": "to_dict",
          "qual": "PercentileResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 117,
          "args": {},
          "ret": "{'p5': 1.0, 'p25': 1.0, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0, 'mean': 1.0, 'std_dev': 0.0}",
-         "dur_ms": 0.011,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 94,
+         "id": 13123,
          "name": "to_dict",
          "qual": "AssetLevelResult.to_dict",
          "file": "services/monte_carlo_engine.py",
          "line": 143,
          "args": {},
          "ret": "{'id': 'TEST_req_assets_id', 'name': 'TEST_req_assets_name', 'sector': 'TEST_req_assets_sector', 'exposure': 1.0, 'pd': {'p5': 1.0, 'p25': 1.0, 'p50': 1.0, 'p75': 1.0, 'p95': 1.0}, 'el_p50': 0.97, 'el_p95': 1.12}",
-         "dur_ms": 0.011,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 95,
+         "id": 13124,
          "name": "_gelman_rubin_rhat",
          "qual": "_gelman_rubin_rhat",
          "file": "services/monte_carlo_engine.py",
@@ -1532,13 +1532,13 @@
           "arr": "array([0.88627221, 1.04980612, 1.02249385, 0.94419542, 0.93072481,        0.82986738, 0.95324379, 0.971633  , 0.81022436, 0.89480404,        0.92791728, 1.12605421, 0.86377771, 0.88469194, 0.9472948 ,        1.10854105, 0.94040136, 0.93546\u2026"
          },
          "ret": "1.0132",
-         "dur_ms": 0.101,
+         "dur_ms": 0.081,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 96,
+         "id": 13125,
          "name": "_effective_n",
          "qual": "_effective_n",
          "file": "services/monte_carlo_engine.py",
@@ -1548,20 +1548,20 @@
           "max_lag": "20"
          },
          "ret": "200",
-         "dur_ms": 0.095,
+         "dur_ms": 0.074,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 97,
+         "id": 13126,
          "name": "<lambda>",
          "qual": "MonteCarloResult.<lambda>",
          "file": "services/monte_carlo_engine.py",
          "line": 174,
          "args": {},
-         "ret": "'2026-06-30T18:03:16.188909Z'",
-         "dur_ms": 0.009,
+         "ret": "'2026-07-05T23:15:49.389551Z'",
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
@@ -1569,13 +1569,13 @@
        ]
       },
       {
-       "id": 98,
+       "id": 13127,
        "name": "<genexpr>",
        "qual": "quick_scenario_comparison.<locals>.<genexpr>",
        "file": "api/v1/routes/monte_carlo.py",
        "line": 241,
        "args": {
-        ".0": "<list_iterator object at 0x000001EBC5594EB0>"
+        ".0": "<list_iterator object at 0x0000013D48CBE3B0>"
        },
        "ret": "1.0",
        "dur_ms": 0.003,
@@ -1584,16 +1584,16 @@
        "children": []
       },
       {
-       "id": 99,
+       "id": 13128,
        "name": "<genexpr>",
        "qual": "quick_scenario_comparison.<locals>.<genexpr>",
        "file": "api/v1/routes/monte_carlo.py",
        "line": 241,
        "args": {
-        ".0": "<list_iterator object at 0x000001EBC5594EB0>"
+        ".0": "<list_iterator object at 0x0000013D48CBE3B0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []

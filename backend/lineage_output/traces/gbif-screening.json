@@ -1,0 +1,90 @@
+{
+ "domain": "gbif-screening",
+ "meta": {
+  "ts": "2026-07-05T19:15:23",
+  "endpoints": 2,
+  "module": "api.v1.routes.gbif_screening",
+  "router_prefix": "/api/v1/gbif"
+ },
+ "transactions": [
+  {
+   "domain": "gbif-screening",
+   "label": "GET /api/v1/gbif/health",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 791.825,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ok",
+     "upstream_status"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11552,
+     "name": "gbif_health",
+     "qual": "gbif_health",
+     "file": "api/v1/routes/gbif_screening.py",
+     "line": 262,
+     "args": {},
+     "ret": "{'ok': True, 'upstream_status': 200}",
+     "dur_ms": 790.664,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gbif-screening",
+   "label": "GET /api/v1/gbif/site-screen",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.682,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)",
+    "radius_km": "10.0 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11553,
+     "name": "site_screen",
+     "qual": "site_screen",
+     "file": "api/v1/routes/gbif_screening.py",
+     "line": 94,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'",
+      "radius_km": "10.0"
+     },
+     "ret": "None",
+     "dur_ms": 0.331,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

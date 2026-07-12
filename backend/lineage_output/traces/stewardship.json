@@ -1,10 +1,10 @@
 {
  "domain": "stewardship",
  "meta": {
-  "ts": "2026-06-30T14:05:19",
+  "ts": "2026-07-05T19:17:04",
+  "endpoints": 9,
   "module": "api.v1.routes.stewardship",
-  "router_prefix": "/api/v1/stewardship",
-  "endpoints": 9
+  "router_prefix": "/api/v1/stewardship"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.415,
+   "dur_ms": 0.221,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40481,
      "name": "ref_engagement_types",
      "qual": "ref_engagement_types",
      "file": "api/v1/routes/stewardship.py",
      "line": 258,
      "args": {},
      "ret": "{'count': 8, 'engagement_types': {'written_communication': {'label': 'Written Communication', 'description': 'Letters, emails, formal notices to board/management', 'intensity': 'low', 'typical_duration_months': 3, 'gfanz_ref': 'GFANZ-E-1'}\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.248,
+   "dur_ms": 0.158,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40482,
      "name": "ref_escalation_ladder",
      "qual": "ref_escalation_ladder",
      "file": "api/v1/routes/stewardship.py",
      "line": 285,
      "args": {},
      "ret": "{'steps': 6, 'escalation_ladder': [{'level': 1, 'action': 'written_communication', 'trigger_months_stalled': 3}, {'level': 2, 'action': 'meeting_management', 'trigger_months_stalled': 6}, {'level': 3, 'action': 'meeting_board', 'trigger_mo\u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.238,
+   "dur_ms": 0.156,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -113,14 +113,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40483,
      "name": "ref_frameworks",
      "qual": "ref_frameworks",
      "file": "api/v1/routes/stewardship.py",
      "line": 298,
      "args": {},
      "ret": "{'frameworks': {'GFANZ-E-1': {'title': 'Active stewardship with portfolio companies', 'metric': '% portfolio companies engaged', 'milestones': {'baseline_engagement_pct': 20.0, 'intermediate_engagement_pct': 50.0, 'advanced_engagement_pct'\u2026",
-     "dur_ms": 0.012,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -133,7 +133,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.186,
+   "dur_ms": 0.13,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -153,14 +153,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 40484,
      "name": "ref_initiatives",
      "qual": "ref_initiatives",
      "file": "api/v1/routes/stewardship.py",
      "line": 276,
      "args": {},
      "ret": "{'count': 5, 'initiatives': {'CA100_PLUS': {'name': 'Climate Action 100+', 'focus': 'Engagement with 170 systemically important emitters', 'member_count': 700, 'aum_trillion_usd': 68, 'min_engagement_actions': 3, 'nzami_compatible': True, \u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -173,7 +173,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.203,
+   "dur_ms": 0.123,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -193,14 +193,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40485,
      "name": "ref_proxy_resolutions",
      "qual": "ref_proxy_resolutions",
      "file": "api/v1/routes/stewardship.py",
      "line": 267,
      "args": {},
      "ret": "{'count': 6, 'resolution_types': {'climate_transition_plan': {'expected_support': True, 'weight': 0.3, 'nzami_critical': True}, 'ghg_reduction_target': {'expected_support': True, 'weight': 0.25, 'nzami_critical': True}, 'climate_disclosure\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -213,7 +213,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'engagement'",
-   "dur_ms": 0.232,
+   "dur_ms": 0.154,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -227,7 +227,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 40486,
      "name": "assess_single_engagement",
      "qual": "assess_single_engagement",
      "file": "api/v1/routes/stewardship.py",
@@ -236,7 +236,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.012,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -249,7 +249,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'engagement'",
-   "dur_ms": 0.194,
+   "dur_ms": 0.13,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -263,7 +263,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 40487,
      "name": "assess_escalation",
      "qual": "assess_escalation",
      "file": "api/v1/routes/stewardship.py",
@@ -272,7 +272,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -285,7 +285,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.184,
+   "dur_ms": 0.207,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -299,7 +299,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 40488,
      "name": "assess_portfolio",
      "qual": "assess_portfolio",
      "file": "api/v1/routes/stewardship.py",
@@ -308,7 +308,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -321,7 +321,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 0.227,
+   "dur_ms": 0.15,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -335,7 +335,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 40489,
      "name": "assess_proxy_votes",
      "qual": "assess_proxy_votes",
      "file": "api/v1/routes/stewardship.py",
@@ -344,12 +344,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.056,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 40490,
        "name": "_to_proxy_domain",
        "qual": "_to_proxy_domain",
        "file": "api/v1/routes/stewardship.py",
@@ -358,7 +358,7 @@
         "m": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []

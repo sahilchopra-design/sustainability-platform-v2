@@ -1,0 +1,131 @@
+{
+ "domain": "usgs-earthquake",
+ "meta": {
+  "ts": "2026-07-05T19:17:19",
+  "endpoints": 2,
+  "module": "api.v1.routes.usgs_earthquake",
+  "router_prefix": "/api/v1/usgs-earthquake"
+ },
+ "transactions": [
+  {
+   "domain": "usgs-earthquake",
+   "label": "GET /api/v1/usgs-earthquake/point",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: USGS earthquake point query error: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"TEST_lon\"\nLINE 8:                 ST_SetSRID(ST_MakePoint('TEST_lon', 'TEST_la...\n                                                ^\n\n[SQL: \n            SELECT zone_id, risk_level, country_iso3, max_magnitude_50yr, event_count_50yr,\n                   d",
+   "dur_ms": 294.318,
+   "node_count": 1,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "ref_earthquake_zones"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT zone_id, risk_level, country_iso3, max_magnitude_50yr, event_count_50yr, data_source, ST_XMin(zone_boundary) AS min_lon, ST_YMin(zone_boundary) AS min_lat, ST_XMax(zone_boundary) AS max_lon, ST_YMax(zone_boundary) AS max_lat FROM ref_earthquake_zones WHERE ST_Within( ST_SetSRID(ST_MakePoint(%(lng)s, %(lat)s), 4326), zone_boundary ) LIMIT 1'",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": null,
+     "dur_ms": 59.593,
+     "is_reference": false,
+     "error": "InvalidTextRepresentation('invalid input syntax for type double precision: \"TEST_lon\"\\nLINE 8:                 ST_SetSRID(ST_MakePoint(\\'TEST_lon\\', \\'TEST_la...\\n                                    \u2026"
+    }
+   ],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42520,
+     "name": "usgs_earthquake_point",
+     "qual": "usgs_earthquake_point",
+     "file": "api/v1/routes/usgs_earthquake.py",
+     "line": 82,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B7590>"
+     },
+     "ret": "None",
+     "dur_ms": 265.038,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "usgs-earthquake",
+   "label": "GET /api/v1/usgs-earthquake/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 391.055,
+   "node_count": 1,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ref_earthquake_zones"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "\"SELECT COUNT(*) AS row_count, MIN(ST_YMin(zone_boundary)) AS min_lat, MAX(ST_YMax(zone_boundary)) AS max_lat, MIN(ST_XMin(zone_boundary)) AS min_lon, MAX(ST_XMax(zone_boundary)) AS max_lon, COALESCE(SUM(event_count_50yr), 0) AS total_events_aggregated, MAX(max_magnitude_50yr) AS global_max_magnitude, COUNT(*) FILTER (WHERE risk_level = 'very_high') AS very_high_zones, COUNT(*) FILTER (WHERE risk\u2026",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 178.314,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "row_count",
+     "coverage",
+     "total_events_aggregated",
+     "global_max_magnitude",
+     "risk_level_counts",
+     "data_source",
+     "note"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42521,
+     "name": "usgs_earthquake_status",
+     "qual": "usgs_earthquake_status",
+     "file": "api/v1/routes/usgs_earthquake.py",
+     "line": 27,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A216870>"
+     },
+     "ret": "{'row_count': 4500, 'coverage': {'min_lat': -90.0, 'max_lat': 62.0, 'min_lon': -180.0, 'max_lon': 180.0}, 'total_events_aggregated': 61633, 'global_max_magnitude': 8.8, 'risk_level_counts': {'very_high': 77, 'high': 191, 'moderate': 339, '\u2026",
+     "dur_ms": 361.731,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

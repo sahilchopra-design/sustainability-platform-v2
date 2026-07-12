@@ -1,10 +1,10 @@
 {
  "domain": "just-transition-engine",
  "meta": {
-  "ts": "2026-06-30T14:02:59",
+  "ts": "2026-07-05T19:15:48",
+  "endpoints": 12,
   "module": "api.v1.routes.just_transition_engine",
-  "router_prefix": "/api/v1/just-transition",
-  "endpoints": 12
+  "router_prefix": "/api/v1/just-transition"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.299,
+   "dur_ms": 0.246,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12853,
      "name": "ref_cbi_criteria",
      "qual": "ref_cbi_criteria",
      "file": "api/v1/routes/just_transition_engine.py",
      "line": 301,
      "args": {},
      "ret": "{'status': 'success', 'data': {'standard': 'Climate Bonds Initiative \u2014 Just Transition Finance Label Criteria (2023)', 'total_criteria': 0, 'eligibility_threshold': '6 of 8 criteria must be met', 'criteria': [], 'applicable_instruments': [\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.405,
+   "dur_ms": 0.333,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -71,40 +71,25 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12854,
      "name": "ref_esrs_social_requirements",
      "qual": "ref_esrs_social_requirements",
      "file": "api/v1/routes/just_transition_engine.py",
      "line": 251,
      "args": {},
      "ret": "{'status': 'success', 'data': {'framework': 'CSRD ESRS \u2014 Social Standards (EFRAG IG3)', 'S1': {'name': 'Own Workforce', 'requirements_count': 0, 'requirements': [], 'mandatory_count': 0}, 'S2': {'name': 'Workers in the Value Chain', 'requi\u2026",
-     "dur_ms": 0.232,
+     "dur_ms": 0.132,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 12855,
        "name": "<genexpr>",
        "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/just_transition_engine.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 4,
-       "name": "<genexpr>",
-       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
-       "file": "api/v1/routes/just_transition_engine.py",
-       "line": 267,
-       "args": {
-        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+        ".0": "<list_iterator object at 0x0000013D48752290>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -113,13 +98,13 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 12856,
        "name": "<genexpr>",
        "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/just_transition_engine.py",
-       "line": 273,
+       "line": 267,
        "args": {
-        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+        ".0": "<list_iterator object at 0x0000013D48752290>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -128,16 +113,31 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 12857,
+       "name": "<genexpr>",
+       "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/just_transition_engine.py",
+       "line": 273,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48752290>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12858,
        "name": "<genexpr>",
        "qual": "ref_esrs_social_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/just_transition_engine.py",
        "line": 279,
        "args": {
-        ".0": "<list_iterator object at 0x0000025038ECC4F0>"
+        ".0": "<list_iterator object at 0x0000013D48752290>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -152,7 +152,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.152,
+   "dur_ms": 0.14,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -171,7 +171,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 12859,
      "name": "ref_ilo_dimensions",
      "qual": "ref_ilo_dimensions",
      "file": "api/v1/routes/just_transition_engine.py",
@@ -191,7 +191,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.148,
+   "dur_ms": 0.137,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -210,7 +210,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 12860,
      "name": "ref_living_wage_benchmarks",
      "qual": "ref_living_wage_benchmarks",
      "file": "api/v1/routes/just_transition_engine.py",
@@ -266,7 +266,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.209,
+   "dur_ms": 0.175,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -280,7 +280,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 12861,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/just_transition_engine.py",
@@ -289,7 +289,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -302,7 +302,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.167,
+   "dur_ms": 0.156,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -316,7 +316,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 12862,
      "name": "ilo_assessment",
      "qual": "ilo_assessment",
      "file": "api/v1/routes/just_transition_engine.py",
@@ -325,7 +325,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.003,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "technology",
  "meta": {
-  "ts": "2026-06-30T14:05:32",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 15,
   "module": "api.v1.routes.technology",
-  "router_prefix": "/api/v1/technology",
-  "endpoints": 15
+  "router_prefix": "/api/v1/technology"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.597,
+   "dur_ms": 0.242,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -32,26 +32,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42161,
      "name": "ref_ai_benchmarks",
      "qual": "ref_ai_benchmarks",
      "file": "api/v1/routes/technology.py",
      "line": 448,
      "args": {},
      "ret": "{'source': 'Published research 2019-2024', 'models': {'gpt4_class': {'training_kwh': 62000000, 'params_b': 1800, 'source': 'Epoch AI 2024 est.'}, 'gpt3_class': {'training_kwh': 1287000, 'params_b': 175, 'source': 'Patterson et al. 2021'}, \u2026",
-     "dur_ms": 0.116,
+     "dur_ms": 0.046,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42162,
        "name": "get_ai_training_benchmarks",
        "qual": "TechnologyRiskEngine.get_ai_training_benchmarks",
        "file": "services/technology_risk_engine.py",
-       "line": 976,
+       "line": 987,
        "args": {},
        "ret": "{'gpt4_class': {'training_kwh': 62000000, 'params_b': 1800, 'source': 'Epoch AI 2024 est.'}, 'gpt3_class': {'training_kwh': 1287000, 'params_b': 175, 'source': 'Patterson et al. 2021'}, 'llama3_70b': {'training_kwh': 6500000, 'params_b': 7\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -66,7 +66,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.229,
+   "dur_ms": 0.148,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -85,26 +85,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42163,
      "name": "ref_cloud_benchmarks",
      "qual": "ref_cloud_benchmarks",
      "file": "api/v1/routes/technology.py",
      "line": 433,
      "args": {},
      "ret": "{'pue': {'aws': 1.135, 'azure': 1.18, 'gcp': 1.1, 'oracle': 1.25, 'alibaba': 1.25, 'on_prem_avg': 1.58}, 'grid_factors': {'us-east-1': 379.0, 'us-west-2': 89.0, 'eu-west-1': 296.0, 'eu-central-1': 338.0, 'eu-north-1': 8.0, 'ap-southeast-1'\u2026",
-     "dur_ms": 0.046,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42164,
        "name": "get_cloud_provider_benchmarks",
        "qual": "TechnologyRiskEngine.get_cloud_provider_benchmarks",
        "file": "services/technology_risk_engine.py",
-       "line": 964,
+       "line": 975,
        "args": {},
        "ret": "{'pue': {'aws': 1.135, 'azure': 1.18, 'gcp': 1.1, 'oracle': 1.25, 'alibaba': 1.25, 'on_prem_avg': 1.58}, 'grid_factors': {'us-east-1': 379.0, 'us-west-2': 89.0, 'eu-west-1': 296.0, 'eu-central-1': 338.0, 'eu-north-1': 8.0, 'ap-southeast-1'\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -119,7 +119,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.199,
+   "dur_ms": 0.133,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -138,26 +138,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42165,
      "name": "ref_ewaste_rates",
      "qual": "ref_ewaste_rates",
      "file": "api/v1/routes/technology.py",
      "line": 458,
      "args": {},
      "ret": "{'source': 'ITU Global E-waste Monitor 2024 / WEEE Directive', 'rates': {'servers': 35.0, 'networking': 20.0, 'storage': 25.0, 'desktops': 30.0, 'laptops': 25.0, 'monitors': 15.0, 'mobile_phones': 15.0, 'batteries': 10.0, 'cables': 40.0}}",
-     "dur_ms": 0.035,
+     "dur_ms": 0.024,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42166,
        "name": "get_ewaste_recycling_rates",
        "qual": "TechnologyRiskEngine.get_ewaste_recycling_rates",
        "file": "services/technology_risk_engine.py",
-       "line": 985,
+       "line": 996,
        "args": {},
        "ret": "{'servers': 35.0, 'networking': 20.0, 'storage': 25.0, 'desktops': 30.0, 'laptops': 25.0, 'monitors': 15.0, 'mobile_phones': 15.0, 'batteries': 10.0, 'cables': 40.0}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -172,7 +172,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.177,
+   "dur_ms": 0.128,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -191,26 +191,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42167,
      "name": "ref_grid_factors",
      "qual": "ref_grid_factors",
      "file": "api/v1/routes/technology.py",
      "line": 428,
      "args": {},
      "ret": "{'source': 'IEA 2024 estimates (gCO2/kWh)', 'factors': {'us-east-1': 379.0, 'us-west-2': 89.0, 'eu-west-1': 296.0, 'eu-central-1': 338.0, 'eu-north-1': 8.0, 'ap-southeast-1': 408.0, 'ap-northeast-1': 457.0, 'ap-south-1': 632.0, 'me-south-1\u2026",
-     "dur_ms": 0.029,
+     "dur_ms": 0.022,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 42168,
        "name": "get_grid_emission_factors",
        "qual": "TechnologyRiskEngine.get_grid_emission_factors",
        "file": "services/technology_risk_engine.py",
-       "line": 961,
+       "line": 972,
        "args": {},
        "ret": "{'us-east-1': 379.0, 'us-west-2': 89.0, 'eu-west-1': 296.0, 'eu-central-1': 338.0, 'eu-north-1': 8.0, 'ap-southeast-1': 408.0, 'ap-northeast-1': 457.0, 'ap-south-1': 632.0, 'me-south-1': 528.0, 'global_avg': 436.0}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -225,7 +225,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.218,
+   "dur_ms": 0.131,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -244,26 +244,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 42169,
      "name": "ref_pue_benchmarks",
      "qual": "ref_pue_benchmarks",
      "file": "api/v1/routes/technology.py",
      "line": 438,
      "args": {},
      "ret": "{'source': 'Uptime Institute 2024 Global Survey', 'benchmarks': {'hyperscale': {'best': 1.08, 'median': 1.12, 'worst': 1.25}, 'colocation': {'best': 1.15, 'median': 1.35, 'worst': 1.6}, 'enterprise': {'best': 1.2, 'median': 1.58, 'worst': \u2026",
-     "dur_ms": 0.036,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 42170,
        "name": "get_pue_benchmarks",
        "qual": "TechnologyRiskEngine.get_pue_benchmarks",
        "file": "services/technology_risk_engine.py",
-       "line": 970,
+       "line": 981,
        "args": {},
        "ret": "{'hyperscale': {'best': 1.08, 'median': 1.12, 'worst': 1.25}, 'colocation': {'best': 1.15, 'median': 1.35, 'worst': 1.6}, 'enterprise': {'best': 1.2, 'median': 1.58, 'worst': 2.2}, 'edge': {'best': 1.3, 'median': 1.5, 'worst': 1.8}}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -278,7 +278,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.2,
+   "dur_ms": 0.142,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -297,23 +297,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 42171,
      "name": "ref_semiconductor",
      "qual": "ref_semiconductor",
      "file": "api/v1/routes/technology.py",
      "line": 453,
      "args": {},
      "ret": "{'water_intensity': {'logic_5nm': 30.0, 'logic_7nm': 25.0, 'logic_14nm': 18.0, 'logic_28nm': 12.0, 'memory_dram': 20.0, 'memory_nand': 15.0, 'analog': 8.0, 'power': 6.0}, 'rare_earth_concentration': {'gallium': {'top3_pct': 98.0, 'primary'\u2026",
-     "dur_ms": 0.048,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 42172,
        "name": "get_semiconductor_water_data",
        "qual": "TechnologyRiskEngine.get_semiconductor_water_data",
        "file": "services/technology_risk_engine.py",
-       "line": 979,
+       "line": 990,
        "args": {},
        "ret": "{'water_intensity': {'logic_5nm': 30.0, 'logic_7nm': 25.0, 'logic_14nm': 18.0, 'logic_28nm': 12.0, 'memory_dram': 20.0, 'memory_nand': 15.0, 'analog': 8.0, 'power': 6.0}, 'rare_earth_concentration': {'gallium': {'top3_pct': 98.0, 'primary'\u2026",
        "dur_ms": 0.002,
@@ -331,7 +331,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.189,
+   "dur_ms": 0.125,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -350,26 +350,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42173,
      "name": "ref_wue_benchmarks",
      "qual": "ref_wue_benchmarks",
      "file": "api/v1/routes/technology.py",
      "line": 443,
      "args": {},
      "ret": "{'source': 'The Green Grid WUE methodology', 'benchmarks': {'air_cooled': {'best': 0.0, 'median': 0.5, 'worst': 1.2}, 'evaporative': {'best': 1.0, 'median': 1.8, 'worst': 3.5}, 'liquid': {'best': 0.0, 'median': 0.2, 'worst': 0.6}, 'adiabat\u2026",
-     "dur_ms": 0.032,
+     "dur_ms": 0.024,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 42174,
        "name": "get_wue_benchmarks",
        "qual": "TechnologyRiskEngine.get_wue_benchmarks",
        "file": "services/technology_risk_engine.py",
-       "line": 973,
+       "line": 984,
        "args": {},
        "ret": "{'air_cooled': {'best': 0.0, 'median': 0.5, 'worst': 1.2}, 'evaporative': {'best': 1.0, 'median': 1.8, 'worst': 3.5}, 'liquid': {'best': 0.0, 'median': 0.2, 'worst': 0.6}, 'adiabatic': {'best': 0.3, 'median': 0.9, 'worst': 2.0}}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -384,7 +384,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 0.244,
+   "dur_ms": 0.139,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -398,7 +398,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 42175,
      "name": "assess_ai_carbon",
      "qual": "assess_ai_carbon",
      "file": "api/v1/routes/technology.py",
@@ -407,7 +407,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.027,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -420,7 +420,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 0.215,
+   "dur_ms": 0.118,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -434,7 +434,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 42176,
      "name": "assess_cloud_emissions",
      "qual": "assess_cloud_emissions",
      "file": "api/v1/routes/technology.py",
@@ -443,7 +443,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -456,7 +456,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 0.173,
+   "dur_ms": 0.113,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -470,7 +470,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 42177,
      "name": "assess_data_centre",
      "qual": "assess_data_centre",
      "file": "api/v1/routes/technology.py",
@@ -479,7 +479,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -510,7 +510,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'avg_weight_kg'",
-   "dur_ms": 0.184,
+   "dur_ms": 0.114,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -524,7 +524,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 42178,
      "name": "assess_ewaste",
      "qual": "assess_ewaste",
      "file": "api/v1/routes/technology.py",
@@ -533,7 +533,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -546,7 +546,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'data_centres'",
-   "dur_ms": 0.174,
+   "dur_ms": 0.112,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -560,7 +560,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 42179,
      "name": "integrated_assessment",
      "qual": "integrated_assessment",
      "file": "api/v1/routes/technology.py",
@@ -569,7 +569,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -582,7 +582,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 0.161,
+   "dur_ms": 0.109,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -596,7 +596,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 42180,
      "name": "assess_semiconductor_risk",
      "qual": "assess_semiconductor_risk",
      "file": "api/v1/routes/technology.py",
@@ -605,7 +605,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -618,7 +618,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'energy_per_unit_kwh'",
-   "dur_ms": 0.191,
+   "dur_ms": 0.122,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -632,7 +632,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 42181,
      "name": "assess_software_carbon",
      "qual": "assess_software_carbon",
      "file": "api/v1/routes/technology.py",
@@ -641,7 +641,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []

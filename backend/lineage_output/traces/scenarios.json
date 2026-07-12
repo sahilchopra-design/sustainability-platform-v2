@@ -1,10 +1,10 @@
 {
  "domain": "scenarios",
  "meta": {
-  "ts": "2026-06-30T14:05:00",
+  "ts": "2026-07-05T19:16:59",
+  "endpoints": 16,
   "module": "api.v1.routes.scenarios",
-  "router_prefix": "/api/v1/scenarios",
-  "endpoints": 16
+  "router_prefix": "/api/v1/scenarios"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3468.92,
+   "dur_ms": 337.843,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -28,8 +28,8 @@
      "tables": [
       "scenarios"
      ],
-     "rowcount": 40,
-     "dur_ms": 242.262,
+     "rowcount": 42,
+     "dur_ms": 94.194,
      "is_reference": false,
      "error": null
     }
@@ -42,13 +42,13 @@
    },
    "output_summary": {
     "type": "array",
-    "len": 40,
+    "len": 42,
     "item0_keys": null
    },
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39930,
      "name": "list_scenarios",
      "qual": "list_scenarios",
      "file": "api/v1/routes/scenarios.py",
@@ -57,30 +57,30 @@
       "approval_status": "None",
       "source": "None",
       "published_only": "False",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74323F20>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9CBF0>"
      },
-     "ret": "[<db.models.scenario.Scenario object at 0x0000025B747992B0>, <db.models.scenario.Scenario object at 0x0000025B74799310>, <db.models.scenario.Scenario object at 0x0000025B747993A0>, <db.models.scenario.Scenario object at 0x0000025B747994C0>\u2026",
-     "dur_ms": 3436.613,
+     "ret": "[<db.models.scenario.Scenario object at 0x0000013D4A14A6C0>, <db.models.scenario.Scenario object at 0x0000013D4A14A990>, <db.models.scenario.Scenario object at 0x0000013D4A14BF20>, <db.models.scenario.Scenario object at 0x0000013D4A14BCB0>\u2026",
+     "dur_ms": 305.685,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39931,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74323F20>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9CBF0>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 39932,
        "name": "list_scenarios",
        "qual": "ScenarioBuilderService.list_scenarios",
        "file": "services/scenario_builder_service.py",
@@ -90,8 +90,8 @@
         "source": "None",
         "published_only": "False"
        },
-       "ret": "[<db.models.scenario.Scenario object at 0x0000025B747992B0>, <db.models.scenario.Scenario object at 0x0000025B74799310>, <db.models.scenario.Scenario object at 0x0000025B747993A0>, <db.models.scenario.Scenario object at 0x0000025B747994C0>\u2026",
-       "dur_ms": 3436.494,
+       "ret": "[<db.models.scenario.Scenario object at 0x0000013D4A14A6C0>, <db.models.scenario.Scenario object at 0x0000013D4A14A990>, <db.models.scenario.Scenario object at 0x0000013D4A14BF20>, <db.models.scenario.Scenario object at 0x0000013D4A14BCB0>\u2026",
+       "dur_ms": 305.61,
        "sql": [
         0
        ],
@@ -108,7 +108,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 341.716,
+   "dur_ms": 392.576,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -124,7 +124,7 @@
       "ngfs_data_sources"
      ],
      "rowcount": 2,
-     "dur_ms": 71.268,
+     "dur_ms": 93.151,
      "is_reference": false,
      "error": null
     }
@@ -140,43 +140,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 39933,
      "name": "get_ngfs_sources",
      "qual": "get_ngfs_sources",
      "file": "api/v1/routes/scenarios.py",
      "line": 39,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B740E4B60>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497DA930>"
      },
-     "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000025B747BEE70>, <db.models.scenario.NGFSDataSource object at 0x0000025B747BEEA0>]",
-     "dur_ms": 309.965,
+     "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000013D4A1BB500>, <db.models.scenario.NGFSDataSource object at 0x0000013D4A1BB320>]",
+     "dur_ms": 361.931,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 39934,
        "name": "__init__",
        "qual": "NGFSSyncService.__init__",
        "file": "services/ngfs_sync_service.py",
        "line": 160,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B740E4B60>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D497DA930>"
        },
        "ret": "None",
-       "dur_ms": 0.005,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 39935,
        "name": "get_ngfs_sources",
        "qual": "NGFSSyncService.get_ngfs_sources",
        "file": "services/ngfs_sync_service.py",
        "line": 163,
        "args": {},
-       "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000025B747BEE70>, <db.models.scenario.NGFSDataSource object at 0x0000025B747BEEA0>]",
-       "dur_ms": 309.804,
+       "ret": "[<db.models.scenario.NGFSDataSource object at 0x0000013D4A1BB500>, <db.models.scenario.NGFSDataSource object at 0x0000013D4A1BB320>]",
+       "dur_ms": 361.878,
        "sql": [
         0
        ],
@@ -193,7 +193,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 304.649,
+   "dur_ms": 278.995,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -209,7 +209,7 @@
       "scenarios"
      ],
      "rowcount": 12,
-     "dur_ms": 61.273,
+     "dur_ms": 58.334,
      "is_reference": false,
      "error": null
     }
@@ -225,43 +225,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39936,
      "name": "get_scenario_templates",
      "qual": "get_scenario_templates",
      "file": "api/v1/routes/scenarios.py",
      "line": 103,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7425B350>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48C3E030>"
      },
      "ret": "[ScenarioTemplateResponse(id='54fdf6d0-457b-4db0-a195-63ca3c1bdbf1', name='Below 2\u00b0C (5.0)', description='Gradual strengthening of policies limits warming to below 2\u00b0C', ngfs_scenario_type=<NGFSScenarioType.BELOW_2C: 'below_2c'>, parameter\u2026",
-     "dur_ms": 271.486,
+     "dur_ms": 250.055,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 39937,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7425B350>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48C3E030>"
        },
        "ret": "None",
-       "dur_ms": 0.009,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 39938,
        "name": "get_ngfs_templates",
        "qual": "ScenarioBuilderService.get_ngfs_templates",
        "file": "services/scenario_builder_service.py",
        "line": 265,
        "args": {},
-       "ret": "[<db.models.scenario.Scenario object at 0x0000025B7479A510>, <db.models.scenario.Scenario object at 0x0000025B7479A630>, <db.models.scenario.Scenario object at 0x0000025B7479A750>, <db.models.scenario.Scenario object at 0x0000025B7479AC30>\u2026",
-       "dur_ms": 270.962,
+       "ret": "[<db.models.scenario.Scenario object at 0x0000013D4A1C2D80>, <db.models.scenario.Scenario object at 0x0000013D4A1C2270>, <db.models.scenario.Scenario object at 0x0000013D4A1C3F80>, <db.models.scenario.Scenario object at 0x0000013D4A1C3AD0>\u2026",
+       "dur_ms": 249.906,
        "sql": [
         0
        ],
@@ -278,7 +278,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 323.006,
+   "dur_ms": 269.082,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -294,7 +294,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 84.441,
+     "dur_ms": 59.094,
      "is_reference": false,
      "error": null
     }
@@ -307,37 +307,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 39939,
      "name": "get_scenario",
      "qual": "get_scenario",
      "file": "api/v1/routes/scenarios.py",
      "line": 165,
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B72A9A060>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9E0C0>"
      },
      "ret": "None",
-     "dur_ms": 290.117,
+     "dur_ms": 240.521,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 39940,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B72A9A060>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9E0C0>"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 39941,
        "name": "get_scenario",
        "qual": "ScenarioBuilderService.get_scenario",
        "file": "services/scenario_builder_service.py",
@@ -346,7 +346,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 289.998,
+       "dur_ms": 240.468,
        "sql": [
         0
        ],
@@ -363,7 +363,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "ModuleNotFoundError: No module named 'backend'",
-   "dur_ms": 6.184,
+   "dur_ms": 1.473,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -379,7 +379,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 39942,
      "name": "get_impact_preview",
      "qual": "get_impact_preview",
      "file": "api/v1/routes/scenarios.py",
@@ -387,10 +387,10 @@
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799310>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A14A990>"
      },
      "ret": "None",
-     "dur_ms": 5.473,
+     "dur_ms": 1.196,
      "sql": [],
      "error": null,
      "children": []
@@ -403,7 +403,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 334.508,
+   "dur_ms": 315.564,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -419,7 +419,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 73.043,
+     "dur_ms": 64.065,
      "is_reference": false,
      "error": null
     }
@@ -432,37 +432,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 39943,
      "name": "get_scenario_versions",
      "qual": "get_scenario_versions",
      "file": "api/v1/routes/scenarios.py",
      "line": 316,
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747992E0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1498E0>"
      },
      "ret": "None",
-     "dur_ms": 298.148,
+     "dur_ms": 283.073,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 15,
+       "id": 39944,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747992E0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1498E0>"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 39945,
        "name": "get_scenario",
        "qual": "ScenarioBuilderService.get_scenario",
        "file": "services/scenario_builder_service.py",
@@ -471,7 +471,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 298.035,
+       "dur_ms": 283.024,
        "sql": [
         0
        ],
@@ -488,7 +488,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1071.095,
+   "dur_ms": 944.438,
    "node_count": 9,
    "provenance": [
     "real-db"
@@ -505,7 +505,7 @@
       "scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 104.909,
+     "dur_ms": 58.207,
      "is_reference": false,
      "error": null
     },
@@ -516,7 +516,7 @@
       "scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 60.11,
+     "dur_ms": 58.357,
      "is_reference": false,
      "error": null
     },
@@ -527,7 +527,7 @@
       "scenario_versions"
      ],
      "rowcount": 1,
-     "dur_ms": 40.595,
+     "dur_ms": 42.416,
      "is_reference": false,
      "error": null
     },
@@ -538,7 +538,7 @@
       "scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 76.723,
+     "dur_ms": 59.529,
      "is_reference": false,
      "error": null
     }
@@ -549,42 +549,42 @@
    },
    "output_summary": {
     "type": "Scenario",
-    "repr": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>"
+    "repr": "<db.models.scenario.Scenario object at 0x0000013D49EA6150>"
    },
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 39946,
      "name": "create_scenario",
      "qual": "create_scenario",
      "file": "api/v1/routes/scenarios.py",
      "line": 150,
      "args": {
       "scenario": "ScenarioCreate(name='TEST_scenario_name', description=None, source=<ScenarioSource.CUSTOM: 'custom'>, ngfs_scenario_type=None, base_scenario_id=None, parameters=ScenarioParametersBase(carbon_price={}, temperature_pathway={}, gdp_impact={},\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799EE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C27E0>"
      },
-     "ret": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>",
-     "dur_ms": 1038.021,
+     "ret": "<db.models.scenario.Scenario object at 0x0000013D49EA6150>",
+     "dur_ms": 912.927,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 18,
+       "id": 39947,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74799EE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C27E0>"
        },
        "ret": "None",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 39948,
        "name": "create_scenario",
        "qual": "ScenarioBuilderService.create_scenario",
        "file": "services/scenario_builder_service.py",
@@ -592,8 +592,8 @@
        "args": {
         "scenario_data": "ScenarioCreate(name='TEST_scenario_name', description=None, source=<ScenarioSource.CUSTOM: 'custom'>, ngfs_scenario_type=None, base_scenario_id=None, parameters=ScenarioParametersBase(carbon_price={}, temperature_pathway={}, gdp_impact={},\u2026"
        },
-       "ret": "<db.models.scenario.Scenario object at 0x0000025B74799EB0>",
-       "dur_ms": 1037.878,
+       "ret": "<db.models.scenario.Scenario object at 0x0000013D49EA6150>",
+       "dur_ms": 912.863,
        "sql": [
         0,
         1,
@@ -602,85 +602,85 @@
        "error": null,
        "children": [
         {
-         "id": 20,
+         "id": 39949,
          "name": "<lambda>",
          "qual": "Scenario.<lambda>",
          "file": "db/models/scenario.py",
          "line": 55,
          "args": {},
-         "ret": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'",
-         "dur_ms": 0.067,
+         "ret": "'8a18582d-621f-4df1-be4e-396642d1e437'",
+         "dur_ms": 0.024,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 21,
+         "id": 39950,
          "name": "<lambda>",
          "qual": "Scenario.<lambda>",
          "file": "db/models/scenario.py",
          "line": 88,
          "args": {},
-         "ret": "datetime.datetime(2026, 6, 30, 18, 4, 56, 992998, tzinfo=datetime.timezone.utc)",
-         "dur_ms": 0.012,
+         "ret": "datetime.datetime(2026, 7, 5, 23, 16, 56, 362541, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 22,
+         "id": 39951,
          "name": "<lambda>",
          "qual": "Scenario.<lambda>",
          "file": "db/models/scenario.py",
          "line": 89,
          "args": {},
-         "ret": "datetime.datetime(2026, 6, 30, 18, 4, 56, 992998, tzinfo=datetime.timezone.utc)",
-         "dur_ms": 0.008,
+         "ret": "datetime.datetime(2026, 7, 5, 23, 16, 56, 362541, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 23,
+         "id": 39952,
          "name": "_create_version",
          "qual": "ScenarioBuilderService._create_version",
          "file": "services/scenario_builder_service.py",
          "line": 274,
          "args": {
-          "scenario_id": "'0daac82d-714b-4cb6-8df7-1b6dd145b5d7'",
+          "scenario_id": "'8a18582d-621f-4df1-be4e-396642d1e437'",
           "version_number": "1",
           "parameters": "{'carbon_price': {}, 'temperature_pathway': {}, 'gdp_impact': {}, 'sectoral_multipliers': {}, 'physical_risk': {}}",
           "change_summary": "'Initial version'",
           "changed_by": "None"
          },
-         "ret": "<db.models.scenario.ScenarioVersion object at 0x0000025B743997F0>",
-         "dur_ms": 44.021,
+         "ret": "<db.models.scenario.ScenarioVersion object at 0x0000013D4A1488C0>",
+         "dur_ms": 44.653,
          "sql": [
           2
          ],
          "error": null,
          "children": [
           {
-           "id": 24,
+           "id": 39953,
            "name": "<lambda>",
            "qual": "ScenarioVersion.<lambda>",
            "file": "db/models/scenario.py",
            "line": 103,
            "args": {},
-           "ret": "'c898b3ac-66fa-4683-ae69-3768af0f5c88'",
-           "dur_ms": 0.028,
+           "ret": "'6173338e-9cb0-43ae-8c0f-2d58709a897e'",
+           "dur_ms": 0.023,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 25,
+           "id": 39954,
            "name": "<lambda>",
            "qual": "ScenarioVersion.<lambda>",
            "file": "db/models/scenario.py",
            "line": 113,
            "args": {},
-           "ret": "datetime.datetime(2026, 6, 30, 18, 4, 57, 406600, tzinfo=datetime.timezone.utc)",
+           "ret": "datetime.datetime(2026, 7, 5, 23, 16, 56, 710198, tzinfo=datetime.timezone.utc)",
            "dur_ms": 0.006,
            "sql": [],
            "error": null,
@@ -700,7 +700,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 637.565,
+   "dur_ms": 638.144,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -716,7 +716,7 @@
       "ngfs_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 67.29,
+     "dur_ms": 58.401,
      "is_reference": false,
      "error": null
     },
@@ -727,7 +727,7 @@
       "ngfs_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.837,
+     "dur_ms": 38.736,
      "is_reference": false,
      "error": null
     },
@@ -738,7 +738,7 @@
       "ngfs_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 61.189,
+     "dur_ms": 63.353,
      "is_reference": false,
      "error": null
     }
@@ -751,12 +751,12 @@
    },
    "output_summary": {
     "type": "NGFSDataSource",
-    "repr": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>"
+    "repr": "<db.models.scenario.NGFSDataSource object at 0x0000013D4A1C1940>"
    },
    "truncated": [],
    "tree": [
     {
-     "id": 26,
+     "id": 39955,
      "name": "create_ngfs_source",
      "qual": "create_ngfs_source",
      "file": "api/v1/routes/scenarios.py",
@@ -765,30 +765,30 @@
       "name": "'NGFS Phase V'",
       "version": "'5.0'",
       "url": "'https://data.ece.iiasa.ac.at/ngfs/'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479BAD0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A14A6C0>"
      },
-     "ret": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>",
-     "dur_ms": 608.37,
+     "ret": "<db.models.scenario.NGFSDataSource object at 0x0000013D4A1C1940>",
+     "dur_ms": 606.304,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 27,
+       "id": 39956,
        "name": "__init__",
        "qual": "NGFSSyncService.__init__",
        "file": "services/ngfs_sync_service.py",
        "line": 160,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479BAD0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A14A6C0>"
        },
        "ret": "None",
-       "dur_ms": 0.007,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 39957,
        "name": "create_or_update_source",
        "qual": "NGFSSyncService.create_or_update_source",
        "file": "services/ngfs_sync_service.py",
@@ -799,8 +799,8 @@
         "version": "'5.0'",
         "release_date": "None"
        },
-       "ret": "<db.models.scenario.NGFSDataSource object at 0x0000025B7479A4B0>",
-       "dur_ms": 608.253,
+       "ret": "<db.models.scenario.NGFSDataSource object at 0x0000013D4A1C1940>",
+       "dur_ms": 606.222,
        "sql": [
         0,
         1,
@@ -819,7 +819,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.508,
+   "dur_ms": 0.342,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -841,7 +841,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 29,
+     "id": 39958,
      "name": "sync_ngfs_data",
      "qual": "sync_ngfs_data",
      "file": "api/v1/routes/scenarios.py",
@@ -849,10 +849,10 @@
      "args": {
       "source_id": "None",
       "background_tasks": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B9B0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A14B680>"
      },
      "ret": "{'message': 'NGFS sync started for all sources'}",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -901,7 +901,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 278.608,
+   "dur_ms": 278.66,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -917,7 +917,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 54.351,
+     "dur_ms": 58.237,
      "is_reference": false,
      "error": null
     }
@@ -931,7 +931,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 30,
+     "id": 39959,
      "name": "approve_scenario",
      "qual": "approve_scenario",
      "file": "api/v1/routes/scenarios.py",
@@ -939,30 +939,30 @@
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "decision": "ScenarioApprovalDecision(approved=True, approved_by='TEST_decision_approved_by', notes=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479AC90>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1498E0>"
      },
      "ret": "None",
-     "dur_ms": 249.572,
+     "dur_ms": 249.968,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 31,
+       "id": 39960,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479AC90>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1498E0>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 32,
+       "id": 39961,
        "name": "approve_scenario",
        "qual": "ScenarioBuilderService.approve_scenario",
        "file": "services/scenario_builder_service.py",
@@ -973,7 +973,7 @@
         "notes": "None"
        },
        "ret": "None",
-       "dur_ms": 249.487,
+       "dur_ms": 249.906,
        "sql": [
         0
        ],
@@ -990,7 +990,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 560.508,
+   "dur_ms": 289.279,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -1006,7 +1006,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 69.242,
+     "dur_ms": 63.158,
      "is_reference": false,
      "error": null
     }
@@ -1020,7 +1020,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 33,
+     "id": 39962,
      "name": "fork_scenario",
      "qual": "fork_scenario",
      "file": "api/v1/routes/scenarios.py",
@@ -1028,21 +1028,21 @@
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "fork_request": "ScenarioForkRequest(new_name='TEST_fork_request_new_name', description=None, created_by=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B470>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C3200>"
      },
      "ret": "None",
-     "dur_ms": 529.132,
+     "dur_ms": 258.566,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 34,
+       "id": 39963,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B7479B470>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C3200>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1051,7 +1051,7 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 39964,
        "name": "fork_scenario",
        "qual": "ScenarioBuilderService.fork_scenario",
        "file": "services/scenario_builder_service.py",
@@ -1063,7 +1063,7 @@
         "created_by": "None"
        },
        "ret": "None",
-       "dur_ms": 529.059,
+       "dur_ms": 258.5,
        "sql": [
         0
        ],
@@ -1080,7 +1080,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 309.126,
+   "dur_ms": 284.703,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -1096,7 +1096,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 58.962,
+     "dur_ms": 65.47,
      "is_reference": false,
      "error": null
     }
@@ -1111,7 +1111,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 39965,
      "name": "calculate_impact_preview",
      "qual": "calculate_impact_preview",
      "file": "api/v1/routes/scenarios.py",
@@ -1120,30 +1120,30 @@
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "request": "ScenarioImpactPreviewRequest(portfolio_id='TEST_request_portfolio_id', parameters=None)",
       "background_tasks": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BF050>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C39B0>"
      },
      "ret": "None",
-     "dur_ms": 279.489,
+     "dur_ms": 253.836,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 37,
+       "id": 39966,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BF050>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C39B0>"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 38,
+       "id": 39967,
        "name": "get_scenario",
        "qual": "ScenarioBuilderService.get_scenario",
        "file": "services/scenario_builder_service.py",
@@ -1152,7 +1152,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 279.356,
+       "dur_ms": 253.766,
        "sql": [
         0
        ],
@@ -1169,7 +1169,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 297.623,
+   "dur_ms": 265.662,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -1185,7 +1185,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 57.017,
+     "dur_ms": 56.594,
      "is_reference": false,
      "error": null
     }
@@ -1198,37 +1198,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 39,
+     "id": 39968,
      "name": "publish_scenario",
      "qual": "publish_scenario",
      "file": "api/v1/routes/scenarios.py",
      "line": 240,
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BD940>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C3200>"
      },
      "ret": "None",
-     "dur_ms": 270.04,
+     "dur_ms": 237.147,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 40,
+       "id": 39969,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B747BD940>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1C3200>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 41,
+       "id": 39970,
        "name": "publish_scenario",
        "qual": "ScenarioBuilderService.publish_scenario",
        "file": "services/scenario_builder_service.py",
@@ -1237,7 +1237,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 269.974,
+       "dur_ms": 237.086,
        "sql": [
         0
        ],
@@ -1254,7 +1254,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Scenario 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 367.374,
+   "dur_ms": 482.903,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -1270,7 +1270,7 @@
       "scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 61.49,
+     "dur_ms": 61.93,
      "is_reference": false,
      "error": null
     }
@@ -1284,7 +1284,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 42,
+     "id": 39971,
      "name": "submit_for_approval",
      "qual": "submit_for_approval",
      "file": "api/v1/routes/scenarios.py",
@@ -1292,21 +1292,21 @@
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "submission": "ScenarioSubmitForApproval(submitted_by='TEST_submission_submitted_by', notes=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74798BC0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D493D4F20>"
      },
      "ret": "None",
-     "dur_ms": 338.907,
+     "dur_ms": 452.275,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 43,
+       "id": 39972,
        "name": "__init__",
        "qual": "ScenarioBuilderService.__init__",
        "file": "services/scenario_builder_service.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025B74798BC0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D493D4F20>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1315,7 +1315,7 @@
        "children": []
       },
       {
-       "id": 44,
+       "id": 39973,
        "name": "submit_for_approval",
        "qual": "ScenarioBuilderService.submit_for_approval",
        "file": "services/scenario_builder_service.py",
@@ -1326,7 +1326,7 @@
         "notes": "None"
        },
        "ret": "None",
-       "dur_ms": 338.846,
+       "dur_ms": 452.21,
        "sql": [
         0
        ],

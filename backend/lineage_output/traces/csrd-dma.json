@@ -1,10 +1,10 @@
 {
  "domain": "csrd-dma",
  "meta": {
-  "ts": "2026-06-30T14:00:12",
+  "ts": "2026-07-05T19:11:07",
+  "endpoints": 10,
   "module": "api.v1.routes.csrd_dma",
-  "router_prefix": "/api/v1/csrd-dma",
-  "endpoints": 10
+  "router_prefix": "/api/v1/csrd-dma"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.332,
+   "dur_ms": 0.291,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3245,
      "name": "ref_financial_risk_types",
      "qual": "ref_financial_risk_types",
      "file": "api/v1/routes/csrd_dma.py",
      "line": 192,
      "args": {},
      "ret": "{'physical_risk': 'Chronic or acute physical climate risk affecting asset value or operations', 'transition_risk': 'Policy, regulatory, technology or market shift risk', 'systemic_risk': 'Broader systemic risks (biodiversity loss, social i\u2026",
-     "dur_ms": 0.048,
+     "dur_ms": 0.046,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 3246,
        "name": "get_financial_risk_types",
        "qual": "CSRDDMAEngine.get_financial_risk_types",
        "file": "services/csrd_dma_engine.py",
-       "line": 636,
+       "line": 726,
        "args": {},
        "ret": "{'physical_risk': 'Chronic or acute physical climate risk affecting asset value or operations', 'transition_risk': 'Policy, regulatory, technology or market shift risk', 'systemic_risk': 'Broader systemic risks (biodiversity loss, social i\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.188,
+   "dur_ms": 0.208,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -96,26 +96,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 3247,
      "name": "ref_sector_materiality",
      "qual": "ref_sector_materiality",
      "file": "api/v1/routes/csrd_dma.py",
      "line": 198,
      "args": {},
      "ret": "{'financial_services': ['E1', 'S1', 'G1', 'S2'], 'energy': ['E1', 'E2', 'E3', 'S1', 'G1'], 'manufacturing': ['E1', 'E2', 'E5', 'S1', 'S2', 'G1'], 'real_estate': ['E1', 'E3', 'E4', 'S1', 'S3'], 'agriculture': ['E1', 'E2', 'E3', 'E4', 'S2', \u2026",
-     "dur_ms": 0.037,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 3248,
        "name": "get_sector_materiality",
        "qual": "CSRDDMAEngine.get_sector_materiality",
        "file": "services/csrd_dma_engine.py",
-       "line": 640,
+       "line": 730,
        "args": {},
        "ret": "{'financial_services': ['E1', 'S1', 'G1', 'S2'], 'energy': ['E1', 'E2', 'E3', 'S1', 'G1'], 'manufacturing': ['E1', 'E2', 'E5', 'S1', 'S2', 'G1'], 'real_estate': ['E1', 'E3', 'E4', 'S1', 'S3'], 'agriculture': ['E1', 'E2', 'E3', 'E4', 'S2', \u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.175,
+   "dur_ms": 0.198,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -150,23 +150,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 3249,
      "name": "ref_severity_criteria",
      "qual": "ref_severity_criteria",
      "file": "api/v1/routes/csrd_dma.py",
      "line": 186,
      "args": {},
      "ret": "{'scale': {'weight': 0.35, 'description': 'Breadth of impact \u2014 how many affected'}, 'scope': {'weight': 0.35, 'description': 'Depth of impact \u2014 how seriously affected'}, 'irremediability': {'weight': 0.3, 'description': 'Ease of remediatio\u2026",
-     "dur_ms": 0.041,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 3250,
        "name": "get_severity_criteria",
        "qual": "CSRDDMAEngine.get_severity_criteria",
        "file": "services/csrd_dma_engine.py",
-       "line": 632,
+       "line": 722,
        "args": {},
        "ret": "{'scale': {'weight': 0.35, 'description': 'Breadth of impact \u2014 how many affected'}, 'scope': {'weight': 0.35, 'description': 'Depth of impact \u2014 how seriously affected'}, 'irremediability': {'weight': 0.3, 'description': 'Ease of remediatio\u2026",
        "dur_ms": 0.002,
@@ -184,7 +184,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.209,
+   "dur_ms": 0.222,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -211,23 +211,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 3251,
      "name": "ref_topics",
      "qual": "ref_topics",
      "file": "api/v1/routes/csrd_dma.py",
      "line": 180,
      "args": {},
      "ret": "{'E1': {'name': 'Climate Change', 'standard': 'ESRS E1', 'sub_topics': ['climate_adaptation', 'climate_mitigation', 'energy']}, 'E2': {'name': 'Pollution', 'standard': 'ESRS E2', 'sub_topics': ['air_pollution', 'water_pollution', 'soil_pol\u2026",
-     "dur_ms": 0.05,
+     "dur_ms": 0.053,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 3252,
        "name": "get_esrs_topics",
        "qual": "CSRDDMAEngine.get_esrs_topics",
        "file": "services/csrd_dma_engine.py",
-       "line": 628,
+       "line": 718,
        "args": {},
        "ret": "{'E1': {'name': 'Climate Change', 'standard': 'ESRS E1', 'sub_topics': ['climate_adaptation', 'climate_mitigation', 'energy']}, 'E2': {'name': 'Pollution', 'standard': 'ESRS E2', 'sub_topics': ['air_pollution', 'water_pollution', 'soil_pol\u2026",
        "dur_ms": 0.002,
@@ -263,7 +263,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.215,
+   "dur_ms": 0.228,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -277,7 +277,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 3253,
      "name": "financial_assessment",
      "qual": "financial_assessment",
      "file": "api/v1/routes/csrd_dma.py",
@@ -286,7 +286,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.022,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": []
@@ -299,7 +299,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.168,
+   "dur_ms": 0.186,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -313,7 +313,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 3254,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/csrd_dma.py",
@@ -322,7 +322,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []
@@ -335,7 +335,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.155,
+   "dur_ms": 0.177,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -349,7 +349,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 3255,
      "name": "impact_assessment",
      "qual": "impact_assessment",
      "file": "api/v1/routes/csrd_dma.py",
@@ -358,7 +358,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []

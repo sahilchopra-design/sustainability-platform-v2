@@ -1,10 +1,10 @@
 {
  "domain": "dme-factor-registry",
  "meta": {
-  "ts": "2026-06-30T14:00:50",
+  "ts": "2026-07-05T19:14:33",
+  "endpoints": 8,
   "module": "api.v1.routes.dme_factor_registry",
-  "router_prefix": "/api/v1/dme-factor-registry",
-  "endpoints": 8
+  "router_prefix": "/api/v1/dme-factor-registry"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 26.609,
+   "dur_ms": 11.571,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -48,7 +48,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9853,
      "name": "list_factors",
      "qual": "list_factors",
      "file": "api/v1/routes/dme_factor_registry.py",
@@ -58,12 +58,12 @@
       "offset": "0"
      },
      "ret": "[{'factor_id': 'ENV-001-I', 'factor_name': 'Climate Transition - Impact', 'pillar': 'environmental', 'topic': 'Climate Transition', 'sub_topic': 'Climate Transition Detail 1', 'materiality_dimension': 'impact', 'source': 'dme', 'data_frequ\u2026",
-     "dur_ms": 18.898,
+     "dur_ms": 10.8,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 9854,
        "name": "get_all_factors",
        "qual": "FactorRegistryEngine.get_all_factors",
        "file": "services/dme_factor_registry.py",
@@ -73,19 +73,19 @@
         "offset": "0"
        },
        "ret": "[{'factor_id': 'ENV-001-I', 'factor_name': 'Climate Transition - Impact', 'pillar': 'environmental', 'topic': 'Climate Transition', 'sub_topic': 'Climate Transition Detail 1', 'materiality_dimension': 'impact', 'source': 'dme', 'data_frequ\u2026",
-       "dur_ms": 18.538,
+       "dur_ms": 10.523,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 9855,
          "name": "_build_registry",
          "qual": "FactorRegistryEngine._build_registry",
          "file": "services/dme_factor_registry.py",
          "line": 593,
          "args": {},
          "ret": "[FactorDefinition(factor_id='ENV-001-I', factor_name='Climate Transition - Impact', pillar='environmental', topic='Climate Transition', sub_topic='Climate Transition Detail 1', materiality_dimension='impact', source='dme', data_frequency='\u2026",
-         "dur_ms": 6.977,
+         "dur_ms": 4.236,
          "sql": [],
          "error": null,
          "children": []
@@ -102,7 +102,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 9.796,
+   "dur_ms": 8.028,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -122,7 +122,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 9856,
      "name": "get_factor",
      "qual": "get_factor",
      "file": "api/v1/routes/dme_factor_registry.py",
@@ -131,12 +131,12 @@
       "factor_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'Factor 550e8400-e29b-41d4-a716-446655440001 not found'}",
-     "dur_ms": 9.473,
+     "dur_ms": 7.784,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 9857,
        "name": "get_factor",
        "qual": "FactorRegistryEngine.get_factor",
        "file": "services/dme_factor_registry.py",
@@ -145,19 +145,19 @@
         "factor_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 9.426,
+       "dur_ms": 7.744,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 6,
+         "id": 9858,
          "name": "_build_registry",
          "qual": "FactorRegistryEngine._build_registry",
          "file": "services/dme_factor_registry.py",
          "line": 593,
          "args": {},
          "ret": "[FactorDefinition(factor_id='ENV-001-I', factor_name='Climate Transition - Impact', pillar='environmental', topic='Climate Transition', sub_topic='Climate Transition Detail 1', materiality_dimension='impact', source='dme', data_frequency='\u2026",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -174,7 +174,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.536,
+   "dur_ms": 0.64,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -204,26 +204,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 9859,
      "name": "get_overlay_mapping",
      "qual": "get_overlay_mapping",
      "file": "api/v1/routes/dme_factor_registry.py",
      "line": 46,
      "args": {},
      "ret": "[{'factor_id': 'OVR-ESG-001', 'factor_name': 'Transition Risk PD Multiplier', 'pillar': 'environmental', 'topic': 'Climate Transition', 'materiality_dimension': 'risk', 'source': 'overlay_esg', 'overlay_registry_key': 'ESG_TRANSITION_PD_MU\u2026",
-     "dur_ms": 0.183,
+     "dur_ms": 0.188,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 9860,
        "name": "get_overlay_mapping",
        "qual": "FactorRegistryEngine.get_overlay_mapping",
        "file": "services/dme_factor_registry.py",
        "line": 727,
        "args": {},
        "ret": "[{'factor_id': 'OVR-ESG-001', 'factor_name': 'Transition Risk PD Multiplier', 'pillar': 'environmental', 'topic': 'Climate Transition', 'materiality_dimension': 'risk', 'source': 'overlay_esg', 'overlay_registry_key': 'ESG_TRANSITION_PD_MU\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -238,7 +238,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.992,
+   "dur_ms": 0.625,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -260,26 +260,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 9861,
      "name": "get_dme_topics",
      "qual": "get_dme_topics",
      "file": "api/v1/routes/dme_factor_registry.py",
      "line": 64,
      "args": {},
      "ret": "{'environmental': [{'id': 'ENV-001', 'topic': 'Climate Transition'}, {'id': 'ENV-002', 'topic': 'GHG Emissions'}, {'id': 'ENV-003', 'topic': 'Carbon Intensity'}, {'id': 'ENV-004', 'topic': 'Scope 3 Supply Chain'}, {'id': 'ENV-005', 'topic'\u2026",
-     "dur_ms": 0.667,
+     "dur_ms": 0.382,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 9862,
        "name": "get_dme_topics",
        "qual": "FactorRegistryEngine.get_dme_topics",
        "file": "services/dme_factor_registry.py",
        "line": 743,
        "args": {},
        "ret": "{'environmental': [{'id': 'ENV-001', 'topic': 'Climate Transition'}, {'id': 'ENV-002', 'topic': 'GHG Emissions'}, {'id': 'ENV-003', 'topic': 'Carbon Intensity'}, {'id': 'ENV-004', 'topic': 'Scope 3 Supply Chain'}, {'id': 'ENV-005', 'topic'\u2026",
-       "dur_ms": 0.479,
+       "dur_ms": 0.248,
        "sql": [],
        "error": null,
        "children": []
@@ -294,7 +294,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.589,
+   "dur_ms": 0.34,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -317,26 +317,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 9863,
      "name": "get_pillars",
      "qual": "get_pillars",
      "file": "api/v1/routes/dme_factor_registry.py",
      "line": 58,
      "args": {},
      "ret": "{'pillars': ['environmental', 'social', 'governance', 'technology', 'capitalAccess', 'sectoralStructure'], 'materiality_dimensions': ['impact', 'risk', 'opportunity'], 'velocity_methods': ['z_score', 'exposure_led', 'sentiment_led', 'polic\u2026",
-     "dur_ms": 0.339,
+     "dur_ms": 0.197,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 9864,
        "name": "get_pillars",
        "qual": "FactorRegistryEngine.get_pillars",
        "file": "services/dme_factor_registry.py",
        "line": 732,
        "args": {},
        "ret": "{'pillars': ['environmental', 'social', 'governance', 'technology', 'capitalAccess', 'sectoralStructure'], 'materiality_dimensions': ['impact', 'risk', 'opportunity'], 'velocity_methods': ['z_score', 'exposure_led', 'sentiment_led', 'polic\u2026",
-       "dur_ms": 0.282,
+       "dur_ms": 0.162,
        "sql": [],
        "error": null,
        "children": []
@@ -351,7 +351,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 10.937,
+   "dur_ms": 9.669,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -375,38 +375,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 9865,
      "name": "get_stats",
      "qual": "get_stats",
      "file": "api/v1/routes/dme_factor_registry.py",
      "line": 40,
      "args": {},
      "ret": "{'total_factors': 664, 'by_source': {'dme': 633, 'overlay_esg': 10, 'overlay_geo': 9, 'overlay_tech': 12}, 'by_pillar': {'environmental': 221, 'social': 174, 'governance': 131, 'technology': 84, 'sectoralStructure': 54}, 'by_materiality': \u2026",
-     "dur_ms": 10.698,
+     "dur_ms": 9.478,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 9866,
        "name": "get_stats",
        "qual": "FactorRegistryEngine.get_stats",
        "file": "services/dme_factor_registry.py",
        "line": 695,
        "args": {},
        "ret": "{'total_factors': 664, 'by_source': {'dme': 633, 'overlay_esg': 10, 'overlay_geo': 9, 'overlay_tech': 12}, 'by_pillar': {'environmental': 221, 'social': 174, 'governance': 131, 'technology': 84, 'sectoralStructure': 54}, 'by_materiality': \u2026",
-       "dur_ms": 10.633,
+       "dur_ms": 9.358,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 15,
+         "id": 9867,
          "name": "_build_registry",
          "qual": "FactorRegistryEngine._build_registry",
          "file": "services/dme_factor_registry.py",
          "line": 593,
          "args": {},
          "ret": "[FactorDefinition(factor_id='ENV-001-I', factor_name='Climate Transition - Impact', pillar='environmental', topic='Climate Transition', sub_topic='Climate Transition Detail 1', materiality_dimension='impact', source='dme', data_frequency='\u2026",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []

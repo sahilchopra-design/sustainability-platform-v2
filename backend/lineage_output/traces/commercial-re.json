@@ -1,10 +1,10 @@
 {
  "domain": "commercial-re",
  "meta": {
-  "ts": "2026-06-30T14:00:03",
+  "ts": "2026-07-05T19:11:04",
+  "endpoints": 12,
   "module": "api.v1.routes.commercial_re",
-  "router_prefix": "/api/v1/commercial-re",
-  "endpoints": 12
+  "router_prefix": "/api/v1/commercial-re"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.521,
+   "dur_ms": 0.35,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2780,
      "name": "ref_crrem_pathways",
      "qual": "ref_crrem_pathways",
      "file": "api/v1/routes/commercial_re.py",
      "line": 318,
      "args": {},
      "ret": "{'status': 'success', 'data': {'office': {'UK': {'2025': 28.0, '2030': 18.0, '2035': 12.0, '2040': 7.0, '2050': 2.0}, 'DE': {'2025': 22.0, '2030': 15.0, '2035': 9.0, '2040': 5.0, '2050': 1.5}, 'FR': {'2025': 18.0, '2030': 12.0, '2035': 7.0\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.245,
+   "dur_ms": 0.211,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2781,
      "name": "ref_epc_thresholds",
      "qual": "ref_epc_thresholds",
      "file": "api/v1/routes/commercial_re.py",
      "line": 324,
      "args": {},
      "ret": "{'status': 'success', 'data': {'thresholds': {'UK': {'A': 50.0, 'B': 75.0, 'C': 100.0, 'D': 125.0, 'E': 150.0, 'F': 175.0, 'G': 999.0}, 'DE': {'A+': 30.0, 'A': 50.0, 'B': 75.0, 'C': 100.0, 'D': 130.0, 'E': 160.0, 'F': 200.0, 'G': 250.0, 'H\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.238,
+   "dur_ms": 0.214,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,14 +110,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 2782,
      "name": "ref_green_premium",
      "qual": "ref_green_premium",
      "file": "api/v1/routes/commercial_re.py",
      "line": 349,
      "args": {},
      "ret": "{'status': 'success', 'data': {'green_premium_evidence': {'UK': {'office': {'premium_pct': 8.5, 'brown_discount_pct': 6.0}, 'retail': {'premium_pct': 5.0, 'brown_discount_pct': 4.0}, 'logistics': {'premium_pct': 6.0, 'brown_discount_pct': \u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.3,
+   "dur_ms": 0.212,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,7 +149,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 2783,
      "name": "ref_retrofit_measures",
      "qual": "ref_retrofit_measures",
      "file": "api/v1/routes/commercial_re.py",
@@ -205,7 +205,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.272,
+   "dur_ms": 0.222,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -219,7 +219,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 2784,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/commercial_re.py",
@@ -228,7 +228,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []

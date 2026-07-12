@@ -1,0 +1,65 @@
+{
+ "domain": "green-bond-analytics",
+ "meta": {
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 3,
+  "module": "api.v1.routes.green_bond_analytics",
+  "router_prefix": "/api/v1/green-bond-analytics"
+ },
+ "transactions": [
+  {
+   "domain": "green-bond-analytics",
+   "label": "POST /api/v1/green-bond-analytics/curve-spreads",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-bond-analytics",
+   "label": "POST /api/v1/green-bond-analytics/dual-tranche",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "green-bond-analytics",
+   "label": "POST /api/v1/green-bond-analytics/relative-value",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

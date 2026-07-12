@@ -1,0 +1,226 @@
+{
+ "domain": "eia-energy",
+ "meta": {
+  "ts": "2026-07-05T19:14:34",
+  "endpoints": 3,
+  "module": "api.v1.routes.eia_energy",
+  "router_prefix": "/api/v1/eia"
+ },
+ "transactions": [
+  {
+   "domain": "eia-energy",
+   "label": "GET /api/v1/eia/gas-price",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.444,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "days": "180 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "series_id",
+     "label",
+     "units",
+     "observations",
+     "source",
+     "upstream_error",
+     "retrieved_at",
+     "provenance",
+     "cache"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10030,
+     "name": "gas_price",
+     "qual": "gas_price",
+     "file": "api/v1/routes/eia_energy.py",
+     "line": 269,
+     "args": {
+      "days": "180"
+     },
+     "ret": "{'mode': 'demo-seed', 'series_id': 'RNGWHHD', 'label': 'Henry Hub Natural Gas Spot Price', 'units': '$/MMBtu', 'observations': [{'date': '2025-01', 'value': 3.9}, {'date': '2025-02', 'value': 3.6}, {'date': '2025-03', 'value': 3.15}, {'dat\u2026",
+     "dur_ms": 0.149,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10031,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/eia_energy.py",
+       "line": 132,
+       "args": {
+        "key": "('gas-price', 180, False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10032,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/eia_energy.py",
+       "line": 141,
+       "args": {
+        "key": "('gas-price', 180, False)",
+        "value": "{'mode': 'demo-seed', 'series_id': 'RNGWHHD', 'label': 'Henry Hub Natural Gas Spot Price', 'units': '$/MMBtu', 'observations': [{'date': '2025-01', 'value': 3.9}, {'date': '2025-02', 'value': 3.6}, {'date': '2025-03', 'value': 3.15}, {'dat\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eia-energy",
+   "label": "GET /api/v1/eia/grid-mix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.422,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "region": "'CAL' (default)",
+    "start": "None (default)",
+    "end": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "region",
+     "region_label",
+     "period",
+     "generation_mix",
+     "units",
+     "source",
+     "upstream_error",
+     "retrieved_at",
+     "provenance",
+     "cache"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10033,
+     "name": "grid_mix",
+     "qual": "grid_mix",
+     "file": "api/v1/routes/eia_energy.py",
+     "line": 173,
+     "args": {
+      "region": "'CAL'",
+      "start": "None",
+      "end": "None"
+     },
+     "ret": "{'mode': 'demo-seed', 'region': 'CAL', 'region_label': 'California', 'period': None, 'generation_mix': [{'fuel': 'gas', 'perc': 34.0}, {'fuel': 'solar', 'perc': 27.0}, {'fuel': 'hydro', 'perc': 9.0}, {'fuel': 'wind', 'perc': 8.0}, {'fuel':\u2026",
+     "dur_ms": 0.158,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 10034,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/eia_energy.py",
+       "line": 132,
+       "args": {
+        "key": "('grid-mix', 'CAL', '2026-07-04T23', '2026-07-05T23', False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 10035,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/eia_energy.py",
+       "line": 141,
+       "args": {
+        "key": "('grid-mix', 'CAL', '2026-07-04T23', '2026-07-05T23', False)",
+        "value": "{'mode': 'demo-seed', 'region': 'CAL', 'region_label': 'California', 'period': None, 'generation_mix': [{'fuel': 'gas', 'perc': 34.0}, {'fuel': 'solar', 'perc': 27.0}, {'fuel': 'hydro', 'perc': 9.0}, {'fuel': 'wind', 'perc': 8.0}, {'fuel':\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "eia-energy",
+   "label": "GET /api/v1/eia/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.164,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "api_key_configured",
+     "api_key_env",
+     "note",
+     "regions",
+     "checked_at"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 10036,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/eia_energy.py",
+     "line": 156,
+     "args": {},
+     "ret": "{'source': 'US EIA Open Data v2', 'mode': 'demo-seed', 'api_key_configured': False, 'api_key_env': 'EIA_API_KEY', 'note': 'No EIA_API_KEY set \u2014 endpoints return a labeled seeded representative sample. Get a free instant key at eia.gov/open\u2026",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

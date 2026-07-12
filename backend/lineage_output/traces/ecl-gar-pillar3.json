@@ -1,10 +1,10 @@
 {
  "domain": "ecl-gar-pillar3",
  "meta": {
-  "ts": "2026-06-30T14:01:03",
+  "ts": "2026-07-05T19:14:34",
+  "endpoints": 5,
   "module": "api.v1.routes.ecl_gar_pillar3",
-  "router_prefix": "/api/v1/ecl-gar-pillar3",
-  "endpoints": 5
+  "router_prefix": "/api/v1/ecl-gar-pillar3"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.625,
+   "dur_ms": 0.265,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -31,14 +31,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 10028,
      "name": "ref_kpis",
      "qual": "ref_kpis",
      "file": "api/v1/routes/ecl_gar_pillar3.py",
      "line": 221,
      "args": {},
      "ret": "{'pillar3_kpi_template': [{'kpi_id': 'GAR-1', 'label': 'GAR \u2014 total covered assets (numerator)', 'unit': 'EUR_m', 'taxonomy_note': 'Sum taxonomy-aligned exposures'}, {'kpi_id': 'GAR-2', 'label': 'GAR \u2014 total covered assets (denominator)', \u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.467,
+   "dur_ms": 0.176,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -70,14 +70,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 10029,
      "name": "ref_nace",
      "qual": "ref_nace",
      "file": "api/v1/routes/ecl_gar_pillar3.py",
      "line": 227,
      "args": {},
      "ret": "{'taxonomy_eligible_nace': {'A01': {'label': 'Crop and animal production', 'ccm': True, 'cca': False, 'nace_code': 'A01'}, 'D35': {'label': 'Electricity, gas, steam and AC supply', 'ccm': True, 'cca': True, 'nace_code': 'D35'}, 'F41': {'la\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []

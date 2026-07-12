@@ -1,10 +1,10 @@
 {
  "domain": "climate-risk",
  "meta": {
-  "ts": "2026-06-30T13:59:59",
+  "ts": "2026-07-05T19:11:01",
+  "endpoints": 21,
   "module": "api.v1.routes.climate_risk",
-  "router_prefix": "/api/v1/climate-risk",
-  "endpoints": 21
+  "router_prefix": "/api/v1/climate-risk"
  },
  "transactions": [
   {
@@ -12,9 +12,9 @@
    "label": "GET /api/v1/climate-risk/assessments",
    "status": "failed",
    "http_status": 500,
-   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
-   "dur_ms": 72.132,
-   "node_count": 80,
+   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\backend\\services\\climate_integrated_risk.py)",
+   "dur_ms": 30.643,
+   "node_count": 79,
    "provenance": [
     "computed"
    ],
@@ -29,7 +29,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2414,
      "name": "list_runs",
      "qual": "list_runs",
      "file": "api/v1/routes/climate_risk.py",
@@ -40,65 +40,78 @@
       "limit": "50"
      },
      "ret": "None",
-     "dur_ms": 68.508,
+     "dur_ms": 27.946,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 2415,
        "name": "_get_runner",
        "qual": "_get_runner",
        "file": "api/v1/routes/climate_risk.py",
        "line": 51,
        "args": {},
        "ret": "None",
-       "dur_ms": 68.458,
+       "dur_ms": 27.905,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
-         "name": "<module>",
-         "qual": "<module>",
-         "file": "services/__init__.py",
-         "line": 1,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.006,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 4,
+         "id": 2416,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/assessment_runner.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 31.984,
+         "dur_ms": 26.177,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 5,
+           "id": 2417,
            "name": "<module>",
            "qual": "<module>",
            "file": "services/assessment_methodology_manager.py",
            "line": 1,
            "args": {},
            "ret": "None",
-           "dur_ms": 17.925,
+           "dur_ms": 17.605,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 6,
+             "id": 2418,
              "name": "MethodologyStatus",
              "qual": "MethodologyStatus",
              "file": "services/assessment_methodology_manager.py",
              "line": 46,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.133,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2419,
+             "name": "InteractionMode",
+             "qual": "InteractionMode",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 53,
+             "args": {},
+             "ret": "None",
+             "dur_ms": 0.085,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2420,
+             "name": "ScenarioWeighting",
+             "qual": "ScenarioWeighting",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 60,
              "args": {},
              "ret": "None",
              "dur_ms": 0.107,
@@ -107,111 +120,85 @@
              "children": []
             },
             {
-             "id": 7,
-             "name": "InteractionMode",
-             "qual": "InteractionMode",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 53,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.095,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 8,
-             "name": "ScenarioWeighting",
-             "qual": "ScenarioWeighting",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 60,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.077,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 9,
+             "id": 2421,
              "name": "AggregationMethod",
              "qual": "AggregationMethod",
              "file": "services/assessment_methodology_manager.py",
              "line": 66,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.102,
+             "dur_ms": 0.149,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 10,
+             "id": 2422,
              "name": "ReportingTemplate",
              "qual": "ReportingTemplate",
              "file": "services/assessment_methodology_manager.py",
              "line": 74,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.109,
+             "dur_ms": 0.114,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 11,
+             "id": 2423,
              "name": "PhysicalRiskParams",
              "qual": "PhysicalRiskParams",
              "file": "services/assessment_methodology_manager.py",
              "line": 86,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.026,
+             "dur_ms": 0.035,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 12,
+             "id": 2424,
              "name": "TransitionRiskParams",
              "qual": "TransitionRiskParams",
              "file": "services/assessment_methodology_manager.py",
              "line": 113,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.007,
+             "dur_ms": 0.01,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 13,
+             "id": 2425,
              "name": "IntegrationParams",
              "qual": "IntegrationParams",
              "file": "services/assessment_methodology_manager.py",
              "line": 139,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.009,
+             "dur_ms": 0.011,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 14,
+             "id": 2426,
              "name": "AggregationParams",
              "qual": "AggregationParams",
              "file": "services/assessment_methodology_manager.py",
              "line": 152,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.007,
+             "dur_ms": 0.01,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 15,
+             "id": 2427,
              "name": "OutputParams",
              "qual": "OutputParams",
              "file": "services/assessment_methodology_manager.py",
@@ -224,7 +211,7 @@
              "children": []
             },
             {
-             "id": 16,
+             "id": 2428,
              "name": "MethodologyConfig",
              "qual": "MethodologyConfig",
              "file": "services/assessment_methodology_manager.py",
@@ -237,20 +224,20 @@
              "children": []
             },
             {
-             "id": 17,
+             "id": 2429,
              "name": "ChangeLogEntry",
              "qual": "ChangeLogEntry",
              "file": "services/assessment_methodology_manager.py",
              "line": 192,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.01,
+             "dur_ms": 0.011,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 18,
+             "id": 2430,
              "name": "Methodology",
              "qual": "Methodology",
              "file": "services/assessment_methodology_manager.py",
@@ -263,45 +250,45 @@
              "children": []
             },
             {
-             "id": 19,
+             "id": 2431,
              "name": "MethodologyValidationError",
              "qual": "MethodologyValidationError",
              "file": "services/assessment_methodology_manager.py",
              "line": 247,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.005,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 20,
+             "id": 2432,
              "name": "_build_templates",
              "qual": "_build_templates",
              "file": "services/assessment_methodology_manager.py",
              "line": 355,
              "args": {},
              "ret": "{'tmpl-eu_bank_baseline': Methodology(id='tmpl-eu_bank_baseline', name='EU Bank Baseline', description='Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', status=<MethodologyStatus.PUBLI\u2026",
-             "dur_ms": 2.257,
+             "dur_ms": 2.047,
              "sql": [],
              "error": null,
              "children": [
               {
-               "id": 21,
+               "id": 2433,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.003,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 22,
+               "id": 2434,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -314,46 +301,46 @@
                "children": []
               },
               {
-               "id": 23,
+               "id": 2435,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 108,
                "args": {},
                "ret": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
-               "dur_ms": 0.001,
-               "sql": [],
-               "error": null,
-               "children": []
-              },
-              {
-               "id": 24,
-               "name": "<lambda>",
-               "qual": "OutputParams.<lambda>",
-               "file": "services/assessment_methodology_manager.py",
-               "line": 170,
-               "args": {},
-               "ret": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
-               "dur_ms": 0.005,
-               "sql": [],
-               "error": null,
-               "children": []
-              },
-              {
-               "id": 25,
-               "name": "<lambda>",
-               "qual": "OutputParams.<lambda>",
-               "file": "services/assessment_methodology_manager.py",
-               "line": 173,
-               "args": {},
-               "ret": "['json', 'xlsx']",
                "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 26,
+               "id": 2436,
+               "name": "<lambda>",
+               "qual": "OutputParams.<lambda>",
+               "file": "services/assessment_methodology_manager.py",
+               "line": 170,
+               "args": {},
+               "ret": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
+               "dur_ms": 0.003,
+               "sql": [],
+               "error": null,
+               "children": []
+              },
+              {
+               "id": 2437,
+               "name": "<lambda>",
+               "qual": "OutputParams.<lambda>",
+               "file": "services/assessment_methodology_manager.py",
+               "line": 173,
+               "args": {},
+               "ret": "['json', 'xlsx']",
+               "dur_ms": 0.001,
+               "sql": [],
+               "error": null,
+               "children": []
+              },
+              {
+               "id": 2438,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -366,26 +353,26 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-eu_bank_baseline', name='EU Bank Baseline', description='Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', status=<MethodologyStatus.PUBLISHED: 'PUBLISHED'>, versio\u2026",
-               "dur_ms": 0.039,
+               "dur_ms": 0.031,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 27,
+               "id": 2439,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.003,
+               "dur_ms": 0.002,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 28,
+               "id": 2440,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -398,46 +385,46 @@
                "children": []
               },
               {
-               "id": 29,
+               "id": 2441,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 108,
                "args": {},
                "ret": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 30,
+               "id": 2442,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 170,
                "args": {},
                "ret": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
-               "dur_ms": 0.002,
+               "dur_ms": 0.003,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 31,
+               "id": 2443,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 173,
                "args": {},
                "ret": "['json', 'xlsx']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 32,
+               "id": 2444,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -450,52 +437,52 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-eu_bank_conservative', name='EU Bank Conservative', description='High-severity scenario for ICAAP adverse scenario stress testing. Exponential damage curves + multiplicative interaction.', status=<MethodologyStatus.PUB\u2026",
-               "dur_ms": 0.018,
+               "dur_ms": 0.016,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 33,
+               "id": 2445,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.002,
-               "sql": [],
-               "error": null,
-               "children": []
-              },
-              {
-               "id": 34,
-               "name": "<lambda>",
-               "qual": "PhysicalRiskParams.<lambda>",
-               "file": "services/assessment_methodology_manager.py",
-               "line": 106,
-               "args": {},
-               "ret": "[5, 10, 20, 30]",
-               "dur_ms": 0.002,
-               "sql": [],
-               "error": null,
-               "children": []
-              },
-              {
-               "id": 35,
-               "name": "<lambda>",
-               "qual": "PhysicalRiskParams.<lambda>",
-               "file": "services/assessment_methodology_manager.py",
-               "line": 108,
-               "args": {},
-               "ret": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
                "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 36,
+               "id": 2446,
+               "name": "<lambda>",
+               "qual": "PhysicalRiskParams.<lambda>",
+               "file": "services/assessment_methodology_manager.py",
+               "line": 106,
+               "args": {},
+               "ret": "[5, 10, 20, 30]",
+               "dur_ms": 0.001,
+               "sql": [],
+               "error": null,
+               "children": []
+              },
+              {
+               "id": 2447,
+               "name": "<lambda>",
+               "qual": "PhysicalRiskParams.<lambda>",
+               "file": "services/assessment_methodology_manager.py",
+               "line": 108,
+               "args": {},
+               "ret": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
+               "dur_ms": 0.002,
+               "sql": [],
+               "error": null,
+               "children": []
+              },
+              {
+               "id": 2448,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -508,7 +495,7 @@
                "children": []
               },
               {
-               "id": 37,
+               "id": 2449,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -521,7 +508,7 @@
                "children": []
               },
               {
-               "id": 38,
+               "id": 2450,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -534,26 +521,26 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.3, chronic_weight=0.7, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-energy_transition_focus', name='Energy Transition Focus', description='Heavily weighted towards transition risk for oil, gas, coal, and utilities. Emphasises stranded assets and carbon pricing.', status=<MethodologySta\u2026",
-               "dur_ms": 0.013,
+               "dur_ms": 0.011,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 39,
+               "id": 2451,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 40,
+               "id": 2452,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -566,7 +553,7 @@
                "children": []
               },
               {
-               "id": 41,
+               "id": 2453,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -579,7 +566,7 @@
                "children": []
               },
               {
-               "id": 42,
+               "id": 2454,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -592,7 +579,7 @@
                "children": []
               },
               {
-               "id": 43,
+               "id": 2455,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -605,7 +592,7 @@
                "children": []
               },
               {
-               "id": 44,
+               "id": 2456,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -618,13 +605,13 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress', 'pe\u2026"
                },
                "ret": "Methodology(id='tmpl-energy_physical_focus', name='Energy Physical Focus', description='Physical risk-dominant for power generation and transmission infrastructure exposed to acute + chronic hazards.', status=<MethodologyStatus.PUBLISHED: \u2026",
-               "dur_ms": 0.012,
+               "dur_ms": 0.009,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 45,
+               "id": 2457,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -637,7 +624,7 @@
                "children": []
               },
               {
-               "id": 46,
+               "id": 2458,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -650,7 +637,7 @@
                "children": []
               },
               {
-               "id": 47,
+               "id": 2459,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -663,7 +650,7 @@
                "children": []
               },
               {
-               "id": 48,
+               "id": 2460,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -676,20 +663,20 @@
                "children": []
               },
               {
-               "id": 49,
+               "id": 2461,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 173,
                "args": {},
                "ret": "['json', 'xlsx']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 50,
+               "id": 2462,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -702,26 +689,26 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-manufacturing_cbam', name='Manufacturing CBAM', description='Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', status=<MethodologyStatus.PUBLISHED: 'PUB\u2026",
-               "dur_ms": 0.013,
+               "dur_ms": 0.009,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 51,
+               "id": 2463,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 52,
+               "id": 2464,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -734,7 +721,7 @@
                "children": []
               },
               {
-               "id": 53,
+               "id": 2465,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -747,20 +734,20 @@
                "children": []
               },
               {
-               "id": 54,
+               "id": 2466,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 170,
                "args": {},
                "ret": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 55,
+               "id": 2467,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -773,7 +760,7 @@
                "children": []
               },
               {
-               "id": 56,
+               "id": 2468,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -786,26 +773,26 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise'], damage_function='sigmoid', adaptation_disc\u2026"
                },
                "ret": "Methodology(id='tmpl-supply_chain_resilience', name='Supply Chain Resilience', description='Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', status=<MethodologyStatus.PUBLISHED: 'PUBLISH\u2026",
-               "dur_ms": 0.013,
+               "dur_ms": 0.009,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 57,
+               "id": 2469,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 58,
+               "id": 2470,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -818,20 +805,20 @@
                "children": []
               },
               {
-               "id": 59,
+               "id": 2471,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 108,
                "args": {},
                "ret": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 60,
+               "id": 2472,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -844,7 +831,7 @@
                "children": []
               },
               {
-               "id": 61,
+               "id": 2473,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -857,7 +844,7 @@
                "children": []
               },
               {
-               "id": 62,
+               "id": 2474,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -870,13 +857,13 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-canadian_osfi_aligned', name='Canadian OSFI Aligned', description='Compliant with OSFI Guideline B-15 (Climate Risk Management) for Canadian FIs. Uses 4-scenario NGFS set.', status=<MethodologyStatus.PUBLISHED: 'PUBLIS\u2026",
-               "dur_ms": 0.01,
+               "dur_ms": 0.008,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 63,
+               "id": 2475,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -889,7 +876,7 @@
                "children": []
               },
               {
-               "id": 64,
+               "id": 2476,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -902,7 +889,7 @@
                "children": []
               },
               {
-               "id": 65,
+               "id": 2477,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -915,7 +902,7 @@
                "children": []
               },
               {
-               "id": 66,
+               "id": 2478,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -928,7 +915,7 @@
                "children": []
               },
               {
-               "id": 67,
+               "id": 2479,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -941,7 +928,7 @@
                "children": []
               },
               {
-               "id": 68,
+               "id": 2480,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -954,26 +941,26 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], da\u2026"
                },
                "ret": "Methodology(id='tmpl-tcfd_disclosure_quick', name='TCFD Disclosure Quick', description='Lightweight methodology for producing TCFD four-pillar qualitative + quantitative disclosures efficiently.', status=<MethodologyStatus.PUBLISHED: 'PUBL\u2026",
-               "dur_ms": 0.01,
+               "dur_ms": 0.008,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 69,
+               "id": 2481,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 93,
                "args": {},
                "ret": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 70,
+               "id": 2482,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -986,7 +973,7 @@
                "children": []
               },
               {
-               "id": 71,
+               "id": 2483,
                "name": "<lambda>",
                "qual": "PhysicalRiskParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -999,7 +986,7 @@
                "children": []
               },
               {
-               "id": 72,
+               "id": 2484,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
@@ -1012,20 +999,20 @@
                "children": []
               },
               {
-               "id": 73,
+               "id": 2485,
                "name": "<lambda>",
                "qual": "OutputParams.<lambda>",
                "file": "services/assessment_methodology_manager.py",
                "line": 173,
                "args": {},
                "ret": "['json', 'xlsx']",
-               "dur_ms": 0.002,
+               "dur_ms": 0.001,
                "sql": [],
                "error": null,
                "children": []
               },
               {
-               "id": 74,
+               "id": 2486,
                "name": "_make_template",
                "qual": "_make_template",
                "file": "services/assessment_methodology_manager.py",
@@ -1038,7 +1025,7 @@
                 "config": "MethodologyConfig(physical=PhysicalRiskParams(acute_weight=0.5, chronic_weight=0.5, enabled_hazards=['riverine_flood', 'coastal_flood', 'drought', 'extreme_heat', 'sea_level_rise', 'permafrost_thaw', 'wildfire', 'chronic_heat_stress'], dam\u2026"
                },
                "ret": "Methodology(id='tmpl-nature_inclusive_tnfd', name='Nature-Inclusive TNFD', description='TNFD LEAP-aligned methodology that amplifies physical and transition scores for sectors with high ecosystem dependency.', status=<MethodologyStatus.PUB\u2026",
-               "dur_ms": 0.012,
+               "dur_ms": 0.008,
                "sql": [],
                "error": null,
                "children": []
@@ -1046,20 +1033,20 @@
              ]
             },
             {
-             "id": 75,
+             "id": 2487,
              "name": "AssessmentMethodologyManager",
              "qual": "AssessmentMethodologyManager",
              "file": "services/assessment_methodology_manager.py",
              "line": 553,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.018,
+             "dur_ms": 0.008,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 76,
+             "id": 2488,
              "name": "__init__",
              "qual": "AssessmentMethodologyManager.__init__",
              "file": "services/assessment_methodology_manager.py",
@@ -1068,7 +1055,7 @@
               "db_session": "None"
              },
              "ret": "None",
-             "dur_ms": 0.006,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
@@ -1076,52 +1063,52 @@
            ]
           },
           {
-           "id": 77,
+           "id": 2489,
            "name": "<module>",
            "qual": "<module>",
            "file": "services/climate_integrated_risk.py",
            "line": 1,
            "args": {},
            "ret": "None",
-           "dur_ms": 3.686,
+           "dur_ms": 4.001,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 78,
+             "id": 2490,
              "name": "IntegrationConfig",
              "qual": "IntegrationConfig",
              "file": "services/climate_integrated_risk.py",
              "line": 77,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.017,
+             "dur_ms": 0.02,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 79,
+             "id": 2491,
              "name": "IntegratedRiskResult",
              "qual": "IntegratedRiskResult",
              "file": "services/climate_integrated_risk.py",
              "line": 92,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.006,
+             "dur_ms": 0.01,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 80,
+             "id": 2492,
              "name": "ClimateIntegratedRisk",
              "qual": "ClimateIntegratedRisk",
              "file": "services/climate_integrated_risk.py",
              "line": 130,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.012,
+             "dur_ms": 0.013,
              "sql": [],
              "error": null,
              "children": []
@@ -1141,8 +1128,8 @@
    "label": "GET /api/v1/climate-risk/assessments/{run_id}",
    "status": "failed",
    "http_status": 500,
-   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
-   "dur_ms": 12.074,
+   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\backend\\services\\climate_integrated_risk.py)",
+   "dur_ms": 4.129,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -1156,7 +1143,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 81,
+     "id": 2493,
      "name": "get_run",
      "qual": "get_run",
      "file": "api/v1/routes/climate_risk.py",
@@ -1165,31 +1152,31 @@
       "run_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "None",
-     "dur_ms": 8.844,
+     "dur_ms": 2.008,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 82,
+       "id": 2494,
        "name": "_get_runner",
        "qual": "_get_runner",
        "file": "api/v1/routes/climate_risk.py",
        "line": 51,
        "args": {},
        "ret": "None",
-       "dur_ms": 8.809,
+       "dur_ms": 1.976,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 83,
+         "id": 2495,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/assessment_runner.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.054,
+         "dur_ms": 0.039,
          "sql": [],
          "error": null,
          "children": []
@@ -1205,8 +1192,8 @@
    "label": "GET /api/v1/climate-risk/assessments/{run_id}/drill-down",
    "status": "failed",
    "http_status": 500,
-   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
-   "dur_ms": 13.287,
+   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\backend\\services\\climate_integrated_risk.py)",
+   "dur_ms": 3.888,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -1223,7 +1210,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 84,
+     "id": 2496,
      "name": "drill_down",
      "qual": "drill_down",
      "file": "api/v1/routes/climate_risk.py",
@@ -1235,31 +1222,31 @@
       "time_horizon": "None"
      },
      "ret": "None",
-     "dur_ms": 3.364,
+     "dur_ms": 1.851,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 85,
+       "id": 2497,
        "name": "_get_runner",
        "qual": "_get_runner",
        "file": "api/v1/routes/climate_risk.py",
        "line": 51,
        "args": {},
        "ret": "None",
-       "dur_ms": 3.325,
+       "dur_ms": 1.815,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 86,
+         "id": 2498,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/assessment_runner.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.077,
+         "dur_ms": 0.044,
          "sql": [],
          "error": null,
          "children": []
@@ -1276,7 +1263,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 17.393,
+   "dur_ms": 14.71,
    "node_count": 22,
    "provenance": [
     "computed"
@@ -1300,7 +1287,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 87,
+     "id": 2499,
      "name": "list_methodologies",
      "qual": "list_methodologies",
      "file": "api/v1/routes/climate_risk.py",
@@ -1310,25 +1297,25 @@
       "sector": "None",
       "include_templates": "True"
      },
-     "ret": "{'status': 'ok', 'count': 9, 'data': [{'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status':\u2026",
-     "dur_ms": 12.179,
+     "ret": "{'status': 'ok', 'count': 9, 'data': [{'id': 'tmpl-manufacturing_cbam', 'name': 'Manufacturing CBAM', 'description': 'Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', 'stat\u2026",
+     "dur_ms": 9.055,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 88,
+       "id": 2500,
        "name": "_get_method_manager",
        "qual": "_get_method_manager",
        "file": "api/v1/routes/climate_risk.py",
        "line": 46,
        "args": {},
-       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-       "dur_ms": 0.055,
+       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+       "dur_ms": 0.061,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 89,
+         "id": 2501,
          "name": "get_manager",
          "qual": "get_manager",
          "file": "services/assessment_methodology_manager.py",
@@ -1336,8 +1323,8 @@
          "args": {
           "db_session": "None"
          },
-         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-         "dur_ms": 0.004,
+         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
@@ -1345,7 +1332,7 @@
        ]
       },
       {
-       "id": 90,
+       "id": 2502,
        "name": "list_all",
        "qual": "AssessmentMethodologyManager.list_all",
        "file": "services/assessment_methodology_manager.py",
@@ -1355,13 +1342,13 @@
         "sector": "None",
         "include_templates": "True"
        },
-       "ret": "[Methodology(id='tmpl-supply_chain_resilience', name='Supply Chain Resilience', description='Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', status=<MethodologyStatus.PUBLISHED: 'PUBLIS\u2026",
-       "dur_ms": 1.433,
+       "ret": "[Methodology(id='tmpl-manufacturing_cbam', name='Manufacturing CBAM', description='Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', status=<MethodologyStatus.PUBLISHED: 'PU\u2026",
+       "dur_ms": 2.388,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 91,
+         "id": 2503,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1369,14 +1356,14 @@
          "args": {
           "m": "Methodology(id='tmpl-eu_bank_baseline', name='EU Bank Baseline', description='Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', status=<MethodologyStatus.PUBLISHED: 'PUBLISHED'>, versio\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.087025+00:00'",
-         "dur_ms": 0.012,
+         "ret": "'2026-07-05T23:11:01.288034+00:00'",
+         "dur_ms": 0.011,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 92,
+         "id": 2504,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1384,14 +1371,14 @@
          "args": {
           "m": "Methodology(id='tmpl-eu_bank_conservative', name='EU Bank Conservative', description='High-severity scenario for ICAAP adverse scenario stress testing. Exponential damage curves + multiplicative interaction.', status=<MethodologyStatus.PUB\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.087025+00:00'",
-         "dur_ms": 0.115,
+         "ret": "'2026-07-05T23:11:01.288034+00:00'",
+         "dur_ms": 0.015,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 93,
+         "id": 2505,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1399,14 +1386,14 @@
          "args": {
           "m": "Methodology(id='tmpl-energy_transition_focus', name='Energy Transition Focus', description='Heavily weighted towards transition risk for oil, gas, coal, and utilities. Emphasises stranded assets and carbon pricing.', status=<MethodologySta\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.087025+00:00'",
-         "dur_ms": 0.012,
+         "ret": "'2026-07-05T23:11:01.288034+00:00'",
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 94,
+         "id": 2506,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1414,14 +1401,14 @@
          "args": {
           "m": "Methodology(id='tmpl-energy_physical_focus', name='Energy Physical Focus', description='Physical risk-dominant for power generation and transmission infrastructure exposed to acute + chronic hazards.', status=<MethodologyStatus.PUBLISHED: \u2026"
          },
-         "ret": "'2026-06-30T17:59:59.087025+00:00'",
-         "dur_ms": 0.004,
+         "ret": "'2026-07-05T23:11:01.288034+00:00'",
+         "dur_ms": 0.073,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 95,
+         "id": 2507,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1429,14 +1416,14 @@
          "args": {
           "m": "Methodology(id='tmpl-manufacturing_cbam', name='Manufacturing CBAM', description='Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', status=<MethodologyStatus.PUBLISHED: 'PUB\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.087025+00:00'",
-         "dur_ms": 0.003,
+         "ret": "'2026-07-05T23:11:01.289035+00:00'",
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 96,
+         "id": 2508,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1444,14 +1431,14 @@
          "args": {
           "m": "Methodology(id='tmpl-supply_chain_resilience', name='Supply Chain Resilience', description='Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', status=<MethodologyStatus.PUBLISHED: 'PUBLISH\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.089035+00:00'",
-         "dur_ms": 0.003,
+         "ret": "'2026-07-05T23:11:01.289035+00:00'",
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 97,
+         "id": 2509,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1459,14 +1446,14 @@
          "args": {
           "m": "Methodology(id='tmpl-canadian_osfi_aligned', name='Canadian OSFI Aligned', description='Compliant with OSFI Guideline B-15 (Climate Risk Management) for Canadian FIs. Uses 4-scenario NGFS set.', status=<MethodologyStatus.PUBLISHED: 'PUBLIS\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.089035+00:00'",
-         "dur_ms": 0.003,
+         "ret": "'2026-07-05T23:11:01.289035+00:00'",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 98,
+         "id": 2510,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1474,14 +1461,14 @@
          "args": {
           "m": "Methodology(id='tmpl-tcfd_disclosure_quick', name='TCFD Disclosure Quick', description='Lightweight methodology for producing TCFD four-pillar qualitative + quantitative disclosures efficiently.', status=<MethodologyStatus.PUBLISHED: 'PUBL\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.089035+00:00'",
+         "ret": "'2026-07-05T23:11:01.289035+00:00'",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 99,
+         "id": 2511,
          "name": "<lambda>",
          "qual": "AssessmentMethodologyManager.list_all.<locals>.<lambda>",
          "file": "services/assessment_methodology_manager.py",
@@ -1489,8 +1476,8 @@
          "args": {
           "m": "Methodology(id='tmpl-nature_inclusive_tnfd', name='Nature-Inclusive TNFD', description='TNFD LEAP-aligned methodology that amplifies physical and transition scores for sectors with high ecosystem dependency.', status=<MethodologyStatus.PUB\u2026"
          },
-         "ret": "'2026-06-30T17:59:59.089035+00:00'",
-         "dur_ms": 0.003,
+         "ret": "'2026-07-05T23:11:01.289035+00:00'",
+         "dur_ms": 0.037,
          "sql": [],
          "error": null,
          "children": []
@@ -1498,118 +1485,118 @@
        ]
       },
       {
-       "id": 100,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status': 'PUBLISHED', 'version': 1, 'target_se\u2026",
-       "dur_ms": 0.604,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 101,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-canadian_osfi_aligned', 'name': 'Canadian OSFI Aligned', 'description': 'Compliant with OSFI Guideline B-15 (Climate Risk Management) for Canadian FIs. Uses 4-scenario NGFS set.', 'status': 'PUBLISHED', 'version': 1, 'target_s\u2026",
-       "dur_ms": 0.769,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 102,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-tcfd_disclosure_quick', 'name': 'TCFD Disclosure Quick', 'description': 'Lightweight methodology for producing TCFD four-pillar qualitative + quantitative disclosures efficiently.', 'status': 'PUBLISHED', 'version': 1, 'target\u2026",
-       "dur_ms": 0.691,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 103,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-nature_inclusive_tnfd', 'name': 'Nature-Inclusive TNFD', 'description': 'TNFD LEAP-aligned methodology that amplifies physical and transition scores for sectors with high ecosystem dependency.', 'status': 'PUBLISHED', 'version\u2026",
-       "dur_ms": 0.772,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 104,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-eu_bank_baseline', 'name': 'EU Bank Baseline', 'description': 'Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', 'status': 'PUBLISHED', 'version': 1, 'target_sectors': ['A'\u2026",
-       "dur_ms": 0.551,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 105,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-eu_bank_conservative', 'name': 'EU Bank Conservative', 'description': 'High-severity scenario for ICAAP adverse scenario stress testing. Exponential damage curves + multiplicative interaction.', 'status': 'PUBLISHED', 'version\u2026",
-       "dur_ms": 0.647,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 106,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-energy_transition_focus', 'name': 'Energy Transition Focus', 'description': 'Heavily weighted towards transition risk for oil, gas, coal, and utilities. Emphasises stranded assets and carbon pricing.', 'status': 'PUBLISHED', '\u2026",
-       "dur_ms": 0.692,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 107,
-       "name": "to_dict",
-       "qual": "Methodology.to_dict",
-       "file": "services/assessment_methodology_manager.py",
-       "line": 219,
-       "args": {},
-       "ret": "{'id': 'tmpl-energy_physical_focus', 'name': 'Energy Physical Focus', 'description': 'Physical risk-dominant for power generation and transmission infrastructure exposed to acute + chronic hazards.', 'status': 'PUBLISHED', 'version': 1, 't\u2026",
-       "dur_ms": 0.495,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 108,
+       "id": 2512,
        "name": "to_dict",
        "qual": "Methodology.to_dict",
        "file": "services/assessment_methodology_manager.py",
        "line": 219,
        "args": {},
        "ret": "{'id': 'tmpl-manufacturing_cbam', 'name': 'Manufacturing CBAM', 'description': 'Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', 'status': 'PUBLISHED', 'version': 1, 'targe\u2026",
-       "dur_ms": 0.651,
+       "dur_ms": 0.874,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2513,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status': 'PUBLISHED', 'version': 1, 'target_se\u2026",
+       "dur_ms": 0.404,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2514,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-canadian_osfi_aligned', 'name': 'Canadian OSFI Aligned', 'description': 'Compliant with OSFI Guideline B-15 (Climate Risk Management) for Canadian FIs. Uses 4-scenario NGFS set.', 'status': 'PUBLISHED', 'version': 1, 'target_s\u2026",
+       "dur_ms": 0.701,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2515,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-tcfd_disclosure_quick', 'name': 'TCFD Disclosure Quick', 'description': 'Lightweight methodology for producing TCFD four-pillar qualitative + quantitative disclosures efficiently.', 'status': 'PUBLISHED', 'version': 1, 'target\u2026",
+       "dur_ms": 0.415,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2516,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-nature_inclusive_tnfd', 'name': 'Nature-Inclusive TNFD', 'description': 'TNFD LEAP-aligned methodology that amplifies physical and transition scores for sectors with high ecosystem dependency.', 'status': 'PUBLISHED', 'version\u2026",
+       "dur_ms": 0.504,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2517,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-eu_bank_baseline', 'name': 'EU Bank Baseline', 'description': 'Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', 'status': 'PUBLISHED', 'version': 1, 'target_sectors': ['A'\u2026",
+       "dur_ms": 0.539,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2518,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-eu_bank_conservative', 'name': 'EU Bank Conservative', 'description': 'High-severity scenario for ICAAP adverse scenario stress testing. Exponential damage curves + multiplicative interaction.', 'status': 'PUBLISHED', 'version\u2026",
+       "dur_ms": 0.529,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2519,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-energy_transition_focus', 'name': 'Energy Transition Focus', 'description': 'Heavily weighted towards transition risk for oil, gas, coal, and utilities. Emphasises stranded assets and carbon pricing.', 'status': 'PUBLISHED', '\u2026",
+       "dur_ms": 0.41,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2520,
+       "name": "to_dict",
+       "qual": "Methodology.to_dict",
+       "file": "services/assessment_methodology_manager.py",
+       "line": 219,
+       "args": {},
+       "ret": "{'id': 'tmpl-energy_physical_focus', 'name': 'Energy Physical Focus', 'description': 'Physical risk-dominant for power generation and transmission infrastructure exposed to acute + chronic hazards.', 'status': 'PUBLISHED', 'version': 1, 't\u2026",
+       "dur_ms": 0.391,
        "sql": [],
        "error": null,
        "children": []
@@ -1624,7 +1611,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 7.424,
+   "dur_ms": 8.556,
    "node_count": 56,
    "provenance": [
     "computed"
@@ -1632,8 +1619,8 @@
    "source_tables": [],
    "sources": [],
    "inputs": {
-    "id_a": "tmpl-supply_chain_resilience (real id)",
-    "id_b": "tmpl-supply_chain_resilience (real id)"
+    "id_a": "tmpl-manufacturing_cbam (real id)",
+    "id_b": "tmpl-manufacturing_cbam (real id)"
    },
    "output_summary": {
     "type": "object",
@@ -1647,34 +1634,34 @@
    "truncated": [],
    "tree": [
     {
-     "id": 109,
+     "id": 2521,
      "name": "diff_methodologies",
      "qual": "diff_methodologies",
      "file": "api/v1/routes/climate_risk.py",
      "line": 411,
      "args": {
-      "id_a": "'tmpl-supply_chain_resilience'",
-      "id_b": "'tmpl-supply_chain_resilience'"
+      "id_a": "'tmpl-manufacturing_cbam'",
+      "id_b": "'tmpl-manufacturing_cbam'"
      },
      "ret": "{'status': 'ok', 'changed_fields': 0, 'data': {}}",
-     "dur_ms": 4.352,
+     "dur_ms": 6.25,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 110,
+       "id": 2522,
        "name": "_get_method_manager",
        "qual": "_get_method_manager",
        "file": "api/v1/routes/climate_risk.py",
        "line": 46,
        "args": {},
-       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-       "dur_ms": 0.043,
+       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+       "dur_ms": 0.042,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 111,
+         "id": 2523,
          "name": "get_manager",
          "qual": "get_manager",
          "file": "services/assessment_methodology_manager.py",
@@ -1682,8 +1669,8 @@
          "args": {
           "db_session": "None"
          },
-         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-         "dur_ms": 0.004,
+         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -1691,509 +1678,56 @@
        ]
       },
       {
-       "id": 112,
+       "id": 2524,
        "name": "diff",
        "qual": "AssessmentMethodologyManager.diff",
        "file": "services/assessment_methodology_manager.py",
        "line": 787,
        "args": {
-        "id_a": "'tmpl-supply_chain_resilience'",
-        "id_b": "'tmpl-supply_chain_resilience'"
+        "id_a": "'tmpl-manufacturing_cbam'",
+        "id_b": "'tmpl-manufacturing_cbam'"
        },
        "ret": "{}",
-       "dur_ms": 4.233,
+       "dur_ms": 6.142,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 113,
+         "id": 2525,
          "name": "_deep_diff",
          "qual": "_deep_diff",
          "file": "services/assessment_methodology_manager.py",
          "line": 848,
          "args": {
-          "a": "{'physical': {'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise'], 'damage_function': 'sigmoid', 'adaptation_discount': 0.1, 'cascad\u2026",
-          "b": "{'physical': {'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise'], 'damage_function': 'sigmoid', 'adaptation_discount': 0.1, 'cascad\u2026",
+          "a": "{'physical': {'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], 'damage_function': 'sigmo\u2026",
+          "b": "{'physical': {'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], 'damage_function': 'sigmo\u2026",
           "path": "''",
           "result": "None"
          },
          "ret": "{}",
-         "dur_ms": 2.666,
+         "dur_ms": 5.192,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 114,
+           "id": 2526,
            "name": "_deep_diff",
            "qual": "_deep_diff",
            "file": "services/assessment_methodology_manager.py",
            "line": 848,
            "args": {
-            "a": "{'physical_weight': 0.5, 'transition_weight': 0.5, 'interaction_mode': <InteractionMode.ADDITIVE: 'additive'>, 'interaction_alpha': 0.1, 'nature_risk_amplifier': False, 'nature_amplifier_cap': 1.5, 'scenario_weighting': <ScenarioWeighting.\u2026",
-            "b": "{'physical_weight': 0.5, 'transition_weight': 0.5, 'interaction_mode': <InteractionMode.ADDITIVE: 'additive'>, 'interaction_alpha': 0.1, 'nature_risk_amplifier': False, 'nature_amplifier_cap': 1.5, 'scenario_weighting': <ScenarioWeighting.\u2026",
-            "path": "'integration'",
-            "result": "{}"
-           },
-           "ret": "{}",
-           "dur_ms": 0.431,
-           "sql": [],
-           "error": null,
-           "children": [
-            {
-             "id": 115,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.1",
-              "b": "0.1",
-              "path": "'integration.interaction_alpha'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.006,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 116,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "False",
-              "b": "False",
-              "path": "'integration.nature_risk_amplifier'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.005,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 117,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "<InteractionMode.ADDITIVE: 'additive'>",
-              "b": "<InteractionMode.ADDITIVE: 'additive'>",
-              "path": "'integration.interaction_mode'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 118,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "1.5",
-              "b": "1.5",
-              "path": "'integration.nature_amplifier_cap'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 119,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "None",
-              "b": "None",
-              "path": "'integration.scenario_custom_weights'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 120,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "<ScenarioWeighting.EQUAL: 'equal'>",
-              "b": "<ScenarioWeighting.EQUAL: 'equal'>",
-              "path": "'integration.scenario_weighting'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.051,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 121,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.5",
-              "b": "0.5",
-              "path": "'integration.physical_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.007,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 122,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.5",
-              "b": "0.5",
-              "path": "'integration.transition_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.005,
-             "sql": [],
-             "error": null,
-             "children": []
-            }
-           ]
-          },
-          {
-           "id": 123,
-           "name": "_deep_diff",
-           "qual": "_deep_diff",
-           "file": "services/assessment_methodology_manager.py",
-           "line": 848,
-           "args": {
-            "a": "{'decimal_places': 4, 'score_scale': '0-100', 'include_confidence_intervals': True, 'confidence_level': 0.95, 'reporting_templates': [<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_\u2026",
-            "b": "{'decimal_places': 4, 'score_scale': '0-100', 'include_confidence_intervals': True, 'confidence_level': 0.95, 'reporting_templates': [<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_\u2026",
-            "path": "'output'",
-            "result": "{}"
-           },
-           "ret": "{}",
-           "dur_ms": 0.328,
-           "sql": [],
-           "error": null,
-           "children": [
-            {
-             "id": 124,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.95",
-              "b": "0.95",
-              "path": "'output.confidence_level'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 125,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "3",
-              "b": "3",
-              "path": "'output.drill_down_depth'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 126,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "True",
-              "b": "True",
-              "path": "'output.include_confidence_intervals'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 127,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "['json', 'xlsx']",
-              "b": "['json', 'xlsx']",
-              "path": "'output.export_formats'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 128,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "True",
-              "b": "True",
-              "path": "'output.include_drill_down'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 129,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "'0-100'",
-              "b": "'0-100'",
-              "path": "'output.score_scale'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 130,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "4",
-              "b": "4",
-              "path": "'output.decimal_places'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 131,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
-              "b": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
-              "path": "'output.reporting_templates'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            }
-           ]
-          },
-          {
-           "id": 132,
-           "name": "_deep_diff",
-           "qual": "_deep_diff",
-           "file": "services/assessment_methodology_manager.py",
-           "line": 848,
-           "args": {
-            "a": "{'method': <AggregationMethod.MAX: 'max'>, 'weight_field': 'exposure_value', 'diversification_benefit': True, 'diversification_factor': 0.85, 'outlier_treatment': 'winsorize', 'outlier_percentile': 0.99}",
-            "b": "{'method': <AggregationMethod.MAX: 'max'>, 'weight_field': 'exposure_value', 'diversification_benefit': True, 'diversification_factor': 0.85, 'outlier_treatment': 'winsorize', 'outlier_percentile': 0.99}",
-            "path": "'aggregation'",
-            "result": "{}"
-           },
-           "ret": "{}",
-           "dur_ms": 0.217,
-           "sql": [],
-           "error": null,
-           "children": [
-            {
-             "id": 133,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "'winsorize'",
-              "b": "'winsorize'",
-              "path": "'aggregation.outlier_treatment'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 134,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.85",
-              "b": "0.85",
-              "path": "'aggregation.diversification_factor'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 135,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "True",
-              "b": "True",
-              "path": "'aggregation.diversification_benefit'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 136,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "<AggregationMethod.MAX: 'max'>",
-              "b": "<AggregationMethod.MAX: 'max'>",
-              "path": "'aggregation.method'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 137,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.99",
-              "b": "0.99",
-              "path": "'aggregation.outlier_percentile'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 138,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "'exposure_value'",
-              "b": "'exposure_value'",
-              "path": "'aggregation.weight_field'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            }
-           ]
-          },
-          {
-           "id": 139,
-           "name": "_deep_diff",
-           "qual": "_deep_diff",
-           "file": "services/assessment_methodology_manager.py",
-           "line": 848,
-           "args": {
-            "a": "{'sector_classification_weight': 0.2, 'carbon_pricing_weight': 0.2, 'stranded_asset_weight': 0.1, 'alignment_weight': 0.3, 'scenario_stress_weight': 0.2, 'policy_legal_weight': 0.3, 'technology_weight': 0.25, 'market_weight': 0.25, 'reputa\u2026",
-            "b": "{'sector_classification_weight': 0.2, 'carbon_pricing_weight': 0.2, 'stranded_asset_weight': 0.1, 'alignment_weight': 0.3, 'scenario_stress_weight': 0.2, 'policy_legal_weight': 0.3, 'technology_weight': 0.25, 'market_weight': 0.25, 'reputa\u2026",
+            "a": "{'sector_classification_weight': 0.2, 'carbon_pricing_weight': 0.4, 'stranded_asset_weight': 0.15, 'alignment_weight': 0.15, 'scenario_stress_weight': 0.1, 'policy_legal_weight': 0.3, 'technology_weight': 0.25, 'market_weight': 0.25, 'repu\u2026",
+            "b": "{'sector_classification_weight': 0.2, 'carbon_pricing_weight': 0.4, 'stranded_asset_weight': 0.15, 'alignment_weight': 0.15, 'scenario_stress_weight': 0.1, 'policy_legal_weight': 0.3, 'technology_weight': 0.25, 'market_weight': 0.25, 'repu\u2026",
             "path": "'transition'",
             "result": "{}"
            },
            "ret": "{}",
-           "dur_ms": 0.807,
+           "dur_ms": 2.193,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 140,
+             "id": 2527,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2205,31 +1739,139 @@
               "result": "{}"
              },
              "ret": "{}",
-             "dur_ms": 0.007,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 141,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.25",
-              "b": "0.25",
-              "path": "'transition.market_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
              "dur_ms": 0.004,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 142,
+             "id": 2528,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.2",
+              "b": "0.2",
+              "path": "'transition.reputation_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2529,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.95",
+              "b": "0.95",
+              "path": "'transition.cbam_rate'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2530,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "'Phase5'",
+              "b": "'Phase5'",
+              "path": "'transition.ngfs_version'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2531,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.3",
+              "b": "0.3",
+              "path": "'transition.policy_legal_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2532,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "True",
+              "b": "True",
+              "path": "'transition.include_scope3_carbon'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.022,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2533,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.1",
+              "b": "0.1",
+              "path": "'transition.scenario_stress_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.005,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2534,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.2",
+              "b": "0.2",
+              "path": "'transition.sector_classification_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.005,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2535,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2247,7 +1889,61 @@
              "children": []
             },
             {
-             "id": 143,
+             "id": 2536,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.15",
+              "b": "0.15",
+              "path": "'transition.alignment_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2537,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.15",
+              "b": "0.15",
+              "path": "'transition.stranded_asset_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2538,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.4",
+              "b": "0.4",
+              "path": "'transition.carbon_pricing_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2539,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2265,133 +1961,7 @@
              "children": []
             },
             {
-             "id": 144,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "True",
-              "b": "True",
-              "path": "'transition.include_scope3_carbon'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 145,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.3",
-              "b": "0.3",
-              "path": "'transition.policy_legal_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 146,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "'Phase5'",
-              "b": "'Phase5'",
-              "path": "'transition.ngfs_version'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 147,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.2",
-              "b": "0.2",
-              "path": "'transition.sector_classification_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 148,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.1",
-              "b": "0.1",
-              "path": "'transition.stranded_asset_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 149,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.85",
-              "b": "0.85",
-              "path": "'transition.cbam_rate'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 150,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.2",
-              "b": "0.2",
-              "path": "'transition.scenario_stress_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.003,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 151,
+             "id": 2540,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2409,55 +1979,19 @@
              "children": []
             },
             {
-             "id": 152,
+             "id": 2541,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
              "line": 848,
              "args": {
-              "a": "0.2",
-              "b": "0.2",
-              "path": "'transition.reputation_weight'",
+              "a": "0.25",
+              "b": "0.25",
+              "path": "'transition.market_weight'",
               "result": "{}"
              },
              "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 153,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.2",
-              "b": "0.2",
-              "path": "'transition.carbon_pricing_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 154,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.3",
-              "b": "0.3",
-              "path": "'transition.alignment_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.005,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
@@ -2465,32 +1999,32 @@
            ]
           },
           {
-           "id": 155,
+           "id": 2542,
            "name": "_deep_diff",
            "qual": "_deep_diff",
            "file": "services/assessment_methodology_manager.py",
            "line": 848,
            "args": {
-            "a": "{'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise'], 'damage_function': 'sigmoid', 'adaptation_discount': 0.1, 'cascading_multiplie\u2026",
-            "b": "{'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise'], 'damage_function': 'sigmoid', 'adaptation_discount': 0.1, 'cascading_multiplie\u2026",
-            "path": "'physical'",
+            "a": "{'physical_weight': 0.5, 'transition_weight': 0.5, 'interaction_mode': <InteractionMode.ADDITIVE: 'additive'>, 'interaction_alpha': 0.1, 'nature_risk_amplifier': False, 'nature_amplifier_cap': 1.5, 'scenario_weighting': <ScenarioWeighting.\u2026",
+            "b": "{'physical_weight': 0.5, 'transition_weight': 0.5, 'interaction_mode': <InteractionMode.ADDITIVE: 'additive'>, 'interaction_alpha': 0.1, 'nature_risk_amplifier': False, 'nature_amplifier_cap': 1.5, 'scenario_weighting': <ScenarioWeighting.\u2026",
+            "path": "'integration'",
             "result": "{}"
            },
            "ret": "{}",
-           "dur_ms": 0.465,
+           "dur_ms": 1.018,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 156,
+             "id": 2543,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
              "line": 848,
              "args": {
-              "a": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
-              "b": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
-              "path": "'physical.scenarios'",
+              "a": "False",
+              "b": "False",
+              "path": "'integration.nature_risk_amplifier'",
               "result": "{}"
              },
              "ret": "{}",
@@ -2500,7 +2034,442 @@
              "children": []
             },
             {
-             "id": 157,
+             "id": 2544,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.5",
+              "b": "0.5",
+              "path": "'integration.transition_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.017,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2545,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "None",
+              "b": "None",
+              "path": "'integration.scenario_custom_weights'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.009,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2546,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "<ScenarioWeighting.EQUAL: 'equal'>",
+              "b": "<ScenarioWeighting.EQUAL: 'equal'>",
+              "path": "'integration.scenario_weighting'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.009,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2547,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "<InteractionMode.ADDITIVE: 'additive'>",
+              "b": "<InteractionMode.ADDITIVE: 'additive'>",
+              "path": "'integration.interaction_mode'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2548,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.5",
+              "b": "0.5",
+              "path": "'integration.physical_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2549,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "1.5",
+              "b": "1.5",
+              "path": "'integration.nature_amplifier_cap'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2550,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.1",
+              "b": "0.1",
+              "path": "'integration.interaction_alpha'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 2551,
+           "name": "_deep_diff",
+           "qual": "_deep_diff",
+           "file": "services/assessment_methodology_manager.py",
+           "line": 848,
+           "args": {
+            "a": "{'decimal_places': 4, 'score_scale': '0-100', 'include_confidence_intervals': True, 'confidence_level': 0.95, 'reporting_templates': [<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_\u2026",
+            "b": "{'decimal_places': 4, 'score_scale': '0-100', 'include_confidence_intervals': True, 'confidence_level': 0.95, 'reporting_templates': [<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_\u2026",
+            "path": "'output'",
+            "result": "{}"
+           },
+           "ret": "{}",
+           "dur_ms": 1.046,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 2552,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "3",
+              "b": "3",
+              "path": "'output.drill_down_depth'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.027,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2553,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
+              "b": "[<ReportingTemplate.TCFD_FOUR_PILLAR: 'tcfd_four_pillar'>, <ReportingTemplate.INTERNAL_SUMMARY: 'internal_summary'>]",
+              "path": "'output.reporting_templates'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.005,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2554,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "['json', 'xlsx']",
+              "b": "['json', 'xlsx']",
+              "path": "'output.export_formats'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.015,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2555,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "True",
+              "b": "True",
+              "path": "'output.include_confidence_intervals'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.005,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2556,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "True",
+              "b": "True",
+              "path": "'output.include_drill_down'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.004,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2557,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.95",
+              "b": "0.95",
+              "path": "'output.confidence_level'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2558,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "'0-100'",
+              "b": "'0-100'",
+              "path": "'output.score_scale'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2559,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "4",
+              "b": "4",
+              "path": "'output.decimal_places'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.004,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 2560,
+           "name": "_deep_diff",
+           "qual": "_deep_diff",
+           "file": "services/assessment_methodology_manager.py",
+           "line": 848,
+           "args": {
+            "a": "{'method': <AggregationMethod.WEIGHTED_AVERAGE: 'weighted_average'>, 'weight_field': 'exposure_value', 'diversification_benefit': True, 'diversification_factor': 0.85, 'outlier_treatment': 'winsorize', 'outlier_percentile': 0.99}",
+            "b": "{'method': <AggregationMethod.WEIGHTED_AVERAGE: 'weighted_average'>, 'weight_field': 'exposure_value', 'diversification_benefit': True, 'diversification_factor': 0.85, 'outlier_treatment': 'winsorize', 'outlier_percentile': 0.99}",
+            "path": "'aggregation'",
+            "result": "{}"
+           },
+           "ret": "{}",
+           "dur_ms": 0.192,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 2561,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "<AggregationMethod.WEIGHTED_AVERAGE: 'weighted_average'>",
+              "b": "<AggregationMethod.WEIGHTED_AVERAGE: 'weighted_average'>",
+              "path": "'aggregation.method'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2562,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "'exposure_value'",
+              "b": "'exposure_value'",
+              "path": "'aggregation.weight_field'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2563,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "True",
+              "b": "True",
+              "path": "'aggregation.diversification_benefit'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2564,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.85",
+              "b": "0.85",
+              "path": "'aggregation.diversification_factor'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.003,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2565,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.99",
+              "b": "0.99",
+              "path": "'aggregation.outlier_percentile'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2566,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "'winsorize'",
+              "b": "'winsorize'",
+              "path": "'aggregation.outlier_treatment'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 2567,
+           "name": "_deep_diff",
+           "qual": "_deep_diff",
+           "file": "services/assessment_methodology_manager.py",
+           "line": 848,
+           "args": {
+            "a": "{'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], 'damage_function': 'sigmoid', 'adaptat\u2026",
+            "b": "{'acute_weight': 0.5, 'chronic_weight': 0.5, 'enabled_hazards': ['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress'], 'damage_function': 'sigmoid', 'adaptat\u2026",
+            "path": "'physical'",
+            "result": "{}"
+           },
+           "ret": "{}",
+           "dur_ms": 0.354,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 2568,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2518,61 +2487,7 @@
              "children": []
             },
             {
-             "id": 158,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.5",
-              "b": "0.5",
-              "path": "'physical.chronic_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 159,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "0.5",
-              "b": "0.5",
-              "path": "'physical.acute_weight'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.004,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 160,
-             "name": "_deep_diff",
-             "qual": "_deep_diff",
-             "file": "services/assessment_methodology_manager.py",
-             "line": 848,
-             "args": {
-              "a": "['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise']",
-              "b": "['riverine_flood', 'tropical_cyclone', 'extreme_heat', 'drought', 'wildfire', 'sea_level_rise']",
-              "path": "'physical.enabled_hazards'",
-              "result": "{}"
-             },
-             "ret": "{}",
-             "dur_ms": 0.007,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 161,
+             "id": 2569,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2590,25 +2505,43 @@
              "children": []
             },
             {
-             "id": 162,
+             "id": 2570,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
              "line": 848,
              "args": {
-              "a": "0.1",
-              "b": "0.1",
-              "path": "'physical.adaptation_discount'",
+              "a": "0.5",
+              "b": "0.5",
+              "path": "'physical.chronic_weight'",
               "result": "{}"
              },
              "ret": "{}",
-             "dur_ms": 0.005,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 163,
+             "id": 2571,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "0.5",
+              "b": "0.5",
+              "path": "'physical.acute_weight'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2572,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
@@ -2620,25 +2553,79 @@
               "result": "{}"
              },
              "ret": "{}",
-             "dur_ms": 0.004,
+             "dur_ms": 0.003,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 164,
+             "id": 2573,
              "name": "_deep_diff",
              "qual": "_deep_diff",
              "file": "services/assessment_methodology_manager.py",
              "line": 848,
              "args": {
-              "a": "1.6",
-              "b": "1.6",
+              "a": "0.1",
+              "b": "0.1",
+              "path": "'physical.adaptation_discount'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2574,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
+              "b": "['Below 2\u00b0C', 'Delayed Transition', 'Current Policies']",
+              "path": "'physical.scenarios'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2575,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "1.2",
+              "b": "1.2",
               "path": "'physical.cascading_multiplier'",
               "result": "{}"
              },
              "ret": "{}",
-             "dur_ms": 0.003,
+             "dur_ms": 0.002,
+             "sql": [],
+             "error": null,
+             "children": []
+            },
+            {
+             "id": 2576,
+             "name": "_deep_diff",
+             "qual": "_deep_diff",
+             "file": "services/assessment_methodology_manager.py",
+             "line": 848,
+             "args": {
+              "a": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
+              "b": "['riverine_flood', 'coastal_flood', 'tropical_cyclone', 'extreme_heat', 'wildfire', 'drought', 'sea_level_rise', 'chronic_heat_stress']",
+              "path": "'physical.enabled_hazards'",
+              "result": "{}"
+             },
+             "ret": "{}",
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
@@ -2659,7 +2646,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 15.678,
+   "dur_ms": 2.728,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -2667,7 +2654,7 @@
    "source_tables": [],
    "sources": [],
    "inputs": {
-    "methodology_id": "tmpl-supply_chain_resilience (real id)"
+    "methodology_id": "tmpl-manufacturing_cbam (real id)"
    },
    "output_summary": {
     "type": "object",
@@ -2680,33 +2667,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 165,
+     "id": 2577,
      "name": "get_methodology",
      "qual": "get_methodology",
      "file": "api/v1/routes/climate_risk.py",
      "line": 323,
      "args": {
-      "methodology_id": "'tmpl-supply_chain_resilience'"
+      "methodology_id": "'tmpl-manufacturing_cbam'"
      },
-     "ret": "{'status': 'ok', 'data': {'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status': 'PUBLISHED',\u2026",
-     "dur_ms": 1.105,
+     "ret": "{'status': 'ok', 'data': {'id': 'tmpl-manufacturing_cbam', 'name': 'Manufacturing CBAM', 'description': 'Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', 'status': 'PUBLISH\u2026",
+     "dur_ms": 0.67,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 166,
+       "id": 2578,
        "name": "_get_method_manager",
        "qual": "_get_method_manager",
        "file": "api/v1/routes/climate_risk.py",
        "line": 46,
        "args": {},
-       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-       "dur_ms": 0.062,
+       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+       "dur_ms": 0.037,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 167,
+         "id": 2579,
          "name": "get_manager",
          "qual": "get_manager",
          "file": "services/assessment_methodology_manager.py",
@@ -2714,8 +2701,8 @@
          "args": {
           "db_session": "None"
          },
-         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-         "dur_ms": 0.005,
+         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -2723,29 +2710,29 @@
        ]
       },
       {
-       "id": 168,
+       "id": 2580,
        "name": "get",
        "qual": "AssessmentMethodologyManager.get",
        "file": "services/assessment_methodology_manager.py",
        "line": 614,
        "args": {
-        "methodology_id": "'tmpl-supply_chain_resilience'"
+        "methodology_id": "'tmpl-manufacturing_cbam'"
        },
-       "ret": "Methodology(id='tmpl-supply_chain_resilience', name='Supply Chain Resilience', description='Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', status=<MethodologyStatus.PUBLISHED: 'PUBLISH\u2026",
-       "dur_ms": 0.006,
+       "ret": "Methodology(id='tmpl-manufacturing_cbam', name='Manufacturing CBAM', description='Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', status=<MethodologyStatus.PUBLISHED: 'PUB\u2026",
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 169,
+       "id": 2581,
        "name": "to_dict",
        "qual": "Methodology.to_dict",
        "file": "services/assessment_methodology_manager.py",
        "line": 219,
        "args": {},
-       "ret": "{'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status': 'PUBLISHED', 'version': 1, 'target_se\u2026",
-       "dur_ms": 0.692,
+       "ret": "{'id': 'tmpl-manufacturing_cbam', 'name': 'Manufacturing CBAM', 'description': 'Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', 'status': 'PUBLISHED', 'version': 1, 'targe\u2026",
+       "dur_ms": 0.431,
        "sql": [],
        "error": null,
        "children": []
@@ -2760,7 +2747,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 12.85,
+   "dur_ms": 5.642,
    "node_count": 5,
    "provenance": [
     "computed"
@@ -2768,7 +2755,7 @@
    "source_tables": [],
    "sources": [],
    "inputs": {
-    "methodology_id": "tmpl-supply_chain_resilience (real id)"
+    "methodology_id": "tmpl-manufacturing_cbam (real id)"
    },
    "output_summary": {
     "type": "object",
@@ -2781,33 +2768,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 170,
+     "id": 2582,
      "name": "export_methodology",
      "qual": "export_methodology",
      "file": "api/v1/routes/climate_risk.py",
      "line": 388,
      "args": {
-      "methodology_id": "'tmpl-supply_chain_resilience'"
+      "methodology_id": "'tmpl-manufacturing_cbam'"
      },
-     "ret": "{'status': 'ok', 'data': '{\\n  \"id\": \"tmpl-supply_chain_resilience\",\\n  \"name\": \"Supply Chain Resilience\",\\n  \"description\": \"Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.\",\\n  \"status\"\u2026",
-     "dur_ms": 7.459,
+     "ret": "{'status': 'ok', 'data': '{\\n  \"id\": \"tmpl-manufacturing_cbam\",\\n  \"name\": \"Manufacturing CBAM\",\\n  \"description\": \"Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.\",\\n  \"sta\u2026",
+     "dur_ms": 3.006,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 171,
+       "id": 2583,
        "name": "_get_method_manager",
        "qual": "_get_method_manager",
        "file": "api/v1/routes/climate_risk.py",
        "line": 46,
        "args": {},
-       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-       "dur_ms": 0.058,
+       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+       "dur_ms": 0.038,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 172,
+         "id": 2584,
          "name": "get_manager",
          "qual": "get_manager",
          "file": "services/assessment_methodology_manager.py",
@@ -2815,8 +2802,8 @@
          "args": {
           "db_session": "None"
          },
-         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-         "dur_ms": 0.004,
+         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -2824,28 +2811,28 @@
        ]
       },
       {
-       "id": 173,
+       "id": 2585,
        "name": "export_json",
        "qual": "AssessmentMethodologyManager.export_json",
        "file": "services/assessment_methodology_manager.py",
        "line": 800,
        "args": {
-        "methodology_id": "'tmpl-supply_chain_resilience'"
+        "methodology_id": "'tmpl-manufacturing_cbam'"
        },
-       "ret": "'{\\n  \"id\": \"tmpl-supply_chain_resilience\",\\n  \"name\": \"Supply Chain Resilience\",\\n  \"description\": \"Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.\",\\n  \"status\": \"PUBLISHED\",\\n  \"versio\u2026",
-       "dur_ms": 7.291,
+       "ret": "'{\\n  \"id\": \"tmpl-manufacturing_cbam\",\\n  \"name\": \"Manufacturing CBAM\",\\n  \"description\": \"Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.\",\\n  \"status\": \"PUBLISHED\",\\n  \"ve\u2026",
+       "dur_ms": 2.888,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 174,
+         "id": 2586,
          "name": "to_dict",
          "qual": "Methodology.to_dict",
          "file": "services/assessment_methodology_manager.py",
          "line": 219,
          "args": {},
-         "ret": "{'id': 'tmpl-supply_chain_resilience', 'name': 'Supply Chain Resilience', 'description': 'Multi-tier supply chain assessment emphasising cascading physical risk and Scope 3 carbon exposure.', 'status': 'PUBLISHED', 'version': 1, 'target_se\u2026",
-         "dur_ms": 3.188,
+         "ret": "{'id': 'tmpl-manufacturing_cbam', 'name': 'Manufacturing CBAM', 'description': 'Calibrated for steel, cement, aluminium, and chemical exporters exposed to EU Carbon Border Adjustment Mechanism.', 'status': 'PUBLISHED', 'version': 1, 'targe\u2026",
+         "dur_ms": 0.419,
          "sql": [],
          "error": null,
          "children": []
@@ -2862,7 +2849,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.703,
+   "dur_ms": 4.749,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -2882,31 +2869,31 @@
    "truncated": [],
    "tree": [
     {
-     "id": 175,
+     "id": 2587,
      "name": "list_templates",
      "qual": "list_templates",
      "file": "api/v1/routes/climate_risk.py",
      "line": 425,
      "args": {},
      "ret": "{'status': 'ok', 'count': 9, 'data': [{'id': 'tmpl-eu_bank_baseline', 'name': 'EU Bank Baseline', 'description': 'Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', 'template_name': 'eu_\u2026",
-     "dur_ms": 0.561,
+     "dur_ms": 0.463,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 176,
+       "id": 2588,
        "name": "_get_method_manager",
        "qual": "_get_method_manager",
        "file": "api/v1/routes/climate_risk.py",
        "line": 46,
        "args": {},
-       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-       "dur_ms": 0.046,
+       "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+       "dur_ms": 0.057,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 177,
+         "id": 2589,
          "name": "get_manager",
          "qual": "get_manager",
          "file": "services/assessment_methodology_manager.py",
@@ -2914,8 +2901,8 @@
          "args": {
           "db_session": "None"
          },
-         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000023F7689ADB0>",
-         "dur_ms": 0.004,
+         "ret": "<services.assessment_methodology_manager.AssessmentMethodologyManager object at 0x0000013D488F1100>",
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -2923,14 +2910,14 @@
        ]
       },
       {
-       "id": 178,
+       "id": 2590,
        "name": "list_templates",
        "qual": "AssessmentMethodologyManager.list_templates",
        "file": "services/assessment_methodology_manager.py",
        "line": 572,
        "args": {},
        "ret": "[Methodology(id='tmpl-eu_bank_baseline', name='EU Bank Baseline', description='Standard methodology for EU banks complying with EBA GL/2025/01 and ECB climate stress test guidance.', status=<MethodologyStatus.PUBLISHED: 'PUBLISHED'>, versi\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
@@ -2944,8 +2931,8 @@
    "label": "POST /api/v1/climate-risk/assessments/run",
    "status": "failed",
    "http_status": 500,
-   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
-   "dur_ms": 12.67,
+   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\backend\\services\\climate_integrated_risk.py)",
+   "dur_ms": 5.115,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -2959,7 +2946,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 179,
+     "id": 2591,
      "name": "run_assessment",
      "qual": "run_assessment",
      "file": "api/v1/routes/climate_risk.py",
@@ -2968,31 +2955,31 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 6.264,
+     "dur_ms": 1.808,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 180,
+       "id": 2592,
        "name": "_get_runner",
        "qual": "_get_runner",
        "file": "api/v1/routes/climate_risk.py",
        "line": 51,
        "args": {},
        "ret": "None",
-       "dur_ms": 6.16,
+       "dur_ms": 1.774,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 181,
+         "id": 2593,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/assessment_runner.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.076,
+         "dur_ms": 0.043,
          "sql": [],
          "error": null,
          "children": []
@@ -3026,8 +3013,8 @@
    "label": "POST /api/v1/climate-risk/integrated/assess",
    "status": "failed",
    "http_status": 500,
-   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\Documents\\Risk Analytics\\backend\\services\\climate_integrated_risk.py)",
-   "dur_ms": 233.941,
+   "error": "ImportError: cannot import name 'IntegratedRiskCalculator' from 'services.climate_integrated_risk' (C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\backend\\services\\climate_integrated_risk.py)",
+   "dur_ms": 49.581,
    "node_count": 40,
    "provenance": [
     "computed"
@@ -3041,7 +3028,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 182,
+     "id": 2594,
      "name": "assess_integrated_risk",
      "qual": "assess_integrated_risk",
      "file": "api/v1/routes/climate_risk.py",
@@ -3050,79 +3037,53 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 230.91,
+     "dur_ms": 46.763,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 183,
+       "id": 2595,
        "name": "_get_physical_engine",
        "qual": "_get_physical_engine",
        "file": "api/v1/routes/climate_risk.py",
        "line": 56,
        "args": {},
-       "ret": "<services.climate_physical_risk_engine.PhysicalRiskEngine object at 0x0000023F7691C140>",
-       "dur_ms": 94.616,
+       "ret": "<services.climate_physical_risk_engine.PhysicalRiskEngine object at 0x0000013D48869190>",
+       "dur_ms": 19.076,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 184,
+         "id": 2596,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/climate_physical_risk_engine.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 17.673,
+         "dur_ms": 7.492,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 185,
+           "id": 2597,
            "name": "PhysicalRiskConfig",
            "qual": "PhysicalRiskConfig",
            "file": "services/climate_physical_risk_engine.py",
            "line": 375,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.053,
+           "dur_ms": 0.037,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 186,
+           "id": 2598,
            "name": "HazardScore",
            "qual": "HazardScore",
            "file": "services/climate_physical_risk_engine.py",
            "line": 421,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 0.007,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 187,
-           "name": "ExposureResult",
-           "qual": "ExposureResult",
-           "file": "services/climate_physical_risk_engine.py",
-           "line": 432,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 0.009,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 188,
-           "name": "VulnerabilityResult",
-           "qual": "VulnerabilityResult",
-           "file": "services/climate_physical_risk_engine.py",
-           "line": 441,
            "args": {},
            "ret": "None",
            "dur_ms": 0.005,
@@ -3131,7 +3092,33 @@
            "children": []
           },
           {
-           "id": 189,
+           "id": 2599,
+           "name": "ExposureResult",
+           "qual": "ExposureResult",
+           "file": "services/climate_physical_risk_engine.py",
+           "line": 432,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 2600,
+           "name": "VulnerabilityResult",
+           "qual": "VulnerabilityResult",
+           "file": "services/climate_physical_risk_engine.py",
+           "line": 441,
+           "args": {},
+           "ret": "None",
+           "dur_ms": 0.004,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 2601,
            "name": "DamageResult",
            "qual": "DamageResult",
            "file": "services/climate_physical_risk_engine.py",
@@ -3144,27 +3131,27 @@
            "children": []
           },
           {
-           "id": 190,
+           "id": 2602,
            "name": "PhysicalRiskResult",
            "qual": "PhysicalRiskResult",
            "file": "services/climate_physical_risk_engine.py",
            "line": 464,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.006,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 191,
+           "id": 2603,
            "name": "PhysicalRiskEngine",
            "qual": "PhysicalRiskEngine",
            "file": "services/climate_physical_risk_engine.py",
            "line": 496,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.028,
+           "dur_ms": 0.013,
            "sql": [],
            "error": null,
            "children": []
@@ -3172,7 +3159,7 @@
          ]
         },
         {
-         "id": 192,
+         "id": 2604,
          "name": "__init__",
          "qual": "PhysicalRiskEngine.__init__",
          "file": "services/climate_physical_risk_engine.py",
@@ -3181,12 +3168,12 @@
           "config": "None"
          },
          "ret": "None",
-         "dur_ms": 0.263,
+         "dur_ms": 0.193,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 193,
+           "id": 2605,
            "name": "<lambda>",
            "qual": "PhysicalRiskConfig.<lambda>",
            "file": "services/climate_physical_risk_engine.py",
@@ -3199,7 +3186,7 @@
            "children": []
           },
           {
-           "id": 194,
+           "id": 2606,
            "name": "<lambda>",
            "qual": "PhysicalRiskConfig.<lambda>",
            "file": "services/climate_physical_risk_engine.py",
@@ -3212,39 +3199,39 @@
            "children": []
           },
           {
-           "id": 195,
+           "id": 2607,
            "name": "_validate_config",
            "qual": "PhysicalRiskEngine._validate_config",
            "file": "services/climate_physical_risk_engine.py",
            "line": 508,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.035,
+           "dur_ms": 0.027,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 196,
+           "id": 2608,
            "name": "_build_hazard_weights",
            "qual": "PhysicalRiskEngine._build_hazard_weights",
            "file": "services/climate_physical_risk_engine.py",
            "line": 533,
            "args": {},
            "ret": "{'flooding': 0.07692307692307693, 'cyclone': 0.07692307692307693, 'heatwave': 0.07692307692307693, 'wildfire': 0.07692307692307693, 'extreme_precipitation': 0.07692307692307693, 'severe_wind': 0.07692307692307693, 'cold_snap': 0.0769230769\u2026",
-           "dur_ms": 0.048,
+           "dur_ms": 0.039,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 197,
+             "id": 2609,
              "name": "_get_active_hazards",
              "qual": "PhysicalRiskEngine._get_active_hazards",
              "file": "services/climate_physical_risk_engine.py",
              "line": 546,
              "args": {},
              "ret": "['flooding', 'cyclone', 'heatwave', 'wildfire', 'extreme_precipitation', 'severe_wind', 'cold_snap', 'sea_level_rise', 'temperature_increase', 'drought', 'permafrost', 'soil_degradation', 'ocean_acidification']",
-             "dur_ms": 0.005,
+             "dur_ms": 0.004,
              "sql": [],
              "error": null,
              "children": []
@@ -3256,57 +3243,57 @@
        ]
       },
       {
-       "id": 198,
+       "id": 2610,
        "name": "_get_transition_engine",
        "qual": "_get_transition_engine",
        "file": "api/v1/routes/climate_risk.py",
        "line": 61,
        "args": {},
-       "ret": "<services.climate_transition_risk_engine.TransitionRiskEngine object at 0x0000023F7691CD70>",
-       "dur_ms": 136.168,
+       "ret": "<services.climate_transition_risk_engine.TransitionRiskEngine object at 0x0000013D48869850>",
+       "dur_ms": 27.474,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 199,
+         "id": 2611,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/climate_transition_risk_engine.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 14.808,
+         "dur_ms": 14.705,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 200,
+           "id": 2612,
            "name": "TransitionRiskConfig",
            "qual": "TransitionRiskConfig",
            "file": "services/climate_transition_risk_engine.py",
            "line": 234,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.074,
+           "dur_ms": 0.045,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 201,
+           "id": 2613,
            "name": "SectorClassificationResult",
            "qual": "SectorClassificationResult",
            "file": "services/climate_transition_risk_engine.py",
            "line": 310,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.013,
+           "dur_ms": 0.009,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 202,
+           "id": 2614,
            "name": "CarbonPricingResult",
            "qual": "CarbonPricingResult",
            "file": "services/climate_transition_risk_engine.py",
@@ -3319,7 +3306,7 @@
            "children": []
           },
           {
-           "id": 203,
+           "id": 2615,
            "name": "StrandedAssetResult",
            "qual": "StrandedAssetResult",
            "file": "services/climate_transition_risk_engine.py",
@@ -3332,53 +3319,53 @@
            "children": []
           },
           {
-           "id": 204,
+           "id": 2616,
            "name": "AlignmentResult",
            "qual": "AlignmentResult",
            "file": "services/climate_transition_risk_engine.py",
            "line": 349,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.013,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 205,
+           "id": 2617,
            "name": "ScenarioStressResult",
            "qual": "ScenarioStressResult",
            "file": "services/climate_transition_risk_engine.py",
            "line": 362,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.006,
+           "dur_ms": 0.011,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 206,
+           "id": 2618,
            "name": "TransitionRiskResult",
            "qual": "TransitionRiskResult",
            "file": "services/climate_transition_risk_engine.py",
            "line": 378,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.007,
+           "dur_ms": 0.012,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 207,
+           "id": 2619,
            "name": "TransitionRiskEngine",
            "qual": "TransitionRiskEngine",
            "file": "services/climate_transition_risk_engine.py",
            "line": 414,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.018,
+           "dur_ms": 0.029,
            "sql": [],
            "error": null,
            "children": []
@@ -3386,7 +3373,7 @@
          ]
         },
         {
-         "id": 208,
+         "id": 2620,
          "name": "__init__",
          "qual": "TransitionRiskEngine.__init__",
          "file": "services/climate_transition_risk_engine.py",
@@ -3396,38 +3383,38 @@
           "nace_mapper": "None"
          },
          "ret": "None",
-         "dur_ms": 66.192,
+         "dur_ms": 10.765,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 209,
+           "id": 2621,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 243,
            "args": {},
            "ret": "[20.0, 100.0, 500.0, 1000.0]",
-           "dur_ms": 0.003,
+           "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 210,
+           "id": 2622,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 250,
            "args": {},
            "ret": "['cement', 'steel', 'aluminium', 'fertilizers', 'electricity', 'hydrogen']",
-           "dur_ms": 0.002,
+           "dur_ms": 0.003,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 211,
+           "id": 2623,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
@@ -3440,71 +3427,71 @@
            "children": []
           },
           {
-           "id": 212,
+           "id": 2624,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 270,
            "args": {},
            "ret": "['sbti_target', 'green_capex_ratio', 'governance_quality', 'disclosed_pathway']",
-           "dur_ms": 0.001,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 213,
+           "id": 2625,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 280,
            "args": {},
            "ret": "['Net Zero 2050', 'Below 2C', 'Divergent Net Zero', 'Delayed Transition', 'NDCs', 'Current Policies']",
-           "dur_ms": 0.002,
+           "dur_ms": 0.013,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 214,
+           "id": 2626,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 290,
            "args": {},
            "ret": "{'policy_legal': 0.35, 'technology': 0.25, 'market': 0.25, 'reputation': 0.15}",
-           "dur_ms": 0.002,
+           "dur_ms": 0.007,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 215,
+           "id": 2627,
            "name": "<module>",
            "qual": "<module>",
            "file": "services/nace_cprs_mapper.py",
            "line": 1,
            "args": {},
            "ret": "None",
-           "dur_ms": 2.372,
+           "dur_ms": 6.63,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 216,
+             "id": 2628,
              "name": "SectorClassification",
              "qual": "SectorClassification",
              "file": "services/nace_cprs_mapper.py",
              "line": 203,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.006,
+             "dur_ms": 0.005,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 217,
+             "id": 2629,
              "name": "CounterpartySectorScore",
              "qual": "CounterpartySectorScore",
              "file": "services/nace_cprs_mapper.py",
@@ -3517,14 +3504,14 @@
              "children": []
             },
             {
-             "id": 218,
+             "id": 2630,
              "name": "NACECPRSMapper",
              "qual": "NACECPRSMapper",
              "file": "services/nace_cprs_mapper.py",
              "line": 231,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.011,
+             "dur_ms": 0.016,
              "sql": [],
              "error": null,
              "children": []
@@ -3532,7 +3519,7 @@
            ]
           },
           {
-           "id": 219,
+           "id": 2631,
            "name": "__init__",
            "qual": "NACECPRSMapper.__init__",
            "file": "services/nace_cprs_mapper.py",
@@ -3542,20 +3529,20 @@
             "nace_overrides": "{}"
            },
            "ret": "None",
-           "dur_ms": 0.009,
+           "dur_ms": 0.013,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 220,
+           "id": 2632,
            "name": "_validate_config",
            "qual": "TransitionRiskEngine._validate_config",
            "file": "services/climate_transition_risk_engine.py",
            "line": 460,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.032,
+           "dur_ms": 0.043,
            "sql": [],
            "error": null,
            "children": []
@@ -3565,14 +3552,14 @@
        ]
       },
       {
-       "id": 221,
+       "id": 2633,
        "name": "_get_integrator",
        "qual": "_get_integrator",
        "file": "api/v1/routes/climate_risk.py",
        "line": 66,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.013,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
@@ -3713,7 +3700,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 16.001,
+   "dur_ms": 17.794,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -3727,7 +3714,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 222,
+     "id": 2634,
      "name": "assess_physical_risk",
      "qual": "assess_physical_risk",
      "file": "api/v1/routes/climate_risk.py",
@@ -3736,24 +3723,24 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 13.223,
+     "dur_ms": 13.594,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 223,
+       "id": 2635,
        "name": "_get_physical_engine",
        "qual": "_get_physical_engine",
        "file": "api/v1/routes/climate_risk.py",
        "line": 56,
        "args": {},
-       "ret": "<services.climate_physical_risk_engine.PhysicalRiskEngine object at 0x0000023F7691E390>",
-       "dur_ms": 0.247,
+       "ret": "<services.climate_physical_risk_engine.PhysicalRiskEngine object at 0x0000013D488F2780>",
+       "dur_ms": 0.27,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 224,
+         "id": 2636,
          "name": "__init__",
          "qual": "PhysicalRiskEngine.__init__",
          "file": "services/climate_physical_risk_engine.py",
@@ -3762,12 +3749,12 @@
           "config": "None"
          },
          "ret": "None",
-         "dur_ms": 0.202,
+         "dur_ms": 0.227,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 225,
+           "id": 2637,
            "name": "<lambda>",
            "qual": "PhysicalRiskConfig.<lambda>",
            "file": "services/climate_physical_risk_engine.py",
@@ -3780,7 +3767,7 @@
            "children": []
           },
           {
-           "id": 226,
+           "id": 2638,
            "name": "<lambda>",
            "qual": "PhysicalRiskConfig.<lambda>",
            "file": "services/climate_physical_risk_engine.py",
@@ -3793,39 +3780,39 @@
            "children": []
           },
           {
-           "id": 227,
+           "id": 2639,
            "name": "_validate_config",
            "qual": "PhysicalRiskEngine._validate_config",
            "file": "services/climate_physical_risk_engine.py",
            "line": 508,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.016,
+           "dur_ms": 0.018,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 228,
+           "id": 2640,
            "name": "_build_hazard_weights",
            "qual": "PhysicalRiskEngine._build_hazard_weights",
            "file": "services/climate_physical_risk_engine.py",
            "line": 533,
            "args": {},
            "ret": "{'flooding': 0.07692307692307693, 'cyclone': 0.07692307692307693, 'heatwave': 0.07692307692307693, 'wildfire': 0.07692307692307693, 'extreme_precipitation': 0.07692307692307693, 'severe_wind': 0.07692307692307693, 'cold_snap': 0.0769230769\u2026",
-           "dur_ms": 0.049,
+           "dur_ms": 0.053,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 229,
+             "id": 2641,
              "name": "_get_active_hazards",
              "qual": "PhysicalRiskEngine._get_active_hazards",
              "file": "services/climate_physical_risk_engine.py",
              "line": 546,
              "args": {},
              "ret": "['flooding', 'cyclone', 'heatwave', 'wildfire', 'extreme_precipitation', 'severe_wind', 'cold_snap', 'sea_level_rise', 'temperature_increase', 'drought', 'permafrost', 'soil_degradation', 'ocean_acidification']",
-             "dur_ms": 0.008,
+             "dur_ms": 0.009,
              "sql": [],
              "error": null,
              "children": []
@@ -3864,7 +3851,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 21.262,
+   "dur_ms": 18.091,
    "node_count": 11,
    "provenance": [
     "computed"
@@ -3878,7 +3865,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 230,
+     "id": 2642,
      "name": "assess_transition_risk",
      "qual": "assess_transition_risk",
      "file": "api/v1/routes/climate_risk.py",
@@ -3887,24 +3874,24 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 18.36,
+     "dur_ms": 14.526,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 231,
+       "id": 2643,
        "name": "_get_transition_engine",
        "qual": "_get_transition_engine",
        "file": "api/v1/routes/climate_risk.py",
        "line": 61,
        "args": {},
-       "ret": "<services.climate_transition_risk_engine.TransitionRiskEngine object at 0x0000023F7691F380>",
-       "dur_ms": 0.583,
+       "ret": "<services.climate_transition_risk_engine.TransitionRiskEngine object at 0x0000013D488C53D0>",
+       "dur_ms": 0.456,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 232,
+         "id": 2644,
          "name": "__init__",
          "qual": "TransitionRiskEngine.__init__",
          "file": "services/climate_transition_risk_engine.py",
@@ -3914,25 +3901,25 @@
           "nace_mapper": "None"
          },
          "ret": "None",
-         "dur_ms": 0.542,
+         "dur_ms": 0.357,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 233,
+           "id": 2645,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 243,
            "args": {},
            "ret": "[20.0, 100.0, 500.0, 1000.0]",
-           "dur_ms": 0.003,
+           "dur_ms": 0.004,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 234,
+           "id": 2646,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
@@ -3945,7 +3932,7 @@
            "children": []
           },
           {
-           "id": 235,
+           "id": 2647,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
@@ -3958,20 +3945,20 @@
            "children": []
           },
           {
-           "id": 236,
+           "id": 2648,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
            "line": 270,
            "args": {},
            "ret": "['sbti_target', 'green_capex_ratio', 'governance_quality', 'disclosed_pathway']",
-           "dur_ms": 0.004,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 237,
+           "id": 2649,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
@@ -3984,7 +3971,7 @@
            "children": []
           },
           {
-           "id": 238,
+           "id": 2650,
            "name": "<lambda>",
            "qual": "TransitionRiskConfig.<lambda>",
            "file": "services/climate_transition_risk_engine.py",
@@ -3997,7 +3984,7 @@
            "children": []
           },
           {
-           "id": 239,
+           "id": 2651,
            "name": "__init__",
            "qual": "NACECPRSMapper.__init__",
            "file": "services/nace_cprs_mapper.py",
@@ -4007,20 +3994,20 @@
             "nace_overrides": "{}"
            },
            "ret": "None",
-           "dur_ms": 0.009,
+           "dur_ms": 0.011,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 240,
+           "id": 2652,
            "name": "_validate_config",
            "qual": "TransitionRiskEngine._validate_config",
            "file": "services/climate_transition_risk_engine.py",
            "line": 460,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.02,
+           "dur_ms": 0.018,
            "sql": [],
            "error": null,
            "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "public-reference-data",
  "meta": {
-  "ts": "2026-06-30T14:04:21",
+  "ts": "2026-07-05T19:16:26",
+  "endpoints": 4,
   "module": "api.v1.routes.public_reference_data",
-  "router_prefix": "/api/v1/refdata",
-  "endpoints": 4
+  "router_prefix": "/api/v1/refdata"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2131.272,
+   "dur_ms": 324.198,
    "node_count": 32,
    "provenance": [
     "reference-data",
@@ -30,7 +30,7 @@
       "reference_data_sources"
      ],
      "rowcount": 31,
-     "dur_ms": 80.536,
+     "dur_ms": 67.577,
      "is_reference": true,
      "error": null
     }
@@ -58,49 +58,49 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 30621,
      "name": "list_sources",
      "qual": "list_sources",
      "file": "api/v1/routes/public_reference_data.py",
      "line": 18,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001BD87D07BC0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1266F0>"
      },
      "ret": "[{'source_key': 'brsr', 'name': 'BRSR Companies \u2014 SEBI Top 1000 (DME)', 'provider': 'SEBI BRSR filings (A\u00b2 DME store)', 'license': 'Public-domain (SEBI filings)', 'url': 'https://www.sebi.gov.in', 'shape': 'records', 'cadence': 'annual', '\u2026",
-     "dur_ms": 2097.707,
+     "dur_ms": 293.697,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 30622,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'brsr', 'name': 'BRSR Companies \u2014 SEBI Top 1000 (DME)', 'provider': 'SEBI BRSR filings (A\u00b2 DME store)', 'license': 'Public-domain (SEBI filings)', 'url': 'https://www.sebi.gov.in', 'shape': 'records', 'cadence': 'annual', 'r\u2026",
-       "dur_ms": 0.031,
+       "dur_ms": 0.026,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 30623,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'brsr_esrs_crosswalk', 'name': 'BRSR\u2194ESRS Crosswalk (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'records', 'cadence': 'static', 'row_count': 141, 'last_ingested_at': '2026-06-2\u2026",
-       "dur_ms": 0.018,
+       "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 30624,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -113,98 +113,98 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 30625,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'cbam', 'name': 'CBAM Country Vulnerability', 'provider': 'A\u00b2 Intelligence (public trade + EU CBAM data)', 'license': 'Public-domain derived', 'url': 'https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism_\u2026",
-       "dur_ms": 0.017,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 30626,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'ceda', 'name': 'CEDA Sector Emission Factors', 'provider': 'Climate & Economic Data (EEIO)', 'license': 'Public-domain derived', 'url': 'https://vitalmetricsgroup.com/ceda/', 'shape': 'records', 'cadence': 'annual', 'row_co\u2026",
-       "dur_ms": 0.015,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 30627,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'country_esg', 'name': 'Country ESG Profiles (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'points', 'cadence': 'annual', 'row_count': 330, 'last_ingested_at': '2026-06-27T18:13:\u2026",
-       "dur_ms": 0.016,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 30628,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'csrd', 'name': 'CSRD Entity Registry (EU)', 'provider': 'A\u00b2 Intelligence (public EU filings)', 'license': 'Public-domain derived', 'url': 'https://finance.ec.europa.eu/csrd', 'shape': 'records', 'cadence': 'annual', 'row_co\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 30629,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'dme_taxonomy', 'name': 'A\u00b2 Materiality Taxonomy (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Internal reference', 'url': '', 'shape': 'records', 'cadence': 'static', 'row_count': 299, 'last_ingested_at': '2026-06-27T18:1\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 30630,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'encore_dependencies', 'name': 'ENCORE Nature Dependencies (DME)', 'provider': 'ENCORE / TNFD', 'license': 'Public (ENCORE)', 'url': 'https://encorenature.org', 'shape': 'records', 'cadence': 'static', 'row_count': 30, 'last\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 30631,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'encore_ecosystem_services', 'name': 'ENCORE Ecosystem Services (DME)', 'provider': 'ENCORE / TNFD', 'license': 'Public (ENCORE)', 'url': 'https://encorenature.org', 'shape': 'records', 'cadence': 'static', 'row_count': 35, \u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 30632,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -217,85 +217,85 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 30633,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'encore_pressures', 'name': 'ENCORE Pressures (DME)', 'provider': 'ENCORE / TNFD', 'license': 'Public (ENCORE)', 'url': 'https://encorenature.org', 'shape': 'records', 'cadence': 'static', 'row_count': 14, 'last_ingested_at'\u2026",
-       "dur_ms": 0.014,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 14,
-       "name": "as_dict",
-       "qual": "ReferenceDataSource.as_dict",
-       "file": "db/models/reference_data.py",
-       "line": 31,
-       "args": {},
-       "ret": "{'source_key': 'esrs_datapoints', 'name': 'ESRS Datapoint Registry (DME)', 'provider': 'EFRAG ESRS', 'license': 'Public (EFRAG)', 'url': 'https://www.efrag.org', 'shape': 'records', 'cadence': 'static', 'row_count': 1222, 'last_ingested_at\u2026",
-       "dur_ms": 0.014,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 15,
-       "name": "as_dict",
-       "qual": "ReferenceDataSource.as_dict",
-       "file": "db/models/reference_data.py",
-       "line": 31,
-       "args": {},
-       "ret": "{'source_key': 'esrs_disclosures', 'name': 'ESRS Entity Disclosures (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'records', 'cadence': 'annual', 'row_count': 6110, 'last_ingested_at': '2026-06\u2026",
-       "dur_ms": 0.014,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 16,
-       "name": "as_dict",
-       "qual": "ReferenceDataSource.as_dict",
-       "file": "db/models/reference_data.py",
-       "line": 31,
-       "args": {},
-       "ret": "{'source_key': 'esrs_materiality', 'name': 'ESRS Materiality Assessments (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'records', 'cadence': 'annual', 'row_count': 65, 'last_ingested_at': '2026\u2026",
        "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 17,
+       "id": 30634,
+       "name": "as_dict",
+       "qual": "ReferenceDataSource.as_dict",
+       "file": "db/models/reference_data.py",
+       "line": 31,
+       "args": {},
+       "ret": "{'source_key': 'esrs_datapoints', 'name': 'ESRS Datapoint Registry (DME)', 'provider': 'EFRAG ESRS', 'license': 'Public (EFRAG)', 'url': 'https://www.efrag.org', 'shape': 'records', 'cadence': 'static', 'row_count': 1222, 'last_ingested_at\u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30635,
+       "name": "as_dict",
+       "qual": "ReferenceDataSource.as_dict",
+       "file": "db/models/reference_data.py",
+       "line": 31,
+       "args": {},
+       "ret": "{'source_key': 'esrs_disclosures', 'name': 'ESRS Entity Disclosures (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'records', 'cadence': 'annual', 'row_count': 6110, 'last_ingested_at': '2026-06\u2026",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30636,
+       "name": "as_dict",
+       "qual": "ReferenceDataSource.as_dict",
+       "file": "db/models/reference_data.py",
+       "line": 31,
+       "args": {},
+       "ret": "{'source_key': 'esrs_materiality', 'name': 'ESRS Materiality Assessments (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'records', 'cadence': 'annual', 'row_count': 65, 'last_ingested_at': '2026\u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30637,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'eu_taxonomy', 'name': 'EU Taxonomy Activities (DME)', 'provider': 'EU Taxonomy / EFRAG', 'license': 'Public', 'url': 'https://ec.europa.eu/sustainable-finance-taxonomy', 'shape': 'records', 'cadence': 'static', 'row_count':\u2026",
-       "dur_ms": 0.015,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 18,
+       "id": 30638,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'iea_scenarios', 'name': 'IEA WEO Scenario Pathways (DME)', 'provider': 'IEA WEO 2023', 'license': 'Public (IEA)', 'url': 'https://www.iea.org/reports/world-energy-outlook-2023', 'shape': 'records', 'cadence': 'annual', 'row\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 30639,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -308,7 +308,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 30640,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -321,59 +321,59 @@
        "children": []
       },
       {
-       "id": 21,
+       "id": 30641,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'owid_energy', 'name': 'OWID Energy', 'provider': 'Our World in Data / Ember / EI Statistical Review', 'license': 'CC-BY 4.0', 'url': 'https://github.com/owid/energy-data', 'shape': 'points', 'cadence': 'annual', 'row_count'\u2026",
-       "dur_ms": 0.014,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 22,
-       "name": "as_dict",
-       "qual": "ReferenceDataSource.as_dict",
-       "file": "db/models/reference_data.py",
-       "line": 31,
-       "args": {},
-       "ret": "{'source_key': 'pcaf_factors', 'name': 'PCAF Sector Emission Factors (DME)', 'provider': 'PCAF Part A Table 5.4', 'license': 'Public (PCAF)', 'url': 'https://carbonaccountingfinancials.com', 'shape': 'records', 'cadence': 'annual', 'row_co\u2026",
-       "dur_ms": 0.016,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 23,
-       "name": "as_dict",
-       "qual": "ReferenceDataSource.as_dict",
-       "file": "db/models/reference_data.py",
-       "line": 31,
-       "args": {},
-       "ret": "{'source_key': 'sasb_materiality', 'name': 'SASB Materiality Map (DME)', 'provider': 'SASB / ISSB', 'license': 'Public (SASB)', 'url': 'https://sasb.ifrs.org', 'shape': 'records', 'cadence': 'static', 'row_count': 87, 'last_ingested_at': '\u2026",
        "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 24,
+       "id": 30642,
+       "name": "as_dict",
+       "qual": "ReferenceDataSource.as_dict",
+       "file": "db/models/reference_data.py",
+       "line": 31,
+       "args": {},
+       "ret": "{'source_key': 'pcaf_factors', 'name': 'PCAF Sector Emission Factors (DME)', 'provider': 'PCAF Part A Table 5.4', 'license': 'Public (PCAF)', 'url': 'https://carbonaccountingfinancials.com', 'shape': 'records', 'cadence': 'annual', 'row_co\u2026",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30643,
+       "name": "as_dict",
+       "qual": "ReferenceDataSource.as_dict",
+       "file": "db/models/reference_data.py",
+       "line": 31,
+       "args": {},
+       "ret": "{'source_key': 'sasb_materiality', 'name': 'SASB Materiality Map (DME)', 'provider': 'SASB / ISSB', 'license': 'Public (SASB)', 'url': 'https://sasb.ifrs.org', 'shape': 'records', 'cadence': 'static', 'row_count': 87, 'last_ingested_at': '\u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 30644,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'sbti', 'name': 'SBTi Companies Taking Action', 'provider': 'Science Based Targets initiative', 'license': 'Public (SBTi)', 'url': 'https://sciencebasedtargets.org/companies-taking-action', 'shape': 'records', 'cadence': 'st\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 25,
+       "id": 30645,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -386,7 +386,7 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 30646,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
@@ -399,79 +399,79 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 30647,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'sovereign_esg', 'name': 'Sovereign ESG Indicators (DME)', 'provider': 'A\u00b2 DME store', 'license': 'Public-domain derived', 'url': '', 'shape': 'points', 'cadence': 'annual', 'row_count': 174, 'last_ingested_at': '2026-06-27T\u2026",
-       "dur_ms": 0.016,
+       "dur_ms": 0.014,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 30648,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'tnfd', 'name': 'TNFD Disclosure Extractions (DME)', 'provider': 'A\u00b2 DME store (TNFD)', 'license': 'Public-domain derived', 'url': 'https://tnfd.global', 'shape': 'records', 'cadence': 'annual', 'row_count': 4259, 'last_inge\u2026",
-       "dur_ms": 0.015,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 29,
+       "id": 30649,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'tpi_pathways', 'name': 'TPI Carbon Pathways (DME)', 'provider': 'Transition Pathway Initiative', 'license': 'Public (TPI)', 'url': 'https://transitionpathwayinitiative.org', 'shape': 'records', 'cadence': 'annual', 'row_cou\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 30,
+       "id": 30650,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'unepfi_scores', 'name': 'UNEP-FI Impact Scores (DME)', 'provider': 'UNEP FI Impact Protocol', 'license': 'Public (UNEP FI)', 'url': 'https://www.unepfi.org', 'shape': 'records', 'cadence': 'annual', 'row_count': 550, 'last_\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 31,
+       "id": 30651,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'verra', 'name': 'Verra Registry Projects', 'provider': 'Verra (VCS/CCB)', 'license': 'Public registry data', 'url': 'https://registry.verra.org', 'shape': 'records', 'cadence': 'static', 'row_count': 819, 'last_ingested_at'\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 32,
+       "id": 30652,
        "name": "as_dict",
        "qual": "ReferenceDataSource.as_dict",
        "file": "db/models/reference_data.py",
        "line": 31,
        "args": {},
        "ret": "{'source_key': 'worldbank', 'name': 'World Bank Development Indicators', 'provider': 'World Bank', 'license': 'CC-BY 4.0', 'url': 'https://data.worldbank.org', 'shape': 'points', 'cadence': 'annual', 'row_count': 14209, 'last_ingested_at':\u2026",
-       "dur_ms": 0.013,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
@@ -486,7 +486,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 869.21,
+   "dur_ms": 301.44,
    "node_count": 2,
    "provenance": [
     "reference-data",
@@ -503,7 +503,7 @@
       "reference_data_points"
      ],
      "rowcount": 0,
-     "dur_ms": 87.983,
+     "dur_ms": 66.866,
      "is_reference": true,
      "error": null
     }
@@ -520,30 +520,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 33,
+     "id": 30653,
      "name": "list_metrics",
      "qual": "list_metrics",
      "file": "api/v1/routes/public_reference_data.py",
      "line": 24,
      "args": {
       "source_key": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001BD86608BC0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9C590>"
      },
      "ret": "[]",
-     "dur_ms": 836.107,
+     "dur_ms": 267.577,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 34,
+       "id": 30654,
        "name": "<genexpr>",
        "qual": "list_metrics.<locals>.<genexpr>",
        "file": "api/v1/routes/public_reference_data.py",
        "line": 28,
        "args": {
-        ".0": "<list_iterator object at 0x000001BD87D58DC0>"
+        ".0": "<list_iterator object at 0x0000013D48B4C610>"
        },
        "ret": "None",
        "dur_ms": 0.004,
@@ -561,7 +561,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1101.952,
+   "dur_ms": 347.274,
    "node_count": 1,
    "provenance": [
     "reference-data",
@@ -578,7 +578,7 @@
       "reference_data_points"
      ],
      "rowcount": 0,
-     "dur_ms": 485.949,
+     "dur_ms": 70.873,
      "is_reference": true,
      "error": null
     }
@@ -600,7 +600,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 35,
+     "id": 30655,
      "name": "get_points",
      "qual": "get_points",
      "file": "api/v1/routes/public_reference_data.py",
@@ -612,10 +612,10 @@
       "year": "None",
       "year_from": "None",
       "limit": "5000",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001BD86A1FFB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B9D9A0>"
      },
      "ret": "[]",
-     "dur_ms": 1062.465,
+     "dur_ms": 316.433,
      "sql": [
       0
      ],
@@ -630,7 +630,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 426.405,
+   "dur_ms": 281.919,
    "node_count": 1,
    "provenance": [
     "reference-data",
@@ -647,7 +647,7 @@
       "reference_data_records"
      ],
      "rowcount": 0,
-     "dur_ms": 75.399,
+     "dur_ms": 63.454,
      "is_reference": true,
      "error": null
     }
@@ -667,7 +667,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 30656,
      "name": "get_records",
      "qual": "get_records",
      "file": "api/v1/routes/public_reference_data.py",
@@ -677,10 +677,10 @@
       "category": "None",
       "country": "None",
       "limit": "2000",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001BD88209D00>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1489B0>"
      },
      "ret": "[]",
-     "dur_ms": 397.115,
+     "dur_ms": 252.565,
      "sql": [
       0
      ],

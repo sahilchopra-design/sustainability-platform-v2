@@ -1,10 +1,10 @@
 {
  "domain": "tnfd-leap",
  "meta": {
-  "ts": "2026-06-30T14:05:35",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 7,
   "module": "api.v1.routes.tnfd_leap",
-  "router_prefix": "/api/v1/tnfd-leap",
-  "endpoints": 7
+  "router_prefix": "/api/v1/tnfd-leap"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'app'",
-   "dur_ms": 3.36,
+   "dur_ms": 1.63,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -28,7 +28,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42215,
      "name": "get_assessment",
      "qual": "get_assessment",
      "file": "api/v1/routes/tnfd_leap.py",
@@ -38,7 +38,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.02,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'app'",
-   "dur_ms": 2.085,
+   "dur_ms": 1.051,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -66,7 +66,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42216,
      "name": "list_assessments",
      "qual": "list_assessments",
      "file": "api/v1/routes/tnfd_leap.py",
@@ -76,7 +76,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -89,7 +89,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.91,
+   "dur_ms": 0.941,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -108,14 +108,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42217,
      "name": "get_biomes",
      "qual": "get_biomes",
      "file": "api/v1/routes/tnfd_leap.py",
      "line": 167,
      "args": {},
      "ret": "{'biomes': ['Tropical moist forests', 'Tropical dry forests', 'Temperate broadleaf forests', 'Temperate conifer forests', 'Boreal forests / Taiga', 'Tropical grasslands & savannas', 'Temperate grasslands & shrublands', 'Flooded grasslands \u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -128,7 +128,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.869,
+   "dur_ms": 0.985,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -146,14 +146,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42218,
      "name": "get_cross_framework",
      "qual": "get_cross_framework",
      "file": "api/v1/routes/tnfd_leap.py",
      "line": 185,
      "args": {},
      "ret": "{'cross_framework': {'ESRS_E4': {'name': 'CSRD ESRS E4 \u2014 Biodiversity & Ecosystems', 'alignment': 'LEAP underpins ESRS E4 double materiality; DR-E4-4 location data, DR-E4-7 dependencies & impacts', 'mandatory_dps': ['E4-1', 'E4-2', 'E4-3',\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -166,7 +166,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.867,
+   "dur_ms": 0.932,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -185,14 +185,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42219,
      "name": "get_impact_drivers",
      "qual": "get_impact_drivers",
      "file": "api/v1/routes/tnfd_leap.py",
      "line": 173,
      "args": {},
      "ret": "{'impact_drivers': ['GHG emissions', 'Water use', 'Land use change', 'Soil pollution', 'Water pollution', 'Marine pollution', 'Solid waste', 'Noise & light pollution'], 'count': 8}",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -205,7 +205,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 7.84,
+   "dur_ms": 0.967,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -223,14 +223,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 42220,
      "name": "get_sector_materiality",
      "qual": "get_sector_materiality",
      "file": "api/v1/routes/tnfd_leap.py",
      "line": 179,
      "args": {},
      "ret": "{'sector_materiality': {'A01': {'sector_name': 'Crop & animal production', 'high_risk_biomes': ['Tropical moist forests', 'Tropical grasslands & savannas', 'Temperate grasslands & shrublands'], 'key_dependencies': ['Pollination', 'Soil for\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -243,8 +243,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 5.625,
-   "node_count": 41,
+   "dur_ms": 2.513,
+   "node_count": 12,
    "provenance": [
     "computed"
    ],
@@ -288,7 +288,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42221,
      "name": "run_leap_assessment",
      "qual": "run_leap_assessment",
      "file": "api/v1/routes/tnfd_leap.py",
@@ -297,128 +297,50 @@
       "body": "TNFDLEAPRequest(entity_id='TEST_body_entity_id', entity_name=None, sector='TEST_body_sector', reporting_period=None, value_chain_scope=None, locations=None)",
       "request": "'TEST_request'"
      },
-     "ret": "{'assessment_id': '9c58dddf-d3c7-436d-ad8b-2a7a8c9f6f6e', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'sector': 'TEST_body_sector', 'reporting_period': '2025', 'assessment_date': '2026-06-30T18:05:35.288938', 'locate_score': 6\u2026",
-     "dur_ms": 3.058,
+     "ret": "{'assessment_id': '1a1cff41-3b15-48d1-8242-bf0df43d63e0', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'sector': 'TEST_body_sector', 'reporting_period': '2025', 'assessment_date': '2026-07-05T23:17:16.457168', 'locate_score': N\u2026",
+     "dur_ms": 1.026,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 42222,
        "name": "run_full_leap",
        "qual": "TNFDLEAPEngine.run_full_leap",
        "file": "services/tnfd_leap_engine.py",
-       "line": 519,
+       "line": 716,
        "args": {
         "entity_id": "'TEST_body_entity_id'",
         "sector": "'TEST_body_sector'",
         "reporting_period": "None"
        },
-       "ret": "{'assessment_id': '9c58dddf-d3c7-436d-ad8b-2a7a8c9f6f6e', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'sector': 'TEST_body_sector', 'reporting_period': '2025', 'assessment_date': '2026-06-30T18:05:35.288938', 'locate_score': 6\u2026",
-       "dur_ms": 2.819,
+       "ret": "{'assessment_id': '1a1cff41-3b15-48d1-8242-bf0df43d63e0', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'sector': 'TEST_body_sector', 'reporting_period': '2025', 'assessment_date': '2026-07-05T23:17:16.457168', 'locate_score': N\u2026",
+       "dur_ms": 0.914,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 9,
-         "name": "_rng",
-         "qual": "TNFDLEAPEngine._rng",
-         "file": "services/tnfd_leap_engine.py",
-         "line": 229,
-         "args": {
-          "entity_id": "'TEST_body_entity_id'"
-         },
-         "ret": "<random.Random object at 0x000001C861C4A3F0>",
-         "dur_ms": 0.103,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 10,
+         "id": 42223,
          "name": "locate_assessment",
          "qual": "TNFDLEAPEngine.locate_assessment",
          "file": "services/tnfd_leap_engine.py",
-         "line": 260,
+         "line": 309,
          "args": {
           "entity_id": "'TEST_body_entity_id'",
           "sector": "'TEST_body_sector'",
           "value_chain_scope": "None",
           "locations": "None"
          },
-         "ret": "{'step': 'L', 'step_name': 'Locate', 'locate_score': 63.5, 'priority_locations': [{'location_id': 'LOC-001', 'location_name': 'Site A \u2014 Indonesia', 'country': 'Brazil', 'biome': 'Tropical dry forests', 'sensitivity': 'Very High', 'protecte\u2026",
-         "dur_ms": 0.419,
+         "ret": "{'step': 'L', 'step_name': 'Locate', 'locate_score': None, 'priority_locations': [], 'num_priority_locations': 0, 'value_chain_scope': {'upstream_coverage_pct': None, 'operations_coverage_pct': None, 'downstream_coverage_pct': None}, 'sens\u2026",
+         "dur_ms": 0.037,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 11,
-           "name": "_rng",
-           "qual": "TNFDLEAPEngine._rng",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 229,
-           "args": {
-            "entity_id": "'TEST_body_entity_id:locate'"
-           },
-           "ret": "<random.Random object at 0x000001C862DE7CB0>",
-           "dur_ms": 0.034,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 12,
+           "id": 42224,
            "name": "_get_sector_profile",
            "qual": "TNFDLEAPEngine._get_sector_profile",
            "file": "services/tnfd_leap_engine.py",
-           "line": 233,
-           "args": {
-            "sector": "'TEST_body_sector'"
-           },
-           "ret": "{'sector_name': 'General', 'high_risk_biomes': ['Tropical moist forests', 'Coral reefs'], 'key_dependencies': ['Climate regulation', 'Freshwater', 'Pollination'], 'key_impacts': ['GHG emissions', 'Land use change', 'Water use']}",
-           "dur_ms": 0.005,
-           "sql": [],
-           "error": null,
-           "children": []
-          }
-         ]
-        },
-        {
-         "id": 13,
-         "name": "evaluate_assessment",
-         "qual": "TNFDLEAPEngine.evaluate_assessment",
-         "file": "services/tnfd_leap_engine.py",
-         "line": 314,
-         "args": {
-          "entity_id": "'TEST_body_entity_id'",
-          "sector": "'TEST_body_sector'",
-          "locate_result": "{'step': 'L', 'step_name': 'Locate', 'locate_score': 63.5, 'priority_locations': [{'location_id': 'LOC-001', 'location_name': 'Site A \u2014 Indonesia', 'country': 'Brazil', 'biome': 'Tropical dry forests', 'sensitivity': 'Very High', 'protecte\u2026"
-         },
-         "ret": "{'step': 'E', 'step_name': 'Evaluate', 'evaluate_score': 68.0, 'dependencies': [{'ecosystem_service': 'Freshwater', 'dependency_level': 'Low', 'business_process': 'Core production', 'substitutability': 'Partially substitutable', 'encore_ma\u2026",
-         "dur_ms": 0.602,
-         "sql": [],
-         "error": null,
-         "children": [
-          {
-           "id": 14,
-           "name": "_rng",
-           "qual": "TNFDLEAPEngine._rng",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 229,
-           "args": {
-            "entity_id": "'TEST_body_entity_id:evaluate'"
-           },
-           "ret": "<random.Random object at 0x000001C862DE7CB0>",
-           "dur_ms": 0.023,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 15,
-           "name": "_get_sector_profile",
-           "qual": "TNFDLEAPEngine._get_sector_profile",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 233,
+           "line": 257,
            "args": {
             "sector": "'TEST_body_sector'"
            },
@@ -427,78 +349,125 @@
            "sql": [],
            "error": null,
            "children": []
-          },
+          }
+         ]
+        },
+        {
+         "id": 42225,
+         "name": "evaluate_assessment",
+         "qual": "TNFDLEAPEngine.evaluate_assessment",
+         "file": "services/tnfd_leap_engine.py",
+         "line": 397,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "sector": "'TEST_body_sector'",
+          "locate_result": "{'step': 'L', 'step_name': 'Locate', 'locate_score': None, 'priority_locations': [], 'num_priority_locations': 0, 'value_chain_scope': {'upstream_coverage_pct': None, 'operations_coverage_pct': None, 'downstream_coverage_pct': None}, 'sens\u2026",
+          "dependencies": "None",
+          "impacts": "None"
+         },
+         "ret": "{'step': 'E', 'step_name': 'Evaluate', 'evaluate_score': None, 'dependencies': [], 'num_dependencies': 0, 'impacts': [], 'num_impacts': 0, 'ecosystem_condition': {}, 'encore_tool_version': 'ENCORE 2.0', 'assessment_method': 'TNFD ENCORE Me\u2026",
+         "dur_ms": 0.156,
+         "sql": [],
+         "error": null,
+         "children": [
           {
-           "id": 16,
+           "id": 42226,
+           "name": "_get_sector_profile",
+           "qual": "TNFDLEAPEngine._get_sector_profile",
+           "file": "services/tnfd_leap_engine.py",
+           "line": 257,
+           "args": {
+            "sector": "'TEST_body_sector'"
+           },
+           "ret": "{'sector_name': 'General', 'high_risk_biomes': ['Tropical moist forests', 'Coral reefs'], 'key_dependencies': ['Climate regulation', 'Freshwater', 'Pollination'], 'key_impacts': ['GHG emissions', 'Land use change', 'Water use']}",
+           "dur_ms": 0.024,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 42227,
+         "name": "assess_material_risks",
+         "qual": "TNFDLEAPEngine.assess_material_risks",
+         "file": "services/tnfd_leap_engine.py",
+         "line": 494,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "sector": "'TEST_body_sector'",
+          "evaluate_result": "{'step': 'E', 'step_name': 'Evaluate', 'evaluate_score': None, 'dependencies': [], 'num_dependencies': 0, 'impacts': [], 'num_impacts': 0, 'ecosystem_condition': {}, 'encore_tool_version': 'ENCORE 2.0', 'assessment_method': 'TNFD ENCORE Me\u2026",
+          "risks": "None",
+          "opportunities": "None"
+         },
+         "ret": "{'step': 'A', 'step_name': 'Assess', 'assess_score': None, 'material_risks': [], 'material_opportunities': [], 'risk_magnitude': 'insufficient_data', 'risk_magnitude_score': None, 'opportunity_magnitude': 'insufficient_data', 'total_financ\u2026",
+         "dur_ms": 0.054,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 42228,
            "name": "_score_to_magnitude",
            "qual": "TNFDLEAPEngine._score_to_magnitude",
            "file": "services/tnfd_leap_engine.py",
-           "line": 244,
+           "line": 268,
            "args": {
-            "score": "70.02203505127997"
+            "score": "None"
            },
-           "ret": "'high'",
+           "ret": "'insufficient_data'",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 42229,
+         "name": "prepare_response",
+         "qual": "TNFDLEAPEngine.prepare_response",
+         "file": "services/tnfd_leap_engine.py",
+         "line": 595,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "assess_result": "{'step': 'A', 'step_name': 'Assess', 'assess_score': None, 'material_risks': [], 'material_opportunities': [], 'risk_magnitude': 'insufficient_data', 'risk_magnitude_score': None, 'opportunity_magnitude': 'insufficient_data', 'total_financ\u2026",
+          "strategy_response": "None",
+          "targets": "None",
+          "disclosures_met": "None"
+         },
+         "ret": "{'step': 'P', 'step_name': 'Prepare', 'prepare_score': None, 'strategy_response': {'nature_policy_adopted': None, 'board_oversight': None, 'nature_in_risk_register': None, 'nature_in_strategy': None, 'engagement_plan': None, 'nature_positi\u2026",
+         "dur_ms": 0.078,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 42230,
+           "name": "<genexpr>",
+           "qual": "TNFDLEAPEngine.prepare_response.<locals>.<genexpr>",
+           "file": "services/tnfd_leap_engine.py",
+           "line": 659,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D4A1EF850>"
+           },
+           "ret": "None",
            "dur_ms": 0.005,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 17,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
+           "id": 42231,
+           "name": "_derive_improvement_areas",
+           "qual": "TNFDLEAPEngine._derive_improvement_areas",
            "file": "services/tnfd_leap_engine.py",
-           "line": 244,
+           "line": 689,
            "args": {
-            "score": "62.49677583588606"
+            "strategy": "{'nature_policy_adopted': None, 'board_oversight': None, 'nature_in_risk_register': None, 'nature_in_strategy': None, 'engagement_plan': None, 'nature_positive_commitment': None, 'third_party_verification': None}",
+            "targets": "[]",
+            "disclosure_pct": "None"
            },
-           "ret": "'high'",
-           "dur_ms": 0.003,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 18,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "59.642200523807965"
-           },
-           "ret": "'high'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 19,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "36.050625532851"
-           },
-           "ret": "'medium'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 20,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "58.959588205011826"
-           },
-           "ret": "'high'",
-           "dur_ms": 0.002,
+           "ret": "['Set quantitative biodiversity targets']",
+           "dur_ms": 0.004,
            "sql": [],
            "error": null,
            "children": []
@@ -506,411 +475,16 @@
          ]
         },
         {
-         "id": 21,
-         "name": "assess_material_risks",
-         "qual": "TNFDLEAPEngine.assess_material_risks",
-         "file": "services/tnfd_leap_engine.py",
-         "line": 378,
-         "args": {
-          "entity_id": "'TEST_body_entity_id'",
-          "sector": "'TEST_body_sector'",
-          "evaluate_result": "{'step': 'E', 'step_name': 'Evaluate', 'evaluate_score': 68.0, 'dependencies': [{'ecosystem_service': 'Freshwater', 'dependency_level': 'Low', 'business_process': 'Core production', 'substitutability': 'Partially substitutable', 'encore_ma\u2026"
-         },
-         "ret": "{'step': 'A', 'step_name': 'Assess', 'assess_score': 75.9, 'material_risks': [{'risk_id': 'R01', 'description': 'Mangrove loss increasing coastal flood exposure at key facilities', 'risk_type': 'Transition \u2014 market', 'time_horizon': 'Short\u2026",
-         "dur_ms": 0.804,
-         "sql": [],
-         "error": null,
-         "children": [
-          {
-           "id": 22,
-           "name": "_rng",
-           "qual": "TNFDLEAPEngine._rng",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 229,
-           "args": {
-            "entity_id": "'TEST_body_entity_id:assess'"
-           },
-           "ret": "<random.Random object at 0x000001C862DE7CB0>",
-           "dur_ms": 0.022,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 23,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "76.77859635470143"
-           },
-           "ret": "'very_high'",
-           "dur_ms": 0.003,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 24,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "45.40146792764701"
-           },
-           "ret": "'medium'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 25,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "42.47943786978095"
-           },
-           "ret": "'medium'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 26,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "42.70277523271745"
-           },
-           "ret": "'medium'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 27,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "61.25124851951262"
-           },
-           "ret": "'high'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 28,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "76.8",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 29,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "45.4",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 30,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "42.5",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 31,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "42.7",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 32,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "61.3",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 33,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 437,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E151B0>"
-           },
-           "ret": "None",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 34,
-           "name": "_score_to_magnitude",
-           "qual": "TNFDLEAPEngine._score_to_magnitude",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 244,
-           "args": {
-            "score": "53.739999999999995"
-           },
-           "ret": "'medium'",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 35,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "41.72",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 36,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "21.13",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 37,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "18.38",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 38,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "43.41",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 39,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "9.84",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 40,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 448,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "None",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 41,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 449,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "11.11",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 42,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 449,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "3.7",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 43,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 449,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "8.67",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 44,
-           "name": "<genexpr>",
-           "qual": "TNFDLEAPEngine.assess_material_risks.<locals>.<genexpr>",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 449,
-           "args": {
-            ".0": "<list_iterator object at 0x000001C863E152D0>"
-           },
-           "ret": "None",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          }
-         ]
-        },
-        {
-         "id": 45,
-         "name": "prepare_response",
-         "qual": "TNFDLEAPEngine.prepare_response",
-         "file": "services/tnfd_leap_engine.py",
-         "line": 455,
-         "args": {
-          "entity_id": "'TEST_body_entity_id'",
-          "assess_result": "{'step': 'A', 'step_name': 'Assess', 'assess_score': 75.9, 'material_risks': [{'risk_id': 'R01', 'description': 'Mangrove loss increasing coastal flood exposure at key facilities', 'risk_type': 'Transition \u2014 market', 'time_horizon': 'Short\u2026"
-         },
-         "ret": "{'step': 'P', 'step_name': 'Prepare', 'prepare_score': 61.4, 'strategy_response': {'nature_policy_adopted': True, 'board_oversight': 'Board committee', 'nature_in_risk_register': True, 'nature_in_strategy': True, 'engagement_plan': False, \u2026",
-         "dur_ms": 0.141,
-         "sql": [],
-         "error": null,
-         "children": [
-          {
-           "id": 46,
-           "name": "_rng",
-           "qual": "TNFDLEAPEngine._rng",
-           "file": "services/tnfd_leap_engine.py",
-           "line": 229,
-           "args": {
-            "entity_id": "'TEST_body_entity_id:prepare'"
-           },
-           "ret": "<random.Random object at 0x000001C862DE7CB0>",
-           "dur_ms": 0.022,
-           "sql": [],
-           "error": null,
-           "children": []
-          }
-         ]
-        },
-        {
-         "id": 47,
+         "id": 42232,
          "name": "_score_to_maturity",
          "qual": "TNFDLEAPEngine._score_to_maturity",
          "file": "services/tnfd_leap_engine.py",
-         "line": 251,
+         "line": 277,
          "args": {
-          "score": "67.2"
+          "score": "None"
          },
-         "ret": "'established'",
-         "dur_ms": 0.004,
+         "ret": "'insufficient_data'",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []

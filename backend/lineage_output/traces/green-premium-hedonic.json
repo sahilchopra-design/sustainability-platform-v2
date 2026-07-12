@@ -1,0 +1,57 @@
+{
+ "domain": "green-premium-hedonic",
+ "meta": {
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 1,
+  "module": "api.v1.routes.green_premium_hedonic",
+  "router_prefix": "/api/v1/green-premium-hedonic"
+ },
+ "transactions": [
+  {
+   "domain": "green-premium-hedonic",
+   "label": "GET /api/v1/green-premium-hedonic/analyze",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Provide at least one of town, postcode, district.",
+   "dur_ms": 0.414,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "town": "None (default)",
+    "postcode": "None (default)",
+    "district": "None (default)",
+    "min_date": "None (default)",
+    "max_date": "None (default)",
+    "limit": "200 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12275,
+     "name": "analyze",
+     "qual": "analyze",
+     "file": "api/v1/routes/green_premium_hedonic.py",
+     "line": 114,
+     "args": {
+      "town": "None",
+      "postcode": "None",
+      "district": "None",
+      "min_date": "None",
+      "max_date": "None",
+      "limit": "200"
+     },
+     "ret": "None",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

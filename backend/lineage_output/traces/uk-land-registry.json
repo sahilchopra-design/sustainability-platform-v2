@@ -1,0 +1,57 @@
+{
+ "domain": "uk-land-registry",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 1,
+  "module": "api.v1.routes.uk_land_registry",
+  "router_prefix": "/api/v1/uk-land-registry"
+ },
+ "transactions": [
+  {
+   "domain": "uk-land-registry",
+   "label": "GET /api/v1/uk-land-registry/transactions",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Provide at least one of postcode, town, district.",
+   "dur_ms": 0.292,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "postcode": "None (default)",
+    "town": "None (default)",
+    "district": "None (default)",
+    "min_date": "None (default)",
+    "max_date": "None (default)",
+    "limit": "200 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42394,
+     "name": "transactions",
+     "qual": "transactions",
+     "file": "api/v1/routes/uk_land_registry.py",
+     "line": 195,
+     "args": {
+      "postcode": "None",
+      "town": "None",
+      "district": "None",
+      "min_date": "None",
+      "max_date": "None",
+      "limit": "200"
+     },
+     "ret": "None",
+     "dur_ms": 0.015,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

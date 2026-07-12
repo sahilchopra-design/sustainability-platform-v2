@@ -1,10 +1,10 @@
 {
  "domain": "energy-emissions",
  "meta": {
-  "ts": "2026-06-30T14:01:31",
+  "ts": "2026-07-05T19:14:39",
+  "endpoints": 10,
   "module": "api.v1.routes.energy_emissions",
-  "router_prefix": "/api/v1/energy-emissions",
-  "endpoints": 10
+  "router_prefix": "/api/v1/energy-emissions"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.264,
+   "dur_ms": 0.299,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -36,26 +36,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11040,
      "name": "ref_abatement_measures",
      "qual": "ref_abatement_measures",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 264,
      "args": {},
      "ret": "{'ldar': {'label': 'LDAR Program', 'cost_eur_tch4': 2500, 'reduction_pct': 60, 'applicable': ['fugitive_wellhead', 'fugitive_processing', 'fugitive_transmission', 'fugitive_distribution']}, 'vapour_recovery': {'label': 'Vapour Recovery Uni\u2026",
-     "dur_ms": 0.047,
+     "dur_ms": 0.057,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11041,
        "name": "get_abatement_measures",
        "qual": "MethaneOGMPEngine.get_abatement_measures",
        "file": "services/methane_ogmp.py",
        "line": 242,
        "args": {},
        "ret": "{'ldar': {'label': 'LDAR Program', 'cost_eur_tch4': 2500, 'reduction_pct': 60, 'applicable': ['fugitive_wellhead', 'fugitive_processing', 'fugitive_transmission', 'fugitive_distribution']}, 'vapour_recovery': {'label': 'Vapour Recovery Uni\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -70,7 +70,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.266,
+   "dur_ms": 0.353,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -112,26 +112,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11042,
      "name": "ref_esrs_mappings",
      "qual": "ref_esrs_mappings",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 276,
      "args": {},
      "ret": "{'E1-6_GHG_scope1': {'esrs': 'E1', 'dr': 'E1-6', 'paragraph': '44(a)', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e', 'source_module': 'carbon_calculator', 'source_field': 'scope1_total_tco2e'}, 'E1-6_GHG_scope2_lb': {'esrs': 'E1\u2026",
-     "dur_ms": 0.094,
+     "dur_ms": 0.14,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11043,
        "name": "get_mappings",
        "qual": "CSRDAutoPopulateEngine.get_mappings",
        "file": "services/csrd_auto_populate.py",
        "line": 487,
        "args": {},
        "ret": "{'E1-6_GHG_scope1': {'esrs': 'E1', 'dr': 'E1-6', 'paragraph': '44(a)', 'label': 'Gross Scope 1 GHG emissions', 'unit': 'tCO2e', 'source_module': 'carbon_calculator', 'source_field': 'scope1_total_tco2e'}, 'E1-6_GHG_scope2_lb': {'esrs': 'E1\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -146,7 +146,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.127,
+   "dur_ms": 0.173,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -173,26 +173,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11044,
      "name": "ref_esrs_minimums",
      "qual": "ref_esrs_minimums",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 280,
      "args": {},
      "ret": "{'E1': 15, 'E2': 6, 'E3': 5, 'E4': 8, 'E5': 5, 'S1': 10, 'S2': 12, 'S3': 8, 'S4': 6, 'G1': 4}",
-     "dur_ms": 0.021,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11045,
        "name": "get_esrs_minimums",
        "qual": "CSRDAutoPopulateEngine.get_esrs_minimums",
        "file": "services/csrd_auto_populate.py",
        "line": 490,
        "args": {},
        "ret": "{'E1': 15, 'E2': 6, 'E3': 5, 'E4': 8, 'E5': 5, 'S1': 10, 'S2': 12, 'S3': 8, 'S4': 6, 'G1': 4}",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -207,7 +207,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.164,
+   "dur_ms": 0.192,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -234,19 +234,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11046,
      "name": "ref_fuel_efs",
      "qual": "ref_fuel_efs",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 268,
      "args": {},
      "ret": "{'crude_oil_bbl': {'ef_tco2': 0.43, 'unit': 'barrel', 'label': 'Crude Oil'}, 'natural_gas_mcf': {'ef_tco2': 0.053, 'unit': 'MCF', 'label': 'Natural Gas'}, 'lng_tonne': {'ef_tco2': 2.75, 'unit': 'tonne', 'label': 'LNG'}, 'thermal_coal_tonne\u2026",
-     "dur_ms": 0.037,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11047,
        "name": "get_fuel_efs",
        "qual": "Scope3Cat11Engine.get_fuel_efs",
        "file": "services/scope3_cat11.py",
@@ -268,7 +268,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.142,
+   "dur_ms": 0.19,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -295,26 +295,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11048,
      "name": "ref_methane_categories",
      "qual": "ref_methane_categories",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 256,
      "args": {},
      "ret": "{'venting': {'label': 'Process Venting', 'typical_ef_tch4_bcm': 0.4, 'abatement_potential_pct': 90}, 'flaring': {'label': 'Incomplete Flaring', 'typical_ef_tch4_bcm': 0.05, 'abatement_potential_pct': 95}, 'fugitive_wellhead': {'label': 'Fu\u2026",
-     "dur_ms": 0.035,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11049,
        "name": "get_source_categories",
        "qual": "MethaneOGMPEngine.get_source_categories",
        "file": "services/methane_ogmp.py",
        "line": 236,
        "args": {},
        "ret": "{'venting': {'label': 'Process Venting', 'typical_ef_tch4_bcm': 0.4, 'abatement_potential_pct': 90}, 'flaring': {'label': 'Incomplete Flaring', 'typical_ef_tch4_bcm': 0.05, 'abatement_potential_pct': 95}, 'fugitive_wellhead': {'label': 'Fu\u2026",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -329,7 +329,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.126,
+   "dur_ms": 0.174,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -351,26 +351,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 11050,
      "name": "ref_ogmp_levels",
      "qual": "ref_ogmp_levels",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 260,
      "args": {},
      "ret": "{1: {'label': 'Level 1 \u2014 Emission factors', 'method': 'Generic EFs', 'accuracy': 'low'}, 2: {'label': 'Level 2 \u2014 Activity-based EFs', 'method': 'Country/region EFs', 'accuracy': 'moderate'}, 3: {'label': 'Level 3 \u2014 Facility modelling', 'me\u2026",
-     "dur_ms": 0.027,
+     "dur_ms": 0.037,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 11051,
        "name": "get_ogmp_levels",
        "qual": "MethaneOGMPEngine.get_ogmp_levels",
        "file": "services/methane_ogmp.py",
        "line": 239,
        "args": {},
        "ret": "{1: {'label': 'Level 1 \u2014 Emission factors', 'method': 'Generic EFs', 'accuracy': 'low'}, 2: {'label': 'Level 2 \u2014 Activity-based EFs', 'method': 'Country/region EFs', 'accuracy': 'moderate'}, 3: {'label': 'Level 3 \u2014 Facility modelling', 'me\u2026",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -385,7 +385,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.126,
+   "dur_ms": 0.181,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -410,26 +410,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 11052,
      "name": "ref_product_profiles",
      "qual": "ref_product_profiles",
      "file": "api/v1/routes/energy_emissions.py",
      "line": 272,
      "args": {},
      "ret": "{'passenger_car_ice': {'annual_energy_kwh': 0, 'annual_fuel_litres': 1200, 'fuel_type': 'gasoline_litre', 'lifetime_years': 12, 'label': 'Passenger Car (ICE)'}, 'passenger_car_ev': {'annual_energy_kwh': 3500, 'annual_fuel_litres': 0, 'fuel\u2026",
-     "dur_ms": 0.027,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 11053,
        "name": "get_product_profiles",
        "qual": "Scope3Cat11Engine.get_product_profiles",
        "file": "services/scope3_cat11.py",
        "line": 233,
        "args": {},
        "ret": "{'passenger_car_ice': {'annual_energy_kwh': 0, 'annual_fuel_litres': 1200, 'fuel_type': 'gasoline_litre', 'lifetime_years': 12, 'label': 'Passenger Car (ICE)'}, 'passenger_car_ev': {'annual_energy_kwh': 3500, 'annual_fuel_litres': 0, 'fuel\u2026",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []

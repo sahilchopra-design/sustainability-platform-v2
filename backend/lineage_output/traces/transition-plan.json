@@ -1,10 +1,10 @@
 {
  "domain": "transition-plan",
  "meta": {
-  "ts": "2026-06-30T14:05:37",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 17,
   "module": "api.v1.routes.transition_plan",
-  "router_prefix": "/api/v1/transition-plan",
-  "endpoints": 17
+  "router_prefix": "/api/v1/transition-plan"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.387,
+   "dur_ms": 0.261,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42356,
      "name": "ref_carbon_credit_quality",
      "qual": "ref_carbon_credit_quality",
      "file": "api/v1/routes/transition_plan.py",
      "line": 178,
      "args": {},
      "ret": "{'carbon_credit_quality_criteria': {'icvcm_ccp': {'name': 'Integrity Council Core Carbon Principles', 'requirements': ['Additionality', 'Permanence', 'Robust quantification', 'No double counting', 'Sustainable development', 'Transition tow\u2026",
-     "dur_ms": 0.066,
+     "dur_ms": 0.05,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42357,
        "name": "get_carbon_credit_quality_criteria",
        "qual": "TransitionPlanEngine.get_carbon_credit_quality_criteria",
        "file": "services/transition_plan_engine.py",
        "line": 1124,
        "args": {},
        "ret": "{'icvcm_ccp': {'name': 'Integrity Council Core Carbon Principles', 'requirements': ['Additionality', 'Permanence', 'Robust quantification', 'No double counting', 'Sustainable development', 'Transition towards net-zero']}, 'article_6_4': {'\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.292,
+   "dur_ms": 0.216,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42358,
      "name": "ref_cdp_c4_questions",
      "qual": "ref_cdp_c4_questions",
      "file": "api/v1/routes/transition_plan.py",
      "line": 148,
      "args": {},
      "ret": "{'cdp_c4_questions': {'C4.1': {'name': 'Emissions reduction targets', 'section': 'C4 Targets and Performance', 'sub_questions': {'C4.1a': {'desc': 'Absolute target details', 'datapoints': ['absolute_target_scope', 'base_year', 'base_year_e\u2026",
-     "dur_ms": 0.091,
+     "dur_ms": 0.071,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42359,
        "name": "get_cdp_c4_questions",
        "qual": "TransitionPlanEngine.get_cdp_c4_questions",
        "file": "services/transition_plan_engine.py",
        "line": 1104,
        "args": {},
        "ret": "{'C4.1': {'name': 'Emissions reduction targets', 'section': 'C4 Targets and Performance', 'sub_questions': {'C4.1a': {'desc': 'Absolute target details', 'datapoints': ['absolute_target_scope', 'base_year', 'base_year_emissions', 'target_ye\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.526,
+   "dur_ms": 0.337,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,19 +135,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42360,
      "name": "ref_cross_framework_mapping",
      "qual": "ref_cross_framework_mapping",
      "file": "api/v1/routes/transition_plan.py",
      "line": 154,
      "args": {},
      "ret": "{'cross_framework_mapping': [{'metric_id': 'CFM-001', 'metric_name': 'Net-zero target year', 'tpt_ref': 'TPT-F-1', 'gfanz_ref': 'GFANZ-T-1', 'iigcc_ref': 'NZIF-2.2', 'csddd_ref': 'Art 22(1)(a)', 'esrs_e1_ref': 'E1-1-01', 'cdp_ref': 'C4.1c'\u2026",
-     "dur_ms": 0.194,
+     "dur_ms": 0.136,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42361,
        "name": "get_cross_framework_mapping",
        "qual": "TransitionPlanEngine.get_cross_framework_mapping",
        "file": "services/transition_plan_engine.py",
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.25,
+   "dur_ms": 0.184,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,19 +187,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42362,
      "name": "ref_csddd_requirements",
      "qual": "ref_csddd_requirements",
      "file": "api/v1/routes/transition_plan.py",
      "line": 136,
      "args": {},
      "ret": "{'csddd_requirements': {'art22_1': {'ref': 'Art 22(1)', 'desc': 'Adopt and put into effect a transition plan for climate change mitigation', 'requirements': {'art22_1_a': {'ref': 'Art 22(1)(a)', 'desc': 'Time-bound targets for 2030 and in \u2026",
-     "dur_ms": 0.071,
+     "dur_ms": 0.055,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 42363,
        "name": "get_csddd_requirements",
        "qual": "TransitionPlanEngine.get_csddd_requirements",
        "file": "services/transition_plan_engine.py",
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.514,
+   "dur_ms": 0.229,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 42364,
      "name": "ref_esrs_e1_disclosures",
      "qual": "ref_esrs_e1_disclosures",
      "file": "api/v1/routes/transition_plan.py",
      "line": 142,
      "args": {},
      "ret": "{'esrs_e1_disclosures': {'E1-1': {'name': 'Transition plan for climate change mitigation', 'paragraphs': '14-19', 'datapoints': [{'id': 'E1-1-01', 'name': 'Net-zero target year', 'type': 'quantitative', 'unit': 'year', 'mandatory': True}, \u2026",
-     "dur_ms": 0.163,
+     "dur_ms": 0.078,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 42365,
        "name": "get_esrs_e1_disclosures",
        "qual": "TransitionPlanEngine.get_esrs_e1_disclosures",
        "file": "services/transition_plan_engine.py",
        "line": 1100,
        "args": {},
        "ret": "{'E1-1': {'name': 'Transition plan for climate change mitigation', 'paragraphs': '14-19', 'datapoints': [{'id': 'E1-1-01', 'name': 'Net-zero target year', 'type': 'quantitative', 'unit': 'year', 'mandatory': True}, {'id': 'E1-1-02', 'name'\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.502,
+   "dur_ms": 0.333,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 42366,
      "name": "ref_gfanz_components",
      "qual": "ref_gfanz_components",
      "file": "api/v1/routes/transition_plan.py",
      "line": 124,
      "args": {},
      "ret": "{'gfanz_components': {'target_setting': {'name': 'Net-Zero Target Setting', 'weight': 0.2, 'requirements': [{'id': 'GFANZ-T-1', 'desc': '1.5C alignment commitment (no/low overshoot)', 'datapoints': ['net_zero_year', 'overshoot_scenario', '\u2026",
-     "dur_ms": 0.258,
+     "dur_ms": 0.076,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 42367,
        "name": "get_gfanz_components",
        "qual": "TransitionPlanEngine.get_gfanz_components",
        "file": "services/transition_plan_engine.py",
        "line": 1088,
        "args": {},
        "ret": "{'target_setting': {'name': 'Net-Zero Target Setting', 'weight': 0.2, 'requirements': [{'id': 'GFANZ-T-1', 'desc': '1.5C alignment commitment (no/low overshoot)', 'datapoints': ['net_zero_year', 'overshoot_scenario', 'paris_alignment']}, {\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -325,7 +325,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.33,
+   "dur_ms": 0.254,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -343,19 +343,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42368,
      "name": "ref_iigcc_nzif",
      "qual": "ref_iigcc_nzif",
      "file": "api/v1/routes/transition_plan.py",
      "line": 130,
      "args": {},
      "ret": "{'iigcc_nzif_steps': {'step1': {'name': 'Governance and Strategy', 'weight': 0.15, 'requirements': [{'id': 'NZIF-1.1', 'desc': 'Net-zero investment policy adopted by board', 'datapoints': ['nz_policy_adopted', 'board_approval_date']}, {'id\u2026",
-     "dur_ms": 0.087,
+     "dur_ms": 0.071,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 42369,
        "name": "get_iigcc_nzif_steps",
        "qual": "TransitionPlanEngine.get_iigcc_nzif_steps",
        "file": "services/transition_plan_engine.py",
@@ -377,7 +377,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.205,
+   "dur_ms": 0.151,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -395,19 +395,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 42370,
      "name": "ref_regulatory_timeline",
      "qual": "ref_regulatory_timeline",
      "file": "api/v1/routes/transition_plan.py",
      "line": 184,
      "args": {},
      "ret": "{'regulatory_timeline': {'csddd': {'directive': '2024/1760', 'group_1': '2027-07-26', 'group_2': '2028-07-26', 'group_3': '2029-07-26'}, 'csrd': {'directive': '2022/2464', 'wave_1': 'FY2024 (large PIEs >500 employees)', 'wave_2': 'FY2025 (\u2026",
-     "dur_ms": 0.039,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 42371,
        "name": "get_regulatory_timeline",
        "qual": "TransitionPlanEngine.get_regulatory_timeline",
        "file": "services/transition_plan_engine.py",
@@ -429,7 +429,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.233,
+   "dur_ms": 0.152,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -447,26 +447,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 42372,
      "name": "ref_scoring_rubrics",
      "qual": "ref_scoring_rubrics",
      "file": "api/v1/routes/transition_plan.py",
      "line": 160,
      "args": {},
      "ret": "{'scoring_rubrics': {'target_credibility': {'weight': 0.25, 'criteria': {'sbti_validated': 30, 'paris_1_5c': 25, 'scope_1_2_3': 20, 'interim_milestones': 15, 'base_year_recent': 10}}, 'implementation_maturity': {'weight': 0.25, 'criteria':\u2026",
-     "dur_ms": 0.07,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 18,
+       "id": 42373,
        "name": "get_scoring_rubrics",
        "qual": "TransitionPlanEngine.get_scoring_rubrics",
        "file": "services/transition_plan_engine.py",
        "line": 1112,
        "args": {},
        "ret": "{'target_credibility': {'weight': 0.25, 'criteria': {'sbti_validated': 30, 'paris_1_5c': 25, 'scope_1_2_3': 20, 'interim_milestones': 15, 'base_year_recent': 10}}, 'implementation_maturity': {'weight': 0.25, 'criteria': {'actions_underway'\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -481,7 +481,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.219,
+   "dur_ms": 0.155,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -499,26 +499,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 42374,
      "name": "ref_sector_pathways",
      "qual": "ref_sector_pathways",
      "file": "api/v1/routes/transition_plan.py",
      "line": 166,
      "args": {},
      "ret": "{'sector_pathways': {'power': {'source': 'IEA NZE 2023', 'unit': 'gCO2/kWh', '2020': 442, '2025': 340, '2030': 138, '2035': 27, '2040': -10, '2050': -40}, 'steel': {'source': 'SBTi Iron & Steel', 'unit': 'tCO2/t steel', '2020': 1.89, '2025\u2026",
-     "dur_ms": 0.055,
+     "dur_ms": 0.038,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 20,
+       "id": 42375,
        "name": "get_sector_pathways",
        "qual": "TransitionPlanEngine.get_sector_pathways",
        "file": "services/transition_plan_engine.py",
        "line": 1116,
        "args": {},
        "ret": "{'power': {'source': 'IEA NZE 2023', 'unit': 'gCO2/kWh', '2020': 442, '2025': 340, '2030': 138, '2035': 27, '2040': -10, '2050': -40}, 'steel': {'source': 'SBTi Iron & Steel', 'unit': 'tCO2/t steel', '2020': 1.89, '2025': 1.62, '2030': 1.2\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -533,7 +533,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.184,
+   "dur_ms": 0.131,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -551,26 +551,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 42376,
      "name": "ref_target_validation",
      "qual": "ref_target_validation",
      "file": "api/v1/routes/transition_plan.py",
      "line": 172,
      "args": {},
      "ret": "{'target_validation_criteria': {'sbti_near_term': {'horizon': '5-10 years', 'ambition': '1.5C or well-below 2C', 'scope': 'Scope 1+2 mandatory, Scope 3 if >40%', 'base_year': 'No older than 2 years from submission'}, 'sbti_long_term': {'ho\u2026",
-     "dur_ms": 0.034,
+     "dur_ms": 0.028,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 22,
+       "id": 42377,
        "name": "get_target_validation_criteria",
        "qual": "TransitionPlanEngine.get_target_validation_criteria",
        "file": "services/transition_plan_engine.py",
        "line": 1120,
        "args": {},
        "ret": "{'sbti_near_term': {'horizon': '5-10 years', 'ambition': '1.5C or well-below 2C', 'scope': 'Scope 1+2 mandatory, Scope 3 if >40%', 'base_year': 'No older than 2 years from submission'}, 'sbti_long_term': {'horizon': 'By 2050 or sooner', 'a\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -585,7 +585,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.285,
+   "dur_ms": 0.209,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -603,26 +603,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 42378,
      "name": "ref_tpt_framework",
      "qual": "ref_tpt_framework",
      "file": "api/v1/routes/transition_plan.py",
      "line": 118,
      "args": {},
      "ret": "{'tpt_framework': {'TPT-F': {'element': 'Foundations', 'sub_elements': {'TPT-F-1': {'name': 'Strategic ambition', 'description': 'Net-zero commitment with interim targets; alignment with 1.5C or well-below 2C; scope coverage', 'weight': 0.\u2026",
-     "dur_ms": 0.089,
+     "dur_ms": 0.074,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 24,
+       "id": 42379,
        "name": "get_tpt_framework",
        "qual": "TransitionPlanEngine.get_tpt_framework",
        "file": "services/transition_plan_engine.py",
        "line": 1084,
        "args": {},
        "ret": "{'TPT-F': {'element': 'Foundations', 'sub_elements': {'TPT-F-1': {'name': 'Strategic ambition', 'description': 'Net-zero commitment with interim targets; alignment with 1.5C or well-below 2C; scope coverage', 'weight': 0.15, 'datapoints': \u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -637,7 +637,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.255,
+   "dur_ms": 0.142,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -651,47 +651,11 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 42380,
      "name": "assess_transition_plan",
      "qual": "assess_transition_plan",
      "file": "api/v1/routes/transition_plan.py",
      "line": 67,
-     "args": {
-      "req": "'TEST_req'"
-     },
-     "ret": "None",
-     "dur_ms": 0.011,
-     "sql": [],
-     "error": null,
-     "children": []
-    }
-   ]
-  },
-  {
-   "domain": "transition-plan",
-   "label": "POST /api/v1/transition-plan/assess-sector-pathway",
-   "status": "failed",
-   "http_status": 500,
-   "error": "AttributeError: 'str' object has no attribute 'sector'",
-   "dur_ms": 0.181,
-   "node_count": 1,
-   "provenance": [
-    "computed"
-   ],
-   "source_tables": [],
-   "sources": [],
-   "inputs": {
-    "req": "'TEST_req' (mock)"
-   },
-   "output_summary": null,
-   "truncated": [],
-   "tree": [
-    {
-     "id": 26,
-     "name": "assess_sector_pathway",
-     "qual": "assess_sector_pathway",
-     "file": "api/v1/routes/transition_plan.py",
-     "line": 88,
      "args": {
       "req": "'TEST_req'"
      },
@@ -705,11 +669,11 @@
   },
   {
    "domain": "transition-plan",
-   "label": "POST /api/v1/transition-plan/assess-targets",
+   "label": "POST /api/v1/transition-plan/assess-sector-pathway",
    "status": "failed",
    "http_status": 500,
-   "error": "AttributeError: 'str' object has no attribute 'targets_data'",
-   "dur_ms": 0.189,
+   "error": "AttributeError: 'str' object has no attribute 'sector'",
+   "dur_ms": 0.123,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -723,7 +687,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 27,
+     "id": 42381,
+     "name": "assess_sector_pathway",
+     "qual": "assess_sector_pathway",
+     "file": "api/v1/routes/transition_plan.py",
+     "line": 88,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "transition-plan",
+   "label": "POST /api/v1/transition-plan/assess-targets",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'targets_data'",
+   "dur_ms": 0.132,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42382,
      "name": "assess_targets",
      "qual": "assess_targets",
      "file": "api/v1/routes/transition_plan.py",
@@ -732,7 +732,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.015,
      "sql": [],
      "error": null,
      "children": []

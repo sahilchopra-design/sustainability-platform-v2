@@ -1,0 +1,206 @@
+{
+ "domain": "ucdp-conflict",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 4,
+  "module": "api.v1.routes.ucdp_conflict",
+  "router_prefix": "/api/v1/ucdp"
+ },
+ "transactions": [
+  {
+   "domain": "ucdp-conflict",
+   "label": "GET /api/v1/ucdp/country-summary",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No coverage for 'TEST_iso3'. See /api/v1/ucdp/status for seeded coverage.",
+   "dur_ms": 0.336,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "iso3": "'TEST_iso3' (mock-required)",
+    "months": "12 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42383,
+     "name": "country_summary",
+     "qual": "country_summary",
+     "file": "api/v1/routes/ucdp_conflict.py",
+     "line": 344,
+     "args": {
+      "iso3": "'TEST_iso3'",
+      "months": "12"
+     },
+     "ret": "None",
+     "dur_ms": 0.078,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 42384,
+       "name": "_resolve_iso3",
+       "qual": "_resolve_iso3",
+       "file": "api/v1/routes/ucdp_conflict.py",
+       "line": 244,
+       "args": {
+        "country": "'TEST_ISO3'"
+       },
+       "ret": "None",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ucdp-conflict",
+   "label": "GET /api/v1/ucdp/coverage",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.203,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "countries"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42385,
+     "name": "coverage",
+     "qual": "coverage",
+     "file": "api/v1/routes/ucdp_conflict.py",
+     "line": 404,
+     "args": {},
+     "ret": "{'count': 48, 'countries': [{'iso3': 'ARE', 'iso2': 'AE', 'country_name': 'United Arab Emirates', 'tier': 'none'}, {'iso3': 'ARG', 'iso2': 'AR', 'country_name': 'Argentina', 'tier': 'none'}, {'iso3': 'AUS', 'iso2': 'AU', 'country_name': 'A\u2026",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ucdp-conflict",
+   "label": "GET /api/v1/ucdp/events",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.243,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "country": "None (default)",
+    "start_date": "None (default)",
+    "end_date": "None (default)",
+    "pagesize": "50 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "country",
+     "iso3",
+     "count",
+     "events",
+     "source",
+     "upstream_error",
+     "retrieved_at"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42386,
+     "name": "events",
+     "qual": "events",
+     "file": "api/v1/routes/ucdp_conflict.py",
+     "line": 304,
+     "args": {
+      "country": "None",
+      "start_date": "None",
+      "end_date": "None",
+      "pagesize": "50"
+     },
+     "ret": "{'mode': 'seeded-real-sample', 'country': None, 'iso3': None, 'count': 21, 'events': [{'iso3': 'UKR', 'date': '2022-02', 'headline': 'Russia launches full-scale invasion of Ukraine'}, {'iso3': 'UKR', 'date': '2022-09', 'headline': 'Ukraini\u2026",
+     "dur_ms": 0.032,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ucdp-conflict",
+   "label": "GET /api/v1/ucdp/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.14,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "api_token_configured",
+     "api_token_env",
+     "base_url",
+     "registration",
+     "note",
+     "seeded_countries_covered",
+     "seeded_notable_incidents",
+     "checked_at"
+    ],
+    "n_keys": 10
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42387,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/ucdp_conflict.py",
+     "line": 282,
+     "args": {},
+     "ret": "{'source': 'UCDP (Uppsala Conflict Data Program) -- GED events API', 'mode': 'demo-seed', 'api_token_configured': False, 'api_token_env': 'UCDP_API_TOKEN', 'base_url': 'https://ucdpapi.pcr.uu.se/api/gedevents/24.1', 'registration': {'self_\u2026",
+     "dur_ms": 0.022,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

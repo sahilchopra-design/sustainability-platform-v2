@@ -1,10 +1,10 @@
 {
  "domain": "rics-esg",
  "meta": {
-  "ts": "2026-06-30T14:04:42",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 3,
   "module": "api.v1.routes.rics_esg",
-  "router_prefix": "/api/v1/rics-esg",
-  "endpoints": 3
+  "router_prefix": "/api/v1/rics-esg"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.598,
+   "dur_ms": 0.316,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -36,26 +36,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39695,
      "name": "get_checklist",
      "qual": "get_checklist",
      "file": "api/v1/routes/rics_esg.py",
      "line": 105,
      "args": {},
      "ret": "{'PS1': [{'item_id': 'PS1-01', 'section': 'PS 1 \u2014 Terms of Engagement', 'requirement': 'Confirm scope of ESG considerations in engagement letter', 'guidance': 'State whether sustainability factors will be explicitly reflected in the valuat\u2026",
-     "dur_ms": 0.168,
+     "dur_ms": 0.103,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39696,
        "name": "get_full_checklist",
        "qual": "RICSESGEngine.get_full_checklist",
        "file": "services/rics_esg_engine.py",
        "line": 343,
        "args": {},
        "ret": "{'PS1': [{'item_id': 'PS1-01', 'section': 'PS 1 \u2014 Terms of Engagement', 'requirement': 'Confirm scope of ESG considerations in engagement letter', 'guidance': 'State whether sustainability factors will be explicitly reflected in the valuat\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -70,7 +70,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.673,
+   "dur_ms": 0.184,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -90,26 +90,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39697,
      "name": "get_materiality_factors",
      "qual": "get_materiality_factors",
      "file": "api/v1/routes/rics_esg.py",
      "line": 111,
      "args": {},
      "ret": "{'environmental': [{'factor': 'Energy performance (EPC rating)', 'data_source': 'EPC Register', 'weight': 0.25}, {'factor': 'Carbon emissions (Scope 1+2)', 'data_source': 'CRREM / GHG Protocol', 'weight': 0.2}, {'factor': 'Flood risk expos\u2026",
-     "dur_ms": 0.151,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 39698,
        "name": "get_materiality_factors",
        "qual": "RICSESGEngine.get_materiality_factors",
        "file": "services/rics_esg_engine.py",
        "line": 347,
        "args": {},
        "ret": "{'environmental': [{'factor': 'Energy performance (EPC rating)', 'data_source': 'EPC Register', 'weight': 0.25}, {'factor': 'Carbon emissions (Scope 1+2)', 'data_source': 'CRREM / GHG Protocol', 'weight': 0.2}, {'factor': 'Flood risk expos\u2026",
-       "dur_ms": 0.025,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -124,7 +124,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'property_id'",
-   "dur_ms": 0.367,
+   "dur_ms": 0.15,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -138,7 +138,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39699,
      "name": "assess_compliance",
      "qual": "assess_compliance",
      "file": "api/v1/routes/rics_esg.py",
@@ -147,7 +147,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.013,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

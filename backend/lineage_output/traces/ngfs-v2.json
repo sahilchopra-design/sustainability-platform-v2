@@ -1,10 +1,10 @@
 {
  "domain": "ngfs-v2",
  "meta": {
-  "ts": "2026-06-30T14:03:37",
+  "ts": "2026-07-05T19:15:58",
+  "endpoints": 10,
   "module": "api.v1.routes.ngfs_v2",
-  "router_prefix": "/api/v1/ngfs-scenarios",
-  "endpoints": 10
+  "router_prefix": "/api/v1/ngfs-scenarios"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3715.359,
+   "dur_ms": 318.647,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 27,
-     "dur_ms": 75.899,
+     "dur_ms": 68.143,
      "is_reference": false,
      "error": null
     }
@@ -52,7 +52,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13584,
      "name": "list_scenarios",
      "qual": "list_scenarios",
      "file": "api/v1/routes/ngfs_v2.py",
@@ -62,17 +62,17 @@
       "category": "None",
       "temperature_target": "None",
       "sort_by": "'phase'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB849D2BA0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D494DC170>"
      },
      "ret": "{'data': [{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carb\u2026",
-     "dur_ms": 3682.953,
+     "dur_ms": 288.769,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13585,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -82,7 +82,7 @@
         "meta": "{'total_scenarios': 27, 'phase_count': {'1': 6, '2': 10, '3': 8, '5': 3}, 'temperature_range': {'min': 1.4, 'max': 3.5}}"
        },
        "ret": "{'data': [{'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carb\u2026",
-       "dur_ms": 0.025,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -97,7 +97,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 346.786,
+   "dur_ms": 300.01,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -113,7 +113,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 27,
-     "dur_ms": 67.041,
+     "dur_ms": 63.86,
      "is_reference": false,
      "error": null
     }
@@ -139,7 +139,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13586,
      "name": "filter_scenarios",
      "qual": "filter_scenarios",
      "file": "api/v1/routes/ngfs_v2.py",
@@ -152,17 +152,17 @@
       "net_zero_by_year": "None",
       "carbon_price_min": "None",
       "carbon_price_max": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB849D2E10>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B42480>"
      },
      "ret": "{'data': [{'id': '0a7c8df2-2b87-40e5-a950-311982371532', 'name': 'Technology Breakthrough', 'slug': 'technology-breakthrough', 'phase': 2, 'phase_year': 2021, 'category': 'Orderly', 'temperature_target': 1.4, 'temperature_by_2100': 1.4, 'c\u2026",
-     "dur_ms": 312.716,
+     "dur_ms": 270.802,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 13587,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -172,7 +172,7 @@
         "meta": "{'total': 27}"
        },
        "ret": "{'data': [{'id': '0a7c8df2-2b87-40e5-a950-311982371532', 'name': 'Technology Breakthrough', 'slug': 'technology-breakthrough', 'phase': 2, 'phase_year': 2021, 'category': 'Orderly', 'temperature_target': 1.4, 'temperature_by_2100': 1.4, 'c\u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -187,7 +187,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 382.165,
+   "dur_ms": 335.054,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -203,7 +203,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 6,
-     "dur_ms": 67.682,
+     "dur_ms": 57.942,
      "is_reference": false,
      "error": null
     },
@@ -214,7 +214,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 10,
-     "dur_ms": 35.591,
+     "dur_ms": 32.468,
      "is_reference": false,
      "error": null
     },
@@ -225,7 +225,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 8,
-     "dur_ms": 32.027,
+     "dur_ms": 30.792,
      "is_reference": false,
      "error": null
     }
@@ -244,16 +244,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13588,
      "name": "get_phases",
      "qual": "get_phases",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 101,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BCE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46933BC0>"
      },
      "ret": "{'data': {'1': {'year': 2020, 'count': 6, 'scenarios': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'slug': 'orderly-below-2c', 'category': 'Orderly', 'temperature': 1.5}, {'id': '55c66d13-0599-493a-b161-d\u2026",
-     "dur_ms": 349.998,
+     "dur_ms": 304.612,
      "sql": [
       0,
       1,
@@ -262,7 +262,7 @@
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 13589,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -287,7 +287,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 717.99,
+   "dur_ms": 493.062,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -303,7 +303,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 27,
-     "dur_ms": 340.893,
+     "dur_ms": 76.094,
      "is_reference": false,
      "error": null
     }
@@ -322,23 +322,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13590,
      "name": "get_temperature_ranges",
      "qual": "get_temperature_ranges",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 117,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BD40>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B7FD70>"
      },
      "ret": "{'data': {'below_1.5C': [{'id': '81d7970d-ac07-42f3-be69-5caa75c62f10', 'name': 'Orderly (Below 2\u00b0C)', 'temperature': 1.5, 'category': 'Orderly', 'phase': 1}, {'id': 'ebc9a173-eab3-4c6d-be73-1b5e15bf0766', 'name': 'Divergent Net Zero', 'te\u2026",
-     "dur_ms": 683.47,
+     "dur_ms": 461.225,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13591,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -363,7 +363,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 472.951,
+   "dur_ms": 323.634,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -380,7 +380,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 1,
-     "dur_ms": 182.768,
+     "dur_ms": 57.832,
      "is_reference": false,
      "error": null
     },
@@ -391,7 +391,7 @@
       "ngfs_scenario_parameters"
      ],
      "rowcount": 4,
-     "dur_ms": 44.083,
+     "dur_ms": 34.764,
      "is_reference": false,
      "error": null
     }
@@ -411,17 +411,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13592,
      "name": "get_scenario",
      "qual": "get_scenario",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 197,
      "args": {
       "scenario_id": "'c8260fc9-2afb-4e2f-ab03-7f9d7a837828'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634B9E0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9EBA0>"
      },
      "ret": "{'data': {'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbo\u2026",
-     "dur_ms": 443.408,
+     "dur_ms": 294.641,
      "sql": [
       0,
       1
@@ -429,7 +429,7 @@
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 13593,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -439,7 +439,7 @@
         "meta": "None"
        },
        "ret": "{'data': {'id': 'c8260fc9-2afb-4e2f-ab03-7f9d7a837828', 'name': 'Current Policies', 'slug': 'current-policies-p1', 'phase': 1, 'phase_year': 2020, 'category': 'Hot House World', 'temperature_target': 2.8, 'temperature_by_2100': 2.8, 'carbo\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -454,7 +454,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 907.161,
+   "dur_ms": 477.697,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -472,7 +472,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 1,
-     "dur_ms": 63.966,
+     "dur_ms": 60.458,
      "is_reference": false,
      "error": null
     },
@@ -483,7 +483,7 @@
       "ngfs_scenario_parameters"
      ],
      "rowcount": 4,
-     "dur_ms": 154.01,
+     "dur_ms": 31.653,
      "is_reference": false,
      "error": null
     },
@@ -494,7 +494,7 @@
       "ngfs_scenario_timeseries"
      ],
      "rowcount": 76,
-     "dur_ms": 307.922,
+     "dur_ms": 38.366,
      "is_reference": false,
      "error": null
     },
@@ -505,7 +505,7 @@
       "ngfs_scenario_timeseries"
      ],
      "rowcount": 76,
-     "dur_ms": 39.633,
+     "dur_ms": 30.933,
      "is_reference": false,
      "error": null
     },
@@ -516,7 +516,7 @@
       "ngfs_scenario_timeseries"
      ],
      "rowcount": 76,
-     "dur_ms": 34.35,
+     "dur_ms": 34.662,
      "is_reference": false,
      "error": null
     },
@@ -527,7 +527,7 @@
       "ngfs_scenario_timeseries"
      ],
      "rowcount": 76,
-     "dur_ms": 32.491,
+     "dur_ms": 31.149,
      "is_reference": false,
      "error": null
     }
@@ -547,17 +547,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 13594,
      "name": "get_parameters",
      "qual": "get_parameters",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 218,
      "args": {
       "scenario_id": "'c8260fc9-2afb-4e2f-ab03-7f9d7a837828'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB8634BCE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AFA270>"
      },
      "ret": "{'data': [{'id': 'abd83769-21c4-402e-80e9-e09a4d6c775c', 'parameter_name': 'carbon_price', 'display_name': 'Carbon Price', 'unit': 'USD/tCO2', 'category': 'pricing', 'is_editable': True, 'min_value': 0.0, 'max_value': 700.0, 'default_value\u2026",
-     "dur_ms": 877.164,
+     "dur_ms": 446.604,
      "sql": [
       0,
       1,
@@ -569,7 +569,7 @@
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 13595,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -579,7 +579,7 @@
         "meta": "None"
        },
        "ret": "{'data': [{'id': 'abd83769-21c4-402e-80e9-e09a4d6c775c', 'parameter_name': 'carbon_price', 'display_name': 'Carbon Price', 'unit': 'USD/tCO2', 'category': 'pricing', 'is_editable': True, 'min_value': 0.0, 'max_value': 700.0, 'default_value\u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -594,7 +594,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1550.799,
+   "dur_ms": 511.711,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -611,7 +611,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 1,
-     "dur_ms": 206.842,
+     "dur_ms": 225.16,
      "is_reference": false,
      "error": null
     },
@@ -622,7 +622,7 @@
       "ngfs_scenario_timeseries"
      ],
      "rowcount": 304,
-     "dur_ms": 316.318,
+     "dur_ms": 59.928,
      "is_reference": false,
      "error": null
     }
@@ -645,7 +645,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 13596,
      "name": "get_time_series",
      "qual": "get_time_series",
      "file": "api/v1/routes/ngfs_v2.py",
@@ -655,10 +655,10 @@
       "parameter_name": "None",
       "start_year": "2025",
       "end_year": "2100",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9CF20>"
      },
      "ret": "{'data': {'carbon_price': [{'year': 2025, 'value': 10.0, 'is_interpolated': False}, {'year': 2026, 'value': 12.0, 'is_interpolated': True}, {'year': 2027, 'value': 14.0, 'is_interpolated': True}, {'year': 2028, 'value': 16.0, 'is_interpola\u2026",
-     "dur_ms": 1000.371,
+     "dur_ms": 481.76,
      "sql": [
       0,
       1
@@ -666,7 +666,7 @@
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 13597,
        "name": "_wrap",
        "qual": "_wrap",
        "file": "api/v1/routes/ngfs_v2.py",
@@ -676,7 +676,7 @@
         "meta": "None"
        },
        "ret": "{'data': {'carbon_price': [{'year': 2025, 'value': 10.0, 'is_interpolated': False}, {'year': 2026, 'value': 12.0, 'is_interpolated': True}, {'year': 2027, 'value': 14.0, 'is_interpolated': True}, {'year': 2028, 'value': 16.0, 'is_interpola\u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -691,7 +691,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No scenarios found",
-   "dur_ms": 578.472,
+   "dur_ms": 296.486,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -707,7 +707,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 0,
-     "dur_ms": 64.112,
+     "dur_ms": 60.316,
      "is_reference": false,
      "error": null
     }
@@ -720,17 +720,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 13598,
      "name": "compare_scenarios",
      "qual": "compare_scenarios",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 276,
      "args": {
       "body": "CompareRequest(scenario_ids=['TEST_body_scenario_ids'], metrics=['carbon_price', 'emissions', 'temperature', 'gdp_impact'])",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB861919A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48E13BC0>"
      },
      "ret": "None",
-     "dur_ms": 547.195,
+     "dur_ms": 266.653,
      "sql": [
       0
      ],
@@ -745,7 +745,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'get'",
-   "dur_ms": 0.566,
+   "dur_ms": 0.463,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -760,17 +760,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 13599,
      "name": "search_scenarios",
      "qual": "search_scenarios",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 181,
      "args": {
       "body": "'TEST_body'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380FB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9E990>"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []
@@ -783,8 +783,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 384.506,
-   "node_count": 4,
+   "dur_ms": 285.03,
+   "node_count": 3,
    "provenance": [
     "real-db"
    ],
@@ -799,7 +799,7 @@
       "ngfs_scenarios_v2"
      ],
      "rowcount": 1,
-     "dur_ms": 71.313,
+     "dur_ms": 59.039,
      "is_reference": false,
      "error": null
     }
@@ -818,56 +818,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 13600,
      "name": "seed_scenarios",
      "qual": "seed_scenarios",
      "file": "api/v1/routes/ngfs_v2.py",
      "line": 304,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B403B0>"
      },
      "ret": "{'message': 'Already seeded', 'count': 27}",
-     "dur_ms": 352.396,
+     "dur_ms": 253.932,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 18,
-       "name": "<module>",
-       "qual": "<module>",
-       "file": "services/__init__.py",
-       "line": 1,
-       "args": {},
-       "ret": "None",
-       "dur_ms": 0.005,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 19,
+       "id": 13601,
        "name": "<module>",
        "qual": "<module>",
        "file": "services/ngfs_seeder.py",
        "line": 1,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.051,
+       "dur_ms": 0.058,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 20,
+       "id": 13602,
        "name": "seed_ngfs_scenarios",
        "qual": "seed_ngfs_scenarios",
        "file": "services/ngfs_seeder.py",
        "line": 261,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002AB86380350>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B403B0>"
        },
        "ret": "{'message': 'Already seeded', 'count': 27}",
-       "dur_ms": 321.963,
+       "dur_ms": 251.352,
        "sql": [
         0
        ],

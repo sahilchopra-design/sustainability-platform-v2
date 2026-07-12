@@ -1,10 +1,10 @@
 {
  "domain": "regulatory-reports",
  "meta": {
-  "ts": "2026-06-30T14:04:36",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 15,
   "module": "api.v1.routes.regulatory_reports",
-  "router_prefix": "/api/v1/regulatory-reports",
-  "endpoints": 15
+  "router_prefix": "/api/v1/regulatory-reports"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.792,
+   "dur_ms": 0.234,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39655,
      "name": "list_frameworks",
      "qual": "list_frameworks",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 110,
      "args": {},
      "ret": "{'frameworks': [{'code': 'TCFD', 'name': 'Task Force on Climate-related Financial Disclosures', 'region': 'Global', 'sections': 11, 'method': 'compile_tcfd'}, {'code': 'SFDR', 'name': 'Sustainable Finance Disclosure Regulation', 'region': \u2026",
-     "dur_ms": 0.178,
+     "dur_ms": 0.053,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39656,
        "name": "get_supported_frameworks",
        "qual": "RegulatoryReportCompiler.get_supported_frameworks",
        "file": "services/regulatory_report_compiler.py",
        "line": 1615,
        "args": {},
        "ret": "[{'code': 'TCFD', 'name': 'Task Force on Climate-related Financial Disclosures', 'region': 'Global', 'sections': 11, 'method': 'compile_tcfd'}, {'code': 'SFDR', 'name': 'Sustainable Finance Disclosure Regulation', 'region': 'EU', 'sections\u2026",
-       "dur_ms": 0.018,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.234,
+   "dur_ms": 0.356,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39657,
      "name": "ref_brsr_framework",
      "qual": "ref_brsr_framework",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 140,
      "args": {},
      "ret": "{'brsr_framework': {'framework': 'SEBI BRSR', 'version': '2023 (Updated Annexure I + II)', 'applicability': {'brsr_full': 'Top 1000 listed entities by market capitalisation (mandatory from FY 2022-23)', 'brsr_core': 'Top 150 listed entitie\u2026",
-     "dur_ms": 0.637,
+     "dur_ms": 0.161,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 39658,
        "name": "get_brsr_framework",
        "qual": "RegulatoryReportCompiler.get_brsr_framework",
        "file": "services/regulatory_report_compiler.py",
        "line": 1658,
        "args": {},
        "ret": "{'framework': 'SEBI BRSR', 'version': '2023 (Updated Annexure I + II)', 'applicability': {'brsr_full': 'Top 1000 listed entities by market capitalisation (mandatory from FY 2022-23)', 'brsr_core': 'Top 150 listed entities (mandatory from F\u2026",
-       "dur_ms": 0.21,
+       "dur_ms": 0.026,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.306,
+   "dur_ms": 0.163,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39659,
      "name": "ref_gri305",
      "qual": "ref_gri305",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 128,
      "args": {},
      "ret": "{'gri305_template': [{'id': '305-1', 'title': 'Direct (Scope 1) GHG emissions', 'required_fields': ['gross_scope1_tco2e', 'gases_included', 'biogenic_tco2e', 'base_year', 'source_ef', 'consolidation_approach', 'standards_used']}, {'id': '3\u2026",
-     "dur_ms": 0.074,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 39660,
        "name": "get_gri305_template",
        "qual": "RegulatoryReportCompiler.get_gri305_template",
        "file": "services/regulatory_report_compiler.py",
        "line": 1648,
        "args": {},
        "ret": "[{'id': '305-1', 'title': 'Direct (Scope 1) GHG emissions', 'required_fields': ['gross_scope1_tco2e', 'gases_included', 'biogenic_tco2e', 'base_year', 'source_ef', 'consolidation_approach', 'standards_used']}, {'id': '305-2', 'title': 'Ene\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.285,
+   "dur_ms": 0.149,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,26 +187,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39661,
      "name": "ref_sec_climate",
      "qual": "ref_sec_climate",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 134,
      "args": {},
      "ret": "{'sec_climate_template': [{'item': '1502', 'title': 'Governance \u2014 Board oversight and management role', 'required': ['board_oversight_description', 'management_role_description', 'relevant_expertise_description', 'frequency_of_oversight']}\u2026",
-     "dur_ms": 0.058,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 39662,
        "name": "get_sec_climate_template",
        "qual": "RegulatoryReportCompiler.get_sec_climate_template",
        "file": "services/regulatory_report_compiler.py",
        "line": 1653,
        "args": {},
        "ret": "[{'item': '1502', 'title': 'Governance \u2014 Board oversight and management role', 'required': ['board_oversight_description', 'management_role_description', 'relevant_expertise_description', 'frequency_of_oversight']}, {'item': '1503', 'title\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.263,
+   "dur_ms": 0.153,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39663,
      "name": "ref_sfdr_pai",
      "qual": "ref_sfdr_pai",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 122,
      "args": {},
      "ret": "{'sfdr_pai_template': [{'pai_id': 1, 'indicator': 'GHG emissions', 'metric': 'Scope 1 GHG emissions', 'unit': 'tCO2e', 'category': 'climate'}, {'pai_id': 1, 'indicator': 'GHG emissions', 'metric': 'Scope 2 GHG emissions', 'unit': 'tCO2e', \u2026",
-     "dur_ms": 0.073,
+     "dur_ms": 0.04,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 39664,
        "name": "get_sfdr_pai_template",
        "qual": "RegulatoryReportCompiler.get_sfdr_pai_template",
        "file": "services/regulatory_report_compiler.py",
        "line": 1643,
        "args": {},
        "ret": "[{'pai_id': 1, 'indicator': 'GHG emissions', 'metric': 'Scope 1 GHG emissions', 'unit': 'tCO2e', 'category': 'climate'}, {'pai_id': 1, 'indicator': 'GHG emissions', 'metric': 'Scope 2 GHG emissions', 'unit': 'tCO2e', 'category': 'climate'}\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.237,
+   "dur_ms": 0.143,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 39665,
      "name": "ref_tcfd",
      "qual": "ref_tcfd",
      "file": "api/v1/routes/regulatory_reports.py",
      "line": 116,
      "args": {},
      "ret": "{'tcfd_structure': [{'id': 'GOV-a', 'pillar': 'Governance', 'recommendation': 'Board oversight of climate-related risks and opportunities', 'guidance': ['Processes by which the board is informed', 'Frequency of board briefings', 'Whether b\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 39666,
        "name": "get_tcfd_structure",
        "qual": "RegulatoryReportCompiler.get_tcfd_structure",
        "file": "services/regulatory_report_compiler.py",
        "line": 1638,
        "args": {},
        "ret": "[{'id': 'GOV-a', 'pillar': 'Governance', 'recommendation': 'Board oversight of climate-related risks and opportunities', 'guidance': ['Processes by which the board is informed', 'Frequency of board briefings', 'Whether board considers clim\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []

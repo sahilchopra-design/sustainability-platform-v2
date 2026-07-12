@@ -1,10 +1,10 @@
 {
  "domain": "priips-kid",
  "meta": {
-  "ts": "2026-06-30T14:04:13",
+  "ts": "2026-07-05T19:16:25",
+  "endpoints": 10,
   "module": "api.v1.routes.priips_kid",
-  "router_prefix": "/api/v1/priips-kid",
-  "endpoints": 10
+  "router_prefix": "/api/v1/priips-kid"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.459,
+   "dur_ms": 0.268,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 29303,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/priips_kid.py",
      "line": 242,
      "args": {},
      "ret": "{'sfdr_overlap': 'KID ESG inserts mirror pre-contractual SFDR Annex II (Art 8) / Annex III (Art 9) disclosures', 'eu_taxonomy': 'Taxonomy alignment % in KID must match pre-contractual disclosure', 'mifid_spt': 'KID ESG classification feeds\u2026",
-     "dur_ms": 0.068,
+     "dur_ms": 0.046,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 29304,
        "name": "get_cross_framework",
        "qual": "PRIIPSKIDEngine.get_cross_framework",
        "file": "services/priips_kid_engine.py",
        "line": 514,
        "args": {},
        "ret": "{'sfdr_overlap': 'KID ESG inserts mirror pre-contractual SFDR Annex II (Art 8) / Annex III (Art 9) disclosures', 'eu_taxonomy': 'Taxonomy alignment % in KID must match pre-contractual disclosure', 'mifid_spt': 'KID ESG classification feeds\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.406,
+   "dur_ms": 0.199,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -91,26 +91,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 29305,
      "name": "ref_esg_insert_types",
      "qual": "ref_esg_insert_types",
      "file": "api/v1/routes/priips_kid.py",
      "line": 234,
      "args": {},
      "ret": "{'sustainability_risk': {'name': 'Sustainability Risk Statement', 'required_for': ['art6', 'art8', 'art8_pai', 'art8_taxonomy', 'art9'], 'sfdr_article': 'Art 3 SFDR', 'description': 'Statement on integration of sustainability risks into in\u2026",
-     "dur_ms": 0.146,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 29306,
        "name": "get_esg_insert_types",
        "qual": "PRIIPSKIDEngine.get_esg_insert_types",
        "file": "services/priips_kid_engine.py",
        "line": 511,
        "args": {},
        "ret": "{'sustainability_risk': {'name': 'Sustainability Risk Statement', 'required_for': ['art6', 'art8', 'art8_pai', 'art8_taxonomy', 'art9'], 'sfdr_article': 'Art 3 SFDR', 'description': 'Statement on integration of sustainability risks into in\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -125,7 +125,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.448,
+   "dur_ms": 0.189,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -148,26 +148,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 29307,
      "name": "ref_kid_sections",
      "qual": "ref_kid_sections",
      "file": "api/v1/routes/priips_kid.py",
      "line": 218,
      "args": {},
      "ret": "{'section_1_product': {'name': 'What is this product?', 'mandatory_fields': ['product_name', 'product_type', 'manufacturer', 'isin', 'competent_authority', 'investment_objective', 'target_investor_profile', 'insurance_element']}, 'section_\u2026",
-     "dur_ms": 0.069,
+     "dur_ms": 0.046,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 29308,
        "name": "get_kid_sections",
        "qual": "PRIIPSKIDEngine.get_kid_sections",
        "file": "services/priips_kid_engine.py",
        "line": 505,
        "args": {},
        "ret": "{'section_1_product': {'name': 'What is this product?', 'mandatory_fields': ['product_name', 'product_type', 'manufacturer', 'isin', 'competent_authority', 'investment_objective', 'target_investor_profile', 'insurance_element']}, 'section_\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -182,7 +182,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.526,
+   "dur_ms": 0.182,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -206,26 +206,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 29309,
      "name": "ref_sri_classes",
      "qual": "ref_sri_classes",
      "file": "api/v1/routes/priips_kid.py",
      "line": 226,
      "args": {},
      "ret": "{1: {'class': 1, 'vol_range': [0, 0.005], 'description': 'Very low market risk'}, 2: {'class': 2, 'vol_range': [0.005, 0.12], 'description': 'Low market risk'}, 3: {'class': 3, 'vol_range': [0.12, 0.2], 'description': 'Low to medium market\u2026",
-     "dur_ms": 0.074,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 29310,
        "name": "get_sri_classes",
        "qual": "PRIIPSKIDEngine.get_sri_classes",
        "file": "services/priips_kid_engine.py",
        "line": 508,
        "args": {},
        "ret": "{1: {'class': 1, 'vol_range': [0, 0.005], 'description': 'Very low market risk'}, 2: {'class': 2, 'vol_range': [0.005, 0.12], 'description': 'Low market risk'}, 3: {'class': 3, 'vol_range': [0.12, 0.2], 'description': 'Low to medium market\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -240,7 +240,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.294,
+   "dur_ms": 0.188,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -260,26 +260,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 29311,
      "name": "ref_timeline",
      "qual": "ref_timeline",
      "file": "api/v1/routes/priips_kid.py",
      "line": 250,
      "args": {},
      "ret": "[{'date': '2014-11-26', 'event': 'PRIIPs Regulation (EU) 1286/2014 published in OJEU', 'article': 'All'}, {'date': '2017-01-01', 'event': 'PRIIPs KID mandatory application date for non-UCITS retail PRIIPs', 'article': 'Art 32'}, {'date': '\u2026",
-     "dur_ms": 0.058,
+     "dur_ms": 0.038,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 29312,
        "name": "get_timeline",
        "qual": "PRIIPSKIDEngine.get_timeline",
        "file": "services/priips_kid_engine.py",
        "line": 517,
        "args": {},
        "ret": "[{'date': '2014-11-26', 'event': 'PRIIPs Regulation (EU) 1286/2014 published in OJEU', 'article': 'All'}, {'date': '2017-01-01', 'event': 'PRIIPs KID mandatory application date for non-UCITS retail PRIIPs', 'article': 'Art 32'}, {'date': '\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -294,7 +294,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'product_id'",
-   "dur_ms": 0.484,
+   "dur_ms": 0.217,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -308,7 +308,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 29313,
      "name": "assess_sri",
      "qual": "assess_sri",
      "file": "api/v1/routes/priips_kid.py",
@@ -317,12 +317,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.069,
+     "dur_ms": 0.031,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 29314,
        "name": "_build_product_input",
        "qual": "_build_product_input",
        "file": "api/v1/routes/priips_kid.py",
@@ -331,7 +331,7 @@
         "model": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.016,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -346,7 +346,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'product_id'",
-   "dur_ms": 0.311,
+   "dur_ms": 0.18,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -360,7 +360,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 29315,
      "name": "calculate_scenarios",
      "qual": "calculate_scenarios",
      "file": "api/v1/routes/priips_kid.py",
@@ -369,12 +369,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.038,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 29316,
        "name": "_build_product_input",
        "qual": "_build_product_input",
        "file": "api/v1/routes/priips_kid.py",
@@ -383,7 +383,7 @@
         "model": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []

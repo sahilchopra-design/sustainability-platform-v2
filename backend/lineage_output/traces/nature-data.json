@@ -1,10 +1,10 @@
 {
  "domain": "nature-data",
  "meta": {
-  "ts": "2026-06-30T14:03:31",
+  "ts": "2026-07-05T19:15:53",
+  "endpoints": 9,
   "module": "api.v1.routes.nature_data",
-  "router_prefix": "/api/v1/nature-data",
-  "endpoints": 9
+  "router_prefix": "/api/v1/nature-data"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2217.56,
+   "dur_ms": 324.96,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 0,
-     "dur_ms": 328.005,
+     "dur_ms": 59.387,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 1,
-     "dur_ms": 32.835,
+     "dur_ms": 28.229,
      "is_reference": false,
      "error": null
     }
@@ -64,7 +64,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13180,
      "name": "search_gfw",
      "qual": "search_gfw",
      "file": "api/v1/routes/nature_data.py",
@@ -75,11 +75,11 @@
       "year_end": "None",
       "limit": "100",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904C3F38F0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5D300>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487C70E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [], 'total': 0}",
-     "dur_ms": 2188.309,
+     "dur_ms": 294.647,
      "sql": [
       0,
       1
@@ -95,7 +95,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1227.427,
+   "dur_ms": 275.856,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -111,7 +111,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 0,
-     "dur_ms": 218.721,
+     "dur_ms": 57.488,
      "is_reference": false,
      "error": null
     }
@@ -129,17 +129,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13181,
      "name": "gfw_countries",
      "qual": "gfw_countries",
      "file": "api/v1/routes/nature_data.py",
      "line": 192,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DC3AA80>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5D800>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B430B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'countries': []}",
-     "dur_ms": 811.624,
+     "dur_ms": 242.551,
      "sql": [
       0
      ],
@@ -154,7 +154,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No GFW data for 550e8400-e29b-41d4-a716-446655440001",
-   "dur_ms": 784.166,
+   "dur_ms": 443.412,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -170,7 +170,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 0,
-     "dur_ms": 82.987,
+     "dur_ms": 136.705,
      "is_reference": false,
      "error": null
     }
@@ -183,18 +183,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13182,
      "name": "gfw_country_timeseries",
      "qual": "gfw_country_timeseries",
      "file": "api/v1/routes/nature_data.py",
      "line": 210,
      "args": {
       "iso3": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DC3A870>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DA80>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9FEF0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 752.794,
+     "dur_ms": 373.007,
      "sql": [
       0
      ],
@@ -209,7 +209,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 351.464,
+   "dur_ms": 667.255,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -225,7 +225,7 @@
       "dh_nature_spatial_overlaps"
      ],
      "rowcount": 0,
-     "dur_ms": 91.023,
+     "dur_ms": 201.571,
      "is_reference": false,
      "error": null
     }
@@ -247,7 +247,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13183,
      "name": "nature_overlaps",
      "qual": "nature_overlaps",
      "file": "api/v1/routes/nature_data.py",
@@ -256,11 +256,11 @@
       "asset_id": "None",
       "wdpa_id": "None",
       "limit": "50",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90B00>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DD00>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9EC30>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'overlaps': [], 'total': 0}",
-     "dur_ms": 320.335,
+     "dur_ms": 604.821,
      "sql": [
       0
      ],
@@ -275,7 +275,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1558.572,
+   "dur_ms": 540.83,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -293,7 +293,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": 1,
-     "dur_ms": 479.461,
+     "dur_ms": 67.482,
      "is_reference": false,
      "error": null
     },
@@ -304,7 +304,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": 1,
-     "dur_ms": 43.781,
+     "dur_ms": 65.013,
      "is_reference": false,
      "error": null
     },
@@ -315,7 +315,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 1,
-     "dur_ms": 27.883,
+     "dur_ms": 30.394,
      "is_reference": false,
      "error": null
     },
@@ -326,7 +326,7 @@
       "dh_gfw_tree_cover_loss"
      ],
      "rowcount": 1,
-     "dur_ms": 29.23,
+     "dur_ms": 42.424,
      "is_reference": false,
      "error": null
     },
@@ -337,7 +337,7 @@
       "dh_nature_spatial_overlaps"
      ],
      "rowcount": 1,
-     "dur_ms": 422.86,
+     "dur_ms": 29.316,
      "is_reference": false,
      "error": null
     }
@@ -357,17 +357,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13184,
      "name": "nature_data_stats",
      "qual": "nature_data_stats",
      "file": "api/v1/routes/nature_data.py",
      "line": 268,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90D10>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5DEE0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9E090>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'wdpa': {'records': 0, 'countries': 0}, 'gfw': {'records': 0, 'countries': 0}, 'overlaps': {'records': 0}}",
-     "dur_ms": 1374.247,
+     "dur_ms": 506.866,
      "sql": [
       0,
       1,
@@ -386,7 +386,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 592.598,
+   "dur_ms": 441.754,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -402,7 +402,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": 0,
-     "dur_ms": 60.727,
+     "dur_ms": 102.263,
      "is_reference": false,
      "error": null
     },
@@ -413,7 +413,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": 1,
-     "dur_ms": 28.17,
+     "dur_ms": 33.776,
      "is_reference": false,
      "error": null
     }
@@ -438,7 +438,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13185,
      "name": "search_wdpa",
      "qual": "search_wdpa",
      "file": "api/v1/routes/nature_data.py",
@@ -450,11 +450,11 @@
       "search": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD90F80>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DADFA60>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9D5E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'records': [], 'total': 0}",
-     "dur_ms": 563.901,
+     "dur_ms": 410.293,
      "sql": [
       0,
       1
@@ -470,7 +470,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1484.341,
+   "dur_ms": 291.674,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -486,7 +486,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": 0,
-     "dur_ms": 460.226,
+     "dur_ms": 58.632,
      "is_reference": false,
      "error": null
     }
@@ -504,17 +504,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13186,
      "name": "wdpa_countries",
      "qual": "wdpa_countries",
      "file": "api/v1/routes/nature_data.py",
      "line": 80,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD91820>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD13100>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9F5F0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'countries': []}",
-     "dur_ms": 1159.025,
+     "dur_ms": 262.061,
      "sql": [
       0
      ],
@@ -529,7 +529,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type double precision: \"TEST_lat\"\nLINE 6:                        LEAST(1.0, cos(radians('TEST_lat')) *...\n                                                      ^\n\n[SQL: \n        SELECT * FROM (\n            SELECT id, wdpa_id, name, country_iso3, iucn_cat, rep_area_km2, status,\n                   latitude, longitude,\n  ",
-   "dur_ms": 1484.216,
+   "dur_ms": 272.261,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -545,7 +545,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": null,
-     "dur_ms": 97.992,
+     "dur_ms": 59.843,
      "is_reference": false,
      "error": "InvalidTextRepresentation('invalid input syntax for type double precision: \"TEST_lat\"\\nLINE 6:                        LEAST(1.0, cos(radians(\\'TEST_lat\\')) *...\\n                                     \u2026"
     }
@@ -561,7 +561,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 13187,
      "name": "wdpa_nearby",
      "qual": "wdpa_nearby",
      "file": "api/v1/routes/nature_data.py",
@@ -571,11 +571,11 @@
       "lng": "'TEST_lng'",
       "radius_km": "50",
       "limit": "20",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD908F0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5CA40>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9E750>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 1341.587,
+     "dur_ms": 243.437,
      "sql": [
       0
      ],
@@ -590,7 +590,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\nLINE 2: ...CT * FROM dh_wdpa_protected_areas WHERE wdpa_id = '550e8400-...\n                                                             ^\n\n[SQL: \n        SELECT * FROM dh_wdpa_protected_areas WHERE wdpa_id = %(wdpa_id)s\n    ]\n[parameters: {'wdpa_id': '550e8400-e29b-4",
-   "dur_ms": 1552.169,
+   "dur_ms": 289.007,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -606,7 +606,7 @@
       "dh_wdpa_protected_areas"
      ],
      "rowcount": null,
-     "dur_ms": 62.945,
+     "dur_ms": 56.877,
      "is_reference": false,
      "error": "InvalidTextRepresentation('invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\\nLINE 2: ...CT * FROM dh_wdpa_protected_areas WHERE wdpa_id = \\'550e8400-...\\n                \u2026"
     }
@@ -619,18 +619,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13188,
      "name": "get_wdpa_by_id",
      "qual": "get_wdpa_by_id",
      "file": "api/v1/routes/nature_data.py",
      "line": 130,
      "args": {
       "wdpa_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002904DD91F40>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000002904DD5CF40>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9D9D0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 1519.221,
+     "dur_ms": 260.876,
      "sql": [
       0
      ],

@@ -1,10 +1,10 @@
 {
  "domain": "blue-economy",
  "meta": {
-  "ts": "2026-06-30T13:59:29",
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 11,
   "module": "api.v1.routes.blue_economy",
-  "router_prefix": "/api/v1/blue-economy",
-  "endpoints": 11
+  "router_prefix": "/api/v1/blue-economy"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.467,
+   "dur_ms": 2.714,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,14 +35,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 620,
      "name": "ref_bbnj_articles",
      "qual": "ref_bbnj_articles",
      "file": "api/v1/routes/blue_economy.py",
      "line": 247,
      "args": {},
      "ret": "{'articles': {'article_9_mgbr': {'title': 'Marine Genetic Resources & Benefit Sharing', 'description': 'Access and benefit sharing for MGRs in ABNJ; multilateral mechanism', 'compliance_indicators': ['mgr_access_policy', 'benefit_sharing_a\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.468,
+   "dur_ms": 1.852,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -76,14 +76,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 621,
      "name": "ref_ecosystems",
      "qual": "ref_ecosystems",
      "file": "api/v1/routes/blue_economy.py",
      "line": 225,
      "args": {},
      "ret": "{'ecosystems': {'mangrove': {'sequestration_rate_min_tco2_ha_yr': 6.0, 'sequestration_rate_max_tco2_ha_yr': 8.0, 'sequestration_rate_mean_tco2_ha_yr': 7.0, 'soil_carbon_stock_tco2_ha': 860, 'above_ground_carbon_tco2_ha': 120, 'permanence_r\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -96,7 +96,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 15.892,
+   "dur_ms": 1.505,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -124,14 +124,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 622,
      "name": "ref_ocean_markets",
      "qual": "ref_ocean_markets",
      "file": "api/v1/routes/blue_economy.py",
      "line": 270,
      "args": {},
      "ret": "{'global_ocean_economy_gdp_bn_usd': 2500, 'ocean_economy_potential_2030_bn_usd': 3000, 'sdg14_annual_financing_gap_bn_usd': 175, 'blue_bond_issuance_2023_bn_usd': 5.5, 'blue_carbon_market_2023_mn_usd': 120, 'offshore_wind_installed_gw': 65\u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -144,7 +144,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.425,
+   "dur_ms": 1.464,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -165,7 +165,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 623,
      "name": "ref_sof_pillars",
      "qual": "ref_sof_pillars",
      "file": "api/v1/routes/blue_economy.py",
@@ -185,7 +185,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.506,
+   "dur_ms": 1.511,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -206,14 +206,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 624,
      "name": "ref_use_of_proceeds",
      "qual": "ref_use_of_proceeds",
      "file": "api/v1/routes/blue_economy.py",
      "line": 236,
      "args": {},
      "ret": "{'categories': {'sustainable_fisheries': {'description': 'MSC-certified and FIP-supported fisheries, IUU elimination', 'icma_alignment_score': 0.92, 'sof_pillar': 'sustainable_ocean_economy', 'sdg_targets': ['SDG14.4', 'SDG14.6'], 'typical\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -295,10 +295,10 @@
   {
    "domain": "blue-economy",
    "label": "POST /api/v1/blue-economy/screen-bond",
-   "status": "failed",
-   "http_status": 500,
-   "error": "HTTPException: 500: 'NoneType' object is not iterable",
-   "dur_ms": 28.865,
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.128,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -308,11 +308,31 @@
    "inputs": {
     "request": "<BlueBondScreenRequest (mock)>"
    },
-   "output_summary": null,
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "bond_id",
+     "issuer",
+     "bond_amount_usd",
+     "icma_alignment_score",
+     "overall_verdict",
+     "eligible_categories",
+     "ineligible_categories",
+     "sof_pillar_coverage",
+     "use_of_proceeds_breakdown",
+     "greenium_bps",
+     "external_review_required",
+     "reporting_frequency",
+     "recommendations",
+     "standards_applied"
+    ],
+    "n_keys": 15
+   },
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 625,
      "name": "screen_bond_endpoint",
      "qual": "screen_bond_endpoint",
      "file": "api/v1/routes/blue_economy.py",
@@ -320,22 +340,22 @@
      "args": {
       "request": "BlueBondScreenRequest(entity_id='TEST_request_entity_id', bond_id=None, issuer='Unknown Issuer', bond_amount_usd=500000000, use_of_proceeds_categories=None)"
      },
-     "ret": "None",
-     "dur_ms": 22.35,
+     "ret": "{'status': 'success', 'bond_id': 'BB-59353', 'issuer': 'Unknown Issuer', 'bond_amount_usd': 500000000.0, 'icma_alignment_score': 0.9125, 'overall_verdict': 'fully_aligned', 'eligible_categories': ['sustainable_fisheries', 'marine_conservat\u2026",
+     "dur_ms": 0.223,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 626,
        "name": "screen_blue_bond",
        "qual": "screen_blue_bond",
        "file": "services/blue_economy_engine.py",
-       "line": 335,
+       "line": 350,
        "args": {
         "bond_data": "{'entity_id': 'TEST_request_entity_id', 'bond_id': None, 'issuer': 'Unknown Issuer', 'bond_amount_usd': 500000000, 'use_of_proceeds_categories': None}"
        },
-       "ret": "None",
-       "dur_ms": 0.071,
+       "ret": "BlueBondScreeningResult(bond_id='BB-59353', issuer='Unknown Issuer', bond_amount_usd=500000000.0, icma_alignment_score=0.9125, eligible_categories=['sustainable_fisheries', 'marine_conservation', 'ocean_based_renewable_energy', 'coastal_re\u2026",
+       "dur_ms": 0.085,
        "sql": [],
        "error": null,
        "children": []
@@ -350,8 +370,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.902,
-   "node_count": 9,
+   "dur_ms": 4.058,
+   "node_count": 2,
    "provenance": [
     "computed"
    ],
@@ -373,14 +393,15 @@
      "poseidon_principles_aligned",
      "sea_pledge_eligible",
      "priority_pillars",
-     "reference_frameworks"
+     "reference_frameworks",
+     "data_flags"
     ],
-    "n_keys": 11
+    "n_keys": 12
    },
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 627,
      "name": "sof_assessment_endpoint",
      "qual": "sof_assessment_endpoint",
      "file": "api/v1/routes/blue_economy.py",
@@ -388,131 +409,25 @@
      "args": {
       "request": "SOFAssessmentRequest(entity_id='TEST_request_entity_id', entity_name=None, declared_sof_scores=None)"
      },
-     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'overall_sof_score': 0.6239, 'sof_tier': 'progressing', 'pillar_assessments': {'ocean_health': {'score': 0.6893, 'description': 'Reducing pollution, restoring ecosystems, address\u2026",
-     "dur_ms": 0.307,
+     "ret": "{'status': 'success', 'entity_id': 'TEST_request_entity_id', 'overall_sof_score': None, 'sof_tier': 'insufficient_data', 'pillar_assessments': {'ocean_health': {'score': None, 'description': 'Reducing pollution, restoring ecosystems, addre\u2026",
+     "dur_ms": 0.194,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 628,
        "name": "assess_sof_alignment",
        "qual": "assess_sof_alignment",
        "file": "services/blue_economy_engine.py",
-       "line": 662,
+       "line": 851,
        "args": {
         "entity_data": "{'entity_id': 'TEST_request_entity_id', 'entity_name': None, 'declared_sof_scores': None}"
        },
-       "ret": "{'entity_id': 'TEST_request_entity_id', 'overall_sof_score': 0.6239, 'sof_tier': 'progressing', 'pillar_assessments': {'ocean_health': {'score': 0.6893, 'description': 'Reducing pollution, restoring ecosystems, addressing ocean acidificati\u2026",
-       "dur_ms": 0.198,
+       "ret": "{'entity_id': 'TEST_request_entity_id', 'overall_sof_score': None, 'sof_tier': 'insufficient_data', 'pillar_assessments': {'ocean_health': {'score': None, 'description': 'Reducing pollution, restoring ecosystems, addressing ocean acidifica\u2026",
+       "dur_ms": 0.026,
        "sql": [],
        "error": null,
-       "children": [
-        {
-         "id": 10,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.151646",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 11,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.083",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 12,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.13354",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 13,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.121932",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 14,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.0975",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 15,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "0.036303999999999996",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 16,
-         "name": "<genexpr>",
-         "qual": "assess_sof_alignment.<locals>.<genexpr>",
-         "file": "services/blue_economy_engine.py",
-         "line": 678,
-         "args": {
-          ".0": "<dict_keyiterator object at 0x000001FB66C67830>"
-         },
-         "ret": "None",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
+       "children": []
       }
      ]
     }

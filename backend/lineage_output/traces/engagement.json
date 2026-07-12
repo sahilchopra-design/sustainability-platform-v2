@@ -1,10 +1,10 @@
 {
  "domain": "engagement",
  "meta": {
-  "ts": "2026-06-30T14:01:47",
+  "ts": "2026-07-05T19:14:42",
+  "endpoints": 9,
   "module": "api.v1.routes.engagement",
-  "router_prefix": "/api/v1/engagement",
-  "endpoints": 9
+  "router_prefix": "/api/v1/engagement"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2500.22,
+   "dur_ms": 675.082,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -30,7 +30,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_entities ( id SERIAL PRIMARY KEY, entity_name TEXT NOT NULL, lei TEXT, isin TEXT, sector_gics TEXT, country_iso2 TEXT, engagement_theme TEXT DEFAULT 'net_zero', engagement_strategy TEXT DEFAULT 'direct', priority_tier INTEGER DEFAULT 2, ca100_focus BOOLEAN DEFAULT FALSE, nzba_engagement BOOLEAN DEFAULT FALSE, engagement_lead TEXT, engagement_start_date DATE,\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 66.232,
+     "dur_ms": 73.886,
      "is_reference": false,
      "error": null
     },
@@ -39,7 +39,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_log ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, log_date DATE NOT NULL, interaction_type TEXT, milestone TEXT, outcome TEXT DEFAULT 'pending', next_action TEXT, next_action_date DATE, participants TEXT, counterparty_participants TEXT, created_by TEXT, created_at TIMESTAMP DEFAULT NOW() )\"",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 29.833,
+     "dur_ms": 30.353,
      "is_reference": false,
      "error": null
     },
@@ -48,7 +48,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_commitments ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, commitment_type TEXT, description TEXT, target_year INTEGER, target_value NUMERIC(12,4), target_unit TEXT, baseline_year INTEGER, status TEXT DEFAULT 'open', verification_body TEXT, verified BOOLEAN DEFAULT FALSE, notes TEXT, created_at TIMESTAMP DEFA\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 30.08,
+     "dur_ms": 30.377,
      "is_reference": false,
      "error": null
     },
@@ -57,7 +57,7 @@
      "sql": "'CREATE TABLE IF NOT EXISTS engagement_escalations ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, escalation_date DATE NOT NULL, escalation_type TEXT, trigger_reason TEXT, action_taken TEXT, resolution TEXT, resolved_at DATE, created_at TIMESTAMP DEFAULT NOW() )'",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 32.196,
+     "dur_ms": 29.809,
      "is_reference": false,
      "error": null
     },
@@ -71,7 +71,7 @@
       "engagement_log"
      ],
      "rowcount": 0,
-     "dur_ms": 202.094,
+     "dur_ms": 60.608,
      "is_reference": false,
      "error": null
     }
@@ -87,32 +87,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11066,
      "name": "list_entities",
      "qual": "list_entities",
      "file": "api/v1/routes/engagement.py",
      "line": 177,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D2324FB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A93B90>"
      },
      "ret": "[]",
-     "dur_ms": 2209.162,
+     "dur_ms": 647.382,
      "sql": [
       4
      ],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11067,
        "name": "_ensure_tables",
        "qual": "_ensure_tables",
        "file": "api/v1/routes/engagement.py",
        "line": 99,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D2324FB0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A93B90>"
        },
        "ret": "None",
-       "dur_ms": 1093.631,
+       "dur_ms": 388.784,
        "sql": [
         0,
         1,
@@ -132,7 +132,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "DataError: (psycopg2.errors.InvalidTextRepresentation) invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\nLINE 1: SELECT * FROM engagement_entities WHERE id='550e8400-e29b-41...\n                                                   ^\n\n[SQL: SELECT * FROM engagement_entities WHERE id=%(id)s]\n[parameters: {'id': '550e8400-e29b-41d4-a716-446655440001'}]\n(Background on this err",
-   "dur_ms": 5671.433,
+   "dur_ms": 648.322,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -146,7 +146,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_entities ( id SERIAL PRIMARY KEY, entity_name TEXT NOT NULL, lei TEXT, isin TEXT, sector_gics TEXT, country_iso2 TEXT, engagement_theme TEXT DEFAULT 'net_zero', engagement_strategy TEXT DEFAULT 'direct', priority_tier INTEGER DEFAULT 2, ca100_focus BOOLEAN DEFAULT FALSE, nzba_engagement BOOLEAN DEFAULT FALSE, engagement_lead TEXT, engagement_start_date DATE,\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 230.4,
+     "dur_ms": 55.99,
      "is_reference": false,
      "error": null
     },
@@ -155,7 +155,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_log ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, log_date DATE NOT NULL, interaction_type TEXT, milestone TEXT, outcome TEXT DEFAULT 'pending', next_action TEXT, next_action_date DATE, participants TEXT, counterparty_participants TEXT, created_by TEXT, created_at TIMESTAMP DEFAULT NOW() )\"",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 822.151,
+     "dur_ms": 27.633,
      "is_reference": false,
      "error": null
     },
@@ -164,7 +164,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_commitments ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, commitment_type TEXT, description TEXT, target_year INTEGER, target_value NUMERIC(12,4), target_unit TEXT, baseline_year INTEGER, status TEXT DEFAULT 'open', verification_body TEXT, verified BOOLEAN DEFAULT FALSE, notes TEXT, created_at TIMESTAMP DEFA\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 188.821,
+     "dur_ms": 27.903,
      "is_reference": false,
      "error": null
     },
@@ -173,7 +173,7 @@
      "sql": "'CREATE TABLE IF NOT EXISTS engagement_escalations ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, escalation_date DATE NOT NULL, escalation_type TEXT, trigger_reason TEXT, action_taken TEXT, resolution TEXT, resolved_at DATE, created_at TIMESTAMP DEFAULT NOW() )'",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 186.769,
+     "dur_ms": 29.23,
      "is_reference": false,
      "error": null
     },
@@ -184,7 +184,7 @@
       "engagement_entities"
      ],
      "rowcount": null,
-     "dur_ms": 220.894,
+     "dur_ms": 58.657,
      "is_reference": false,
      "error": "InvalidTextRepresentation('invalid input syntax for type integer: \"550e8400-e29b-41d4-a716-446655440001\"\\nLINE 1: SELECT * FROM engagement_entities WHERE id=\\'550e8400-e29b-41...\\n                   \u2026"
     }
@@ -197,33 +197,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11068,
      "name": "get_entity",
      "qual": "get_entity",
      "file": "api/v1/routes/engagement.py",
      "line": 234,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D12C5E20>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47651FD0>"
      },
      "ret": "None",
-     "dur_ms": 5629.807,
+     "dur_ms": 617.548,
      "sql": [
       4
      ],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11069,
        "name": "_ensure_tables",
        "qual": "_ensure_tables",
        "file": "api/v1/routes/engagement.py",
        "line": 99,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D12C5E20>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47651FD0>"
        },
        "ret": "None",
-       "dur_ms": 2810.938,
+       "dur_ms": 368.52,
        "sql": [
         0,
         1,
@@ -243,7 +243,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3880.345,
+   "dur_ms": 769.442,
    "node_count": 5,
    "provenance": [
     "real-db"
@@ -258,7 +258,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_entities ( id SERIAL PRIMARY KEY, entity_name TEXT NOT NULL, lei TEXT, isin TEXT, sector_gics TEXT, country_iso2 TEXT, engagement_theme TEXT DEFAULT 'net_zero', engagement_strategy TEXT DEFAULT 'direct', priority_tier INTEGER DEFAULT 2, ca100_focus BOOLEAN DEFAULT FALSE, nzba_engagement BOOLEAN DEFAULT FALSE, engagement_lead TEXT, engagement_start_date DATE,\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 801.843,
+     "dur_ms": 58.424,
      "is_reference": false,
      "error": null
     },
@@ -267,7 +267,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_log ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, log_date DATE NOT NULL, interaction_type TEXT, milestone TEXT, outcome TEXT DEFAULT 'pending', next_action TEXT, next_action_date DATE, participants TEXT, counterparty_participants TEXT, created_by TEXT, created_at TIMESTAMP DEFAULT NOW() )\"",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 42.144,
+     "dur_ms": 30.735,
      "is_reference": false,
      "error": null
     },
@@ -276,7 +276,7 @@
      "sql": "\"CREATE TABLE IF NOT EXISTS engagement_commitments ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, commitment_type TEXT, description TEXT, target_year INTEGER, target_value NUMERIC(12,4), target_unit TEXT, baseline_year INTEGER, status TEXT DEFAULT 'open', verification_body TEXT, verified BOOLEAN DEFAULT FALSE, notes TEXT, created_at TIMESTAMP DEFA\u2026",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 41.819,
+     "dur_ms": 29.689,
      "is_reference": false,
      "error": null
     },
@@ -285,7 +285,7 @@
      "sql": "'CREATE TABLE IF NOT EXISTS engagement_escalations ( id SERIAL PRIMARY KEY, entity_id INTEGER REFERENCES engagement_entities(id) ON DELETE CASCADE, escalation_date DATE NOT NULL, escalation_type TEXT, trigger_reason TEXT, action_taken TEXT, resolution TEXT, resolved_at DATE, created_at TIMESTAMP DEFAULT NOW() )'",
      "tables": [],
      "rowcount": -1,
-     "dur_ms": 33.679,
+     "dur_ms": 29.707,
      "is_reference": false,
      "error": null
     },
@@ -296,7 +296,7 @@
       "engagement_entities"
      ],
      "rowcount": 1,
-     "dur_ms": 853.839,
+     "dur_ms": 57.412,
      "is_reference": false,
      "error": null
     },
@@ -307,7 +307,7 @@
       "engagement_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 181.915,
+     "dur_ms": 31.111,
      "is_reference": false,
      "error": null
     },
@@ -318,7 +318,7 @@
       "engagement_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 59.689,
+     "dur_ms": 27.93,
      "is_reference": false,
      "error": null
     },
@@ -330,7 +330,7 @@
       "engagement_log"
      ],
      "rowcount": 0,
-     "dur_ms": 41.332,
+     "dur_ms": 36.962,
      "is_reference": false,
      "error": null
     }
@@ -351,16 +351,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11070,
      "name": "engagement_summary",
      "qual": "engagement_summary",
      "file": "api/v1/routes/engagement.py",
      "line": 350,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D24F1AC0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AD6A0>"
      },
      "ret": "{'totals': {'entity_count': 0, 'active': 0, 'escalated': 0, 'closed': 0, 'ca100_count': 0, 'avg_progress_pct': None, 'avg_baseline_temp_c': None, 'avg_current_temp_c': None, 'temp_delta_c': None}, 'by_theme': [], 'by_priority_tier': [], 'u\u2026",
-     "dur_ms": 3847.238,
+     "dur_ms": 741.184,
      "sql": [
       4,
       5,
@@ -370,16 +370,16 @@
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11071,
        "name": "_ensure_tables",
        "qual": "_ensure_tables",
        "file": "api/v1/routes/engagement.py",
        "line": 99,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001C9D24F1AC0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AD6A0>"
        },
        "ret": "None",
-       "dur_ms": 2353.543,
+       "dur_ms": 386.272,
        "sql": [
         0,
         1,
@@ -390,7 +390,7 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 11072,
        "name": "safe",
        "qual": "engagement_summary.<locals>.safe",
        "file": "api/v1/routes/engagement.py",
@@ -399,13 +399,13 @@
         "v": "None"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 11073,
        "name": "safe",
        "qual": "engagement_summary.<locals>.safe",
        "file": "api/v1/routes/engagement.py",
@@ -420,7 +420,7 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 11074,
        "name": "safe",
        "qual": "engagement_summary.<locals>.safe",
        "file": "api/v1/routes/engagement.py",

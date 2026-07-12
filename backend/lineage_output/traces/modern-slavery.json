@@ -1,10 +1,10 @@
 {
  "domain": "modern-slavery",
  "meta": {
-  "ts": "2026-06-30T14:03:12",
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 8,
   "module": "api.v1.routes.modern_slavery",
-  "router_prefix": "/api/v1/modern-slavery",
-  "endpoints": 8
+  "router_prefix": "/api/v1/modern-slavery"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.545,
+   "dur_ms": 0.336,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13015,
      "name": "ref_audit_schemes",
      "qual": "ref_audit_schemes",
      "file": "api/v1/routes/modern_slavery.py",
      "line": 165,
      "args": {},
      "ret": "{'count': 15, 'effectiveness_scale': {'very_high': 'Rigorous; unannounced; strong worker voice; certification with surveillance', 'high': 'Solid coverage; semi-announced; good corrective action follow-up', 'medium': 'Baseline compliance; a\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.768,
+   "dur_ms": 0.329,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13016,
      "name": "ref_high_risk_sectors",
      "qual": "ref_high_risk_sectors",
      "file": "api/v1/routes/modern_slavery.py",
      "line": 144,
      "args": {},
      "ret": "{'count': 24, 'note': 'Risk ratings are indicative based on ILO, ITUC, and U.S. DoL research', 'sectors': {'garments_textiles_bangladesh': {'sector': 'Garments & Textiles', 'geography': 'Bangladesh', 'forced_labour_risk': 'very_high', 'chi\u2026",
-     "dur_ms": 0.017,
+     "dur_ms": 0.014,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.709,
+   "dur_ms": 0.253,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -115,14 +115,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13017,
      "name": "ref_ilo_indicators",
      "qual": "ref_ilo_indicators",
      "file": "api/v1/routes/modern_slavery.py",
      "line": 115,
      "args": {},
      "ret": "{'source': 'ILO (2012) Hard to See, Harder to Count \u2014 Survey Guidelines', 'ilo_conventions': ['C29 Forced Labour Convention 1930', 'C105 Abolition of Forced Labour 1957'], 'count': 11, 'indicators': {'abuse_of_vulnerability': {'number': 1,\u2026",
-     "dur_ms": 0.044,
+     "dur_ms": 0.013,
      "sql": [],
      "error": null,
      "children": []
@@ -135,7 +135,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.283,
+   "dur_ms": 0.185,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -163,14 +163,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13018,
      "name": "ref_uflpa_criteria",
      "qual": "ref_uflpa_criteria",
      "file": "api/v1/routes/modern_slavery.py",
      "line": 188,
      "args": {},
      "ret": "{'legislation': 'Uyghur Forced Labor Prevention Act, Pub. L. 117-78', 'enacted': '2022-06-21', 'enforcing_body': 'U.S. Customs and Border Protection (CBP)', 'rebuttable_presumption': {'description': 'Any goods mined, produced, or manufactu\u2026",
-     "dur_ms": 0.013,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -183,7 +183,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'sector'",
-   "dur_ms": 0.338,
+   "dur_ms": 0.221,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -197,7 +197,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13019,
      "name": "assess_forced_labour",
      "qual": "assess_forced_labour",
      "file": "api/v1/routes/modern_slavery.py",
@@ -206,12 +206,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.071,
+     "dur_ms": 0.052,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 13020,
        "name": "assess_forced_labour_risk",
        "qual": "ModernSlaveryEngine.assess_forced_labour_risk",
        "file": "services/modern_slavery_engine.py",
@@ -220,7 +220,7 @@
         "entity_data": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.011,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -235,7 +235,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'covers_area_1_structure'",
-   "dur_ms": 0.778,
+   "dur_ms": 0.197,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -249,7 +249,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13021,
      "name": "evaluate_msa_statement",
      "qual": "evaluate_msa_statement",
      "file": "api/v1/routes/modern_slavery.py",
@@ -258,12 +258,12 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.13,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13022,
        "name": "evaluate_msa_statement",
        "qual": "ModernSlaveryEngine.evaluate_msa_statement",
        "file": "services/modern_slavery_engine.py",
@@ -272,7 +272,7 @@
         "statement": "'TEST_request'"
        },
        "ret": "None",
-       "dur_ms": 0.031,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
@@ -287,7 +287,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'suppliers'",
-   "dur_ms": 0.433,
+   "dur_ms": 0.161,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -301,7 +301,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13023,
      "name": "screen_supply_chain",
      "qual": "screen_supply_chain",
      "file": "api/v1/routes/modern_slavery.py",
@@ -310,7 +310,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.025,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []

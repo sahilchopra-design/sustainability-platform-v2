@@ -1,10 +1,10 @@
 {
  "domain": "sovereign-debt-climate",
  "meta": {
-  "ts": "2026-06-30T14:05:15",
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 10,
   "module": "api.v1.routes.sovereign_debt_climate",
-  "router_prefix": "/api/v1/sovereign-debt-climate",
-  "endpoints": 10
+  "router_prefix": "/api/v1/sovereign-debt-climate"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 5.003,
+   "dur_ms": 1.863,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40446,
      "name": "ref_crdc_triggers",
      "qual": "ref_crdc_triggers",
      "file": "api/v1/routes/sovereign_debt_climate.py",
      "line": 225,
      "args": {},
      "ret": "{'trigger_types': {'cyclone_wind_speed': {'description': 'Tropical cyclone maximum sustained wind speed', 'unit': 'km/h', 'typical_threshold': 119, 'deferred_period_months': 24, 'source': 'WMO / National Met Services', 'basis_risk': 'low'}\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.371,
+   "dur_ms": 1.214,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -77,14 +77,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40447,
      "name": "ref_dfn_frameworks",
      "qual": "ref_dfn_frameworks",
      "file": "api/v1/routes/sovereign_debt_climate.py",
      "line": 265,
      "args": {},
      "ret": "{'frameworks': {'bilateral': {'description': 'Creditor government to debtor swap with conservation earmark', 'precedents': ['Seychelles 2016 (TNC/NatWest)', 'Belize 2021 (TNC)'], 'discount_range_pct': [15, 40], 'conservation_commitment_min\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -97,7 +97,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.78,
+   "dur_ms": 1.555,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -120,14 +120,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40448,
      "name": "ref_imf_rst_eligible",
      "qual": "ref_imf_rst_eligible",
      "file": "api/v1/routes/sovereign_debt_climate.py",
      "line": 240,
      "args": {},
      "ret": "{'eligible_countries': {'BHS': {'access_limit_pct_quota': 150, 'reform_area': 'climate_resilience', 'approved': True}, 'BRB': {'access_limit_pct_quota': 150, 'reform_area': 'climate_resilience', 'approved': True}, 'CRI': {'access_limit_pct\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -140,7 +140,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.703,
+   "dur_ms": 1.446,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -162,7 +162,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 40449,
      "name": "ref_paris_club",
      "qual": "ref_paris_club",
      "file": "api/v1/routes/sovereign_debt_climate.py",
@@ -182,7 +182,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.019,
+   "dur_ms": 1.258,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -204,14 +204,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40450,
      "name": "ref_sids_list",
      "qual": "ref_sids_list",
      "file": "api/v1/routes/sovereign_debt_climate.py",
      "line": 213,
      "args": {},
      "ret": "{'sids': {'ATG': {'name': 'Antigua and Barbuda', 'vulnerability_score': 0.78, 'region': 'Caribbean', 'gdp_usd_bn': 1.7}, 'BHS': {'name': 'Bahamas', 'vulnerability_score': 0.71, 'region': 'Caribbean', 'gdp_usd_bn': 12.0}, 'BRB': {'name': 'B\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -221,10 +221,10 @@
   {
    "domain": "sovereign-debt-climate",
    "label": "POST /api/v1/sovereign-debt-climate/crdc-assessment",
-   "status": "failed",
-   "http_status": 500,
-   "error": "HTTPException: 500: float() argument must be a string or a real number, not 'NoneType'",
-   "dur_ms": 2.323,
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.432,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -234,11 +234,33 @@
    "inputs": {
     "request": "<CRDCRequest (mock)>"
    },
-   "output_summary": null,
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "country_iso",
+     "country_name",
+     "crdc_eligible",
+     "debt_amount_usd",
+     "trigger_type",
+     "trigger_threshold",
+     "trigger_probability_pct",
+     "climate_event_return_period_years",
+     "deferred_amount_usd",
+     "deferred_period_months",
+     "basis_risk_rating",
+     "debt_relief_score",
+     "implementation_cost_usd",
+     "recommendations",
+     "standard",
+     "trigger_reference"
+    ],
+    "n_keys": 17
+   },
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 40451,
      "name": "crdc_assessment_endpoint",
      "qual": "crdc_assessment_endpoint",
      "file": "api/v1/routes/sovereign_debt_climate.py",
@@ -246,23 +268,23 @@
      "args": {
       "request": "CRDCRequest(country_iso='TEST_request_country_iso', country_name=None, is_sids=False, is_ldc=False, debt_amount_usd=None, trigger_type='cyclone_wind_speed', trigger_threshold=None)"
      },
-     "ret": "None",
-     "dur_ms": 0.129,
+     "ret": "{'status': 'success', 'country_iso': 'TEST_request_country_iso', 'country_name': 'TEST_request_country_iso', 'crdc_eligible': True, 'debt_amount_usd': None, 'trigger_type': 'cyclone_wind_speed', 'trigger_threshold': 119.0, 'trigger_probabi\u2026",
+     "dur_ms": 0.119,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 40452,
        "name": "assess_crdc_eligibility",
        "qual": "assess_crdc_eligibility",
        "file": "services/sovereign_debt_climate_engine.py",
-       "line": 282,
+       "line": 309,
        "args": {
         "country_data": "{'country_iso': 'TEST_request_country_iso', 'country_name': None, 'is_sids': False, 'is_ldc': False}",
         "debt_terms": "{'debt_amount_usd': None, 'trigger_type': 'cyclone_wind_speed', 'trigger_threshold': None}"
        },
-       "ret": "None",
-       "dur_ms": 0.052,
+       "ret": "CRDCAssessment(country_iso='TEST_request_country_iso', country_name='TEST_request_country_iso', debt_amount_usd=None, crdc_eligible=True, trigger_type='cyclone_wind_speed', trigger_threshold=119.0, trigger_probability_pct=13.33, deferred_a\u2026",
+       "dur_ms": 0.047,
        "sql": [],
        "error": null,
        "children": []

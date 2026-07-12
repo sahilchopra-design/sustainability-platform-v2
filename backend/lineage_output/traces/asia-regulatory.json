@@ -1,10 +1,10 @@
 {
  "domain": "asia-regulatory",
  "meta": {
-  "ts": "2026-06-30T13:59:22",
+  "ts": "2026-07-05T19:10:38",
+  "endpoints": 20,
   "module": "api.v1.routes.asia_regulatory",
-  "router_prefix": "/api/v1/asia-regulatory",
-  "endpoints": 20
+  "router_prefix": "/api/v1/asia-regulatory"
  },
  "transactions": [
   {
@@ -13,8 +13,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 27.63,
-   "node_count": 11,
+   "dur_ms": 1.402,
+   "node_count": 10,
    "provenance": [
     "computed"
    ],
@@ -31,121 +31,108 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 368,
      "name": "list_asean_focus_areas",
      "qual": "list_asean_focus_areas",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 170,
      "args": {},
      "ret": "{'focus_areas': ['Climate Change Mitigation', 'Climate Change Adaptation', 'Protection of Healthy Ecosystems and Biodiversity', 'Resource Resilience and the Transition to a Circular Economy', 'Social Inclusion']}",
-     "dur_ms": 27.409,
+     "dur_ms": 1.243,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 369,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D90018B0>",
-       "dur_ms": 27.378,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FD7F0>",
+       "dur_ms": 1.22,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
-         "name": "<module>",
-         "qual": "<module>",
-         "file": "services/__init__.py",
-         "line": 1,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 4,
+         "id": 370,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/asia_regulatory_engine.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.869,
+         "dur_ms": 0.189,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 5,
+           "id": 371,
            "name": "BRSRCoreEngine",
            "qual": "BRSRCoreEngine",
            "file": "services/asia_regulatory_engine.py",
            "line": 78,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.012,
+           "dur_ms": 0.006,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 6,
+           "id": 372,
            "name": "HKMAEngine",
            "qual": "HKMAEngine",
            "file": "services/asia_regulatory_engine.py",
            "line": 280,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.01,
+           "dur_ms": 0.007,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 7,
+           "id": 373,
            "name": "BOJScenarioEngine",
            "qual": "BOJScenarioEngine",
            "file": "services/asia_regulatory_engine.py",
            "line": 414,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.011,
+           "dur_ms": 0.008,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 8,
+           "id": 374,
            "name": "ASEANTaxonomyEngine",
            "qual": "ASEANTaxonomyEngine",
            "file": "services/asia_regulatory_engine.py",
            "line": 543,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.004,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 9,
+           "id": 375,
            "name": "PBoCGreenFinanceEngine",
            "qual": "PBoCGreenFinanceEngine",
            "file": "services/asia_regulatory_engine.py",
            "line": 634,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 10,
+           "id": 376,
            "name": "AsiaRegulatoryEngine",
            "qual": "AsiaRegulatoryEngine",
            "file": "services/asia_regulatory_engine.py",
@@ -160,14 +147,14 @@
          ]
         },
         {
-         "id": 11,
+         "id": 377,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
@@ -184,8 +171,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1008.606,
-   "node_count": 6,
+   "dur_ms": 623.305,
+   "node_count": 5,
    "provenance": [
     "db-empty"
    ],
@@ -202,7 +189,7 @@
       "asean_taxonomy_activities"
      ],
      "rowcount": 0,
-     "dur_ms": 207.173,
+     "dur_ms": 74.754,
      "is_reference": false,
      "error": null
     }
@@ -225,7 +212,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 378,
      "name": "get_asean_member_state_coverage",
      "qual": "get_asean_member_state_coverage",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -234,31 +221,31 @@
       "country_code": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'country_code': '550E8400-E29B-41D4-A716-446655440001', 'total_activities': 0, 'green_pct': 0.0, 'amber_pct': 0.0, 'red_pct': 100.0, 'activities': []}",
-     "dur_ms": 1008.3,
+     "dur_ms": 623.172,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 379,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D9001880>",
-       "dur_ms": 0.028,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FEC90>",
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 14,
+         "id": 380,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.005,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -266,7 +253,7 @@
        ]
       },
       {
-       "id": 15,
+       "id": 381,
        "name": "get_member_state_coverage",
        "qual": "ASEANTaxonomyEngine.get_member_state_coverage",
        "file": "services/asia_regulatory_engine.py",
@@ -275,12 +262,12 @@
         "country_code": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'country_code': '550E8400-E29B-41D4-A716-446655440001', 'total_activities': 0, 'green_pct': 0.0, 'amber_pct': 0.0, 'red_pct': 100.0, 'activities': []}",
-       "dur_ms": 1008.219,
+       "dur_ms": 623.118,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 16,
+         "id": 382,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -290,26 +277,12 @@
           "params": "{'cc': '550E8400-E29B-41D4-A716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 1008.033,
+         "dur_ms": 623.048,
          "sql": [
           0
          ],
          "error": null,
-         "children": [
-          {
-           "id": 17,
-           "name": "<module>",
-           "qual": "<module>",
-           "file": "db/postgres.py",
-           "line": 1,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 1.487,
-           "sql": [],
-           "error": null,
-           "children": []
-          }
-         ]
+         "children": []
         }
        ]
       }
@@ -323,7 +296,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.226,
+   "dur_ms": 0.184,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -341,38 +314,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 383,
      "name": "list_asean_member_states",
      "qual": "list_asean_member_states",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 164,
      "args": {},
      "ret": "{'member_states': ['BN', 'KH', 'ID', 'LA', 'MY', 'MM', 'PH', 'SG', 'TH', 'VN']}",
-     "dur_ms": 0.051,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 19,
+       "id": 384,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913AB70>",
-       "dur_ms": 0.026,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FF0E0>",
+       "dur_ms": 0.024,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 20,
+         "id": 385,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -389,7 +362,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 999.848,
+   "dur_ms": 566.757,
    "node_count": 6,
    "provenance": [
     "db-empty"
@@ -406,7 +379,7 @@
       "asean_taxonomy_activities"
      ],
      "rowcount": 0,
-     "dur_ms": 62.353,
+     "dur_ms": 57.247,
      "is_reference": false,
      "error": null
     },
@@ -417,7 +390,7 @@
       "asean_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 66.172,
+     "dur_ms": 59.477,
      "is_reference": false,
      "error": null
     }
@@ -436,7 +409,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 386,
      "name": "get_asean_entity_taxonomy",
      "qual": "get_asean_entity_taxonomy",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -445,31 +418,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'ASEAN entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 999.68,
+     "dur_ms": 566.61,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 22,
+       "id": 387,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913A480>",
-       "dur_ms": 0.02,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FFA40>",
+       "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 23,
+         "id": 388,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -477,7 +450,7 @@
        ]
       },
       {
-       "id": 24,
+       "id": 389,
        "name": "get_entity_taxonomy",
        "qual": "ASEANTaxonomyEngine.get_entity_taxonomy",
        "file": "services/asia_regulatory_engine.py",
@@ -486,12 +459,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'error': 'ASEAN entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 999.615,
+       "dur_ms": 566.552,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 25,
+         "id": 390,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -501,7 +474,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 679.164,
+         "dur_ms": 289.996,
          "sql": [
           0
          ],
@@ -509,7 +482,7 @@
          "children": []
         },
         {
-         "id": 26,
+         "id": 391,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -519,7 +492,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 320.32,
+         "dur_ms": 276.391,
          "sql": [
           1
          ],
@@ -538,7 +511,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.283,
+   "dur_ms": 0.332,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -560,7 +533,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 27,
+     "id": 392,
      "name": "get_boj_sector_impact",
      "qual": "get_boj_sector_impact",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -569,31 +542,31 @@
       "sector": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'scenarios': {'Transition_1.5C': {}, 'Transition_2C': {}, 'Physical_2C': {}, 'Physical_4C': {}}, 'methodology': 'Bank of Japan Climate Scenario Analysis 2023'}",
-     "dur_ms": 0.104,
+     "dur_ms": 0.093,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 28,
+       "id": 393,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913B4A0>",
-       "dur_ms": 0.043,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FD4F0>",
+       "dur_ms": 0.029,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 29,
+         "id": 394,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
@@ -601,7 +574,7 @@
        ]
       },
       {
-       "id": 30,
+       "id": 395,
        "name": "get_sector_impact",
        "qual": "BOJScenarioEngine.get_sector_impact",
        "file": "services/asia_regulatory_engine.py",
@@ -610,7 +583,7 @@
         "sector": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'scenarios': {'Transition_1.5C': {}, 'Transition_2C': {}, 'Physical_2C': {}, 'Physical_4C': {}}, 'methodology': 'Bank of Japan Climate Scenario Analysis 2023'}",
-       "dur_ms": 0.013,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
@@ -625,7 +598,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 340.795,
+   "dur_ms": 295.348,
    "node_count": 6,
    "provenance": [
     "db-empty"
@@ -641,7 +614,7 @@
       "boj_scenario_results"
      ],
      "rowcount": 0,
-     "dur_ms": 72.946,
+     "dur_ms": 64.547,
      "is_reference": false,
      "error": null
     }
@@ -662,7 +635,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 31,
+     "id": 396,
      "name": "get_boj_entity_scenarios",
      "qual": "get_boj_entity_scenarios",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -671,31 +644,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'entity_id': '550e8400-e29b-41d4-a716-446655440001', 'source': 'reference_table', 'results': [{'scenario_name': 'Transition_1.5C', 'scenario_type': 'transition', 'warming_pathway': '1.5C', 'time_horizon': '2030', 'sector': 'Energy', 'pd_c\u2026",
-     "dur_ms": 340.548,
+     "dur_ms": 295.16,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 32,
+       "id": 397,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913B4A0>",
-       "dur_ms": 0.017,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FDDF0>",
+       "dur_ms": 0.014,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 33,
+         "id": 398,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -703,7 +676,7 @@
        ]
       },
       {
-       "id": 34,
+       "id": 399,
        "name": "get_entity_scenarios",
        "qual": "BOJScenarioEngine.get_entity_scenarios",
        "file": "services/asia_regulatory_engine.py",
@@ -712,12 +685,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'entity_id': '550e8400-e29b-41d4-a716-446655440001', 'source': 'reference_table', 'results': [{'scenario_name': 'Transition_1.5C', 'scenario_type': 'transition', 'warming_pathway': '1.5C', 'time_horizon': '2030', 'sector': 'Energy', 'pd_c\u2026",
-       "dur_ms": 340.396,
+       "dur_ms": 295.057,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 35,
+         "id": 400,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -727,7 +700,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 339.897,
+         "dur_ms": 294.81,
          "sql": [
           0
          ],
@@ -735,7 +708,7 @@
          "children": []
         },
         {
-         "id": 36,
+         "id": 401,
          "name": "_build_reference_output",
          "qual": "BOJScenarioEngine._build_reference_output",
          "file": "services/asia_regulatory_engine.py",
@@ -744,7 +717,7 @@
           "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
          },
          "ret": "{'entity_id': '550e8400-e29b-41d4-a716-446655440001', 'source': 'reference_table', 'results': [{'scenario_name': 'Transition_1.5C', 'scenario_type': 'transition', 'warming_pathway': '1.5C', 'time_horizon': '2030', 'sector': 'Energy', 'pd_c\u2026",
-         "dur_ms": 0.173,
+         "dur_ms": 0.059,
          "sql": [],
          "error": null,
          "children": []
@@ -761,7 +734,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2039.981,
+   "dur_ms": 311.855,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -777,7 +750,7 @@
       "brsr_disclosures"
      ],
      "rowcount": 0,
-     "dur_ms": 653.563,
+     "dur_ms": 82.236,
      "is_reference": false,
      "error": null
     }
@@ -795,38 +768,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 402,
      "name": "brsr_top_1000_summary",
      "qual": "brsr_top_1000_summary",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 41,
      "args": {},
      "ret": "{'total_entities': 0, 'top_reporters': [], 'disclosures': []}",
-     "dur_ms": 2039.768,
+     "dur_ms": 311.703,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 38,
+       "id": 403,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913B500>",
-       "dur_ms": 0.037,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D47207CE0>",
+       "dur_ms": 0.022,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 39,
+         "id": 404,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -834,19 +807,19 @@
        ]
       },
       {
-       "id": 40,
+       "id": 405,
        "name": "get_top_1000_summary",
        "qual": "BRSRCoreEngine.get_top_1000_summary",
        "file": "services/asia_regulatory_engine.py",
        "line": 185,
        "args": {},
        "ret": "{'total_entities': 0, 'top_reporters': [], 'disclosures': []}",
-       "dur_ms": 2039.668,
+       "dur_ms": 311.639,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 41,
+         "id": 406,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -856,7 +829,7 @@
           "params": "None"
          },
          "ret": "[]",
-         "dur_ms": 2039.588,
+         "dur_ms": 311.581,
          "sql": [
           0
          ],
@@ -875,7 +848,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2285.314,
+   "dur_ms": 297.364,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -891,7 +864,7 @@
       "brsr_disclosures"
      ],
      "rowcount": 0,
-     "dur_ms": 1292.032,
+     "dur_ms": 63.897,
      "is_reference": false,
      "error": null
     }
@@ -910,7 +883,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 42,
+     "id": 407,
      "name": "get_brsr_disclosure",
      "qual": "get_brsr_disclosure",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -919,31 +892,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'No BRSR disclosure found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 2285.07,
+     "dur_ms": 297.196,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 43,
+       "id": 408,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913BFE0>",
-       "dur_ms": 0.037,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D470B3710>",
+       "dur_ms": 0.024,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 44,
+         "id": 409,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.005,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -951,7 +924,7 @@
        ]
       },
       {
-       "id": 45,
+       "id": 410,
        "name": "get_brsr_disclosure",
        "qual": "BRSRCoreEngine.get_brsr_disclosure",
        "file": "services/asia_regulatory_engine.py",
@@ -960,12 +933,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'error': 'No BRSR disclosure found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 2284.979,
+       "dur_ms": 297.127,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 46,
+         "id": 411,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -975,7 +948,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001', 'name': '%550e8400-e29b-41d4-a716-446655440001%'}"
          },
          "ret": "[]",
-         "dur_ms": 2284.917,
+         "dur_ms": 297.066,
          "sql": [
           0
          ],
@@ -994,7 +967,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1506.308,
+   "dur_ms": 304.26,
    "node_count": 6,
    "provenance": [
     "db-empty"
@@ -1010,7 +983,7 @@
       "brsr_disclosures"
      ],
      "rowcount": 0,
-     "dur_ms": 64.149,
+     "dur_ms": 63.407,
      "is_reference": false,
      "error": null
     }
@@ -1029,7 +1002,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 47,
+     "id": 412,
      "name": "get_brsr_scorecard",
      "qual": "get_brsr_scorecard",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -1038,31 +1011,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'No BRSR disclosure found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 1506.078,
+     "dur_ms": 304.091,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 48,
+       "id": 413,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D913B8F0>",
-       "dur_ms": 0.024,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D4716D100>",
+       "dur_ms": 0.023,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 49,
+         "id": 414,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
@@ -1070,7 +1043,7 @@
        ]
       },
       {
-       "id": 50,
+       "id": 415,
        "name": "get_brsr_scorecard",
        "qual": "BRSRCoreEngine.get_brsr_scorecard",
        "file": "services/asia_regulatory_engine.py",
@@ -1079,12 +1052,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'error': 'No BRSR disclosure found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 1506.004,
+       "dur_ms": 304.024,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 51,
+         "id": 416,
          "name": "get_brsr_disclosure",
          "qual": "BRSRCoreEngine.get_brsr_disclosure",
          "file": "services/asia_regulatory_engine.py",
@@ -1093,12 +1066,12 @@
           "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
          },
          "ret": "{'error': 'No BRSR disclosure found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-         "dur_ms": 1505.979,
+         "dur_ms": 304.005,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 52,
+           "id": 417,
            "name": "_exec_read",
            "qual": "_exec_read",
            "file": "services/asia_regulatory_engine.py",
@@ -1108,7 +1081,7 @@
             "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001', 'name': '%550e8400-e29b-41d4-a716-446655440001%'}"
            },
            "ret": "[]",
-           "dur_ms": 1505.878,
+           "dur_ms": 303.941,
            "sql": [
             0
            ],
@@ -1129,7 +1102,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 27.941,
+   "dur_ms": 1.807,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -1155,7 +1128,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 53,
+     "id": 418,
      "name": "cbi_certified_bonds",
      "qual": "cbi_certified_bonds",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -1168,43 +1141,43 @@
       "issuer": "None"
      },
      "ret": "{'source': 'reference_snapshot', 'count': 20, 'bonds': [{'isin': 'XS2600001234', 'issuer': 'EIB', 'amount_usd_mn': 1500.0, 'label': 'CBI Certified', 'date': '2025-11-15', 'sector': 'Transport', 'country': 'EU', 'currency': 'EUR'}, {'isin':\u2026",
-     "dur_ms": 27.395,
+     "dur_ms": 1.561,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 54,
+       "id": 419,
        "name": "_cbi",
        "qual": "_cbi",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 31,
        "args": {},
-       "ret": "<services.cbi_data_client.CBIDataClient object at 0x000001B6D913B4A0>",
-       "dur_ms": 26.288,
+       "ret": "<services.cbi_data_client.CBIDataClient object at 0x0000013D475FF2F0>",
+       "dur_ms": 1.228,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 55,
+         "id": 420,
          "name": "<module>",
          "qual": "<module>",
          "file": "services/cbi_data_client.py",
          "line": 1,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.305,
+         "dur_ms": 0.084,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 56,
+           "id": 421,
            "name": "CBIDataClient",
            "qual": "CBIDataClient",
            "file": "services/cbi_data_client.py",
            "line": 181,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.024,
+           "dur_ms": 0.007,
            "sql": [],
            "error": null,
            "children": []
@@ -1212,7 +1185,7 @@
          ]
         },
         {
-         "id": 57,
+         "id": 422,
          "name": "__init__",
          "qual": "CBIDataClient.__init__",
          "file": "services/cbi_data_client.py",
@@ -1221,7 +1194,7 @@
           "timeout": "10"
          },
          "ret": "None",
-         "dur_ms": 0.006,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -1229,7 +1202,7 @@
        ]
       },
       {
-       "id": 58,
+       "id": 423,
        "name": "get_certified_bonds",
        "qual": "CBIDataClient.get_certified_bonds",
        "file": "services/cbi_data_client.py",
@@ -1242,12 +1215,12 @@
         "issuer": "None"
        },
        "ret": "{'source': 'reference_snapshot', 'count': 20, 'bonds': [{'isin': 'XS2600001234', 'issuer': 'EIB', 'amount_usd_mn': 1500.0, 'label': 'CBI Certified', 'date': '2025-11-15', 'sector': 'Transport', 'country': 'EU', 'currency': 'EUR'}, {'isin':\u2026",
-       "dur_ms": 0.906,
+       "dur_ms": 0.252,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 59,
+         "id": 424,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/cbi_data_client.py",
@@ -1257,19 +1230,19 @@
           "params": "{'limit': 50}"
          },
          "ret": "[]",
-         "dur_ms": 0.844,
+         "dur_ms": 0.232,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 60,
+           "id": 425,
            "name": "_get_db",
            "qual": "_get_db",
            "file": "services/cbi_data_client.py",
            "line": 35,
            "args": {},
            "ret": "None",
-           "dur_ms": 0.807,
+           "dur_ms": 0.219,
            "sql": [],
            "error": null,
            "children": []
@@ -1288,7 +1261,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 379.227,
+   "dur_ms": 314.789,
    "node_count": 9,
    "provenance": [
     "computed"
@@ -1323,31 +1296,31 @@
    "truncated": [],
    "tree": [
     {
-     "id": 61,
+     "id": 426,
      "name": "cbi_market_overview",
      "qual": "cbi_market_overview",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 255,
      "args": {},
      "ret": "{'snapshot_date': '2025-12-31', 'total_issuance_usd_bn': 5200.0, 'green_usd_bn': 3100.0, 'social_usd_bn': 600.0, 'sustainability_usd_bn': 700.0, 'sll_usd_bn': 400.0, 'slb_usd_bn': 350.0, 'transition_usd_bn': 50.0, 'cbi_certified_usd_bn': 1\u2026",
-     "dur_ms": 378.839,
+     "dur_ms": 314.652,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 62,
+       "id": 427,
        "name": "_cbi",
        "qual": "_cbi",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 31,
        "args": {},
-       "ret": "<services.cbi_data_client.CBIDataClient object at 0x000001B6D9181790>",
-       "dur_ms": 0.046,
+       "ret": "<services.cbi_data_client.CBIDataClient object at 0x0000013D475AEA20>",
+       "dur_ms": 0.017,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 63,
+         "id": 428,
          "name": "__init__",
          "qual": "CBIDataClient.__init__",
          "file": "services/cbi_data_client.py",
@@ -1356,7 +1329,7 @@
           "timeout": "10"
          },
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -1364,7 +1337,7 @@
        ]
       },
       {
-       "id": 64,
+       "id": 429,
        "name": "get_market_overview",
        "qual": "CBIDataClient.get_market_overview",
        "file": "services/cbi_data_client.py",
@@ -1373,24 +1346,24 @@
         "force_refresh": "False"
        },
        "ret": "{'snapshot_date': '2025-12-31', 'total_issuance_usd_bn': 5200.0, 'green_usd_bn': 3100.0, 'social_usd_bn': 600.0, 'sustainability_usd_bn': 700.0, 'sll_usd_bn': 400.0, 'slb_usd_bn': 350.0, 'transition_usd_bn': 50.0, 'cbi_certified_usd_bn': 1\u2026",
-       "dur_ms": 378.656,
+       "dur_ms": 314.579,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 65,
+         "id": 430,
          "name": "_get_latest_snapshot",
          "qual": "CBIDataClient._get_latest_snapshot",
          "file": "services/cbi_data_client.py",
          "line": 406,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.787,
+         "dur_ms": 0.2,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 66,
+           "id": 431,
            "name": "_exec_read",
            "qual": "_exec_read",
            "file": "services/cbi_data_client.py",
@@ -1400,19 +1373,19 @@
             "params": "None"
            },
            "ret": "[]",
-           "dur_ms": 0.748,
+           "dur_ms": 0.186,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 67,
+             "id": 432,
              "name": "_get_db",
              "qual": "_get_db",
              "file": "services/cbi_data_client.py",
              "line": 35,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.715,
+             "dur_ms": 0.174,
              "sql": [],
              "error": null,
              "children": []
@@ -1422,20 +1395,20 @@
          ]
         },
         {
-         "id": 68,
+         "id": 433,
          "name": "_fetch_live_market",
          "qual": "CBIDataClient._fetch_live_market",
          "file": "services/cbi_data_client.py",
          "line": 305,
          "args": {},
          "ret": "None",
-         "dur_ms": 377.503,
+         "dur_ms": 314.192,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 69,
+         "id": 434,
          "name": "_format_overview",
          "qual": "CBIDataClient._format_overview",
          "file": "services/cbi_data_client.py",
@@ -1444,7 +1417,7 @@
           "data": "{'snapshot_date': '2025-12-31', 'total_issuance_usd_bn': 5200.0, 'green_usd_bn': 3100.0, 'social_usd_bn': 600.0, 'sustainability_usd_bn': 700.0, 'sll_usd_bn': 400.0, 'slb_usd_bn': 350.0, 'transition_usd_bn': 50.0, 'cbi_certified_usd_bn': 1\u2026"
          },
          "ret": "{'snapshot_date': '2025-12-31', 'total_issuance_usd_bn': 5200.0, 'green_usd_bn': 3100.0, 'social_usd_bn': 600.0, 'sustainability_usd_bn': 700.0, 'sll_usd_bn': 400.0, 'slb_usd_bn': 350.0, 'transition_usd_bn': 50.0, 'cbi_certified_usd_bn': 1\u2026",
-         "dur_ms": 0.019,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
@@ -1461,7 +1434,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.078,
+   "dur_ms": 0.591,
    "node_count": 7,
    "provenance": [
     "computed"
@@ -1487,31 +1460,31 @@
    "truncated": [],
    "tree": [
     {
-     "id": 70,
+     "id": 435,
      "name": "cbi_pricing_report",
      "qual": "cbi_pricing_report",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 312,
      "args": {},
      "ret": "{'total_market_usd_bn': 5200.0, 'cbi_certified_usd_bn': 1250.0, 'cbi_certified_share_pct': 24.0, 'avg_greenium_bps': -3.5, 'avg_oversubscription_ratio': 3.2, 'ytd_issuance_usd_bn': 900.0, 'ytd_deal_count': 3800, 'snapshot_date': '2025-12-3\u2026",
-     "dur_ms": 0.884,
+     "dur_ms": 0.467,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 71,
+       "id": 436,
        "name": "_cbi",
        "qual": "_cbi",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 31,
        "args": {},
-       "ret": "<services.cbi_data_client.CBIDataClient object at 0x000001B6D9181880>",
-       "dur_ms": 0.029,
+       "ret": "<services.cbi_data_client.CBIDataClient object at 0x0000013D46CCFD10>",
+       "dur_ms": 0.021,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 72,
+         "id": 437,
          "name": "__init__",
          "qual": "CBIDataClient.__init__",
          "file": "services/cbi_data_client.py",
@@ -1520,7 +1493,7 @@
           "timeout": "10"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -1528,31 +1501,31 @@
        ]
       },
       {
-       "id": 73,
+       "id": 438,
        "name": "get_pricing_report",
        "qual": "CBIDataClient.get_pricing_report",
        "file": "services/cbi_data_client.py",
        "line": 285,
        "args": {},
        "ret": "{'total_market_usd_bn': 5200.0, 'cbi_certified_usd_bn': 1250.0, 'cbi_certified_share_pct': 24.0, 'avg_greenium_bps': -3.5, 'avg_oversubscription_ratio': 3.2, 'ytd_issuance_usd_bn': 900.0, 'ytd_deal_count': 3800, 'snapshot_date': '2025-12-3\u2026",
-       "dur_ms": 0.796,
+       "dur_ms": 0.408,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 74,
+         "id": 439,
          "name": "_get_latest_snapshot",
          "qual": "CBIDataClient._get_latest_snapshot",
          "file": "services/cbi_data_client.py",
          "line": 406,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.597,
+         "dur_ms": 0.377,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 75,
+           "id": 440,
            "name": "_exec_read",
            "qual": "_exec_read",
            "file": "services/cbi_data_client.py",
@@ -1562,19 +1535,19 @@
             "params": "None"
            },
            "ret": "[]",
-           "dur_ms": 0.576,
+           "dur_ms": 0.358,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 76,
+             "id": 441,
              "name": "_get_db",
              "qual": "_get_db",
              "file": "services/cbi_data_client.py",
              "line": 35,
              "args": {},
              "ret": "None",
-             "dur_ms": 0.559,
+             "dur_ms": 0.345,
              "sql": [],
              "error": null,
              "children": []
@@ -1595,7 +1568,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.248,
+   "dur_ms": 0.167,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -1614,31 +1587,31 @@
    "truncated": [],
    "tree": [
     {
-     "id": 77,
+     "id": 442,
      "name": "cbi_sector_criteria",
      "qual": "cbi_sector_criteria",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 303,
      "args": {},
      "ret": "{'sectors': {'Energy': {'thresholds': {'solar_pv_kgco2e_kwh': 0.05, 'wind_kgco2e_kwh': 0.05, 'hydro_kgco2e_kwh': 0.05}, 'excluded': ['coal', 'oil', 'unabated_gas'], 'notes': 'CBI Climate Bonds Taxonomy \u2014 Energy sector criteria v2.1 (2024)'\u2026",
-     "dur_ms": 0.084,
+     "dur_ms": 0.066,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 78,
+       "id": 443,
        "name": "_cbi",
        "qual": "_cbi",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 31,
        "args": {},
-       "ret": "<services.cbi_data_client.CBIDataClient object at 0x000001B6D91BB020>",
-       "dur_ms": 0.022,
+       "ret": "<services.cbi_data_client.CBIDataClient object at 0x0000013D46629850>",
+       "dur_ms": 0.017,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 79,
+         "id": 444,
          "name": "__init__",
          "qual": "CBIDataClient.__init__",
          "file": "services/cbi_data_client.py",
@@ -1647,7 +1620,7 @@
           "timeout": "10"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -1655,14 +1628,14 @@
        ]
       },
       {
-       "id": 80,
+       "id": 445,
        "name": "get_sector_criteria",
        "qual": "CBIDataClient.get_sector_criteria",
        "file": "services/cbi_data_client.py",
        "line": 282,
        "args": {},
        "ret": "{'sectors': {'Energy': {'thresholds': {'solar_pv_kgco2e_kwh': 0.05, 'wind_kgco2e_kwh': 0.05, 'hydro_kgco2e_kwh': 0.05}, 'excluded': ['coal', 'oil', 'unabated_gas'], 'notes': 'CBI Climate Bonds Taxonomy \u2014 Energy sector criteria v2.1 (2024)'\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -1677,7 +1650,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 889.299,
+   "dur_ms": 310.101,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -1695,7 +1668,7 @@
       "hkma_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 69.988,
+     "dur_ms": 78.081,
      "is_reference": false,
      "error": null
     }
@@ -1712,38 +1685,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 81,
+     "id": 446,
      "name": "hkma_sector_benchmark",
      "qual": "hkma_sector_benchmark",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 86,
      "args": {},
-     "ret": "{'benchmark_by_type': [], 'as_of': '2026-06-30'}",
-     "dur_ms": 889.163,
+     "ret": "{'benchmark_by_type': [], 'as_of': '2026-07-05'}",
+     "dur_ms": 309.989,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 82,
+       "id": 447,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D91BAB10>",
-       "dur_ms": 0.022,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D47137290>",
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 83,
+         "id": 448,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -1751,19 +1724,19 @@
        ]
       },
       {
-       "id": 84,
+       "id": 449,
        "name": "get_sector_benchmark",
        "qual": "HKMAEngine.get_sector_benchmark",
        "file": "services/asia_regulatory_engine.py",
        "line": 360,
        "args": {},
-       "ret": "{'benchmark_by_type': [], 'as_of': '2026-06-30'}",
-       "dur_ms": 889.094,
+       "ret": "{'benchmark_by_type': [], 'as_of': '2026-07-05'}",
+       "dur_ms": 309.938,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 85,
+         "id": 450,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -1773,7 +1746,7 @@
           "params": "None"
          },
          "ret": "[]",
-         "dur_ms": 888.926,
+         "dur_ms": 309.853,
          "sql": [
           0
          ],
@@ -1792,7 +1765,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 620.517,
+   "dur_ms": 297.584,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -1810,7 +1783,7 @@
       "hkma_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 65.954,
+     "dur_ms": 60.861,
      "is_reference": false,
      "error": null
     }
@@ -1829,7 +1802,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 86,
+     "id": 451,
      "name": "get_hkma_assessment",
      "qual": "get_hkma_assessment",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -1838,31 +1811,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'No HKMA entity found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 619.171,
+     "dur_ms": 297.379,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 87,
+       "id": 452,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D91BB080>",
-       "dur_ms": 0.045,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D46D437A0>",
+       "dur_ms": 0.025,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 88,
+         "id": 453,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -1870,7 +1843,7 @@
        ]
       },
       {
-       "id": 89,
+       "id": 454,
        "name": "get_assessment",
        "qual": "HKMAEngine.get_assessment",
        "file": "services/asia_regulatory_engine.py",
@@ -1879,12 +1852,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'error': 'No HKMA entity found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 619.036,
+       "dur_ms": 297.305,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 90,
+         "id": 455,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -1894,7 +1867,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 618.96,
+         "dur_ms": 297.24,
          "sql": [
           0
          ],
@@ -1913,7 +1886,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 315.374,
+   "dur_ms": 330.556,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -1929,7 +1902,7 @@
       "pboc_green_finance_records"
      ],
      "rowcount": 0,
-     "dur_ms": 75.578,
+     "dur_ms": 87.911,
      "is_reference": false,
      "error": null
     }
@@ -1947,38 +1920,38 @@
    "truncated": [],
    "tree": [
     {
-     "id": 91,
+     "id": 456,
      "name": "pboc_gbepc_catalogue",
      "qual": "pboc_gbepc_catalogue",
      "file": "api/v1/routes/asia_regulatory.py",
      "line": 208,
      "args": {},
      "ret": "{'catalogue_version': 'GBEPC 2021', 'categories': [], 'category_labels': {'CE': 'Clean Energy', 'CT': 'Clean Transportation', 'EC': 'Energy Conservation and Environmental Protection', 'EE': 'Ecological Environment', 'GU': 'Green Upgrading \u2026",
-     "dur_ms": 315.136,
+     "dur_ms": 330.328,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 92,
+       "id": 457,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D91F42F0>",
-       "dur_ms": 0.034,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D471E5F70>",
+       "dur_ms": 0.03,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 93,
+         "id": 458,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.003,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
@@ -1986,19 +1959,19 @@
        ]
       },
       {
-       "id": 94,
+       "id": 459,
        "name": "get_gbepc_catalogue",
        "qual": "PBoCGreenFinanceEngine.get_gbepc_catalogue",
        "file": "services/asia_regulatory_engine.py",
        "line": 670,
        "args": {},
        "ret": "{'catalogue_version': 'GBEPC 2021', 'categories': [], 'category_labels': {'CE': 'Clean Energy', 'CT': 'Clean Transportation', 'EC': 'Energy Conservation and Environmental Protection', 'EE': 'Ecological Environment', 'GU': 'Green Upgrading \u2026",
-       "dur_ms": 315.05,
+       "dur_ms": 330.235,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 95,
+         "id": 460,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -2008,7 +1981,7 @@
           "params": "None"
          },
          "ret": "[]",
-         "dur_ms": 314.997,
+         "dur_ms": 330.179,
          "sql": [
           0
          ],
@@ -2027,7 +2000,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.171,
+   "dur_ms": 0.152,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -2047,7 +2020,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 96,
+     "id": 461,
      "name": "pboc_categories",
      "qual": "pboc_categories",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -2067,7 +2040,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1011.525,
+   "dur_ms": 582.542,
    "node_count": 6,
    "provenance": [
     "db-empty"
@@ -2084,7 +2057,7 @@
       "pboc_green_finance_records"
      ],
      "rowcount": 0,
-     "dur_ms": 457.987,
+     "dur_ms": 55.975,
      "is_reference": false,
      "error": null
     },
@@ -2095,7 +2068,7 @@
       "pboc_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 64.705,
+     "dur_ms": 63.846,
      "is_reference": false,
      "error": null
     }
@@ -2114,7 +2087,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 97,
+     "id": 462,
      "name": "get_pboc_green_finance",
      "qual": "get_pboc_green_finance",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -2123,31 +2096,31 @@
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'error': 'PBoC entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 1011.365,
+     "dur_ms": 582.406,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 98,
+       "id": 463,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D91F48F0>",
-       "dur_ms": 0.028,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475AE900>",
+       "dur_ms": 0.024,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 99,
+         "id": 464,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -2155,7 +2128,7 @@
        ]
       },
       {
-       "id": 100,
+       "id": 465,
        "name": "get_entity_green_finance",
        "qual": "PBoCGreenFinanceEngine.get_entity_green_finance",
        "file": "services/asia_regulatory_engine.py",
@@ -2164,12 +2137,12 @@
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "{'error': 'PBoC entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 1011.291,
+       "dur_ms": 582.338,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 101,
+         "id": 466,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -2179,7 +2152,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 702.256,
+         "dur_ms": 285.683,
          "sql": [
           0
          ],
@@ -2187,7 +2160,7 @@
          "children": []
         },
         {
-         "id": 102,
+         "id": 467,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -2197,7 +2170,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 308.896,
+         "dur_ms": 296.48,
          "sql": [
           1
          ],
@@ -2234,7 +2207,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 280.02,
+   "dur_ms": 282.736,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -2250,7 +2223,7 @@
       "hkma_entities"
      ],
      "rowcount": 0,
-     "dur_ms": 57.426,
+     "dur_ms": 61.491,
      "is_reference": false,
      "error": null
     }
@@ -2270,7 +2243,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 103,
+     "id": 468,
      "name": "run_hkma_stress_test",
      "qual": "run_hkma_stress_test",
      "file": "api/v1/routes/asia_regulatory.py",
@@ -2280,31 +2253,31 @@
       "scenarios": "None"
      },
      "ret": "{'error': 'Entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-     "dur_ms": 279.797,
+     "dur_ms": 282.533,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 104,
+       "id": 469,
        "name": "_engine",
        "qual": "_engine",
        "file": "api/v1/routes/asia_regulatory.py",
        "line": 26,
        "args": {},
-       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x000001B6D91F4980>",
-       "dur_ms": 0.024,
+       "ret": "<services.asia_regulatory_engine.AsiaRegulatoryEngine object at 0x0000013D475FD220>",
+       "dur_ms": 0.025,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 105,
+         "id": 470,
          "name": "__init__",
          "qual": "AsiaRegulatoryEngine.__init__",
          "file": "services/asia_regulatory_engine.py",
          "line": 724,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
@@ -2312,7 +2285,7 @@
        ]
       },
       {
-       "id": 106,
+       "id": 471,
        "name": "run_stress_test",
        "qual": "HKMAEngine.run_stress_test",
        "file": "services/asia_regulatory_engine.py",
@@ -2322,12 +2295,12 @@
         "scenarios": "None"
        },
        "ret": "{'error': 'Entity not found', 'entity_id': '550e8400-e29b-41d4-a716-446655440001'}",
-       "dur_ms": 279.72,
+       "dur_ms": 282.455,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 107,
+         "id": 472,
          "name": "_exec_read",
          "qual": "_exec_read",
          "file": "services/asia_regulatory_engine.py",
@@ -2337,7 +2310,7 @@
           "params": "{'eid': '550e8400-e29b-41d4-a716-446655440001'}"
          },
          "ret": "[]",
-         "dur_ms": 279.663,
+         "dur_ms": 282.399,
          "sql": [
           0
          ],

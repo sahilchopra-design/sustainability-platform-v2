@@ -1,10 +1,10 @@
 {
  "domain": "nature-re-integration",
  "meta": {
-  "ts": "2026-06-30T14:03:21",
+  "ts": "2026-07-05T19:15:53",
+  "endpoints": 7,
   "module": "api.v1.routes.nature_re_integration",
-  "router_prefix": "/api/v1/nature-re",
-  "endpoints": 7
+  "router_prefix": "/api/v1/nature-re"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.377,
+   "dur_ms": 0.258,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13189,
      "name": "ref_bio_cap_rate",
      "qual": "ref_bio_cap_rate",
      "file": "api/v1/routes/nature_re_integration.py",
      "line": 157,
      "args": {},
      "ret": "{'biodiversity_cap_rate_schedule': [{'min_score': 0.0, 'max_score': 1.0, 'cap_rate_adj_bps': 0}, {'min_score': 1.0, 'max_score': 2.0, 'cap_rate_adj_bps': 5}, {'min_score': 2.0, 'max_score': 3.0, 'cap_rate_adj_bps': 15}, {'min_score': 3.0, \u2026",
-     "dur_ms": 0.066,
+     "dur_ms": 0.044,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13190,
        "name": "get_biodiversity_cap_rate_schedule",
        "qual": "NatureREIntegrationEngine.get_biodiversity_cap_rate_schedule",
        "file": "services/nature_re_integration_engine.py",
        "line": 401,
        "args": {},
        "ret": "[{'min_score': 0.0, 'max_score': 1.0, 'cap_rate_adj_bps': 0}, {'min_score': 1.0, 'max_score': 2.0, 'cap_rate_adj_bps': 5}, {'min_score': 2.0, 'max_score': 3.0, 'cap_rate_adj_bps': 15}, {'min_score': 3.0, 'max_score': 4.0, 'cap_rate_adj_bps\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.248,
+   "dur_ms": 0.141,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13191,
      "name": "ref_bng_costs",
      "qual": "ref_bng_costs",
      "file": "api/v1/routes/nature_re_integration.py",
      "line": 163,
      "args": {},
      "ret": "{'bng_unit_costs': {'grassland': 18000, 'woodland': 25000, 'wetland': 30000, 'hedgerow_per_km': 15000, 'urban_habitat': 20000, 'default': 22000}}",
-     "dur_ms": 0.036,
+     "dur_ms": 0.025,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 13192,
        "name": "get_bng_unit_costs",
        "qual": "NatureREIntegrationEngine.get_bng_unit_costs",
        "file": "services/nature_re_integration_engine.py",
        "line": 406,
        "args": {},
        "ret": "{'grassland': 18000, 'woodland': 25000, 'wetland': 30000, 'hedgerow_per_km': 15000, 'urban_habitat': 20000, 'default': 22000}",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.184,
+   "dur_ms": 0.127,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13193,
      "name": "ref_eu_tax_dnsh",
      "qual": "ref_eu_tax_dnsh",
      "file": "api/v1/routes/nature_re_integration.py",
      "line": 169,
      "args": {},
      "ret": "{'eu_taxonomy_nature_dnsh': {'max_water_stress_score': 3.0, 'max_biodiversity_impact': 2.0, 'requires_eia': True, 'no_net_deforestation': True, 'wetland_buffer_m': 50}}",
-     "dur_ms": 0.03,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 13194,
        "name": "get_eu_taxonomy_nature_dnsh",
        "qual": "NatureREIntegrationEngine.get_eu_taxonomy_nature_dnsh",
        "file": "services/nature_re_integration_engine.py",
        "line": 410,
        "args": {},
        "ret": "{'max_water_stress_score': 3.0, 'max_biodiversity_impact': 2.0, 'requires_eia': True, 'no_net_deforestation': True, 'wetland_buffer_m': 50}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.2,
+   "dur_ms": 0.145,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,26 +187,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13195,
      "name": "ref_nature_haircut",
      "qual": "ref_nature_haircut",
      "file": "api/v1/routes/nature_re_integration.py",
      "line": 145,
      "args": {},
      "ret": "{'nature_haircut_table': {'office': {'low': 0.0, 'medium_low': 0.5, 'medium': 1.5, 'medium_high': 3.0, 'high': 5.0, 'critical': 8.0}, 'retail': {'low': 0.0, 'medium_low': 0.5, 'medium': 1.5, 'medium_high': 3.5, 'high': 6.0, 'critical': 10.\u2026",
-     "dur_ms": 0.047,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13196,
        "name": "get_nature_haircut_table",
        "qual": "NatureREIntegrationEngine.get_nature_haircut_table",
        "file": "services/nature_re_integration_engine.py",
        "line": 393,
        "args": {},
        "ret": "{'office': {'low': 0.0, 'medium_low': 0.5, 'medium': 1.5, 'medium_high': 3.0, 'high': 5.0, 'critical': 8.0}, 'retail': {'low': 0.0, 'medium_low': 0.5, 'medium': 1.5, 'medium_high': 3.5, 'high': 6.0, 'critical': 10.0}, 'industrial': {'low':\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.199,
+   "dur_ms": 0.144,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13197,
      "name": "ref_water_noi",
      "qual": "ref_water_noi",
      "file": "api/v1/routes/nature_re_integration.py",
      "line": 151,
      "args": {},
      "ret": "{'water_noi_adjustments': {'office': {'low': 0.0, 'low_medium': -0.3, 'medium_high': -1.0, 'high': -2.5, 'extremely_high': -5.0}, 'retail': {'low': 0.0, 'low_medium': -0.2, 'medium_high': -0.8, 'high': -2.0, 'extremely_high': -4.0}, 'indus\u2026",
-     "dur_ms": 0.044,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 13198,
        "name": "get_water_noi_adjustments",
        "qual": "NatureREIntegrationEngine.get_water_noi_adjustments",
        "file": "services/nature_re_integration_engine.py",
        "line": 397,
        "args": {},
        "ret": "{'office': {'low': 0.0, 'low_medium': -0.3, 'medium_high': -1.0, 'high': -2.5, 'extremely_high': -5.0}, 'retail': {'low': 0.0, 'low_medium': -0.2, 'medium_high': -0.8, 'high': -2.0, 'extremely_high': -4.0}, 'industrial': {'low': 0.0, 'low_\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'property_id'",
-   "dur_ms": 0.267,
+   "dur_ms": 0.165,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -287,7 +287,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 13199,
      "name": "assess_nature_re",
      "qual": "assess_nature_re",
      "file": "api/v1/routes/nature_re_integration.py",
@@ -296,12 +296,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.064,
+     "dur_ms": 0.027,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 13200,
        "name": "_to_input",
        "qual": "_to_input",
        "file": "api/v1/routes/nature_re_integration.py",
@@ -310,7 +310,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.007,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -325,7 +325,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'properties'",
-   "dur_ms": 0.181,
+   "dur_ms": 0.123,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -339,7 +339,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 13201,
      "name": "assess_portfolio_nature_re",
      "qual": "assess_portfolio_nature_re",
      "file": "api/v1/routes/nature_re_integration.py",
@@ -348,7 +348,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

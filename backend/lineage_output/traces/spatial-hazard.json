@@ -1,10 +1,10 @@
 {
  "domain": "spatial-hazard",
  "meta": {
-  "ts": "2026-06-30T14:05:17",
+  "ts": "2026-07-05T19:17:04",
+  "endpoints": 5,
   "module": "api.v1.routes.spatial_hazard",
-  "router_prefix": "/api/v1/spatial-hazard",
-  "endpoints": 5
+  "router_prefix": "/api/v1/spatial-hazard"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.61,
+   "dur_ms": 0.241,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40461,
      "name": "ref_supported_countries",
      "qual": "ref_supported_countries",
      "file": "api/v1/routes/spatial_hazard.py",
      "line": 103,
      "args": {},
      "ret": "{'countries': ['AE', 'AU', 'BR', 'CA', 'CN', 'DE', 'ES', 'FR', 'GB', 'IN', 'IT', 'JP', 'NL', 'SG', 'US']}",
-     "dur_ms": 0.061,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 40462,
        "name": "get_supported_countries",
        "qual": "SpatialHazardService.get_supported_countries",
        "file": "services/spatial_hazard_service.py",
        "line": 447,
        "args": {},
        "ret": "['AE', 'AU', 'BR', 'CA', 'CN', 'DE', 'ES', 'FR', 'GB', 'IN', 'IT', 'JP', 'NL', 'SG', 'US']",
-       "dur_ms": 0.011,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.468,
+   "dur_ms": 0.217,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40463,
      "name": "ref_country_profiles",
      "qual": "ref_country_profiles",
      "file": "api/v1/routes/spatial_hazard.py",
      "line": 115,
      "args": {},
      "ret": "{'country_profiles': {'GB': {'flood_zone': '2', 'flood_depth_100yr_m': 0.4, 'heat_days_above_35c': 3, 'wildfire_proximity_km': 50, 'coastal_proximity_km': 40, 'subsidence_risk': 'low', 'water_stress_score': 1.8, 'sea_level_rise_cm_2050': 3\u2026",
-     "dur_ms": 0.17,
+     "dur_ms": 0.065,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 40464,
        "name": "get_country_profiles",
        "qual": "SpatialHazardService.get_country_profiles",
        "file": "services/spatial_hazard_service.py",
        "line": 443,
        "args": {},
        "ret": "{'GB': {'flood_zone': '2', 'flood_depth_100yr_m': 0.4, 'heat_days_above_35c': 3, 'wildfire_proximity_km': 50, 'coastal_proximity_km': 40, 'subsidence_risk': 'low', 'water_stress_score': 1.8, 'sea_level_rise_cm_2050': 30, 'cyclone_exposure'\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.242,
+   "dur_ms": 0.17,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40465,
      "name": "ref_hazard_schema",
      "qual": "ref_hazard_schema",
      "file": "api/v1/routes/spatial_hazard.py",
      "line": 109,
      "args": {},
      "ret": "{'hazard_schema': {'flood_zone': {'type': 'categorical', 'values': ['1', '2', '3a', '3b', 'X', 'A', 'AE', 'V']}, 'flood_depth_100yr_m': {'type': 'numeric', 'unit': 'metres', 'range': [0, 10]}, 'heat_days_above_35c': {'type': 'integer', 'un\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 40466,
        "name": "get_hazard_schema",
        "qual": "SpatialHazardService.get_hazard_schema",
        "file": "services/spatial_hazard_service.py",
        "line": 451,
        "args": {},
        "ret": "{'flood_zone': {'type': 'categorical', 'values': ['1', '2', '3a', '3b', 'X', 'A', 'AE', 'V']}, 'flood_depth_100yr_m': {'type': 'numeric', 'unit': 'metres', 'range': [0, 10]}, 'heat_days_above_35c': {'type': 'integer', 'unit': 'days/year', \u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []

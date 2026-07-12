@@ -1,10 +1,10 @@
 {
  "domain": "sfdr-exclusion",
  "meta": {
-  "ts": "2026-06-30T14:05:07",
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 4,
   "module": "api.v1.routes.sfdr_exclusion",
-  "router_prefix": "/api/v1/sfdr-compliance",
-  "endpoints": 4
+  "router_prefix": "/api/v1/sfdr-compliance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.358,
+   "dur_ms": 0.376,
    "node_count": 4,
    "provenance": [
     "computed"
@@ -34,7 +34,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40117,
      "name": "get_exclusion_rules",
      "qual": "get_exclusion_rules",
      "file": "api/v1/routes/sfdr_exclusion.py",
@@ -43,12 +43,12 @@
       "sfdr": "'art8'"
      },
      "ret": "{'sfdr_classification': 'art8', 'rules': [{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, \u2026",
-     "dur_ms": 0.109,
+     "dur_ms": 0.119,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 40118,
        "name": "__init__",
        "qual": "ExclusionListEngine.__init__",
        "file": "services/exclusion_list_engine.py",
@@ -63,7 +63,7 @@
        "children": []
       },
       {
-       "id": 3,
+       "id": 40119,
        "name": "get_rules",
        "qual": "ExclusionListEngine.get_rules",
        "file": "services/exclusion_list_engine.py",
@@ -72,12 +72,12 @@
         "sfdr_classification": "'art8'"
        },
        "ret": "[{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, 'applies_to': ['art6', 'art8', 'art8plus'\u2026",
-       "dur_ms": 0.05,
+       "dur_ms": 0.056,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 4,
+         "id": 40120,
          "name": "_get_applicable_rules",
          "qual": "ExclusionListEngine._get_applicable_rules",
          "file": "services/exclusion_list_engine.py",
@@ -86,7 +86,7 @@
           "sfdr": "'art8'"
          },
          "ret": "[{'category': 'controversial_weapons', 'name': 'Controversial Weapons', 'description': 'Cluster munitions, anti-personnel mines, biological weapons, chemical weapons', 'revenue_threshold_pct': 0.0, 'applies_to': ['art6', 'art8', 'art8plus'\u2026",
-         "dur_ms": 0.012,
+         "dur_ms": 0.016,
          "sql": [],
          "error": null,
          "children": []
@@ -103,7 +103,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.163,
+   "dur_ms": 0.167,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -123,14 +123,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40121,
      "name": "get_pai_reference",
      "qual": "get_pai_reference",
      "file": "api/v1/routes/sfdr_exclusion.py",
      "line": 263,
      "args": {},
      "ret": "{'pai_indicators': [{'id': 'PAI_1', 'name': 'GHG Emissions Scope 1', 'unit': 'tCO2e'}, {'id': 'PAI_2', 'name': 'GHG Emissions Scope 2', 'unit': 'tCO2e'}, {'id': 'PAI_3', 'name': 'GHG Emissions Scope 3', 'unit': 'tCO2e'}, {'id': 'PAI_4', 'n\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -161,7 +161,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'custom_rules'",
-   "dur_ms": 0.153,
+   "dur_ms": 0.173,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -175,7 +175,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 40122,
      "name": "screen_holdings",
      "qual": "screen_holdings",
      "file": "api/v1/routes/sfdr_exclusion.py",

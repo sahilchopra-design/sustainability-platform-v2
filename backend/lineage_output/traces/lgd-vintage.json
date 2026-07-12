@@ -1,10 +1,10 @@
 {
  "domain": "lgd-vintage",
  "meta": {
-  "ts": "2026-06-30T14:03:01",
+  "ts": "2026-07-05T19:15:48",
+  "endpoints": 9,
   "module": "api.v1.routes.lgd_vintage",
-  "router_prefix": "/api/v1/lgd-vintage",
-  "endpoints": 9
+  "router_prefix": "/api/v1/lgd-vintage"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.46,
+   "dur_ms": 4.596,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -32,26 +32,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12863,
      "name": "get_downturn_addons",
      "qual": "get_downturn_addons",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 365,
      "args": {},
      "ret": "{'downturn_addons': {'property': 0.08, 'equipment': 0.1, 'financial': 0.05, 'unsecured': 0.12, 'inventory': 0.1, 'receivables': 0.08, 'cash': 0.02, 'other': 0.12, 'real_estate_residential': 0.08, 'real_estate_commercial': 0.08}, 'regulatio\u2026",
-     "dur_ms": 0.044,
+     "dur_ms": 0.149,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12864,
        "name": "get_downturn_addons",
        "qual": "LGDDownturnEngine.get_downturn_addons",
        "file": "services/lgd_downturn_engine.py",
        "line": 516,
        "args": {},
        "ret": "{'property': 0.08, 'equipment': 0.1, 'financial': 0.05, 'unsecured': 0.12, 'inventory': 0.1, 'receivables': 0.08, 'cash': 0.02, 'other': 0.12, 'real_estate_residential': 0.08, 'real_estate_commercial': 0.08}",
-       "dur_ms": 0.004,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
@@ -66,7 +66,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.143,
+   "dur_ms": 25.158,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -87,19 +87,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12865,
      "name": "get_climate_haircuts",
      "qual": "get_climate_haircuts",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 403,
      "args": {},
      "ret": "{'stranded_haircuts': {'Coal Mining': 0.4, 'Oil & Gas': 0.25, 'Gas Utilities': 0.15, 'Thermal Power': 0.2, 'Carbon-Intensive Manufacturing': 0.12, 'Cement': 0.1, 'Steel': 0.1, 'Chemicals': 0.08}, 'physical_risk_multipliers': {'extreme': 0.\u2026",
-     "dur_ms": 0.072,
+     "dur_ms": 0.079,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 12866,
        "name": "get_climate_stranded_haircuts",
        "qual": "LGDDownturnEngine.get_climate_stranded_haircuts",
        "file": "services/lgd_downturn_engine.py",
@@ -112,14 +112,14 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 12867,
        "name": "get_green_premium_table",
        "qual": "LGDDownturnEngine.get_green_premium_table",
        "file": "services/lgd_downturn_engine.py",
        "line": 536,
        "args": {},
        "ret": "{'A': -0.05, 'B': -0.03, 'C': -0.01, 'D': 0.0, 'E': 0.03, 'F': 0.05, 'G': 0.08}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -134,7 +134,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.345,
+   "dur_ms": 1.917,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -152,26 +152,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 12868,
      "name": "get_country_severity",
      "qual": "get_country_severity",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 391,
      "args": {},
      "ret": "{'country_cycle_severity': {'US': 1.0, 'UK': 0.95, 'DE': 0.9, 'FR': 0.92, 'ES': 1.25, 'IT': 1.2, 'GR': 1.5, 'PT': 1.15, 'IE': 1.1, 'NL': 0.85, 'BE': 0.88, 'AT': 0.85, 'CH': 0.7, 'JP': 0.8, 'AU': 0.9, 'CA': 0.88, 'SE': 0.75, 'NO': 0.72, 'DK\u2026",
-     "dur_ms": 0.046,
+     "dur_ms": 0.051,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 12869,
        "name": "get_country_cycle_severity",
        "qual": "LGDDownturnEngine.get_country_cycle_severity",
        "file": "services/lgd_downturn_engine.py",
        "line": 526,
        "args": {},
        "ret": "{'US': 1.0, 'UK': 0.95, 'DE': 0.9, 'FR': 0.92, 'ES': 1.25, 'IT': 1.2, 'GR': 1.5, 'PT': 1.15, 'IE': 1.1, 'NL': 0.85, 'BE': 0.88, 'AT': 0.85, 'CH': 0.7, 'JP': 0.8, 'AU': 0.9, 'CA': 0.88, 'SE': 0.75, 'NO': 0.72, 'DK': 0.78, 'FI': 0.82, 'SG': \u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -186,7 +186,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.107,
+   "dur_ms": 1.39,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -205,26 +205,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 12870,
      "name": "get_regulatory_floors",
      "qual": "get_regulatory_floors",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 349,
      "args": {},
      "ret": "{'regulatory_floors': {'RESIDENTIAL_MORTGAGE': 0.1, 'COMMERCIAL_MORTGAGE': 0.15, 'CORPORATE_UNSECURED': 0.25, 'CORPORATE_SECURED': 0.15, 'SME_UNSECURED': 0.25, 'SME_SECURED': 0.15, 'RETAIL_UNSECURED': 0.25}, 'regulation': 'CRR2 Art. 164'}",
-     "dur_ms": 0.028,
+     "dur_ms": 0.039,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 12871,
        "name": "get_regulatory_floors",
        "qual": "LGDDownturnEngine.get_regulatory_floors",
        "file": "services/lgd_downturn_engine.py",
        "line": 511,
        "args": {},
        "ret": "{'RESIDENTIAL_MORTGAGE': 0.1, 'COMMERCIAL_MORTGAGE': 0.15, 'CORPORATE_UNSECURED': 0.25, 'CORPORATE_SECURED': 0.15, 'SME_UNSECURED': 0.25, 'SME_SECURED': 0.15, 'RETAIL_UNSECURED': 0.25}",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -239,7 +239,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.075,
+   "dur_ms": 3.627,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -257,26 +257,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 12872,
      "name": "get_sector_severity",
      "qual": "get_sector_severity",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 379,
      "args": {},
      "ret": "{'sector_severity': {'Oil & Gas': 1.5, 'Coal Mining': 1.7, 'Utilities': 1.15, 'Real Estate': 1.4, 'Construction': 1.35, 'Automotive': 1.25, 'Airlines': 1.45, 'Shipping': 1.35, 'Hospitality': 1.3, 'Retail Trade': 1.2, 'Agriculture': 1.1, 'H\u2026",
-     "dur_ms": 0.035,
+     "dur_ms": 0.093,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 12873,
        "name": "get_sector_severity",
        "qual": "LGDDownturnEngine.get_sector_severity",
        "file": "services/lgd_downturn_engine.py",
        "line": 521,
        "args": {},
        "ret": "{'Oil & Gas': 1.5, 'Coal Mining': 1.7, 'Utilities': 1.15, 'Real Estate': 1.4, 'Construction': 1.35, 'Automotive': 1.25, 'Airlines': 1.45, 'Shipping': 1.35, 'Hospitality': 1.3, 'Retail Trade': 1.2, 'Agriculture': 1.1, 'Healthcare': 0.85, 'T\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.008,
        "sql": [],
        "error": null,
        "children": []
@@ -291,7 +291,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.07,
+   "dur_ms": 2.385,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -310,26 +310,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 12874,
      "name": "get_benchmark_rates",
      "qual": "get_benchmark_rates",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 521,
      "args": {},
      "ret": "{'benchmark_rates': {1: 0.015, 2: 0.032, 3: 0.05, 4: 0.068, 5: 0.083, 6: 0.095, 7: 0.105, 8: 0.112, 9: 0.118, 10: 0.125}, 'early_warning_threshold': 0.5}",
-     "dur_ms": 0.033,
+     "dur_ms": 0.062,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 12875,
        "name": "get_benchmark_default_rates",
        "qual": "VintageAnalyzer.get_benchmark_default_rates",
        "file": "services/vintage_analyzer.py",
        "line": 526,
        "args": {},
        "ret": "{1: 0.015, 2: 0.032, 3: 0.05, 4: 0.068, 5: 0.083, 6: 0.095, 7: 0.105, 8: 0.112, 9: 0.118, 10: 0.125}",
-       "dur_ms": 0.003,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
@@ -344,7 +344,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.219,
+   "dur_ms": 1.668,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -363,26 +363,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 12876,
      "name": "get_ecb_coverage_table",
      "qual": "get_ecb_coverage_table",
      "file": "api/v1/routes/lgd_vintage.py",
      "line": 505,
      "args": {},
      "ret": "{'ecb_npe_coverage': {0: {'unsecured': 0.0, 'secured': 0.0}, 1: {'unsecured': 0.35, 'secured': 0.0}, 2: {'unsecured': 1.0, 'secured': 0.0}, 3: {'unsecured': 1.0, 'secured': 0.25}, 4: {'unsecured': 1.0, 'secured': 0.35}, 5: {'unsecured': 1.\u2026",
-     "dur_ms": 0.072,
+     "dur_ms": 0.058,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 15,
+       "id": 12877,
        "name": "get_ecb_npe_coverage_table",
        "qual": "VintageAnalyzer.get_ecb_npe_coverage_table",
        "file": "services/vintage_analyzer.py",
        "line": 521,
        "args": {},
        "ret": "{0: {'unsecured': 0.0, 'secured': 0.0}, 1: {'unsecured': 0.35, 'secured': 0.0}, 2: {'unsecured': 1.0, 'secured': 0.0}, 3: {'unsecured': 1.0, 'secured': 0.25}, 4: {'unsecured': 1.0, 'secured': 0.35}, 5: {'unsecured': 1.0, 'secured': 0.55}, \u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -397,7 +397,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: Downturn LGD failed: 'str' object has no attribute 'include_climate_overlay'",
-   "dur_ms": 1.663,
+   "dur_ms": 1.692,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -411,7 +411,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 12878,
      "name": "calculate_downturn_lgd",
      "qual": "calculate_downturn_lgd",
      "file": "api/v1/routes/lgd_vintage.py",
@@ -420,7 +420,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.44,
+     "dur_ms": 0.246,
      "sql": [],
      "error": null,
      "children": []
@@ -433,7 +433,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: Vintage analysis failed: 'str' object has no attribute 'reference_year'",
-   "dur_ms": 1.55,
+   "dur_ms": 1.662,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -447,7 +447,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 12879,
      "name": "run_vintage_analysis",
      "qual": "run_vintage_analysis",
      "file": "api/v1/routes/lgd_vintage.py",
@@ -456,7 +456,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.154,
+     "dur_ms": 0.18,
      "sql": [],
      "error": null,
      "children": []

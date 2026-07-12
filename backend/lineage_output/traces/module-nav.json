@@ -1,0 +1,237 @@
+{
+ "domain": "module-nav",
+ "meta": {
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 7,
+  "module": "api.v1.routes.module_nav",
+  "router_prefix": "/api/v1/module-nav"
+ },
+ "transactions": [
+  {
+   "domain": "module-nav",
+   "label": "GET /api/v1/module-nav/connections/{module_id}",
+   "status": "failed",
+   "http_status": 503,
+   "error": "HTTPException: 503: atlas.json not found: C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\docs\\module_atlas\\atlas.json",
+   "dur_ms": 1.915,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "module_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13024,
+     "name": "get_connections",
+     "qual": "get_connections",
+     "file": "api/v1/routes/module_nav.py",
+     "line": 236,
+     "args": {
+      "module_id": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 1.439,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13025,
+       "name": "_load_atlas",
+       "qual": "_load_atlas",
+       "file": "api/v1/routes/module_nav.py",
+       "line": 63,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 1.34,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "module-nav",
+   "label": "GET /api/v1/module-nav/favorites",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'Depends' object has no attribute 'user_id'",
+   "dur_ms": 0.747,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13026,
+     "name": "list_favorites",
+     "qual": "list_favorites",
+     "file": "api/v1/routes/module_nav.py",
+     "line": 110,
+     "args": {
+      "user": "Depends(get_current_user)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B12870>"
+     },
+     "ret": "None",
+     "dur_ms": 0.197,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "module-nav",
+   "label": "GET /api/v1/module-nav/recents",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'Depends' object has no attribute 'user_id'",
+   "dur_ms": 0.616,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "limit": "10 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13027,
+     "name": "list_recents",
+     "qual": "list_recents",
+     "file": "api/v1/routes/module_nav.py",
+     "line": 173,
+     "args": {
+      "limit": "10",
+      "user": "Depends(get_current_user)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48C42D80>"
+     },
+     "ret": "None",
+     "dur_ms": 0.143,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "module-nav",
+   "label": "GET /api/v1/module-nav/sectors",
+   "status": "failed",
+   "http_status": 503,
+   "error": "HTTPException: 503: module_tags.json not found: C:\\Users\\SahilChopra\\AppData\\Local\\Temp\\sp-tmp\\docs\\module_atlas\\module_tags.json",
+   "dur_ms": 0.841,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13028,
+     "name": "get_sectors",
+     "qual": "get_sectors",
+     "file": "api/v1/routes/module_nav.py",
+     "line": 219,
+     "args": {},
+     "ret": "None",
+     "dur_ms": 0.681,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13029,
+       "name": "_load_module_tags",
+       "qual": "_load_module_tags",
+       "file": "api/v1/routes/module_nav.py",
+       "line": 54,
+       "args": {},
+       "ret": "None",
+       "dur_ms": 0.634,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "module-nav",
+   "label": "POST /api/v1/module-nav/favorites",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "module-nav",
+   "label": "DELETE /api/v1/module-nav/favorites/{module_path:path}",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "module-nav",
+   "label": "POST /api/v1/module-nav/recents",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

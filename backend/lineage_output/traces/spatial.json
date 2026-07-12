@@ -1,10 +1,10 @@
 {
  "domain": "spatial",
  "meta": {
-  "ts": "2026-06-30T14:05:16",
+  "ts": "2026-07-05T19:17:04",
+  "endpoints": 7,
   "module": "api.v1.routes.spatial",
-  "router_prefix": "/api/v1/spatial",
-  "endpoints": 7
+  "router_prefix": "/api/v1/spatial"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 777.52,
+   "dur_ms": 520.416,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -36,8 +36,8 @@
       "pg_index",
       "pg_namespace"
      ],
-     "rowcount": 11,
-     "dur_ms": 131.42,
+     "rowcount": 13,
+     "dur_ms": 297.957,
      "is_reference": false,
      "error": null
     }
@@ -56,16 +56,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40459,
      "name": "ref_spatial_indexes",
      "qual": "ref_spatial_indexes",
      "file": "api/v1/routes/spatial.py",
      "line": 392,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000023037B91F70>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1E2C00>"
      },
-     "ret": "{'gist_index_count': 11, 'indexes': [{'schema': 'public', 'table_name': 'cat_risk_properties', 'index_name': 'idx_cat_risk_properties_location', 'column_name': 'location', 'index_type': 'gist'}, {'schema': 'public', 'table_name': 'eudr_geo\u2026",
-     "dur_ms": 745.47,
+     "ret": "{'gist_index_count': 13, 'indexes': [{'schema': 'public', 'table_name': 'cat_risk_properties', 'index_name': 'idx_cat_risk_properties_location', 'column_name': 'location', 'index_type': 'gist'}, {'schema': 'public', 'table_name': 'eudr_geo\u2026",
+     "dur_ms": 490.889,
      "sql": [
       0
      ],
@@ -80,7 +80,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 361.514,
+   "dur_ms": 371.344,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -100,7 +100,7 @@
       "vw_postgis_status"
      ],
      "rowcount": 3,
-     "dur_ms": 79.895,
+     "dur_ms": 79.718,
      "is_reference": false,
      "error": null
     },
@@ -114,7 +114,7 @@
       "ref_wildfire_zones"
      ],
      "rowcount": 1,
-     "dur_ms": 69.905,
+     "dur_ms": 83.06,
      "is_reference": false,
      "error": null
     }
@@ -136,16 +136,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40460,
      "name": "ref_postgis_status",
      "qual": "ref_postgis_status",
      "file": "api/v1/routes/spatial.py",
      "line": 357,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000023037B91910>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1E3260>"
      },
      "ret": "{'postgis_active': True, 'extensions': [{'extension': 'pg_trgm', 'version': '1.6', 'schema': 'public'}, {'extension': 'postgis', 'version': '3.3.7', 'schema': 'public'}, {'extension': 'postgis_topology', 'version': '3.3.7', 'schema': 'topo\u2026",
-     "dur_ms": 331.898,
+     "dur_ms": 342.749,
      "sql": [
       0,
       1

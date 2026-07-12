@@ -1,0 +1,153 @@
+{
+ "domain": "openfigi",
+ "meta": {
+  "ts": "2026-07-05T19:15:58",
+  "endpoints": 3,
+  "module": "api.v1.routes.openfigi",
+  "router_prefix": "/api/v1/openfigi"
+ },
+ "transactions": [
+  {
+   "domain": "openfigi",
+   "label": "GET /api/v1/openfigi/isin-to-issuer/{isin}",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: ISIN must be a 12-character alphanumeric code",
+   "dur_ms": 0.351,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "isin": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13611,
+     "name": "isin_to_issuer",
+     "qual": "isin_to_issuer",
+     "file": "api/v1/routes/openfigi.py",
+     "line": 248,
+     "args": {
+      "isin": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B73E90>"
+     },
+     "ret": "None",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "openfigi",
+   "label": "GET /api/v1/openfigi/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.228,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "api_key_configured",
+     "api_key_env",
+     "batch_cap",
+     "unkeyed_rate_limit_observed",
+     "note",
+     "checked_at"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13612,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/openfigi.py",
+     "line": 210,
+     "args": {},
+     "ret": "{'source': 'OpenFIGI api.openfigi.com/v3/mapping (free; keyless at low rate limit)', 'mode': 'live-unkeyed', 'api_key_configured': False, 'api_key_env': 'OPENFIGI_API_KEY', 'batch_cap': 10, 'unkeyed_rate_limit_observed': '25 requests / 60s\u2026",
+     "dur_ms": 0.087,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13613,
+       "name": "_api_key",
+       "qual": "_api_key",
+       "file": "api/v1/routes/openfigi.py",
+       "line": 94,
+       "args": {},
+       "ret": "''",
+       "dur_ms": 0.013,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 13614,
+       "name": "_batch_cap",
+       "qual": "_batch_cap",
+       "file": "api/v1/routes/openfigi.py",
+       "line": 98,
+       "args": {},
+       "ret": "10",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 13615,
+         "name": "_api_key",
+         "qual": "_api_key",
+         "file": "api/v1/routes/openfigi.py",
+         "line": 94,
+         "args": {},
+         "ret": "''",
+         "dur_ms": 0.007,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "openfigi",
+   "label": "POST /api/v1/openfigi/map",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

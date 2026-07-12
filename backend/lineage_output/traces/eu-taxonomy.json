@@ -1,10 +1,10 @@
 {
  "domain": "eu-taxonomy",
  "meta": {
-  "ts": "2026-06-30T14:01:58",
+  "ts": "2026-07-05T19:15:15",
+  "endpoints": 13,
   "module": "api.v1.routes.eu_taxonomy",
-  "router_prefix": "/api/v1/eu-taxonomy",
-  "endpoints": 13
+  "router_prefix": "/api/v1/eu-taxonomy"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.508,
+   "dur_ms": 0.271,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11365,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 148,
      "args": {},
      "ret": "{'cross_framework_map': [{'taxonomy_element': 'Turnover KPI', 'csrd_esrs': 'ESRS 2 SBM-1, ESRS E1-1', 'sfdr': 'Article 5(1) / Article 6 SFDR RTS Annex III', 'issb': 'IFRS S2 para 29(a)', 'gri': 'GRI 201-1', 'cdp': 'C-FS14.1', 'tcfd': 'Metr\u2026",
-     "dur_ms": 0.097,
+     "dur_ms": 0.061,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11366,
        "name": "get_cross_framework_map",
        "qual": "EUTaxonomyEngine.get_cross_framework_map",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1139,
        "args": {},
        "ret": "[{'taxonomy_element': 'Turnover KPI', 'csrd_esrs': 'ESRS 2 SBM-1, ESRS E1-1', 'sfdr': 'Article 5(1) / Article 6 SFDR RTS Annex III', 'issb': 'IFRS S2 para 29(a)', 'gri': 'GRI 201-1', 'cdp': 'C-FS14.1', 'tcfd': 'Metrics & Targets (b)'}, {'t\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.382,
+   "dur_ms": 0.2,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11367,
      "name": "ref_dnsh_matrix",
      "qual": "ref_dnsh_matrix",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 118,
      "args": {},
      "ret": "{'dnsh_matrix': {'CCM': {'CCA': 'Climate risk assessment per RCP 8.5/4.5; physical risk adaptation measures', 'WTR': 'Water Framework Directive compliance; no deterioration of water status; Environmental Impact Assessment', 'CE': 'Waste hi\u2026",
-     "dur_ms": 0.084,
+     "dur_ms": 0.049,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11368,
        "name": "get_dnsh_matrix",
        "qual": "EUTaxonomyEngine.get_dnsh_matrix",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1114,
        "args": {},
        "ret": "{'CCM': {'CCA': 'Climate risk assessment per RCP 8.5/4.5; physical risk adaptation measures', 'WTR': 'Water Framework Directive compliance; no deterioration of water status; Environmental Impact Assessment', 'CE': 'Waste hierarchy complian\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.676,
+   "dur_ms": 0.342,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11369,
      "name": "ref_enabling_activities",
      "qual": "ref_enabling_activities",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 142,
      "args": {},
      "ret": "{'enabling_activities': [{'nace_code': 'C3.1', 'name': 'Manufacture of renewable energy technologies', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'q\u2026",
-     "dur_ms": 0.299,
+     "dur_ms": 0.158,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11370,
        "name": "get_enabling_activities",
        "qual": "EUTaxonomyEngine.get_enabling_activities",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1134,
        "args": {},
        "ret": "[{'nace_code': 'C3.1', 'name': 'Manufacture of renewable energy technologies', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria':\u2026",
-       "dur_ms": 0.106,
+       "dur_ms": 0.031,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.378,
+   "dur_ms": 0.161,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,26 +187,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11371,
      "name": "ref_financial_kpis",
      "qual": "ref_financial_kpis",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 154,
      "args": {},
      "ret": "{'financial_kpi_definitions': {'gar': {'name': 'Green Asset Ratio (GAR)', 'applicable_to': 'Credit institutions (CRR)', 'numerator': 'Taxonomy-aligned exposures in banking book', 'denominator': 'Total covered assets (excluding central bank\u2026",
-     "dur_ms": 0.066,
+     "dur_ms": 0.034,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11372,
        "name": "get_financial_kpi_definitions",
        "qual": "EUTaxonomyEngine.get_financial_kpi_definitions",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1144,
        "args": {},
        "ret": "{'gar': {'name': 'Green Asset Ratio (GAR)', 'applicable_to': 'Credit institutions (CRR)', 'numerator': 'Taxonomy-aligned exposures in banking book', 'denominator': 'Total covered assets (excluding central bank exposures, sovereign, trading\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.71,
+   "dur_ms": 0.153,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11373,
      "name": "ref_kpi_definitions",
      "qual": "ref_kpi_definitions",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 130,
      "args": {},
      "ret": "{'kpi_definitions': {'turnover': {'name': 'Turnover KPI', 'article': 'Article 8(2)(a)', 'numerator': 'Revenue from taxonomy-aligned activities', 'denominator': 'Total net revenue per IAS 1.82(a)', 'notes': 'Revenue from products/services a\u2026",
-     "dur_ms": 0.096,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11374,
        "name": "get_kpi_definitions",
        "qual": "EUTaxonomyEngine.get_kpi_definitions",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1124,
        "args": {},
        "ret": "{'turnover': {'name': 'Turnover KPI', 'article': 'Article 8(2)(a)', 'numerator': 'Revenue from taxonomy-aligned activities', 'denominator': 'Total net revenue per IAS 1.82(a)', 'notes': 'Revenue from products/services associated with taxon\u2026",
-       "dur_ms": 0.007,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.458,
+   "dur_ms": 0.18,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 11375,
      "name": "ref_minimum_safeguards",
      "qual": "ref_minimum_safeguards",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 124,
      "args": {},
      "ret": "{'minimum_safeguards': {'frameworks': [{'name': 'OECD Guidelines for Multinational Enterprises on Responsible Business Conduct', 'version': '2023 update', 'requirements': ['Human rights due diligence', 'Anti-corruption policies', 'Environm\u2026",
-     "dur_ms": 0.133,
+     "dur_ms": 0.049,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 11376,
        "name": "get_minimum_safeguards",
        "qual": "EUTaxonomyEngine.get_minimum_safeguards",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1119,
        "args": {},
        "ret": "{'frameworks': [{'name': 'OECD Guidelines for Multinational Enterprises on Responsible Business Conduct', 'version': '2023 update', 'requirements': ['Human rights due diligence', 'Anti-corruption policies', 'Environmental responsibility', \u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -325,7 +325,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.492,
+   "dur_ms": 0.6,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -343,26 +343,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 11377,
      "name": "ref_nace_activities",
      "qual": "ref_nace_activities",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 112,
      "args": {},
      "ret": "{'nace_activities': [{'nace_code': 'A1', 'name': 'Afforestation', 'sector': 'Forestry', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM', 'CCA'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria': 'Forest ma\u2026",
-     "dur_ms": 0.673,
+     "dur_ms": 0.271,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 11378,
        "name": "get_nace_activities",
        "qual": "EUTaxonomyEngine.get_nace_activities",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1101,
        "args": {},
        "ret": "[{'nace_code': 'A1', 'name': 'Afforestation', 'sector': 'Forestry', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM', 'CCA'], 'sc_thresholds': {'CCM': {'type': 'qualitative', 'criteria': 'Forest management plan, net c\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -377,7 +377,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.325,
+   "dur_ms": 0.159,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -395,26 +395,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 11379,
      "name": "ref_objectives",
      "qual": "ref_objectives",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 106,
      "args": {},
      "ret": "{'environmental_objectives': {'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'article': 'Article 10', 'description': 'Substantial contribution to climate change mitigation through GHG avoidance/reduction or enhancement of GHG re\u2026",
-     "dur_ms": 0.064,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 11380,
        "name": "get_environmental_objectives",
        "qual": "EUTaxonomyEngine.get_environmental_objectives",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1096,
        "args": {},
        "ret": "{'CCM': {'id': 'CCM', 'name': 'Climate Change Mitigation', 'article': 'Article 10', 'description': 'Substantial contribution to climate change mitigation through GHG avoidance/reduction or enhancement of GHG removals', 'delegated_act': 'Cl\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -429,7 +429,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.552,
+   "dur_ms": 0.177,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -447,26 +447,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 11381,
      "name": "ref_sector_thresholds",
      "qual": "ref_sector_thresholds",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 160,
      "args": {},
      "ret": "{'sector_thresholds': {'electricity_generation': {'threshold': 100, 'unit': 'gCO2e/kWh', 'basis': 'lifecycle', 'article': 'Climate DA Annex I Section 4.1-4.8'}, 'cement': {'threshold': 0.498, 'unit': 'tCO2/t clinker', 'basis': 'direct', 'a\u2026",
-     "dur_ms": 0.115,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 18,
+       "id": 11382,
        "name": "get_sector_thresholds",
        "qual": "EUTaxonomyEngine.get_sector_thresholds",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1149,
        "args": {},
        "ret": "{'electricity_generation': {'threshold': 100, 'unit': 'gCO2e/kWh', 'basis': 'lifecycle', 'article': 'Climate DA Annex I Section 4.1-4.8'}, 'cement': {'threshold': 0.498, 'unit': 'tCO2/t clinker', 'basis': 'direct', 'article': 'Climate DA A\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -481,7 +481,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.671,
+   "dur_ms": 0.255,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -499,26 +499,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 11383,
      "name": "ref_transitional_activities",
      "qual": "ref_transitional_activities",
      "file": "api/v1/routes/eu_taxonomy.py",
      "line": 136,
      "args": {},
      "ret": "{'transitional_activities': [{'nace_code': 'C23.5.1', 'name': 'Manufacture of cement', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'quantitative', 't\u2026",
-     "dur_ms": 0.247,
+     "dur_ms": 0.097,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 20,
+       "id": 11384,
        "name": "get_transitional_activities",
        "qual": "EUTaxonomyEngine.get_transitional_activities",
        "file": "services/eu_taxonomy_engine.py",
        "line": 1129,
        "args": {},
        "ret": "[{'nace_code': 'C23.5.1', 'name': 'Manufacture of cement', 'sector': 'Manufacturing', 'delegated_act': 'Climate DA 2021/2139', 'eligible_objectives': ['CCM'], 'sc_thresholds': {'CCM': {'type': 'quantitative', 'threshold': 0.498, 'unit': 't\u2026",
-       "dur_ms": 0.061,
+       "dur_ms": 0.026,
        "sql": [],
        "error": null,
        "children": []
@@ -533,7 +533,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'nace_code'",
-   "dur_ms": 0.496,
+   "dur_ms": 0.164,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -547,7 +547,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 11385,
      "name": "assess_activity",
      "qual": "assess_activity",
      "file": "api/v1/routes/eu_taxonomy.py",
@@ -556,7 +556,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.129,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -569,7 +569,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.55,
+   "dur_ms": 0.135,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -583,7 +583,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 11386,
      "name": "assess_entity",
      "qual": "assess_entity",
      "file": "api/v1/routes/eu_taxonomy.py",
@@ -592,7 +592,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.029,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -605,7 +605,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'portfolio_id'",
-   "dur_ms": 0.308,
+   "dur_ms": 0.133,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -619,7 +619,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 11387,
      "name": "assess_portfolio",
      "qual": "assess_portfolio",
      "file": "api/v1/routes/eu_taxonomy.py",
@@ -628,7 +628,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

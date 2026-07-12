@@ -1,10 +1,10 @@
 {
  "domain": "green-premium-tenant",
  "meta": {
-  "ts": "2026-06-30T14:02:37",
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 3,
   "module": "api.v1.routes.green_premium_tenant",
-  "router_prefix": "/api/v1/green-premium",
-  "endpoints": 3
+  "router_prefix": "/api/v1/green-premium"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.296,
+   "dur_ms": 0.393,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12276,
      "name": "get_reference_data",
      "qual": "get_reference_data",
      "file": "api/v1/routes/green_premium_tenant.py",
      "line": 250,
      "args": {},
      "ret": "{'green_rent_premium_by_certification': {'LEED': {'Platinum': 12.0, 'Gold': 8.0, 'Silver': 4.0, 'Certified': 2.0}, 'BREEAM': {'Outstanding': 10.0, 'Excellent': 7.0, 'Very Good': 4.0, 'Good': 2.0, 'Pass': 0.5}, 'NABERS': {'6 Star': 12.0, '5\u2026",
-     "dur_ms": 0.039,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'properties'",
-   "dur_ms": 0.209,
+   "dur_ms": 0.324,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -70,7 +70,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12277,
      "name": "assess_green_premium",
      "qual": "assess_green_premium",
      "file": "api/v1/routes/green_premium_tenant.py",
@@ -79,7 +79,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -92,7 +92,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'properties'",
-   "dur_ms": 0.202,
+   "dur_ms": 0.163,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -106,7 +106,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12278,
      "name": "assess_tenant_esg",
      "qual": "assess_tenant_esg",
      "file": "api/v1/routes/green_premium_tenant.py",
@@ -115,7 +115,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

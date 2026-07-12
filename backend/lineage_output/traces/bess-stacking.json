@@ -1,0 +1,218 @@
+{
+ "domain": "bess-stacking",
+ "meta": {
+  "ts": "2026-07-05T19:10:41",
+  "endpoints": 7,
+  "module": "api.v1.routes.bess_stacking",
+  "router_prefix": "/api/v1/bess-stacking"
+ },
+ "transactions": [
+  {
+   "domain": "bess-stacking",
+   "label": "GET /api/v1/bess-stacking/ref/defaults",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.302,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "price_shape_usd_mwh",
+     "price_shape_basis",
+     "market_parameters",
+     "note"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 581,
+     "name": "ref_defaults",
+     "qual": "ref_defaults",
+     "file": "api/v1/routes/bess_stacking.py",
+     "line": 1197,
+     "args": {},
+     "ret": "{'price_shape_usd_mwh': [42.0, 38.0, 35.0, 33.0, 32.0, 33.0, 45.0, 62.0, 75.0, 68.0, 55.0, 48.0, 45.0, 44.0, 46.0, 52.0, 68.0, 95.0, 118.0, 110.0, 88.0, 70.0, 58.0, 48.0], 'price_shape_basis': 'Hand-authored two-peak day-ahead shape (overn\u2026",
+     "dur_ms": 0.004,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "GET /api/v1/bess-stacking/ref/market-menus",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.189,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "capacity_derating_tables",
+     "ancillary_product_menu",
+     "note"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 582,
+     "name": "ref_market_menus",
+     "qual": "ref_market_menus",
+     "file": "api/v1/routes/bess_stacking.py",
+     "line": 1211,
+     "args": {},
+     "ret": "{'capacity_derating_tables': {'GB_T4_style': {'basis': 'GB Capacity Market T-4 style storage class derating, hand-authored from 2024-27 auction guideline ranges (EMR Delivery Body): ~10% at 0.5h rising to ~95% at 8h+. Approximate, labeled.\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "POST /api/v1/bess-stacking/augmentation-optimize",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'price_shape_usd_mwh'",
+   "dur_ms": 0.208,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 583,
+     "name": "augmentation_optimize",
+     "qual": "augmentation_optimize",
+     "file": "api/v1/routes/bess_stacking.py",
+     "line": 1137,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "POST /api/v1/bess-stacking/dispatch-compare",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "POST /api/v1/bess-stacking/fr-cooptimize",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'price_shape_usd_mwh'",
+   "dur_ms": 0.175,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 584,
+     "name": "fr_cooptimize",
+     "qual": "fr_cooptimize",
+     "file": "api/v1/routes/bess_stacking.py",
+     "line": 1022,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "POST /api/v1/bess-stacking/stack",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "bess-stacking",
+   "label": "POST /api/v1/bess-stacking/structures",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

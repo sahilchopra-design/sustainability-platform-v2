@@ -1,10 +1,10 @@
 {
  "domain": "sustainable-trade-finance",
  "meta": {
-  "ts": "2026-06-30T14:05:30",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 12,
   "module": "api.v1.routes.sustainable_trade_finance",
-  "router_prefix": "/api/v1/sustainable-trade-finance",
-  "endpoints": 12
+  "router_prefix": "/api/v1/sustainable-trade-finance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.052,
+   "dur_ms": 1.616,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42116,
      "name": "get_commodity_supply_chain_risks",
      "qual": "get_commodity_supply_chain_risks",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 311,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'commodity': 'cotton', 'deforestation_risk': 'medium', 'modern_slavery_risk': 'high', 'water_stress_risk': 'high', 'conflict_minerals_risk': 'low', 'eudr_regulated': False, 'key_risks': ['child_labour', 'for\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.57,
+   "dur_ms": 1.038,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -75,14 +75,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42117,
      "name": "get_eca_country_risk_ratings",
      "qual": "get_eca_country_risk_ratings",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 296,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'country_iso2': 'DE', 'risk_rating': 0}, {'country_iso2': 'FR', 'risk_rating': 0}, {'country_iso2': 'UK', 'risk_rating': 0}, {'country_iso2': 'US', 'risk_rating': 0}, {'country_iso2': 'JP', 'risk_rating': 0}\u2026",
-     "dur_ms": 0.025,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []
@@ -95,7 +95,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.527,
+   "dur_ms": 1.002,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -115,14 +115,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42118,
      "name": "get_ep4_categories",
      "qual": "get_ep4_categories",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 246,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'category': 'A', 'description': 'Projects with potential significant adverse environmental and social (E&S) impacts that are diverse, irreversible or unprecedented', 'threshold_usd': 10000000, 'ifc_ps_requir\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -135,7 +135,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.998,
+   "dur_ms": 1.062,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -156,14 +156,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42119,
      "name": "get_high_risk_sectors",
      "qual": "get_high_risk_sectors",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 285,
      "args": {},
      "ret": "{'status': 'success', 'data': ['mining_extractives', 'oil_gas', 'large_scale_agriculture', 'hydropower', 'large_infrastructure', 'chemical_manufacturing', 'textile_garment', 'electronics_manufacturing', 'forestry', 'fishing', 'construction\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -176,7 +176,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.152,
+   "dur_ms": 1.057,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -197,14 +197,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42120,
      "name": "get_icc_stf_principles",
      "qual": "get_icc_stf_principles",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 324,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'principle_number': 1, 'principle': 'Do No Harm', 'description': 'Trade finance transactions should not finance activities that cause significant harm to people or the planet', 'requirements': ['negative_scr\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -217,7 +217,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.195,
+   "dur_ms": 1.043,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -238,14 +238,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 42121,
      "name": "get_ifc_performance_standards",
      "qual": "get_ifc_performance_standards",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 267,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'standard': 1, 'name': 'Assessment and Management of E&S Risks and Impacts', 'mandatory_cat_a': True}, {'standard': 2, 'name': 'Labor and Working Conditions', 'mandatory_cat_a': True}, {'standard': 3, 'name'\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -258,7 +258,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.243,
+   "dur_ms": 1.158,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -278,14 +278,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42122,
      "name": "get_oecd_sector_sustainability_standards",
      "qual": "get_oecd_sector_sustainability_standards",
      "file": "api/v1/routes/sustainable_trade_finance.py",
      "line": 343,
      "args": {},
      "ret": "{'status': 'success', 'data': [{'sector': 'power', 'standard': 'OECD SSS for Power Sector (2016)'}, {'sector': 'water', 'standard': 'OECD SSS for Water and Sanitation (2018)'}, {'sector': 'transport', 'standard': 'OECD SSS for Transport (2\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -298,8 +298,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.743,
-   "node_count": 4,
+   "dur_ms": 2.815,
+   "node_count": 14,
    "provenance": [
     "computed"
    ],
@@ -319,7 +319,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 42123,
      "name": "post_assess_ep4_compliance",
      "qual": "post_assess_ep4_compliance",
      "file": "api/v1/routes/sustainable_trade_finance.py",
@@ -328,54 +328,205 @@
       "req": "EP4ComplianceRequest(entity_id='TEST_req_entity_id', project_name='Trade Finance Project', sector='manufacturing', country='NG', total_cost_usd=25000000.0)"
      },
      "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'project_name': 'Trade Finance Project', 'ep4_category': 'A', 'category_rationale': 'Category A: Projects with potential significant adverse environmental and social (E&S) i\u2026",
-     "dur_ms": 0.331,
+     "dur_ms": 0.431,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 42124,
        "name": "assess_ep4_compliance",
        "qual": "assess_ep4_compliance",
        "file": "services/sustainable_trade_finance_engine.py",
-       "line": 285,
+       "line": 281,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "project_name": "'Trade Finance Project'",
         "sector": "'manufacturing'",
         "country": "'NG'",
-        "total_cost_usd": "25000000.0"
+        "total_cost_usd": "25000000.0",
+        "principle_scores": "None"
        },
        "ret": "{'entity_id': 'TEST_req_entity_id', 'project_name': 'Trade Finance Project', 'ep4_category': 'A', 'category_rationale': 'Category A: Projects with potential significant adverse environmental and social (E&S) impacts that are diverse, irrev\u2026",
-       "dur_ms": 0.225,
+       "dur_ms": 0.321,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 10,
-         "name": "_rng",
-         "qual": "_rng",
+         "id": 42125,
+         "name": "_get_eca_risk_rating",
+         "qual": "_get_eca_risk_rating",
          "file": "services/sustainable_trade_finance_engine.py",
-         "line": 275,
+         "line": 274,
          "args": {
-          "entity_id": "'TEST_req_entity_idTrade Finance Project'"
+          "country": "'NG'"
          },
-         "ret": "<random.Random object at 0x000001A3D1B29B30>",
-         "dur_ms": 0.027,
+         "ret": "6",
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 11,
-         "name": "_get_eca_risk_rating",
-         "qual": "_get_eca_risk_rating",
+         "id": 42126,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
          "file": "services/sustainable_trade_finance_engine.py",
-         "line": 278,
+         "line": 427,
          "args": {
-          "country": "'NG'"
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
          },
-         "ret": "6",
+         "ret": "1",
          "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42127,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42128,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42129,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42130,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42131,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42132,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42133,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42134,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42135,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42136,
+         "name": "<genexpr>",
+         "qual": "assess_ep4_compliance.<locals>.<genexpr>",
+         "file": "services/sustainable_trade_finance_engine.py",
+         "line": 427,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE860>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
@@ -392,8 +543,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.094,
-   "node_count": 3,
+   "dur_ms": 1.73,
+   "node_count": 2,
    "provenance": [
     "computed"
    ],
@@ -413,7 +564,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 42137,
      "name": "post_calculate_esg_linked_margin",
      "qual": "post_calculate_esg_linked_margin",
      "file": "api/v1/routes/sustainable_trade_finance.py",
@@ -421,44 +572,29 @@
      "args": {
       "req": "ESGLinkedMarginRequest(entity_id='TEST_req_entity_id', base_margin_bps=200.0, kpis=None, performance_data=None)"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'base_margin_bps': 200.0, 'adjusted_margin_bps': 202.02, 'margin_adjustment_bps': 2.02, 'kpi_results': [{'kpi_id': 'GHG_INTENSITY', 'name': 'GHG Emissions Intensity', 'unit'\u2026",
-     "dur_ms": 0.454,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'base_margin_bps': 200.0, 'adjusted_margin_bps': None, 'margin_adjustment_bps': 0.0, 'kpi_results': [{'kpi_id': 'GHG_INTENSITY', 'name': 'GHG Emissions Intensity', 'unit': '\u2026",
+     "dur_ms": 0.237,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 42138,
        "name": "calculate_esg_linked_margin",
        "qual": "calculate_esg_linked_margin",
        "file": "services/sustainable_trade_finance_engine.py",
-       "line": 507,
+       "line": 561,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "base_margin_bps": "200.0",
         "kpis": "None",
-        "performance_data": "None"
+        "performance_data": "None",
+        "icc_principle_scores": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'base_margin_bps': 200.0, 'adjusted_margin_bps': 202.02, 'margin_adjustment_bps': 2.02, 'kpi_results': [{'kpi_id': 'GHG_INTENSITY', 'name': 'GHG Emissions Intensity', 'unit': 'tCO2e/unit', 'baseline': 10\u2026",
-       "dur_ms": 0.2,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'base_margin_bps': 200.0, 'adjusted_margin_bps': None, 'margin_adjustment_bps': 0.0, 'kpi_results': [{'kpi_id': 'GHG_INTENSITY', 'name': 'GHG Emissions Intensity', 'unit': 'tCO2e/unit', 'baseline': 100.0\u2026",
+       "dur_ms": 0.116,
        "sql": [],
        "error": null,
-       "children": [
-        {
-         "id": 14,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/sustainable_trade_finance_engine.py",
-         "line": 275,
-         "args": {
-          "entity_id": "'TEST_req_entity_idesg_margin'"
-         },
-         "ret": "<random.Random object at 0x000001A3D1B29B30>",
-         "dur_ms": 0.02,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
+       "children": []
       }
      ]
     }
@@ -488,8 +624,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.005,
-   "node_count": 4,
+   "dur_ms": 1.882,
+   "node_count": 3,
    "provenance": [
     "computed"
    ],
@@ -509,7 +645,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 42139,
      "name": "post_score_eca_green_classification",
      "qual": "post_score_eca_green_classification",
      "file": "api/v1/routes/sustainable_trade_finance.py",
@@ -517,50 +653,36 @@
      "args": {
       "req": "ECAGreenRequest(entity_id='TEST_req_entity_id', sector='power', technology='solar_pv', country='IN', oecd_classification='Category_B')"
      },
-     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'sector': 'power', 'technology': 'solar_pv', 'country': 'IN', 'oecd_classification': 'Category_B', 'environmental_review_score': 77.6, 'sector_sustainability_standard': 'OEC\u2026",
-     "dur_ms": 0.204,
+     "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'sector': 'power', 'technology': 'solar_pv', 'country': 'IN', 'oecd_classification': 'Category_B', 'environmental_review_score': None, 'sector_sustainability_standard': 'OEC\u2026",
+     "dur_ms": 0.152,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 42140,
        "name": "score_eca_green_classification",
        "qual": "score_eca_green_classification",
        "file": "services/sustainable_trade_finance_engine.py",
-       "line": 418,
+       "line": 458,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "sector": "'power'",
         "technology": "'solar_pv'",
         "country": "'IN'",
-        "oecd_classification": "'Category_B'"
+        "oecd_classification": "'Category_B'",
+        "environmental_review_score": "None"
        },
-       "ret": "{'entity_id': 'TEST_req_entity_id', 'sector': 'power', 'technology': 'solar_pv', 'country': 'IN', 'oecd_classification': 'Category_B', 'environmental_review_score': 77.6, 'sector_sustainability_standard': 'OECD SSS for Power Sector (2016)'\u2026",
-       "dur_ms": 0.145,
+       "ret": "{'entity_id': 'TEST_req_entity_id', 'sector': 'power', 'technology': 'solar_pv', 'country': 'IN', 'oecd_classification': 'Category_B', 'environmental_review_score': None, 'sector_sustainability_standard': 'OECD SSS for Power Sector (2016)'\u2026",
+       "dur_ms": 0.096,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 17,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/sustainable_trade_finance_engine.py",
-         "line": 275,
-         "args": {
-          "entity_id": "'TEST_req_entity_idpowersolar_pv'"
-         },
-         "ret": "<random.Random object at 0x000001A3D1B29B30>",
-         "dur_ms": 0.024,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 18,
+         "id": 42141,
          "name": "_get_eca_risk_rating",
          "qual": "_get_eca_risk_rating",
          "file": "services/sustainable_trade_finance_engine.py",
-         "line": 278,
+         "line": 274,
          "args": {
           "country": "'IN'"
          },
@@ -582,8 +704,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.56,
-   "node_count": 4,
+   "dur_ms": 1.423,
+   "node_count": 3,
    "provenance": [
     "computed"
    ],
@@ -603,7 +725,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 42142,
      "name": "post_screen_supply_chain_esg",
      "qual": "post_screen_supply_chain_esg",
      "file": "api/v1/routes/sustainable_trade_finance.py",
@@ -612,16 +734,16 @@
       "req": "SupplyChainESGRequest(entity_id='TEST_req_entity_id', commodity='cocoa', origin_country='CI', tier1_supplier='Supplier A', certifications=None)"
      },
      "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'commodity': 'cocoa', 'origin_country': 'CI', 'tier1_supplier': 'Supplier A', 'eudr_overlay': {'eudr_regulated': True, 'regulation': 'EU Regulation 2023/1115', 'applicable_c\u2026",
-     "dur_ms": 0.22,
+     "dur_ms": 0.174,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 20,
+       "id": 42143,
        "name": "screen_supply_chain_esg",
        "qual": "screen_supply_chain_esg",
        "file": "services/sustainable_trade_finance_engine.py",
-       "line": 638,
+       "line": 740,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "commodity": "'cocoa'",
@@ -630,31 +752,16 @@
         "certifications": "None"
        },
        "ret": "{'entity_id': 'TEST_req_entity_id', 'commodity': 'cocoa', 'origin_country': 'CI', 'tier1_supplier': 'Supplier A', 'eudr_overlay': {'eudr_regulated': True, 'regulation': 'EU Regulation 2023/1115', 'applicable_commodities': ['cocoa', 'coffee\u2026",
-       "dur_ms": 0.148,
+       "dur_ms": 0.105,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 21,
-         "name": "_rng",
-         "qual": "_rng",
-         "file": "services/sustainable_trade_finance_engine.py",
-         "line": 275,
-         "args": {
-          "entity_id": "'TEST_req_entity_idcocoaCI'"
-         },
-         "ret": "<random.Random object at 0x000001A3D1B29B30>",
-         "dur_ms": 0.019,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 22,
+         "id": 42144,
          "name": "_get_eca_risk_rating",
          "qual": "_get_eca_risk_rating",
          "file": "services/sustainable_trade_finance_engine.py",
-         "line": 278,
+         "line": 274,
          "args": {
           "country": "'CI'"
          },

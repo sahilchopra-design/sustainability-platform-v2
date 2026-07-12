@@ -1,10 +1,10 @@
 {
  "domain": "digital-product-passport",
  "meta": {
-  "ts": "2026-06-30T14:00:43",
+  "ts": "2026-07-05T19:14:33",
+  "endpoints": 11,
   "module": "api.v1.routes.digital_product_passport",
-  "router_prefix": "/api/v1/digital-product-passport",
-  "endpoints": 11
+  "router_prefix": "/api/v1/digital-product-passport"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.129,
+   "dur_ms": 1.928,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,7 +36,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9815,
      "name": "ref_battery_targets",
      "qual": "ref_battery_targets",
      "file": "api/v1/routes/digital_product_passport.py",
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.545,
+   "dur_ms": 3.213,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -78,14 +78,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 9816,
      "name": "ref_dpp_mandatory_fields",
      "qual": "ref_dpp_mandatory_fields",
      "file": "api/v1/routes/digital_product_passport.py",
      "line": 299,
      "args": {},
      "ret": "{'status': 'success', 'source': 'EU DPP schema draft Q1 2025; Regulation (EU) 2024/1781 Art 8', 'total_mandatory_fields': 25, 'fields': [{'field_id': 'DPP-01', 'name': 'unique_product_identifier', 'section': 'product_identity', 'format': '\u2026",
-     "dur_ms": 0.129,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": []
@@ -98,7 +98,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.431,
+   "dur_ms": 1.835,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -121,14 +121,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 9817,
      "name": "ref_epr_rates",
      "qual": "ref_epr_rates",
      "file": "api/v1/routes/digital_product_passport.py",
      "line": 318,
      "args": {},
      "ret": "{'status': 'success', 'source': 'Directive 2008/98/EC Art 8a; national EPR scheme transpositions 2021-2024', 'total_countries': 20, 'currency': 'EUR', 'unit': 'per tonne of product placed on market', 'rates_by_country': {'DE': {'avg_rate_e\u2026",
-     "dur_ms": 0.218,
+     "dur_ms": 0.066,
      "sql": [],
      "error": null,
      "children": []
@@ -141,7 +141,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.544,
+   "dur_ms": 1.339,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -162,14 +162,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 9818,
      "name": "ref_product_categories",
      "qual": "ref_product_categories",
      "file": "api/v1/routes/digital_product_passport.py",
      "line": 285,
      "args": {},
      "ret": "{'status': 'success', 'source': 'Regulation (EU) 2024/1781 (ESPR) Annex I and Delegated Acts', 'total_categories': 15, 'categories': {'textiles': {'regulation_ref': 'ESPR Delegated Act \u2014 Textiles (priority group, Annex I)', 'dpp_mandatory_\u2026",
-     "dur_ms": 0.017,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -200,7 +200,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 13.0,
+   "dur_ms": 25.608,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -214,7 +214,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 9819,
      "name": "circularity_assessment",
      "qual": "circularity_assessment",
      "file": "api/v1/routes/digital_product_passport.py",
@@ -223,7 +223,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 10.506,
+     "dur_ms": 24.177,
      "sql": [],
      "error": null,
      "children": []
@@ -290,7 +290,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 12.378,
+   "dur_ms": 11.823,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -304,7 +304,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 9820,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/digital_product_passport.py",
@@ -313,7 +313,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 9.908,
+     "dur_ms": 8.443,
      "sql": [],
      "error": null,
      "children": []

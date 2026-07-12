@@ -1,10 +1,10 @@
 {
  "domain": "climate-insurance",
  "meta": {
-  "ts": "2026-06-30T13:59:52",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 12,
   "module": "api.v1.routes.climate_insurance",
-  "router_prefix": "/api/v1/climate-insurance",
-  "endpoints": 12
+  "router_prefix": "/api/v1/climate-insurance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.726,
+   "dur_ms": 0.342,
    "node_count": 6,
    "provenance": [
     "computed"
@@ -36,55 +36,55 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2156,
      "name": "ref_iais_requirements",
      "qual": "ref_iais_requirements",
      "file": "api/v1/routes/climate_insurance.py",
      "line": 415,
      "args": {},
      "ret": "{'pillars': {'governance': {'pillar': 'Governance', 'weight': 0.25, 'icp_reference': 'ICP 7 (Corporate Governance)', 'items': [{'id': 'GOV-01', 'description': 'Board mandate includes explicit oversight of climate-related risks', 'scoring':\u2026",
-     "dur_ms": 0.265,
+     "dur_ms": 0.115,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 2157,
        "name": "<genexpr>",
        "qual": "ref_iais_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_insurance.py",
        "line": 428,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000025B501CEF20>"
+        ".0": "<dict_valueiterator object at 0x0000013D476EE4D0>"
        },
        "ret": "5",
-       "dur_ms": 0.01,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 2158,
        "name": "<genexpr>",
        "qual": "ref_iais_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_insurance.py",
        "line": 428,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000025B501CEF20>"
+        ".0": "<dict_valueiterator object at 0x0000013D476EE4D0>"
        },
        "ret": "4",
-       "dur_ms": 0.063,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 2159,
        "name": "<genexpr>",
        "qual": "ref_iais_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_insurance.py",
        "line": 428,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000025B501CEF20>"
+        ".0": "<dict_valueiterator object at 0x0000013D476EE4D0>"
        },
        "ret": "6",
        "dur_ms": 0.002,
@@ -93,31 +93,31 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 2160,
        "name": "<genexpr>",
        "qual": "ref_iais_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_insurance.py",
        "line": 428,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000025B501CEF20>"
+        ".0": "<dict_valueiterator object at 0x0000013D476EE4D0>"
        },
        "ret": "5",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 2161,
        "name": "<genexpr>",
        "qual": "ref_iais_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_insurance.py",
        "line": 428,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000025B501CEF20>"
+        ".0": "<dict_valueiterator object at 0x0000013D476EE4D0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -132,7 +132,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.348,
+   "dur_ms": 0.241,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -154,14 +154,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 2162,
      "name": "ref_natcat_profiles",
      "qual": "ref_natcat_profiles",
      "file": "api/v1/routes/climate_insurance.py",
      "line": 444,
      "args": {},
      "ret": "{'countries': {'USA': {'name': 'United States of America', 'aal_pct': {'flood': 0.28, 'wind_cyclone': 0.35, 'earthquake': 0.1, 'drought': 0.08}, 'pml_100yr_pct': {'flood': 1.2, 'wind_cyclone': 2.5, 'earthquake': 0.9, 'drought': 0.4}, 'pml_\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -174,7 +174,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.305,
+   "dur_ms": 0.148,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -195,14 +195,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 2163,
      "name": "ref_parametric_triggers",
      "qual": "ref_parametric_triggers",
      "file": "api/v1/routes/climate_insurance.py",
      "line": 469,
      "args": {},
      "ret": "{'trigger_types': {'rainfall_deficit': {'name': 'Rainfall Deficit Index', 'description': 'Trigger based on cumulative rainfall below historical percentile threshold', 'trigger_metric': 'mm cumulative rainfall in season', 'trigger_threshold\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -215,7 +215,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.213,
+   "dur_ms": 0.112,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -236,14 +236,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 2164,
      "name": "ref_protection_gap",
      "qual": "ref_protection_gap",
      "file": "api/v1/routes/climate_insurance.py",
      "line": 499,
      "args": {},
      "ret": "{'protection_gap_data': {'global_2022': {'total_economic_losses_usd_bn': 275, 'total_insured_losses_usd_bn': 125, 'protection_gap_usd_bn': 150, 'protection_gap_pct': 0.545, 'source': 'Swiss Re sigma No 1/2023'}, 'emerging_markets': {'total\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -256,7 +256,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.448,
+   "dur_ms": 1.073,
    "node_count": 25,
    "provenance": [
     "computed"
@@ -286,7 +286,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 2165,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/climate_insurance.py",
@@ -294,110 +294,110 @@
      "args": {
       "request": "InsurancePortfolioRequest(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_inve\u2026"
      },
-     "ret": "{'insurer_name': 'TEST_request_insurer_name', 'reporting_year': 2024, 'overall_climate_risk_score': 63.7, 'supervisory_flags': ['IAIS supervisory action required \u2014 overall compliance below 40%'], 'iais_compliance': {'overall_score_pct': 50\u2026",
-     "dur_ms": 1.787,
+     "ret": "{'insurer_name': 'TEST_request_insurer_name', 'reporting_year': 2024, 'overall_climate_risk_score': 65.0, 'supervisory_flags': ['IAIS supervisory action required \u2014 overall compliance below 40%'], 'iais_compliance': {'overall_score_pct': 50\u2026",
+     "dur_ms": 0.787,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 2166,
        "name": "full_assessment",
        "qual": "ClimateInsuranceEngine.full_assessment",
        "file": "services/climate_insurance_engine.py",
-       "line": 1071,
+       "line": 1084,
        "args": {
         "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_invest\u2026"
        },
        "ret": "ClimateInsuranceResult(insurer_name='TEST_request_insurer_name', reporting_year=2024, iais_compliance={'overall_score_pct': 50.0, 'supervisory_status': 'supervisory_action_required', 'rag_flag': 'red', 'pillar_detail': {'governance': {'pil\u2026",
-       "dur_ms": 1.339,
+       "dur_ms": 0.666,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 12,
+         "id": 2167,
          "name": "assess_iais_compliance",
          "qual": "ClimateInsuranceEngine.assess_iais_compliance",
          "file": "services/climate_insurance_engine.py",
-         "line": 626,
+         "line": 629,
          "args": {
           "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_invest\u2026"
          },
          "ret": "{'overall_score_pct': 50.0, 'supervisory_status': 'supervisory_action_required', 'rag_flag': 'red', 'pillar_detail': {'governance': {'pillar': 'Governance', 'icp_reference': 'ICP 7 (Corporate Governance)', 'score_pct': 50.0, 'items_scored'\u2026",
-         "dur_ms": 0.383,
+         "dur_ms": 0.118,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 13,
+           "id": 2168,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.assess_iais_compliance.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 656,
+           "line": 659,
            "args": {
-            ".0": "<dict_keyiterator object at 0x0000025B501E8310>"
+            ".0": "<dict_keyiterator object at 0x0000013D488CFAB0>"
            },
            "ret": "0.125",
-           "dur_ms": 0.01,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 14,
+           "id": 2169,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.assess_iais_compliance.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 656,
+           "line": 659,
            "args": {
-            ".0": "<dict_keyiterator object at 0x0000025B501E8310>"
+            ".0": "<dict_keyiterator object at 0x0000013D488CFAB0>"
            },
            "ret": "0.125",
-           "dur_ms": 0.004,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 15,
+           "id": 2170,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.assess_iais_compliance.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 656,
+           "line": 659,
            "args": {
-            ".0": "<dict_keyiterator object at 0x0000025B501E8310>"
+            ".0": "<dict_keyiterator object at 0x0000013D488CFAB0>"
            },
            "ret": "0.15",
-           "dur_ms": 0.003,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 16,
+           "id": 2171,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.assess_iais_compliance.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 656,
+           "line": 659,
            "args": {
-            ".0": "<dict_keyiterator object at 0x0000025B501E8310>"
+            ".0": "<dict_keyiterator object at 0x0000013D488CFAB0>"
            },
            "ret": "0.1",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 17,
+           "id": 2172,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.assess_iais_compliance.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 656,
+           "line": 659,
            "args": {
-            ".0": "<dict_keyiterator object at 0x0000025B501E8310>"
+            ".0": "<dict_keyiterator object at 0x0000013D488CFAB0>"
            },
            "ret": "None",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
@@ -405,87 +405,42 @@
          ]
         },
         {
-         "id": 18,
+         "id": 2173,
          "name": "calculate_climate_var",
          "qual": "ClimateInsuranceEngine.calculate_climate_var",
          "file": "services/climate_insurance_engine.py",
-         "line": 817,
+         "line": 820,
          "args": {
           "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_invest\u2026"
          },
-         "ret": "{'insurer': 'TEST_request_insurer_name', 'ngfs_scenario': 'orderly', 'scenario_name': 'Net Zero 2050 (Orderly)', 'total_exposure_usd_m': 1.0, 'physical_risk_var_usd_m': 0.02, 'physical_risk_var_pct': 1.68, 'transition_risk_var_usd_m': 0.01\u2026",
-         "dur_ms": 0.033,
+         "ret": "{'insurer': 'TEST_request_insurer_name', 'ngfs_scenario': 'orderly', 'scenario_name': 'Net Zero 2050 (Orderly)', 'total_exposure_usd_m': 1.0, 'physical_risk_var_usd_m': 0.01, 'physical_risk_var_pct': 0.79, 'transition_risk_var_usd_m': 0.01\u2026",
+         "dur_ms": 0.035,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 19,
+         "id": 2174,
          "name": "orsa_climate_stress",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress",
          "file": "services/climate_insurance_engine.py",
-         "line": 884,
+         "line": 897,
          "args": {
           "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_invest\u2026"
          },
          "ret": "{'scenario_results': {'orderly': {'scenario_name': 'Net Zero 2050 (Orderly)', 'scr_baseline_usd_m': 0.15, 'natcat_reserve_increase_usd_m': 0.01, 'market_risk_shock_usd_m': 0.03, 'liability_reserve_uplift_usd_m': 0.0, 'total_scr_uplift_usd_\u2026",
-         "dur_ms": 0.335,
+         "dur_ms": 0.185,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 20,
+           "id": 2175,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 940,
+           "line": 953,
            "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
-           },
-           "ret": "1",
-           "dur_ms": 0.003,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 21,
-           "name": "<genexpr>",
-           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
-           "file": "services/climate_insurance_engine.py",
-           "line": 940,
-           "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
-           },
-           "ret": "1",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 22,
-           "name": "<genexpr>",
-           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
-           "file": "services/climate_insurance_engine.py",
-           "line": 940,
-           "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
-           },
-           "ret": "1",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 23,
-           "name": "<genexpr>",
-           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
-           "file": "services/climate_insurance_engine.py",
-           "line": 940,
-           "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
            },
            "ret": "1",
            "dur_ms": 0.001,
@@ -494,13 +449,13 @@
            "children": []
           },
           {
-           "id": 24,
+           "id": 2176,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 940,
+           "line": 953,
            "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
            },
            "ret": "1",
            "dur_ms": 0.001,
@@ -509,13 +464,13 @@
            "children": []
           },
           {
-           "id": 25,
+           "id": 2177,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 940,
+           "line": 953,
            "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
            },
            "ret": "1",
            "dur_ms": 0.001,
@@ -524,13 +479,58 @@
            "children": []
           },
           {
-           "id": 26,
+           "id": 2178,
            "name": "<genexpr>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
            "file": "services/climate_insurance_engine.py",
-           "line": 940,
+           "line": 953,
            "args": {
-            ".0": "<list_iterator object at 0x0000025B5006B940>"
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 2179,
+           "name": "<genexpr>",
+           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
+           "file": "services/climate_insurance_engine.py",
+           "line": 953,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 2180,
+           "name": "<genexpr>",
+           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
+           "file": "services/climate_insurance_engine.py",
+           "line": 953,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
+           },
+           "ret": "1",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 2181,
+           "name": "<genexpr>",
+           "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
+           "file": "services/climate_insurance_engine.py",
+           "line": 953,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D488C65F0>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -539,26 +539,26 @@
            "children": []
           },
           {
-           "id": 27,
+           "id": 2182,
            "name": "<lambda>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
            "file": "services/climate_insurance_engine.py",
-           "line": 949,
+           "line": 962,
            "args": {
             "k": "'orderly'"
            },
            "ret": "142.7",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 28,
+           "id": 2183,
            "name": "<lambda>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
            "file": "services/climate_insurance_engine.py",
-           "line": 949,
+           "line": 962,
            "args": {
             "k": "'disorderly'"
            },
@@ -569,11 +569,11 @@
            "children": []
           },
           {
-           "id": 29,
+           "id": 2184,
            "name": "<lambda>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
            "file": "services/climate_insurance_engine.py",
-           "line": 949,
+           "line": 962,
            "args": {
             "k": "'hot_house'"
            },
@@ -584,11 +584,11 @@
            "children": []
           },
           {
-           "id": 30,
+           "id": 2185,
            "name": "<lambda>",
            "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
            "file": "services/climate_insurance_engine.py",
-           "line": 949,
+           "line": 962,
            "args": {
             "k": "'below_2c'"
            },
@@ -601,62 +601,62 @@
          ]
         },
         {
-         "id": 31,
+         "id": 2186,
          "name": "assess_casualty_liability",
          "qual": "ClimateInsuranceEngine.assess_casualty_liability",
          "file": "services/climate_insurance_engine.py",
-         "line": 954,
+         "line": 967,
          "args": {
           "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='TEST_request_portfolio_type', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_invest\u2026"
          },
          "ret": "{'insurer': 'TEST_request_insurer_name', 'do_greenwashing': {'exposure_usd_m': 0.05, 'reserve_estimate_usd_m': 0.0, 'annual_growth_rate_pct': 25.0, 'climate_loading': 1.2, 'key_risks': ['Securities class actions for misleading ESG claims',\u2026",
+         "dur_ms": 0.009,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2187,
+         "name": "model_natcat_loss",
+         "qual": "ClimateInsuranceEngine.model_natcat_loss",
+         "file": "services/climate_insurance_engine.py",
+         "line": 767,
+         "args": {
+          "n": "NatCatInput(country_code='USA', peril='flood', insured_exposure_usd_m=0.6, rcp_scenario='rcp45', horizon_year=2040)"
+         },
+         "ret": "{'country': 'USA', 'country_name': 'United States of America', 'peril': 'flood', 'insured_exposure_usd_m': 0.6, 'rcp_scenario': 'rcp45', 'horizon_year': 2040, 'aal_base_usd_m': 0.002, 'aal_climate_adjusted_usd_m': 0.002, 'pml_100yr_base_us\u2026",
+         "dur_ms": 0.015,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2188,
+         "name": "design_parametric_product",
+         "qual": "ClimateInsuranceEngine.design_parametric_product",
+         "file": "services/climate_insurance_engine.py",
+         "line": 693,
+         "args": {
+          "p": "ParametricDesignInput(product_name='Sovereign Flood Parametric Bond', peril='flood', trigger_type='flood_depth', country_code='USA', exposure_value_usd_m=0.12, season_months=6, trigger_level=None, exit_level=None, max_payout_usd_m=None, pr\u2026"
+         },
+         "ret": "{'product_name': 'Sovereign Flood Parametric Bond', 'peril': 'flood', 'trigger_type': 'flood_depth', 'trigger_description': 'Trigger based on modelled or observed flood inundation depth at reference gauge', 'country': 'USA', 'exposure_valu\u2026",
          "dur_ms": 0.018,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 32,
-         "name": "model_natcat_loss",
-         "qual": "ClimateInsuranceEngine.model_natcat_loss",
-         "file": "services/climate_insurance_engine.py",
-         "line": 764,
-         "args": {
-          "n": "NatCatInput(country_code='USA', peril='flood', insured_exposure_usd_m=0.6, rcp_scenario='rcp45', horizon_year=2040)"
-         },
-         "ret": "{'country': 'USA', 'country_name': 'United States of America', 'peril': 'flood', 'insured_exposure_usd_m': 0.6, 'rcp_scenario': 'rcp45', 'horizon_year': 2040, 'aal_base_usd_m': 0.002, 'aal_climate_adjusted_usd_m': 0.002, 'pml_100yr_base_us\u2026",
-         "dur_ms": 0.025,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 33,
-         "name": "design_parametric_product",
-         "qual": "ClimateInsuranceEngine.design_parametric_product",
-         "file": "services/climate_insurance_engine.py",
-         "line": 690,
-         "args": {
-          "p": "ParametricDesignInput(product_name='Sovereign Flood Parametric Bond', peril='flood', trigger_type='flood_depth', country_code='USA', exposure_value_usd_m=0.12, season_months=6, trigger_level=None, exit_level=None, max_payout_usd_m=None, pr\u2026"
-         },
-         "ret": "{'product_name': 'Sovereign Flood Parametric Bond', 'peril': 'flood', 'trigger_type': 'flood_depth', 'trigger_description': 'Trigger based on modelled or observed flood inundation depth at reference gauge', 'country': 'USA', 'exposure_valu\u2026",
-         "dur_ms": 0.028,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 34,
+         "id": 2189,
          "name": "analyse_protection_gap",
          "qual": "ClimateInsuranceEngine.analyse_protection_gap",
          "file": "services/climate_insurance_engine.py",
-         "line": 1015,
+         "line": 1028,
          "args": {
           "country_code": "'USA'",
           "peril": "'flood'"
          },
          "ret": "{'country': 'USA', 'country_name': 'United States of America', 'peril': 'flood', 'current_insurance_penetration_pct': 38.0, 'current_protection_gap_pct': 62.0, 'per_100m_economic_loss': {'insured_usd_m': 38.0, 'uninsured_usd_m': 62.0, 'gap\u2026",
-         "dur_ms": 0.021,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
          "children": []
@@ -745,7 +745,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.816,
+   "dur_ms": 0.423,
    "node_count": 13,
    "provenance": [
     "computed"
@@ -770,7 +770,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 35,
+     "id": 2190,
      "name": "orsa_stress",
      "qual": "orsa_stress",
      "file": "api/v1/routes/climate_insurance.py",
@@ -779,47 +779,32 @@
       "request": "ORSAStressRequest(insurer_name='TEST_request_insurer_name', portfolio_type='pc', total_exposure_usd_m=1.0, investment_portfolio_usd_m=None, high_carbon_investment_pct=None, ngfs_scenario='orderly', reporting_year=2024)"
      },
      "ret": "{'scenario_results': {'orderly': {'scenario_name': 'Net Zero 2050 (Orderly)', 'scr_baseline_usd_m': 0.15, 'natcat_reserve_increase_usd_m': 0.01, 'market_risk_shock_usd_m': 0.03, 'liability_reserve_uplift_usd_m': 0.0, 'total_scr_uplift_usd_\u2026",
-     "dur_ms": 0.456,
+     "dur_ms": 0.235,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 36,
+       "id": 2191,
        "name": "orsa_climate_stress",
        "qual": "ClimateInsuranceEngine.orsa_climate_stress",
        "file": "services/climate_insurance_engine.py",
-       "line": 884,
+       "line": 897,
        "args": {
         "portfolio_input": "InsurancePortfolioInput(insurer_name='TEST_request_insurer_name', portfolio_type='pc', total_exposure_usd_m=1.0, pc_exposure_usd_m=None, life_exposure_usd_m=None, investment_portfolio_usd_m=None, high_carbon_investment_pct=None, country_ex\u2026"
        },
        "ret": "{'scenario_results': {'orderly': {'scenario_name': 'Net Zero 2050 (Orderly)', 'scr_baseline_usd_m': 0.15, 'natcat_reserve_increase_usd_m': 0.01, 'market_risk_shock_usd_m': 0.03, 'liability_reserve_uplift_usd_m': 0.0, 'total_scr_uplift_usd_\u2026",
-       "dur_ms": 0.368,
+       "dur_ms": 0.181,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 37,
+         "id": 2192,
          "name": "<genexpr>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
          "file": "services/climate_insurance_engine.py",
-         "line": 940,
+         "line": 953,
          "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
-         },
-         "ret": "1",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 38,
-         "name": "<genexpr>",
-         "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
-         "file": "services/climate_insurance_engine.py",
-         "line": 940,
-         "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
          },
          "ret": "1",
          "dur_ms": 0.002,
@@ -828,13 +813,13 @@
          "children": []
         },
         {
-         "id": 39,
+         "id": 2193,
          "name": "<genexpr>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
          "file": "services/climate_insurance_engine.py",
-         "line": 940,
+         "line": 953,
          "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
          },
          "ret": "1",
          "dur_ms": 0.001,
@@ -843,13 +828,13 @@
          "children": []
         },
         {
-         "id": 40,
+         "id": 2194,
          "name": "<genexpr>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
          "file": "services/climate_insurance_engine.py",
-         "line": 940,
+         "line": 953,
          "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
          },
          "ret": "1",
          "dur_ms": 0.001,
@@ -858,28 +843,13 @@
          "children": []
         },
         {
-         "id": 41,
+         "id": 2195,
          "name": "<genexpr>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
          "file": "services/climate_insurance_engine.py",
-         "line": 940,
+         "line": 953,
          "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
-         },
-         "ret": "1",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 42,
-         "name": "<genexpr>",
-         "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
-         "file": "services/climate_insurance_engine.py",
-         "line": 940,
-         "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
          },
          "ret": "1",
          "dur_ms": 0.001,
@@ -888,56 +858,86 @@
          "children": []
         },
         {
-         "id": 43,
+         "id": 2196,
          "name": "<genexpr>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
          "file": "services/climate_insurance_engine.py",
-         "line": 940,
+         "line": 953,
          "args": {
-          ".0": "<list_iterator object at 0x0000025B501DD090>"
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2197,
+         "name": "<genexpr>",
+         "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
+         "file": "services/climate_insurance_engine.py",
+         "line": 953,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 2198,
+         "name": "<genexpr>",
+         "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<genexpr>",
+         "file": "services/climate_insurance_engine.py",
+         "line": 953,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D488C7D30>"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 44,
+         "id": 2199,
          "name": "<lambda>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
          "file": "services/climate_insurance_engine.py",
-         "line": 949,
+         "line": 962,
          "args": {
           "k": "'orderly'"
          },
          "ret": "142.7",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 45,
+         "id": 2200,
          "name": "<lambda>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
          "file": "services/climate_insurance_engine.py",
-         "line": 949,
+         "line": 962,
          "args": {
           "k": "'disorderly'"
          },
          "ret": "119.1",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 46,
+         "id": 2201,
          "name": "<lambda>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
          "file": "services/climate_insurance_engine.py",
-         "line": 949,
+         "line": 962,
          "args": {
           "k": "'hot_house'"
          },
@@ -948,11 +948,11 @@
          "children": []
         },
         {
-         "id": 47,
+         "id": 2202,
          "name": "<lambda>",
          "qual": "ClimateInsuranceEngine.orsa_climate_stress.<locals>.<lambda>",
          "file": "services/climate_insurance_engine.py",
-         "line": 949,
+         "line": 962,
          "args": {
           "k": "'below_2c'"
          },

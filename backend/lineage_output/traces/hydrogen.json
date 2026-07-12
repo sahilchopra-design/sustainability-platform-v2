@@ -1,10 +1,10 @@
 {
  "domain": "hydrogen",
  "meta": {
-  "ts": "2026-06-30T14:02:43",
+  "ts": "2026-07-05T19:15:39",
+  "endpoints": 9,
   "module": "api.v1.routes.hydrogen",
-  "router_prefix": "/api/v1/hydrogen",
-  "endpoints": 9
+  "router_prefix": "/api/v1/hydrogen"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.476,
+   "dur_ms": 0.245,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12542,
      "name": "ref_country_costs",
      "qual": "ref_country_costs",
      "file": "api/v1/routes/hydrogen.py",
      "line": 191,
      "args": {},
      "ret": "{'country_electricity_costs': {'DE': {'cost_usd_kwh': 0.085, 'grid_carbon_gco2_kwh': 360.0, 're_share_pct': 52.0}, 'FR': {'cost_usd_kwh': 0.07, 'grid_carbon_gco2_kwh': 58.0, 're_share_pct': 25.0}, 'ES': {'cost_usd_kwh': 0.065, 'grid_carbon\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.296,
+   "dur_ms": 0.145,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -73,14 +73,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12543,
      "name": "ref_h2_colours",
      "qual": "ref_h2_colours",
      "file": "api/v1/routes/hydrogen.py",
      "line": 171,
      "args": {},
      "ret": "{'h2_colours': {'green': {'production_pathway': 'Water electrolysis powered by renewable electricity', 'ghg_intensity_kgco2e_kgh2': 0.6, 'ghg_intensity_lo': 0.3, 'ghg_intensity_hi': 1.0, 'rfnbo_compliant': True, 'eu_taxonomy_eligible': Tru\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -93,7 +93,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.232,
+   "dur_ms": 0.136,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -113,14 +113,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12544,
      "name": "ref_production_pathways",
      "qual": "ref_production_pathways",
      "file": "api/v1/routes/hydrogen.py",
      "line": 181,
      "args": {},
      "ret": "{'production_pathways': {'electrolysis_solar': {'capex_usd_kw': 800.0, 'opex_pct_capex': 2.0, 'efficiency_pct': 70.0, 'water_demand_lt_kgh2': 9.0}, 'electrolysis_wind': {'capex_usd_kw': 950.0, 'opex_pct_capex': 2.5, 'efficiency_pct': 68.0,\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "carbon-removal",
  "meta": {
-  "ts": "2026-06-30T13:59:37",
+  "ts": "2026-07-05T19:10:49",
+  "endpoints": 10,
   "module": "api.v1.routes.carbon_removal",
-  "router_prefix": "/api/v1/carbon-removal",
-  "endpoints": 10
+  "router_prefix": "/api/v1/carbon-removal"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.18,
+   "dur_ms": 1.745,
    "node_count": 7,
    "provenance": [
     "computed"
@@ -38,55 +38,55 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 898,
      "name": "get_frontier_criteria",
      "qual": "get_frontier_criteria",
      "file": "api/v1/routes/carbon_removal.py",
      "line": 426,
      "args": {},
      "ret": "{'frontier_eligibility_criteria': {'novel_technology': {'description': 'Technology must be novel or pre-commercial; mature natural solutions excluded', 'threshold': 'TRL <= 7 at time of application; not afforestation/reforestation or REDD+\u2026",
-     "dur_ms": 0.146,
+     "dur_ms": 0.121,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 899,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "0.2",
-       "dur_ms": 0.005,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 900,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "0.25",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 901,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "0.2",
        "dur_ms": 0.001,
@@ -95,13 +95,13 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 902,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "0.2",
        "dur_ms": 0.001,
@@ -110,13 +110,13 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 903,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "0.15",
        "dur_ms": 0.001,
@@ -125,13 +125,13 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 904,
        "name": "<genexpr>",
        "qual": "get_frontier_criteria.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 435,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9A2F0>"
+        ".0": "<dict_valueiterator object at 0x0000013D48740900>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -149,7 +149,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.539,
+   "dur_ms": 1.257,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -171,25 +171,25 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 905,
      "name": "get_market_benchmarks",
      "qual": "get_market_benchmarks",
      "file": "api/v1/routes/carbon_removal.py",
      "line": 405,
      "args": {},
      "ret": "{'market_benchmarks': {'corporate_net_zero': {'buyer_description': 'Corporates with SBTi net-zero targets using CDR for residual emissions', 'typical_price_usd': 50, 'price_range_usd': (15, 200), 'volume_tco2_yr_2024': 25000000, 'growth_ra\u2026",
-     "dur_ms": 0.125,
+     "dur_ms": 0.128,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 906,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "25000000",
        "dur_ms": 0.003,
@@ -198,13 +198,13 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 907,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "80000000",
        "dur_ms": 0.001,
@@ -213,13 +213,13 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 908,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "35000000",
        "dur_ms": 0.001,
@@ -228,13 +228,13 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 909,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "5000000",
        "dur_ms": 0.001,
@@ -243,13 +243,13 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 910,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "500000",
        "dur_ms": 0.001,
@@ -258,13 +258,13 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 911,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "3000000",
        "dur_ms": 0.001,
@@ -273,13 +273,13 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 912,
        "name": "<genexpr>",
        "qual": "get_market_benchmarks.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_removal.py",
        "line": 415,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001AEA5A9B470>"
+        ".0": "<dict_valueiterator object at 0x0000013D487431A0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -297,7 +297,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.324,
+   "dur_ms": 2.003,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -318,14 +318,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 913,
      "name": "get_oxford_principles",
      "qual": "get_oxford_principles",
      "file": "api/v1/routes/carbon_removal.py",
      "line": 383,
      "args": {},
      "ret": "{'oxford_cdr_principles': {'additionality': {'description': 'Carbon removal would not have occurred without the carbon credit incentive', 'sub_criteria': ['financial_additionality', 'regulatory_additionality', 'common_practice_test', 'base\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -338,7 +338,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.12,
+   "dur_ms": 1.465,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -361,14 +361,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 914,
      "name": "get_technology_profiles",
      "qual": "get_technology_profiles",
      "file": "api/v1/routes/carbon_removal.py",
      "line": 362,
      "args": {},
      "ret": "{'technology_profiles': {'beccs': {'name': 'Bioenergy with Carbon Capture and Storage', 'ipcc_category': 'technological', 'trl_level': 6, 'cost_usd_tco2_current': 100, 'cost_usd_tco2_2030': 80, 'cost_usd_tco2_2050': 60, 'permanence_years':\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -381,7 +381,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.159,
+   "dur_ms": 1.375,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -395,7 +395,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 915,
      "name": "assess_article64",
      "qual": "assess_article64",
      "file": "api/v1/routes/carbon_removal.py",
@@ -404,7 +404,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -417,7 +417,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.017,
+   "dur_ms": 1.027,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -431,7 +431,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 916,
      "name": "run_full_assessment",
      "qual": "run_full_assessment",
      "file": "api/v1/routes/carbon_removal.py",
@@ -440,7 +440,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -453,7 +453,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.011,
+   "dur_ms": 1.018,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -467,7 +467,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 917,
      "name": "calculate_economics",
      "qual": "calculate_economics",
      "file": "api/v1/routes/carbon_removal.py",
@@ -489,7 +489,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 3.0,
+   "dur_ms": 0.991,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -503,7 +503,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 918,
      "name": "assess_market_eligibility",
      "qual": "assess_market_eligibility",
      "file": "api/v1/routes/carbon_removal.py",
@@ -512,7 +512,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.881,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -525,7 +525,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 2.065,
+   "dur_ms": 1.155,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -539,7 +539,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 919,
      "name": "score_oxford_principles",
      "qual": "score_oxford_principles",
      "file": "api/v1/routes/carbon_removal.py",
@@ -548,7 +548,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.012,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -561,7 +561,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.099,
+   "dur_ms": 1.039,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -575,7 +575,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 920,
      "name": "assess_technology",
      "qual": "assess_technology",
      "file": "api/v1/routes/carbon_removal.py",
@@ -584,7 +584,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []

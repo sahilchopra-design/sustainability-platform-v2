@@ -1,7 +1,7 @@
 {
  "domain": "mining",
  "meta": {
-  "ts": "2026-07-01T10:02:46",
+  "ts": "2026-07-05T19:15:49",
   "endpoints": 4,
   "module": "api.v1.routes.mining",
   "router_prefix": "/api/v1/mining"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 552.869,
+   "dur_ms": 275.454,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -31,7 +31,7 @@
       "mining_risk_assessments"
      ],
      "rowcount": null,
-     "dur_ms": 56.285,
+     "dur_ms": 64.708,
      "is_reference": false,
      "error": "UndefinedColumn('column a.overall_risk_score does not exist\\nLINE 3:                        a.overall_risk_score, a.overall_risk_...\\n                               ^\\n')"
     }
@@ -49,7 +49,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12961,
      "name": "list_assessments",
      "qual": "list_assessments",
      "file": "api/v1/routes/mining.py",
@@ -57,10 +57,10 @@
      "args": {
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2C68AF00>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48B4FAD0>"
      },
      "ret": "[]",
-     "dur_ms": 521.271,
+     "dur_ms": 246.361,
      "sql": [
       0
      ],
@@ -75,7 +75,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 324.712,
+   "dur_ms": 310.742,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -93,7 +93,7 @@
       "mining_risk_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 67.042,
+     "dur_ms": 67.578,
      "is_reference": false,
      "error": null
     }
@@ -106,17 +106,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12962,
      "name": "get_assessment",
      "qual": "get_assessment",
      "file": "api/v1/routes/mining.py",
      "line": 279,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2B003320>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9D640>"
      },
      "ret": "None",
-     "dur_ms": 294.477,
+     "dur_ms": 282.017,
      "sql": [
       0
      ],
@@ -131,7 +131,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.23,
+   "dur_ms": 0.352,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -154,26 +154,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12963,
      "name": "reference_data",
      "qual": "reference_data",
      "file": "api/v1/routes/mining.py",
      "line": 248,
      "args": {},
      "ret": "{'critical_minerals_hhi': {'lithium': 0.52, 'cobalt': 0.72, 'nickel': 0.28, 'manganese': 0.3, 'graphite': 0.7, 'rare_earth': 0.85, 'platinum_group': 0.55, 'tungsten': 0.75, 'indium': 0.68, 'gallium': 0.8, 'germanium': 0.7, 'copper': 0.15, \u2026",
-     "dur_ms": 0.068,
+     "dur_ms": 0.087,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 12964,
        "name": "get_reference_data",
        "qual": "get_reference_data",
        "file": "services/mining_risk_calculator.py",
        "line": 369,
        "args": {},
        "ret": "{'critical_minerals_hhi': {'lithium': 0.52, 'cobalt': 0.72, 'nickel': 0.28, 'manganese': 0.3, 'graphite': 0.7, 'rare_earth': 0.85, 'platinum_group': 0.55, 'tungsten': 0.75, 'indium': 0.68, 'gallium': 0.8, 'germanium': 0.7, 'copper': 0.15, \u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -188,7 +188,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.218,
+   "dur_ms": 0.3,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -203,17 +203,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12965,
      "name": "calculate_mining",
      "qual": "calculate_mining",
      "file": "api/v1/routes/mining.py",
      "line": 104,
      "args": {
       "req": "'TEST_req'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000027F2C6B1D60>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48D9FEC0>"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "sector-assessments",
  "meta": {
-  "ts": "2026-06-30T14:05:06",
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 9,
   "module": "api.v1.routes.sector_assessments",
-  "router_prefix": "/api/v1",
-  "endpoints": 9
+  "router_prefix": "/api/v1"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 639.005,
+   "dur_ms": 295.182,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -28,8 +28,8 @@
      "tables": [
       "power_plant_assessments"
      ],
-     "rowcount": 14,
-     "dur_ms": 105.175,
+     "rowcount": 15,
+     "dur_ms": 69.042,
      "is_reference": false,
      "error": null
     }
@@ -49,17 +49,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 40041,
      "name": "list_plant_assessments",
      "qual": "list_plant_assessments",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 1094,
      "args": {
       "status": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D3440>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B4470>"
      },
-     "ret": "{'assessments': [{'assessment_id': '4c72633c-0cb8-4f61-982f-f114d1aa68a8', 'plant_name': 'RWE Neurath Coal Phase-out', 'assessment_date': '2025-12-31', 'current_ci_gco2_kwh': 1042.0, 'iea_nze_2030_target': 100.0, 'implied_stranding_year': \u2026",
-     "dur_ms": 605.276,
+     "ret": "{'assessments': [{'assessment_id': '5d142a8d-fd82-4e81-a283-607f1a5a4986', 'plant_name': 'TEST_request_plant_id', 'assessment_date': '2026-06-30', 'current_ci_gco2_kwh': 1.0, 'iea_nze_2030_target': 138.0, 'implied_stranding_year': 2044, 't\u2026",
+     "dur_ms": 264.673,
      "sql": [
       0
      ],
@@ -74,7 +74,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 303.307,
+   "dur_ms": 293.809,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -90,7 +90,7 @@
       "power_plant_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 66.185,
+     "dur_ms": 58.373,
      "is_reference": false,
      "error": null
     }
@@ -103,17 +103,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 40042,
      "name": "get_plant_assessment",
      "qual": "get_plant_assessment",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 1141,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000207432526F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B5490>"
      },
      "ret": "None",
-     "dur_ms": 270.376,
+     "dur_ms": 260.965,
      "sql": [
       0
      ],
@@ -128,7 +128,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 294.092,
+   "dur_ms": 383.35,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -144,7 +144,7 @@
       "cat_risk_assessments"
      ],
      "rowcount": 50,
-     "dur_ms": 77.145,
+     "dur_ms": 81.207,
      "is_reference": false,
      "error": null
     }
@@ -166,7 +166,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 40043,
      "name": "list_cat_risk_assessments",
      "qual": "list_cat_risk_assessments",
      "file": "api/v1/routes/sector_assessments.py",
@@ -175,10 +175,10 @@
       "status": "None",
       "peril": "None",
       "risk_category": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D3650>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B5160>"
      },
      "ret": "{'assessments': [{'assessment_id': 'efe85cfc-5983-41fb-9d0a-dff8559a1523', 'property_reference': 'CAT-003', 'peril': 'flood', 'property_value_gbp': 62000000.0, 'aal_gbp': 1860000.0, 'pml_gbp': 0, 'risk_score': None, 'risk_category': None, \u2026",
-     "dur_ms": 264.218,
+     "dur_ms": 353.476,
      "sql": [
       0
      ],
@@ -193,7 +193,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 310.63,
+   "dur_ms": 266.153,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -209,7 +209,7 @@
       "cat_risk_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 69.896,
+     "dur_ms": 57.55,
      "is_reference": false,
      "error": null
     }
@@ -222,17 +222,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 40044,
      "name": "get_cat_risk_assessment",
      "qual": "get_cat_risk_assessment",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 1039,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000207433D2F30>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B51F0>"
      },
      "ret": "None",
-     "dur_ms": 277.652,
+     "dur_ms": 237.641,
      "sql": [
       0
      ],
@@ -247,7 +247,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 342.42,
+   "dur_ms": 327.768,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -262,8 +262,8 @@
      "tables": [
       "data_centre_assessments"
      ],
-     "rowcount": 9,
-     "dur_ms": 67.574,
+     "rowcount": 10,
+     "dur_ms": 94.609,
      "is_reference": false,
      "error": null
     }
@@ -284,7 +284,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 40045,
      "name": "list_dc_assessments",
      "qual": "list_dc_assessments",
      "file": "api/v1/routes/sector_assessments.py",
@@ -292,10 +292,10 @@
      "args": {
       "status": "None",
       "assessment_year": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513320>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B4DD0>"
      },
-     "ret": "{'assessments': [{'assessment_id': '76a5e566-468f-4618-97a8-339e70c5786a', 'facility_name': 'Microsoft Azure West Europe', 'assessment_year': 2024, 'pue': 1.099, 'renewable_energy_pct': 97.8, 'efficiency_score': 94.2, 'efficiency_rating': \u2026",
-     "dur_ms": 313.483,
+     "ret": "{'assessments': [{'assessment_id': '934f202d-bda9-448e-9080-e89cb3f03e19', 'facility_name': 'TEST_request_facility_id', 'assessment_year': 2026, 'pue': 1.0, 'renewable_energy_pct': None, 'efficiency_score': 50.0, 'efficiency_rating': 'C', \u2026",
+     "dur_ms": 283.205,
      "sql": [
       0
      ],
@@ -310,7 +310,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Assessment not found",
-   "dur_ms": 273.355,
+   "dur_ms": 313.853,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -326,7 +326,7 @@
       "data_centre_assessments"
      ],
      "rowcount": 0,
-     "dur_ms": 57.821,
+     "dur_ms": 60.245,
      "is_reference": false,
      "error": null
     }
@@ -339,17 +339,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 40046,
      "name": "get_dc_assessment",
      "qual": "get_dc_assessment",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 940,
      "args": {
       "assessment_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513A40>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B7650>"
      },
      "ret": "None",
-     "dur_ms": 245.262,
+     "dur_ms": 283.911,
      "sql": [
       0
      ],
@@ -364,7 +364,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 494.085,
+   "dur_ms": 461.343,
    "node_count": 32,
    "provenance": [
     "real-db"
@@ -381,7 +381,7 @@
       "power_plant_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 62.194,
+     "dur_ms": 68.077,
      "is_reference": false,
      "error": null
     },
@@ -392,7 +392,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 40.18,
+     "dur_ms": 38.262,
      "is_reference": false,
      "error": null
     },
@@ -403,7 +403,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 34.347,
+     "dur_ms": 28.204,
      "is_reference": false,
      "error": null
     },
@@ -414,7 +414,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 30.235,
+     "dur_ms": 27.898,
      "is_reference": false,
      "error": null
     },
@@ -425,7 +425,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 30.248,
+     "dur_ms": 29.933,
      "is_reference": false,
      "error": null
     },
@@ -436,7 +436,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 33.005,
+     "dur_ms": 28.203,
      "is_reference": false,
      "error": null
     },
@@ -447,7 +447,7 @@
       "power_plant_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 28.99,
+     "dur_ms": 27.905,
      "is_reference": false,
      "error": null
     }
@@ -479,22 +479,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 40047,
      "name": "assess_plant_decarbonisation",
      "qual": "assess_plant_decarbonisation",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 777,
      "args": {
       "request": "PlantDecarbRequest(plant_id='TEST_request_plant_id', plant_name=None, plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', installed_capacity_mw=1.0, current_load_factor_pct=1.0, current_emission_intensity_gco2_kwh\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513590>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B6F60>"
      },
      "ret": "PlantDecarbResponse(plant_id='TEST_request_plant_id', plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', current_emission_intensity_gco2_kwh=1.0, iea_nze_2030_target_gco2_kwh=138.0, iea_nze_2050_target_gco2_kwh=0\u2026",
-     "dur_ms": 493.565,
+     "dur_ms": 460.755,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 40048,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -503,13 +503,13 @@
         "year": "2030"
        },
        "ret": "138.0",
-       "dur_ms": 0.01,
+       "dur_ms": 0.024,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 40049,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -518,13 +518,13 @@
         "year": "2050"
        },
        "ret": "0",
-       "dur_ms": 0.004,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 40050,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -533,13 +533,13 @@
         "year": "2025"
        },
        "ret": "340.0",
-       "dur_ms": 0.005,
+       "dur_ms": 0.014,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 40051,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -548,13 +548,13 @@
         "year": "2025"
        },
        "ret": "340.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 40052,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -563,13 +563,13 @@
         "year": "2026"
        },
        "ret": "299.6",
-       "dur_ms": 0.004,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 13,
+       "id": 40053,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -578,13 +578,13 @@
         "year": "2027"
        },
        "ret": "259.2",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 14,
+       "id": 40054,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -599,7 +599,7 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 40055,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -614,7 +614,7 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 40056,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -623,13 +623,13 @@
         "year": "2030"
        },
        "ret": "138.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 17,
+       "id": 40057,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -644,7 +644,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 40058,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -653,13 +653,13 @@
         "year": "2032"
        },
        "ret": "106.8",
-       "dur_ms": 0.003,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 40059,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -668,13 +668,13 @@
         "year": "2033"
        },
        "ret": "91.2",
-       "dur_ms": 0.003,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 20,
+       "id": 40060,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -683,13 +683,13 @@
         "year": "2034"
        },
        "ret": "75.6",
-       "dur_ms": 0.003,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 21,
+       "id": 40061,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -698,13 +698,13 @@
         "year": "2035"
        },
        "ret": "60.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 40062,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -713,13 +713,13 @@
         "year": "2036"
        },
        "ret": "53.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 40063,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -728,13 +728,13 @@
         "year": "2037"
        },
        "ret": "46.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 24,
+       "id": 40064,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -743,13 +743,13 @@
         "year": "2038"
        },
        "ret": "39.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 25,
+       "id": 40065,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -758,13 +758,13 @@
         "year": "2039"
        },
        "ret": "32.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 26,
+       "id": 40066,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -773,13 +773,13 @@
         "year": "2040"
        },
        "ret": "25.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 27,
+       "id": 40067,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -788,13 +788,13 @@
         "year": "2041"
        },
        "ret": "22.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 28,
+       "id": 40068,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -803,13 +803,13 @@
         "year": "2042"
        },
        "ret": "19.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 29,
+       "id": 40069,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -818,13 +818,13 @@
         "year": "2043"
        },
        "ret": "16.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 30,
+       "id": 40070,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -833,13 +833,13 @@
         "year": "2044"
        },
        "ret": "13.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 31,
+       "id": 40071,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -848,13 +848,13 @@
         "year": "2025"
        },
        "ret": "340.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 32,
+       "id": 40072,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -863,13 +863,13 @@
         "year": "2030"
        },
        "ret": "138.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 33,
+       "id": 40073,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -878,13 +878,13 @@
         "year": "2035"
        },
        "ret": "60.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 34,
+       "id": 40074,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -893,13 +893,13 @@
         "year": "2040"
        },
        "ret": "25.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 35,
+       "id": 40075,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -908,13 +908,13 @@
         "year": "2045"
        },
        "ret": "10.0",
-       "dur_ms": 0.003,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 36,
+       "id": 40076,
        "name": "_interpolate_nze",
        "qual": "_interpolate_nze",
        "file": "api/v1/routes/sector_assessments.py",
@@ -923,13 +923,13 @@
         "year": "2050"
        },
        "ret": "0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 37,
+       "id": 40077,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/sector_assessments.py",
@@ -939,19 +939,19 @@
         "missing": "[]"
        },
        "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
-       "dur_ms": 0.02,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 38,
+       "id": 40078,
        "name": "_persist_plant_assessment",
        "qual": "_persist_plant_assessment",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 461,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000020743513590>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B6F60>",
         "req": "PlantDecarbRequest(plant_id='TEST_request_plant_id', plant_name=None, plant_type='TEST_request_plant_type', country_iso='TEST_request_country_iso', installed_capacity_mw=1.0, current_load_factor_pct=1.0, current_emission_intensity_gco2_kwh\u2026",
         "plant_name": "'TEST_request_plant_id'",
         "intensity": "1.0",
@@ -964,8 +964,8 @@
         "total_capex": "None",
         "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
        },
-       "ret": "'5d142a8d-fd82-4e81-a283-607f1a5a4986'",
-       "dur_ms": 492.689,
+       "ret": "'2e864c67-4a1d-4920-921c-cab8d539788e'",
+       "dur_ms": 459.308,
        "sql": [
         0,
         1,
@@ -988,7 +988,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 462.408,
+   "dur_ms": 339.069,
    "node_count": 8,
    "provenance": [
     "db-empty"
@@ -1004,9 +1004,9 @@
       "cat_risk_assessments"
      ],
      "rowcount": null,
-     "dur_ms": 69.148,
+     "dur_ms": 56.021,
      "is_reference": false,
-     "error": "CheckViolation('new row for relation \"cat_risk_assessments\" violates check constraint \"ck_cat_risk_assessments_peril\"\\nDETAIL:  Failing row contains (ba335534-47a8-4295-882f-b032ae2b0c71, null, TEST_\u2026"
+     "error": "CheckViolation('new row for relation \"cat_risk_assessments\" violates check constraint \"ck_cat_risk_assessments_peril\"\\nDETAIL:  Failing row contains (7caf965d-387b-4fd3-b432-a21603122a29, null, TEST_\u2026"
     }
    ],
    "inputs": {
@@ -1035,22 +1035,22 @@
    "truncated": [],
    "tree": [
     {
-     "id": 39,
+     "id": 40079,
      "name": "assess_cat_risk",
      "qual": "assess_cat_risk",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 664,
      "args": {
       "request": "CATRiskRequest(property_id='TEST_request_property_id', property_reference=None, latitude=1.0, longitude=1.0, country_iso='TEST_request_country_iso', peril='TEST_request_peril', property_value_gbp=1.0, construction_type=None, year_built=Non\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000020741C30FE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B7530>"
      },
      "ret": "CATRiskResponse(property_id='TEST_request_property_id', peril='TEST_request_peril', climate_scenario='RCP4.5', climate_horizon_year=2050, annual_average_loss_gbp=0.0, climate_adjusted_aal_gbp=0.0, aal_uplift_pct=0.0, pml_estimates=[PMLEsti\u2026",
-     "dur_ms": 461.827,
+     "dur_ms": 338.52,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 40,
+       "id": 40080,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/sector_assessments.py",
@@ -1066,13 +1066,13 @@
        "children": []
       },
       {
-       "id": 41,
+       "id": 40081,
        "name": "_persist_cat_risk_assessment",
        "qual": "_persist_cat_risk_assessment",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 374,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000020741C30FE0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B7530>",
         "req": "CATRiskRequest(property_id='TEST_request_property_id', property_reference=None, latitude=1.0, longitude=1.0, country_iso='TEST_request_country_iso', peril='TEST_request_peril', property_value_gbp=1.0, construction_type=None, year_built=Non\u2026",
         "aal": "0.0",
         "climate_aal": "0.0",
@@ -1083,20 +1083,20 @@
         "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
        },
        "ret": "None",
-       "dur_ms": 461.589,
+       "dur_ms": 338.266,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 42,
+         "id": 40082,
          "name": "<genexpr>",
          "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
          "file": "api/v1/routes/sector_assessments.py",
          "line": 400,
          "args": {
-          ".0": "<list_iterator object at 0x0000020741D306A0>"
+          ".0": "<list_iterator object at 0x0000013D4A1B7820>"
          },
          "ret": "0.27",
          "dur_ms": 0.002,
@@ -1105,28 +1105,28 @@
          "children": []
         },
         {
-         "id": 43,
+         "id": 40083,
          "name": "<genexpr>",
          "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
          "file": "api/v1/routes/sector_assessments.py",
          "line": 400,
          "args": {
-          ".0": "<list_iterator object at 0x0000020741D306A0>"
+          ".0": "<list_iterator object at 0x0000013D4A1B7820>"
          },
          "ret": "0.36",
-         "dur_ms": 0.001,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 44,
+         "id": 40084,
          "name": "<genexpr>",
          "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
          "file": "api/v1/routes/sector_assessments.py",
          "line": 400,
          "args": {
-          ".0": "<list_iterator object at 0x0000020741D306A0>"
+          ".0": "<list_iterator object at 0x0000013D4A1B7820>"
          },
          "ret": "0.46",
          "dur_ms": 0.001,
@@ -1135,13 +1135,13 @@
          "children": []
         },
         {
-         "id": 45,
+         "id": 40085,
          "name": "<genexpr>",
          "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
          "file": "api/v1/routes/sector_assessments.py",
          "line": 400,
          "args": {
-          ".0": "<list_iterator object at 0x0000020741D306A0>"
+          ".0": "<list_iterator object at 0x0000013D4A1B7820>"
          },
          "ret": "0.49",
          "dur_ms": 0.001,
@@ -1150,13 +1150,13 @@
          "children": []
         },
         {
-         "id": 46,
+         "id": 40086,
          "name": "<genexpr>",
          "qual": "_persist_cat_risk_assessment.<locals>.<genexpr>",
          "file": "api/v1/routes/sector_assessments.py",
          "line": 400,
          "args": {
-          ".0": "<list_iterator object at 0x0000020741D306A0>"
+          ".0": "<list_iterator object at 0x0000013D4A1B7820>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1176,7 +1176,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 313.817,
+   "dur_ms": 301.533,
    "node_count": 7,
    "provenance": [
     "real-db"
@@ -1192,7 +1192,7 @@
       "data_centre_assessments"
      ],
      "rowcount": 1,
-     "dur_ms": 62.536,
+     "dur_ms": 72.376,
      "is_reference": false,
      "error": null
     }
@@ -1219,28 +1219,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 47,
+     "id": 40087,
      "name": "assess_data_center",
      "qual": "assess_data_center",
      "file": "api/v1/routes/sector_assessments.py",
      "line": 545,
      "args": {
       "request": "DataCenterRequest(facility_id='TEST_request_facility_id', facility_name=None, assessment_year=None, location=None, grid_region='TEST_request_grid_region', pue=1.0, wue=None, total_it_load_mw=1.0, annual_energy_consumption_mwh=1.0, renewabl\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000020743371A60>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B4DD0>"
      },
      "ret": "DataCenterResponse(facility_id='TEST_request_facility_id', overall_efficiency_score=50.0, carbon_intensity_kgco2_per_mwh_it=350.0, annual_co2e_tonnes=0.35, renewable_coverage_pct=0.0, efficiency_benchmarks=[EfficiencyBenchmark(metric='PUE'\u2026",
-     "dur_ms": 313.347,
+     "dur_ms": 300.998,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 48,
+       "id": 40088,
        "name": "<genexpr>",
        "qual": "assess_data_center.<locals>.<genexpr>",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 595,
        "args": {
-        ".0": "<list_iterator object at 0x000002073EA04460>"
+        ".0": "<list_iterator object at 0x0000013D4A1B55A0>"
        },
        "ret": "100.0",
        "dur_ms": 0.003,
@@ -1249,13 +1249,13 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 40089,
        "name": "<genexpr>",
        "qual": "assess_data_center.<locals>.<genexpr>",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 595,
        "args": {
-        ".0": "<list_iterator object at 0x000002073EA04460>"
+        ".0": "<list_iterator object at 0x0000013D4A1B55A0>"
        },
        "ret": "0.0",
        "dur_ms": 0.002,
@@ -1264,13 +1264,13 @@
        "children": []
       },
       {
-       "id": 50,
+       "id": 40090,
        "name": "<genexpr>",
        "qual": "assess_data_center.<locals>.<genexpr>",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 595,
        "args": {
-        ".0": "<list_iterator object at 0x000002073EA04460>"
+        ".0": "<list_iterator object at 0x0000013D4A1B55A0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -1279,7 +1279,7 @@
        "children": []
       },
       {
-       "id": 51,
+       "id": 40091,
        "name": "_build_validation_summary",
        "qual": "_build_validation_summary",
        "file": "api/v1/routes/sector_assessments.py",
@@ -1289,19 +1289,19 @@
         "missing": "[]"
        },
        "ret": "ValidationSummary(is_valid=True, warnings=[], missing_fields=[], data_quality_score=1.0)",
-       "dur_ms": 0.011,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 52,
+       "id": 40092,
        "name": "_persist_dc_assessment",
        "qual": "_persist_dc_assessment",
        "file": "api/v1/routes/sector_assessments.py",
        "line": 300,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000020743371A60>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B4DD0>",
         "facility_name": "'TEST_request_facility_id'",
         "assessment_year": "2026",
         "req": "DataCenterRequest(facility_id='TEST_request_facility_id', facility_name=None, assessment_year=None, location=None, grid_region='TEST_request_grid_region', pue=1.0, wue=None, total_it_load_mw=1.0, annual_energy_consumption_mwh=1.0, renewabl\u2026",
@@ -1310,15 +1310,15 @@
         "targets": "[ImprovementTarget(measure='Renewable energy PPA or on-site solar/wind', potential_reduction_pct=90.0, estimated_cost_gbp=5.0, payback_years=7.0, priority='high'), ImprovementTarget(measure='Negotiate long-term Renewable Energy PPA (10-15y\u2026",
         "validation_json": "{'is_valid': True, 'warnings': [], 'missing_fields': [], 'data_quality_score': 1.0}"
        },
-       "ret": "'934f202d-bda9-448e-9080-e89cb3f03e19'",
-       "dur_ms": 312.855,
+       "ret": "'aea9615e-04e7-496f-bd94-947d797548ea'",
+       "dur_ms": 300.641,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 53,
+         "id": 40093,
          "name": "_efficiency_rating",
          "qual": "_efficiency_rating",
          "file": "api/v1/routes/sector_assessments.py",

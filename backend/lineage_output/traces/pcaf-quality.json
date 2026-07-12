@@ -1,10 +1,10 @@
 {
  "domain": "pcaf-quality",
  "meta": {
-  "ts": "2026-06-30T14:03:38",
+  "ts": "2026-07-05T19:16:00",
+  "endpoints": 11,
   "module": "api.v1.routes.pcaf_quality",
-  "router_prefix": "/api/v1/pcaf-quality",
-  "endpoints": 11
+  "router_prefix": "/api/v1/pcaf-quality"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.072,
+   "dur_ms": 0.247,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -31,26 +31,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13751,
      "name": "ref_asset_classes",
      "qual": "ref_asset_classes",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 109,
      "args": {},
      "ret": "{'asset_classes': [{'asset_class_id': 'listed_equity_corporate_bonds', 'label': 'Listed Equity and Corporate Bonds', 'description': \"Publicly traded equity holdings and corporate bonds. Attribution uses Enterprise Value Including Cash (EVI\u2026",
-     "dur_ms": 0.259,
+     "dur_ms": 0.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13752,
        "name": "get_asset_classes",
        "qual": "PCAFQualityEngine.get_asset_classes",
        "file": "services/pcaf_quality_engine.py",
        "line": 1593,
        "args": {},
        "ret": "[{'asset_class_id': 'listed_equity_corporate_bonds', 'label': 'Listed Equity and Corporate Bonds', 'description': \"Publicly traded equity holdings and corporate bonds. Attribution uses Enterprise Value Including Cash (EVIC) to allocate the\u2026",
-       "dur_ms": 0.012,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -65,7 +65,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.647,
+   "dur_ms": 0.16,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -83,26 +83,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13753,
      "name": "ref_attribution_methods",
      "qual": "ref_attribution_methods",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 133,
      "args": {},
      "ret": "{'attribution_methods': [{'method_id': 'enterprise_value', 'label': 'Enterprise Value Including Cash (EVIC)', 'formula_description': 'Attribution Factor = Outstanding Amount / EVIC, where EVIC = Market capitalisation + total debt + preferr\u2026",
-     "dur_ms": 0.135,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 13754,
        "name": "get_attribution_methods",
        "qual": "PCAFQualityEngine.get_attribution_methods",
        "file": "services/pcaf_quality_engine.py",
        "line": 1613,
        "args": {},
        "ret": "[{'method_id': 'enterprise_value', 'label': 'Enterprise Value Including Cash (EVIC)', 'formula_description': 'Attribution Factor = Outstanding Amount / EVIC, where EVIC = Market capitalisation + total debt + preferred equity + minority int\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -117,7 +117,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.28,
+   "dur_ms": 0.155,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -135,26 +135,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13755,
      "name": "ref_benchmarks",
      "qual": "ref_benchmarks",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 151,
      "args": {},
      "ret": "{'benchmarks': [{'sector': 'Commercial Banking', 'nace_hint': 'K64', 'median_dqs': 3.8, 'pct_dqs1_2': 18.0, 'pct_dqs4_5': 52.0, 'sample_size': 42, 'benchmark_year': 2024}, {'sector': 'Investment Banking', 'nace_hint': 'K66', 'median_dqs': \u2026",
-     "dur_ms": 0.07,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 13756,
        "name": "get_quality_benchmarks",
        "qual": "PCAFQualityEngine.get_quality_benchmarks",
        "file": "services/pcaf_quality_engine.py",
        "line": 1628,
        "args": {},
        "ret": "[{'sector': 'Commercial Banking', 'nace_hint': 'K64', 'median_dqs': 3.8, 'pct_dqs1_2': 18.0, 'pct_dqs4_5': 52.0, 'sample_size': 42, 'benchmark_year': 2024}, {'sector': 'Investment Banking', 'nace_hint': 'K66', 'median_dqs': 3.5, 'pct_dqs1_\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.324,
+   "dur_ms": 0.19,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -187,19 +187,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13757,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 145,
      "args": {},
      "ret": "{'cross_framework_map': [{'mapping_id': 'pcaf_sfdr_pai1', 'pcaf_metric': 'Total financed emissions (Scope 1 + 2 + 3)', 'target_framework': 'SFDR', 'target_reference': 'PAI 1 \u2014 GHG emissions (Scope 1, 2, and 3 financed)', 'description': 'PC\u2026",
-     "dur_ms": 0.096,
+     "dur_ms": 0.06,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13758,
        "name": "get_cross_framework_map",
        "qual": "PCAFQualityEngine.get_cross_framework_map",
        "file": "services/pcaf_quality_engine.py",
@@ -221,7 +221,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.228,
+   "dur_ms": 0.148,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -239,26 +239,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13759,
      "name": "ref_dqs_levels",
      "qual": "ref_dqs_levels",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 115,
      "args": {},
      "ret": "{'dqs_levels': [{'score': 1, 'label': 'Audited emissions data', 'description': 'Verified GHG emissions data (Scope 1, 2, and relevant Scope 3 categories) directly reported by the borrower/investee and assured by an accredited third party (\u2026",
-     "dur_ms": 0.054,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 13760,
        "name": "get_dqs_levels",
        "qual": "PCAFQualityEngine.get_dqs_levels",
        "file": "services/pcaf_quality_engine.py",
        "line": 1598,
        "args": {},
        "ret": "[{'score': 1, 'label': 'Audited emissions data', 'description': 'Verified GHG emissions data (Scope 1, 2, and relevant Scope 3 categories) directly reported by the borrower/investee and assured by an accredited third party (e.g. ISO 14064-\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -273,7 +273,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.249,
+   "dur_ms": 0.162,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -291,26 +291,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 13761,
      "name": "ref_emission_factors",
      "qual": "ref_emission_factors",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 127,
      "args": {},
      "ret": "{'emission_factors': [{'nace_code': 'A', 'sector_label': 'Agriculture, Forestry and Fishing', 'scope1_ef_tco2_per_meur': 520.0, 'scope2_ef': 85.0, 'scope3_ef': 1250.0, 'data_year': 2023, 'source': 'Eurostat / PCAF DB 2023'}, {'nace_code': \u2026",
-     "dur_ms": 0.073,
+     "dur_ms": 0.049,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 13762,
        "name": "get_emission_factors",
        "qual": "PCAFQualityEngine.get_emission_factors",
        "file": "services/pcaf_quality_engine.py",
        "line": 1608,
        "args": {},
        "ret": "[{'nace_code': 'A', 'sector_label': 'Agriculture, Forestry and Fishing', 'scope1_ef_tco2_per_meur': 520.0, 'scope2_ef': 85.0, 'scope3_ef': 1250.0, 'data_year': 2023, 'source': 'Eurostat / PCAF DB 2023'}, {'nace_code': 'B', 'sector_label': \u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -325,7 +325,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.212,
+   "dur_ms": 0.142,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -343,26 +343,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 13763,
      "name": "ref_improvement_paths",
      "qual": "ref_improvement_paths",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 139,
      "args": {},
      "ret": "{'improvement_paths': [{'from_dqs': 5, 'to_dqs': 4, 'transition_label': 'Sector proxy -> Economic activity estimate', 'actions': ['Obtain revenue or total assets data for the borrower/investee', 'Apply region- and sector-specific emission \u2026",
-     "dur_ms": 0.051,
+     "dur_ms": 0.034,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 13764,
        "name": "get_improvement_paths",
        "qual": "PCAFQualityEngine.get_improvement_paths",
        "file": "services/pcaf_quality_engine.py",
        "line": 1618,
        "args": {},
        "ret": "[{'from_dqs': 5, 'to_dqs': 4, 'transition_label': 'Sector proxy -> Economic activity estimate', 'actions': ['Obtain revenue or total assets data for the borrower/investee', 'Apply region- and sector-specific emission factors per EUR revenu\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -377,7 +377,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.216,
+   "dur_ms": 0.131,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -395,26 +395,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 13765,
      "name": "ref_quality_dimensions",
      "qual": "ref_quality_dimensions",
      "file": "api/v1/routes/pcaf_quality.py",
      "line": 121,
      "args": {},
      "ret": "{'quality_dimensions': [{'dimension_id': 'emissions_data_quality', 'label': 'Emissions Data Quality', 'description': 'Source and reliability of the underlying GHG emissions data. Ranges from third-party verified (DQS 1) to sector proxy (DQ\u2026",
-     "dur_ms": 0.063,
+     "dur_ms": 0.027,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 13766,
        "name": "get_quality_dimensions",
        "qual": "PCAFQualityEngine.get_quality_dimensions",
        "file": "services/pcaf_quality_engine.py",
        "line": 1603,
        "args": {},
        "ret": "[{'dimension_id': 'emissions_data_quality', 'label': 'Emissions Data Quality', 'description': 'Source and reliability of the underlying GHG emissions data. Ranges from third-party verified (DQS 1) to sector proxy (DQS 5).', 'weight': 0.35}\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -429,7 +429,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.231,
+   "dur_ms": 0.137,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -443,7 +443,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 13767,
      "name": "assess_data_quality",
      "qual": "assess_data_quality",
      "file": "api/v1/routes/pcaf_quality.py",
@@ -452,7 +452,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -465,7 +465,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'holding_id'",
-   "dur_ms": 0.182,
+   "dur_ms": 0.118,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -479,7 +479,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 13768,
      "name": "score_holding",
      "qual": "score_holding",
      "file": "api/v1/routes/pcaf_quality.py",
@@ -488,7 +488,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -501,7 +501,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'portfolio_id'",
-   "dur_ms": 0.172,
+   "dur_ms": 0.108,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -515,7 +515,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 13769,
      "name": "score_portfolio",
      "qual": "score_portfolio",
      "file": "api/v1/routes/pcaf_quality.py",
@@ -524,7 +524,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

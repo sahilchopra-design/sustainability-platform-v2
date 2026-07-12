@@ -1,0 +1,133 @@
+{
+ "domain": "nasa-power",
+ "meta": {
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 2,
+  "module": "api.v1.routes.nasa_power",
+  "router_prefix": "/api/v1/nasa-power"
+ },
+ "transactions": [
+  {
+   "domain": "nasa-power",
+   "label": "GET /api/v1/nasa-power/resource",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.417,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)",
+    "parameters": "'ALLSKY_SFC_SW_DWN,WS10M,WS50M,T2M' (default)",
+    "start": "'TEST_start' (mock-required)",
+    "end": "'TEST_end' (mock-required)",
+    "community": "'RE' (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13135,
+     "name": "resource",
+     "qual": "resource",
+     "file": "api/v1/routes/nasa_power.py",
+     "line": 58,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'",
+      "parameters": "'ALLSKY_SFC_SW_DWN,WS10M,WS50M,T2M'",
+      "start": "'TEST_start'",
+      "end": "'TEST_end'",
+      "community": "'RE'"
+     },
+     "ret": "None",
+     "dur_ms": 0.058,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13136,
+       "name": "fetch_resource",
+       "qual": "fetch_resource",
+       "file": "services/nasa_power_client.py",
+       "line": 76,
+       "args": {
+        "lat": "'TEST_lat'",
+        "lon": "'TEST_lon'",
+        "parameters": "'ALLSKY_SFC_SW_DWN,WS10M,WS50M,T2M'",
+        "start": "'TEST_start'",
+        "end": "'TEST_end'",
+        "community": "'RE'"
+       },
+       "ret": "None",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "nasa-power",
+   "label": "GET /api/v1/nasa-power/resource-yield-inputs",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.231,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13137,
+     "name": "resource_yield_inputs",
+     "qual": "resource_yield_inputs",
+     "file": "api/v1/routes/nasa_power.py",
+     "line": 79,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'"
+     },
+     "ret": "None",
+     "dur_ms": 0.047,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13138,
+       "name": "fetch_yield_inputs",
+       "qual": "fetch_yield_inputs",
+       "file": "services/nasa_power_client.py",
+       "line": 109,
+       "args": {
+        "lat": "'TEST_lat'",
+        "lon": "'TEST_lon'"
+       },
+       "ret": "None",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,10 +1,10 @@
 {
  "domain": "audit-log",
  "meta": {
-  "ts": "2026-06-30T13:59:20",
+  "ts": "2026-07-05T19:10:39",
+  "endpoints": 3,
   "module": "api.v1.routes.audit_log",
-  "router_prefix": "/api/v1/audit-log",
-  "endpoints": 3
+  "router_prefix": "/api/v1/audit-log"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4176.476,
+   "dur_ms": 674.092,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "audit_log"
      ],
      "rowcount": 0,
-     "dur_ms": 219.036,
+     "dur_ms": 363.219,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "audit_log"
      ],
      "rowcount": 1,
-     "dur_ms": 36.496,
+     "dur_ms": 32.274,
      "is_reference": false,
      "error": null
     }
@@ -70,7 +70,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 494,
      "name": "list_audit_entries",
      "qual": "list_audit_entries",
      "file": "api/v1/routes/audit_log.py",
@@ -85,11 +85,11 @@
       "since_hours": "24",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EE966C0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666ED2B920>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47207890>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 0, 'limit': 50, 'offset': 0, 'entries': []}",
-     "dur_ms": 4140.889,
+     "dur_ms": 613.63,
      "sql": [
       0,
       1
@@ -105,7 +105,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 532.854,
+   "dur_ms": 439.024,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -121,7 +121,7 @@
       "audit_log"
      ],
      "rowcount": 0,
-     "dur_ms": 68.394,
+     "dur_ms": 62.874,
      "is_reference": false,
      "error": null
     },
@@ -132,7 +132,7 @@
       "audit_log"
      ],
      "rowcount": 0,
-     "dur_ms": 32.273,
+     "dur_ms": 32.217,
      "is_reference": false,
      "error": null
     },
@@ -143,7 +143,7 @@
       "audit_log"
      ],
      "rowcount": 1,
-     "dur_ms": 145.866,
+     "dur_ms": 31.354,
      "is_reference": false,
      "error": null
     },
@@ -154,7 +154,7 @@
       "audit_log"
      ],
      "rowcount": 1,
-     "dur_ms": 39.064,
+     "dur_ms": 30.569,
      "is_reference": false,
      "error": null
     }
@@ -177,18 +177,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 495,
      "name": "audit_stats",
      "qual": "audit_stats",
      "file": "api/v1/routes/audit_log.py",
      "line": 120,
      "args": {
       "since_hours": "24",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EE963C0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666EE8FBA0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475FFBF0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'since_hours': 24, 'total_entries': 0, 'error_count': 0, 'by_action_class': [], 'top_users': []}",
-     "dur_ms": 495.948,
+     "dur_ms": 389.095,
      "sql": [
       0,
       1,
@@ -206,7 +206,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Audit entry not found",
-   "dur_ms": 776.306,
+   "dur_ms": 305.548,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -222,7 +222,7 @@
       "audit_log"
      ],
      "rowcount": 0,
-     "dur_ms": 96.009,
+     "dur_ms": 89.262,
      "is_reference": false,
      "error": null
     }
@@ -235,18 +235,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 496,
      "name": "get_audit_entry",
      "qual": "get_audit_entry",
      "file": "api/v1/routes/audit_log.py",
      "line": 167,
      "args": {
       "entry_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001666EFC08F0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x000001666EFAC900>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47650800>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 739.744,
+     "dur_ms": 275.157,
      "sql": [
       0
      ],

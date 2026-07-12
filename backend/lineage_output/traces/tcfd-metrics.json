@@ -1,10 +1,10 @@
 {
  "domain": "tcfd-metrics",
  "meta": {
-  "ts": "2026-06-30T14:05:31",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 8,
   "module": "api.v1.routes.tcfd_metrics",
-  "router_prefix": "/api/v1/tcfd-metrics",
-  "endpoints": 8
+  "router_prefix": "/api/v1/tcfd-metrics"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.311,
+   "dur_ms": 0.382,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42148,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/tcfd_metrics.py",
      "line": 203,
      "args": {},
      "ret": "{'csrd_esrs_e1': 'TCFD 4 pillars map to ESRS E1-1 to E1-9 (near 1:1 for S3 = E1-6 scenario analysis)', 'issb_s2': 'IFRS S2 directly incorporates all 11 TCFD recommendations as its foundation', 'cdp_c_modules': 'CDP C1=G1/G2, C2/C3=S1/S2, C\u2026",
-     "dur_ms": 0.049,
+     "dur_ms": 0.042,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42149,
        "name": "get_cross_framework",
        "qual": "TCFDMetricsEngine.get_cross_framework",
        "file": "services/tcfd_metrics_engine.py",
        "line": 551,
        "args": {},
        "ret": "{'csrd_esrs_e1': 'TCFD 4 pillars map to ESRS E1-1 to E1-9 (near 1:1 for S3 = E1-6 scenario analysis)', 'issb_s2': 'IFRS S2 directly incorporates all 11 TCFD recommendations as its foundation', 'cdp_c_modules': 'CDP C1=G1/G2, C2/C3=S1/S2, C\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.172,
+   "dur_ms": 0.315,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -91,26 +91,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42150,
      "name": "ref_maturity_levels",
      "qual": "ref_maturity_levels",
      "file": "api/v1/routes/tcfd_metrics.py",
      "line": 195,
      "args": {},
      "ret": "{1: {'level': 1, 'name': 'Initial', 'description': 'Ad hoc, inconsistent, limited board involvement', 'score_range': [0, 30]}, 2: {'level': 2, 'name': 'Emerging', 'description': 'Some processes defined, partial disclosure', 'score_range': \u2026",
-     "dur_ms": 0.034,
+     "dur_ms": 0.062,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 42151,
        "name": "get_maturity_levels",
        "qual": "TCFDMetricsEngine.get_maturity_levels",
        "file": "services/tcfd_metrics_engine.py",
        "line": 548,
        "args": {},
        "ret": "{1: {'level': 1, 'name': 'Initial', 'description': 'Ad hoc, inconsistent, limited board involvement', 'score_range': [0, 30]}, 2: {'level': 2, 'name': 'Emerging', 'description': 'Some processes defined, partial disclosure', 'score_range': \u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -125,7 +125,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.164,
+   "dur_ms": 0.284,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -146,26 +146,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42152,
      "name": "ref_pillars",
      "qual": "ref_pillars",
      "file": "api/v1/routes/tcfd_metrics.py",
      "line": 179,
      "args": {},
      "ret": "{'governance': {'pillar_id': 'governance', 'name': 'Governance', 'description': 'Board and management oversight of climate-related risks and opportunities', 'recommendations': ['G1', 'G2']}, 'strategy': {'pillar_id': 'strategy', 'name': 'S\u2026",
-     "dur_ms": 0.037,
+     "dur_ms": 0.091,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42153,
        "name": "get_pillars",
        "qual": "TCFDMetricsEngine.get_pillars",
        "file": "services/tcfd_metrics_engine.py",
        "line": 542,
        "args": {},
        "ret": "{'governance': {'pillar_id': 'governance', 'name': 'Governance', 'description': 'Board and management oversight of climate-related risks and opportunities', 'recommendations': ['G1', 'G2']}, 'strategy': {'pillar_id': 'strategy', 'name': 'S\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -180,7 +180,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.263,
+   "dur_ms": 0.239,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -208,26 +208,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 42154,
      "name": "ref_recommendations",
      "qual": "ref_recommendations",
      "file": "api/v1/routes/tcfd_metrics.py",
      "line": 171,
      "args": {},
      "ret": "{'G1': {'id': 'G1', 'pillar': 'governance', 'name': 'Board Oversight', 'description': \"Describe the board's oversight of climate-related risks and opportunities\", 'disclosure_elements': ['Board responsibility structure', 'Frequency of boar\u2026",
-     "dur_ms": 0.097,
+     "dur_ms": 0.071,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 42155,
        "name": "get_recommendations",
        "qual": "TCFDMetricsEngine.get_recommendations",
        "file": "services/tcfd_metrics_engine.py",
        "line": 539,
        "args": {},
        "ret": "{'G1': {'id': 'G1', 'pillar': 'governance', 'name': 'Board Oversight', 'description': \"Describe the board's oversight of climate-related risks and opportunities\", 'disclosure_elements': ['Board responsibility structure', 'Frequency of boar\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -242,7 +242,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.165,
+   "dur_ms": 0.167,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -264,26 +264,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 42156,
      "name": "ref_sector_supplements",
      "qual": "ref_sector_supplements",
      "file": "api/v1/routes/tcfd_metrics.py",
      "line": 187,
      "args": {},
      "ret": "{'financial_institutions': {'sector': 'financial_institutions', 'name': 'Financial Institutions', 'sub_sectors': ['banks', 'insurance', 'asset_management'], 'additional_metrics': ['financed_emissions_scope3_cat15', 'portfolio_temperature_a\u2026",
-     "dur_ms": 0.04,
+     "dur_ms": 0.047,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 42157,
        "name": "get_sector_supplements",
        "qual": "TCFDMetricsEngine.get_sector_supplements",
        "file": "services/tcfd_metrics_engine.py",
        "line": 545,
        "args": {},
        "ret": "{'financial_institutions': {'sector': 'financial_institutions', 'name': 'Financial Institutions', 'sub_sectors': ['banks', 'insurance', 'asset_management'], 'additional_metrics': ['financed_emissions_scope3_cat15', 'portfolio_temperature_a\u2026",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -298,7 +298,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'recommendations'",
-   "dur_ms": 0.171,
+   "dur_ms": 0.156,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -312,7 +312,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 42158,
      "name": "assess",
      "qual": "assess",
      "file": "api/v1/routes/tcfd_metrics.py",
@@ -321,7 +321,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -334,7 +334,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'recommendations'",
-   "dur_ms": 0.139,
+   "dur_ms": 0.131,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -348,7 +348,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 42159,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/tcfd_metrics.py",
@@ -357,7 +357,7 @@
       "requests": "'TEST_requests'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -370,7 +370,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'recommendations'",
-   "dur_ms": 0.15,
+   "dur_ms": 0.126,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -384,7 +384,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42160,
      "name": "assess_pillar",
      "qual": "assess_pillar",
      "file": "api/v1/routes/tcfd_metrics.py",
@@ -393,7 +393,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []

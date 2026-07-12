@@ -1,10 +1,10 @@
 {
  "domain": "dme-dmi",
  "meta": {
-  "ts": "2026-06-30T14:00:48",
+  "ts": "2026-07-05T19:14:33",
+  "endpoints": 4,
   "module": "api.v1.routes.dme_dmi",
-  "router_prefix": "/api/v1/dme-dmi",
-  "endpoints": 4
+  "router_prefix": "/api/v1/dme-dmi"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.386,
+   "dur_ms": 0.264,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -34,26 +34,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9851,
      "name": "get_pcaf_confidence",
      "qual": "get_pcaf_confidence",
      "file": "api/v1/routes/dme_dmi.py",
      "line": 32,
      "args": {},
      "ret": "{'pcaf_confidence_map': {1: 1.0, 2: 0.85, 3: 0.7, 4: 0.55, 5: 0.4}, 'recency_decay': '\u03bb = 0.2/year (18% loss/year)', 'aggregation_formula': 'S = \u03a3(w \u00d7 c \u00d7 x) / \u03a3(w \u00d7 c)', 'concentration_penalties': {'single_name': '\u03b1_entity \u00d7 (share - thre\u2026",
-     "dur_ms": 0.071,
+     "dur_ms": 0.053,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 9852,
        "name": "get_reference_data",
        "qual": "DMIEngine.get_reference_data",
        "file": "services/dme_dmi_engine.py",
        "line": 197,
        "args": {},
        "ret": "{'pcaf_confidence_map': {1: 1.0, 2: 0.85, 3: 0.7, 4: 0.55, 5: 0.4}, 'recency_decay': '\u03bb = 0.2/year (18% loss/year)', 'aggregation_formula': 'S = \u03a3(w \u00d7 c \u00d7 x) / \u03a3(w \u00d7 c)', 'concentration_penalties': {'single_name': '\u03b1_entity \u00d7 (share - thre\u2026",
-       "dur_ms": 0.005,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []

@@ -1,10 +1,10 @@
 {
  "domain": "organisations",
  "meta": {
-  "ts": "2026-06-30T14:03:32",
+  "ts": "2026-07-05T19:15:59",
+  "endpoints": 8,
   "module": "api.v1.routes.organisations",
-  "router_prefix": "/api/v1/organisations",
-  "endpoints": 8
+  "router_prefix": "/api/v1/organisations"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2860.294,
+   "dur_ms": 346.358,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "organisations"
      ],
      "rowcount": 2,
-     "dur_ms": 90.556,
+     "dur_ms": 77.009,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "organisations"
      ],
      "rowcount": 1,
-     "dur_ms": 31.333,
+     "dur_ms": 31.142,
      "is_reference": false,
      "error": null
     }
@@ -61,7 +61,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13616,
      "name": "list_organisations",
      "qual": "list_organisations",
      "file": "api/v1/routes/organisations.py",
@@ -69,11 +69,11 @@
      "args": {
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F4D0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B67C0C20>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B709E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 2, 'organisations': [{'id': '37b45899-30fc-4e05-b9bf-4c1f6d403682', 'name': 'AA IMPACT Inc', 'short_name': None, 'org_type': 'fintech', 'jurisdiction': 'IND', 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei'\u2026",
-     "dur_ms": 2830.182,
+     "dur_ms": 309.434,
      "sql": [
       0,
       1
@@ -81,31 +81,31 @@
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13617,
        "name": "_org_to_dict",
        "qual": "_org_to_dict",
        "file": "api/v1/routes/organisations.py",
        "line": 55,
        "args": {
-        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x00000257B6992FF0>"
+        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x0000013D49B72960>"
        },
        "ret": "{'id': '37b45899-30fc-4e05-b9bf-4c1f6d403682', 'name': 'AA IMPACT Inc', 'short_name': None, 'org_type': 'fintech', 'jurisdiction': 'IND', 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei': None, 'is_active': True, 'cre\u2026",
-       "dur_ms": 0.085,
+       "dur_ms": 0.034,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 13618,
        "name": "_org_to_dict",
        "qual": "_org_to_dict",
        "file": "api/v1/routes/organisations.py",
        "line": 55,
        "args": {
-        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x00000257B6993020>"
+        "org": "<db.models.portfolio_pg.OrganisationPG object at 0x0000013D48D34140>"
        },
        "ret": "{'id': '00000000-0000-0000-0000-000000000001', 'name': 'Platform Default', 'short_name': None, 'org_type': 'other', 'jurisdiction': None, 'regulatory_regime': None, 'subscription_tier': 'institutional', 'lei': None, 'is_active': True, 'cre\u2026",
-       "dur_ms": 0.038,
+       "dur_ms": 0.014,
        "sql": [],
        "error": null,
        "children": []
@@ -120,7 +120,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.454,
+   "dur_ms": 0.297,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -141,14 +141,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13619,
      "name": "get_my_org",
      "qual": "get_my_org",
      "file": "api/v1/routes/organisations.py",
      "line": 84,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F650>",
-      "user": "Depends(dependency=<function get_current_user at 0x00000257B6755DA0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B43500>",
+      "user": "Depends(get_current_user)"
      },
      "ret": "{'organisation': None, 'message': 'No organisation assigned'}",
      "dur_ms": 0.006,
@@ -164,7 +164,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Organisation not found",
-   "dur_ms": 322.899,
+   "dur_ms": 325.282,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -180,7 +180,7 @@
       "organisations"
      ],
      "rowcount": 0,
-     "dur_ms": 64.414,
+     "dur_ms": 61.565,
      "is_reference": false,
      "error": null
     }
@@ -193,18 +193,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13620,
      "name": "get_organisation",
      "qual": "get_organisation",
      "file": "api/v1/routes/organisations.py",
      "line": 102,
      "args": {
       "org_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B677F4D0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B68A5BC0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B40AD0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 288.324,
+     "dur_ms": 297.392,
      "sql": [
       0
      ],
@@ -219,7 +219,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 313.144,
+   "dur_ms": 336.816,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -235,7 +235,7 @@
       "org_users"
      ],
      "rowcount": 0,
-     "dur_ms": 66.985,
+     "dur_ms": 82.663,
      "is_reference": false,
      "error": null
     }
@@ -255,18 +255,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13621,
      "name": "list_org_members",
      "qual": "list_org_members",
      "file": "api/v1/routes/organisations.py",
      "line": 192,
      "args": {
       "org_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x00000257B6992EA0>",
-      "_user": "Depends(dependency=<function require_role.<locals>._dependency at 0x00000257B68A65C0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B41310>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'org_id': '550e8400-e29b-41d4-a716-446655440001', 'members': []}",
-     "dur_ms": 282.658,
+     "dur_ms": 307.438,
      "sql": [
       0
      ],

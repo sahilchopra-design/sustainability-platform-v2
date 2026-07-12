@@ -1,10 +1,10 @@
 {
  "domain": "entity-resolution",
  "meta": {
-  "ts": "2026-06-30T14:01:49",
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 13,
   "module": "api.v1.routes.entity_resolution",
-  "router_prefix": "/api/v1/entity-resolution",
-  "endpoints": 13
+  "router_prefix": "/api/v1/entity-resolution"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: LEI must be exactly 20 characters",
-   "dur_ms": 0.317,
+   "dur_ms": 0.416,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -27,17 +27,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11091,
      "name": "entity_graph",
      "qual": "entity_graph",
      "file": "api/v1/routes/entity_resolution.py",
-     "line": 456,
+     "line": 468,
      "args": {
       "lei": "'550e8400-e29b-41d4-a716-446655440001'",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC276A0>, use_cache=True, scope=None)"
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 0.015,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": []
@@ -50,8 +50,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3942.476,
-   "node_count": 1,
+   "dur_ms": 28152.199,
+   "node_count": 29,
    "provenance": [
     "real-db"
    ],
@@ -66,7 +66,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 137.684,
+     "dur_ms": 53.062,
      "is_reference": false,
      "error": null
     },
@@ -76,8 +76,8 @@
      "tables": [
       "entity_lei"
      ],
-     "rowcount": 0,
-     "dur_ms": 185.809,
+     "rowcount": 3,
+     "dur_ms": 29.116,
      "is_reference": false,
      "error": null
     }
@@ -103,7 +103,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11092,
      "name": "search_lei",
      "qual": "search_lei",
      "file": "api/v1/routes/entity_resolution.py",
@@ -114,17 +114,447 @@
       "status": "None",
       "limit": "20",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFB0ACC0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAE2CA020>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48868BF0>",
+      "_user": "Depends(_dependency)"
      },
-     "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'records': []}",
-     "dur_ms": 3585.867,
+     "ret": "{'total': 3, 'offset': 0, 'limit': 20, 'records': [{'lei': 'HWUPKR0MPOU8FGXBT394', 'legal_name': 'Apple Inc.', 'status': 'ACTIVE', 'jurisdiction': 'US-CA', 'entity_category': 'GENERAL', 'legal_form_code': 'H1UM', 'legal_form_name': None, '\u2026",
+     "dur_ms": 28123.386,
      "sql": [
       0,
       1
      ],
      "error": null,
-     "children": []
+     "children": [
+      {
+       "id": 11093,
+       "name": "_lei_to_dict",
+       "qual": "_lei_to_dict",
+       "file": "api/v1/routes/entity_resolution.py",
+       "line": 323,
+       "args": {
+        "r": "<db.models.entity_resolution.EntityLei object at 0x0000013D49240A40>"
+       },
+       "ret": "{'lei': 'HWUPKR0MPOU8FGXBT394', 'legal_name': 'Apple Inc.', 'status': 'ACTIVE', 'jurisdiction': 'US-CA', 'entity_category': 'GENERAL', 'legal_form_code': 'H1UM', 'legal_form_name': None, 'legal_form_decoded': {'code': 'H1UM', 'name': 'For-\u2026",
+       "dur_ms": 27743.752,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11094,
+         "name": "<module>",
+         "qual": "<module>",
+         "file": "services/gleif_reference_registries.py",
+         "line": 1,
+         "args": {},
+         "ret": "None",
+         "dur_ms": 0.031,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 11095,
+         "name": "decode_legal_form",
+         "qual": "decode_legal_form",
+         "file": "services/gleif_reference_registries.py",
+         "line": 109,
+         "args": {
+          "code": "'H1UM'"
+         },
+         "ret": "{'code': 'H1UM', 'name': 'For-Profit Corporation General Stock', 'country': 'United States of America'}",
+         "dur_ms": 21154.51,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11096,
+           "name": "_legal_forms",
+           "qual": "_legal_forms",
+           "file": "services/gleif_reference_registries.py",
+           "line": 97,
+           "args": {},
+           "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+           "dur_ms": 21142.121,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11097,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'entity-legal-forms'",
+              "path": "'/entity-legal-forms'"
+             },
+             "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+             "dur_ms": 21128.892,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 11098,
+               "name": "_fetch_all_pages",
+               "qual": "_fetch_all_pages",
+               "file": "services/gleif_reference_registries.py",
+               "line": 58,
+               "args": {
+                "path": "'/entity-legal-forms'"
+               },
+               "ret": "[{'type': 'entity-legal-forms', 'id': '09K3', 'attributes': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localNa\u2026",
+               "dur_ms": 21106.684,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": 11099,
+           "name": "<genexpr>",
+           "qual": "decode_legal_form.<locals>.<genexpr>",
+           "file": "services/gleif_reference_registries.py",
+           "line": 121,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D47585600>"
+           },
+           "ret": "{'localName': 'For-Profit Corporation General Stock', 'language': 'English', 'languageCode': 'en', 'transliteratedName': 'For-Profit Corporation General Stock'}",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 11100,
+           "name": "<genexpr>",
+           "qual": "decode_legal_form.<locals>.<genexpr>",
+           "file": "services/gleif_reference_registries.py",
+           "line": 121,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D47585600>"
+           },
+           "ret": "None",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 11101,
+         "name": "decode_registration_authority",
+         "qual": "decode_registration_authority",
+         "file": "services/gleif_reference_registries.py",
+         "line": 126,
+         "args": {
+          "ra_id": "'RA000598'"
+         },
+         "ret": "{'id': 'RA000598', 'name': 'Business Entity Records', 'jurisdiction': 'United States of America'}",
+         "dur_ms": 6586.885,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11102,
+           "name": "_registration_authorities",
+           "qual": "_registration_authorities",
+           "file": "services/gleif_reference_registries.py",
+           "line": 101,
+           "args": {},
+           "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+           "dur_ms": 6583.837,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11103,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'registration-authorities'",
+              "path": "'/registration-authorities'"
+             },
+             "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+             "dur_ms": 6580.315,
+             "sql": [],
+             "error": null,
+             "children": [
+              {
+               "id": 11104,
+               "name": "_fetch_all_pages",
+               "qual": "_fetch_all_pages",
+               "file": "services/gleif_reference_registries.py",
+               "line": 58,
+               "args": {
+                "path": "'/registration-authorities'"
+               },
+               "ret": "[{'type': 'registration-authorities', 'id': 'RA000001', 'attributes': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationNam\u2026",
+               "dur_ms": 6572.039,
+               "sql": [],
+               "error": null,
+               "children": []
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 11105,
+       "name": "_lei_to_dict",
+       "qual": "_lei_to_dict",
+       "file": "api/v1/routes/entity_resolution.py",
+       "line": 323,
+       "args": {
+        "r": "<db.models.entity_resolution.EntityLei object at 0x0000013D49243890>"
+       },
+       "ret": "{'lei': '7LTWFZYICNSX8D621K86', 'legal_name': 'DEUTSCHE BANK AKTIENGESELLSCHAFT', 'status': 'ACTIVE', 'jurisdiction': 'DE', 'entity_category': 'GENERAL', 'legal_form_code': '6QQB', 'legal_form_name': None, 'legal_form_decoded': {'code': '6\u2026",
+       "dur_ms": 33.676,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11106,
+         "name": "decode_legal_form",
+         "qual": "decode_legal_form",
+         "file": "services/gleif_reference_registries.py",
+         "line": 109,
+         "args": {
+          "code": "'6QQB'"
+         },
+         "ret": "{'code': '6QQB', 'name': 'Aktiengesellschaft', 'country': 'Germany'}",
+         "dur_ms": 26.826,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11107,
+           "name": "_legal_forms",
+           "qual": "_legal_forms",
+           "file": "services/gleif_reference_registries.py",
+           "line": 97,
+           "args": {},
+           "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+           "dur_ms": 12.899,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11108,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'entity-legal-forms'",
+              "path": "'/entity-legal-forms'"
+             },
+             "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 11109,
+           "name": "<genexpr>",
+           "qual": "decode_legal_form.<locals>.<genexpr>",
+           "file": "services/gleif_reference_registries.py",
+           "line": 121,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48B13400>"
+           },
+           "ret": "None",
+           "dur_ms": 0.009,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 11110,
+         "name": "decode_registration_authority",
+         "qual": "decode_registration_authority",
+         "file": "services/gleif_reference_registries.py",
+         "line": 126,
+         "args": {
+          "ra_id": "'RA000242'"
+         },
+         "ret": "{'id': 'RA000242', 'name': 'Commercial Register', 'jurisdiction': 'Germany'}",
+         "dur_ms": 6.717,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11111,
+           "name": "_registration_authorities",
+           "qual": "_registration_authorities",
+           "file": "services/gleif_reference_registries.py",
+           "line": 101,
+           "args": {},
+           "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+           "dur_ms": 3.471,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11112,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'registration-authorities'",
+              "path": "'/registration-authorities'"
+             },
+             "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+             "dur_ms": 0.008,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": 11113,
+       "name": "_lei_to_dict",
+       "qual": "_lei_to_dict",
+       "file": "api/v1/routes/entity_resolution.py",
+       "line": 323,
+       "args": {
+        "r": "<db.models.entity_resolution.EntityLei object at 0x0000013D49242FC0>"
+       },
+       "ret": "{'lei': '549300DAQ1CVT6CXN342', 'legal_name': 'NOVO NORDISK A/S', 'status': 'ACTIVE', 'jurisdiction': 'DK', 'entity_category': 'GENERAL', 'legal_form_code': 'ZRPO', 'legal_form_name': None, 'legal_form_decoded': {'code': 'ZRPO', 'name': 'A\u2026",
+       "dur_ms": 36.22,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 11114,
+         "name": "decode_legal_form",
+         "qual": "decode_legal_form",
+         "file": "services/gleif_reference_registries.py",
+         "line": 109,
+         "args": {
+          "code": "'ZRPO'"
+         },
+         "ret": "{'code': 'ZRPO', 'name': 'Aktieselskab', 'country': 'Denmark'}",
+         "dur_ms": 27.908,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11115,
+           "name": "_legal_forms",
+           "qual": "_legal_forms",
+           "file": "services/gleif_reference_registries.py",
+           "line": 97,
+           "args": {},
+           "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+           "dur_ms": 13.576,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11116,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'entity-legal-forms'",
+              "path": "'/entity-legal-forms'"
+             },
+             "ret": "{'09K3': {'code': '09K3', 'country': 'Faroe Islands', 'jurisdiction': None, 'countryCode': 'FO', 'subdivisionCode': None, 'dateCreated': '2026-02-19', 'status': 'ACTV', 'names': [{'localName': 'Samstarvsfelag vi\u00f0 \u00e1byrgd', 'language': 'Faro\u2026",
+             "dur_ms": 0.007,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          },
+          {
+           "id": 11117,
+           "name": "<genexpr>",
+           "qual": "decode_legal_form.<locals>.<genexpr>",
+           "file": "services/gleif_reference_registries.py",
+           "line": 121,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48B12890>"
+           },
+           "ret": "None",
+           "dur_ms": 0.008,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 11118,
+         "name": "decode_registration_authority",
+         "qual": "decode_registration_authority",
+         "file": "services/gleif_reference_registries.py",
+         "line": 126,
+         "args": {
+          "ra_id": "'RA000170'"
+         },
+         "ret": "{'id': 'RA000170', 'name': 'Central Business Register', 'jurisdiction': 'Denmark'}",
+         "dur_ms": 8.149,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 11119,
+           "name": "_registration_authorities",
+           "qual": "_registration_authorities",
+           "file": "services/gleif_reference_registries.py",
+           "line": 101,
+           "args": {},
+           "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+           "dur_ms": 3.592,
+           "sql": [],
+           "error": null,
+           "children": [
+            {
+             "id": 11120,
+             "name": "_load_registry",
+             "qual": "_load_registry",
+             "file": "services/gleif_reference_registries.py",
+             "line": 80,
+             "args": {
+              "name": "'registration-authorities'",
+              "path": "'/registration-authorities'"
+             },
+             "ret": "{'RA000001': {'code': 'RA000001', 'internationalName': 'Afghanistan Central Business Registry (Ministry of Commerce and Industries)', 'localName': None, 'internationalOrganizationName': 'Afghanistan Central Business Registry (Ministry of C\u2026",
+             "dur_ms": 0.009,
+             "sql": [],
+             "error": null,
+             "children": []
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
     }
    ]
   },
@@ -134,7 +564,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: LEI not found",
-   "dur_ms": 2137.14,
+   "dur_ms": 325.573,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -150,7 +580,7 @@
       "entity_lei"
      ],
      "rowcount": 0,
-     "dur_ms": 236.047,
+     "dur_ms": 60.212,
      "is_reference": false,
      "error": null
     }
@@ -163,18 +593,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11121,
      "name": "get_lei",
      "qual": "get_lei",
      "file": "api/v1/routes/entity_resolution.py",
      "line": 82,
      "args": {
       "lei": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD2EB40>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFB38AE0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D476A96A0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 2102.355,
+     "dur_ms": 293.64,
      "sql": [
       0
      ],
@@ -189,7 +619,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2157.452,
+   "dur_ms": 305.519,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -205,7 +635,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 788.949,
+     "dur_ms": 55.775,
      "is_reference": false,
      "error": null
     },
@@ -216,7 +646,7 @@
       "entity_sanctions"
      ],
      "rowcount": 0,
-     "dur_ms": 42.3,
+     "dur_ms": 29.898,
      "is_reference": false,
      "error": null
     }
@@ -242,7 +672,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11122,
      "name": "search_sanctions",
      "qual": "search_sanctions",
      "file": "api/v1/routes/entity_resolution.py",
@@ -253,11 +683,11 @@
       "dataset": "None",
       "limit": "20",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD677D0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC256C0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49243890>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'records': []}",
-     "dur_ms": 2116.683,
+     "dur_ms": 277.142,
      "sql": [
       0,
       1
@@ -273,7 +703,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Sanctions entity not found",
-   "dur_ms": 731.794,
+   "dur_ms": 274.096,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -289,7 +719,7 @@
       "entity_sanctions"
      ],
      "rowcount": 0,
-     "dur_ms": 179.791,
+     "dur_ms": 58.34,
      "is_reference": false,
      "error": null
     }
@@ -302,18 +732,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11123,
      "name": "get_sanction",
      "qual": "get_sanction",
      "file": "api/v1/routes/entity_resolution.py",
      "line": 127,
      "args": {
       "sanction_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFD67D40>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC25BC0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48E36AB0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 684.307,
+     "dur_ms": 245.292,
      "sql": [
       0
      ],
@@ -328,7 +758,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1582.826,
+   "dur_ms": 364.277,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -344,7 +774,7 @@
       "entity_screening_results"
      ],
      "rowcount": 1,
-     "dur_ms": 342.83,
+     "dur_ms": 70.467,
      "is_reference": false,
      "error": null
     },
@@ -355,7 +785,7 @@
       "entity_screening_results"
      ],
      "rowcount": 0,
-     "dur_ms": 35.142,
+     "dur_ms": 30.233,
      "is_reference": false,
      "error": null
     }
@@ -380,7 +810,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 11124,
      "name": "list_screening_results",
      "qual": "list_screening_results",
      "file": "api/v1/routes/entity_resolution.py",
@@ -390,11 +820,11 @@
       "portfolio_id": "None",
       "limit": "20",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7320>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC26340>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49242330>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total': 0, 'offset': 0, 'limit': 20, 'results': []}",
-     "dur_ms": 1437.104,
+     "dur_ms": 332.904,
      "sql": [
       0,
       1
@@ -410,7 +840,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Screening result not found",
-   "dur_ms": 734.724,
+   "dur_ms": 291.925,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -426,7 +856,7 @@
       "entity_screening_results"
      ],
      "rowcount": 0,
-     "dur_ms": 75.438,
+     "dur_ms": 55.372,
      "is_reference": false,
      "error": null
     }
@@ -439,18 +869,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11125,
      "name": "get_screening_result",
      "qual": "get_screening_result",
      "file": "api/v1/routes/entity_resolution.py",
      "line": 235,
      "args": {
       "result_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7AA0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC265C0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49243A40>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 701.508,
+     "dur_ms": 263.584,
      "sql": [
       0
      ],
@@ -465,7 +895,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 585.972,
+   "dur_ms": 395.038,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -483,7 +913,7 @@
       "entity_lei"
      ],
      "rowcount": 1,
-     "dur_ms": 57.283,
+     "dur_ms": 54.932,
      "is_reference": false,
      "error": null
     },
@@ -494,7 +924,7 @@
       "entity_sanctions"
      ],
      "rowcount": 1,
-     "dur_ms": 164.105,
+     "dur_ms": 28.315,
      "is_reference": false,
      "error": null
     },
@@ -505,7 +935,7 @@
       "entity_screening_results"
      ],
      "rowcount": 1,
-     "dur_ms": 47.779,
+     "dur_ms": 27.657,
      "is_reference": false,
      "error": null
     },
@@ -516,7 +946,7 @@
       "entity_screening_results"
      ],
      "rowcount": 1,
-     "dur_ms": 30.922,
+     "dur_ms": 28.062,
      "is_reference": false,
      "error": null
     },
@@ -527,7 +957,7 @@
       "entity_screening_results"
      ],
      "rowcount": 1,
-     "dur_ms": 29.62,
+     "dur_ms": 27.228,
      "is_reference": false,
      "error": null
     }
@@ -549,17 +979,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 11126,
      "name": "entity_resolution_stats",
      "qual": "entity_resolution_stats",
      "file": "api/v1/routes/entity_resolution.py",
      "line": 275,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EAFDB7320>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC26C00>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49242570>",
+      "_user": "Depends(_dependency)"
      },
-     "ret": "{'lei_records': 0, 'sanctions_entities': 0, 'screening_results': 0, 'pending_reviews': 0, 'confirmed_matches': 0}",
-     "dur_ms": 551.982,
+     "ret": "{'lei_records': 3, 'sanctions_entities': 0, 'screening_results': 0, 'pending_reviews': 0, 'confirmed_matches': 0}",
+     "dur_ms": 367.298,
      "sql": [
       0,
       1,
@@ -632,7 +1062,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 0.52,
+   "dur_ms": 0.499,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -647,18 +1077,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11127,
      "name": "screen_entity",
      "qual": "screen_entity",
      "file": "api/v1/routes/entity_resolution.py",
      "line": 142,
      "args": {
       "req": "'TEST_req'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025EB0128200>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x0000025EAFC25E40>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48EDE150>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []

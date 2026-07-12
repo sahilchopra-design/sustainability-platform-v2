@@ -1,0 +1,212 @@
+{
+ "domain": "open-meteo",
+ "meta": {
+  "ts": "2026-07-05T19:15:58",
+  "endpoints": 4,
+  "module": "api.v1.routes.open_meteo",
+  "router_prefix": "/api/v1/open-meteo"
+ },
+ "transactions": [
+  {
+   "domain": "open-meteo",
+   "label": "GET /api/v1/open-meteo/climate-projection",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.353,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)",
+    "scenario": "'hot_house' (default)",
+    "start_year": "2025 (default)",
+    "end_year": "2050 (default)",
+    "models": "None (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13603,
+     "name": "climate_projection",
+     "qual": "climate_projection",
+     "file": "api/v1/routes/open_meteo.py",
+     "line": 402,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'",
+      "scenario": "'hot_house'",
+      "start_year": "2025",
+      "end_year": "2050",
+      "models": "None"
+     },
+     "ret": "None",
+     "dur_ms": 0.016,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "open-meteo",
+   "label": "GET /api/v1/open-meteo/current-weather",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.169,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13604,
+     "name": "current_weather",
+     "qual": "current_weather",
+     "file": "api/v1/routes/open_meteo.py",
+     "line": 264,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'"
+     },
+     "ret": "None",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "open-meteo",
+   "label": "GET /api/v1/open-meteo/historical-extremes",
+   "status": "failed",
+   "http_status": 500,
+   "error": "TypeError: type str doesn't define __round__ method",
+   "dur_ms": 0.253,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lat": "'TEST_lat' (mock-required)",
+    "lon": "'TEST_lon' (mock-required)",
+    "start_year": "2000 (default)",
+    "end_year": "2024 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13605,
+     "name": "historical_extremes",
+     "qual": "historical_extremes",
+     "file": "api/v1/routes/open_meteo.py",
+     "line": 317,
+     "args": {
+      "lat": "'TEST_lat'",
+      "lon": "'TEST_lon'",
+      "start_year": "2000",
+      "end_year": "2024"
+     },
+     "ret": "None",
+     "dur_ms": 0.052,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13606,
+       "name": "_clamp_years",
+       "qual": "_clamp_years",
+       "file": "api/v1/routes/open_meteo.py",
+       "line": 310,
+       "args": {
+        "start_year": "2000",
+        "end_year": "2024"
+       },
+       "ret": "(2000, 2024)",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "open-meteo",
+   "label": "GET /api/v1/open-meteo/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.178,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "api_key_configured",
+     "api_key_env",
+     "pricing_verified_at",
+     "tiers",
+     "note",
+     "checked_at"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13607,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/open_meteo.py",
+     "line": 226,
+     "args": {},
+     "ret": "{'source': 'Open-Meteo (open-meteo.com)', 'api_key_configured': False, 'api_key_env': 'OPEN_METEO_API_KEY', 'pricing_verified_at': '2026-07-05', 'tiers': {'free': {'price': '$0', 'calls': '10,000/day', 'commercial_use': False, 'apis_reacha\u2026",
+     "dur_ms": 0.046,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13608,
+       "name": "_api_key",
+       "qual": "_api_key",
+       "file": "api/v1/routes/open_meteo.py",
+       "line": 149,
+       "args": {},
+       "ret": "''",
+       "dur_ms": 0.015,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

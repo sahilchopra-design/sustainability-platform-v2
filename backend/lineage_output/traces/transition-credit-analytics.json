@@ -1,0 +1,1437 @@
+{
+ "domain": "transition-credit-analytics",
+ "meta": {
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 8,
+  "module": "api.v1.routes.transition_credit_analytics",
+  "router_prefix": "/api/v1/transition-credit"
+ },
+ "transactions": [
+  {
+   "domain": "transition-credit-analytics",
+   "label": "GET /api/v1/transition-credit/ref/climate-multipliers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.261,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "basis",
+     "scenario_ids",
+     "sector_class",
+     "class_multipliers",
+     "sector_multipliers",
+     "pcaf_dq_ladder",
+     "sector_itr_defaults",
+     "sa_rw_by_rating"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42259,
+     "name": "ref_climate_multipliers",
+     "qual": "ref_climate_multipliers",
+     "file": "api/v1/routes/transition_credit_analytics.py",
+     "line": 490,
+     "args": {},
+     "ret": "{'basis': 'Hand-authored judgment overlay in the spirit of NGFS/ECB climate stress-test practice: the multiplier scales every downgrade probability (incl. default) in the migration-matrix row; the diagonal absorbs the difference (row re-no\u2026",
+     "dur_ms": 0.02,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "GET /api/v1/transition-credit/ref/pd-term-structure",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.542,
+   "node_count": 8,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "basis",
+     "anchor_years",
+     "anchors_pct",
+     "years",
+     "curves"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42260,
+     "name": "ref_pd_term_structure",
+     "qual": "ref_pd_term_structure",
+     "file": "api/v1/routes/transition_credit_analytics.py",
+     "line": 459,
+     "args": {},
+     "ret": "{'basis': \"Hand-authored approximation of S&P Global 'Default, Transition and Recovery' 1981-2023 global corporate cumulative default rates; anchors at years 1/3/5/7/10, linear interpolation in between. APPROXIMATE \u2014 refresh from the publi\u2026",
+     "dur_ms": 0.369,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 42261,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'AAA'",
+        "years": "10"
+       },
+       "ret": "[0.0002, 0.00075, 0.0013, 0.0023, 0.0033, 0.0041, 0.0049, 0.0054666666666666665, 0.006033333333333334, 0.0066]",
+       "dur_ms": 0.02,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42262,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'AA'",
+        "years": "10"
+       },
+       "ret": "[0.0003, 0.00075, 0.0012, 0.0021, 0.003, 0.0039000000000000003, 0.0048, 0.0054666666666666665, 0.006133333333333333, 0.0068000000000000005]",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42263,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'A'",
+        "years": "10"
+       },
+       "ret": "[0.0006, 0.00135, 0.0021, 0.00315, 0.0042, 0.0054, 0.0066, 0.007933333333333334, 0.009266666666666668, 0.0106]",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42264,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'BBB'",
+        "years": "10"
+       },
+       "ret": "[0.0017000000000000001, 0.0046, 0.0075, 0.01095, 0.0144, 0.0176, 0.0208, 0.023666666666666666, 0.026533333333333332, 0.0294]",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42265,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'BB'",
+        "years": "10"
+       },
+       "ret": "[0.006500000000000001, 0.01895, 0.031400000000000004, 0.04485, 0.0583, 0.06905, 0.07980000000000001, 0.08823333333333334, 0.09666666666666666, 0.1051]",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42266,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'B'",
+        "years": "10"
+       },
+       "ret": "[0.033, 0.069, 0.105, 0.13, 0.155, 0.1725, 0.19, 0.2016666666666667, 0.21333333333333332, 0.225]",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42267,
+       "name": "cum_pd_curve",
+       "qual": "cum_pd_curve",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 239,
+       "args": {
+        "rating": "'CCC'",
+        "years": "10"
+       },
+       "ret": "[0.265, 0.325, 0.385, 0.4125, 0.44, 0.455, 0.47, 0.48, 0.49, 0.5]",
+       "dur_ms": 0.01,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "GET /api/v1/transition-credit/ref/transition-matrix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.32,
+   "node_count": 74,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "basis",
+     "ratings",
+     "matrix_pct",
+     "row_sums"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42268,
+     "name": "ref_transition_matrix",
+     "qual": "ref_transition_matrix",
+     "file": "api/v1/routes/transition_credit_analytics.py",
+     "line": 477,
+     "args": {},
+     "ret": "{'basis': \"Hand-authored approximation of the S&P Global 1981-2023 NR-adjusted global corporate average one-year transition matrix; default column matches this desk's 1-yr PD ladder exactly. APPROXIMATE \u2014 refresh from the published study f\u2026",
+     "dur_ms": 1.184,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 42269,
+       "name": "baseline_matrix",
+       "qual": "baseline_matrix",
+       "file": "api/v1/routes/transition_credit_analytics.py",
+       "line": 171,
+       "args": {},
+       "ret": "((0.8984000000000001, 0.0935, 0.0055000000000000005, 0.0005, 0.0011, 0.0003, 0.0005, 0.0002), (0.0051, 0.9066, 0.081, 0.005, 0.0006, 0.0011, 0.0003, 0.0003), (0.0003, 0.0172, 0.9204000000000001, 0.0554, 0.0044, 0.001, 0.0007000000000000001\u2026",
+       "dur_ms": 1.093,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 42270,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.8984000000000001",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42271,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0935",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42272,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0055000000000000005",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42273,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0005",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42274,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0011",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42275,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0003",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42276,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0005",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42277,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0002",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42278,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42279,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0051",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42280,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.9066",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42281,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.081",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42282,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.005",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42283,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0006",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42284,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0011",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42285,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0003",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42286,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0003",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42287,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42288,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0003",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42289,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0172",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42290,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.9204000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42291,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0554",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42292,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0044",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42293,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42294,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0007000000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42295,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0006",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42296,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42297,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42298,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42299,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0351",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42300,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.9134",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42301,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0398",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42302,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.006500000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42303,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0024",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42304,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0017000000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42305,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42306,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42307,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0003",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42308,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0012",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42309,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.050300000000000004",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42310,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.8593999999999999",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42311,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0713",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42312,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0109",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42313,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.006500000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42314,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42315,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42316,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0002",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42317,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0008",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42318,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0016",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42319,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0513",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42320,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.8442000000000001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42321,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0689",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42322,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.033",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42323,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42324,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42325,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42326,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.001",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42327,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0036",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42328,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0087",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42329,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.1294",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42330,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.5922999999999999",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42331,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.265",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42332,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42333,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42334,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42335,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42336,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42337,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42338,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42339,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42340,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "1.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 42341,
+         "name": "<genexpr>",
+         "qual": "baseline_matrix.<locals>.<genexpr>",
+         "file": "api/v1/routes/transition_credit_analytics.py",
+         "line": 179,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D4A1EE800>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "POST /api/v1/transition-credit/climate-matrix",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "POST /api/v1/transition-credit/lifetime-el",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "POST /api/v1/transition-credit/pcaf",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "POST /api/v1/transition-credit/portfolio",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "transition-credit-analytics",
+   "label": "POST /api/v1/transition-credit/pricing",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

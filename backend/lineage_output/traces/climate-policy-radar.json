@@ -1,0 +1,1100 @@
+{
+ "domain": "climate-policy-radar",
+ "meta": {
+  "ts": "2026-07-05T19:11:01",
+  "endpoints": 3,
+  "module": "api.v1.routes.climate_policy_radar",
+  "router_prefix": "/api/v1/climate-policy"
+ },
+ "transactions": [
+  {
+   "domain": "climate-policy-radar",
+   "label": "GET /api/v1/climate-policy/countries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2.317,
+   "node_count": 64,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "countries",
+     "provenance"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2324,
+     "name": "countries",
+     "qual": "countries",
+     "file": "api/v1/routes/climate_policy_radar.py",
+     "line": 317,
+     "args": {},
+     "ret": "{'count': 21, 'countries': [{'iso3': 'FIN', 'country_name': 'Finland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Ilmastolaki 423/2022)', 'enacted_or_announced': '2022-07', 'binding_tier': 'enacted_law', 'target_type': 'n\u2026",
+     "dur_ms": 2.028,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2325,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'EUU', 'country_name': 'European Union', 'is_bloc': True, 'law_or_pledge_name': 'European Climate Law (Regulation (EU) 2021/1119)', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'targ\u2026"
+       },
+       "ret": "{'iso3': 'EUU', 'country_name': 'European Union', 'is_bloc': True, 'law_or_pledge_name': 'European Climate Law (Regulation (EU) 2021/1119)', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'targ\u2026",
+       "dur_ms": 0.05,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2326,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'EUU', 'country_name': 'European Union', 'is_bloc': True, 'law_or_pledge_name': 'European Climate Law (Regulation (EU) 2021/1119)', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'targ\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2327,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'GBR', 'country_name': 'United Kingdom', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act 2008 (2050 Target Amendment Order 2019)', 'enacted_or_announced': '2019-06', 'binding_tier': 'enacted_law', 'target_type': 'net_z\u2026"
+       },
+       "ret": "{'iso3': 'GBR', 'country_name': 'United Kingdom', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act 2008 (2050 Target Amendment Order 2019)', 'enacted_or_announced': '2019-06', 'binding_tier': 'enacted_law', 'target_type': 'net_z\u2026",
+       "dur_ms": 0.078,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2328,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'GBR', 'country_name': 'United Kingdom', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act 2008 (2050 Target Amendment Order 2019)', 'enacted_or_announced': '2019-06', 'binding_tier': 'enacted_law', 'target_type': 'net_z\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.017,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2329,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'DEU', 'country_name': 'Germany', 'is_bloc': False, 'law_or_pledge_name': 'Bundes-Klimaschutzgesetz (Federal Climate Change Act), amended 2021', 'enacted_or_announced': '2021-08', 'binding_tier': 'enacted_law', 'target_type': 'net\u2026"
+       },
+       "ret": "{'iso3': 'DEU', 'country_name': 'Germany', 'is_bloc': False, 'law_or_pledge_name': 'Bundes-Klimaschutzgesetz (Federal Climate Change Act), amended 2021', 'enacted_or_announced': '2021-08', 'binding_tier': 'enacted_law', 'target_type': 'net\u2026",
+       "dur_ms": 0.052,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2330,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'DEU', 'country_name': 'Germany', 'is_bloc': False, 'law_or_pledge_name': 'Bundes-Klimaschutzgesetz (Federal Climate Change Act), amended 2021', 'enacted_or_announced': '2021-08', 'binding_tier': 'enacted_law', 'target_type': 'net\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 21.4, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 91.4}",
+         "dur_ms": 0.01,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2331,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'FRA', 'country_name': 'France', 'is_bloc': False, 'law_or_pledge_name': 'Loi Energie-Climat (Energy-Climate Law, Loi n. 2019-1147)', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'ta\u2026"
+       },
+       "ret": "{'iso3': 'FRA', 'country_name': 'France', 'is_bloc': False, 'law_or_pledge_name': 'Loi Energie-Climat (Energy-Climate Law, Loi n. 2019-1147)', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'ta\u2026",
+       "dur_ms": 0.137,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2332,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'FRA', 'country_name': 'France', 'is_bloc': False, 'law_or_pledge_name': 'Loi Energie-Climat (Energy-Climate Law, Loi n. 2019-1147)', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'ta\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.019,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2333,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'SWE', 'country_name': 'Sweden', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimatlagen 2017:720) + Climate Policy Framework', 'enacted_or_announced': '2018-01', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+       },
+       "ret": "{'iso3': 'SWE', 'country_name': 'Sweden', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimatlagen 2017:720) + Climate Policy Framework', 'enacted_or_announced': '2018-01', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026",
+       "dur_ms": 0.042,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2334,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'SWE', 'country_name': 'Sweden', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimatlagen 2017:720) + Climate Policy Framework', 'enacted_or_announced': '2018-01', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 21.4, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 91.4}",
+         "dur_ms": 0.008,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2335,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'DNK', 'country_name': 'Denmark', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimalov)', 'enacted_or_announced': '2020-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050, 'interim_tier': \u2026"
+       },
+       "ret": "{'iso3': 'DNK', 'country_name': 'Denmark', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimalov)', 'enacted_or_announced': '2020-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050, 'interim_tier': \u2026",
+       "dur_ms": 0.033,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2336,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'DNK', 'country_name': 'Denmark', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimalov)', 'enacted_or_announced': '2020-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050, 'interim_tier': \u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2337,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'ESP', 'country_name': 'Spain', 'is_bloc': False, 'law_or_pledge_name': 'Ley 7/2021 de cambio climatico y transicion energetica', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target\u2026"
+       },
+       "ret": "{'iso3': 'ESP', 'country_name': 'Spain', 'is_bloc': False, 'law_or_pledge_name': 'Ley 7/2021 de cambio climatico y transicion energetica', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target\u2026",
+       "dur_ms": 0.03,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2338,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'ESP', 'country_name': 'Spain', 'is_bloc': False, 'law_or_pledge_name': 'Ley 7/2021 de cambio climatico y transicion energetica', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.006,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2339,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'NZL', 'country_name': 'New Zealand', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Response (Zero Carbon) Amendment Act 2019', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+       },
+       "ret": "{'iso3': 'NZL', 'country_name': 'New Zealand', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Response (Zero Carbon) Amendment Act 2019', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026",
+       "dur_ms": 0.027,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2340,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'NZL', 'country_name': 'New Zealand', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Response (Zero Carbon) Amendment Act 2019', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 10, 'stringency_score': 82.1}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2341,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'JPN', 'country_name': 'Japan', 'is_bloc': False, 'law_or_pledge_name': 'Act on Promotion of Global Warming Countermeasures (amended 2021)', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zer\u2026"
+       },
+       "ret": "{'iso3': 'JPN', 'country_name': 'Japan', 'is_bloc': False, 'law_or_pledge_name': 'Act on Promotion of Global Warming Countermeasures (amended 2021)', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zer\u2026",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2342,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'JPN', 'country_name': 'Japan', 'is_bloc': False, 'law_or_pledge_name': 'Act on Promotion of Global Warming Countermeasures (amended 2021)', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zer\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 8, 'coverage_points': 15, 'stringency_score': 80.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2343,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'KOR', 'country_name': 'South Korea', 'is_bloc': False, 'law_or_pledge_name': 'Framework Act on Carbon Neutrality and Green Growth', 'enacted_or_announced': '2021-09', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'tar\u2026"
+       },
+       "ret": "{'iso3': 'KOR', 'country_name': 'South Korea', 'is_bloc': False, 'law_or_pledge_name': 'Framework Act on Carbon Neutrality and Green Growth', 'enacted_or_announced': '2021-09', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'tar\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2344,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'KOR', 'country_name': 'South Korea', 'is_bloc': False, 'law_or_pledge_name': 'Framework Act on Carbon Neutrality and Green Growth', 'enacted_or_announced': '2021-09', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'tar\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2345,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'CAN', 'country_name': 'Canada', 'is_bloc': False, 'law_or_pledge_name': 'Canadian Net-Zero Emissions Accountability Act', 'enacted_or_announced': '2021-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year':\u2026"
+       },
+       "ret": "{'iso3': 'CAN', 'country_name': 'Canada', 'is_bloc': False, 'law_or_pledge_name': 'Canadian Net-Zero Emissions Accountability Act', 'enacted_or_announced': '2021-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year':\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2346,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'CAN', 'country_name': 'Canada', 'is_bloc': False, 'law_or_pledge_name': 'Canadian Net-Zero Emissions Accountability Act', 'enacted_or_announced': '2021-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year':\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2347,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'CHL', 'country_name': 'Chile', 'is_bloc': False, 'law_or_pledge_name': 'Ley Marco de Cambio Climatico (Law 21.455)', 'enacted_or_announced': '2022-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050\u2026"
+       },
+       "ret": "{'iso3': 'CHL', 'country_name': 'Chile', 'is_bloc': False, 'law_or_pledge_name': 'Ley Marco de Cambio Climatico (Law 21.455)', 'enacted_or_announced': '2022-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2348,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'CHL', 'country_name': 'Chile', 'is_bloc': False, 'law_or_pledge_name': 'Ley Marco de Cambio Climatico (Law 21.455)', 'enacted_or_announced': '2022-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2349,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'CHE', 'country_name': 'Switzerland', 'is_bloc': False, 'law_or_pledge_name': 'Climate and Innovation Act (Klimaschutzgesetz), approved by national referendum', 'enacted_or_announced': '2023-06', 'binding_tier': 'enacted_law', 'ta\u2026"
+       },
+       "ret": "{'iso3': 'CHE', 'country_name': 'Switzerland', 'is_bloc': False, 'law_or_pledge_name': 'Climate and Innovation Act (Klimaschutzgesetz), approved by national referendum', 'enacted_or_announced': '2023-06', 'binding_tier': 'enacted_law', 'ta\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2350,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'CHE', 'country_name': 'Switzerland', 'is_bloc': False, 'law_or_pledge_name': 'Climate and Innovation Act (Klimaschutzgesetz), approved by national referendum', 'enacted_or_announced': '2023-06', 'binding_tier': 'enacted_law', 'ta\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2351,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'IRL', 'country_name': 'Ireland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Action and Low Carbon Development (Amendment) Act 2021', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero\u2026"
+       },
+       "ret": "{'iso3': 'IRL', 'country_name': 'Ireland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Action and Low Carbon Development (Amendment) Act 2021', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2352,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'IRL', 'country_name': 'Ireland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Action and Low Carbon Development (Amendment) Act 2021', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2353,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'FIN', 'country_name': 'Finland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Ilmastolaki 423/2022)', 'enacted_or_announced': '2022-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 203\u2026"
+       },
+       "ret": "{'iso3': 'FIN', 'country_name': 'Finland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Ilmastolaki 423/2022)', 'enacted_or_announced': '2022-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 203\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2354,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'FIN', 'country_name': 'Finland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Ilmastolaki 423/2022)', 'enacted_or_announced': '2022-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 203\u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 30.0, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 100.0}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2355,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'USA', 'country_name': 'United States', 'is_bloc': False, 'law_or_pledge_name': 'None enacted federally; historical 2050 net-zero commitment was a non-binding NDC/executive-branch goal (Executive Order 14008, 2021)', 'enacted_or_a\u2026"
+       },
+       "ret": "{'iso3': 'USA', 'country_name': 'United States', 'is_bloc': False, 'law_or_pledge_name': 'None enacted federally; historical 2050 net-zero commitment was a non-binding NDC/executive-branch goal (Executive Order 14008, 2021)', 'enacted_or_a\u2026",
+       "dur_ms": 0.024,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2356,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'USA', 'country_name': 'United States', 'is_bloc': False, 'law_or_pledge_name': 'None enacted federally; historical 2050 net-zero commitment was a non-binding NDC/executive-branch goal (Executive Order 14008, 2021)', 'enacted_or_a\u2026"
+         },
+         "ret": "{'binding_points': 0, 'ambition_points': 0.0, 'interim_points': 0, 'coverage_points': 5, 'stringency_score': 5.0}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2357,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'CHN', 'country_name': 'China', 'is_bloc': False, 'law_or_pledge_name': '2060 carbon-neutrality pledge (announced UNGA, Sept 2020), incorporated into the 14th Five-Year Plan (2021-2025)', 'enacted_or_announced': '2020-09', 'bindin\u2026"
+       },
+       "ret": "{'iso3': 'CHN', 'country_name': 'China', 'is_bloc': False, 'law_or_pledge_name': '2060 carbon-neutrality pledge (announced UNGA, Sept 2020), incorporated into the 14th Five-Year Plan (2021-2025)', 'enacted_or_announced': '2020-09', 'bindin\u2026",
+       "dur_ms": 0.027,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2358,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'CHN', 'country_name': 'China', 'is_bloc': False, 'law_or_pledge_name': '2060 carbon-neutrality pledge (announced UNGA, Sept 2020), incorporated into the 14th Five-Year Plan (2021-2025)', 'enacted_or_announced': '2020-09', 'bindin\u2026"
+         },
+         "ret": "{'binding_points': 20, 'ambition_points': 8.6, 'interim_points': 8, 'coverage_points': 5, 'stringency_score': 41.6}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2359,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'IND', 'country_name': 'India', 'is_bloc': False, 'law_or_pledge_name': \"Net-zero-by-2070 pledge ('Panchamrit'), announced COP26, Nov 2021\", 'enacted_or_announced': '2021-11', 'binding_tier': 'ndc_pledge_only', 'target_type': 'net\u2026"
+       },
+       "ret": "{'iso3': 'IND', 'country_name': 'India', 'is_bloc': False, 'law_or_pledge_name': \"Net-zero-by-2070 pledge ('Panchamrit'), announced COP26, Nov 2021\", 'enacted_or_announced': '2021-11', 'binding_tier': 'ndc_pledge_only', 'target_type': 'net\u2026",
+       "dur_ms": 0.025,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2360,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'IND', 'country_name': 'India', 'is_bloc': False, 'law_or_pledge_name': \"Net-zero-by-2070 pledge ('Panchamrit'), announced COP26, Nov 2021\", 'enacted_or_announced': '2021-11', 'binding_tier': 'ndc_pledge_only', 'target_type': 'net\u2026"
+         },
+         "ret": "{'binding_points': 15, 'ambition_points': 0.0, 'interim_points': 0, 'coverage_points': 5, 'stringency_score': 20.0}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2361,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'BRA', 'country_name': 'Brazil', 'is_bloc': False, 'law_or_pledge_name': 'Updated NDC reaffirming climate-neutrality-by-2050; base law is the National Policy on Climate Change (Law 12.187/2009)', 'enacted_or_announced': '2009 (bas\u2026"
+       },
+       "ret": "{'iso3': 'BRA', 'country_name': 'Brazil', 'is_bloc': False, 'law_or_pledge_name': 'Updated NDC reaffirming climate-neutrality-by-2050; base law is the National Policy on Climate Change (Law 12.187/2009)', 'enacted_or_announced': '2009 (bas\u2026",
+       "dur_ms": 0.029,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2362,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'BRA', 'country_name': 'Brazil', 'is_bloc': False, 'law_or_pledge_name': 'Updated NDC reaffirming climate-neutrality-by-2050; base law is the National Policy on Climate Change (Law 12.187/2009)', 'enacted_or_announced': '2009 (bas\u2026"
+         },
+         "ret": "{'binding_points': 15, 'ambition_points': 17.1, 'interim_points': 0, 'coverage_points': 15, 'stringency_score': 47.1}",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2363,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'MEX', 'country_name': 'Mexico', 'is_bloc': False, 'law_or_pledge_name': 'General Climate Change Law (amended) -- aspirational 50% reduction by 2050 vs 2000', 'enacted_or_announced': '2012 (base law, amended since)', 'binding_tier\u2026"
+       },
+       "ret": "{'iso3': 'MEX', 'country_name': 'Mexico', 'is_bloc': False, 'law_or_pledge_name': 'General Climate Change Law (amended) -- aspirational 50% reduction by 2050 vs 2000', 'enacted_or_announced': '2012 (base law, amended since)', 'binding_tier\u2026",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2364,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'MEX', 'country_name': 'Mexico', 'is_bloc': False, 'law_or_pledge_name': 'General Climate Change Law (amended) -- aspirational 50% reduction by 2050 vs 2000', 'enacted_or_announced': '2012 (base law, amended since)', 'binding_tier\u2026"
+         },
+         "ret": "{'binding_points': 20, 'ambition_points': 17.1, 'interim_points': 0, 'coverage_points': 5, 'stringency_score': 42.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2365,
+       "name": "_with_score",
+       "qual": "_with_score",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 313,
+       "args": {
+        "rec": "{'iso3': 'NOR', 'country_name': 'Norway', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Klimaloven)', 'enacted_or_announced': '2017-06', 'binding_tier': 'enacted_law', 'target_type': 'reduction_target', 'target_year': 2050, \u2026"
+       },
+       "ret": "{'iso3': 'NOR', 'country_name': 'Norway', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Klimaloven)', 'enacted_or_announced': '2017-06', 'binding_tier': 'enacted_law', 'target_type': 'reduction_target', 'target_year': 2050, \u2026",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 2366,
+         "name": "_score",
+         "qual": "_score",
+         "file": "api/v1/routes/climate_policy_radar.py",
+         "line": 295,
+         "args": {
+          "rec": "{'iso3': 'NOR', 'country_name': 'Norway', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Klimaloven)', 'enacted_or_announced': '2017-06', 'binding_tier': 'enacted_law', 'target_type': 'reduction_target', 'target_year': 2050, \u2026"
+         },
+         "ret": "{'binding_points': 40, 'ambition_points': 17.1, 'interim_points': 15, 'coverage_points': 15, 'stringency_score': 87.1}",
+         "dur_ms": 0.004,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 2367,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'EUU', 'country_name': 'European Union', 'is_bloc': True, 'law_or_pledge_name': 'European Climate Law (Regulation (EU) 2021/1119)', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'targ\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2368,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'GBR', 'country_name': 'United Kingdom', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act 2008 (2050 Target Amendment Order 2019)', 'enacted_or_announced': '2019-06', 'binding_tier': 'enacted_law', 'target_type': 'net_z\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2369,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'DEU', 'country_name': 'Germany', 'is_bloc': False, 'law_or_pledge_name': 'Bundes-Klimaschutzgesetz (Federal Climate Change Act), amended 2021', 'enacted_or_announced': '2021-08', 'binding_tier': 'enacted_law', 'target_type': 'net\u2026"
+       },
+       "ret": "91.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2370,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'FRA', 'country_name': 'France', 'is_bloc': False, 'law_or_pledge_name': 'Loi Energie-Climat (Energy-Climate Law, Loi n. 2019-1147)', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'ta\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2371,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'SWE', 'country_name': 'Sweden', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimatlagen 2017:720) + Climate Policy Framework', 'enacted_or_announced': '2018-01', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+       },
+       "ret": "91.4",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2372,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'DNK', 'country_name': 'Denmark', 'is_bloc': False, 'law_or_pledge_name': 'Climate Act (Klimalov)', 'enacted_or_announced': '2020-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050, 'interim_tier': \u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2373,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'ESP', 'country_name': 'Spain', 'is_bloc': False, 'law_or_pledge_name': 'Ley 7/2021 de cambio climatico y transicion energetica', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2374,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'NZL', 'country_name': 'New Zealand', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Response (Zero Carbon) Amendment Act 2019', 'enacted_or_announced': '2019-11', 'binding_tier': 'enacted_law', 'target_type': 'net_zero',\u2026"
+       },
+       "ret": "82.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2375,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'JPN', 'country_name': 'Japan', 'is_bloc': False, 'law_or_pledge_name': 'Act on Promotion of Global Warming Countermeasures (amended 2021)', 'enacted_or_announced': '2021-05', 'binding_tier': 'enacted_law', 'target_type': 'net_zer\u2026"
+       },
+       "ret": "80.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2376,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'KOR', 'country_name': 'South Korea', 'is_bloc': False, 'law_or_pledge_name': 'Framework Act on Carbon Neutrality and Green Growth', 'enacted_or_announced': '2021-09', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'tar\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2377,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'CAN', 'country_name': 'Canada', 'is_bloc': False, 'law_or_pledge_name': 'Canadian Net-Zero Emissions Accountability Act', 'enacted_or_announced': '2021-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year':\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2378,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'CHL', 'country_name': 'Chile', 'is_bloc': False, 'law_or_pledge_name': 'Ley Marco de Cambio Climatico (Law 21.455)', 'enacted_or_announced': '2022-06', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 2050\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2379,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'CHE', 'country_name': 'Switzerland', 'is_bloc': False, 'law_or_pledge_name': 'Climate and Innovation Act (Klimaschutzgesetz), approved by national referendum', 'enacted_or_announced': '2023-06', 'binding_tier': 'enacted_law', 'ta\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2380,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'IRL', 'country_name': 'Ireland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Action and Low Carbon Development (Amendment) Act 2021', 'enacted_or_announced': '2021-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero\u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2381,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'FIN', 'country_name': 'Finland', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Ilmastolaki 423/2022)', 'enacted_or_announced': '2022-07', 'binding_tier': 'enacted_law', 'target_type': 'net_zero', 'target_year': 203\u2026"
+       },
+       "ret": "100.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2382,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'USA', 'country_name': 'United States', 'is_bloc': False, 'law_or_pledge_name': 'None enacted federally; historical 2050 net-zero commitment was a non-binding NDC/executive-branch goal (Executive Order 14008, 2021)', 'enacted_or_a\u2026"
+       },
+       "ret": "5.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2383,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'CHN', 'country_name': 'China', 'is_bloc': False, 'law_or_pledge_name': '2060 carbon-neutrality pledge (announced UNGA, Sept 2020), incorporated into the 14th Five-Year Plan (2021-2025)', 'enacted_or_announced': '2020-09', 'bindin\u2026"
+       },
+       "ret": "41.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2384,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'IND', 'country_name': 'India', 'is_bloc': False, 'law_or_pledge_name': \"Net-zero-by-2070 pledge ('Panchamrit'), announced COP26, Nov 2021\", 'enacted_or_announced': '2021-11', 'binding_tier': 'ndc_pledge_only', 'target_type': 'net\u2026"
+       },
+       "ret": "20.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2385,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'BRA', 'country_name': 'Brazil', 'is_bloc': False, 'law_or_pledge_name': 'Updated NDC reaffirming climate-neutrality-by-2050; base law is the National Policy on Climate Change (Law 12.187/2009)', 'enacted_or_announced': '2009 (bas\u2026"
+       },
+       "ret": "47.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2386,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'MEX', 'country_name': 'Mexico', 'is_bloc': False, 'law_or_pledge_name': 'General Climate Change Law (amended) -- aspirational 50% reduction by 2050 vs 2000', 'enacted_or_announced': '2012 (base law, amended since)', 'binding_tier\u2026"
+       },
+       "ret": "42.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2387,
+       "name": "<lambda>",
+       "qual": "countries.<locals>.<lambda>",
+       "file": "api/v1/routes/climate_policy_radar.py",
+       "line": 320,
+       "args": {
+        "c": "{'iso3': 'NOR', 'country_name': 'Norway', 'is_bloc': False, 'law_or_pledge_name': 'Climate Change Act (Klimaloven)', 'enacted_or_announced': '2017-06', 'binding_tier': 'enacted_law', 'target_type': 'reduction_target', 'target_year': 2050, \u2026"
+       },
+       "ret": "87.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-policy-radar",
+   "label": "GET /api/v1/climate-policy/country/{iso3}",
+   "status": "failed",
+   "http_status": 404,
+   "error": "HTTPException: 404: No seeded climate-policy entry for '550e8400-e29b-41d4-a716-446655440001'. See /api/v1/climate-policy/countries.",
+   "dur_ms": 0.169,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "iso3": "550e8400-e29b-41d4-a716-446655440001 (mock id)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2388,
+     "name": "country",
+     "qual": "country",
+     "file": "api/v1/routes/climate_policy_radar.py",
+     "line": 324,
+     "args": {
+      "iso3": "'550e8400-e29b-41d4-a716-446655440001'"
+     },
+     "ret": "None",
+     "dur_ms": 0.017,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "climate-policy-radar",
+   "label": "GET /api/v1/climate-policy/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1395.352,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "live_api_exists",
+     "site_reachable",
+     "site_check_detail",
+     "seeded_countries",
+     "note",
+     "provenance",
+     "checked_at"
+    ],
+    "n_keys": 9
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2389,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/climate_policy_radar.py",
+     "line": 346,
+     "args": {},
+     "ret": "{'source': 'Climate Policy Radar', 'mode': 'seeded-real-extract', 'live_api_exists': False, 'site_reachable': True, 'site_check_detail': 'HTTP 200', 'seeded_countries': 21, 'note': 'No public API found at climatepolicyradar.org / app.clima\u2026",
+     "dur_ms": 1393.278,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

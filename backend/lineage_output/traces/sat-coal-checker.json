@@ -1,10 +1,10 @@
 {
  "domain": "sat-coal-checker",
  "meta": {
-  "ts": "2026-06-30T14:04:43",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 3,
   "module": "api.v1.routes.sat_coal_checker",
-  "router_prefix": "/api/v1/sat-coal",
-  "endpoints": 3
+  "router_prefix": "/api/v1/sat-coal"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 727.592,
+   "dur_ms": 397.894,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1120,
-     "dur_ms": 171.126,
+     "dur_ms": 156.774,
      "is_reference": false,
      "error": null
     }
@@ -47,30 +47,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39741,
      "name": "get_gem_summary",
      "qual": "get_gem_summary",
      "file": "api/v1/routes/sat_coal_checker.py",
      "line": 254,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000025DD73D0710>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125970>"
      },
      "ret": "{'message': 'No GEM coal data loaded'}",
-     "dur_ms": 697.583,
+     "dur_ms": 368.115,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39742,
        "name": "_get_gem_coal_summary",
        "qual": "_get_gem_coal_summary",
        "file": "api/v1/routes/sat_coal_checker.py",
        "line": 429,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000025DD73D0710>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A125970>"
        },
        "ret": "None",
-       "dur_ms": 697.414,
+       "dur_ms": 368.037,
        "sql": [
         0
        ],
@@ -87,7 +87,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.339,
+   "dur_ms": 0.2,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -108,14 +108,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39743,
      "name": "get_thresholds",
      "qual": "get_thresholds",
      "file": "api/v1/routes/sat_coal_checker.py",
      "line": 232,
      "args": {},
      "ret": "{'revenue_thresholds': {'exclusion': 25.0, 'watchlist': 10.0, 'acceptable': 5.0}, 'phase_out_deadlines': {'OECD': 2030, 'non_OECD': 2040, 'IEA_NZE_no_new': 2021}, 'pipeline_risk_categories': {'announced': 'HIGH -- New capacity announced', \u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

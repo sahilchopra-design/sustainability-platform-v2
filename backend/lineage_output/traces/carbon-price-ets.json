@@ -1,10 +1,10 @@
 {
  "domain": "carbon-price-ets",
  "meta": {
-  "ts": "2026-06-30T13:59:35",
+  "ts": "2026-07-05T19:10:48",
+  "endpoints": 10,
   "module": "api.v1.routes.carbon_price_ets",
-  "router_prefix": "/api/v1/carbon-price-ets",
-  "endpoints": 10
+  "router_prefix": "/api/v1/carbon-price-ets"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.352,
+   "dur_ms": 1.726,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -38,70 +38,70 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 867,
      "name": "ref_cbam_sectors",
      "qual": "ref_cbam_sectors",
      "file": "api/v1/routes/carbon_price_ets.py",
      "line": 262,
      "args": {},
      "ret": "{'sectors': {'cement': {'hs_chapters': ['2523'], 'embedded_carbon_intensity_tco2_t': 0.83, 'eu_benchmark_tco2_t': 0.766, 'free_allocation_phase_out_yr': 2034, 'cbam_phase_in_start': 2023, 'cbam_full_phase_in': 2026, 'leakage_risk': 0.9, 'i\u2026",
-     "dur_ms": 0.17,
+     "dur_ms": 0.136,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 868,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "2.8",
-       "dur_ms": 0.006,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 869,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "8.6",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 4,
-       "name": "<genexpr>",
-       "qual": "ref_cbam_sectors.<locals>.<genexpr>",
-       "file": "api/v1/routes/carbon_price_ets.py",
-       "line": 272,
-       "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
-       },
-       "ret": "5.1",
        "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 870,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
+       },
+       "ret": "5.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 871,
+       "name": "<genexpr>",
+       "qual": "ref_cbam_sectors.<locals>.<genexpr>",
+       "file": "api/v1/routes/carbon_price_ets.py",
+       "line": 272,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "3.2",
        "dur_ms": 0.001,
@@ -110,13 +110,13 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 872,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "1.5",
        "dur_ms": 0.002,
@@ -125,13 +125,13 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 873,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "0.3",
        "dur_ms": 0.001,
@@ -140,13 +140,13 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 874,
        "name": "<genexpr>",
        "qual": "ref_cbam_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 272,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534C040>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737BF0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -164,7 +164,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.324,
+   "dur_ms": 1.106,
    "node_count": 10,
    "provenance": [
     "computed"
@@ -191,25 +191,25 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 875,
      "name": "ref_china_ets_sectors",
      "qual": "ref_china_ets_sectors",
      "file": "api/v1/routes/carbon_price_ets.py",
      "line": 293,
      "args": {},
      "ret": "{'sectors': {'power_generation': {'benchmark_tco2_mwh_coal': 0.877, 'benchmark_tco2_mwh_gas': 0.392, 'coverage_mt_co2': 4500, 'entities': 2225, 'phase': 'Phase 1+2'}, 'iron_steel': {'benchmark_tco2_t': 1.8, 'coverage_mt_co2': 1800, 'entiti\u2026",
-     "dur_ms": 0.159,
+     "dur_ms": 0.143,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 876,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "4500",
        "dur_ms": 0.003,
@@ -218,13 +218,13 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 877,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "1800",
        "dur_ms": 0.002,
@@ -233,13 +233,13 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 878,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "500",
        "dur_ms": 0.001,
@@ -248,13 +248,13 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 879,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "1400",
        "dur_ms": 0.001,
@@ -263,13 +263,13 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 880,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "700",
        "dur_ms": 0.001,
@@ -278,13 +278,13 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 881,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "800",
        "dur_ms": 0.001,
@@ -293,13 +293,13 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 882,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "220",
        "dur_ms": 0.001,
@@ -308,13 +308,13 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 883,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "60",
        "dur_ms": 0.001,
@@ -323,13 +323,13 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 884,
        "name": "<genexpr>",
        "qual": "ref_china_ets_sectors.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_price_ets.py",
        "line": 299,
        "args": {
-        ".0": "<dict_valueiterator object at 0x000001422534D170>"
+        ".0": "<dict_valueiterator object at 0x0000013D47737830>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -347,7 +347,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.205,
+   "dur_ms": 0.934,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -371,14 +371,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 885,
      "name": "ref_ets_systems",
      "qual": "ref_ets_systems",
      "file": "api/v1/routes/carbon_price_ets.py",
      "line": 227,
      "args": {},
      "ret": "{'ets_systems': {'eu_ets': {'name': 'EU Emissions Trading System', 'jurisdiction': 'European Union', 'current_price_usd': 68.0, 'current_price_local': 62.0, 'local_currency': 'EUR', 'cap_mt_co2': 1382, 'sectors_covered': ['power', 'industr\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -391,7 +391,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.126,
+   "dur_ms": 0.917,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -413,7 +413,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 886,
      "name": "ref_iea_pathways",
      "qual": "ref_iea_pathways",
      "file": "api/v1/routes/carbon_price_ets.py",
@@ -433,7 +433,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.083,
+   "dur_ms": 0.866,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -457,7 +457,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 887,
      "name": "ref_leakage_risk",
      "qual": "ref_leakage_risk",
      "file": "api/v1/routes/carbon_price_ets.py",
@@ -513,7 +513,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.511,
+   "dur_ms": 1.121,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -546,7 +546,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 888,
      "name": "eu_ets_forecast_endpoint",
      "qual": "eu_ets_forecast_endpoint",
      "file": "api/v1/routes/carbon_price_ets.py",
@@ -554,24 +554,24 @@
      "args": {
       "request": "EUETSForecastRequest(entity_id='default', horizon_years=10, scenario='APS')"
      },
-     "ret": "{'status': 'success', 'scenario': 'APS', 'base_price_eur': 68.0, 'price_path': {2026: 77.66, 2027: 79.92, 2028: 86.18, 2029: 88.63, 2030: 105.12, 2031: 116.9, 2032: 129.52, 2033: 147.48, 2034: 152.56, 2035: 156.92, 2036: 167.23}, 'price_20\u2026",
-     "dur_ms": 0.223,
+     "ret": "{'status': 'success', 'scenario': 'APS', 'base_price_eur': 68.0, 'price_path': {2026: 74.59, 2027: 81.58, 2028: 89.0, 2029: 96.85, 2030: 105.18, 2031: 112.77, 2032: 120.8, 2033: 129.33, 2034: 138.36, 2035: 147.94, 2036: 158.1}, 'price_2030\u2026",
+     "dur_ms": 0.128,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 23,
+       "id": 889,
        "name": "forecast_eu_ets_price",
        "qual": "forecast_eu_ets_price",
        "file": "services/carbon_price_ets_engine.py",
-       "line": 351,
+       "line": 356,
        "args": {
         "horizon_years": "10",
         "scenario": "'APS'",
         "entity_id": "'default'"
        },
-       "ret": "EUETSForecast(scenario='APS', base_price_eur=68.0, price_path={2026: 77.66, 2027: 79.92, 2028: 86.18, 2029: 88.63, 2030: 105.12, 2031: 116.9, 2032: 129.52, 2033: 147.48, 2034: 152.56, 2035: 156.92, 2036: 167.23}, price_2030_eur=105.12, pri\u2026",
-       "dur_ms": 0.151,
+       "ret": "EUETSForecast(scenario='APS', base_price_eur=68.0, price_path={2026: 74.59, 2027: 81.58, 2028: 89.0, 2029: 96.85, 2030: 105.18, 2031: 112.77, 2032: 120.8, 2033: 129.33, 2034: 138.36, 2035: 147.94, 2036: 158.1}, price_2030_eur=105.18, price\u2026",
+       "dur_ms": 0.063,
        "sql": [],
        "error": null,
        "children": []

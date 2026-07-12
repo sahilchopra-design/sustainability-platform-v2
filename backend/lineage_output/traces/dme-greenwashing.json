@@ -1,10 +1,10 @@
 {
  "domain": "dme-greenwashing",
  "meta": {
-  "ts": "2026-06-30T14:00:52",
+  "ts": "2026-07-05T19:14:33",
+  "endpoints": 4,
   "module": "api.v1.routes.dme_greenwashing",
-  "router_prefix": "/api/v1/dme-greenwashing",
-  "endpoints": 4
+  "router_prefix": "/api/v1/dme-greenwashing"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.441,
+   "dur_ms": 0.266,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,14 +35,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 9868,
      "name": "get_config_defaults",
      "qual": "get_config_defaults",
      "file": "api/v1/routes/dme_greenwashing.py",
      "line": 26,
      "args": {},
      "ret": "{'ema_alpha': 0.08, 'cusum_k_factor': 0.5, 'cusum_h': 5.0, 'warning_threshold': 2.0, 'critical_threshold': 3.0}",
-     "dur_ms": 0.075,
+     "dur_ms": 0.043,
      "sql": [],
      "error": null,
      "children": []
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.318,
+   "dur_ms": 0.163,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -76,14 +76,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 9869,
      "name": "get_methodology",
      "qual": "get_methodology",
      "file": "api/v1/routes/dme_greenwashing.py",
      "line": 32,
      "args": {},
      "ret": "{'credibility_weighting': {'formula': 'W = RawScore \u00d7 QualityWeight \u00d7 Freshness', 'quality_weight': '1 - (PCAF - 1) \u00d7 0.2', 'freshness': 'exp(-ln(2)/36 \u00d7 age_months)'}, 'detection_conditions': {'condition_1': 'V_divergence > 1\u03c3 (velocity e\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

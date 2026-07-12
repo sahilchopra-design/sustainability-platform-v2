@@ -1,7 +1,7 @@
 {
  "domain": "pe-portfolio",
  "meta": {
-  "ts": "2026-07-01T10:05:44",
+  "ts": "2026-07-05T19:16:04",
   "endpoints": 10,
   "module": "api.v1.routes.pe_portfolio",
   "router_prefix": "/api/v1/pe-portfolio"
@@ -13,8 +13,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 565.089,
-   "node_count": 6,
+   "dur_ms": 260.06,
+   "node_count": 4,
    "provenance": [
     "db-empty"
    ],
@@ -29,7 +29,7 @@
       "pe_portfolio_companies"
      ],
      "rowcount": 0,
-     "dur_ms": 59.017,
+     "dur_ms": 59.831,
      "is_reference": false,
      "error": null
     }
@@ -49,7 +49,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13844,
      "name": "db_list_companies",
      "qual": "db_list_companies",
      "file": "api/v1/routes/pe_portfolio.py",
@@ -59,51 +59,24 @@
       "status": "None"
      },
      "ret": "{'count': 0, 'companies': []}",
-     "dur_ms": 564.869,
+     "dur_ms": 259.796,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13845,
        "name": "_get_pe_db",
        "qual": "_get_pe_db",
        "file": "api/v1/routes/pe_portfolio.py",
        "line": 270,
        "args": {},
-       "ret": "<services.pe_db_service.PEDBService object at 0x000002063748F5F0>",
-       "dur_ms": 1.497,
+       "ret": "<services.pe_db_service.PEDBService object at 0x0000013D48C3FA40>",
+       "dur_ms": 0.048,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
-         "name": "<module>",
-         "qual": "<module>",
-         "file": "services/pe_db_service.py",
-         "line": 1,
-         "args": {},
-         "ret": "None",
-         "dur_ms": 0.087,
-         "sql": [],
-         "error": null,
-         "children": [
-          {
-           "id": 4,
-           "name": "PEDBService",
-           "qual": "PEDBService",
-           "file": "services/pe_db_service.py",
-           "line": 36,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 0.006,
-           "sql": [],
-           "error": null,
-           "children": []
-          }
-         ]
-        },
-        {
-         "id": 5,
+         "id": 13846,
          "name": "__init__",
          "qual": "PEDBService.__init__",
          "file": "services/pe_db_service.py",
@@ -120,7 +93,7 @@
        ]
       },
       {
-       "id": 6,
+       "id": 13847,
        "name": "list_portfolio_companies",
        "qual": "PEDBService.list_portfolio_companies",
        "file": "services/pe_db_service.py",
@@ -131,7 +104,7 @@
         "limit": "100"
        },
        "ret": "[]",
-       "dur_ms": 563.322,
+       "dur_ms": 259.675,
        "sql": [
         0
        ],
@@ -148,7 +121,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 310.42,
+   "dur_ms": 315.769,
    "node_count": 5,
    "provenance": [
     "real-db"
@@ -164,7 +137,7 @@
       "pe_portfolio_companies"
      ],
      "rowcount": 1,
-     "dur_ms": 56.704,
+     "dur_ms": 53.886,
      "is_reference": false,
      "error": null
     },
@@ -175,7 +148,7 @@
       "pe_portfolio_companies"
      ],
      "rowcount": 0,
-     "dur_ms": 27.335,
+     "dur_ms": 29.069,
      "is_reference": false,
      "error": null
     }
@@ -201,7 +174,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13848,
      "name": "db_portfolio_summary",
      "qual": "db_portfolio_summary",
      "file": "api/v1/routes/pe_portfolio.py",
@@ -210,24 +183,24 @@
       "fund_id": "None"
      },
      "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0, 'by_sector': [\u2026",
-     "dur_ms": 310.221,
+     "dur_ms": 315.492,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13849,
        "name": "_get_pe_db",
        "qual": "_get_pe_db",
        "file": "api/v1/routes/pe_portfolio.py",
        "line": 270,
        "args": {},
-       "ret": "<services.pe_db_service.PEDBService object at 0x000002063A2A9F10>",
-       "dur_ms": 0.038,
+       "ret": "<services.pe_db_service.PEDBService object at 0x0000013D48B4CBF0>",
+       "dur_ms": 0.218,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 9,
+         "id": 13850,
          "name": "__init__",
          "qual": "PEDBService.__init__",
          "file": "services/pe_db_service.py",
@@ -236,7 +209,7 @@
           "engine": "Engine(postgresql://postgres.kytzcbipsghprsqoalvi:***@aws-1-us-east-2.pooler.supabase.com:5432/postgres)"
          },
          "ret": "None",
-         "dur_ms": 0.001,
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
@@ -244,7 +217,7 @@
        ]
       },
       {
-       "id": 10,
+       "id": 13851,
        "name": "portfolio_summary",
        "qual": "PEDBService.portfolio_summary",
        "file": "services/pe_db_service.py",
@@ -253,7 +226,7 @@
         "fund_id": "None"
        },
        "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0, 'by_sector': [\u2026",
-       "dur_ms": 310.127,
+       "dur_ms": 315.131,
        "sql": [
         0,
         1
@@ -261,7 +234,7 @@
        "error": null,
        "children": [
         {
-         "id": 11,
+         "id": 13852,
          "name": "_row_to_dict",
          "qual": "_row_to_dict",
          "file": "services/pe_db_service.py",
@@ -270,7 +243,7 @@
           "row": "{'total_companies': 0, 'active_count': 0, 'exited_count': 0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0}"
          },
          "ret": "{'total_companies': 0.0, 'active_count': 0.0, 'exited_count': 0.0, 'total_invested_eur': Decimal('0'), 'total_nav_eur': Decimal('0'), 'total_exit_proceeds_eur': Decimal('0'), 'avg_esg_score': 0.0, 'avg_esg_entry_score': 0.0}",
-         "dur_ms": 0.049,
+         "dur_ms": 0.027,
          "sql": [],
          "error": null,
          "children": []
@@ -287,7 +260,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.255,
+   "dur_ms": 0.24,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -305,26 +278,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 13853,
      "name": "get_kpi_template",
      "qual": "get_kpi_template",
      "file": "api/v1/routes/pe_portfolio.py",
      "line": 248,
      "args": {},
      "ret": "{'kpis': [{'kpi_id': 'scope_1_emissions_tco2e', 'name': 'Scope 1 GHG Emissions', 'category': 'emissions', 'unit': 'tCO2e', 'direction': 'lower_is_better', 'ilpa_metric_id': 'GHG-1'}, {'kpi_id': 'scope_2_emissions_tco2e', 'name': 'Scope 2 G\u2026",
-     "dur_ms": 0.062,
+     "dur_ms": 0.061,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 13854,
        "name": "get_kpi_template",
        "qual": "PEPortfolioMonitor.get_kpi_template",
        "file": "services/pe_portfolio_monitor.py",
        "line": 383,
        "args": {},
        "ret": "[{'kpi_id': 'scope_1_emissions_tco2e', 'name': 'Scope 1 GHG Emissions', 'category': 'emissions', 'unit': 'tCO2e', 'direction': 'lower_is_better', 'ilpa_metric_id': 'GHG-1'}, {'kpi_id': 'scope_2_emissions_tco2e', 'name': 'Scope 2 GHG Emissi\u2026",
-       "dur_ms": 0.011,
+       "dur_ms": 0.013,
        "sql": [],
        "error": null,
        "children": []
@@ -339,7 +312,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.211,
+   "dur_ms": 0.232,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -361,7 +334,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 13855,
      "name": "get_sector_levers",
      "qual": "get_sector_levers",
      "file": "api/v1/routes/pe_portfolio.py",
@@ -370,12 +343,12 @@
       "sector": "'Technology'"
      },
      "ret": "{'sector': 'Technology', 'levers': [{'lever_id': 'TECH_1', 'name': 'Data Centre Energy Efficiency', 'category': 'environmental', 'capex_eur_range': (200000, 2000000), 'annual_savings_pct': (5, 15), 'ebitda_uplift_pct': (1, 3), 'implementat\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.069,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 15,
+       "id": 13856,
        "name": "get_sector_levers",
        "qual": "PEValueCreationEngine.get_sector_levers",
        "file": "services/pe_value_creation.py",
@@ -390,7 +363,7 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 13857,
        "name": "get_available_sectors",
        "qual": "PEValueCreationEngine.get_available_sectors",
        "file": "services/pe_value_creation.py",

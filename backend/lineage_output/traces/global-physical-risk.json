@@ -1,0 +1,491 @@
+{
+ "domain": "global-physical-risk",
+ "meta": {
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 4,
+  "module": "api.v1.routes.global_physical_risk",
+  "router_prefix": "/api/v1/global-physical-risk"
+ },
+ "transactions": [
+  {
+   "domain": "global-physical-risk",
+   "label": "GET /api/v1/global-physical-risk/coverage-stats",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1401.128,
+   "node_count": 8,
+   "provenance": [
+    "real-db"
+   ],
+   "source_tables": [
+    "ref_cyclone_zones",
+    "ref_earthquake_zones",
+    "ref_flood_zones",
+    "ref_sea_level_zones",
+    "ref_wildfire_zones"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT COUNT(*) FROM ref_earthquake_zones'",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 59.685,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 1,
+     "sql": "'SELECT ST_XMin(ST_Extent(zone_boundary)) AS min_lon, ST_YMin(ST_Extent(zone_boundary)) AS min_lat, ST_XMax(ST_Extent(zone_boundary)) AS max_lon, ST_YMax(ST_Extent(zone_boundary)) AS max_lat FROM ref_earthquake_zones'",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 316.942,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 2,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) AS n FROM ref_earthquake_zones WHERE country_iso3 IS NOT NULL'",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 38.7,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 3,
+     "sql": "'SELECT MAX(created_at) FROM ref_earthquake_zones'",
+     "tables": [
+      "ref_earthquake_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 37.617,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 4,
+     "sql": "'SELECT COUNT(*) FROM ref_cyclone_zones'",
+     "tables": [
+      "ref_cyclone_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.133,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 5,
+     "sql": "'SELECT ST_XMin(ST_Extent(zone_boundary)) AS min_lon, ST_YMin(ST_Extent(zone_boundary)) AS min_lat, ST_XMax(ST_Extent(zone_boundary)) AS max_lon, ST_YMax(ST_Extent(zone_boundary)) AS max_lat FROM ref_cyclone_zones'",
+     "tables": [
+      "ref_cyclone_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 112.586,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 6,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) AS n FROM ref_cyclone_zones WHERE country_iso3 IS NOT NULL'",
+     "tables": [
+      "ref_cyclone_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.327,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 7,
+     "sql": "'SELECT MAX(created_at) FROM ref_cyclone_zones'",
+     "tables": [
+      "ref_cyclone_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.936,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 8,
+     "sql": "'SELECT COUNT(*) FROM ref_wildfire_zones'",
+     "tables": [
+      "ref_wildfire_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.976,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 9,
+     "sql": "'SELECT ST_XMin(ST_Extent(zone_boundary)) AS min_lon, ST_YMin(ST_Extent(zone_boundary)) AS min_lat, ST_XMax(ST_Extent(zone_boundary)) AS max_lon, ST_YMax(ST_Extent(zone_boundary)) AS max_lat FROM ref_wildfire_zones'",
+     "tables": [
+      "ref_wildfire_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 165.063,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 10,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) AS n FROM ref_wildfire_zones WHERE country_iso3 IS NOT NULL'",
+     "tables": [
+      "ref_wildfire_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.399,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 11,
+     "sql": "'SELECT MAX(created_at) FROM ref_wildfire_zones'",
+     "tables": [
+      "ref_wildfire_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.756,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 12,
+     "sql": "'SELECT COUNT(*) FROM ref_flood_zones'",
+     "tables": [
+      "ref_flood_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 32.525,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 13,
+     "sql": "'SELECT ST_XMin(ST_Extent(zone_boundary)) AS min_lon, ST_YMin(ST_Extent(zone_boundary)) AS min_lat, ST_XMax(ST_Extent(zone_boundary)) AS max_lon, ST_YMax(ST_Extent(zone_boundary)) AS max_lat FROM ref_flood_zones'",
+     "tables": [
+      "ref_flood_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.526,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 14,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) AS n FROM ref_flood_zones WHERE country_iso3 IS NOT NULL'",
+     "tables": [
+      "ref_flood_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.98,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 15,
+     "sql": "'SELECT MAX(created_at) FROM ref_flood_zones'",
+     "tables": [
+      "ref_flood_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.764,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 16,
+     "sql": "'SELECT COUNT(*) FROM ref_sea_level_zones'",
+     "tables": [
+      "ref_sea_level_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.276,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 17,
+     "sql": "'SELECT ST_XMin(ST_Extent(zone_boundary)) AS min_lon, ST_YMin(ST_Extent(zone_boundary)) AS min_lat, ST_XMax(ST_Extent(zone_boundary)) AS max_lon, ST_YMax(ST_Extent(zone_boundary)) AS max_lat FROM ref_sea_level_zones'",
+     "tables": [
+      "ref_sea_level_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 30.416,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 18,
+     "sql": "'SELECT COUNT(DISTINCT country_iso3) AS n FROM ref_sea_level_zones WHERE country_iso3 IS NOT NULL'",
+     "tables": [
+      "ref_sea_level_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.879,
+     "is_reference": false,
+     "error": null
+    },
+    {
+     "id": 19,
+     "sql": "'SELECT MAX(created_at) FROM ref_sea_level_zones'",
+     "tables": [
+      "ref_sea_level_zones"
+     ],
+     "rowcount": 1,
+     "dur_ms": 31.775,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "hazard_layers",
+     "layers_populated",
+     "layers_total",
+     "build_progress_pct"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12246,
+     "name": "coverage_stats",
+     "qual": "coverage_stats",
+     "file": "api/v1/routes/global_physical_risk.py",
+     "line": 166,
+     "args": {
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47679640>"
+     },
+     "ret": "{'hazard_layers': {'earthquake': {'table': 'ref_earthquake_zones', 'row_count': 4500, 'spatial_extent': {'min_lon': -180.0, 'min_lat': -90.0, 'max_lon': 180.0, 'max_lat': 62.0}, 'distinct_countries': 152, 'last_updated': '2026-07-05T17:54:\u2026",
+     "dur_ms": 1371.46,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12247,
+       "name": "get_coverage_stats",
+       "qual": "get_coverage_stats",
+       "file": "services/global_physical_risk_engine.py",
+       "line": 746,
+       "args": {
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47679640>"
+       },
+       "ret": "{'hazard_layers': {'earthquake': {'table': 'ref_earthquake_zones', 'row_count': 4500, 'spatial_extent': {'min_lon': -180.0, 'min_lat': -90.0, 'max_lon': 180.0, 'max_lat': 62.0}, 'distinct_countries': 152, 'last_updated': '2026-07-05T17:54:\u2026",
+       "dur_ms": 1371.388,
+       "sql": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+       ],
+       "error": null,
+       "children": [
+        {
+         "id": 12248,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.005,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12249,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.003,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12250,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12251,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12252,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "1",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12253,
+         "name": "<genexpr>",
+         "qual": "get_coverage_stats.<locals>.<genexpr>",
+         "file": "services/global_physical_risk_engine.py",
+         "line": 796,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D436099E0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "global-physical-risk",
+   "label": "GET /api/v1/global-physical-risk/region-summary",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: min_lon/min_lat must be strictly less than max_lon/max_lat",
+   "dur_ms": 0.404,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "min_lon": "'TEST_min_lon' (mock-required)",
+    "min_lat": "'TEST_min_lat' (mock-required)",
+    "max_lon": "'TEST_max_lon' (mock-required)",
+    "max_lat": "'TEST_max_lat' (mock-required)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12254,
+     "name": "region_summary",
+     "qual": "region_summary",
+     "file": "api/v1/routes/global_physical_risk.py",
+     "line": 137,
+     "args": {
+      "min_lon": "'TEST_min_lon'",
+      "min_lat": "'TEST_min_lat'",
+      "max_lon": "'TEST_max_lon'",
+      "max_lat": "'TEST_max_lat'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47679580>"
+     },
+     "ret": "None",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "global-physical-risk",
+   "label": "POST /api/v1/global-physical-risk/point-profile",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "global-physical-risk",
+   "label": "POST /api/v1/global-physical-risk/portfolio-profile",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

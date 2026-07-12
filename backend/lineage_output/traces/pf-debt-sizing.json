@@ -1,0 +1,70 @@
+{
+ "domain": "pf-debt-sizing",
+ "meta": {
+  "ts": "2026-07-05T19:16:10",
+  "endpoints": 2,
+  "module": "api.v1.routes.pf_debt_sizing",
+  "router_prefix": "/api/v1/pf-debt-sizing"
+ },
+ "transactions": [
+  {
+   "domain": "pf-debt-sizing",
+   "label": "GET /api/v1/pf-debt-sizing/ref/dscr-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.917,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "benchmarks",
+     "structure_benchmarks",
+     "basis_note",
+     "as_of"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28461,
+     "name": "dscr_benchmarks",
+     "qual": "dscr_benchmarks",
+     "file": "api/v1/routes/pf_debt_sizing.py",
+     "line": 1074,
+     "args": {},
+     "ret": "{'benchmarks': [{'contract_type': 'Fully contracted solar PV (IG offtaker, 20yr+ PPA)', 'target_dscr_contracted': 1.2, 'target_dscr_merchant': None, 'max_gearing_pct': 85, 'typical_tenor_years': '18-22 (or PPA-1)', 'note': 'Lowest resource\u2026",
+     "dur_ms": 0.003,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pf-debt-sizing",
+   "label": "POST /api/v1/pf-debt-sizing/size",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

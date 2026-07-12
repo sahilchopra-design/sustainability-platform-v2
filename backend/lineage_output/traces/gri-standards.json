@@ -1,10 +1,10 @@
 {
  "domain": "gri-standards",
  "meta": {
-  "ts": "2026-06-30T14:02:39",
+  "ts": "2026-07-05T19:15:35",
+  "endpoints": 8,
   "module": "api.v1.routes.gri_standards",
-  "router_prefix": "/api/v1/gri-standards",
-  "endpoints": 8
+  "router_prefix": "/api/v1/gri-standards"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.358,
+   "dur_ms": 0.248,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -32,39 +32,39 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12320,
      "name": "ref_content_index_requirements",
      "qual": "ref_content_index_requirements",
      "file": "api/v1/routes/gri_standards.py",
      "line": 143,
      "args": {},
      "ret": "{'status': 'ok', 'result': {'content_index_requirements': {'required_columns': ['disclosure_id', 'disclosure_title', 'location_in_report', 'omission_if_applicable'], 'optional_columns': ['assurance_reference', 'sdg_linkage'], 'format_optio\u2026",
-     "dur_ms": 0.088,
+     "dur_ms": 0.064,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12321,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
-       "dur_ms": 0.005,
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 12322,
        "name": "ref_content_index_requirements",
        "qual": "GRIStandardsEngine.ref_content_index_requirements",
        "file": "services/gri_standards_engine.py",
-       "line": 891,
+       "line": 1026,
        "args": {},
        "ret": "{'content_index_requirements': {'required_columns': ['disclosure_id', 'disclosure_title', 'location_in_report', 'omission_if_applicable'], 'optional_columns': ['assurance_reference', 'sdg_linkage'], 'format_options': ['embedded_in_report',\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -79,7 +79,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.804,
+   "dur_ms": 0.244,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -98,36 +98,36 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 12323,
      "name": "ref_gri_2_disclosures",
      "qual": "ref_gri_2_disclosures",
      "file": "api/v1/routes/gri_standards.py",
      "line": 107,
      "args": {},
      "ret": "{'status': 'ok', 'result': {'gri_2_disclosures': {'2-1': {'title': 'Organisational details', 'group': 'org_profile', 'description': 'Legal name, nature of ownership, headquarters location, countries of operation', 'requirement_level': 'req\u2026",
-     "dur_ms": 0.524,
+     "dur_ms": 0.095,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 12324,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
        "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 12325,
        "name": "ref_gri_2_disclosures",
        "qual": "GRIStandardsEngine.ref_gri_2_disclosures",
        "file": "services/gri_standards_engine.py",
-       "line": 879,
+       "line": 1014,
        "args": {},
        "ret": "{'gri_2_disclosures': {'2-1': {'title': 'Organisational details', 'group': 'org_profile', 'description': 'Legal name, nature of ownership, headquarters location, countries of operation', 'requirement_level': 'required', 'guidance_notes': '\u2026",
        "dur_ms": 0.002,
@@ -145,7 +145,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.264,
+   "dur_ms": 0.239,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -164,36 +164,36 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 12326,
      "name": "ref_gri_300_standards",
      "qual": "ref_gri_300_standards",
      "file": "api/v1/routes/gri_standards.py",
      "line": 116,
      "args": {},
      "ret": "{'status': 'ok', 'result': {'gri_300_standards': {'GRI_301': {'standard': 'GRI 301: Materials 2016', 'topic': 'Materials', 'disclosures': {'301-1': {'title': 'Materials used by weight or volume', 'description': 'Total weight or volume of r\u2026",
-     "dur_ms": 0.095,
+     "dur_ms": 0.093,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 12327,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
-       "dur_ms": 0.002,
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 12328,
        "name": "ref_gri_300_standards",
        "qual": "GRIStandardsEngine.ref_gri_300_standards",
        "file": "services/gri_standards_engine.py",
-       "line": 882,
+       "line": 1017,
        "args": {},
        "ret": "{'gri_300_standards': {'GRI_301': {'standard': 'GRI 301: Materials 2016', 'topic': 'Materials', 'disclosures': {'301-1': {'title': 'Materials used by weight or volume', 'description': 'Total weight or volume of renewable + non-renewable ma\u2026",
        "dur_ms": 0.001,
@@ -211,7 +211,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.181,
+   "dur_ms": 0.174,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -230,36 +230,36 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 12329,
      "name": "ref_material_topic_process",
      "qual": "ref_material_topic_process",
      "file": "api/v1/routes/gri_standards.py",
      "line": 125,
      "args": {},
      "ret": "{'status': 'ok', 'result': {'gri_3_process': {'step_1_understand_context': {'title': \"Understand the organisation's activities and business relationships\", 'description': 'Map value chain, business relationships, industry context, and oper\u2026",
-     "dur_ms": 0.055,
+     "dur_ms": 0.051,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 12330,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
        "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 12331,
        "name": "ref_material_topic_process",
        "qual": "GRIStandardsEngine.ref_material_topic_process",
        "file": "services/gri_standards_engine.py",
-       "line": 885,
+       "line": 1020,
        "args": {},
        "ret": "{'gri_3_process': {'step_1_understand_context': {'title': \"Understand the organisation's activities and business relationships\", 'description': 'Map value chain, business relationships, industry context, and operating environment', 'key_ac\u2026",
        "dur_ms": 0.001,
@@ -277,7 +277,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.185,
+   "dur_ms": 0.171,
    "node_count": 3,
    "provenance": [
     "computed"
@@ -296,36 +296,36 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 12332,
      "name": "ref_service_levels",
      "qual": "ref_service_levels",
      "file": "api/v1/routes/gri_standards.py",
      "line": 134,
      "args": {},
      "ret": "{'status': 'ok', 'result': {'gri_service_levels': {'with_reference': {'name': 'In accordance with GRI Standards (2021+)', 'description': 'Current compliance level for GRI 2021 framework. Requires all GRI 2 disclosures plus management appro\u2026",
-     "dur_ms": 0.058,
+     "dur_ms": 0.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 12333,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
        "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 15,
+       "id": 12334,
        "name": "ref_service_levels",
        "qual": "GRIStandardsEngine.ref_service_levels",
        "file": "services/gri_standards_engine.py",
-       "line": 888,
+       "line": 1023,
        "args": {},
        "ret": "{'gri_service_levels': {'with_reference': {'name': 'In accordance with GRI Standards (2021+)', 'description': 'Current compliance level for GRI 2021 framework. Requires all GRI 2 disclosures plus management approach (GRI 3-3) for each mate\u2026",
        "dur_ms": 0.001,
@@ -343,7 +343,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.324,
+   "dur_ms": 0.178,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -357,7 +357,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 12335,
      "name": "assess_gri",
      "qual": "assess_gri",
      "file": "api/v1/routes/gri_standards.py",
@@ -366,19 +366,19 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.044,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 17,
+       "id": 12336,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
-       "dur_ms": 0.002,
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -411,7 +411,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.486,
+   "dur_ms": 0.15,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -425,7 +425,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 12337,
      "name": "materiality_screen",
      "qual": "materiality_screen",
      "file": "api/v1/routes/gri_standards.py",
@@ -434,19 +434,19 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.075,
+     "dur_ms": 0.025,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 19,
+       "id": 12338,
        "name": "get_engine",
        "qual": "get_engine",
        "file": "services/gri_standards_engine.py",
-       "line": 916,
+       "line": 1051,
        "args": {},
-       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x000001AB308BDA60>",
-       "dur_ms": 0.005,
+       "ret": "<services.gri_standards_engine.GRIStandardsEngine object at 0x0000013D46E38FB0>",
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []

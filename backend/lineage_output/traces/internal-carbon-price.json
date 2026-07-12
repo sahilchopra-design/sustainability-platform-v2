@@ -1,10 +1,10 @@
 {
  "domain": "internal-carbon-price",
  "meta": {
-  "ts": "2026-06-30T14:02:50",
+  "ts": "2026-07-05T19:15:47",
+  "endpoints": 11,
   "module": "api.v1.routes.internal_carbon_price",
-  "router_prefix": "/api/v1/internal-carbon-price",
-  "endpoints": 11
+  "router_prefix": "/api/v1/internal-carbon-price"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.572,
+   "dur_ms": 2.512,
    "node_count": 21,
    "provenance": [
     "computed"
@@ -34,19 +34,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12629,
      "name": "ref_abatement_benchmarks",
      "qual": "ref_abatement_benchmarks",
      "file": "api/v1/routes/internal_carbon_price.py",
      "line": 389,
      "args": {},
      "ret": "{'status': 'success', 'count': 20, 'data': [{'measure_key': 'methane_leak_reduction', 'description': 'O&G LDAR and compressor upgrades (methane GWP-100)', 'cost_eur_tco2e': -20.0, 'max_reduction_tco2e_yr': 400000, 'implementation_years': 2\u2026",
-     "dur_ms": 0.494,
+     "dur_ms": 0.496,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12630,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -55,13 +55,13 @@
         "x": "{'measure_key': 'onshore_wind', 'description': 'Onshore wind power replacing coal/gas generation', 'cost_eur_tco2e': -12.0, 'max_reduction_tco2e_yr': 500000, 'implementation_years': 3, 'capex_m_per_100ktco2': 8.5, 'cost_category': 'negativ\u2026"
        },
        "ret": "-12.0",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 12631,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -70,13 +70,13 @@
         "x": "{'measure_key': 'solar_pv_utility', 'description': 'Utility-scale solar PV replacing fossil generation', 'cost_eur_tco2e': -8.0, 'max_reduction_tco2e_yr': 800000, 'implementation_years': 2, 'capex_m_per_100ktco2': 6.0, 'cost_category': 'ne\u2026"
        },
        "ret": "-8.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 12632,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -91,7 +91,7 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 12633,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -106,7 +106,7 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 12634,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -121,7 +121,7 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 12635,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -136,7 +136,7 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 12636,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -151,7 +151,7 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 12637,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -166,7 +166,7 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 12638,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -181,7 +181,7 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 12639,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -196,7 +196,7 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 12640,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -211,7 +211,7 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 12641,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -226,7 +226,7 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 12642,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -241,7 +241,7 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 12643,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -256,7 +256,7 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 12644,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -271,7 +271,7 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 12645,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -286,7 +286,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 12646,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -301,7 +301,7 @@
        "children": []
       },
       {
-       "id": 19,
+       "id": 12647,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -316,7 +316,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 12648,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -331,7 +331,7 @@
        "children": []
       },
       {
-       "id": 21,
+       "id": 12649,
        "name": "<lambda>",
        "qual": "ref_abatement_benchmarks.<locals>.<lambda>",
        "file": "api/v1/routes/internal_carbon_price.py",
@@ -355,7 +355,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.229,
+   "dur_ms": 1.415,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -377,14 +377,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 12650,
      "name": "ref_ets_price_trajectory",
      "qual": "ref_ets_price_trajectory",
      "file": "api/v1/routes/internal_carbon_price.py",
      "line": 362,
      "args": {},
      "ret": "{'status': 'success', 'eu_ets_current_eur_t': 65.0, 'ets2_start_year': 2027, 'data': {2024: {'eu_ets_phase4_eur_t': 65.0, 'ets2_buildings_transport_eur_t': None}, 2025: {'eu_ets_phase4_eur_t': 72.0, 'ets2_buildings_transport_eur_t': None},\u2026",
-     "dur_ms": 0.054,
+     "dur_ms": 0.04,
      "sql": [],
      "error": null,
      "children": []
@@ -397,7 +397,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.953,
+   "dur_ms": 2.122,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -418,14 +418,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 12651,
      "name": "ref_mechanism_types",
      "qual": "ref_mechanism_types",
      "file": "api/v1/routes/internal_carbon_price.py",
      "line": 333,
      "args": {},
      "ret": "{'status': 'success', 'count': 5, 'data': {'shadow_price': {'description': 'Internal shadow carbon price applied to investment appraisals and capex decisions \u2014 does not generate real cash flows but adjusts IRR/NPV.', 'use_case': 'Capital a\u2026",
-     "dur_ms": 0.027,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -438,7 +438,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.507,
+   "dur_ms": 1.878,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -458,14 +458,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 12652,
      "name": "ref_sbti_guidance",
      "qual": "ref_sbti_guidance",
      "file": "api/v1/routes/internal_carbon_price.py",
      "line": 347,
      "args": {},
      "ret": "{'status': 'success', 'data': {'1.5C': {'temperature_target': '1.5\u00b0C (Paris Agreement ambition)', '2025': {'min_eur_t': 50, 'recommended_eur_t': 100, 'source': 'IPCC AR6 WG3 C1 pathway'}, '2030': {'min_eur_t': 135, 'recommended_eur_t': 200\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -550,7 +550,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.769,
+   "dur_ms": 3.629,
    "node_count": 56,
    "provenance": [
     "computed"
@@ -571,7 +571,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 12653,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/internal_carbon_price.py",
@@ -580,12 +580,12 @@
       "req": "ICPFullAssessmentRequest(entity_id='TEST_req_entity_id', mechanism_type='shadow_price', target_year=2030, sbti_target='1.5C', current_icp=None, scope1_tco2=None, scope2_tco2=None, scope3_tco2=None, icp_eur=None, ebitda_m=None, base_year=20\u2026"
      },
      "ret": "{'status': 'success', 'data': {'entity_id': 'TEST_req_entity_id', 'mechanism_design': {'entity_id': 'TEST_req_entity_id', 'mechanism_type': 'shadow_price', 'mechanism_description': 'Internal shadow carbon price applied to investment apprai\u2026",
-     "dur_ms": 1.467,
+     "dur_ms": 1.571,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 26,
+       "id": 12654,
        "name": "run_full_assessment",
        "qual": "InternalCarbonPriceEngine.run_full_assessment",
        "file": "services/internal_carbon_price_engine.py",
@@ -595,12 +595,12 @@
         "request_data": "{'mechanism_type': 'shadow_price', 'target_year': 2030, 'sbti_target': '1.5C', 'base_year': 2019, 'target_reduction_pct': 50.0, 'nze_year': 2050, 'discount_rate': 0.08, 'free_allocation_tco2': 0.0}"
        },
        "ret": "{'entity_id': 'TEST_req_entity_id', 'mechanism_design': {'entity_id': 'TEST_req_entity_id', 'mechanism_type': 'shadow_price', 'mechanism_description': 'Internal shadow carbon price applied to investment appraisals and capex decisions \u2014 doe\u2026",
-       "dur_ms": 1.371,
+       "dur_ms": 1.454,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 27,
+         "id": 12655,
          "name": "design_icp_mechanism",
          "qual": "InternalCarbonPriceEngine.design_icp_mechanism",
          "file": "services/internal_carbon_price_engine.py",
@@ -613,33 +613,33 @@
           "current_icp": "None"
          },
          "ret": "{'entity_id': 'TEST_req_entity_id', 'mechanism_type': 'shadow_price', 'mechanism_description': 'Internal shadow carbon price applied to investment appraisals and capex decisions \u2014 does not generate real cash flows but adjusts IRR/NPV.', 's\u2026",
-         "dur_ms": 1.198,
+         "dur_ms": 1.284,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 28,
+           "id": 12656,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
-           "dur_ms": 0.005,
+           "dur_ms": 0.008,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 29,
+           "id": 12657,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2025",
            "dur_ms": 0.002,
@@ -648,238 +648,13 @@
            "children": []
           },
           {
-           "id": 30,
+           "id": 12658,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
-           },
-           "ret": "2030",
-           "dur_ms": 0.003,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 31,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
-           },
-           "ret": "2035",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 32,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
-           },
-           "ret": "2040",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 33,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
-           },
-           "ret": "2050",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 34,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
-           },
-           "ret": "None",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 35,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 543,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2025",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 36,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 543,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "None",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 37,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2025",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 38,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2030",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 39,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2035",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 40,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2040",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 41,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "2050",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 42,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30790>"
-           },
-           "ret": "None",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 43,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 543,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
-           },
-           "ret": "2025",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 44,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 543,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
-           },
-           "ret": "None",
-           "dur_ms": 0.002,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 45,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 544,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2030",
            "dur_ms": 0.002,
@@ -888,13 +663,13 @@
            "children": []
           },
           {
-           "id": 46,
+           "id": 12659,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2035",
            "dur_ms": 0.001,
@@ -903,13 +678,13 @@
            "children": []
           },
           {
-           "id": 47,
+           "id": 12660,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2040",
            "dur_ms": 0.001,
@@ -918,13 +693,13 @@
            "children": []
           },
           {
-           "id": 48,
+           "id": 12661,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2050",
            "dur_ms": 0.001,
@@ -933,13 +708,13 @@
            "children": []
           },
           {
-           "id": 49,
+           "id": 12662,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C309A0>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -948,13 +723,13 @@
            "children": []
           },
           {
-           "id": 50,
+           "id": 12663,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2025",
            "dur_ms": 0.002,
@@ -963,13 +738,13 @@
            "children": []
           },
           {
-           "id": 51,
+           "id": 12664,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.002,
@@ -978,13 +753,28 @@
            "children": []
           },
           {
-           "id": 52,
+           "id": 12665,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2025",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12666,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2030",
            "dur_ms": 0.001,
@@ -993,13 +783,13 @@
            "children": []
           },
           {
-           "id": 53,
+           "id": 12667,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2035",
            "dur_ms": 0.001,
@@ -1008,13 +798,13 @@
            "children": []
           },
           {
-           "id": 54,
+           "id": 12668,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2040",
            "dur_ms": 0.001,
@@ -1023,13 +813,13 @@
            "children": []
           },
           {
-           "id": 55,
+           "id": 12669,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2050",
            "dur_ms": 0.001,
@@ -1038,13 +828,13 @@
            "children": []
           },
           {
-           "id": 56,
+           "id": 12670,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30940>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1053,13 +843,13 @@
            "children": []
           },
           {
-           "id": 57,
+           "id": 12671,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2025",
            "dur_ms": 0.001,
@@ -1068,28 +858,28 @@
            "children": []
           },
           {
-           "id": 58,
+           "id": 12672,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
-           "dur_ms": 0.001,
+           "dur_ms": 0.002,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 59,
+           "id": 12673,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2030",
            "dur_ms": 0.001,
@@ -1098,13 +888,13 @@
            "children": []
           },
           {
-           "id": 60,
+           "id": 12674,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2035",
            "dur_ms": 0.001,
@@ -1113,13 +903,13 @@
            "children": []
           },
           {
-           "id": 61,
+           "id": 12675,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2040",
            "dur_ms": 0.001,
@@ -1128,13 +918,13 @@
            "children": []
           },
           {
-           "id": 62,
+           "id": 12676,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2050",
            "dur_ms": 0.001,
@@ -1143,13 +933,13 @@
            "children": []
           },
           {
-           "id": 63,
+           "id": 12677,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30910>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1158,13 +948,13 @@
            "children": []
           },
           {
-           "id": 64,
+           "id": 12678,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2025",
            "dur_ms": 0.001,
@@ -1173,13 +963,13 @@
            "children": []
           },
           {
-           "id": 65,
+           "id": 12679,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1188,13 +978,13 @@
            "children": []
           },
           {
-           "id": 66,
+           "id": 12680,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2030",
            "dur_ms": 0.001,
@@ -1203,13 +993,13 @@
            "children": []
           },
           {
-           "id": 67,
+           "id": 12681,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2035",
            "dur_ms": 0.001,
@@ -1218,13 +1008,13 @@
            "children": []
           },
           {
-           "id": 68,
+           "id": 12682,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2040",
            "dur_ms": 0.001,
@@ -1233,13 +1023,13 @@
            "children": []
           },
           {
-           "id": 69,
+           "id": 12683,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2050",
            "dur_ms": 0.001,
@@ -1248,13 +1038,13 @@
            "children": []
           },
           {
-           "id": 70,
+           "id": 12684,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30970>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1263,13 +1053,13 @@
            "children": []
           },
           {
-           "id": 71,
+           "id": 12685,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2025",
            "dur_ms": 0.001,
@@ -1278,28 +1068,13 @@
            "children": []
           },
           {
-           "id": 72,
+           "id": 12686,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 543,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
-           },
-           "ret": "2030",
-           "dur_ms": 0.001,
-           "sql": [],
-           "error": null,
-           "children": []
-          },
-          {
-           "id": 73,
-           "name": "<genexpr>",
-           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
-           "file": "services/internal_carbon_price_engine.py",
-           "line": 543,
-           "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1308,13 +1083,13 @@
            "children": []
           },
           {
-           "id": 74,
+           "id": 12687,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2030",
            "dur_ms": 0.001,
@@ -1323,13 +1098,13 @@
            "children": []
           },
           {
-           "id": 75,
+           "id": 12688,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2035",
            "dur_ms": 0.001,
@@ -1338,13 +1113,13 @@
            "children": []
           },
           {
-           "id": 76,
+           "id": 12689,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2040",
            "dur_ms": 0.001,
@@ -1353,13 +1128,13 @@
            "children": []
           },
           {
-           "id": 77,
+           "id": 12690,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "2050",
            "dur_ms": 0.001,
@@ -1368,13 +1143,238 @@
            "children": []
           },
           {
-           "id": 78,
+           "id": 12691,
            "name": "<genexpr>",
            "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
            "file": "services/internal_carbon_price_engine.py",
            "line": 544,
            "args": {
-            ".0": "<list_iterator object at 0x0000023A61C30850>"
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12692,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 543,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2025",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12693,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 543,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12694,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2030",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12695,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2035",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12696,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2040",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12697,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2050",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12698,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12699,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 543,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2025",
+           "dur_ms": 0.002,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12700,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 543,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2030",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12701,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 543,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "None",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12702,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2030",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12703,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2035",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12704,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2040",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12705,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
+           },
+           "ret": "2050",
+           "dur_ms": 0.001,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 12706,
+           "name": "<genexpr>",
+           "qual": "InternalCarbonPriceEngine.design_icp_mechanism.<locals>.<genexpr>",
+           "file": "services/internal_carbon_price_engine.py",
+           "line": 544,
+           "args": {
+            ".0": "<list_iterator object at 0x0000013D48D72650>"
            },
            "ret": "None",
            "dur_ms": 0.001,
@@ -1385,13 +1385,13 @@
          ]
         },
         {
-         "id": 79,
+         "id": 12707,
          "name": "<genexpr>",
          "qual": "InternalCarbonPriceEngine.run_full_assessment.<locals>.<genexpr>",
          "file": "services/internal_carbon_price_engine.py",
          "line": 1090,
          "args": {
-          ".0": "<tuple_iterator object at 0x0000023A61C307F0>"
+          ".0": "<tuple_iterator object at 0x0000013D48D9F0D0>"
          },
          "ret": "False",
          "dur_ms": 0.002,
@@ -1400,16 +1400,16 @@
          "children": []
         },
         {
-         "id": 80,
+         "id": 12708,
          "name": "<genexpr>",
          "qual": "InternalCarbonPriceEngine.run_full_assessment.<locals>.<genexpr>",
          "file": "services/internal_carbon_price_engine.py",
          "line": 1090,
          "args": {
-          ".0": "<tuple_iterator object at 0x0000023A61C307F0>"
+          ".0": "<tuple_iterator object at 0x0000013D48D9F0D0>"
          },
          "ret": "None",
-         "dur_ms": 0.002,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []

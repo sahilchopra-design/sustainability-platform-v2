@@ -1,10 +1,10 @@
 {
  "domain": "climate-policy-tracker",
  "meta": {
-  "ts": "2026-06-30T13:59:56",
+  "ts": "2026-07-05T19:11:01",
+  "endpoints": 13,
   "module": "api.v1.routes.climate_policy_tracker",
-  "router_prefix": "/api/v1/climate-policy",
-  "endpoints": 13
+  "router_prefix": "/api/v1/climate-policy"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.4,
+   "dur_ms": 0.546,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2390,
      "name": "get_carbon_price_corridor",
      "qual": "get_carbon_price_corridor",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 307,
      "args": {},
      "ret": "{'source': 'IEA World Energy Outlook 2023 \u2014 Net Zero Emissions by 2050 scenario', 'currency': 'USD / tCO2e (2023 real terms)', 'tracks': {'advanced_economies': {'jurisdictions_note': 'EU, USA, GBR, JPN, CAN, AUS, KOR, NOR, CHE, NZL, SWE, D\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.678,
+   "dur_ms": 0.637,
    "node_count": 15,
    "provenance": [
     "computed"
@@ -77,70 +77,70 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2391,
      "name": "get_fit_for_55",
      "qual": "get_fit_for_55",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 233,
      "args": {},
      "ret": "{'package': 'EU Fit for 55', 'overarching_target': '55% net GHG reduction vs 1990 by 2030 (EU Climate Law Reg 2021/1119)', 'regulation_count': 13, 'regulations': [{'id': 'ets_reform', 'name': 'EU ETS Reform (Revised ETS Directive)', 'regul\u2026",
-     "dur_ms": 0.377,
+     "dur_ms": 0.375,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 2392,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "360",
-       "dur_ms": 0.005,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 2393,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "220",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 5,
-       "name": "<genexpr>",
-       "qual": "get_fit_for_55.<locals>.<genexpr>",
-       "file": "api/v1/routes/climate_policy_tracker.py",
-       "line": 244,
-       "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
-       },
-       "ret": "50",
        "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 2394,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
+       },
+       "ret": "50",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2395,
+       "name": "<genexpr>",
+       "qual": "get_fit_for_55.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_policy_tracker.py",
+       "line": 244,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "310",
        "dur_ms": 0.001,
@@ -149,13 +149,13 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 2396,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "240",
        "dur_ms": 0.002,
@@ -164,13 +164,13 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 2397,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "130",
        "dur_ms": 0.001,
@@ -179,13 +179,13 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 2398,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "45",
        "dur_ms": 0.001,
@@ -194,13 +194,13 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 2399,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "30",
        "dur_ms": 0.001,
@@ -209,13 +209,13 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 2400,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "310",
        "dur_ms": 0.001,
@@ -224,13 +224,13 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 2401,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "560",
        "dur_ms": 0.001,
@@ -239,28 +239,28 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 2402,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "20",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 14,
+       "id": 2403,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "0",
        "dur_ms": 0.002,
@@ -269,13 +269,13 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 2404,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "35",
        "dur_ms": 0.001,
@@ -284,16 +284,16 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 2405,
        "name": "<genexpr>",
        "qual": "get_fit_for_55.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_policy_tracker.py",
        "line": 244,
        "args": {
-        ".0": "<list_iterator object at 0x000001E0D4897AC0>"
+        ".0": "<list_iterator object at 0x0000013D46E2BAC0>"
        },
        "ret": "None",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -308,7 +308,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.203,
+   "dur_ms": 0.194,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -330,14 +330,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 2406,
      "name": "get_g20_carbon_pricing",
      "qual": "get_g20_carbon_pricing",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 361,
      "args": {},
      "ret": "{'source': 'World Bank Carbon Pricing Dashboard 2024 + ICAP Status Report 2024', 'g20_coverage_count': 20, 'global_coverage_note': '~23% of global GHG emissions covered by carbon pricing (2024)', 'jurisdictions': {'EU': {'ets_coverage_pct'\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -350,7 +350,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.364,
+   "dur_ms": 0.287,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -374,14 +374,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 2407,
      "name": "get_ira_credits",
      "qual": "get_ira_credits",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 256,
      "args": {},
      "ret": "{'legislation': 'Inflation Reduction Act of 2022 (Pub.L. 117-169)', 'signed': '2022-08-16', 'estimated_climate_investment_10yr_usd_bn': 369, 'credit_count': 26, 'sector_breakdown': {'energy': 10, 'industry': 3, 'manufacturing': 2, 'transpo\u2026",
-     "dur_ms": 0.024,
+     "dur_ms": 0.023,
      "sql": [],
      "error": null,
      "children": []
@@ -394,7 +394,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.554,
+   "dur_ms": 0.724,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -414,14 +414,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 2408,
      "name": "get_jurisdictions",
      "qual": "get_jurisdictions",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 201,
      "args": {},
      "ret": "{'total_jurisdictions': 40, 'advanced_economies': ['AUS', 'CAN', 'CHE', 'DEU', 'DNK', 'ESP', 'EU', 'FRA', 'GBR', 'ITA', 'JPN', 'KOR', 'NOR', 'NZL', 'POL', 'SWE', 'USA'], 'jurisdictions': {'EU': {'name': 'European Union', 'region': 'Europe'\u2026",
-     "dur_ms": 0.099,
+     "dur_ms": 0.094,
      "sql": [],
      "error": null,
      "children": []
@@ -434,7 +434,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.224,
+   "dur_ms": 0.324,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -456,14 +456,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 20,
+     "id": 2409,
      "name": "get_ngfs_policy_scenarios",
      "qual": "get_ngfs_policy_scenarios",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 335,
      "args": {},
      "ret": "{'source': 'NGFS Climate Scenarios Phase IV (2023)', 'scenario_count': 4, 'scenarios': {'orderly': {'name': 'Net Zero 2050 (Orderly)', 'description': 'Paris-consistent, ambitious early action, smooth transition', 'carbon_prices': {'advance\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.013,
      "sql": [],
      "error": null,
      "children": []
@@ -476,7 +476,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.19,
+   "dur_ms": 0.273,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -502,14 +502,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 2410,
      "name": "get_repowereu",
      "qual": "get_repowereu",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 284,
      "args": {},
      "ret": "{'plan': 'REPowerEU', 'published': '2022-05-18', 'target': 'End dependence on Russian fossil fuels before 2030', 'total_investment_eur_bn': 300, 'measure_count': 10, 'measures': [{'id': 'solar_rooftop', 'name': 'Solar Rooftop Mandate', 'ta\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -522,7 +522,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.174,
+   "dur_ms": 0.201,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -542,14 +542,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 2411,
      "name": "get_sector_policy_map",
      "qual": "get_sector_policy_map",
      "file": "api/v1/routes/climate_policy_tracker.py",
      "line": 381,
      "args": {},
      "ret": "{'sectors': ['energy', 'transport', 'buildings', 'industry', 'agriculture', 'finance', 'real_estate', 'shipping', 'aviation', 'waste'], 'sector_policy_map': {'energy': ['eu_ets', 'fit_for_55', 'red_iii', 'eed', 'ira_2022', 'cbam', 'gx_leag\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -562,7 +562,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'jurisdiction'",
-   "dur_ms": 0.24,
+   "dur_ms": 0.257,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -576,7 +576,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 2412,
      "name": "assess_jurisdiction",
      "qual": "assess_jurisdiction",
      "file": "api/v1/routes/climate_policy_tracker.py",
@@ -585,7 +585,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.013,
      "sql": [],
      "error": null,
      "children": []
@@ -652,7 +652,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'jurisdiction'",
-   "dur_ms": 0.2,
+   "dur_ms": 0.22,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -666,7 +666,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 2413,
      "name": "score_ndc",
      "qual": "score_ndc",
      "file": "api/v1/routes/climate_policy_tracker.py",
@@ -675,7 +675,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

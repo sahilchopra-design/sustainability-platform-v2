@@ -1,10 +1,10 @@
 {
  "domain": "counterparties",
  "meta": {
-  "ts": "2026-06-30T14:00:06",
+  "ts": "2026-07-05T19:11:05",
+  "endpoints": 5,
   "module": "api.v1.routes.counterparties",
-  "router_prefix": "/counterparties",
-  "endpoints": 5
+  "router_prefix": "/counterparties"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'Depends' object has no attribute 'skip'",
-   "dur_ms": 0.938,
+   "dur_ms": 0.565,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -28,29 +28,29 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3097,
      "name": "list_counterparties",
      "qual": "list_counterparties",
      "file": "api/v1/routes/counterparties.py",
      "line": 16,
      "args": {
       "search": "None",
-      "pagination": "Depends(dependency=None, use_cache=True, scope=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000019F612B14C0>"
+      "pagination": "Depends(NoneType)",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902F60>"
      },
      "ret": "None",
-     "dur_ms": 0.045,
+     "dur_ms": 0.053,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 3098,
        "name": "__init__",
        "qual": "PortfolioRepository.__init__",
        "file": "api/v1/repositories.py",
        "line": 16,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000019F612B14C0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48902F60>"
        },
        "ret": "None",
        "dur_ms": 0.004,
@@ -66,15 +66,29 @@
    "domain": "counterparties",
    "label": "GET /counterparties/{counterparty_id}",
    "status": "failed",
-   "http_status": 500,
-   "error": "InvalidRequestError: When initializing mapper Mapper[Portfolio(portfolios)], expression 'FileUpload' failed to locate a name ('FileUpload'). If this is a class name, consider adding this relationship() to the <class 'db.models_sql.Portfolio'> class after both dependent classes have been defined.",
-   "dur_ms": 6.167,
+   "http_status": 404,
+   "error": "HTTPException: 404: Counterparty 550e8400-e29b-41d4-a716-446655440001 not found",
+   "dur_ms": 378.039,
    "node_count": 3,
    "provenance": [
-    "computed"
+    "db-empty"
    ],
-   "source_tables": [],
-   "sources": [],
+   "source_tables": [
+    "portfolios"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT portfolios.id AS portfolios_id, portfolios.name AS portfolios_name, portfolios.description AS portfolios_description, portfolios.created_at AS portfolios_created_at, portfolios.updated_at AS portfolios_updated_at FROM portfolios WHERE portfolios.id = %(id_1)s LIMIT %(param_1)s'",
+     "tables": [
+      "portfolios"
+     ],
+     "rowcount": 0,
+     "dur_ms": 64.003,
+     "is_reference": false,
+     "error": null
+    }
+   ],
    "inputs": {
     "counterparty_id": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
     "db": "<real db session>"
@@ -83,37 +97,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 3099,
      "name": "get_counterparty",
      "qual": "get_counterparty",
      "file": "api/v1/routes/counterparties.py",
      "line": 64,
      "args": {
       "counterparty_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000019F61360470>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488F2C30>"
      },
      "ret": "None",
-     "dur_ms": 5.9,
+     "dur_ms": 347.892,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 3100,
        "name": "__init__",
        "qual": "PortfolioRepository.__init__",
        "file": "api/v1/repositories.py",
        "line": 16,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x0000019F61360470>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488F2C30>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 3101,
        "name": "get_by_id",
        "qual": "PortfolioRepository.get_by_id",
        "file": "api/v1/repositories.py",
@@ -122,8 +136,10 @@
         "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 5.848,
-       "sql": [],
+       "dur_ms": 347.789,
+       "sql": [
+        0
+       ],
        "error": null,
        "children": []
       }

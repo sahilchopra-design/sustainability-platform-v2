@@ -1,10 +1,10 @@
 {
  "domain": "fund-management",
  "meta": {
-  "ts": "2026-06-30T14:02:14",
+  "ts": "2026-07-05T19:15:22",
+  "endpoints": 2,
   "module": "api.v1.routes.fund_management",
-  "router_prefix": "/api/v1/fund-management",
-  "endpoints": 2
+  "router_prefix": "/api/v1/fund-management"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.751,
+   "dur_ms": 0.273,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11518,
      "name": "get_sfdr_summary",
      "qual": "get_sfdr_summary",
      "file": "api/v1/routes/fund_management.py",
      "line": 212,
      "args": {},
      "ret": "{'classifications': {'art6': {'name': 'Article 6', 'description': 'No ESG characteristics promoted. Basic sustainability risk disclosure.', 'taxonomy_disclosure': 'Not required'}, 'art8': {'name': 'Article 8', 'description': 'Promotes envi\u2026",
-     "dur_ms": 0.017,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'fund_id'",
-   "dur_ms": 0.348,
+   "dur_ms": 0.257,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -66,7 +66,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11519,
      "name": "analyse_fund",
      "qual": "analyse_fund",
      "file": "api/v1/routes/fund_management.py",
@@ -75,12 +75,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.053,
+     "dur_ms": 0.048,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 11520,
        "name": "_to_fund",
        "qual": "_to_fund",
        "file": "api/v1/routes/fund_management.py",
@@ -89,7 +89,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.009,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []

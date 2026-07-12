@@ -1,10 +1,10 @@
 {
  "domain": "regulatory-horizon",
  "meta": {
-  "ts": "2026-06-30T14:04:33",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 8,
   "module": "api.v1.routes.regulatory_horizon",
-  "router_prefix": "/api/v1/regulatory-horizon",
-  "endpoints": 8
+  "router_prefix": "/api/v1/regulatory-horizon"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.356,
+   "dur_ms": 0.249,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -32,26 +32,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39632,
      "name": "ref_cost_benchmarks",
      "qual": "ref_cost_benchmarks",
      "file": "api/v1/routes/regulatory_horizon.py",
      "line": 174,
      "args": {},
      "ret": "{'status': 'ok', 'reference': {'size_buckets': {'small': '<$1B AUM / <\u20ac50M revenue', 'medium': '$1-50B AUM / \u20ac50M-\u20ac1B revenue', 'large': '>$50B AUM / >\u20ac1B revenue'}, 'benchmarks': {'very_high': {'small': {'one_time_usd': 2000000, 'annual_o\u2026",
-     "dur_ms": 0.069,
+     "dur_ms": 0.063,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39633,
        "name": "ref_cost_benchmarks",
        "qual": "RegulatoryHorizonEngine.ref_cost_benchmarks",
        "file": "services/regulatory_horizon_engine.py",
        "line": 1407,
        "args": {},
        "ret": "{'size_buckets': {'small': '<$1B AUM / <\u20ac50M revenue', 'medium': '$1-50B AUM / \u20ac50M-\u20ac1B revenue', 'large': '>$50B AUM / >\u20ac1B revenue'}, 'benchmarks': {'very_high': {'small': {'one_time_usd': 2000000, 'annual_ongoing_usd': 800000, 'fte_equi\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -66,7 +66,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.298,
+   "dur_ms": 0.211,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -85,26 +85,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39634,
      "name": "ref_entity_applicability",
      "qual": "ref_entity_applicability",
      "file": "api/v1/routes/regulatory_horizon.py",
      "line": 163,
      "args": {},
      "ret": "{'status': 'ok', 'reference': {'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'applicability_matrix': {'EU_CSDDD': {'bank': False, 'insurer': False, 'asset_manager': False, 'corporate': True, 'pension'\u2026",
-     "dur_ms": 0.08,
+     "dur_ms": 0.067,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 39635,
        "name": "ref_entity_applicability",
        "qual": "RegulatoryHorizonEngine.ref_entity_applicability",
        "file": "services/regulatory_horizon_engine.py",
        "line": 1401,
        "args": {},
        "ret": "{'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'applicability_matrix': {'EU_CSDDD': {'bank': False, 'insurer': False, 'asset_manager': False, 'corporate': True, 'pension': False, 'all': False}, 'EU_EU\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -119,7 +119,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.221,
+   "dur_ms": 0.176,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -138,26 +138,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39636,
      "name": "ref_interconnection_map",
      "qual": "ref_interconnection_map",
      "file": "api/v1/routes/regulatory_horizon.py",
      "line": 186,
      "args": {},
      "ret": "{'status': 'ok', 'reference': {'description': 'regulation_id \u2192 list of regulation_ids whose output/data is required as input', 'interconnection_map': {'EU_SFDR_L3': ['EU_CSRD_ESRS', 'EU_TAXONOMY_DA', 'EU_SFDR_L2_PAI'], 'EU_SFDR_L2_PAI': ['\u2026",
-     "dur_ms": 0.06,
+     "dur_ms": 0.052,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 39637,
        "name": "ref_interconnection_map",
        "qual": "RegulatoryHorizonEngine.ref_interconnection_map",
        "file": "services/regulatory_horizon_engine.py",
        "line": 1418,
        "args": {},
        "ret": "{'description': 'regulation_id \u2192 list of regulation_ids whose output/data is required as input', 'interconnection_map': {'EU_SFDR_L3': ['EU_CSRD_ESRS', 'EU_TAXONOMY_DA', 'EU_SFDR_L2_PAI'], 'EU_SFDR_L2_PAI': ['EU_CSRD_ESRS', 'GLOBAL_ISSB_S1\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -172,7 +172,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.732,
+   "dur_ms": 0.483,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -191,19 +191,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39638,
      "name": "ref_regulation_pipeline",
      "qual": "ref_regulation_pipeline",
      "file": "api/v1/routes/regulatory_horizon.py",
      "line": 151,
      "args": {},
      "ret": "{'status': 'ok', 'reference': {'count': 59, 'entity_types': ['bank', 'insurer', 'asset_manager', 'corporate', 'pension', 'all'], 'status_values': ['consultation', 'proposed', 'level2', 'adopted', 'in_force'], 'topic_values': ['climate', 'b\u2026",
-     "dur_ms": 0.351,
+     "dur_ms": 0.225,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 39639,
        "name": "ref_regulation_pipeline",
        "qual": "RegulatoryHorizonEngine.ref_regulation_pipeline",
        "file": "services/regulatory_horizon_engine.py",

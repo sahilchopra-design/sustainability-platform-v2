@@ -1,10 +1,10 @@
 {
  "domain": "avoided-emissions",
  "meta": {
-  "ts": "2026-06-30T13:59:23",
+  "ts": "2026-07-05T19:10:39",
+  "endpoints": 9,
   "module": "api.v1.routes.avoided_emissions",
-  "router_prefix": "/api/v1/avoided-emissions",
-  "endpoints": 9
+  "router_prefix": "/api/v1/avoided-emissions"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.295,
+   "dur_ms": 0.224,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 502,
      "name": "ref_article6_criteria",
      "qual": "ref_article6_criteria",
      "file": "api/v1/routes/avoided_emissions.py",
      "line": 181,
      "args": {},
      "ret": "{'corresponding_adjustment': 'Host country must apply corresponding adjustment', 'authorization': 'Host country authorization of activity required', 'participation': 'Voluntary cooperation between parties', 'sustainable_development': 'Cont\u2026",
-     "dur_ms": 0.038,
+     "dur_ms": 0.037,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 503,
        "name": "get_article6_criteria",
        "qual": "AvoidedEmissionsEngine.get_article6_criteria",
        "file": "services/avoided_emissions_engine.py",
-       "line": 437,
+       "line": 529,
        "args": {},
        "ret": "{'corresponding_adjustment': 'Host country must apply corresponding adjustment', 'authorization': 'Host country authorization of activity required', 'participation': 'Voluntary cooperation between parties', 'sustainable_development': 'Cont\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.15,
+   "dur_ms": 0.147,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -101,23 +101,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 504,
      "name": "ref_baseline_factors",
      "qual": "ref_baseline_factors",
      "file": "api/v1/routes/avoided_emissions.py",
      "line": 175,
      "args": {},
      "ret": "{'coal_electricity_kwh': 0.82, 'grid_average_eu_kwh': 0.276, 'grid_average_us_kwh': 0.386, 'natural_gas_m3': 2.204, 'diesel_litre': 2.64, 'petrol_litre': 2.31, 'steel_tonne_bof': 2.2, 'cement_tonne_opc': 0.83, 'aluminium_tonne_primary': 11\u2026",
-     "dur_ms": 0.033,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 505,
        "name": "get_baseline_factors",
        "qual": "AvoidedEmissionsEngine.get_baseline_factors",
        "file": "services/avoided_emissions_engine.py",
-       "line": 433,
+       "line": 525,
        "args": {},
        "ret": "{'coal_electricity_kwh': 0.82, 'grid_average_eu_kwh': 0.276, 'grid_average_us_kwh': 0.386, 'natural_gas_m3': 2.204, 'diesel_litre': 2.64, 'petrol_litre': 2.31, 'steel_tonne_bof': 2.2, 'cement_tonne_opc': 0.83, 'aluminium_tonne_primary': 11\u2026",
        "dur_ms": 0.002,
@@ -135,7 +135,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.149,
+   "dur_ms": 0.146,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -155,23 +155,23 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 506,
      "name": "ref_categories",
      "qual": "ref_categories",
      "file": "api/v1/routes/avoided_emissions.py",
      "line": 169,
      "args": {},
      "ret": "{'enabled': {'description': 'Products/services that enable others to reduce emissions', 'examples': ['solar_panels', 'EVs', 'insulation', 'efficiency_software', 'smart_meters'], 'additionality_standard': 'Technology comparison method \u2014 com\u2026",
-     "dur_ms": 0.04,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 507,
        "name": "get_avoided_emission_categories",
        "qual": "AvoidedEmissionsEngine.get_avoided_emission_categories",
        "file": "services/avoided_emissions_engine.py",
-       "line": 429,
+       "line": 521,
        "args": {},
        "ret": "{'enabled': {'description': 'Products/services that enable others to reduce emissions', 'examples': ['solar_panels', 'EVs', 'insulation', 'efficiency_software', 'smart_meters'], 'additionality_standard': 'Technology comparison method \u2014 com\u2026",
        "dur_ms": 0.001,
@@ -243,7 +243,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.175,
+   "dur_ms": 0.169,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -257,7 +257,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 508,
      "name": "calculate_activity",
      "qual": "calculate_activity",
      "file": "api/v1/routes/avoided_emissions.py",
@@ -266,7 +266,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.015,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []
@@ -279,7 +279,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.139,
+   "dur_ms": 0.135,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -293,7 +293,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 509,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/avoided_emissions.py",
@@ -302,7 +302,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []

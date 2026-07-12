@@ -1,10 +1,10 @@
 {
  "domain": "climate-litigation",
  "meta": {
-  "ts": "2026-06-30T13:59:53",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 10,
   "module": "api.v1.routes.climate_litigation",
-  "router_prefix": "/api/v1/climate-litigation",
-  "endpoints": 10
+  "router_prefix": "/api/v1/climate-litigation"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.853,
+   "dur_ms": 1.775,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2203,
      "name": "get_case_taxonomy",
      "qual": "get_case_taxonomy",
      "file": "api/v1/routes/climate_litigation.py",
      "line": 305,
      "args": {},
      "ret": "{'case_taxonomy': {'mandatory_disclosure': {'description': 'Litigation arising from alleged failures to make required climate-related disclosures under securities laws, ESG regulations, or sustainability reporting frameworks.', 'typical_pl\u2026",
-     "dur_ms": 0.012,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.798,
+   "dur_ms": 1.255,
    "node_count": 10,
    "provenance": [
     "computed"
@@ -78,70 +78,70 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2204,
      "name": "get_disclosure_triggers",
      "qual": "get_disclosure_triggers",
      "file": "api/v1/routes/climate_litigation.py",
      "line": 352,
      "args": {},
      "ret": "{'disclosure_liability_triggers': {'ifrs_s2_misstatement': {'description': 'Material misstatement in IFRS S2 climate-related disclosures, including incorrect physical/transition risk quantification, scenario analysis, or metrics & targets.\u2026",
-     "dur_ms": 0.414,
+     "dur_ms": 0.166,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 2205,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "500",
-       "dur_ms": 0.006,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 4,
-       "name": "<genexpr>",
-       "qual": "get_disclosure_triggers.<locals>.<genexpr>",
-       "file": "api/v1/routes/climate_litigation.py",
-       "line": 362,
-       "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
-       },
-       "ret": "2000",
        "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 2206,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
-       "ret": "200",
+       "ret": "2000",
        "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 2207,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
+       },
+       "ret": "200",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2208,
+       "name": "<genexpr>",
+       "qual": "get_disclosure_triggers.<locals>.<genexpr>",
+       "file": "api/v1/routes/climate_litigation.py",
+       "line": 362,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "500",
        "dur_ms": 0.001,
@@ -150,28 +150,28 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 2209,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "200",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 2210,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "1000",
        "dur_ms": 0.001,
@@ -180,46 +180,46 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 2211,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "5000",
-       "dur_ms": 0.008,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 2212,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "500",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 2213,
        "name": "<genexpr>",
        "qual": "get_disclosure_triggers.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_litigation.py",
        "line": 362,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000016EC4F728E0>"
+        ".0": "<dict_valueiterator object at 0x0000013D488CF100>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -234,7 +234,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.059,
+   "dur_ms": 1.087,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -258,14 +258,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 2214,
      "name": "get_greenwashing_flags",
      "qual": "get_greenwashing_flags",
      "file": "api/v1/routes/climate_litigation.py",
      "line": 372,
      "args": {},
      "ret": "{'greenwashing_red_flags': {'misleading_claims': [{'flag_id': 'GW-01', 'description': \"Use of 'carbon neutral' without verified offsets or with low-quality offsets only\", 'regulator': 'FCA (UK) / ASIC (Australia) / FTC (US) / BaFin (German\u2026",
-     "dur_ms": 0.046,
+     "dur_ms": 0.02,
      "sql": [],
      "error": null,
      "children": []
@@ -278,7 +278,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.346,
+   "dur_ms": 1.304,
    "node_count": 16,
    "provenance": [
     "computed"
@@ -300,19 +300,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 2215,
      "name": "get_jurisdiction_profiles",
      "qual": "get_jurisdiction_profiles",
      "file": "api/v1/routes/climate_litigation.py",
      "line": 322,
      "args": {},
      "ret": "{'jurisdiction_summary': {'US': {'climate_litigation_activity_score': 92, 'greenwashing_enforcement_score': 70, 'litigation_trend': 'very_high', 'key_legislation_count': 4}, 'UK': {'climate_litigation_activity_score': 72, 'greenwashing_enf\u2026",
-     "dur_ms": 0.435,
+     "dur_ms": 0.266,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 2216,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -321,13 +321,13 @@
         "j": "'US'"
        },
        "ret": "92",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 15,
+       "id": 2217,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -336,13 +336,13 @@
         "j": "'UK'"
        },
        "ret": "72",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 2218,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -357,7 +357,7 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 2219,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -372,7 +372,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 2220,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -381,13 +381,13 @@
         "j": "'EU_France'"
        },
        "ret": "65",
-       "dur_ms": 0.002,
+       "dur_ms": 0.011,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 2221,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -402,7 +402,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 2222,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -417,7 +417,7 @@
        "children": []
       },
       {
-       "id": 21,
+       "id": 2223,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -432,7 +432,7 @@
        "children": []
       },
       {
-       "id": 22,
+       "id": 2224,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -447,7 +447,7 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 2225,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -462,7 +462,7 @@
        "children": []
       },
       {
-       "id": 24,
+       "id": 2226,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -477,7 +477,7 @@
        "children": []
       },
       {
-       "id": 25,
+       "id": 2227,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -492,7 +492,7 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 2228,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -507,7 +507,7 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 2229,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -522,7 +522,7 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 2230,
        "name": "<lambda>",
        "qual": "get_jurisdiction_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/climate_litigation.py",
@@ -546,7 +546,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.901,
+   "dur_ms": 0.964,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -560,7 +560,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 29,
+     "id": 2231,
      "name": "run_full_assessment",
      "qual": "run_full_assessment",
      "file": "api/v1/routes/climate_litigation.py",
@@ -569,7 +569,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -582,7 +582,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 2.946,
+   "dur_ms": 0.94,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -596,7 +596,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 30,
+     "id": 2232,
      "name": "assess_attribution_science",
      "qual": "assess_attribution_science",
      "file": "api/v1/routes/climate_litigation.py",
@@ -605,7 +605,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -618,7 +618,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 3.898,
+   "dur_ms": 0.948,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -632,7 +632,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 31,
+     "id": 2233,
      "name": "assess_disclosure_liability",
      "qual": "assess_disclosure_liability",
      "file": "api/v1/routes/climate_litigation.py",
@@ -641,7 +641,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.017,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -654,7 +654,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 2.533,
+   "dur_ms": 0.955,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -668,7 +668,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 32,
+     "id": 2234,
      "name": "assess_fiduciary_duty",
      "qual": "assess_fiduciary_duty",
      "file": "api/v1/routes/climate_litigation.py",
@@ -677,7 +677,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.013,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -690,7 +690,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 2.208,
+   "dur_ms": 0.951,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -704,7 +704,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 33,
+     "id": 2235,
      "name": "assess_greenwashing_risk",
      "qual": "assess_greenwashing_risk",
      "file": "api/v1/routes/climate_litigation.py",
@@ -713,7 +713,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.012,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -726,7 +726,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.899,
+   "dur_ms": 3.252,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -740,7 +740,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 34,
+     "id": 2236,
      "name": "compute_litigation_exposure",
      "qual": "compute_litigation_exposure",
      "file": "api/v1/routes/climate_litigation.py",
@@ -749,7 +749,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.01,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []

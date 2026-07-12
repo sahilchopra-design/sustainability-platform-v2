@@ -1,0 +1,2993 @@
+{
+ "domain": "grid-carbon",
+ "meta": {
+  "ts": "2026-07-05T19:15:39",
+  "endpoints": 5,
+  "module": "api.v1.routes.grid_carbon",
+  "router_prefix": "/api/v1/grid-carbon"
+ },
+ "transactions": [
+  {
+   "domain": "grid-carbon",
+   "label": "GET /api/v1/grid-carbon/current",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1390.401,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "from",
+     "to",
+     "intensity",
+     "generation_mix",
+     "stale",
+     "provenance"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12339,
+     "name": "current_intensity",
+     "qual": "current_intensity",
+     "file": "api/v1/routes/grid_carbon.py",
+     "line": 134,
+     "args": {},
+     "ret": "{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'intensity': {'forecast': 106, 'actual': 102, 'index': 'moderate'}, 'generation_mix': [{'fuel': 'biomass', 'perc': 7.7}, {'fuel': 'coal', 'perc': 0}, {'fuel': 'imports', 'perc': 14.9\u2026",
+     "dur_ms": 1390.183,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12340,
+       "name": "_cached_fetch",
+       "qual": "_cached_fetch",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 99,
+       "args": {
+        "key": "'current'",
+        "urls": "['https://api.carbonintensity.org.uk/intensity', 'https://api.carbonintensity.org.uk/generation']",
+        "ttl": "120"
+       },
+       "ret": "([{'data': [{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'intensity': {'forecast': 106, 'actual': 102, 'index': 'moderate'}}]}, {'data': {'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'generationmix': [{'fuel': 'bioma\u2026",
+       "dur_ms": 1390.1,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12341,
+         "name": "_fetch_json",
+         "qual": "_fetch_json",
+         "file": "api/v1/routes/grid_carbon.py",
+         "line": 93,
+         "args": {
+          "url": "'https://api.carbonintensity.org.uk/intensity'"
+         },
+         "ret": "{'data': [{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'intensity': {'forecast': 106, 'actual': 102, 'index': 'moderate'}}]}",
+         "dur_ms": 739.62,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12342,
+         "name": "_fetch_json",
+         "qual": "_fetch_json",
+         "file": "api/v1/routes/grid_carbon.py",
+         "line": 93,
+         "args": {
+          "url": "'https://api.carbonintensity.org.uk/generation'"
+         },
+         "ret": "{'data': {'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'generationmix': [{'fuel': 'biomass', 'perc': 7.7}, {'fuel': 'coal', 'perc': 0}, {'fuel': 'imports', 'perc': 14.9}, {'fuel': 'gas', 'perc': 23}, {'fuel': 'nuclear', 'perc': \u2026",
+         "dur_ms": 648.363,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "grid-carbon",
+   "label": "GET /api/v1/grid-carbon/forecast",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1553.789,
+   "node_count": 108,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "hours": "96 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "hours",
+     "period_minutes",
+     "count",
+     "periods",
+     "stale",
+     "provenance"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12343,
+     "name": "forecast",
+     "qual": "forecast",
+     "file": "api/v1/routes/grid_carbon.py",
+     "line": 154,
+     "args": {
+      "hours": "96"
+     },
+     "ret": "{'hours': 96, 'period_minutes': 30, 'count': 102, 'periods': [{'from': '2026-07-05T23:00Z', 'to': '2026-07-05T23:30Z', 'forecast': 105, 'index': 'moderate'}, {'from': '2026-07-05T23:30Z', 'to': '2026-07-06T00:00Z', 'forecast': 103, 'index'\u2026",
+     "dur_ms": 1553.46,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12344,
+       "name": "_iso_minute",
+       "qual": "_iso_minute",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 126,
+       "args": {
+        "dt": "datetime.datetime(2026, 7, 5, 23, 15, 37, 159675, tzinfo=datetime.timezone.utc)"
+       },
+       "ret": "'2026-07-05T23:15Z'",
+       "dur_ms": 0.026,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12345,
+       "name": "_iso_minute",
+       "qual": "_iso_minute",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 126,
+       "args": {
+        "dt": "datetime.datetime(2026, 7, 7, 23, 15, 37, 159675, tzinfo=datetime.timezone.utc)"
+       },
+       "ret": "'2026-07-07T23:15Z'",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12346,
+       "name": "_cached_fetch",
+       "qual": "_cached_fetch",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 99,
+       "args": {
+        "key": "'forecast:96'",
+        "urls": "['https://api.carbonintensity.org.uk/intensity/2026-07-05T23:15Z/fw48h', 'https://api.carbonintensity.org.uk/intensity/2026-07-07T23:15Z/fw48h']",
+        "ttl": "900"
+       },
+       "ret": "([{'data': [{'from': '2026-07-05T23:00Z', 'to': '2026-07-05T23:30Z', 'intensity': {'forecast': 105, 'actual': None, 'index': 'moderate'}}, {'from': '2026-07-05T23:30Z', 'to': '2026-07-06T00:00Z', 'intensity': {'forecast': 103, 'actual': No\u2026",
+       "dur_ms": 1551.176,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12347,
+         "name": "_fetch_json",
+         "qual": "_fetch_json",
+         "file": "api/v1/routes/grid_carbon.py",
+         "line": 93,
+         "args": {
+          "url": "'https://api.carbonintensity.org.uk/intensity/2026-07-05T23:15Z/fw48h'"
+         },
+         "ret": "{'data': [{'from': '2026-07-05T23:00Z', 'to': '2026-07-05T23:30Z', 'intensity': {'forecast': 105, 'actual': None, 'index': 'moderate'}}, {'from': '2026-07-05T23:30Z', 'to': '2026-07-06T00:00Z', 'intensity': {'forecast': 103, 'actual': None\u2026",
+         "dur_ms": 761.428,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12348,
+         "name": "_fetch_json",
+         "qual": "_fetch_json",
+         "file": "api/v1/routes/grid_carbon.py",
+         "line": 93,
+         "args": {
+          "url": "'https://api.carbonintensity.org.uk/intensity/2026-07-07T23:15Z/fw48h'"
+         },
+         "ret": "{'data': [{'from': '2026-07-07T23:00Z', 'to': '2026-07-07T23:30Z', 'intensity': {'forecast': 200, 'actual': None, 'index': 'high'}}, {'from': '2026-07-07T23:30Z', 'to': '2026-07-08T00:00Z', 'intensity': {'forecast': 197, 'actual': None, 'i\u2026",
+         "dur_ms": 787.939,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 12349,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-05T23:00Z', 'to': '2026-07-05T23:30Z', 'forecast': 105, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-05T23:00Z'",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12350,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-05T23:30Z', 'to': '2026-07-06T00:00Z', 'forecast': 103, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-05T23:30Z'",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12351,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T00:00Z', 'to': '2026-07-06T00:30Z', 'forecast': 95, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T00:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12352,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T00:30Z', 'to': '2026-07-06T01:00Z', 'forecast': 94, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T00:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12353,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T01:00Z', 'to': '2026-07-06T01:30Z', 'forecast': 94, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T01:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12354,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T01:30Z', 'to': '2026-07-06T02:00Z', 'forecast': 91, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T01:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12355,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T02:00Z', 'to': '2026-07-06T02:30Z', 'forecast': 91, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T02:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12356,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T02:30Z', 'to': '2026-07-06T03:00Z', 'forecast': 68, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T02:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12357,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T03:00Z', 'to': '2026-07-06T03:30Z', 'forecast': 65, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T03:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12358,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T03:30Z', 'to': '2026-07-06T04:00Z', 'forecast': 67, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T03:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12359,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T04:00Z', 'to': '2026-07-06T04:30Z', 'forecast': 68, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T04:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12360,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T04:30Z', 'to': '2026-07-06T05:00Z', 'forecast': 69, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T04:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12361,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T05:00Z', 'to': '2026-07-06T05:30Z', 'forecast': 69, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T05:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12362,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T05:30Z', 'to': '2026-07-06T06:00Z', 'forecast': 70, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T05:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12363,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T06:00Z', 'to': '2026-07-06T06:30Z', 'forecast': 66, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T06:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12364,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T06:30Z', 'to': '2026-07-06T07:00Z', 'forecast': 64, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T06:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12365,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T07:00Z', 'to': '2026-07-06T07:30Z', 'forecast': 62, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T07:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12366,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T07:30Z', 'to': '2026-07-06T08:00Z', 'forecast': 58, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T07:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12367,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T08:00Z', 'to': '2026-07-06T08:30Z', 'forecast': 53, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T08:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12368,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T08:30Z', 'to': '2026-07-06T09:00Z', 'forecast': 47, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T08:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12369,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T09:00Z', 'to': '2026-07-06T09:30Z', 'forecast': 44, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T09:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12370,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T09:30Z', 'to': '2026-07-06T10:00Z', 'forecast': 63, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T09:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12371,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T10:00Z', 'to': '2026-07-06T10:30Z', 'forecast': 59, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T10:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12372,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T10:30Z', 'to': '2026-07-06T11:00Z', 'forecast': 57, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T10:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12373,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T11:00Z', 'to': '2026-07-06T11:30Z', 'forecast': 55, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T11:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12374,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T11:30Z', 'to': '2026-07-06T12:00Z', 'forecast': 54, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T11:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12375,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T12:00Z', 'to': '2026-07-06T12:30Z', 'forecast': 53, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T12:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12376,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T12:30Z', 'to': '2026-07-06T13:00Z', 'forecast': 53, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T12:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12377,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T13:00Z', 'to': '2026-07-06T13:30Z', 'forecast': 54, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T13:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12378,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T13:30Z', 'to': '2026-07-06T14:00Z', 'forecast': 54, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T13:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12379,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T14:00Z', 'to': '2026-07-06T14:30Z', 'forecast': 54, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T14:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12380,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T14:30Z', 'to': '2026-07-06T15:00Z', 'forecast': 56, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T14:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12381,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T15:00Z', 'to': '2026-07-06T15:30Z', 'forecast': 60, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T15:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12382,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T15:30Z', 'to': '2026-07-06T16:00Z', 'forecast': 62, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T15:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12383,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T16:00Z', 'to': '2026-07-06T16:30Z', 'forecast': 70, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T16:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12384,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T16:30Z', 'to': '2026-07-06T17:00Z', 'forecast': 79, 'index': 'low'}"
+       },
+       "ret": "'2026-07-06T16:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12385,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T17:00Z', 'to': '2026-07-06T17:30Z', 'forecast': 90, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T17:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12386,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T17:30Z', 'to': '2026-07-06T18:00Z', 'forecast': 95, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T17:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12387,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T18:00Z', 'to': '2026-07-06T18:30Z', 'forecast': 96, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T18:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12388,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T18:30Z', 'to': '2026-07-06T19:00Z', 'forecast': 108, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T18:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12389,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T19:00Z', 'to': '2026-07-06T19:30Z', 'forecast': 112, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T19:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12390,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T19:30Z', 'to': '2026-07-06T20:00Z', 'forecast': 117, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T19:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12391,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T20:00Z', 'to': '2026-07-06T20:30Z', 'forecast': 119, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T20:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12392,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T20:30Z', 'to': '2026-07-06T21:00Z', 'forecast': 121, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T20:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12393,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T21:00Z', 'to': '2026-07-06T21:30Z', 'forecast': 121, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T21:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12394,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T21:30Z', 'to': '2026-07-06T22:00Z', 'forecast': 122, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T21:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12395,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T22:00Z', 'to': '2026-07-06T22:30Z', 'forecast': 121, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T22:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12396,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T22:30Z', 'to': '2026-07-06T23:00Z', 'forecast': 117, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T22:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12397,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T23:00Z', 'to': '2026-07-06T23:30Z', 'forecast': 116, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T23:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12398,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-06T23:30Z', 'to': '2026-07-07T00:00Z', 'forecast': 114, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-06T23:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12399,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T00:00Z', 'to': '2026-07-07T00:30Z', 'forecast': 108, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T00:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12400,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T00:30Z', 'to': '2026-07-07T01:00Z', 'forecast': 106, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T00:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12401,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T01:00Z', 'to': '2026-07-07T01:30Z', 'forecast': 106, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T01:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12402,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T01:30Z', 'to': '2026-07-07T02:00Z', 'forecast': 101, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T01:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12403,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T02:00Z', 'to': '2026-07-07T02:30Z', 'forecast': 99, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T02:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12404,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T02:30Z', 'to': '2026-07-07T03:00Z', 'forecast': 98, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T02:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12405,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T03:00Z', 'to': '2026-07-07T03:30Z', 'forecast': 94, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T03:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12406,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T03:30Z', 'to': '2026-07-07T04:00Z', 'forecast': 95, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T03:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12407,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T04:00Z', 'to': '2026-07-07T04:30Z', 'forecast': 94, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T04:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12408,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T04:30Z', 'to': '2026-07-07T05:00Z', 'forecast': 94, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T04:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12409,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T05:00Z', 'to': '2026-07-07T05:30Z', 'forecast': 92, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T05:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12410,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T05:30Z', 'to': '2026-07-07T06:00Z', 'forecast': 87, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T05:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12411,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T06:00Z', 'to': '2026-07-07T06:30Z', 'forecast': 86, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T06:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12412,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T06:30Z', 'to': '2026-07-07T07:00Z', 'forecast': 85, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T06:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12413,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T07:00Z', 'to': '2026-07-07T07:30Z', 'forecast': 82, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T07:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12414,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T07:30Z', 'to': '2026-07-07T08:00Z', 'forecast': 75, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T07:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12415,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T08:00Z', 'to': '2026-07-07T08:30Z', 'forecast': 73, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T08:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12416,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T08:30Z', 'to': '2026-07-07T09:00Z', 'forecast': 71, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T08:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12417,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T09:00Z', 'to': '2026-07-07T09:30Z', 'forecast': 65, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T09:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12418,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T09:30Z', 'to': '2026-07-07T10:00Z', 'forecast': 63, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T09:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12419,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T10:00Z', 'to': '2026-07-07T10:30Z', 'forecast': 59, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T10:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12420,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T10:30Z', 'to': '2026-07-07T11:00Z', 'forecast': 60, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T10:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12421,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T11:00Z', 'to': '2026-07-07T11:30Z', 'forecast': 59, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T11:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12422,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T11:30Z', 'to': '2026-07-07T12:00Z', 'forecast': 63, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T11:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12423,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T12:00Z', 'to': '2026-07-07T12:30Z', 'forecast': 63, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T12:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12424,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T12:30Z', 'to': '2026-07-07T13:00Z', 'forecast': 65, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T12:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12425,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T13:00Z', 'to': '2026-07-07T13:30Z', 'forecast': 68, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T13:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12426,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T13:30Z', 'to': '2026-07-07T14:00Z', 'forecast': 73, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T13:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12427,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T14:00Z', 'to': '2026-07-07T14:30Z', 'forecast': 81, 'index': 'low'}"
+       },
+       "ret": "'2026-07-07T14:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12428,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T14:30Z', 'to': '2026-07-07T15:00Z', 'forecast': 98, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T14:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12429,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T15:00Z', 'to': '2026-07-07T15:30Z', 'forecast': 111, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T15:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12430,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T15:30Z', 'to': '2026-07-07T16:00Z', 'forecast': 122, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T15:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12431,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T16:00Z', 'to': '2026-07-07T16:30Z', 'forecast': 132, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T16:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12432,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T16:30Z', 'to': '2026-07-07T17:00Z', 'forecast': 143, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T16:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12433,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T17:00Z', 'to': '2026-07-07T17:30Z', 'forecast': 151, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T17:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12434,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T17:30Z', 'to': '2026-07-07T18:00Z', 'forecast': 160, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T17:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12435,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T18:00Z', 'to': '2026-07-07T18:30Z', 'forecast': 165, 'index': 'moderate'}"
+       },
+       "ret": "'2026-07-07T18:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12436,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T18:30Z', 'to': '2026-07-07T19:00Z', 'forecast': 175, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T18:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12437,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T19:00Z', 'to': '2026-07-07T19:30Z', 'forecast': 187, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T19:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12438,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T19:30Z', 'to': '2026-07-07T20:00Z', 'forecast': 194, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T19:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12439,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T20:00Z', 'to': '2026-07-07T20:30Z', 'forecast': 202, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T20:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12440,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T20:30Z', 'to': '2026-07-07T21:00Z', 'forecast': 209, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T20:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12441,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T21:00Z', 'to': '2026-07-07T21:30Z', 'forecast': 209, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T21:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12442,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T21:30Z', 'to': '2026-07-07T22:00Z', 'forecast': 207, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T21:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12443,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T22:00Z', 'to': '2026-07-07T22:30Z', 'forecast': 205, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T22:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12444,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T22:30Z', 'to': '2026-07-07T23:00Z', 'forecast': 203, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T22:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12445,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T23:00Z', 'to': '2026-07-07T23:30Z', 'forecast': 200, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T23:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12446,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-07T23:30Z', 'to': '2026-07-08T00:00Z', 'forecast': 197, 'index': 'high'}"
+       },
+       "ret": "'2026-07-07T23:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12447,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-08T00:00Z', 'to': '2026-07-08T00:30Z', 'forecast': 189, 'index': 'high'}"
+       },
+       "ret": "'2026-07-08T00:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12448,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-08T00:30Z', 'to': '2026-07-08T01:00Z', 'forecast': 183, 'index': 'high'}"
+       },
+       "ret": "'2026-07-08T00:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12449,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-08T01:00Z', 'to': '2026-07-08T01:30Z', 'forecast': 179, 'index': 'high'}"
+       },
+       "ret": "'2026-07-08T01:00Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12450,
+       "name": "<lambda>",
+       "qual": "forecast.<locals>.<lambda>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 186,
+       "args": {
+        "p": "{'from': '2026-07-08T01:30Z', 'to': '2026-07-08T02:00Z', 'forecast': 174, 'index': 'high'}"
+       },
+       "ret": "'2026-07-08T01:30Z'",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "grid-carbon",
+   "label": "GET /api/v1/grid-carbon/global/mix",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: Unknown source 'TEST_source'. Use one of GB, US, EU.",
+   "dur_ms": 0.22,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "source": "'TEST_source' (mock-required)",
+    "region": "None (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12451,
+     "name": "global_mix",
+     "qual": "global_mix",
+     "file": "api/v1/routes/grid_carbon.py",
+     "line": 290,
+     "args": {
+      "source": "'TEST_source'",
+      "region": "None"
+     },
+     "ret": "None",
+     "dur_ms": 0.016,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "grid-carbon",
+   "label": "GET /api/v1/grid-carbon/global/sources",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.251,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "sources",
+     "checked_at"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12452,
+     "name": "global_sources",
+     "qual": "global_sources",
+     "file": "api/v1/routes/grid_carbon.py",
+     "line": 252,
+     "args": {},
+     "ret": "{'sources': {'GB': {'label': 'Great Britain (UK NESO)', 'keyed': False, 'regions': None, 'mode': 'live', 'api_key_configured': True, 'api_key_env': None, 'note': 'Keyless \u2014 always live (subject to normal upstream availability).'}, 'US': {'\u2026",
+     "dur_ms": 0.112,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12453,
+       "name": "status",
+       "qual": "status",
+       "file": "api/v1/routes/eia_energy.py",
+       "line": 156,
+       "args": {},
+       "ret": "{'source': 'US EIA Open Data v2', 'mode': 'demo-seed', 'api_key_configured': False, 'api_key_env': 'EIA_API_KEY', 'note': 'No EIA_API_KEY set \u2014 endpoints return a labeled seeded representative sample. Get a free instant key at eia.gov/open\u2026",
+       "dur_ms": 0.028,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12454,
+       "name": "status",
+       "qual": "status",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 204,
+       "args": {},
+       "ret": "{'source': 'ENTSO-E Transparency Platform', 'mode': 'demo-seed', 'api_key_configured': False, 'api_key_env': 'ENTSOE_API_TOKEN', 'note': 'No ENTSOE_API_TOKEN set \u2014 endpoints return a labeled seeded representative sample. Register free at t\u2026",
+       "dur_ms": 0.019,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "grid-carbon",
+   "label": "GET /api/v1/grid-carbon/regional",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 780.162,
+   "node_count": 73,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "include_aggregates": "False (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "from",
+     "to",
+     "regions",
+     "stale",
+     "provenance"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12455,
+     "name": "regional",
+     "qual": "regional",
+     "file": "api/v1/routes/grid_carbon.py",
+     "line": 198,
+     "args": {
+      "include_aggregates": "False"
+     },
+     "ret": "{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'regions': [{'region_id': 1, 'shortname': 'North Scotland', 'dno_region': 'Scottish Hydro Electric Power Distribution', 'is_aggregate': False, 'intensity_forecast': 0, 'index': 'very\u2026",
+     "dur_ms": 779.909,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12456,
+       "name": "_cached_fetch",
+       "qual": "_cached_fetch",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 99,
+       "args": {
+        "key": "'regional'",
+        "urls": "['https://api.carbonintensity.org.uk/regional']",
+        "ttl": "300"
+       },
+       "ret": "([{'data': [{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'regions': [{'regionid': 1, 'dnoregion': 'Scottish Hydro Electric Power Distribution', 'shortname': 'North Scotland', 'intensity': {'forecast': 0, 'index': 'very low'}, '\u2026",
+       "dur_ms": 778.271,
+       "sql": [],
+       "error": null,
+       "children": [
+        {
+         "id": 12457,
+         "name": "_fetch_json",
+         "qual": "_fetch_json",
+         "file": "api/v1/routes/grid_carbon.py",
+         "line": 93,
+         "args": {
+          "url": "'https://api.carbonintensity.org.uk/regional'"
+         },
+         "ret": "{'data': [{'from': '2026-07-05T22:30Z', 'to': '2026-07-05T23:00Z', 'regions': [{'regionid': 1, 'dnoregion': 'Scottish Hydro Electric Power Distribution', 'shortname': 'North Scotland', 'intensity': {'forecast': 0, 'index': 'very low'}, 'ge\u2026",
+         "dur_ms": 777.123,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
+      },
+      {
+       "id": 12458,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12459,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12460,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12461,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "100",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12462,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12463,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "18",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12464,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12465,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12466,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "81.7",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12467,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12468,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "26.5",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12469,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12470,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12471,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "53.6",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12472,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12473,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "19.1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12474,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12475,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12476,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "36.1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12477,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12478,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "10.2",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12479,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12480,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12481,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "44.4",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12482,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12483,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "14.4",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12484,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12485,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12486,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "63.9",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12487,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12488,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12489,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12490,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12491,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "6.7",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12492,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12493,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "18.3",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12494,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12495,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12496,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "54",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12497,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12498,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "7.6",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12499,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12500,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12501,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "34.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12502,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12503,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "4.8",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12504,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12505,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12506,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "39.5",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12507,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12508,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12509,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12510,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12511,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "4.4",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12512,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12513,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "8.2",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12514,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12515,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12516,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "27.6",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12517,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12518,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "3.3",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12519,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0.2",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12520,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12521,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "21",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12522,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12523,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12524,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0.5",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12525,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12526,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "8.9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12527,
+       "name": "<genexpr>",
+       "qual": "regional.<locals>.<genexpr>",
+       "file": "api/v1/routes/grid_carbon.py",
+       "line": 216,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D470B1660>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

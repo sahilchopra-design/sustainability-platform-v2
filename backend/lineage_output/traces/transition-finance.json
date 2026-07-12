@@ -1,10 +1,10 @@
 {
  "domain": "transition-finance",
  "meta": {
-  "ts": "2026-06-30T14:05:37",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 8,
   "module": "api.v1.routes.transition_finance",
-  "router_prefix": "/api/v1/transition-finance",
-  "endpoints": 8
+  "router_prefix": "/api/v1/transition-finance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.721,
+   "dur_ms": 1.591,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -36,14 +36,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42342,
      "name": "ref_gfanz_expectations",
      "qual": "ref_gfanz_expectations",
      "file": "api/v1/routes/transition_finance.py",
      "line": 312,
      "args": {},
      "ret": "{'source': 'Glasgow Financial Alliance for Net Zero (GFANZ), November 2023', 'version': 'November 2023', 'expectations': {'name': 'GFANZ Expectations for Real-economy Transition Plans', 'version': 'November 2023', 'url': 'https://www.gfanz\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -56,7 +56,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.371,
+   "dur_ms": 1.022,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -80,14 +80,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42343,
      "name": "ref_race_to_zero",
      "qual": "ref_race_to_zero",
      "file": "api/v1/routes/transition_finance.py",
      "line": 263,
      "args": {},
      "ret": "{'source': 'Race to Zero Campaign 2023 Criteria, UNFCCC High-Level Champions', 'overview': 'Race to Zero is the global UN-backed campaign rallying non-state actors to achieve net-zero emissions by 2050 at the latest, requiring credible nea\u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -100,7 +100,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.216,
+   "dur_ms": 1.059,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -124,14 +124,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42344,
      "name": "ref_sbti_criteria",
      "qual": "ref_sbti_criteria",
      "file": "api/v1/routes/transition_finance.py",
      "line": 225,
      "args": {},
      "ret": "{'source': 'SBTi Corporate Net-Zero Standard v1.1, September 2023', 'standard_version': 'v1.1', 'criteria': {'near_term_scope12': {'id': 'NT-1', 'name': 'Near-term Scope 1+2 target', 'description': 'Reduce absolute Scope 1+2 by \u226542% by 203\u2026",
-     "dur_ms": 0.019,
+     "dur_ms": 0.014,
      "sql": [],
      "error": null,
      "children": []
@@ -144,7 +144,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.052,
+   "dur_ms": 1.029,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -167,14 +167,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42345,
      "name": "ref_sector_pathways",
      "qual": "ref_sector_pathways",
      "file": "api/v1/routes/transition_finance.py",
      "line": 291,
      "args": {},
      "ret": "{'source': 'IEA NZE2050, IPCC AR6, Mission Possible Partnership, SBTi sector guidance, sector-specific initiatives', 'note': 'Targets expressed as % reduction vs 2019 base year (unless stated). High-climate-impact sectors identified per GF\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -187,7 +187,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.329,
+   "dur_ms": 1.163,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -210,70 +210,70 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 42346,
      "name": "ref_tpt_elements",
      "qual": "ref_tpt_elements",
      "file": "api/v1/routes/transition_finance.py",
      "line": 206,
      "args": {},
      "ret": "{'source': 'Transition Plan Taskforce Disclosure Framework, October 2023', 'elements': {'foundations': {'element_id': 'E1', 'name': 'Foundations', 'weight': 0.25, 'description': 'Strategic ambition (net-zero/interim targets), scenario anal\u2026",
-     "dur_ms": 0.218,
+     "dur_ms": 0.146,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 42347,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "0.25",
-       "dur_ms": 0.011,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 42348,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "0.2",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 8,
-       "name": "<genexpr>",
-       "qual": "ref_tpt_elements.<locals>.<genexpr>",
-       "file": "api/v1/routes/transition_finance.py",
-       "line": 216,
-       "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
-       },
-       "ret": "0.1",
        "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 42349,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
+       },
+       "ret": "0.1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42350,
+       "name": "<genexpr>",
+       "qual": "ref_tpt_elements.<locals>.<genexpr>",
+       "file": "api/v1/routes/transition_finance.py",
+       "line": 216,
+       "args": {
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "0.2",
        "dur_ms": 0.001,
@@ -282,28 +282,28 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 42351,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "0.15",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 42352,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "0.1",
        "dur_ms": 0.001,
@@ -312,13 +312,13 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 42353,
        "name": "<genexpr>",
        "qual": "ref_tpt_elements.<locals>.<genexpr>",
        "file": "api/v1/routes/transition_finance.py",
        "line": 216,
        "args": {
-        ".0": "<dict_valueiterator object at 0x0000027CE32F4680>"
+        ".0": "<dict_valueiterator object at 0x0000013D49D19760>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -336,7 +336,7 @@
    "status": "failed",
    "http_status": 422,
    "error": "HTTPException: 422: 'str' object has no attribute 'entity_name'",
-   "dur_ms": 2.01,
+   "dur_ms": 1.063,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -350,7 +350,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42354,
      "name": "assess_credibility",
      "qual": "assess_credibility",
      "file": "api/v1/routes/transition_finance.py",
@@ -359,7 +359,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.024,
+     "dur_ms": 0.016,
      "sql": [],
      "error": null,
      "children": []
@@ -372,7 +372,7 @@
    "status": "failed",
    "http_status": 422,
    "error": "HTTPException: 422: 'str' object has no attribute 'instrument_type'",
-   "dur_ms": 2.068,
+   "dur_ms": 0.961,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -386,7 +386,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 42355,
      "name": "instrument_screen",
      "qual": "instrument_screen",
      "file": "api/v1/routes/transition_finance.py",
@@ -395,7 +395,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.018,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []

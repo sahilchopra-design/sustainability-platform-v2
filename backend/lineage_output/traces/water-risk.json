@@ -1,10 +1,10 @@
 {
  "domain": "water-risk",
  "meta": {
-  "ts": "2026-06-30T14:05:48",
+  "ts": "2026-07-05T19:17:24",
+  "endpoints": 10,
   "module": "api.v1.routes.water_risk",
-  "router_prefix": "/api/v1/water-risk",
-  "endpoints": 10
+  "router_prefix": "/api/v1/water-risk"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.349,
+   "dur_ms": 0.215,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,7 +35,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42560,
      "name": "ref_cdp_methodology",
      "qual": "ref_cdp_methodology",
      "file": "api/v1/routes/water_risk.py",
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.523,
+   "dur_ms": 0.323,
    "node_count": 11,
    "provenance": [
     "computed"
@@ -76,19 +76,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42561,
      "name": "ref_risk_tiers",
      "qual": "ref_risk_tiers",
      "file": "api/v1/routes/water_risk.py",
      "line": 209,
      "args": {},
      "ret": "{'scale': '0-5 (higher = greater water risk)', 'tiers': [{'tier': 'Low', 'score_min': 0.0, 'score_max': 1.0, 'description': 'Water demand well within sustainable supply. Minimal competition.', 'recommended_action': 'Maintain monitoring; re\u2026",
-     "dur_ms": 0.258,
+     "dur_ms": 0.191,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 42562,
        "name": "_tier_description",
        "qual": "_tier_description",
        "file": "api/v1/routes/water_risk.py",
@@ -97,13 +97,13 @@
         "tier": "'Low'"
        },
        "ret": "'Water demand well within sustainable supply. Minimal competition.'",
-       "dur_ms": 0.006,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 42563,
        "name": "_tier_action",
        "qual": "_tier_action",
        "file": "api/v1/routes/water_risk.py",
@@ -112,13 +112,13 @@
         "tier": "'Low'"
        },
        "ret": "'Maintain monitoring; report water data.'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 42564,
        "name": "_tier_description",
        "qual": "_tier_description",
        "file": "api/v1/routes/water_risk.py",
@@ -127,13 +127,13 @@
         "tier": "'Low-Medium'"
        },
        "ret": "'Some seasonal stress. Monitor for trend changes.'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 42565,
        "name": "_tier_action",
        "qual": "_tier_action",
        "file": "api/v1/routes/water_risk.py",
@@ -148,7 +148,7 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 42566,
        "name": "_tier_description",
        "qual": "_tier_description",
        "file": "api/v1/routes/water_risk.py",
@@ -157,13 +157,13 @@
         "tier": "'Medium-High'"
        },
        "ret": "'Noticeable stress; supply-demand competition emerging.'",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 8,
+       "id": 42567,
        "name": "_tier_action",
        "qual": "_tier_action",
        "file": "api/v1/routes/water_risk.py",
@@ -178,7 +178,7 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 42568,
        "name": "_tier_description",
        "qual": "_tier_description",
        "file": "api/v1/routes/water_risk.py",
@@ -187,13 +187,13 @@
         "tier": "'High'"
        },
        "ret": "'Significant stress; operational disruption risk. Mitigation needed.'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 42569,
        "name": "_tier_action",
        "qual": "_tier_action",
        "file": "api/v1/routes/water_risk.py",
@@ -202,13 +202,13 @@
         "tier": "'High'"
        },
        "ret": "'Implement resilience capex; supplier engagement; CDP disclosure.'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 42570,
        "name": "_tier_description",
        "qual": "_tier_description",
        "file": "api/v1/routes/water_risk.py",
@@ -223,7 +223,7 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 42571,
        "name": "_tier_action",
        "qual": "_tier_action",
        "file": "api/v1/routes/water_risk.py",
@@ -232,7 +232,7 @@
         "tier": "'Extremely High'"
        },
        "ret": "'Emergency response plan; potential relocation assessment; regulator engagement.'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -337,7 +337,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.232,
+   "dur_ms": 0.149,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -351,7 +351,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42572,
      "name": "physical_risk_scenarios",
      "qual": "physical_risk_scenarios",
      "file": "api/v1/routes/water_risk.py",
@@ -360,7 +360,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

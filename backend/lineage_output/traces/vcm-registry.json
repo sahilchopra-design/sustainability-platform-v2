@@ -1,0 +1,385 @@
+{
+ "domain": "vcm-registry",
+ "meta": {
+  "ts": "2026-07-05T19:17:22",
+  "endpoints": 4,
+  "module": "api.v1.routes.vcm_registry",
+  "router_prefix": "/api/v1/vcm-registry"
+ },
+ "transactions": [
+  {
+   "domain": "vcm-registry",
+   "label": "GET /api/v1/vcm-registry/annual",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.4,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "annual",
+     "provenance"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42535,
+     "name": "annual",
+     "qual": "annual",
+     "file": "api/v1/routes/vcm_registry.py",
+     "line": 203,
+     "args": {},
+     "ret": "{'annual': {'years': [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], 'issued_mt': {'verra': [40, 60, 85, 120, 150, 255, 170, 160, 150, 140], 'gold_standard': [12, 15, 18, 22, 28, 45, 40, 42, 44, 45], 'acr': [8, 10, 14, 20, 28\u2026",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-registry",
+   "label": "GET /api/v1/vcm-registry/registries",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.381,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "registries",
+     "provenance"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42536,
+     "name": "registries",
+     "qual": "registries",
+     "file": "api/v1/routes/vcm_registry.py",
+     "line": 190,
+     "args": {},
+     "ret": "{'registries': [{'key': 'verra', 'name': 'Verra (VCS)', 'operator': 'Verra \u2014 Verified Carbon Standard', 'cumulative_issued_mt': 1420.0, 'cumulative_retired_mt': 790.0, 'projects_approx': 2100, 'first_major_issuance_year': 2009, 'scope': 'L\u2026",
+     "dur_ms": 0.043,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-registry",
+   "label": "GET /api/v1/vcm-registry/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 2546.245,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "offsets_db_api",
+     "reachable",
+     "detail",
+     "data_endpoints_key_gated",
+     "api_key_configured",
+     "note"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42537,
+     "name": "upstream_status",
+     "qual": "upstream_status",
+     "file": "api/v1/routes/vcm_registry.py",
+     "line": 215,
+     "args": {},
+     "ret": "{'offsets_db_api': 'https://offsets-db.fly.dev', 'reachable': True, 'detail': 'HTTP 200', 'data_endpoints_key_gated': True, 'api_key_configured': False, 'note': 'All OffsetsDB data endpoints require an X-API-KEY header. This module serves \u2026",
+     "dur_ms": 2544.7,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "vcm-registry",
+   "label": "GET /api/v1/vcm-registry/summary",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.483,
+   "node_count": 15,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "registry_count",
+     "total_issued_mt",
+     "total_retired_mt",
+     "overall_retirement_rate_pct",
+     "provenance"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 42538,
+     "name": "summary",
+     "qual": "summary",
+     "file": "api/v1/routes/vcm_registry.py",
+     "line": 177,
+     "args": {},
+     "ret": "{'registry_count': 6, 'total_issued_mt': 2298.9, 'total_retired_mt': 1267.9, 'overall_retirement_rate_pct': 55.2, 'provenance': {'kind': 'real aggregate extract (hand-authored, approximate)', 'compiled': '2026-07-04', 'data_as_of': 'circa \u2026",
+     "dur_ms": 0.28,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 42539,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "1420.0",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42540,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "340.0",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42541,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "280.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42542,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "215.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42543,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "42.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42544,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "1.9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42545,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 179,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42546,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "790.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42547,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "215.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42548,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "135.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42549,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "120.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42550,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "7.0",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42551,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "0.9",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42552,
+       "name": "<genexpr>",
+       "qual": "summary.<locals>.<genexpr>",
+       "file": "api/v1/routes/vcm_registry.py",
+       "line": 180,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A1E3100>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

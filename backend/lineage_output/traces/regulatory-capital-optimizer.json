@@ -1,10 +1,10 @@
 {
  "domain": "regulatory-capital-optimizer",
  "meta": {
-  "ts": "2026-06-30T14:04:32",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 16,
   "module": "api.v1.routes.regulatory_capital_optimizer",
-  "router_prefix": "/api/v1/regulatory-capital",
-  "endpoints": 16
+  "router_prefix": "/api/v1/regulatory-capital"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.343,
+   "dur_ms": 0.221,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -35,7 +35,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39617,
      "name": "get_climate_p2r_parameters",
      "qual": "get_climate_p2r_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -55,7 +55,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.214,
+   "dur_ms": 0.141,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -76,14 +76,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 39618,
      "name": "get_cva_parameters",
      "qual": "get_cva_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
      "line": 416,
      "args": {},
      "ret": "{'framework': 'CVA Capital \u2014 BCBS 325', 'ba_cva_scalar': 0.25, 'supervisory_counterparty_pairs': [{'sector': 'sovereign_IG', 'risk_weight': 0.005, 'maturity_years': 5}, {'sector': 'sovereign_HY', 'risk_weight': 0.05, 'maturity_years': 5}, \u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -96,7 +96,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.187,
+   "dur_ms": 0.157,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -120,7 +120,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 39619,
      "name": "get_frtb_parameters",
      "qual": "get_frtb_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -140,7 +140,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.156,
+   "dur_ms": 0.128,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -160,14 +160,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 39620,
      "name": "get_nsfr_lcr_parameters",
      "qual": "get_nsfr_lcr_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
      "line": 433,
      "args": {},
      "ret": "{'nsfr': {'minimum': 1.0, 'asf_factors': {'tier1_capital': 1.0, 'tier2_capital': 1.0, 'other_liabilities_residual_gt1y': 1.0, 'retail_stable_deposits_lt1y': 0.95, 'retail_less_stable_deposits_lt1y': 0.9, 'wholesale_non_financial_lt1y': 0.5\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -180,7 +180,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.145,
+   "dur_ms": 0.116,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -203,14 +203,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 39621,
      "name": "get_operational_risk_parameters",
      "qual": "get_operational_risk_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
      "line": 472,
      "args": {},
      "ret": "{'framework': 'SA-OPR \u2014 Basel IV (replaces BIA/TSA/AMA)', 'bic_marginal_coefficients': [{'bi_lower_keur': 0, 'bi_upper_keur': 1000, 'marginal_coefficient': 0.12}, {'bi_lower_keur': 1000, 'bi_upper_keur': 30000, 'marginal_coefficient': 0.15\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -223,7 +223,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.167,
+   "dur_ms": 0.139,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -243,7 +243,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 39622,
      "name": "get_optimization_techniques",
      "qual": "get_optimization_techniques",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -263,7 +263,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.157,
+   "dur_ms": 0.122,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -285,7 +285,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 39623,
      "name": "get_sa_ccr_parameters",
      "qual": "get_sa_ccr_parameters",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -305,7 +305,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.152,
+   "dur_ms": 0.162,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -330,14 +330,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 39624,
      "name": "get_sacr_risk_weights",
      "qual": "get_sacr_risk_weights",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
      "line": 334,
      "args": {},
      "ret": "{'framework': 'CRR3 / Basel IV (effective Jan 2025)', 'rating_buckets': {0: 'AAA / AA', 1: 'A', 2: 'BBB', 3: 'BB', 4: 'B', 5: 'CCC+', 6: 'Unrated'}, 'risk_weights_pct': {'sovereign': [0, 20, 50, 100, 100, 150, 100], 'mdb': [0, 20, 50, 50, \u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.033,
      "sql": [],
      "error": null,
      "children": []
@@ -350,7 +350,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'counterparties'",
-   "dur_ms": 0.176,
+   "dur_ms": 0.144,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -364,7 +364,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 39625,
      "name": "calculate_cva",
      "qual": "calculate_cva",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -373,7 +373,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -386,7 +386,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'positions'",
-   "dur_ms": 0.148,
+   "dur_ms": 0.12,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -400,7 +400,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 39626,
      "name": "calculate_frtb",
      "qual": "calculate_frtb",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -422,7 +422,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'credit_rwa'",
-   "dur_ms": 0.137,
+   "dur_ms": 0.112,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -436,7 +436,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 39627,
      "name": "calculate_capital_ratios",
      "qual": "calculate_capital_ratios",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -458,7 +458,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'exposures'",
-   "dur_ms": 0.135,
+   "dur_ms": 0.112,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -472,7 +472,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 39628,
      "name": "calculate_rwa",
      "qual": "calculate_rwa",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -494,7 +494,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'netting_sets'",
-   "dur_ms": 0.153,
+   "dur_ms": 0.11,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -508,7 +508,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 39629,
      "name": "calculate_sa_ccr",
      "qual": "calculate_sa_ccr",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -517,7 +517,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -548,7 +548,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'business_indicator'",
-   "dur_ms": 0.133,
+   "dur_ms": 0.111,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -562,7 +562,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 39630,
      "name": "calculate_operational_risk",
      "qual": "calculate_operational_risk",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",
@@ -571,7 +571,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -584,7 +584,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'total_rwa'",
-   "dur_ms": 0.145,
+   "dur_ms": 0.106,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -598,7 +598,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 39631,
      "name": "optimize_capital",
      "qual": "optimize_capital",
      "file": "api/v1/routes/regulatory_capital_optimizer.py",

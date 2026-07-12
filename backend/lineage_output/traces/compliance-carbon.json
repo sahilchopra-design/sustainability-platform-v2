@@ -1,0 +1,149 @@
+{
+ "domain": "compliance-carbon",
+ "meta": {
+  "ts": "2026-07-05T19:11:05",
+  "endpoints": 5,
+  "module": "api.v1.routes.compliance_carbon",
+  "router_prefix": "/api/v1/compliance-carbon"
+ },
+ "transactions": [
+  {
+   "domain": "compliance-carbon",
+   "label": "GET /api/v1/compliance-carbon/article6",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.354,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "article_6_2",
+     "article_6_4",
+     "buyer_programs",
+     "corsia_interaction"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2886,
+     "name": "get_article6",
+     "qual": "get_article6",
+     "file": "api/v1/routes/compliance_carbon.py",
+     "line": 589,
+     "args": {},
+     "ret": "{'label': 'regulatory extract, approximate parameters as of ~2025 \u2014 verify against current regulation for production \u2014 rulebook parameters per CMA decisions cited', 'article_6_2': {'name': 'Article 6.2 \u2014 Cooperative approaches (ITMOs)', 'd\u2026",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "compliance-carbon",
+   "label": "GET /api/v1/compliance-carbon/schemes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 3.491,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "schemes",
+     "total_schemes",
+     "global_context",
+     "reconciliation"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2887,
+     "name": "get_schemes",
+     "qual": "get_schemes",
+     "file": "api/v1/routes/compliance_carbon.py",
+     "line": 446,
+     "args": {},
+     "ret": "{'label': 'regulatory extract, approximate parameters as of ~2025 \u2014 verify against current regulation for production', 'schemes': [{'id': 'eu_ets', 'name': 'EU Emissions Trading System (ETS1)', 'jurisdiction': 'European Union + EEA-EFTA (N\u2026",
+     "dur_ms": 0.119,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "compliance-carbon",
+   "label": "POST /api/v1/compliance-carbon/compliance-cost",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "compliance-carbon",
+   "label": "POST /api/v1/compliance-carbon/cross-border",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "compliance-carbon",
+   "label": "POST /api/v1/compliance-carbon/itmo-price",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

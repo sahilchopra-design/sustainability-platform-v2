@@ -1,10 +1,10 @@
 {
  "domain": "entity360",
  "meta": {
-  "ts": "2026-06-30T14:01:35",
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 6,
   "module": "api.v1.routes.entity360",
-  "router_prefix": "/api/v1/entity360",
-  "endpoints": 6
+  "router_prefix": "/api/v1/entity360"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: LEI must be exactly 20 characters",
-   "dur_ms": 0.409,
+   "dur_ms": 0.415,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -27,7 +27,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11128,
      "name": "entity360_by_lei",
      "qual": "entity360_by_lei",
      "file": "api/v1/routes/entity360.py",
@@ -36,7 +36,7 @@
       "lei": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "None",
-     "dur_ms": 0.03,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": []
@@ -49,7 +49,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.191,
+   "dur_ms": 0.238,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -68,19 +68,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11129,
      "name": "ref_entity_types",
      "qual": "ref_entity_types",
      "file": "api/v1/routes/entity360.py",
      "line": 186,
      "args": {},
      "ret": "[{'id': 'corporate', 'label': 'Corporate / Issuer'}, {'id': 'fi', 'label': 'Financial Institution'}, {'id': 'sovereign', 'label': 'Sovereign / Government'}, {'id': 'project', 'label': 'Project / SPV'}, {'id': 'real_estate', 'label': 'Real \u2026",
-     "dur_ms": 0.04,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 11130,
        "name": "get_entity_types",
        "qual": "Entity360Engine.get_entity_types",
        "file": "services/entity360_engine.py",
@@ -102,7 +102,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.207,
+   "dur_ms": 0.205,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -129,19 +129,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11131,
      "name": "ref_module_registry",
      "qual": "ref_module_registry",
      "file": "api/v1/routes/entity360.py",
      "line": 181,
      "args": {},
      "ret": "{'carbon_calculator': {'label': 'Carbon Calculator', 'outputs': ['scope1_tco2e', 'scope2_tco2e', 'scope3_tco2e', 'total_tco2e', 'intensity_revenue'], 'category': 'emissions'}, 'climate_risk': {'label': 'Climate Risk Engine', 'outputs': ['t\u2026",
-     "dur_ms": 0.075,
+     "dur_ms": 0.061,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 11132,
        "name": "get_module_registry",
        "qual": "Entity360Engine.get_module_registry",
        "file": "services/entity360_engine.py",
@@ -192,19 +192,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 11133,
      "name": "ref_sectors",
      "qual": "ref_sectors",
      "file": "api/v1/routes/entity360.py",
      "line": 191,
      "args": {},
      "ret": "{'energy': 'Energy (Oil & Gas / Utilities)', 'financials': 'Financial Institutions', 'industrials': 'Industrials & Manufacturing', 'technology': 'Technology', 'healthcare': 'Healthcare', 'consumer': 'Consumer Goods & Services', 'real_estat\u2026",
-     "dur_ms": 0.023,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 11134,
        "name": "get_sectors",
        "qual": "Entity360Engine.get_sectors",
        "file": "services/entity360_engine.py",

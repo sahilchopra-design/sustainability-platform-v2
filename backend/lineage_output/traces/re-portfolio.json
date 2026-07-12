@@ -1,10 +1,10 @@
 {
  "domain": "re-portfolio",
  "meta": {
-  "ts": "2026-06-30T14:04:20",
+  "ts": "2026-07-05T19:16:30",
+  "endpoints": 7,
   "module": "api.v1.routes.re_portfolio",
-  "router_prefix": "/api/v1/re-portfolio",
-  "endpoints": 7
+  "router_prefix": "/api/v1/re-portfolio"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.062,
+   "dur_ms": 1.909,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -31,14 +31,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 38740,
      "name": "get_crrem_pathways",
      "qual": "get_crrem_pathways",
      "file": "api/v1/routes/re_portfolio.py",
      "line": 602,
      "args": {},
      "ret": "{'pathways': {'office': {'countries': ['GB', 'DE', 'NL', 'FR', 'US'], 'scenarios': ['1.5C', '2C']}, 'retail': {'countries': ['GB', 'DE', 'NL', 'FR', 'US'], 'scenarios': ['1.5C', '2C']}, 'industrial': {'countries': ['GB', 'DE', 'NL', 'FR', \u2026",
-     "dur_ms": 0.023,
+     "dur_ms": 0.026,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 18.678,
+   "dur_ms": 1.223,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -69,14 +69,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 38741,
      "name": "get_meps_timelines",
      "qual": "get_meps_timelines",
      "file": "api/v1/routes/re_portfolio.py",
      "line": 596,
      "args": {},
      "ret": "{'timelines': {'NL': [{'year': 2023, 'minimum_epc': 'C', 'scope': 'office'}, {'year': 2030, 'minimum_epc': 'A', 'scope': 'all_commercial'}], 'GB': [{'year': 2025, 'minimum_epc': 'E', 'scope': 'new_leases'}, {'year': 2028, 'minimum_epc': 'C\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -107,7 +107,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'properties'",
-   "dur_ms": 12.285,
+   "dur_ms": 9.05,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -121,7 +121,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 38742,
      "name": "concentration_analysis",
      "qual": "concentration_analysis",
      "file": "api/v1/routes/re_portfolio.py",
@@ -130,7 +130,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 10.369,
+     "dur_ms": 7.587,
      "sql": [],
      "error": null,
      "children": []
@@ -143,7 +143,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'properties'",
-   "dur_ms": 11.634,
+   "dur_ms": 8.416,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -157,7 +157,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 38743,
      "name": "crrem_analysis",
      "qual": "crrem_analysis",
      "file": "api/v1/routes/re_portfolio.py",
@@ -166,7 +166,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 9.531,
+     "dur_ms": 6.503,
      "sql": [],
      "error": null,
      "children": []
@@ -179,7 +179,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'properties'",
-   "dur_ms": 9.916,
+   "dur_ms": 8.747,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -193,7 +193,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 38744,
      "name": "epc_analysis",
      "qual": "epc_analysis",
      "file": "api/v1/routes/re_portfolio.py",
@@ -202,7 +202,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 8.144,
+     "dur_ms": 6.765,
      "sql": [],
      "error": null,
      "children": []
@@ -215,7 +215,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'valuation_date'",
-   "dur_ms": 10.855,
+   "dur_ms": 7.388,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -229,7 +229,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 38745,
      "name": "calculate_portfolio_nav",
      "qual": "calculate_portfolio_nav",
      "file": "api/v1/routes/re_portfolio.py",
@@ -238,12 +238,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 7.732,
+     "dur_ms": 4.955,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 38746,
        "name": "_to_portfolio",
        "qual": "_to_portfolio",
        "file": "api/v1/routes/re_portfolio.py",
@@ -252,7 +252,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.01,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []

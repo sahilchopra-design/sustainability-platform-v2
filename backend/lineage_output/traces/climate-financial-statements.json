@@ -1,10 +1,10 @@
 {
  "domain": "climate-financial-statements",
  "meta": {
-  "ts": "2026-06-30T13:59:50",
+  "ts": "2026-07-05T19:10:59",
+  "endpoints": 11,
   "module": "api.v1.routes.climate_financial_statements",
-  "router_prefix": "/api/v1/climate-financial-statements",
-  "endpoints": 11
+  "router_prefix": "/api/v1/climate-financial-statements"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.44,
+   "dur_ms": 1.611,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2147,
      "name": "ref_carbon_provision_thresholds",
      "qual": "ref_carbon_provision_thresholds",
      "file": "api/v1/routes/climate_financial_statements.py",
      "line": 338,
      "args": {},
      "ret": "{'status': 'success', 'standard': 'IAS 37 Provisions; EU ETS Directive 2003/87/EC; CORSIA Phase I 2024-2026', 'sector_count': 8, 'data': {'utilities_fossil': {'description': 'Coal, gas and dual-fuel power generation; district heating from \u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.768,
+   "dur_ms": 1.407,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -75,14 +75,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2148,
      "name": "ref_financial_effect_categories",
      "qual": "ref_financial_effect_categories",
      "file": "api/v1/routes/climate_financial_statements.py",
      "line": 281,
      "args": {},
      "ret": "{'status': 'success', 'standard': 'IFRS S2 Climate-Related Disclosures (ISSB June 2023, effective 1 Jan 2024)', 'category_count': 8, 'data': [{'category': 'transition_risk_revenue', 'description': 'Revenue impacts from transition to a lowe\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -95,7 +95,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.454,
+   "dur_ms": 1.775,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -119,14 +119,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 2149,
      "name": "ref_impairment_indicators",
      "qual": "ref_impairment_indicators",
      "file": "api/v1/routes/climate_financial_statements.py",
      "line": 298,
      "args": {},
      "ret": "{'status': 'success', 'standard': 'IAS 36 Impairment of Assets \u2014 IASB climate integration guidance (2024)', 'total_indicators': 12, 'external_count': 6, 'internal_count': 6, 'external_indicators': [{'indicator_name': 'carbon_price_exceeds_\u2026",
-     "dur_ms": 0.024,
+     "dur_ms": 0.014,
      "sql": [],
      "error": null,
      "children": []
@@ -139,7 +139,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.022,
+   "dur_ms": 1.811,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -160,14 +160,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 2150,
      "name": "ref_scenario_multipliers",
      "qual": "ref_scenario_multipliers",
      "file": "api/v1/routes/climate_financial_statements.py",
      "line": 321,
      "args": {},
      "ret": "{'status': 'success', 'methodology': 'NGFS Phase IV Scenarios 2023; IPCC AR6 WG III damage functions; IEA WEO 2023', 'sector_count': 6, 'data': {'oil_gas': {'1_5c_impact_pct': -42.0, '2c_impact_pct': -28.0, '3c_impact_pct': -12.0, 'revenue\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -180,7 +180,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.816,
+   "dur_ms": 1.158,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -201,14 +201,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 2151,
      "name": "ref_stranded_asset_triggers",
      "qual": "ref_stranded_asset_triggers",
      "file": "api/v1/routes/climate_financial_statements.py",
      "line": 352,
      "args": {},
      "ret": "{'status': 'success', 'methodology': 'IEA NZE2050; NGFS Phase IV; IPCC AR6; sector-specific regulatory timelines', 'trigger_count': 6, 'data': [{'trigger_name': 'iea_nze2050_reserve_unburnable', 'description': 'Fossil fuel proved reserves \u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -221,7 +221,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.833,
+   "dur_ms": 1.022,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -235,7 +235,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 2152,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/climate_financial_statements.py",
@@ -244,12 +244,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.061,
+     "dur_ms": 0.038,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 2153,
        "name": "_req_to_entity",
        "qual": "_req_to_entity",
        "file": "api/v1/routes/climate_financial_statements.py",
@@ -258,7 +258,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -345,7 +345,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.821,
+   "dur_ms": 0.994,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -359,7 +359,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 2154,
      "name": "stranded_asset_assessment",
      "qual": "stranded_asset_assessment",
      "file": "api/v1/routes/climate_financial_statements.py",
@@ -368,12 +368,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.064,
+     "dur_ms": 0.03,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 2155,
        "name": "_req_to_entity",
        "qual": "_req_to_entity",
        "file": "api/v1/routes/climate_financial_statements.py",
@@ -382,7 +382,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.008,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []

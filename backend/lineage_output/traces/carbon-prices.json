@@ -1,10 +1,10 @@
 {
  "domain": "carbon-prices",
  "meta": {
-  "ts": "2026-06-30T13:59:38",
+  "ts": "2026-07-05T19:10:49",
+  "endpoints": 4,
   "module": "api.v1.routes.carbon_prices",
-  "router_prefix": "/api/v1/carbon-prices",
-  "endpoints": 4
+  "router_prefix": "/api/v1/carbon-prices"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 992.423,
+   "dur_ms": 364.406,
    "node_count": 4,
    "provenance": [
     "db-empty"
@@ -29,7 +29,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 210.357,
+     "dur_ms": 66.134,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 32.837,
+     "dur_ms": 30.485,
      "is_reference": false,
      "error": null
     },
@@ -51,7 +51,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 160.944,
+     "dur_ms": 30.619,
      "is_reference": false,
      "error": null
     }
@@ -74,7 +74,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 890,
      "name": "compare_carbon_prices",
      "qual": "compare_carbon_prices",
      "file": "api/v1/routes/carbon_prices.py",
@@ -83,27 +83,27 @@
       "scenarios": "'TEST_scenarios'",
       "region": "'World'",
       "year": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED0E3260>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED1D7060>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487309E0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'region': 'World', 'year': None, 'scenarios': [{'scenario': 'TEST_scenarios', 'price_at_year': None, 'data_points': 0, 'min_price': None, 'max_price': None, 'time_series': []}]}",
-     "dur_ms": 961.697,
+     "dur_ms": 333.107,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 891,
        "name": "_find_carbon_price_records",
        "qual": "_find_carbon_price_records",
        "file": "api/v1/routes/carbon_prices.py",
        "line": 35,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED0E3260>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487309E0>",
         "scenario": "'TEST_scenarios'",
         "region": "'World'"
        },
        "ret": "[]",
-       "dur_ms": 961.544,
+       "dur_ms": 332.994,
        "sql": [
         0,
         1,
@@ -113,28 +113,28 @@
        "children": []
       },
       {
-       "id": 3,
+       "id": 892,
        "name": "<genexpr>",
        "qual": "compare_carbon_prices.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_prices.py",
        "line": 86,
        "args": {
-        ".0": "<list_iterator object at 0x000001C2ED038340>"
+        ".0": "<list_iterator object at 0x0000013D476AB7C0>"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 893,
        "name": "<genexpr>",
        "qual": "compare_carbon_prices.<locals>.<genexpr>",
        "file": "api/v1/routes/carbon_prices.py",
        "line": 87,
        "args": {
-        ".0": "<list_iterator object at 0x000001C2ED038340>"
+        ".0": "<list_iterator object at 0x0000013D476AB7C0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -152,7 +152,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 291.874,
+   "dur_ms": 308.313,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -168,7 +168,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 63.993,
+     "dur_ms": 63.154,
      "is_reference": false,
      "error": null
     }
@@ -187,17 +187,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 894,
      "name": "list_carbon_price_scenarios",
      "qual": "list_carbon_price_scenarios",
      "file": "api/v1/routes/carbon_prices.py",
      "line": 98,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3A6E70>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED1D72E0>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D476F8DD0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'scenarios': [], 'total': 0}",
-     "dur_ms": 262.727,
+     "dur_ms": 278.356,
      "sql": [
       0
      ],
@@ -212,7 +212,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 381.998,
+   "dur_ms": 378.739,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -228,7 +228,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 62.703,
+     "dur_ms": 61.22,
      "is_reference": false,
      "error": null
     },
@@ -239,7 +239,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 29.017,
+     "dur_ms": 30.655,
      "is_reference": false,
      "error": null
     },
@@ -250,7 +250,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 1,
-     "dur_ms": 31.958,
+     "dur_ms": 32.733,
      "is_reference": false,
      "error": null
     }
@@ -270,17 +270,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 895,
      "name": "carbon_price_stats",
      "qual": "carbon_price_stats",
      "file": "api/v1/routes/carbon_prices.py",
      "line": 132,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3D9BE0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED2C7F60>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47134440>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'total_data_points': 0, 'distinct_scenarios': 0, 'distinct_models': 0}",
-     "dur_ms": 352.136,
+     "dur_ms": 346.312,
      "sql": [
       0,
       1,
@@ -297,7 +297,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 363.389,
+   "dur_ms": 347.245,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -313,7 +313,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 69.069,
+     "dur_ms": 55.308,
      "is_reference": false,
      "error": null
     },
@@ -324,7 +324,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 34.352,
+     "dur_ms": 29.045,
      "is_reference": false,
      "error": null
     },
@@ -335,7 +335,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 30.183,
+     "dur_ms": 28.468,
      "is_reference": false,
      "error": null
     }
@@ -362,7 +362,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 896,
      "name": "get_carbon_price",
      "qual": "get_carbon_price",
      "file": "api/v1/routes/carbon_prices.py",
@@ -371,27 +371,27 @@
       "scenario": "'550e8400-e29b-41d4-a716-446655440001'",
       "year": "None",
       "region": "'World'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3DAAB0>",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001C2ED2F4360>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487333B0>",
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'scenario': '550e8400-e29b-41d4-a716-446655440001', 'region': 'World', 'year': None, 'price_usd': None, 'unit': 'USD/tCO2', 'source': 'NGFS (no data found)', 'time_series': []}",
-     "dur_ms": 332.417,
+     "dur_ms": 319.284,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 897,
        "name": "_find_carbon_price_records",
        "qual": "_find_carbon_price_records",
        "file": "api/v1/routes/carbon_prices.py",
        "line": 35,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001C2ED3DAAB0>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487333B0>",
         "scenario": "'550e8400-e29b-41d4-a716-446655440001'",
         "region": "'World'"
        },
        "ret": "[]",
-       "dur_ms": 332.373,
+       "dur_ms": 319.245,
        "sql": [
         0,
         1,

@@ -1,10 +1,10 @@
 {
  "domain": "loss-damage",
  "meta": {
-  "ts": "2026-06-30T14:03:01",
+  "ts": "2026-07-05T19:15:48",
+  "endpoints": 10,
   "module": "api.v1.routes.loss_damage",
-  "router_prefix": "/api/v1/loss-damage",
-  "endpoints": 10
+  "router_prefix": "/api/v1/loss-damage"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.959,
+   "dur_ms": 2.265,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -37,14 +37,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12880,
      "name": "ref_frld_criteria",
      "qual": "ref_frld_criteria",
      "file": "api/v1/routes/loss_damage.py",
      "line": 239,
      "args": {},
      "ret": "{'access_criteria': {'sids': {'description': 'Small Island Developing States', 'eligibility_threshold': 'UNOHRLLS SIDS list membership', 'access_modality': 'simplified_procedures', 'indicative_annual_allocation_usd_mn': 50, 'co_financing_r\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -57,7 +57,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.131,
+   "dur_ms": 1.379,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -81,7 +81,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12881,
      "name": "ref_global_shield",
      "qual": "ref_global_shield",
      "file": "api/v1/routes/loss_damage.py",
@@ -101,7 +101,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.07,
+   "dur_ms": 1.258,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -124,14 +124,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12882,
      "name": "ref_loss_event_types",
      "qual": "ref_loss_event_types",
      "file": "api/v1/routes/loss_damage.py",
      "line": 288,
      "args": {},
      "ret": "{'event_types': {'cyclone': {'description': 'Tropical cyclone including hurricane and typhoon', 'wim_relevance': 'high', 'economic_loss_multiplier': 3.5, 'non_economic_share': 0.35, 'insurance_penetration_typical': 0.25, 'parametric_suitab\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -144,7 +144,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.174,
+   "dur_ms": 3.296,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -166,14 +166,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 12883,
      "name": "ref_parametric_triggers",
      "qual": "ref_parametric_triggers",
      "file": "api/v1/routes/loss_damage.py",
      "line": 272,
      "args": {},
      "ret": "{'triggers': {'wind_speed_kmh': {'description': 'Maximum sustained wind speed (1-min average)', 'data_source': 'WMO RSMC tropical cyclone bulletins', 'typical_attachment': 89, 'typical_exhaustion': 185, 'unit': 'km/h', 'settlement_days': 1\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -186,7 +186,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.763,
+   "dur_ms": 1.566,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -211,14 +211,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12884,
      "name": "ref_v20_members",
      "qual": "ref_v20_members",
      "file": "api/v1/routes/loss_damage.py",
      "line": 224,
      "args": {},
      "ret": "{'v20_members': ['AFG', 'BGD', 'BEN', 'BHU', 'BFA', 'KHM', 'CMR', 'CAF', 'COD', 'COG', 'CIV', 'DJI', 'ETH', 'FJI', 'GMB', 'GHA', 'GTM', 'GNB', 'HTI', 'HND', 'KEN', 'KIR', 'MDG', 'MWI', 'MDV', 'MLI', 'MHL', 'FSM', 'MNG', 'MOZ', 'NPL', 'NER'\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -246,11 +246,11 @@
   {
    "domain": "loss-damage",
    "label": "POST /api/v1/loss-damage/ld-gap-analysis",
-   "status": "failed",
-   "http_status": 500,
-   "error": "HTTPException: 500: float() argument must be a string or a real number, not 'NoneType'",
-   "dur_ms": 2.304,
-   "node_count": 2,
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.914,
+   "node_count": 10,
    "provenance": [
     "computed"
    ],
@@ -259,11 +259,27 @@
    "inputs": {
     "request": "<LDGapRequest (mock)>"
    },
-   "output_summary": null,
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "status",
+     "country_iso",
+     "country_name",
+     "event_type",
+     "total_economic_loss_usd",
+     "non_economic_loss_score",
+     "coverage_breakdown",
+     "residual_ld_gap_usd",
+     "insurance_coverage_ratio",
+     "gap_financing_instruments",
+     "non_economic_note"
+    ],
+    "n_keys": 11
+   },
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 12885,
      "name": "ld_gap_analysis_endpoint",
      "qual": "ld_gap_analysis_endpoint",
      "file": "api/v1/routes/loss_damage.py",
@@ -271,26 +287,147 @@
      "args": {
       "request": "LDGapRequest(country_iso='TEST_request_country_iso', country_name=None, event_type='cyclone', gdp_usd=None, insurance_penetration=None, global_shield_covered=None)"
      },
-     "ret": "None",
-     "dur_ms": 0.104,
+     "ret": "{'status': 'success', 'country_iso': 'TEST_request_country_iso', 'country_name': 'TEST_request_country_iso', 'event_type': 'cyclone', 'total_economic_loss_usd': None, 'non_economic_loss_score': None, 'coverage_breakdown': {'insurance_cover\u2026",
+     "dur_ms": 0.273,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 12886,
        "name": "calculate_residual_ld_gap",
        "qual": "calculate_residual_ld_gap",
        "file": "services/loss_damage_engine.py",
-       "line": 455,
+       "line": 638,
        "args": {
         "country_data": "{'country_iso': 'TEST_request_country_iso', 'country_name': None, 'event_type': 'cyclone', 'gdp_usd': None}",
         "coverage_data": "{}"
        },
-       "ret": "None",
-       "dur_ms": 0.046,
+       "ret": "LDGapAnalysis(country_iso='TEST_request_country_iso', country_name='TEST_request_country_iso', event_type='cyclone', total_economic_loss_usd=None, non_economic_loss_score=None, insurance_covered_usd=None, frld_eligible_usd=None, global_shi\u2026",
+       "dur_ms": 0.203,
        "sql": [],
        "error": null,
-       "children": []
+       "children": [
+        {
+         "id": 12887,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12888,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12889,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12890,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12891,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12892,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12893,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12894,
+         "name": "_as_float",
+         "qual": "_as_float",
+         "file": "services/loss_damage_engine.py",
+         "line": 234,
+         "args": {
+          "value": "None"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        }
+       ]
       }
      ]
     }

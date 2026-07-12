@@ -1,7 +1,7 @@
 {
  "domain": "parameter-governance",
  "meta": {
-  "ts": "2026-07-01T10:15:57",
+  "ts": "2026-07-05T19:16:00",
   "endpoints": 6,
   "module": "api.v1.routes.parameter_governance",
   "router_prefix": "/api/v1/parameters"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 706.296,
+   "dur_ms": 286.97,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -29,7 +29,7 @@
       "calculation_parameters"
      ],
      "rowcount": 0,
-     "dur_ms": 88.523,
+     "dur_ms": 70.159,
      "is_reference": false,
      "error": null
     }
@@ -49,7 +49,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13623,
      "name": "list_parameters",
      "qual": "list_parameters",
      "file": "api/v1/routes/parameter_governance.py",
@@ -59,10 +59,10 @@
       "status": "'approved'",
       "limit": "100",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF760EF0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B73110>"
      },
      "ret": "[]",
-     "dur_ms": 670.305,
+     "dur_ms": 255.618,
      "sql": [
       0
      ],
@@ -77,7 +77,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 331.163,
+   "dur_ms": 270.131,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -93,7 +93,7 @@
       "parameter_change_requests"
      ],
      "rowcount": null,
-     "dur_ms": 74.2,
+     "dur_ms": 57.931,
      "is_reference": false,
      "error": "UndefinedColumn('column \"parameter_name\" does not exist\\nLINE 2: ...           SELECT id AS request_id, parameter_id, parameter_...\\n                                                             ^\\n')"
     }
@@ -112,7 +112,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13624,
      "name": "list_change_requests",
      "qual": "list_change_requests",
      "file": "api/v1/routes/parameter_governance.py",
@@ -121,10 +121,10 @@
       "status": "'pending'",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF761400>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B736B0>"
      },
      "ret": "[]",
-     "dur_ms": 297.044,
+     "dur_ms": 242.124,
      "sql": [
       0
      ],
@@ -139,7 +139,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Parameter not found",
-   "dur_ms": 334.379,
+   "dur_ms": 267.04,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -155,7 +155,7 @@
       "calculation_parameters"
      ],
      "rowcount": 0,
-     "dur_ms": 71.553,
+     "dur_ms": 56.524,
      "is_reference": false,
      "error": null
     }
@@ -168,17 +168,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13625,
      "name": "get_parameter",
      "qual": "get_parameter",
      "file": "api/v1/routes/parameter_governance.py",
      "line": 256,
      "args": {
       "param_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C9CF6E6D50>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49B73830>"
      },
      "ret": "None",
-     "dur_ms": 298.917,
+     "dur_ms": 237.88,
      "sql": [
       0
      ],

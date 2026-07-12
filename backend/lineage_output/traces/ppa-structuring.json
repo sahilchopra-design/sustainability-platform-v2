@@ -1,0 +1,279 @@
+{
+ "domain": "ppa-structuring",
+ "meta": {
+  "ts": "2026-07-05T19:16:25",
+  "endpoints": 8,
+  "module": "api.v1.routes.ppa_structuring",
+  "router_prefix": "/api/v1/ppa-structuring"
+ },
+ "transactions": [
+  {
+   "domain": "ppa-structuring",
+   "label": "GET /api/v1/ppa-structuring/ref/capture-rates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.288,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "basis",
+     "capture_rate_tiers",
+     "shape_match_factors",
+     "default_degradation_pct_yr",
+     "default_firming_premium_usd_mwh",
+     "firming_formula"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29292,
+     "name": "ref_capture_rates",
+     "qual": "ref_capture_rates",
+     "file": "api/v1/routes/ppa_structuring.py",
+     "line": 492,
+     "args": {},
+     "ret": "{'label': 'Modeling defaults \u2014 hand-authored, calibrated to published value-factor literature', 'basis': \"Hand-authored MODELING DEFAULTS calibrated to published value-factor literature: Hirth (2013) 'The market value of variable renewable\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "GET /api/v1/ppa-structuring/ref/rec-forward",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.284,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "spot_usd_mwh": "3.0 (default)",
+    "drift_pct_yr": "3.0 (default)",
+    "vintages": "6 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "formula",
+     "spot_usd_mwh",
+     "drift_pct_yr",
+     "strip"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29293,
+     "name": "ref_rec_forward",
+     "qual": "ref_rec_forward",
+     "file": "api/v1/routes/ppa_structuring.py",
+     "line": 1403,
+     "args": {
+      "spot_usd_mwh": "3.0",
+      "drift_pct_yr": "3.0",
+      "vintages": "6"
+     },
+     "ret": "{'label': 'Documented compounding convention on USER spot + drift inputs \u2014 not market quotes', 'formula': 'forward_k = spot x (1 + drift)^k', 'spot_usd_mwh': 3.0, 'drift_pct_yr': 3.0, 'strip': [{'vintage_offset_years': 0, 'vintage_label': \u2026",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "GET /api/v1/ppa-structuring/ref/shape-archetypes",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.22,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "season_days",
+     "solar",
+     "wind",
+     "price",
+     "load_archetypes",
+     "load_basis",
+     "lifecycle_g_co2e_kwh",
+     "eu_taxonomy_threshold_g_kwh",
+     "csa_downgrade_grid",
+     "score_weights_default"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29294,
+     "name": "ref_shape_archetypes",
+     "qual": "ref_shape_archetypes",
+     "file": "api/v1/routes/ppa_structuring.py",
+     "line": 1374,
+     "args": {},
+     "ret": "{'label': 'Hand-authored parametric modeling archetypes (mid-latitude) \u2014 NOT metered data', 'season_days': {'winter': 90, 'spring': 92, 'summer': 92, 'autumn': 91}, 'solar': {'params': {'winter': {'sunrise': 8.0, 'sunset': 16.5, 'amplitude\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "POST /api/v1/ppa-structuring/credit-exposure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "POST /api/v1/ppa-structuring/settlement",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "POST /api/v1/ppa-structuring/shape-analysis",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'technology'",
+   "dur_ms": 0.217,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29295,
+     "name": "shape_analysis",
+     "qual": "shape_analysis",
+     "file": "api/v1/routes/ppa_structuring.py",
+     "line": 797,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.009,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "POST /api/v1/ppa-structuring/structure",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "ppa-structuring",
+   "label": "POST /api/v1/ppa-structuring/term-sheet-score",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'structure_request'",
+   "dur_ms": 0.206,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 29296,
+     "name": "term_sheet_score",
+     "qual": "term_sheet_score",
+     "file": "api/v1/routes/ppa_structuring.py",
+     "line": 1267,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

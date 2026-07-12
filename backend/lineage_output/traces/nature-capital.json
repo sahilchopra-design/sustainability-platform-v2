@@ -1,10 +1,10 @@
 {
  "domain": "nature-capital",
  "meta": {
-  "ts": "2026-06-30T14:03:18",
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 10,
   "module": "api.v1.routes.nature_capital",
-  "router_prefix": "/api/v1/nature-capital",
-  "endpoints": 10
+  "router_prefix": "/api/v1/nature-capital"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3.237,
+   "dur_ms": 2.362,
    "node_count": 20,
    "provenance": [
     "computed"
@@ -36,19 +36,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13143,
      "name": "get_biome_values",
      "qual": "get_biome_values",
      "file": "api/v1/routes/nature_capital.py",
      "line": 238,
      "args": {},
      "ret": "{'methodology': 'Benefit transfer from primary studies \u2014 Costanza et al. (2014), TEEB (2010), IPBES (2019)', 'price_year': 2023, 'currency': 'USD', 'caveat': 'Unit values are estimates based on meta-analysis; site-specific valuations requi\u2026",
-     "dur_ms": 0.477,
+     "dur_ms": 0.409,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13144,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -57,13 +57,13 @@
         "x": "('tropical_forest', {'total_usd_ha_yr': 5264, 'provisioning': 1200, 'regulating': 3200, 'cultural': 864, 'source': 'TEEB 2010 / Costanza et al 2014'})"
        },
        "ret": "5264",
-       "dur_ms": 0.007,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 13145,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -72,13 +72,13 @@
         "x": "('temperate_forest', {'total_usd_ha_yr': 3137, 'provisioning': 980, 'regulating': 1800, 'cultural': 357, 'source': 'TEEB 2010'})"
        },
        "ret": "3137",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 13146,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -87,13 +87,13 @@
         "x": "('boreal_forest', {'total_usd_ha_yr': 894, 'provisioning': 320, 'regulating': 480, 'cultural': 94, 'source': 'Costanza et al 2014'})"
        },
        "ret": "894",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 13147,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -108,7 +108,7 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 13148,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -117,13 +117,13 @@
         "x": "('temperate_grassland', {'total_usd_ha_yr': 1027, 'provisioning': 380, 'regulating': 520, 'cultural': 127, 'source': 'TEEB 2010'})"
        },
        "ret": "1027",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 13149,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -138,7 +138,7 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 13150,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -153,7 +153,7 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 13151,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -168,7 +168,7 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 13152,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -183,7 +183,7 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 13153,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -198,7 +198,7 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 13154,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -213,7 +213,7 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 13155,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -228,7 +228,7 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 13156,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -243,7 +243,7 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 13157,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -258,7 +258,7 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 13158,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -273,7 +273,7 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 13159,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -288,7 +288,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 13160,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -297,13 +297,13 @@
         "x": "('mountain', {'total_usd_ha_yr': 688, 'provisioning': 350, 'regulating': 270, 'cultural': 68, 'source': 'TEEB 2010'})"
        },
        "ret": "688",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 13161,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -318,7 +318,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 13162,
        "name": "<lambda>",
        "qual": "get_biome_values.<locals>.<lambda>",
        "file": "api/v1/routes/nature_capital.py",
@@ -342,7 +342,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.668,
+   "dur_ms": 1.333,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -362,14 +362,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 21,
+     "id": 13163,
      "name": "get_ecosystem_types",
      "qual": "get_ecosystem_types",
      "file": "api/v1/routes/nature_capital.py",
      "line": 140,
      "args": {},
      "ret": "{'framework': 'SEEA EA 2021 / IPBES Global Assessment / TEEB', 'ecosystem_count': 19, 'ecosystems': [{'ecosystem_type': 'tropical_forest', 'total_value_usd_ha_yr': 5264, 'provisioning_usd_ha_yr': 1200, 'regulating_usd_ha_yr': 3200, 'cultur\u2026",
-     "dur_ms": 0.018,
+     "dur_ms": 0.013,
      "sql": [],
      "error": null,
      "children": []
@@ -382,7 +382,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.583,
+   "dur_ms": 1.264,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -403,7 +403,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 22,
+     "id": 13164,
      "name": "get_encore_services",
      "qual": "get_encore_services",
      "file": "api/v1/routes/nature_capital.py",
@@ -423,7 +423,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 7.053,
+   "dur_ms": 1.158,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -444,7 +444,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 23,
+     "id": 13165,
      "name": "get_seea_accounts",
      "qual": "get_seea_accounts",
      "file": "api/v1/routes/nature_capital.py",
@@ -464,7 +464,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.882,
+   "dur_ms": 2.539,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -488,7 +488,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 13166,
      "name": "get_tnfd_disclosures",
      "qual": "get_tnfd_disclosures",
      "file": "api/v1/routes/nature_capital.py",
@@ -508,7 +508,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.609,
+   "dur_ms": 1.88,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -522,7 +522,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 13167,
      "name": "assess_natural_capital_endpoint",
      "qual": "assess_natural_capital_endpoint",
      "file": "api/v1/routes/nature_capital.py",
@@ -562,7 +562,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.533,
+   "dur_ms": 1.465,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -576,7 +576,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 26,
+     "id": 13168,
      "name": "dependency_score_endpoint",
      "qual": "dependency_score_endpoint",
      "file": "api/v1/routes/nature_capital.py",
@@ -585,7 +585,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.006,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -598,7 +598,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.483,
+   "dur_ms": 1.31,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -612,7 +612,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 27,
+     "id": 13169,
      "name": "disclosure_score_endpoint",
      "qual": "disclosure_score_endpoint",
      "file": "api/v1/routes/nature_capital.py",

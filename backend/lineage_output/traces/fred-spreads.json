@@ -1,0 +1,239 @@
+{
+ "domain": "fred-spreads",
+ "meta": {
+  "ts": "2026-07-05T19:15:22",
+  "endpoints": 3,
+  "module": "api.v1.routes.fred_spreads",
+  "router_prefix": "/api/v1/fred-spreads"
+ },
+ "transactions": [
+  {
+   "domain": "fred-spreads",
+   "label": "GET /api/v1/fred-spreads/catalog",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.284,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "count",
+     "series",
+     "default_ids",
+     "units",
+     "source"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11509,
+     "name": "catalog",
+     "qual": "catalog",
+     "file": "api/v1/routes/fred_spreads.py",
+     "line": 185,
+     "args": {},
+     "ret": "{'count': 9, 'series': [{'id': 'BAMLC0A0CM', 'label': 'US Corporate Master (IG)', 'bucket': 'IG-Aggregate', 'grade': 'IG'}, {'id': 'BAMLC0A1CAAA', 'label': 'US Corporate AAA', 'bucket': 'AAA', 'grade': 'IG'}, {'id': 'BAMLC0A2CAA', 'label':\u2026",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "fred-spreads",
+   "label": "GET /api/v1/fred-spreads/series",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.818,
+   "node_count": 7,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "ids": "'BAMLC0A0CM,BAMLC0A4CBBB,BAMLH0A0HYM2,BAMLH0A3HYC' (default)",
+    "observation_start": "'2020-01-01' (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "series",
+     "units",
+     "source",
+     "upstream_error",
+     "retrieved_at",
+     "cache"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11510,
+     "name": "series",
+     "qual": "series",
+     "file": "api/v1/routes/fred_spreads.py",
+     "line": 197,
+     "args": {
+      "ids": "'BAMLC0A0CM,BAMLC0A4CBBB,BAMLH0A0HYM2,BAMLH0A3HYC'",
+      "observation_start": "'2020-01-01'"
+     },
+     "ret": "{'mode': 'demo-seed', 'series': [{'id': 'BAMLC0A0CM', 'label': 'US Corporate Master (IG)', 'bucket': 'IG-Aggregate', 'grade': 'IG', 'observations': [{'date': '2020-01', 'value': 1.01}, {'date': '2020-03', 'value': 3.73}, {'date': '2020-06'\u2026",
+     "dur_ms": 0.436,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11511,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 121,
+       "args": {
+        "key": "('series', ('BAMLC0A0CM', 'BAMLC0A4CBBB', 'BAMLH0A0HYM2', 'BAMLH0A3HYC'), '2020-01-01', False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11512,
+       "name": "_seed_series",
+       "qual": "_seed_series",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 161,
+       "args": {
+        "series_id": "'BAMLC0A0CM'"
+       },
+       "ret": "[{'date': '2020-01', 'value': 1.01}, {'date': '2020-03', 'value': 3.73}, {'date': '2020-06', 'value': 1.55}, {'date': '2020-09', 'value': 1.36}, {'date': '2020-12', 'value': 0.98}, {'date': '2021-03', 'value': 0.91}, {'date': '2021-06', 'v\u2026",
+       "dur_ms": 0.012,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11513,
+       "name": "_seed_series",
+       "qual": "_seed_series",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 161,
+       "args": {
+        "series_id": "'BAMLC0A4CBBB'"
+       },
+       "ret": "[{'date': '2020-01', 'value': 1.37}, {'date': '2020-03', 'value': 4.88}, {'date': '2020-06', 'value': 2.06}, {'date': '2020-09', 'value': 1.79}, {'date': '2020-12', 'value': 1.3}, {'date': '2021-03', 'value': 1.2}, {'date': '2021-06', 'val\u2026",
+       "dur_ms": 0.009,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11514,
+       "name": "_seed_series",
+       "qual": "_seed_series",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 161,
+       "args": {
+        "series_id": "'BAMLH0A0HYM2'"
+       },
+       "ret": "[{'date': '2020-01', 'value': 3.6}, {'date': '2020-03', 'value': 8.77}, {'date': '2020-06', 'value': 6.44}, {'date': '2020-09', 'value': 5.17}, {'date': '2020-12', 'value': 3.86}, {'date': '2021-03', 'value': 3.1}, {'date': '2021-06', 'val\u2026",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11515,
+       "name": "_seed_series",
+       "qual": "_seed_series",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 161,
+       "args": {
+        "series_id": "'BAMLH0A3HYC'"
+       },
+       "ret": "[{'date': '2020-01', 'value': 8.3}, {'date': '2020-03', 'value': 17.9}, {'date': '2020-06', 'value': 12.1}, {'date': '2020-09', 'value': 10.6}, {'date': '2020-12', 'value': 8.3}, {'date': '2021-03', 'value': 6.8}, {'date': '2021-06', 'valu\u2026",
+       "dur_ms": 0.007,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11516,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/fred_spreads.py",
+       "line": 130,
+       "args": {
+        "key": "('series', ('BAMLC0A0CM', 'BAMLC0A4CBBB', 'BAMLH0A0HYM2', 'BAMLH0A3HYC'), '2020-01-01', False)",
+        "value": "{'mode': 'demo-seed', 'series': [{'id': 'BAMLC0A0CM', 'label': 'US Corporate Master (IG)', 'bucket': 'IG-Aggregate', 'grade': 'IG', 'observations': [{'date': '2020-01', 'value': 1.01}, {'date': '2020-03', 'value': 3.73}, {'date': '2020-06'\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "fred-spreads",
+   "label": "GET /api/v1/fred-spreads/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.23,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "api_key_configured",
+     "api_key_env",
+     "note",
+     "seed_coverage",
+     "checked_at"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11517,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/fred_spreads.py",
+     "line": 168,
+     "args": {},
+     "ret": "{'source': 'FRED (St. Louis Fed) \u2014 ICE BofA US OAS indices', 'mode': 'demo-seed', 'api_key_configured': False, 'api_key_env': 'FRED_API_KEY', 'note': 'No FRED_API_KEY set \u2014 endpoints return a labeled seeded real historical sample. Get a fr\u2026",
+     "dur_ms": 0.03,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

@@ -1,10 +1,10 @@
 {
  "domain": "data-hub",
  "meta": {
-  "ts": "2026-06-30T14:00:38",
+  "ts": "2026-07-05T19:11:27",
+  "endpoints": 25,
   "module": "api.v1.routes.data_hub",
-  "router_prefix": "/api/v1/data-hub",
-  "endpoints": 25
+  "router_prefix": "/api/v1/data-hub"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1803.318,
+   "dur_ms": 374.589,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "hub_trajectories"
      ],
      "rowcount": 107,
-     "dur_ms": 158.838,
+     "dur_ms": 121.494,
      "is_reference": false,
      "error": null
     }
@@ -50,43 +50,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3419,
      "name": "get_carbon_price_range",
      "qual": "get_carbon_price_range",
      "file": "api/v1/routes/data_hub.py",
      "line": 296,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333C270BF0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489DA300>"
      },
      "ret": "{'count': 107, 'min': 0.0, 'max': 4027.05, 'scenarios': [{'scenario_id': '48ef80d0-2dad-4ebe-bdf0-bca7bb9ad1b9', 'region': 'World', 'unit': 'USD/tCO2', 'min_price': 212.7, 'max_price': 744.45, 'latest_price': 744.45}, {'scenario_id': '9a8c\u2026",
-     "dur_ms": 1773.436,
+     "dur_ms": 345.815,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 3420,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333C270BF0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489DA300>"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 3421,
        "name": "get_carbon_price_analytics",
        "qual": "DataHubService.get_carbon_price_analytics",
        "file": "services/data_hub_service.py",
        "line": 320,
        "args": {},
        "ret": "{'count': 107, 'min': 0.0, 'max': 4027.05, 'scenarios': [{'scenario_id': '48ef80d0-2dad-4ebe-bdf0-bca7bb9ad1b9', 'region': 'World', 'unit': 'USD/tCO2', 'min_price': 212.7, 'max_price': 744.45, 'latest_price': 744.45}, {'scenario_id': '9a8c\u2026",
-       "dur_ms": 1772.807,
+       "dur_ms": 345.375,
        "sql": [
         0
        ],
@@ -103,7 +103,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1201.117,
+   "dur_ms": 428.817,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -120,7 +120,7 @@
       "hub_sources"
      ],
      "rowcount": 20,
-     "dur_ms": 86.079,
+     "dur_ms": 77.882,
      "is_reference": false,
      "error": null
     },
@@ -131,7 +131,7 @@
       "hub_scenarios"
      ],
      "rowcount": 102,
-     "dur_ms": 325.576,
+     "dur_ms": 93.816,
      "is_reference": false,
      "error": null
     }
@@ -154,43 +154,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 3422,
      "name": "get_coverage_analytics",
      "qual": "get_coverage_analytics",
      "file": "api/v1/routes/data_hub.py",
      "line": 282,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD56AE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A70080>"
      },
      "ret": "{'by_tier': {'SourceTier.TIER_1': {'sources': 6, 'scenarios': 75}, 'SourceTier.TIER_2': {'sources': 6, 'scenarios': 8}, 'SourceTier.TIER_3': {'sources': 5, 'scenarios': 7}, 'SourceTier.TIER_4': {'sources': 1, 'scenarios': 5}, 'SourceTier.T\u2026",
-     "dur_ms": 1019.738,
+     "dur_ms": 395.154,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 3423,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD56AE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A70080>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 3424,
        "name": "get_coverage_analytics",
        "qual": "DataHubService.get_coverage_analytics",
        "file": "services/data_hub_service.py",
        "line": 259,
        "args": {},
        "ret": "{'by_tier': {'SourceTier.TIER_1': {'sources': 6, 'scenarios': 75}, 'SourceTier.TIER_2': {'sources': 6, 'scenarios': 8}, 'SourceTier.TIER_3': {'sources': 5, 'scenarios': 7}, 'SourceTier.TIER_4': {'sources': 1, 'scenarios': 5}, 'SourceTier.T\u2026",
-       "dur_ms": 1018.989,
+       "dur_ms": 394.745,
        "sql": [
         0,
         1
@@ -208,7 +208,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 817.929,
+   "dur_ms": 364.245,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -224,7 +224,7 @@
       "hub_scenarios"
      ],
      "rowcount": 71,
-     "dur_ms": 120.372,
+     "dur_ms": 123.474,
      "is_reference": false,
      "error": null
     }
@@ -244,43 +244,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 3425,
      "name": "get_temperature_range",
      "qual": "get_temperature_range",
      "file": "api/v1/routes/data_hub.py",
      "line": 289,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DB3C680>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2F90>"
      },
      "ret": "{'buckets': {'<1.5C': 1, '1.5-2.0C': 49, '2.0-3.0C': 17, '3.0-4.0C': 2, '>4.0C': 2}, 'total_with_target': 71, 'details': [{'id': '582c230e-b8ae-4665-9851-ab9fcdcd17a1', 'name': 'SSP1-1.9', 'temperature_target': 1.4, 'source_id': 'd8c791bc-\u2026",
-     "dur_ms": 784.281,
+     "dur_ms": 333.788,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 3426,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DB3C680>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2F90>"
        },
        "ret": "None",
-       "dur_ms": 0.005,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 3427,
        "name": "get_temperature_analytics",
        "qual": "DataHubService.get_temperature_analytics",
        "file": "services/data_hub_service.py",
        "line": 294,
        "args": {},
        "ret": "{'buckets': {'<1.5C': 1, '1.5-2.0C': 49, '2.0-3.0C': 17, '3.0-4.0C': 2, '>4.0C': 2}, 'total_with_target': 71, 'details': [{'id': '582c230e-b8ae-4665-9851-ab9fcdcd17a1', 'name': 'SSP1-1.9', 'temperature_target': 1.4, 'source_id': 'd8c791bc-\u2026",
-       "dur_ms": 783.869,
+       "dur_ms": 333.452,
        "sql": [
         0
        ],
@@ -297,7 +297,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 324.224,
+   "dur_ms": 265.541,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -313,7 +313,7 @@
       "hub_comparisons"
      ],
      "rowcount": 3,
-     "dur_ms": 69.423,
+     "dur_ms": 57.108,
      "is_reference": false,
      "error": null
     }
@@ -329,43 +329,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 3428,
      "name": "list_comparisons",
      "qual": "list_comparisons",
      "file": "api/v1/routes/data_hub.py",
      "line": 219,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EDE0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2990>"
      },
-     "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002333E13CE90>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CEF0>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CFE0>]",
-     "dur_ms": 284.066,
+     "ret": "[<db.models.data_hub.DataHubComparison object at 0x0000013D48A44AD0>, <db.models.data_hub.DataHubComparison object at 0x0000013D48A476E0>, <db.models.data_hub.DataHubComparison object at 0x0000013D48A47710>]",
+     "dur_ms": 235.406,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 11,
+       "id": 3429,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EDE0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2990>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 3430,
        "name": "list_comparisons",
        "qual": "DataHubService.list_comparisons",
        "file": "services/data_hub_service.py",
        "line": 139,
        "args": {},
-       "ret": "[<db.models.data_hub.DataHubComparison object at 0x000002333E13CE90>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CEF0>, <db.models.data_hub.DataHubComparison object at 0x000002333E13CFE0>]",
-       "dur_ms": 284.015,
+       "ret": "[<db.models.data_hub.DataHubComparison object at 0x0000013D48A44AD0>, <db.models.data_hub.DataHubComparison object at 0x0000013D48A476E0>, <db.models.data_hub.DataHubComparison object at 0x0000013D48A47710>]",
+       "dur_ms": 235.339,
        "sql": [
         0
        ],
@@ -382,7 +382,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Comparison not found",
-   "dur_ms": 352.524,
+   "dur_ms": 375.306,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -398,7 +398,7 @@
       "hub_comparisons"
      ],
      "rowcount": 0,
-     "dur_ms": 79.177,
+     "dur_ms": 64.424,
      "is_reference": false,
      "error": null
     }
@@ -411,28 +411,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 3431,
      "name": "get_comparison",
      "qual": "get_comparison",
      "file": "api/v1/routes/data_hub.py",
      "line": 233,
      "args": {
       "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EE70>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E2A180>"
      },
      "ret": "None",
-     "dur_ms": 315.982,
+     "dur_ms": 341.941,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 3432,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13EE70>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E2A180>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -441,7 +441,7 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 3433,
        "name": "get_comparison",
        "qual": "DataHubService.get_comparison",
        "file": "services/data_hub_service.py",
@@ -450,7 +450,7 @@
         "comparison_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 315.921,
+       "dur_ms": 341.871,
        "sql": [
         0
        ],
@@ -467,7 +467,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 360.03,
+   "dur_ms": 292.389,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -483,7 +483,7 @@
       "hub_favorites"
      ],
      "rowcount": 1,
-     "dur_ms": 70.564,
+     "dur_ms": 63.369,
      "is_reference": false,
      "error": null
     }
@@ -500,37 +500,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 3434,
      "name": "list_favorites",
      "qual": "list_favorites",
      "file": "api/v1/routes/data_hub.py",
      "line": 255,
      "args": {
       "user_id": "'default_user'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13DB50>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D9F70>"
      },
-     "ret": "[<db.models.data_hub.DataHubFavorite object at 0x000002333E13DD30>]",
-     "dur_ms": 328.112,
+     "ret": "[<db.models.data_hub.DataHubFavorite object at 0x0000013D48A44890>]",
+     "dur_ms": 261.788,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 17,
+       "id": 3435,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13DB50>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D9F70>"
        },
        "ret": "None",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 18,
+       "id": 3436,
        "name": "list_favorites",
        "qual": "DataHubService.list_favorites",
        "file": "services/data_hub_service.py",
@@ -538,8 +538,8 @@
        "args": {
         "user_id": "'default_user'"
        },
-       "ret": "[<db.models.data_hub.DataHubFavorite object at 0x000002333E13DD30>]",
-       "dur_ms": 328.004,
+       "ret": "[<db.models.data_hub.DataHubFavorite object at 0x0000013D48A44890>]",
+       "dur_ms": 261.721,
        "sql": [
         0
        ],
@@ -556,7 +556,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2694.128,
+   "dur_ms": 2454.357,
    "node_count": 53,
    "provenance": [
     "real-db"
@@ -574,7 +574,7 @@
       "hub_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 61.826,
+     "dur_ms": 64.388,
      "is_reference": false,
      "error": null
     },
@@ -585,7 +585,7 @@
       "hub_scenarios"
      ],
      "rowcount": 50,
-     "dur_ms": 66.658,
+     "dur_ms": 63.404,
      "is_reference": false,
      "error": null
     },
@@ -596,7 +596,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 40.406,
+     "dur_ms": 32.738,
      "is_reference": false,
      "error": null
     },
@@ -607,7 +607,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.199,
+     "dur_ms": 29.544,
      "is_reference": false,
      "error": null
     },
@@ -618,7 +618,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 30.742,
+     "dur_ms": 30.614,
      "is_reference": false,
      "error": null
     },
@@ -629,7 +629,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.721,
+     "dur_ms": 33.606,
      "is_reference": false,
      "error": null
     },
@@ -640,7 +640,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 37.449,
+     "dur_ms": 28.963,
      "is_reference": false,
      "error": null
     },
@@ -651,7 +651,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 42.109,
+     "dur_ms": 30.972,
      "is_reference": false,
      "error": null
     },
@@ -662,7 +662,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 35.487,
+     "dur_ms": 30.995,
      "is_reference": false,
      "error": null
     },
@@ -673,7 +673,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.021,
+     "dur_ms": 30.36,
      "is_reference": false,
      "error": null
     },
@@ -684,7 +684,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 29.184,
+     "dur_ms": 29.065,
      "is_reference": false,
      "error": null
     },
@@ -695,7 +695,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.674,
+     "dur_ms": 29.204,
      "is_reference": false,
      "error": null
     },
@@ -706,7 +706,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 35.002,
+     "dur_ms": 31.532,
      "is_reference": false,
      "error": null
     },
@@ -717,7 +717,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 36.135,
+     "dur_ms": 29.846,
      "is_reference": false,
      "error": null
     },
@@ -728,7 +728,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 31.677,
+     "dur_ms": 29.31,
      "is_reference": false,
      "error": null
     },
@@ -739,7 +739,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 42.982,
+     "dur_ms": 30.001,
      "is_reference": false,
      "error": null
     },
@@ -750,7 +750,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 32.577,
+     "dur_ms": 32.776,
      "is_reference": false,
      "error": null
     },
@@ -761,7 +761,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 31.882,
+     "dur_ms": 30.444,
      "is_reference": false,
      "error": null
     },
@@ -772,7 +772,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 34.288,
+     "dur_ms": 32.176,
      "is_reference": false,
      "error": null
     },
@@ -783,7 +783,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 30.85,
+     "dur_ms": 31.753,
      "is_reference": false,
      "error": null
     },
@@ -794,7 +794,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 33.619,
+     "dur_ms": 31.11,
      "is_reference": false,
      "error": null
     },
@@ -805,7 +805,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 30.982,
+     "dur_ms": 33.129,
      "is_reference": false,
      "error": null
     },
@@ -816,7 +816,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 30.924,
+     "dur_ms": 29.878,
      "is_reference": false,
      "error": null
     },
@@ -827,7 +827,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.412,
+     "dur_ms": 29.553,
      "is_reference": false,
      "error": null
     },
@@ -838,7 +838,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 29.49,
+     "dur_ms": 28.643,
      "is_reference": false,
      "error": null
     },
@@ -849,7 +849,7 @@
       "hub_trajectories"
      ],
      "rowcount": 24,
-     "dur_ms": 31.405,
+     "dur_ms": 31.046,
      "is_reference": false,
      "error": null
     },
@@ -860,7 +860,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 32.884,
+     "dur_ms": 31.778,
      "is_reference": false,
      "error": null
     },
@@ -871,7 +871,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 44.059,
+     "dur_ms": 29.406,
      "is_reference": false,
      "error": null
     },
@@ -882,7 +882,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 29.856,
+     "dur_ms": 29.279,
      "is_reference": false,
      "error": null
     },
@@ -893,7 +893,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 32.055,
+     "dur_ms": 33.832,
      "is_reference": false,
      "error": null
     },
@@ -904,7 +904,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.198,
+     "dur_ms": 29.155,
      "is_reference": false,
      "error": null
     },
@@ -915,7 +915,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.024,
+     "dur_ms": 30.602,
      "is_reference": false,
      "error": null
     },
@@ -926,7 +926,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 37.963,
+     "dur_ms": 30.84,
      "is_reference": false,
      "error": null
     },
@@ -937,7 +937,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.035,
+     "dur_ms": 30.064,
      "is_reference": false,
      "error": null
     },
@@ -948,7 +948,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 37.934,
+     "dur_ms": 29.982,
      "is_reference": false,
      "error": null
     },
@@ -959,7 +959,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 33.323,
+     "dur_ms": 29.058,
      "is_reference": false,
      "error": null
     },
@@ -970,7 +970,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 31.202,
+     "dur_ms": 29.48,
      "is_reference": false,
      "error": null
     },
@@ -981,7 +981,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.595,
+     "dur_ms": 29.73,
      "is_reference": false,
      "error": null
     },
@@ -992,7 +992,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 32.414,
+     "dur_ms": 30.069,
      "is_reference": false,
      "error": null
     },
@@ -1003,7 +1003,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 32.214,
+     "dur_ms": 31.363,
      "is_reference": false,
      "error": null
     },
@@ -1014,7 +1014,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 32.357,
+     "dur_ms": 30.327,
      "is_reference": false,
      "error": null
     },
@@ -1025,7 +1025,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.292,
+     "dur_ms": 28.858,
      "is_reference": false,
      "error": null
     },
@@ -1036,7 +1036,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 35.46,
+     "dur_ms": 29.372,
      "is_reference": false,
      "error": null
     },
@@ -1047,7 +1047,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.941,
+     "dur_ms": 31.017,
      "is_reference": false,
      "error": null
     },
@@ -1058,7 +1058,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 34.127,
+     "dur_ms": 30.948,
      "is_reference": false,
      "error": null
     },
@@ -1069,7 +1069,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 36.505,
+     "dur_ms": 31.882,
      "is_reference": false,
      "error": null
     },
@@ -1080,7 +1080,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 33.633,
+     "dur_ms": 30.776,
      "is_reference": false,
      "error": null
     },
@@ -1091,7 +1091,7 @@
       "hub_trajectories"
      ],
      "rowcount": 20,
-     "dur_ms": 30.342,
+     "dur_ms": 29.713,
      "is_reference": false,
      "error": null
     },
@@ -1102,7 +1102,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 36.12,
+     "dur_ms": 29.589,
      "is_reference": false,
      "error": null
     },
@@ -1113,7 +1113,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 28.327,
+     "dur_ms": 31.346,
      "is_reference": false,
      "error": null
     },
@@ -1124,7 +1124,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 30.601,
+     "dur_ms": 32.707,
      "is_reference": false,
      "error": null
     },
@@ -1135,7 +1135,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 37.054,
+     "dur_ms": 29.284,
      "is_reference": false,
      "error": null
     },
@@ -1146,7 +1146,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 38.921,
+     "dur_ms": 29.654,
      "is_reference": false,
      "error": null
     },
@@ -1157,7 +1157,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 32.913,
+     "dur_ms": 31.287,
      "is_reference": false,
      "error": null
     },
@@ -1168,7 +1168,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 37.071,
+     "dur_ms": 30.33,
      "is_reference": false,
      "error": null
     },
@@ -1179,7 +1179,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 37.66,
+     "dur_ms": 29.201,
      "is_reference": false,
      "error": null
     },
@@ -1190,7 +1190,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.214,
+     "dur_ms": 28.337,
      "is_reference": false,
      "error": null
     },
@@ -1201,7 +1201,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 36.729,
+     "dur_ms": 30.572,
      "is_reference": false,
      "error": null
     },
@@ -1212,7 +1212,7 @@
       "hub_trajectories"
      ],
      "rowcount": 9,
-     "dur_ms": 31.899,
+     "dur_ms": 34.149,
      "is_reference": false,
      "error": null
     },
@@ -1223,7 +1223,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.375,
+     "dur_ms": 29.709,
      "is_reference": false,
      "error": null
     },
@@ -1234,7 +1234,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 39.92,
+     "dur_ms": 29.095,
      "is_reference": false,
      "error": null
     },
@@ -1245,7 +1245,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 31.682,
+     "dur_ms": 30.035,
      "is_reference": false,
      "error": null
     },
@@ -1256,7 +1256,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 35.171,
+     "dur_ms": 31.117,
      "is_reference": false,
      "error": null
     },
@@ -1267,7 +1267,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 37.192,
+     "dur_ms": 36.424,
      "is_reference": false,
      "error": null
     },
@@ -1278,7 +1278,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 38.342,
+     "dur_ms": 29.459,
      "is_reference": false,
      "error": null
     },
@@ -1289,7 +1289,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.114,
+     "dur_ms": 29.78,
      "is_reference": false,
      "error": null
     },
@@ -1300,7 +1300,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.442,
+     "dur_ms": 29.485,
      "is_reference": false,
      "error": null
     }
@@ -1325,7 +1325,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 19,
+     "id": 3437,
      "name": "list_scenarios",
      "qual": "list_scenarios",
      "file": "api/v1/routes/data_hub.py",
@@ -1335,30 +1335,30 @@
       "category": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13CFB0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E24B0>"
      },
      "ret": "{'scenarios': [DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', d\u2026",
-     "dur_ms": 2660.548,
+     "dur_ms": 2420.996,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 20,
+       "id": 3438,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E13CFB0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E24B0>"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 21,
+       "id": 3439,
        "name": "list_scenarios",
        "qual": "DataHubService.list_scenarios",
        "file": "services/data_hub_service.py",
@@ -1369,8 +1369,8 @@
         "limit": "50",
         "offset": "0"
        },
-       "ret": "([<db.models.data_hub.DataHubScenario object at 0x000002333E11CC20>, <db.models.data_hub.DataHubScenario object at 0x000002333E11C890>, <db.models.data_hub.DataHubScenario object at 0x000002333E11CCB0>, <db.models.data_hub.DataHubScenario \u2026",
-       "dur_ms": 344.545,
+       "ret": "([<db.models.data_hub.DataHubScenario object at 0x0000013D48A91130>, <db.models.data_hub.DataHubScenario object at 0x0000013D48A91190>, <db.models.data_hub.DataHubScenario object at 0x0000013D48A91250>, <db.models.data_hub.DataHubScenario \u2026",
+       "dur_ms": 344.835,
        "sql": [
         0,
         1
@@ -1379,16 +1379,16 @@
        "children": []
       },
       {
-       "id": 22,
+       "id": 3440,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CC20>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91130>"
        },
        "ret": "DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', description='FEE\u2026",
-       "dur_ms": 80.268,
+       "dur_ms": 69.017,
        "sql": [
         2,
         3
@@ -1397,16 +1397,16 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 3441,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C890>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91190>"
        },
        "ret": "DataHubScenarioResponse(id='f38206c0-482d-485e-886f-04167c84817b', source_id='ab41ff6d-c6e0-4119-93f5-ac9253486654', source_name='International Renewable Energy Agency', external_id='irena_15c', name='1.5C Pathway', display_name='IRENA 1.5\u2026",
-       "dur_ms": 67.081,
+       "dur_ms": 65.944,
        "sql": [
         4,
         5
@@ -1415,16 +1415,16 @@
        "children": []
       },
       {
-       "id": 24,
+       "id": 3442,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CCB0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91250>"
        },
        "ret": "DataHubScenarioResponse(id='47526e8d-bfcf-4857-8e8a-58b5371bd05c', source_id='195466a6-7dcb-4fe1-93a7-9a2a873a255c', source_name='TIAM-ECN', external_id='tiam_2c', name='2C Scenario (TIAM)', display_name='TIAM-ECN 2C', description='ETSAP T\u2026",
-       "dur_ms": 82.418,
+       "dur_ms": 61.821,
        "sql": [
         6,
         7
@@ -1433,16 +1433,16 @@
        "children": []
       },
       {
-       "id": 25,
+       "id": 3443,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C800>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91010>"
        },
        "ret": "DataHubScenarioResponse(id='81184d3a-8137-404e-b698-8d6e22ba4910', source_id='b6be7213-2787-45e5-b2f1-cf3d849c0ad0', source_name='GCAM', external_id='gcam_2c', name='2C Target (GCAM)', display_name='GCAM 2C', description='GCAM 2\u00b0C policy s\u2026",
-       "dur_ms": 67.658,
+       "dur_ms": 63.669,
        "sql": [
         8,
         9
@@ -1451,16 +1451,16 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 3444,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C7D0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A911F0>"
        },
        "ret": "DataHubScenarioResponse(id='ea25c079-f05a-46c9-a310-fe98b0d60e06', source_id='d1ef24b9-83bd-4b85-930c-b69e7e719212', source_name='Japan Strategic Energy Plan', external_id='jp_sep6', name='6th Strategic Energy Plan', display_name='Japan SE\u2026",
-       "dur_ms": 63.618,
+       "dur_ms": 60.019,
        "sql": [
         10,
         11
@@ -1469,16 +1469,16 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 3445,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C920>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91370>"
        },
        "ret": "DataHubScenarioResponse(id='6a600c98-6334-43c5-a945-085c2f667f2f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_1.5C-2100', name='ADVANCE_2020_1.5C-2100', displ\u2026",
-       "dur_ms": 73.524,
+       "dur_ms": 63.056,
        "sql": [
         12,
         13
@@ -1487,16 +1487,16 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 3446,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C770>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A915B0>"
        },
        "ret": "DataHubScenarioResponse(id='a7ce5ade-fda9-49fc-b7b2-1a2e502821f3', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_Med2C', name='ADVANCE_2020_Med2C', display_name=\u2026",
-       "dur_ms": 34.57,
+       "dur_ms": 30.239,
        "sql": [
         14
        ],
@@ -1504,16 +1504,16 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 3447,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C830>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A913D0>"
        },
        "ret": "DataHubScenarioResponse(id='54c653c6-7e51-492f-a006-17a078683ff2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_WB2C', name='ADVANCE_2020_WB2C', display_name='A\u2026",
-       "dur_ms": 44.894,
+       "dur_ms": 30.946,
        "sql": [
         15
        ],
@@ -1521,16 +1521,16 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 3448,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB30>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91430>"
        },
        "ret": "DataHubScenarioResponse(id='8ebbe960-236e-446e-9aa1-5115c66cb25c', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Med2C', name='ADVANCE_2030_Med2C', display_name=\u2026",
-       "dur_ms": 34.303,
+       "dur_ms": 33.97,
        "sql": [
         16
        ],
@@ -1538,16 +1538,16 @@
        "children": []
       },
       {
-       "id": 31,
+       "id": 3449,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB60>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A914F0>"
        },
        "ret": "DataHubScenarioResponse(id='fdff2913-ad3f-4081-ad8b-b9702ec6cb48', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Price1.5C', name='ADVANCE_2030_Price1.5C', displ\u2026",
-       "dur_ms": 33.08,
+       "dur_ms": 31.547,
        "sql": [
         17
        ],
@@ -1555,16 +1555,16 @@
        "children": []
       },
       {
-       "id": 32,
+       "id": 3450,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CBF0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A912B0>"
        },
        "ret": "DataHubScenarioResponse(id='1e41bb6f-8254-4436-a657-498722a9451d', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_WB2C', name='ADVANCE_2030_WB2C', display_name='A\u2026",
-       "dur_ms": 36.543,
+       "dur_ms": 34.775,
        "sql": [
         18
        ],
@@ -1572,16 +1572,16 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 3451,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CBC0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91490>"
        },
        "ret": "DataHubScenarioResponse(id='952fbd2d-d6ac-4d03-af36-2162a07cb81a', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_INDC', name='ADVANCE_INDC', display_name='ADVANCE_IND\u2026",
-       "dur_ms": 32.228,
+       "dur_ms": 32.994,
        "sql": [
         19
        ],
@@ -1589,16 +1589,16 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 3452,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11C9B0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91610>"
        },
        "ret": "DataHubScenarioResponse(id='f38e0825-c4d8-451d-8a3a-eb2645d4738f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_NoPolicy', name='ADVANCE_NoPolicy', display_name='ADV\u2026",
-       "dur_ms": 35.968,
+       "dur_ms": 32.456,
        "sql": [
         20
        ],
@@ -1606,16 +1606,16 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 3453,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CC50>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91820>"
        },
        "ret": "DataHubScenarioResponse(id='c0d7baaa-349f-4be8-b5b9-3499e9ac7ad2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_Reference', name='ADVANCE_Reference', display_name='A\u2026",
-       "dur_ms": 32.467,
+       "dur_ms": 34.711,
        "sql": [
         21
        ],
@@ -1623,16 +1623,16 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 3454,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CA40>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91670>"
        },
        "ret": "DataHubScenarioResponse(id='5fa2375a-1f4f-4a79-942d-e018bac483f6', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_lowren', name='AEO Low Renewables Cost', display_name='US AEO\u2026",
-       "dur_ms": 64.587,
+       "dur_ms": 61.627,
        "sql": [
         22,
         23
@@ -1641,16 +1641,16 @@
        "children": []
       },
       {
-       "id": 37,
+       "id": 3455,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB00>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A916D0>"
        },
        "ret": "DataHubScenarioResponse(id='f4913e92-6e39-4a1d-91fc-054489494f93', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_ref', name='AEO Reference Case', display_name='US AEO Referen\u2026",
-       "dur_ms": 32.7,
+       "dur_ms": 29.533,
        "sql": [
         24
        ],
@@ -1658,16 +1658,16 @@
        "children": []
       },
       {
-       "id": 38,
+       "id": 3456,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CAA0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91790>"
        },
        "ret": "DataHubScenarioResponse(id='830ba862-af6c-4afc-b841-53a576de2130', source_id='d44d85b1-f110-4199-afed-aef21441bad7', source_name='International Energy Agency', external_id='iea_aps', name='Announced Pledges Scenario', display_name='IEA APS\u2026",
-       "dur_ms": 70.348,
+       "dur_ms": 65.025,
        "sql": [
         25,
         26
@@ -1676,16 +1676,16 @@
        "children": []
       },
       {
-       "id": 39,
+       "id": 3457,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CAD0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91550>"
        },
        "ret": "DataHubScenarioResponse(id='e08a88a0-d17c-475f-9d9f-8fcc54017fb2', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_aviation', name='Aviation Decarbonization', display_name='IEA Aviation\u2026",
-       "dur_ms": 76.763,
+       "dur_ms": 60.365,
        "sql": [
         27,
         28
@@ -1694,16 +1694,16 @@
        "children": []
       },
       {
-       "id": 40,
+       "id": 3458,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CB90>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91730>"
        },
        "ret": "DataHubScenarioResponse(id='3eb14397-9aa2-495b-9e0e-478e88738334', source_id='2b8735bf-a044-44c5-936e-2404e65c648e', source_name='UK Carbon Budget (CCC)', external_id='uk_6cb_balanced', name='Balanced Net Zero', display_name='UK 6CB Balanc\u2026",
-       "dur_ms": 64.229,
+       "dur_ms": 64.724,
        "sql": [
         29,
         30
@@ -1712,16 +1712,16 @@
        "children": []
       },
       {
-       "id": 41,
+       "id": 3459,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CDD0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A918B0>"
        },
        "ret": "DataHubScenarioResponse(id='9a8ca79f-203d-4964-8afe-c83ef4c3ea3b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Below 2\u00b0C', name='Below 2\u00b0C', \u2026",
-       "dur_ms": 73.855,
+       "dur_ms": 65.03,
        "sql": [
         31,
         32
@@ -1730,16 +1730,16 @@
        "children": []
       },
       {
-       "id": 42,
+       "id": 3460,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE00>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A919D0>"
        },
        "ret": "DataHubScenarioResponse(id='2037dee8-0d63-4e4d-9a5c-c6a15a4de0c1', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Below 2\u00b0C', name='Below 2\u00b0C', display_\u2026",
-       "dur_ms": 33.87,
+       "dur_ms": 31.363,
        "sql": [
         33
        ],
@@ -1747,16 +1747,16 @@
        "children": []
       },
       {
-       "id": 43,
+       "id": 3461,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CF50>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A918E0>"
        },
        "ret": "DataHubScenarioResponse(id='567ef7e9-2788-41c8-a973-967dff2eb10d', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Below 2\u00b0C', name='B\u2026",
-       "dur_ms": 39.44,
+       "dur_ms": 31.145,
        "sql": [
         34
        ],
@@ -1764,16 +1764,16 @@
        "children": []
       },
       {
-       "id": 44,
+       "id": 3462,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CEC0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91910>"
        },
        "ret": "DataHubScenarioResponse(id='cad7d13a-e0b7-4ab0-ba37-54acbede873e', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_below_2c', name='Below 2C', display_name=None, \u2026",
-       "dur_ms": 34.296,
+       "dur_ms": 29.747,
        "sql": [
         35
        ],
@@ -1781,16 +1781,16 @@
        "children": []
       },
       {
-       "id": 45,
+       "id": 3463,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE60>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91970>"
        },
        "ret": "DataHubScenarioResponse(id='47ab6cc1-eb0e-4a69-87af-4e58dfce926f', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi', name='CD-LINKS_NPi', disp\u2026",
-       "dur_ms": 65.128,
+       "dur_ms": 60.869,
        "sql": [
         36,
         37
@@ -1799,16 +1799,16 @@
        "children": []
       },
       {
-       "id": 46,
+       "id": 3464,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CE90>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A917F0>"
        },
        "ret": "DataHubScenarioResponse(id='b8829a7d-ecec-45af-8ba1-ddcdaaaa6b43', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi2020_1600', name='CD-LINKS_N\u2026",
-       "dur_ms": 33.928,
+       "dur_ms": 32.052,
        "sql": [
         38
        ],
@@ -1816,16 +1816,16 @@
        "children": []
       },
       {
-       "id": 47,
+       "id": 3465,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CA70>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91940>"
        },
        "ret": "DataHubScenarioResponse(id='6463c291-8c46-4f37-92f1-e730b5494a5b', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_cement', name='Cement Technology Roadmap', display_name='IEA Cement Ro\u2026",
-       "dur_ms": 33.454,
+       "dur_ms": 32.489,
        "sql": [
         39
        ],
@@ -1833,16 +1833,16 @@
        "children": []
       },
       {
-       "id": 48,
+       "id": 3466,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CEF0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91A00>"
        },
        "ret": "DataHubScenarioResponse(id='ef2ecba6-6e5b-47ce-b105-847752d3bf9c', source_id='7780a1ff-54cb-42bf-8682-356473973dfe', source_name='China Energy Scenarios', external_id='cn_carbon_peak', name='China Carbon Peak 2030', display_name='China Pea\u2026",
-       "dur_ms": 68.028,
+       "dur_ms": 62.974,
        "sql": [
         40,
         41
@@ -1851,16 +1851,16 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 3467,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CDA0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91B20>"
        },
        "ret": "DataHubScenarioResponse(id='f727b9d4-bcc6-4812-8e6b-6b43b2306348', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp126', name='CMIP6 SSP1-2.6', display_name='CMIP6 SSP1-2.6', d\u2026",
-       "dur_ms": 69.137,
+       "dur_ms": 62.381,
        "sql": [
         42,
         43
@@ -1869,16 +1869,16 @@
        "children": []
       },
       {
-       "id": 50,
+       "id": 3468,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CD70>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91A30>"
        },
        "ret": "DataHubScenarioResponse(id='bf843f87-17e0-45eb-8a2f-44e0f55c8c55', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp245', name='CMIP6 SSP2-4.5', display_name='CMIP6 SSP2-4.5', d\u2026",
-       "dur_ms": 35.905,
+       "dur_ms": 32.684,
        "sql": [
         44
        ],
@@ -1886,16 +1886,16 @@
        "children": []
       },
       {
-       "id": 51,
+       "id": 3469,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D070>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91A60>"
        },
        "ret": "DataHubScenarioResponse(id='259559bb-fc91-4919-9cf4-23a487ffaab2', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp585', name='CMIP6 SSP5-8.5', display_name='CMIP6 SSP5-8.5', d\u2026",
-       "dur_ms": 38.571,
+       "dur_ms": 33.463,
        "sql": [
         45
        ],
@@ -1903,16 +1903,16 @@
        "children": []
       },
       {
-       "id": 52,
+       "id": 3470,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D100>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91AC0>"
        },
        "ret": "DataHubScenarioResponse(id='966e2a7d-90d7-4a27-8cfc-349eb843800a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|CO_Bridge', name='CO_Bridge', display_name\u2026",
-       "dur_ms": 34.61,
+       "dur_ms": 31.455,
        "sql": [
         46
        ],
@@ -1920,16 +1920,16 @@
        "children": []
       },
       {
-       "id": 53,
+       "id": 3471,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D130>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A919A0>"
        },
        "ret": "DataHubScenarioResponse(id='57cc30e9-b21e-4fbd-90a6-f016a3e70b78', source_id='196d7022-18df-431d-9e82-3f76a41301c9', source_name='Carbon Pricing Dashboard', external_id='wb_current_trend', name='Current Carbon Price Trends', display_name='\u2026",
-       "dur_ms": 68.806,
+       "dur_ms": 61.11,
        "sql": [
         47,
         48
@@ -1938,16 +1938,16 @@
        "children": []
       },
       {
-       "id": 54,
+       "id": 3472,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D1F0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91A90>"
        },
        "ret": "DataHubScenarioResponse(id='1b8bab4e-c8bc-46e7-85a3-a17ade4a95de', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_current_policies', name='Current Policies', dis\u2026",
-       "dur_ms": 29.103,
+       "dur_ms": 32.815,
        "sql": [
         49
        ],
@@ -1955,16 +1955,16 @@
        "children": []
       },
       {
-       "id": 55,
+       "id": 3473,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CF80>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91B50>"
        },
        "ret": "DataHubScenarioResponse(id='2ff7debd-9333-436e-b000-481ccaec456a', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Current Policies', name='Curre\u2026",
-       "dur_ms": 32.749,
+       "dur_ms": 33.981,
        "sql": [
         50
        ],
@@ -1972,16 +1972,16 @@
        "children": []
       },
       {
-       "id": 56,
+       "id": 3474,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CFE0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91C70>"
        },
        "ret": "DataHubScenarioResponse(id='1ae611b7-f19d-4690-a982-9e6fd8bb4fbc', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Current Policies', name='Current Polic\u2026",
-       "dur_ms": 38.823,
+       "dur_ms": 31.529,
        "sql": [
         51
        ],
@@ -1989,16 +1989,16 @@
        "children": []
       },
       {
-       "id": 57,
+       "id": 3475,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D0D0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91B80>"
        },
        "ret": "DataHubScenarioResponse(id='a50d2ae7-7571-4153-8f2a-2eb08d9a55bd', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Current Policies', \u2026",
-       "dur_ms": 40.738,
+       "dur_ms": 31.277,
        "sql": [
         52
        ],
@@ -2006,16 +2006,16 @@
        "children": []
       },
       {
-       "id": 58,
+       "id": 3476,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D370>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91BB0>"
        },
        "ret": "DataHubScenarioResponse(id='fe819f37-e850-4653-bd56-04a6bd12f37b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Delayed transition', name='Del\u2026",
-       "dur_ms": 35.252,
+       "dur_ms": 34.756,
        "sql": [
         53
        ],
@@ -2023,16 +2023,16 @@
        "children": []
       },
       {
-       "id": 59,
+       "id": 3477,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D3D0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91C10>"
        },
        "ret": "DataHubScenarioResponse(id='ed20924b-3cc4-4b73-966b-f28d827669d2', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Delayed transition', name='Delayed tra\u2026",
-       "dur_ms": 39.65,
+       "dur_ms": 33.16,
        "sql": [
         54
        ],
@@ -2040,16 +2040,16 @@
        "children": []
       },
       {
-       "id": 60,
+       "id": 3478,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11CFB0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91AF0>"
        },
        "ret": "DataHubScenarioResponse(id='9c74b5c8-75e7-435e-87ec-78c77c98bfde', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Delayed transition'\u2026",
-       "dur_ms": 39.343,
+       "dur_ms": 31.016,
        "sql": [
         55
        ],
@@ -2057,16 +2057,16 @@
        "children": []
       },
       {
-       "id": 61,
+       "id": 3479,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D430>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91BE0>"
        },
        "ret": "DataHubScenarioResponse(id='ce7ae98e-04c0-42f6-ae9f-24a47dc175ef', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_delayed_transition', name='Delayed Transition',\u2026",
-       "dur_ms": 33.459,
+       "dur_ms": 28.99,
        "sql": [
         56
        ],
@@ -2074,16 +2074,16 @@
        "children": []
       },
       {
-       "id": 62,
+       "id": 3480,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D280>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91CA0>"
        },
        "ret": "DataHubScenarioResponse(id='e4f2caf8-1656-40ca-89af-399ac838b019', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_divergent_net_zero', name='Divergent Net Zero',\u2026",
-       "dur_ms": 37.506,
+       "dur_ms": 31.223,
        "sql": [
         57
        ],
@@ -2091,16 +2091,16 @@
        "children": []
       },
       {
-       "id": 63,
+       "id": 3481,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D2E0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91DC0>"
        },
        "ret": "DataHubScenarioResponse(id='b55e9fae-0a55-4bdb-9a16-f5b51f32b5c6', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Baseline', name='EMF30_Baseline', \u2026",
-       "dur_ms": 33.053,
+       "dur_ms": 35.239,
        "sql": [
         58
        ],
@@ -2108,16 +2108,16 @@
        "children": []
       },
       {
-       "id": 64,
+       "id": 3482,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D4F0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91CD0>"
        },
        "ret": "DataHubScenarioResponse(id='c5c52b49-d76e-44ce-8298-ac1f2ac5c887', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster', name='EMF30_Slo\u2026",
-       "dur_ms": 35.376,
+       "dur_ms": 30.436,
        "sql": [
         59
        ],
@@ -2125,16 +2125,16 @@
        "children": []
       },
       {
-       "id": 65,
+       "id": 3483,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D5E0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91D00>"
        },
        "ret": "DataHubScenarioResponse(id='aa194a5f-82ff-4baa-ab61-e7212cc4af8a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster+SLCF+HFC', name='\u2026",
-       "dur_ms": 41.298,
+       "dur_ms": 29.745,
        "sql": [
         60
        ],
@@ -2142,16 +2142,16 @@
        "children": []
       },
       {
-       "id": 66,
+       "id": 3484,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D250>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91D60>"
        },
        "ret": "DataHubScenarioResponse(id='50a8dfa3-7c98-489f-a37f-05757e936249', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_1000', name='EN_INDCi2030_100\u2026",
-       "dur_ms": 33.093,
+       "dur_ms": 30.688,
        "sql": [
         61
        ],
@@ -2159,16 +2159,16 @@
        "children": []
       },
       {
-       "id": 67,
+       "id": 3485,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D640>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91C40>"
        },
        "ret": "DataHubScenarioResponse(id='8f304f76-73e4-4f00-ba38-f775516d3d2e', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1000f_COV_NDCp', \u2026",
-       "dur_ms": 37.071,
+       "dur_ms": 32.081,
        "sql": [
         62
        ],
@@ -2176,16 +2176,16 @@
        "children": []
       },
       {
-       "id": 68,
+       "id": 3486,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D9A0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91D30>"
        },
        "ret": "DataHubScenarioResponse(id='a3b16578-8fb8-4467-8c88-751783540ec1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1800f', name='EN_\u2026",
-       "dur_ms": 38.835,
+       "dur_ms": 37.752,
        "sql": [
         63
        ],
@@ -2193,16 +2193,16 @@
        "children": []
       },
       {
-       "id": 69,
+       "id": 3487,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D4C0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91DF0>"
        },
        "ret": "DataHubScenarioResponse(id='0b61229f-aea7-4c44-911d-81319bf1820d', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f', name='EN_INDCi2030_25\u2026",
-       "dur_ms": 39.11,
+       "dur_ms": 30.137,
        "sql": [
         64
        ],
@@ -2210,16 +2210,16 @@
        "children": []
       },
       {
-       "id": 70,
+       "id": 3488,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D850>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91D90>"
        },
        "ret": "DataHubScenarioResponse(id='7ef2a143-d626-4ad8-bf0f-44f2ad10fafb', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f_NDCp', name='EN_INDCi20\u2026",
-       "dur_ms": 34.98,
+       "dur_ms": 31.933,
        "sql": [
         65
        ],
@@ -2227,16 +2227,16 @@
        "children": []
       },
       {
-       "id": 71,
+       "id": 3489,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E11D910>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48A91F40>"
        },
        "ret": "DataHubScenarioResponse(id='6482245c-c952-4956-b4a9-0e40817e5ac1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_600f_NDCp', name=\u2026",
-       "dur_ms": 33.23,
+       "dur_ms": 30.861,
        "sql": [
         66
        ],
@@ -2253,7 +2253,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 600.434,
+   "dur_ms": 274.155,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -2269,7 +2269,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 93.01,
+     "dur_ms": 56.557,
      "is_reference": false,
      "error": null
     }
@@ -2282,28 +2282,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 72,
+     "id": 3490,
      "name": "get_scenario",
      "qual": "get_scenario",
      "file": "api/v1/routes/data_hub.py",
      "line": 174,
      "args": {
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD86F00>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0B60>"
      },
      "ret": "None",
-     "dur_ms": 566.985,
+     "dur_ms": 243.804,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 73,
+       "id": 3491,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD86F00>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0B60>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -2312,7 +2312,7 @@
        "children": []
       },
       {
-       "id": 74,
+       "id": 3492,
        "name": "get_scenario",
        "qual": "DataHubService.get_scenario",
        "file": "services/data_hub_service.py",
@@ -2321,7 +2321,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 566.926,
+       "dur_ms": 243.747,
        "sql": [
         0
        ],
@@ -2338,7 +2338,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Scenario not found",
-   "dur_ms": 333.775,
+   "dur_ms": 292.33,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -2354,7 +2354,7 @@
       "hub_scenarios"
      ],
      "rowcount": 0,
-     "dur_ms": 72.855,
+     "dur_ms": 57.224,
      "is_reference": false,
      "error": null
     }
@@ -2369,7 +2369,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 75,
+     "id": 3493,
      "name": "get_scenario_trajectories",
      "qual": "get_scenario_trajectories",
      "file": "api/v1/routes/data_hub.py",
@@ -2378,21 +2378,21 @@
       "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "variable": "None",
       "region": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0170>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0050>"
      },
      "ret": "None",
-     "dur_ms": 295.715,
+     "dur_ms": 263.363,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 76,
+       "id": 3494,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0170>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0050>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -2401,7 +2401,7 @@
        "children": []
       },
       {
-       "id": 77,
+       "id": 3495,
        "name": "get_scenario",
        "qual": "DataHubService.get_scenario",
        "file": "services/data_hub_service.py",
@@ -2410,7 +2410,7 @@
         "scenario_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 295.654,
+       "dur_ms": 263.305,
        "sql": [
         0
        ],
@@ -2427,7 +2427,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2407.308,
+   "dur_ms": 279.787,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -2443,7 +2443,7 @@
       "hub_sources"
      ],
      "rowcount": 20,
-     "dur_ms": 1907.997,
+     "dur_ms": 61.727,
      "is_reference": false,
      "error": null
     }
@@ -2460,28 +2460,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 78,
+     "id": 3496,
      "name": "list_sources",
      "qual": "list_sources",
      "file": "api/v1/routes/data_hub.py",
      "line": 67,
      "args": {
       "active_only": "False",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0260>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC1010>"
      },
-     "ret": "[<db.models.data_hub.DataHubSource object at 0x000002333E1B1220>, <db.models.data_hub.DataHubSource object at 0x000002333E1B1640>, <db.models.data_hub.DataHubSource object at 0x000002333E1B14F0>, <db.models.data_hub.DataHubSource object at\u2026",
-     "dur_ms": 2350.621,
+     "ret": "[<db.models.data_hub.DataHubSource object at 0x0000013D48AC1670>, <db.models.data_hub.DataHubSource object at 0x0000013D48AC14F0>, <db.models.data_hub.DataHubSource object at 0x0000013D48AC1A60>, <db.models.data_hub.DataHubSource object at\u2026",
+     "dur_ms": 249.955,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 79,
+       "id": 3497,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B0260>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC1010>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -2490,7 +2490,7 @@
        "children": []
       },
       {
-       "id": 80,
+       "id": 3498,
        "name": "list_sources",
        "qual": "DataHubService.list_sources",
        "file": "services/data_hub_service.py",
@@ -2498,8 +2498,8 @@
        "args": {
         "active_only": "False"
        },
-       "ret": "[<db.models.data_hub.DataHubSource object at 0x000002333E1B1220>, <db.models.data_hub.DataHubSource object at 0x000002333E1B1640>, <db.models.data_hub.DataHubSource object at 0x000002333E1B14F0>, <db.models.data_hub.DataHubSource object at\u2026",
-       "dur_ms": 2350.507,
+       "ret": "[<db.models.data_hub.DataHubSource object at 0x0000013D48AC1670>, <db.models.data_hub.DataHubSource object at 0x0000013D48AC14F0>, <db.models.data_hub.DataHubSource object at 0x0000013D48AC1A60>, <db.models.data_hub.DataHubSource object at\u2026",
+       "dur_ms": 249.901,
        "sql": [
         0
        ],
@@ -2516,7 +2516,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Source not found",
-   "dur_ms": 309.472,
+   "dur_ms": 296.505,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -2532,7 +2532,7 @@
       "hub_sources"
      ],
      "rowcount": 0,
-     "dur_ms": 63.112,
+     "dur_ms": 57.302,
      "is_reference": false,
      "error": null
     }
@@ -2545,37 +2545,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 81,
+     "id": 3499,
      "name": "get_source",
      "qual": "get_source",
      "file": "api/v1/routes/data_hub.py",
      "line": 74,
      "args": {
       "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0170>"
      },
      "ret": "None",
-     "dur_ms": 280.149,
+     "dur_ms": 267.22,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 82,
+       "id": 3500,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC0170>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 83,
+       "id": 3501,
        "name": "get_source",
        "qual": "DataHubService.get_source",
        "file": "services/data_hub_service.py",
@@ -2584,7 +2584,7 @@
         "source_id": "'550e8400-e29b-41d4-a716-446655440001'"
        },
        "ret": "None",
-       "dur_ms": 279.91,
+       "dur_ms": 267.173,
        "sql": [
         0
        ],
@@ -2601,7 +2601,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 550.95,
+   "dur_ms": 495.355,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -2621,7 +2621,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 61.625,
+     "dur_ms": 60.775,
      "is_reference": false,
      "error": null
     },
@@ -2632,7 +2632,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.765,
+     "dur_ms": 30.616,
      "is_reference": false,
      "error": null
     },
@@ -2643,7 +2643,7 @@
       "hub_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 36.449,
+     "dur_ms": 31.872,
      "is_reference": false,
      "error": null
     },
@@ -2654,7 +2654,7 @@
       "hub_trajectories"
      ],
      "rowcount": 1,
-     "dur_ms": 47.154,
+     "dur_ms": 38.793,
      "is_reference": false,
      "error": null
     },
@@ -2665,7 +2665,7 @@
       "hub_comparisons"
      ],
      "rowcount": 1,
-     "dur_ms": 32.352,
+     "dur_ms": 31.385,
      "is_reference": false,
      "error": null
     },
@@ -2676,7 +2676,7 @@
       "hub_sources"
      ],
      "rowcount": 6,
-     "dur_ms": 33.634,
+     "dur_ms": 30.505,
      "is_reference": false,
      "error": null
     },
@@ -2687,7 +2687,7 @@
       "hub_sync_logs"
      ],
      "rowcount": 5,
-     "dur_ms": 44.197,
+     "dur_ms": 36.427,
      "is_reference": false,
      "error": null
     }
@@ -2711,43 +2711,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 84,
+     "id": 3502,
      "name": "get_hub_stats",
      "qual": "get_hub_stats",
      "file": "api/v1/routes/data_hub.py",
      "line": 56,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD866C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC06B0>"
      },
      "ret": "{'total_sources': 20, 'active_sources': 20, 'total_scenarios': 102, 'total_trajectories': 884, 'total_comparisons': 3, 'sources_by_tier': {'SourceTier.TIER_1': 6, 'SourceTier.TIER_3': 5, 'SourceTier.TIER_2': 6, 'SourceTier.TIER_6': 1, 'Sou\u2026",
-     "dur_ms": 517.747,
+     "dur_ms": 463.273,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 85,
+       "id": 3503,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD866C0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC06B0>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 86,
+       "id": 3504,
        "name": "get_stats",
        "qual": "DataHubService.get_stats",
        "file": "services/data_hub_service.py",
        "line": 213,
        "args": {},
        "ret": "{'total_sources': 20, 'active_sources': 20, 'total_scenarios': 102, 'total_trajectories': 884, 'total_comparisons': 3, 'sources_by_tier': {'SourceTier.TIER_1': 6, 'SourceTier.TIER_3': 5, 'SourceTier.TIER_2': 6, 'SourceTier.TIER_6': 1, 'Sou\u2026",
-       "dur_ms": 517.644,
+       "dur_ms": 463.216,
        "sql": [
         0,
         1,
@@ -2770,7 +2770,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 321.162,
+   "dur_ms": 286.833,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -2786,7 +2786,7 @@
       "hub_sync_logs"
      ],
      "rowcount": 20,
-     "dur_ms": 70.032,
+     "dur_ms": 70.389,
      "is_reference": false,
      "error": null
     }
@@ -2804,7 +2804,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 87,
+     "id": 3505,
      "name": "get_sync_logs",
      "qual": "get_sync_logs",
      "file": "api/v1/routes/data_hub.py",
@@ -2812,30 +2812,30 @@
      "args": {
       "source_id": "None",
       "limit": "20",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC1220>"
      },
-     "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20F0>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B2180>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20C0>, <db.models.data_hub.DataHubSyncLog objec\u2026",
-     "dur_ms": 291.65,
+     "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC2120>, <db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC22A0>, <db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC2750>, <db.models.data_hub.DataHubSyncLog objec\u2026",
+     "dur_ms": 257.493,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 88,
+       "id": 3506,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333DD85FD0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC1220>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 89,
+       "id": 3507,
        "name": "get_sync_logs",
        "qual": "DataHubService.get_sync_logs",
        "file": "services/data_hub_service.py",
@@ -2844,8 +2844,8 @@
         "source_id": "None",
         "limit": "20"
        },
-       "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20F0>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B2180>, <db.models.data_hub.DataHubSyncLog object at 0x000002333E1B20C0>, <db.models.data_hub.DataHubSyncLog objec\u2026",
-       "dur_ms": 291.562,
+       "ret": "[<db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC2120>, <db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC22A0>, <db.models.data_hub.DataHubSyncLog object at 0x0000013D48AC2750>, <db.models.data_hub.DataHubSyncLog objec\u2026",
+       "dur_ms": 257.436,
        "sql": [
         0
        ],
@@ -2862,7 +2862,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 594.113,
+   "dur_ms": 294.42,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -2878,7 +2878,7 @@
       "hub_trajectories"
      ],
      "rowcount": 62,
-     "dur_ms": 64.179,
+     "dur_ms": 59.26,
      "is_reference": false,
      "error": null
     }
@@ -2898,43 +2898,43 @@
    "truncated": [],
    "tree": [
     {
-     "id": 90,
+     "id": 3508,
      "name": "get_available_variables",
      "qual": "get_available_variables",
      "file": "api/v1/routes/data_hub.py",
      "line": 303,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B16D0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC13D0>"
      },
      "ret": "[{'variable': 'GDP|PPP', 'unit': 'billion US$2010/yr', 'count': 17}, {'variable': 'Energy Intensity', 'unit': 'MJ/USD', 'count': 5}, {'variable': 'Emissions|CO2|Power', 'unit': 'MtCO2e/yr', 'count': 1}, {'variable': 'Emissions|CO2', 'unit'\u2026",
-     "dur_ms": 564.98,
+     "dur_ms": 262.996,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 91,
+       "id": 3509,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B16D0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC13D0>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 92,
+       "id": 3510,
        "name": "get_available_variables",
        "qual": "DataHubService.get_available_variables",
        "file": "services/data_hub_service.py",
        "line": 351,
        "args": {},
        "ret": "[{'variable': 'GDP|PPP', 'unit': 'billion US$2010/yr', 'count': 17}, {'variable': 'Energy Intensity', 'unit': 'MJ/USD', 'count': 5}, {'variable': 'Emissions|CO2|Power', 'unit': 'MtCO2e/yr', 'count': 1}, {'variable': 'Emissions|CO2', 'unit'\u2026",
-       "dur_ms": 564.681,
+       "dur_ms": 262.912,
        "sql": [
         0
        ],
@@ -2951,7 +2951,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) is not present in table \"hub_scenarios\".\n\n[SQL: INSERT INTO hub_comparisons (id, name, description, base_scenario_id, compare_scenario_ids, variable_filter, region_filte",
-   "dur_ms": 1281.909,
+   "dur_ms": 271.822,
    "node_count": 6,
    "provenance": [
     "db-empty"
@@ -2967,7 +2967,7 @@
       "hub_comparisons"
      ],
      "rowcount": null,
-     "dur_ms": 354.275,
+     "dur_ms": 59.307,
      "is_reference": false,
      "error": "ForeignKeyViolation('insert or update on table \"hub_comparisons\" violates foreign key constraint \"hub_comparisons_base_scenario_id_fkey\"\\nDETAIL:  Key (base_scenario_id)=(TEST_body_base_scenario_id) \u2026"
     }
@@ -2980,37 +2980,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 93,
+     "id": 3511,
      "name": "create_comparison",
      "qual": "create_comparison",
      "file": "api/v1/routes/data_hub.py",
      "line": 226,
      "args": {
       "body": "DataHubComparisonCreate(name='TEST_body_name', description=None, base_scenario_id='TEST_body_base_scenario_id', compare_scenario_ids=[], variable_filter=[], region_filter=[], created_by=None)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B1790>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC3710>"
      },
      "ret": "None",
-     "dur_ms": 1280.878,
+     "dur_ms": 271.088,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 94,
+       "id": 3512,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B1790>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC3710>"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 95,
+       "id": 3513,
        "name": "create_comparison",
        "qual": "DataHubService.create_comparison",
        "file": "services/data_hub_service.py",
@@ -3019,47 +3019,47 @@
         "data": "{'name': 'TEST_body_name', 'description': None, 'base_scenario_id': 'TEST_body_base_scenario_id', 'compare_scenario_ids': [], 'variable_filter': [], 'region_filter': [], 'created_by': None}"
        },
        "ret": "None",
-       "dur_ms": 1280.703,
+       "dur_ms": 271.015,
        "sql": [
         0
        ],
        "error": null,
        "children": [
         {
-         "id": 96,
+         "id": 3514,
          "name": "<lambda>",
          "qual": "DataHubComparison.<lambda>",
          "file": "db/models/data_hub.py",
          "line": 134,
          "args": {},
-         "ret": "'0956ba25-83c4-4cc7-8595-33f2382d04dd'",
-         "dur_ms": 0.074,
+         "ret": "'eaea23e7-5deb-4a30-97c6-443cfbfb6c1b'",
+         "dur_ms": 0.027,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 97,
+         "id": 3515,
          "name": "<lambda>",
          "qual": "DataHubComparison.<lambda>",
          "file": "db/models/data_hub.py",
          "line": 145,
          "args": {},
-         "ret": "datetime.datetime(2026, 6, 30, 18, 0, 28, 739385, tzinfo=datetime.timezone.utc)",
-         "dur_ms": 0.011,
+         "ret": "datetime.datetime(2026, 7, 5, 23, 11, 25, 543256, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 98,
+         "id": 3516,
          "name": "<lambda>",
          "qual": "DataHubComparison.<lambda>",
          "file": "db/models/data_hub.py",
          "line": 146,
          "args": {},
-         "ret": "datetime.datetime(2026, 6, 30, 18, 0, 28, 739385, tzinfo=datetime.timezone.utc)",
-         "dur_ms": 0.003,
+         "ret": "datetime.datetime(2026, 7, 5, 23, 11, 25, 543256, tzinfo=datetime.timezone.utc)",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -3130,7 +3130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 8681.611,
+   "dur_ms": 2361.783,
    "node_count": 53,
    "provenance": [
     "real-db"
@@ -3148,7 +3148,7 @@
       "hub_scenarios"
      ],
      "rowcount": 1,
-     "dur_ms": 64.687,
+     "dur_ms": 55.96,
      "is_reference": false,
      "error": null
     },
@@ -3159,7 +3159,7 @@
       "hub_scenarios"
      ],
      "rowcount": 50,
-     "dur_ms": 66.18,
+     "dur_ms": 61.879,
      "is_reference": false,
      "error": null
     },
@@ -3170,7 +3170,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 31.297,
+     "dur_ms": 27.989,
      "is_reference": false,
      "error": null
     },
@@ -3181,7 +3181,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 30.461,
+     "dur_ms": 31.05,
      "is_reference": false,
      "error": null
     },
@@ -3192,7 +3192,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 30.958,
+     "dur_ms": 28.399,
      "is_reference": false,
      "error": null
     },
@@ -3203,7 +3203,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 41.009,
+     "dur_ms": 28.867,
      "is_reference": false,
      "error": null
     },
@@ -3214,7 +3214,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 35.301,
+     "dur_ms": 29.509,
      "is_reference": false,
      "error": null
     },
@@ -3225,7 +3225,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 60.263,
+     "dur_ms": 28.415,
      "is_reference": false,
      "error": null
     },
@@ -3236,7 +3236,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 699.248,
+     "dur_ms": 29.543,
      "is_reference": false,
      "error": null
     },
@@ -3247,7 +3247,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 77.881,
+     "dur_ms": 28.068,
      "is_reference": false,
      "error": null
     },
@@ -3258,7 +3258,7 @@
       "hub_trajectories"
      ],
      "rowcount": 3,
-     "dur_ms": 435.951,
+     "dur_ms": 29.574,
      "is_reference": false,
      "error": null
     },
@@ -3269,7 +3269,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 31.668,
+     "dur_ms": 27.966,
      "is_reference": false,
      "error": null
     },
@@ -3280,7 +3280,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 157.415,
+     "dur_ms": 30.036,
      "is_reference": false,
      "error": null
     },
@@ -3291,7 +3291,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 50.179,
+     "dur_ms": 28.427,
      "is_reference": false,
      "error": null
     },
@@ -3302,7 +3302,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 34.452,
+     "dur_ms": 28.656,
      "is_reference": false,
      "error": null
     },
@@ -3313,7 +3313,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 37.268,
+     "dur_ms": 28.756,
      "is_reference": false,
      "error": null
     },
@@ -3324,7 +3324,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 34.544,
+     "dur_ms": 28.389,
      "is_reference": false,
      "error": null
     },
@@ -3335,7 +3335,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 32.685,
+     "dur_ms": 28.055,
      "is_reference": false,
      "error": null
     },
@@ -3346,7 +3346,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 35.576,
+     "dur_ms": 29.472,
      "is_reference": false,
      "error": null
     },
@@ -3357,7 +3357,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 35.687,
+     "dur_ms": 31.224,
      "is_reference": false,
      "error": null
     },
@@ -3368,7 +3368,7 @@
       "hub_trajectories"
      ],
      "rowcount": 5,
-     "dur_ms": 32.696,
+     "dur_ms": 29.822,
      "is_reference": false,
      "error": null
     },
@@ -3379,7 +3379,7 @@
       "hub_trajectories"
      ],
      "rowcount": 6,
-     "dur_ms": 34.505,
+     "dur_ms": 30.239,
      "is_reference": false,
      "error": null
     },
@@ -3390,7 +3390,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 35.942,
+     "dur_ms": 31.083,
      "is_reference": false,
      "error": null
     },
@@ -3401,7 +3401,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 42.26,
+     "dur_ms": 29.15,
      "is_reference": false,
      "error": null
     },
@@ -3412,7 +3412,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 34.119,
+     "dur_ms": 30.855,
      "is_reference": false,
      "error": null
     },
@@ -3423,7 +3423,7 @@
       "hub_trajectories"
      ],
      "rowcount": 24,
-     "dur_ms": 35.157,
+     "dur_ms": 30.818,
      "is_reference": false,
      "error": null
     },
@@ -3434,7 +3434,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.08,
+     "dur_ms": 27.751,
      "is_reference": false,
      "error": null
     },
@@ -3445,7 +3445,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 289.008,
+     "dur_ms": 29.823,
      "is_reference": false,
      "error": null
     },
@@ -3456,7 +3456,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 181.376,
+     "dur_ms": 28.708,
      "is_reference": false,
      "error": null
     },
@@ -3467,7 +3467,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 42.11,
+     "dur_ms": 28.492,
      "is_reference": false,
      "error": null
     },
@@ -3478,7 +3478,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 548.371,
+     "dur_ms": 27.719,
      "is_reference": false,
      "error": null
     },
@@ -3489,7 +3489,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 884.756,
+     "dur_ms": 28.65,
      "is_reference": false,
      "error": null
     },
@@ -3500,7 +3500,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 38.874,
+     "dur_ms": 27.528,
      "is_reference": false,
      "error": null
     },
@@ -3511,7 +3511,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 185.24,
+     "dur_ms": 28.497,
      "is_reference": false,
      "error": null
     },
@@ -3522,7 +3522,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 168.645,
+     "dur_ms": 31.277,
      "is_reference": false,
      "error": null
     },
@@ -3533,7 +3533,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 30.246,
+     "dur_ms": 28.537,
      "is_reference": false,
      "error": null
     },
@@ -3544,7 +3544,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 34.051,
+     "dur_ms": 31.596,
      "is_reference": false,
      "error": null
     },
@@ -3555,7 +3555,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 34.903,
+     "dur_ms": 27.706,
      "is_reference": false,
      "error": null
     },
@@ -3566,7 +3566,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 30.599,
+     "dur_ms": 35.394,
      "is_reference": false,
      "error": null
     },
@@ -3577,7 +3577,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 419.32,
+     "dur_ms": 28.41,
      "is_reference": false,
      "error": null
     },
@@ -3588,7 +3588,7 @@
       "hub_trajectories"
      ],
      "rowcount": 4,
-     "dur_ms": 258.207,
+     "dur_ms": 30.568,
      "is_reference": false,
      "error": null
     },
@@ -3599,7 +3599,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 84.661,
+     "dur_ms": 28.105,
      "is_reference": false,
      "error": null
     },
@@ -3610,7 +3610,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 167.835,
+     "dur_ms": 31.165,
      "is_reference": false,
      "error": null
     },
@@ -3621,7 +3621,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 167.165,
+     "dur_ms": 28.076,
      "is_reference": false,
      "error": null
     },
@@ -3632,7 +3632,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 42.937,
+     "dur_ms": 28.68,
      "is_reference": false,
      "error": null
     },
@@ -3643,7 +3643,7 @@
       "hub_trajectories"
      ],
      "rowcount": 28,
-     "dur_ms": 277.253,
+     "dur_ms": 28.976,
      "is_reference": false,
      "error": null
     },
@@ -3654,7 +3654,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 458.009,
+     "dur_ms": 29.708,
      "is_reference": false,
      "error": null
     },
@@ -3665,7 +3665,7 @@
       "hub_trajectories"
      ],
      "rowcount": 20,
-     "dur_ms": 275.447,
+     "dur_ms": 28.988,
      "is_reference": false,
      "error": null
     },
@@ -3676,7 +3676,7 @@
       "hub_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 276.547,
+     "dur_ms": 31.4,
      "is_reference": false,
      "error": null
     },
@@ -3687,7 +3687,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 50.783,
+     "dur_ms": 29.013,
      "is_reference": false,
      "error": null
     },
@@ -3698,7 +3698,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 177.056,
+     "dur_ms": 32.595,
      "is_reference": false,
      "error": null
     },
@@ -3709,7 +3709,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 49.6,
+     "dur_ms": 30.24,
      "is_reference": false,
      "error": null
     },
@@ -3720,7 +3720,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 224.774,
+     "dur_ms": 27.962,
      "is_reference": false,
      "error": null
     },
@@ -3731,7 +3731,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 45.701,
+     "dur_ms": 29.924,
      "is_reference": false,
      "error": null
     },
@@ -3742,7 +3742,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 43.591,
+     "dur_ms": 30.445,
      "is_reference": false,
      "error": null
     },
@@ -3753,7 +3753,7 @@
       "hub_trajectories"
      ],
      "rowcount": 19,
-     "dur_ms": 155.982,
+     "dur_ms": 28.929,
      "is_reference": false,
      "error": null
     },
@@ -3764,7 +3764,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 41.052,
+     "dur_ms": 27.66,
      "is_reference": false,
      "error": null
     },
@@ -3775,7 +3775,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.602,
+     "dur_ms": 27.807,
      "is_reference": false,
      "error": null
     },
@@ -3786,7 +3786,7 @@
       "hub_trajectories"
      ],
      "rowcount": 9,
-     "dur_ms": 37.4,
+     "dur_ms": 27.802,
      "is_reference": false,
      "error": null
     },
@@ -3797,7 +3797,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.816,
+     "dur_ms": 32.248,
      "is_reference": false,
      "error": null
     },
@@ -3808,7 +3808,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 34.186,
+     "dur_ms": 32.133,
      "is_reference": false,
      "error": null
     },
@@ -3819,7 +3819,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 33.017,
+     "dur_ms": 27.978,
      "is_reference": false,
      "error": null
     },
@@ -3830,7 +3830,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 44.809,
+     "dur_ms": 44.894,
      "is_reference": false,
      "error": null
     },
@@ -3841,7 +3841,7 @@
       "hub_trajectories"
      ],
      "rowcount": 10,
-     "dur_ms": 31.977,
+     "dur_ms": 29.938,
      "is_reference": false,
      "error": null
     },
@@ -3852,7 +3852,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.347,
+     "dur_ms": 37.689,
      "is_reference": false,
      "error": null
     },
@@ -3863,7 +3863,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.368,
+     "dur_ms": 28.381,
      "is_reference": false,
      "error": null
     },
@@ -3874,7 +3874,7 @@
       "hub_trajectories"
      ],
      "rowcount": 0,
-     "dur_ms": 32.112,
+     "dur_ms": 28.059,
      "is_reference": false,
      "error": null
     }
@@ -3894,37 +3894,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 99,
+     "id": 3517,
      "name": "search_scenarios",
      "qual": "search_scenarios",
      "file": "api/v1/routes/data_hub.py",
      "line": 165,
      "args": {
       "body": "DataHubScenarioSearch(query=None, source_ids=[], categories=[], tags=[], regions=[], variables=[], temperature_min=None, temperature_max=None, limit=50, offset=0)",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B2990>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488690D0>"
      },
      "ret": "{'scenarios': [DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', d\u2026",
-     "dur_ms": 8646.882,
+     "dur_ms": 2330.897,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 100,
+       "id": 3518,
        "name": "__init__",
        "qual": "DataHubService.__init__",
        "file": "services/data_hub_service.py",
        "line": 19,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002333E1B2990>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488690D0>"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 101,
+       "id": 3519,
        "name": "search_scenarios",
        "qual": "DataHubService.search_scenarios",
        "file": "services/data_hub_service.py",
@@ -3932,8 +3932,8 @@
        "args": {
         "params": "{'query': None, 'source_ids': [], 'categories': [], 'tags': [], 'regions': [], 'variables': [], 'temperature_min': None, 'temperature_max': None, 'limit': 50, 'offset': 0}"
        },
-       "ret": "([<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDD0>, <db.models.data_hub.DataHubScenario object at 0x000002333E1CCDA0>, <db.models.data_hub.DataHubScenario object at 0x000002333E1CCD70>, <db.models.data_hub.DataHubScenario \u2026",
-       "dur_ms": 362.104,
+       "ret": "([<db.models.data_hub.DataHubScenario object at 0x0000013D48B08590>, <db.models.data_hub.DataHubScenario object at 0x0000013D48B08560>, <db.models.data_hub.DataHubScenario object at 0x0000013D48B08530>, <db.models.data_hub.DataHubScenario \u2026",
+       "dur_ms": 323.584,
        "sql": [
         0,
         1
@@ -3942,16 +3942,16 @@
        "children": []
       },
       {
-       "id": 102,
+       "id": 3520,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDD0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08590>"
        },
        "ret": "DataHubScenarioResponse(id='ad7292d6-72cd-4fcd-82a9-1d09fa6163ef', source_id='2fa839cc-5462-48d1-9420-c4d1f951a94c', source_name='WITCH (FEEM/CMCC)', external_id='witch_15c', name='1.5C (WITCH)', display_name='WITCH 1.5C', description='FEE\u2026",
-       "dur_ms": 65.19,
+       "dur_ms": 60.515,
        "sql": [
         2,
         3
@@ -3960,16 +3960,16 @@
        "children": []
       },
       {
-       "id": 103,
+       "id": 3521,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCDA0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08560>"
        },
        "ret": "DataHubScenarioResponse(id='f38206c0-482d-485e-886f-04167c84817b', source_id='ab41ff6d-c6e0-4119-93f5-ac9253486654', source_name='International Renewable Energy Agency', external_id='irena_15c', name='1.5C Pathway', display_name='IRENA 1.5\u2026",
-       "dur_ms": 75.186,
+       "dur_ms": 59.15,
        "sql": [
         4,
         5
@@ -3978,16 +3978,16 @@
        "children": []
       },
       {
-       "id": 104,
+       "id": 3522,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCD70>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08530>"
        },
        "ret": "DataHubScenarioResponse(id='47526e8d-bfcf-4857-8e8a-58b5371bd05c', source_id='195466a6-7dcb-4fe1-93a7-9a2a873a255c', source_name='TIAM-ECN', external_id='tiam_2c', name='2C Scenario (TIAM)', display_name='TIAM-ECN 2C', description='ETSAP T\u2026",
-       "dur_ms": 98.489,
+       "dur_ms": 60.017,
        "sql": [
         6,
         7
@@ -3996,16 +3996,16 @@
        "children": []
       },
       {
-       "id": 105,
+       "id": 3523,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CC920>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08500>"
        },
        "ret": "DataHubScenarioResponse(id='81184d3a-8137-404e-b698-8d6e22ba4910', source_id='b6be7213-2787-45e5-b2f1-cf3d849c0ad0', source_name='GCAM', external_id='gcam_2c', name='2C Target (GCAM)', display_name='GCAM 2C', description='GCAM 2\u00b0C policy s\u2026",
-       "dur_ms": 780.371,
+       "dur_ms": 59.348,
        "sql": [
         8,
         9
@@ -4014,16 +4014,16 @@
        "children": []
       },
       {
-       "id": 106,
+       "id": 3524,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD910>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B084D0>"
        },
        "ret": "DataHubScenarioResponse(id='ea25c079-f05a-46c9-a310-fe98b0d60e06', source_id='d1ef24b9-83bd-4b85-930c-b69e7e719212', source_name='Japan Strategic Energy Plan', external_id='jp_sep6', name='6th Strategic Energy Plan', display_name='Japan SE\u2026",
-       "dur_ms": 470.051,
+       "dur_ms": 59.358,
        "sql": [
         10,
         11
@@ -4032,16 +4032,16 @@
        "children": []
       },
       {
-       "id": 107,
+       "id": 3525,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD310>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B084A0>"
        },
        "ret": "DataHubScenarioResponse(id='6a600c98-6334-43c5-a945-085c2f667f2f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_1.5C-2100', name='ADVANCE_2020_1.5C-2100', displ\u2026",
-       "dur_ms": 211.34,
+       "dur_ms": 59.928,
        "sql": [
         12,
         13
@@ -4050,16 +4050,16 @@
        "children": []
       },
       {
-       "id": 108,
+       "id": 3526,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD220>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08470>"
        },
        "ret": "DataHubScenarioResponse(id='a7ce5ade-fda9-49fc-b7b2-1a2e502821f3', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_Med2C', name='ADVANCE_2020_Med2C', display_name=\u2026",
-       "dur_ms": 35.963,
+       "dur_ms": 29.607,
        "sql": [
         14
        ],
@@ -4067,16 +4067,16 @@
        "children": []
       },
       {
-       "id": 109,
+       "id": 3527,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD1F0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08440>"
        },
        "ret": "DataHubScenarioResponse(id='54c653c6-7e51-492f-a006-17a078683ff2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2020_WB2C', name='ADVANCE_2020_WB2C', display_name='A\u2026",
-       "dur_ms": 39.312,
+       "dur_ms": 31.154,
        "sql": [
         15
        ],
@@ -4084,16 +4084,16 @@
        "children": []
       },
       {
-       "id": 110,
+       "id": 3528,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD1C0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08410>"
        },
        "ret": "DataHubScenarioResponse(id='8ebbe960-236e-446e-9aa1-5115c66cb25c', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Med2C', name='ADVANCE_2030_Med2C', display_name=\u2026",
-       "dur_ms": 36.165,
+       "dur_ms": 29.99,
        "sql": [
         16
        ],
@@ -4101,16 +4101,16 @@
        "children": []
       },
       {
-       "id": 111,
+       "id": 3529,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD190>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B083E0>"
        },
        "ret": "DataHubScenarioResponse(id='fdff2913-ad3f-4081-ad8b-b9702ec6cb48', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_Price1.5C', name='ADVANCE_2030_Price1.5C', displ\u2026",
-       "dur_ms": 33.942,
+       "dur_ms": 29.336,
        "sql": [
         17
        ],
@@ -4118,16 +4118,16 @@
        "children": []
       },
       {
-       "id": 112,
+       "id": 3530,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD160>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B083B0>"
        },
        "ret": "DataHubScenarioResponse(id='1e41bb6f-8254-4436-a657-498722a9451d', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_2030_WB2C', name='ADVANCE_2030_WB2C', display_name='A\u2026",
-       "dur_ms": 37.691,
+       "dur_ms": 30.459,
        "sql": [
         18
        ],
@@ -4135,16 +4135,16 @@
        "children": []
       },
       {
-       "id": 113,
+       "id": 3531,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD130>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08380>"
        },
        "ret": "DataHubScenarioResponse(id='952fbd2d-d6ac-4d03-af36-2162a07cb81a', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_INDC', name='ADVANCE_INDC', display_name='ADVANCE_IND\u2026",
-       "dur_ms": 37.359,
+       "dur_ms": 32.111,
        "sql": [
         19
        ],
@@ -4152,16 +4152,16 @@
        "children": []
       },
       {
-       "id": 114,
+       "id": 3532,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD100>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08350>"
        },
        "ret": "DataHubScenarioResponse(id='f38e0825-c4d8-451d-8a3a-eb2645d4738f', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_NoPolicy', name='ADVANCE_NoPolicy', display_name='ADV\u2026",
-       "dur_ms": 34.148,
+       "dur_ms": 30.601,
        "sql": [
         20
        ],
@@ -4169,16 +4169,16 @@
        "children": []
       },
       {
-       "id": 115,
+       "id": 3533,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD0D0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08320>"
        },
        "ret": "DataHubScenarioResponse(id='c0d7baaa-349f-4be8-b5b9-3499e9ac7ad2', source_id='9afe34ea-821f-4968-878b-8fbbf646c507', source_name='IAMC 1.5\u00b0C Scenarios', external_id='AIM/CGE 2.0|ADVANCE_Reference', name='ADVANCE_Reference', display_name='A\u2026",
-       "dur_ms": 36.556,
+       "dur_ms": 31.322,
        "sql": [
         21
        ],
@@ -4186,16 +4186,16 @@
        "children": []
       },
       {
-       "id": 116,
+       "id": 3534,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD0A0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B082F0>"
        },
        "ret": "DataHubScenarioResponse(id='5fa2375a-1f4f-4a79-942d-e018bac483f6', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_lowren', name='AEO Low Renewables Cost', display_name='US AEO\u2026",
-       "dur_ms": 80.899,
+       "dur_ms": 62.064,
        "sql": [
         22,
         23
@@ -4204,16 +4204,16 @@
        "children": []
       },
       {
-       "id": 117,
+       "id": 3535,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD070>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B082C0>"
        },
        "ret": "DataHubScenarioResponse(id='f4913e92-6e39-4a1d-91fc-054489494f93', source_id='895219e8-500e-43ce-b3e7-99e282128071', source_name='US Annual Energy Outlook', external_id='eia_aeo_ref', name='AEO Reference Case', display_name='US AEO Referen\u2026",
-       "dur_ms": 36.496,
+       "dur_ms": 32.097,
        "sql": [
         24
        ],
@@ -4221,16 +4221,16 @@
        "children": []
       },
       {
-       "id": 118,
+       "id": 3536,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD040>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08290>"
        },
        "ret": "DataHubScenarioResponse(id='830ba862-af6c-4afc-b841-53a576de2130', source_id='d44d85b1-f110-4199-afed-aef21441bad7', source_name='International Energy Agency', external_id='iea_aps', name='Announced Pledges Scenario', display_name='IEA APS\u2026",
-       "dur_ms": 71.542,
+       "dur_ms": 60.596,
        "sql": [
         25,
         26
@@ -4239,16 +4239,16 @@
        "children": []
       },
       {
-       "id": 119,
+       "id": 3537,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD010>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08260>"
        },
        "ret": "DataHubScenarioResponse(id='e08a88a0-d17c-475f-9d9f-8fcc54017fb2', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_aviation', name='Aviation Decarbonization', display_name='IEA Aviation\u2026",
-       "dur_ms": 473.847,
+       "dur_ms": 60.183,
        "sql": [
         27,
         28
@@ -4257,16 +4257,16 @@
        "children": []
       },
       {
-       "id": 120,
+       "id": 3538,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCFE0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08230>"
        },
        "ret": "DataHubScenarioResponse(id='3eb14397-9aa2-495b-9e0e-478e88738334', source_id='2b8735bf-a044-44c5-936e-2404e65c648e', source_name='UK Carbon Budget (CCC)', external_id='uk_6cb_balanced', name='Balanced Net Zero', display_name='UK 6CB Balanc\u2026",
-       "dur_ms": 593.404,
+       "dur_ms": 58.139,
        "sql": [
         29,
         30
@@ -4275,16 +4275,16 @@
        "children": []
       },
       {
-       "id": 121,
+       "id": 3539,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCFB0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08200>"
        },
        "ret": "DataHubScenarioResponse(id='9a8ca79f-203d-4964-8afe-c83ef4c3ea3b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Below 2\u00b0C', name='Below 2\u00b0C', \u2026",
-       "dur_ms": 926.877,
+       "dur_ms": 58.238,
        "sql": [
         31,
         32
@@ -4293,16 +4293,16 @@
        "children": []
       },
       {
-       "id": 122,
+       "id": 3540,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF80>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B081D0>"
        },
        "ret": "DataHubScenarioResponse(id='2037dee8-0d63-4e4d-9a5c-c6a15a4de0c1', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Below 2\u00b0C', name='Below 2\u00b0C', display_\u2026",
-       "dur_ms": 187.428,
+       "dur_ms": 29.995,
        "sql": [
         33
        ],
@@ -4310,16 +4310,16 @@
        "children": []
       },
       {
-       "id": 123,
+       "id": 3541,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF50>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08620>"
        },
        "ret": "DataHubScenarioResponse(id='567ef7e9-2788-41c8-a973-967dff2eb10d', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Below 2\u00b0C', name='B\u2026",
-       "dur_ms": 170.736,
+       "dur_ms": 32.552,
        "sql": [
         34
        ],
@@ -4327,16 +4327,16 @@
        "children": []
       },
       {
-       "id": 124,
+       "id": 3542,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCF20>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B085F0>"
        },
        "ret": "DataHubScenarioResponse(id='cad7d13a-e0b7-4ab0-ba37-54acbede873e', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_below_2c', name='Below 2C', display_name=None, \u2026",
-       "dur_ms": 31.22,
+       "dur_ms": 29.273,
        "sql": [
         35
        ],
@@ -4344,16 +4344,16 @@
        "children": []
       },
       {
-       "id": 125,
+       "id": 3543,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCEF0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B085C0>"
        },
        "ret": "DataHubScenarioResponse(id='47ab6cc1-eb0e-4a69-87af-4e58dfce926f', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi', name='CD-LINKS_NPi', disp\u2026",
-       "dur_ms": 71.099,
+       "dur_ms": 61.225,
        "sql": [
         36,
         37
@@ -4362,16 +4362,16 @@
        "children": []
       },
       {
-       "id": 126,
+       "id": 3544,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCEC0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08170>"
        },
        "ret": "DataHubScenarioResponse(id='b8829a7d-ecec-45af-8ba1-ddcdaaaa6b43', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|CD-LINKS_NPi2020_1600', name='CD-LINKS_N\u2026",
-       "dur_ms": 32.019,
+       "dur_ms": 36.387,
        "sql": [
         38
        ],
@@ -4379,16 +4379,16 @@
        "children": []
       },
       {
-       "id": 127,
+       "id": 3545,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE90>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B0A630>"
        },
        "ret": "DataHubScenarioResponse(id='6463c291-8c46-4f37-92f1-e730b5494a5b', source_id='f15b6f23-969a-490c-895b-3851ad9ab9de', source_name='IEA Sector Roadmaps', external_id='iea_cement', name='Cement Technology Roadmap', display_name='IEA Cement Ro\u2026",
-       "dur_ms": 420.942,
+       "dur_ms": 29.191,
        "sql": [
         39
        ],
@@ -4396,16 +4396,16 @@
        "children": []
       },
       {
-       "id": 128,
+       "id": 3546,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE60>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08E00>"
        },
        "ret": "DataHubScenarioResponse(id='ef2ecba6-6e5b-47ce-b105-847752d3bf9c', source_id='7780a1ff-54cb-42bf-8682-356473973dfe', source_name='China Energy Scenarios', external_id='cn_carbon_peak', name='China Carbon Peak 2030', display_name='China Pea\u2026",
-       "dur_ms": 347.977,
+       "dur_ms": 60.563,
        "sql": [
         40,
         41
@@ -4414,16 +4414,16 @@
        "children": []
       },
       {
-       "id": 129,
+       "id": 3547,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD2B0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08D10>"
        },
        "ret": "DataHubScenarioResponse(id='f727b9d4-bcc6-4812-8e6b-6b43b2306348', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp126', name='CMIP6 SSP1-2.6', display_name='CMIP6 SSP1-2.6', d\u2026",
-       "dur_ms": 339.33,
+       "dur_ms": 62.615,
        "sql": [
         42,
         43
@@ -4432,16 +4432,16 @@
        "children": []
       },
       {
-       "id": 130,
+       "id": 3548,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD280>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08CE0>"
        },
        "ret": "DataHubScenarioResponse(id='bf843f87-17e0-45eb-8a2f-44e0f55c8c55', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp245', name='CMIP6 SSP2-4.5', display_name='CMIP6 SSP2-4.5', d\u2026",
-       "dur_ms": 45.251,
+       "dur_ms": 29.979,
        "sql": [
         44
        ],
@@ -4449,16 +4449,16 @@
        "children": []
       },
       {
-       "id": 131,
+       "id": 3549,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD250>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08CB0>"
        },
        "ret": "DataHubScenarioResponse(id='259559bb-fc91-4919-9cf4-23a487ffaab2', source_id='d6674efd-f945-4e9b-beb0-52a1e5b085cb', source_name='Physical Risk Scenarios', external_id='cmip6_ssp585', name='CMIP6 SSP5-8.5', display_name='CMIP6 SSP5-8.5', d\u2026",
-       "dur_ms": 279.939,
+       "dur_ms": 30.288,
        "sql": [
         45
        ],
@@ -4466,16 +4466,16 @@
        "children": []
       },
       {
-       "id": 132,
+       "id": 3550,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CCE00>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08C80>"
        },
        "ret": "DataHubScenarioResponse(id='966e2a7d-90d7-4a27-8cfc-349eb843800a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|CO_Bridge', name='CO_Bridge', display_name\u2026",
-       "dur_ms": 458.847,
+       "dur_ms": 30.705,
        "sql": [
         46
        ],
@@ -4483,16 +4483,16 @@
        "children": []
       },
       {
-       "id": 133,
+       "id": 3551,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD970>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08C50>"
        },
        "ret": "DataHubScenarioResponse(id='57cc30e9-b21e-4fbd-90a6-f016a3e70b78', source_id='196d7022-18df-431d-9e82-3f76a41301c9', source_name='Carbon Pricing Dashboard', external_id='wb_current_trend', name='Current Carbon Price Trends', display_name='\u2026",
-       "dur_ms": 555.6,
+       "dur_ms": 62.843,
        "sql": [
         47,
         48
@@ -4501,16 +4501,16 @@
        "children": []
       },
       {
-       "id": 134,
+       "id": 3552,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD7F0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08C20>"
        },
        "ret": "DataHubScenarioResponse(id='1b8bab4e-c8bc-46e7-85a3-a17ade4a95de', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_current_policies', name='Current Policies', dis\u2026",
-       "dur_ms": 51.578,
+       "dur_ms": 29.914,
        "sql": [
         49
        ],
@@ -4518,16 +4518,16 @@
        "children": []
       },
       {
-       "id": 135,
+       "id": 3553,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD700>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08BF0>"
        },
        "ret": "DataHubScenarioResponse(id='2ff7debd-9333-436e-b000-481ccaec456a', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Current Policies', name='Curre\u2026",
-       "dur_ms": 178.599,
+       "dur_ms": 34.154,
        "sql": [
         50
        ],
@@ -4535,16 +4535,16 @@
        "children": []
       },
       {
-       "id": 136,
+       "id": 3554,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD6D0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08BC0>"
        },
        "ret": "DataHubScenarioResponse(id='1ae611b7-f19d-4690-a982-9e6fd8bb4fbc', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Current Policies', name='Current Polic\u2026",
-       "dur_ms": 51.185,
+       "dur_ms": 31.91,
        "sql": [
         51
        ],
@@ -4552,16 +4552,16 @@
        "children": []
       },
       {
-       "id": 137,
+       "id": 3555,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD6A0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08B90>"
        },
        "ret": "DataHubScenarioResponse(id='a50d2ae7-7571-4153-8f2a-2eb08d9a55bd', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Current Policies', \u2026",
-       "dur_ms": 227.657,
+       "dur_ms": 29.371,
        "sql": [
         52
        ],
@@ -4569,16 +4569,16 @@
        "children": []
       },
       {
-       "id": 138,
+       "id": 3556,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD670>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08B60>"
        },
        "ret": "DataHubScenarioResponse(id='fe819f37-e850-4653-bd56-04a6bd12f37b', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='REMIND-MAgPIE 3.3-4.8|Delayed transition', name='Del\u2026",
-       "dur_ms": 47.678,
+       "dur_ms": 31.025,
        "sql": [
         53
        ],
@@ -4586,16 +4586,16 @@
        "children": []
       },
       {
-       "id": 139,
+       "id": 3557,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD640>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08B30>"
        },
        "ret": "DataHubScenarioResponse(id='ed20924b-3cc4-4b73-966b-f28d827669d2', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='GCAM 6.0 NGFS|Delayed transition', name='Delayed tra\u2026",
-       "dur_ms": 45.475,
+       "dur_ms": 31.771,
        "sql": [
         54
        ],
@@ -4603,16 +4603,16 @@
        "children": []
       },
       {
-       "id": 140,
+       "id": 3558,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD610>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08B00>"
        },
        "ret": "DataHubScenarioResponse(id='9c74b5c8-75e7-435e-87ec-78c77c98bfde', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='MESSAGEix-GLOBIOM 2.0-M-R12-NGFS|Delayed transition'\u2026",
-       "dur_ms": 157.719,
+       "dur_ms": 30.766,
        "sql": [
         55
        ],
@@ -4620,16 +4620,16 @@
        "children": []
       },
       {
-       "id": 141,
+       "id": 3559,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD5E0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08AD0>"
        },
        "ret": "DataHubScenarioResponse(id='ce7ae98e-04c0-42f6-ae9f-24a47dc175ef', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_delayed_transition', name='Delayed Transition',\u2026",
-       "dur_ms": 41.952,
+       "dur_ms": 28.895,
        "sql": [
         56
        ],
@@ -4637,16 +4637,16 @@
        "children": []
       },
       {
-       "id": 142,
+       "id": 3560,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD5B0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08AA0>"
        },
        "ret": "DataHubScenarioResponse(id='e4f2caf8-1656-40ca-89af-399ac838b019', source_id='a5354f4a-e28a-4cbf-811c-ff306b2fee77', source_name='Network for Greening the Financial System', external_id='ngfs_divergent_net_zero', name='Divergent Net Zero',\u2026",
-       "dur_ms": 35.669,
+       "dur_ms": 28.478,
        "sql": [
         57
        ],
@@ -4654,16 +4654,16 @@
        "children": []
       },
       {
-       "id": 143,
+       "id": 3561,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD580>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08A70>"
        },
        "ret": "DataHubScenarioResponse(id='b55e9fae-0a55-4bdb-9a16-f5b51f32b5c6', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Baseline', name='EMF30_Baseline', \u2026",
-       "dur_ms": 39.878,
+       "dur_ms": 28.717,
        "sql": [
         58
        ],
@@ -4671,16 +4671,16 @@
        "children": []
       },
       {
-       "id": 144,
+       "id": 3562,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD550>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08A40>"
        },
        "ret": "DataHubScenarioResponse(id='c5c52b49-d76e-44ce-8298-ac1f2ac5c887', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster', name='EMF30_Slo\u2026",
-       "dur_ms": 36.001,
+       "dur_ms": 32.912,
        "sql": [
         59
        ],
@@ -4688,16 +4688,16 @@
        "children": []
       },
       {
-       "id": 145,
+       "id": 3563,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD520>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08A10>"
        },
        "ret": "DataHubScenarioResponse(id='aa194a5f-82ff-4baa-ab61-e7212cc4af8a', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='IMAGE 3.0.1|EMF30_Slower-to-faster+SLCF+HFC', name='\u2026",
-       "dur_ms": 35.131,
+       "dur_ms": 32.799,
        "sql": [
         60
        ],
@@ -4705,16 +4705,16 @@
        "children": []
       },
       {
-       "id": 146,
+       "id": 3564,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD4F0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08920>"
        },
        "ret": "DataHubScenarioResponse(id='50a8dfa3-7c98-489f-a37f-05757e936249', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_1000', name='EN_INDCi2030_100\u2026",
-       "dur_ms": 33.799,
+       "dur_ms": 28.654,
        "sql": [
         61
        ],
@@ -4722,16 +4722,16 @@
        "children": []
       },
       {
-       "id": 147,
+       "id": 3565,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD4C0>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08950>"
        },
        "ret": "DataHubScenarioResponse(id='8f304f76-73e4-4f00-ba38-f775516d3d2e', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1000f_COV_NDCp', \u2026",
-       "dur_ms": 46.304,
+       "dur_ms": 45.836,
        "sql": [
         62
        ],
@@ -4739,16 +4739,16 @@
        "children": []
       },
       {
-       "id": 148,
+       "id": 3566,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD490>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08980>"
        },
        "ret": "DataHubScenarioResponse(id='a3b16578-8fb8-4467-8c88-751783540ec1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_1800f', name='EN_\u2026",
-       "dur_ms": 33.257,
+       "dur_ms": 31.172,
        "sql": [
         63
        ],
@@ -4756,16 +4756,16 @@
        "children": []
       },
       {
-       "id": 149,
+       "id": 3567,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD460>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B089B0>"
        },
        "ret": "DataHubScenarioResponse(id='0b61229f-aea7-4c44-911d-81319bf1820d', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f', name='EN_INDCi2030_25\u2026",
-       "dur_ms": 33.502,
+       "dur_ms": 38.357,
        "sql": [
         64
        ],
@@ -4773,16 +4773,16 @@
        "children": []
       },
       {
-       "id": 150,
+       "id": 3568,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD430>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08DA0>"
        },
        "ret": "DataHubScenarioResponse(id='7ef2a143-d626-4ad8-bf0f-44f2ad10fafb', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='WITCH 5.0|EN_INDCi2030_2500f_NDCp', name='EN_INDCi20\u2026",
-       "dur_ms": 33.672,
+       "dur_ms": 29.038,
        "sql": [
         65
        ],
@@ -4790,16 +4790,16 @@
        "children": []
       },
       {
-       "id": 151,
+       "id": 3569,
        "name": "_scenario_to_response",
        "qual": "_scenario_to_response",
        "file": "api/v1/routes/data_hub.py",
        "line": 25,
        "args": {
-        "sc": "<db.models.data_hub.DataHubScenario object at 0x000002333E1CD400>"
+        "sc": "<db.models.data_hub.DataHubScenario object at 0x0000013D48B08D70>"
        },
        "ret": "DataHubScenarioResponse(id='6482245c-c952-4956-b4a9-0e40817e5ac1', source_id='d8c791bc-9d71-4da7-95f2-d1bf9501bde2', source_name='Intergovernmental Panel on Climate Change', external_id='REMIND-MAgPIE 2.1-4.2|EN_INDCi2030_600f_NDCp', name=\u2026",
-       "dur_ms": 33.083,
+       "dur_ms": 28.729,
        "sql": [
         66
        ],

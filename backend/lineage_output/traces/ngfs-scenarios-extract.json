@@ -1,0 +1,118 @@
+{
+ "domain": "ngfs-scenarios-extract",
+ "meta": {
+  "ts": "2026-07-05T19:15:55",
+  "endpoints": 2,
+  "module": "api.v1.routes.ngfs_scenarios_extract",
+  "router_prefix": "/api/v1/ngfs-extract"
+ },
+ "transactions": [
+  {
+   "domain": "ngfs-scenarios-extract",
+   "label": "GET /api/v1/ngfs-extract/scenarios",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 12.249,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "scenario": "None (default)",
+    "region": "None (default)",
+    "variable": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "meta",
+     "years",
+     "scenarios",
+     "regions",
+     "variables",
+     "data"
+    ],
+    "n_keys": 6
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13581,
+     "name": "get_scenarios",
+     "qual": "get_scenarios",
+     "file": "api/v1/routes/ngfs_scenarios_extract.py",
+     "line": 39,
+     "args": {
+      "scenario": "None",
+      "region": "None",
+      "variable": "None"
+     },
+     "ret": "{'meta': {'title': 'NGFS Phase 5 Scenario Extract \u2014 headline variable paths', 'source': 'NGFS Phase 5, IIASA Scenario Explorer (https://data.ene.iiasa.ac.at/ngfs)', 'publisher': 'Network for Greening the Financial System (NGFS)', 'release'\u2026",
+     "dur_ms": 11.82,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 13582,
+       "name": "_load_extract",
+       "qual": "_load_extract",
+       "file": "api/v1/routes/ngfs_scenarios_extract.py",
+       "line": 30,
+       "args": {},
+       "ret": "{'_meta': {'title': 'NGFS Phase 5 Scenario Extract \u2014 headline variable paths', 'source': 'NGFS Phase 5, IIASA Scenario Explorer (https://data.ene.iiasa.ac.at/ngfs)', 'publisher': 'Network for Greening the Financial System (NGFS)', 'release\u2026",
+       "dur_ms": 11.537,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "ngfs-scenarios-extract",
+   "label": "GET /api/v1/ngfs-extract/variables",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.185,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "meta",
+     "variables",
+     "years",
+     "scenario_ids",
+     "region_ids"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13583,
+     "name": "get_variables",
+     "qual": "get_variables",
+     "file": "api/v1/routes/ngfs_scenarios_extract.py",
+     "line": 89,
+     "args": {},
+     "ret": "{'meta': {'title': 'NGFS Phase 5 Scenario Extract \u2014 headline variable paths', 'source': 'NGFS Phase 5, IIASA Scenario Explorer (https://data.ene.iiasa.ac.at/ngfs)', 'publisher': 'Network for Greening the Financial System (NGFS)', 'release'\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

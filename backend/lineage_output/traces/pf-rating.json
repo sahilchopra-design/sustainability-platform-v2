@@ -1,0 +1,138 @@
+{
+ "domain": "pf-rating",
+ "meta": {
+  "ts": "2026-07-05T19:16:10",
+  "endpoints": 3,
+  "module": "api.v1.routes.pf_rating",
+  "router_prefix": "/api/v1/pf-rating"
+ },
+ "transactions": [
+  {
+   "domain": "pf-rating",
+   "label": "GET /api/v1/pf-rating/ref/peers",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.949,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "peers",
+     "basis_note",
+     "as_of"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28462,
+     "name": "peer_reference",
+     "qual": "peer_reference",
+     "file": "api/v1/routes/pf_rating.py",
+     "line": 814,
+     "args": {},
+     "ret": "{'peers': [{'peer': 'Peer A', 'sector': 'Solar PV (contracted)', 'contracted_pct': 100, 'min_dscr': 1.35, 'gearing_pct': 80, 'rating': 'BBB', 'note': '20y IG-utility PPA, mature market'}, {'peer': 'Peer B', 'sector': 'Onshore wind', 'contr\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pf-rating",
+   "label": "GET /api/v1/pf-rating/ref/scorecard",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.673,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "weights",
+     "internal_blends",
+     "knot_tables",
+     "categorical_scores",
+     "rating_bands",
+     "points_per_notch",
+     "anchor",
+     "pd_table",
+     "pd_basis_note",
+     "factor_tree",
+     "notching_rules",
+     "esg_overlay_rules",
+     "pd_curve_interpolation",
+     "methodology_note"
+    ],
+    "n_keys": 14
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28463,
+     "name": "scorecard_reference",
+     "qual": "scorecard_reference",
+     "file": "api/v1/routes/pf_rating.py",
+     "line": 766,
+     "args": {},
+     "ret": "{'weights': {'phase': 0.1, 'resource_risk': 0.15, 'revenue_contract': 0.25, 'structure': 0.3, 'counterparty': 0.1, 'country': 0.1}, 'internal_blends': {'revenue_contract': {'contracted_share': 0.6, 'offtaker_quality': 0.4}, 'structure': {'\u2026",
+     "dur_ms": 0.014,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "pf-rating",
+   "label": "POST /api/v1/pf-rating/rate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "HTTPException: 500: 'str' object has no attribute 'phase'",
+   "dur_ms": 4.813,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 28464,
+     "name": "rate_project",
+     "qual": "rate_project",
+     "file": "api/v1/routes/pf_rating.py",
+     "line": 630,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 3.373,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

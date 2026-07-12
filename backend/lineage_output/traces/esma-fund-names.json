@@ -1,10 +1,10 @@
 {
  "domain": "esma-fund-names",
  "meta": {
-  "ts": "2026-06-30T14:01:54",
+  "ts": "2026-07-05T19:15:15",
+  "endpoints": 8,
   "module": "api.v1.routes.esma_fund_names",
-  "router_prefix": "/api/v1/esma-fund-names",
-  "endpoints": 8
+  "router_prefix": "/api/v1/esma-fund-names"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.351,
+   "dur_ms": 0.312,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -35,26 +35,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11285,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/esma_fund_names.py",
      "line": 172,
      "args": {},
      "ret": "{'sfdr_art8_art9': 'Fund names using ESG terms must comply with SFDR Art 8/9 minimum thresholds; SFDR classification does NOT automatically satisfy name guidelines', 'eu_taxonomy': \"For 'sustainable' terms: minimum taxonomy-aligned % shoul\u2026",
-     "dur_ms": 0.055,
+     "dur_ms": 0.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11286,
        "name": "get_cross_framework",
        "qual": "ESMAFundNamesEngine.get_cross_framework",
        "file": "services/esma_fund_names_engine.py",
        "line": 527,
        "args": {},
        "ret": "{'sfdr_art8_art9': 'Fund names using ESG terms must comply with SFDR Art 8/9 minimum thresholds; SFDR classification does NOT automatically satisfy name guidelines', 'eu_taxonomy': \"For 'sustainable' terms: minimum taxonomy-aligned % shoul\u2026",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -69,7 +69,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.242,
+   "dur_ms": 0.197,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -91,26 +91,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11287,
      "name": "ref_pab_exclusions",
      "qual": "ref_pab_exclusions",
      "file": "api/v1/routes/esma_fund_names.py",
      "line": 158,
      "args": {},
      "ret": "{'controversial_weapons': {'description': 'Companies involved in controversial weapons (cluster munitions, anti-personnel mines, biological/chemical weapons)', 'article': 'Art 12(1)(a) PAB Delegated Regulation'}, 'ungc_violations': {'descr\u2026",
-     "dur_ms": 0.042,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11288,
        "name": "get_pab_exclusions",
        "qual": "ESMAFundNamesEngine.get_pab_exclusions",
        "file": "services/esma_fund_names_engine.py",
        "line": 521,
        "args": {},
        "ret": "{'controversial_weapons': {'description': 'Companies involved in controversial weapons (cluster munitions, anti-personnel mines, biological/chemical weapons)', 'article': 'Art 12(1)(a) PAB Delegated Regulation'}, 'ungc_violations': {'descr\u2026",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -125,7 +125,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.185,
+   "dur_ms": 0.181,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -144,7 +144,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11289,
      "name": "ref_sfdr_requirements",
      "qual": "ref_sfdr_requirements",
      "file": "api/v1/routes/esma_fund_names.py",
@@ -156,7 +156,7 @@
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11290,
        "name": "get_sfdr_requirements",
        "qual": "ESMAFundNamesEngine.get_sfdr_requirements",
        "file": "services/esma_fund_names_engine.py",
@@ -178,7 +178,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.21,
+   "dur_ms": 0.192,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -201,19 +201,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11291,
      "name": "ref_term_categories",
      "qual": "ref_term_categories",
      "file": "api/v1/routes/esma_fund_names.py",
      "line": 151,
      "args": {},
      "ret": "{'environmental': {'terms': ['environmental', 'climate', 'green', 'ESG', 'sustainable', 'sustainability', 'natural', 'nature', 'ecology', 'ecological', 'biodiversity', 'low-carbon', 'net-zero', 'transition', 'Paris-aligned', 'Paris-alignme\u2026",
-     "dur_ms": 0.055,
+     "dur_ms": 0.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11292,
        "name": "get_term_categories",
        "qual": "ESMAFundNamesEngine.get_term_categories",
        "file": "services/esma_fund_names_engine.py",
@@ -235,7 +235,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.191,
+   "dur_ms": 0.3,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -255,19 +255,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11293,
      "name": "ref_timeline",
      "qual": "ref_timeline",
      "file": "api/v1/routes/esma_fund_names.py",
      "line": 179,
      "args": {},
      "ret": "[{'date': '2024-05-14', 'event': 'ESMA Final Report published (ESMA/2024/249)', 'article': 'All'}, {'date': '2024-08-21', 'event': 'Entered into force (OJ publication)', 'article': 'Art 1'}, {'date': '2024-11-21', 'event': 'Application dat\u2026",
-     "dur_ms": 0.035,
+     "dur_ms": 0.032,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11294,
        "name": "get_timeline",
        "qual": "ESMAFundNamesEngine.get_timeline",
        "file": "services/esma_fund_names_engine.py",
@@ -289,7 +289,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'fund_id'",
-   "dur_ms": 0.232,
+   "dur_ms": 0.216,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -303,7 +303,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 11295,
      "name": "assess_fund_name",
      "qual": "assess_fund_name",
      "file": "api/v1/routes/esma_fund_names.py",
@@ -312,7 +312,7 @@
       "body": "'TEST_body'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -325,7 +325,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'fund_id'",
-   "dur_ms": 0.175,
+   "dur_ms": 0.159,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -339,7 +339,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 11296,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/esma_fund_names.py",
@@ -348,7 +348,7 @@
       "body": "'TEST_body'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []

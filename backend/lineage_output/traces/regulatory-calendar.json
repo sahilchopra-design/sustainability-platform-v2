@@ -1,20 +1,20 @@
 {
  "domain": "regulatory-calendar",
  "meta": {
-  "ts": "2026-06-30T14:04:30",
+  "ts": "2026-07-05T19:16:39",
+  "endpoints": 6,
   "module": "api.v1.routes.regulatory_calendar",
-  "router_prefix": "/api/v1/regulatory-calendar",
-  "endpoints": 6
+  "router_prefix": "/api/v1/regulatory-calendar"
  },
  "transactions": [
   {
    "domain": "regulatory-calendar",
    "label": "GET /api/v1/regulatory-calendar/alerts",
-   "status": "failed",
-   "http_status": 500,
-   "error": "AttributeError: 'ObligationAlert' object has no attribute 'get'",
-   "dur_ms": 2.522,
-   "node_count": 35,
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1.06,
+   "node_count": 33,
    "provenance": [
     "computed"
    ],
@@ -26,11 +26,23 @@
     "urgency": "None (default)",
     "include_rescinded": "False (default)"
    },
-   "output_summary": null,
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "days_ahead",
+     "alert_count",
+     "critical",
+     "high",
+     "medium",
+     "low",
+     "alerts"
+    ],
+    "n_keys": 7
+   },
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 39470,
      "name": "get_alerts",
      "qual": "get_alerts",
      "file": "api/v1/routes/regulatory_calendar.py",
@@ -41,13 +53,13 @@
       "urgency": "None",
       "include_rescinded": "False"
      },
-     "ret": "None",
-     "dur_ms": 1.901,
+     "ret": "{'days_ahead': 90, 'alert_count': 0, 'critical': 0, 'high': 0, 'medium': 0, 'low': 0, 'alerts': []}",
+     "dur_ms": 0.805,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 39471,
        "name": "get_upcoming_alerts",
        "qual": "RegulatoryObligationCalendar.get_upcoming_alerts",
        "file": "services/regulatory_obligation_calendar.py",
@@ -58,13 +70,13 @@
         "jurisdictions": "None",
         "entity_types": "None"
        },
-       "ret": "[ObligationAlert(obligation=RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to produc\u2026",
-       "dur_ms": 1.774,
+       "ret": "[]",
+       "dur_ms": 0.696,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 39472,
          "name": "filter",
          "qual": "RegulatoryObligationCalendar.filter",
          "file": "services/regulatory_obligation_calendar.py",
@@ -76,12 +88,12 @@
           "include_rescinded": "False"
          },
          "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
-         "dur_ms": 1.387,
+         "dur_ms": 0.581,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 4,
+           "id": 39473,
            "name": "get_all",
            "qual": "RegulatoryObligationCalendar.get_all",
            "file": "services/regulatory_obligation_calendar.py",
@@ -90,12 +102,12 @@
             "include_rescinded": "False"
            },
            "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
-           "dur_ms": 1.216,
+           "dur_ms": 0.473,
            "sql": [],
            "error": null,
            "children": [
             {
-             "id": 5,
+             "id": 39474,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -104,13 +116,13 @@
               "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
              },
              "ret": "'2025-01-31'",
-             "dur_ms": 0.016,
+             "dur_ms": 0.002,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 6,
+             "id": 39475,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -119,13 +131,13 @@
               "o": "RegulatoryObligation(obligation_id='CSRD-002', framework='CSRD', short_name='CSRD FY2025 \u2014 Large Non-PIEs + Listed SMEs', description='Large non-listed companies (>250 employees OR >EUR 50m turnover OR >EUR 25m balance sheet \u2014 2 of 3 crite\u2026"
              },
              "ret": "'2026-01-31'",
-             "dur_ms": 0.008,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 7,
+             "id": 39476,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -134,13 +146,13 @@
               "o": "RegulatoryObligation(obligation_id='CSRD-003', framework='CSRD', short_name='CSRD FY2028 \u2014 Non-EU Companies (Art. 40a)', description='Non-EU parent companies with EU turnover >EUR 150m must publish a group sustainability report (or equival\u2026"
              },
              "ret": "'2029-01-31'",
-             "dur_ms": 0.002,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 8,
+             "id": 39477,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -155,7 +167,7 @@
              "children": []
             },
             {
-             "id": 9,
+             "id": 39478,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -170,7 +182,7 @@
              "children": []
             },
             {
-             "id": 10,
+             "id": 39479,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -185,7 +197,7 @@
              "children": []
             },
             {
-             "id": 11,
+             "id": 39480,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -200,7 +212,7 @@
              "children": []
             },
             {
-             "id": 12,
+             "id": 39481,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -215,7 +227,7 @@
              "children": []
             },
             {
-             "id": 13,
+             "id": 39482,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -230,7 +242,7 @@
              "children": []
             },
             {
-             "id": 14,
+             "id": 39483,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -245,7 +257,7 @@
              "children": []
             },
             {
-             "id": 15,
+             "id": 39484,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -260,7 +272,7 @@
              "children": []
             },
             {
-             "id": 16,
+             "id": 39485,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -275,7 +287,7 @@
              "children": []
             },
             {
-             "id": 17,
+             "id": 39486,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -290,7 +302,7 @@
              "children": []
             },
             {
-             "id": 18,
+             "id": 39487,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -305,7 +317,7 @@
              "children": []
             },
             {
-             "id": 19,
+             "id": 39488,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -320,7 +332,7 @@
              "children": []
             },
             {
-             "id": 20,
+             "id": 39489,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -335,7 +347,7 @@
              "children": []
             },
             {
-             "id": 21,
+             "id": 39490,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -350,7 +362,7 @@
              "children": []
             },
             {
-             "id": 22,
+             "id": 39491,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -365,7 +377,7 @@
              "children": []
             },
             {
-             "id": 23,
+             "id": 39492,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -374,13 +386,13 @@
               "o": "RegulatoryObligation(obligation_id='BRSR-001', framework='BRSR', short_name='BRSR Full Disclosure \u2014 Top 1000 Listed Entities', description='Top 1000 NSE/BSE listed entities must file BRSR with annual report.', deadline='2025-09-30', recurr\u2026"
              },
              "ret": "'2025-09-30'",
-             "dur_ms": 0.007,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 24,
+             "id": 39493,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -389,13 +401,13 @@
               "o": "RegulatoryObligation(obligation_id='BRSR-002', framework='BRSR', short_name='BRSR Core \u2014 Reasonable Assurance (Top 150)', description='Top 150 NSE/BSE listed entities must obtain reasonable assurance on BRSR Core (9 ESG attributes) from FY\u2026"
              },
              "ret": "'2025-09-30'",
-             "dur_ms": 0.003,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 25,
+             "id": 39494,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -404,13 +416,13 @@
               "o": "RegulatoryObligation(obligation_id='EUDR-001', framework='EUDR', short_name='EUDR Due Diligence Statement (DDS) \u2014 Large Operators', description='Large operators and traders placing deforestation-linked commodities (cattle, cocoa, coffee, p\u2026"
              },
              "ret": "'2025-12-30'",
-             "dur_ms": 0.002,
+             "dur_ms": 0.001,
              "sql": [],
              "error": null,
              "children": []
             },
             {
-             "id": 26,
+             "id": 39495,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -425,7 +437,7 @@
              "children": []
             },
             {
-             "id": 27,
+             "id": 39496,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -440,7 +452,7 @@
              "children": []
             },
             {
-             "id": 28,
+             "id": 39497,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -455,7 +467,7 @@
              "children": []
             },
             {
-             "id": 29,
+             "id": 39498,
              "name": "<lambda>",
              "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
              "file": "services/regulatory_obligation_calendar.py",
@@ -472,102 +484,68 @@
            ]
           }
          ]
-        },
-        {
-         "id": 30,
-         "name": "_compute_urgency",
-         "qual": "RegulatoryObligationCalendar._compute_urgency",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 690,
-         "args": {
-          "days_until": "0"
-         },
-         "ret": "'critical'",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 31,
-         "name": "_build_message",
-         "qual": "RegulatoryObligationCalendar._build_message",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 700,
-         "args": {
-          "o": "RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product categories following SFDR \u2026",
-          "days_until": "0",
-          "urgency": "'critical'"
-         },
-         "ret": "'[CRITICAL] SFDR: SFDR Product Classification Review \u2014 deadline 2026-06-30 (TODAY). Penalty: Mandatory re-classification; product prospectus amendments....'",
-         "dur_ms": 0.005,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 32,
-         "name": "_compute_urgency",
-         "qual": "RegulatoryObligationCalendar._compute_urgency",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 690,
-         "args": {
-          "days_until": "0"
-         },
-         "ret": "'critical'",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 33,
-         "name": "_build_message",
-         "qual": "RegulatoryObligationCalendar._build_message",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 700,
-         "args": {
-          "o": "RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeline.', deadline='2026-06-30'\u2026",
-          "days_until": "0",
-          "urgency": "'critical'"
-         },
-         "ret": "'[CRITICAL] EUDR: EUDR DDS \u2014 SMEs (Small Operators/Traders) \u2014 deadline 2026-06-30 (TODAY). Penalty: Same as EUDR-001 (proportionate to size)....'",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 34,
-         "name": "<lambda>",
-         "qual": "RegulatoryObligationCalendar.get_upcoming_alerts.<locals>.<lambda>",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 650,
-         "args": {
-          "a": "ObligationAlert(obligation=RegulatoryObligation(obligation_id='SFDR-003', framework='SFDR', short_name='SFDR Product Classification Review', description='ESMA taxonomy review of Art. 8/9 fund classification \u2014 anticipated changes to product\u2026"
-         },
-         "ret": "0",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 35,
-         "name": "<lambda>",
-         "qual": "RegulatoryObligationCalendar.get_upcoming_alerts.<locals>.<lambda>",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 650,
-         "args": {
-          "a": "ObligationAlert(obligation=RegulatoryObligation(obligation_id='EUDR-002', framework='EUDR', short_name='EUDR DDS \u2014 SMEs (Small Operators/Traders)', description='SME operators and traders: same DDS obligation as EUDR-001 but deferred timeli\u2026"
-         },
-         "ret": "0",
-         "dur_ms": 0.001,
-         "sql": [],
-         "error": null,
-         "children": []
         }
        ]
+      },
+      {
+       "id": 39499,
+       "name": "<genexpr>",
+       "qual": "get_alerts.<locals>.<genexpr>",
+       "file": "api/v1/routes/regulatory_calendar.py",
+       "line": 144,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A126DA0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39500,
+       "name": "<genexpr>",
+       "qual": "get_alerts.<locals>.<genexpr>",
+       "file": "api/v1/routes/regulatory_calendar.py",
+       "line": 145,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A126DA0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39501,
+       "name": "<genexpr>",
+       "qual": "get_alerts.<locals>.<genexpr>",
+       "file": "api/v1/routes/regulatory_calendar.py",
+       "line": 146,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A126DA0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 39502,
+       "name": "<genexpr>",
+       "qual": "get_alerts.<locals>.<genexpr>",
+       "file": "api/v1/routes/regulatory_calendar.py",
+       "line": 147,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A126DA0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
       }
      ]
     }
@@ -579,7 +557,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'RegulatoryObligationCalendar' object has no attribute '_obligations'",
-   "dur_ms": 0.2,
+   "dur_ms": 0.101,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -591,14 +569,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 39503,
      "name": "list_frameworks",
      "qual": "list_frameworks",
      "file": "api/v1/routes/regulatory_calendar.py",
      "line": 181,
      "args": {},
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -611,7 +589,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.333,
+   "dur_ms": 0.185,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -631,26 +609,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 39504,
      "name": "get_module_coverage",
      "qual": "get_module_coverage",
      "file": "api/v1/routes/regulatory_calendar.py",
      "line": 161,
      "args": {},
      "ret": "{'module_count': 17, 'coverage': {'cbam_calculator': ['CBAM-001', 'CBAM-002'], 'csddd_engine': ['CSDDD-001', 'CSDDD-002'], 'csrd_auto_populate': ['CSDDD-002', 'CSRD-001', 'CSRD-002', 'CSRD-003', 'CSRD-004'], 'csrd_extractor': ['CSRD-002'],\u2026",
-     "dur_ms": 0.148,
+     "dur_ms": 0.08,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 38,
+       "id": 39505,
        "name": "get_platform_module_coverage",
        "qual": "RegulatoryObligationCalendar.get_platform_module_coverage",
        "file": "services/regulatory_obligation_calendar.py",
        "line": 655,
        "args": {},
        "ret": "{'cbam_calculator': ['CBAM-001', 'CBAM-002'], 'csddd_engine': ['CSDDD-001', 'CSDDD-002'], 'csrd_auto_populate': ['CSDDD-002', 'CSRD-001', 'CSRD-002', 'CSRD-003', 'CSRD-004'], 'csrd_extractor': ['CSRD-002'], 'ecl_gar_pillar3_orchestrator': \u2026",
-       "dur_ms": 0.101,
+       "dur_ms": 0.052,
        "sql": [],
        "error": null,
        "children": []
@@ -665,7 +643,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'list' object has no attribute '_obligations'",
-   "dur_ms": 1.545,
+   "dur_ms": 0.736,
    "node_count": 28,
    "provenance": [
     "computed"
@@ -682,7 +660,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 39,
+     "id": 39506,
      "name": "list_obligations",
      "qual": "list_obligations",
      "file": "api/v1/routes/regulatory_calendar.py",
@@ -694,12 +672,12 @@
       "include_rescinded": "False"
      },
      "ret": "None",
-     "dur_ms": 0.942,
+     "dur_ms": 0.588,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 40,
+       "id": 39507,
        "name": "filter",
        "qual": "RegulatoryObligationCalendar.filter",
        "file": "services/regulatory_obligation_calendar.py",
@@ -711,12 +689,12 @@
         "include_rescinded": "False"
        },
        "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
-       "dur_ms": 0.785,
+       "dur_ms": 0.495,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 41,
+         "id": 39508,
          "name": "get_all",
          "qual": "RegulatoryObligationCalendar.get_all",
          "file": "services/regulatory_obligation_calendar.py",
@@ -725,12 +703,12 @@
           "include_rescinded": "False"
          },
          "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
-         "dur_ms": 0.586,
+         "dur_ms": 0.407,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 42,
+           "id": 39509,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -739,13 +717,13 @@
             "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
            },
            "ret": "'2025-01-31'",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 43,
+           "id": 39510,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -754,13 +732,13 @@
             "o": "RegulatoryObligation(obligation_id='CSRD-002', framework='CSRD', short_name='CSRD FY2025 \u2014 Large Non-PIEs + Listed SMEs', description='Large non-listed companies (>250 employees OR >EUR 50m turnover OR >EUR 25m balance sheet \u2014 2 of 3 crite\u2026"
            },
            "ret": "'2026-01-31'",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 44,
+           "id": 39511,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -775,7 +753,7 @@
            "children": []
           },
           {
-           "id": 45,
+           "id": 39512,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -790,7 +768,7 @@
            "children": []
           },
           {
-           "id": 46,
+           "id": 39513,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -805,7 +783,7 @@
            "children": []
           },
           {
-           "id": 47,
+           "id": 39514,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -820,7 +798,7 @@
            "children": []
           },
           {
-           "id": 48,
+           "id": 39515,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -835,7 +813,7 @@
            "children": []
           },
           {
-           "id": 49,
+           "id": 39516,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -850,7 +828,7 @@
            "children": []
           },
           {
-           "id": 50,
+           "id": 39517,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -865,7 +843,7 @@
            "children": []
           },
           {
-           "id": 51,
+           "id": 39518,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -880,7 +858,7 @@
            "children": []
           },
           {
-           "id": 52,
+           "id": 39519,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -895,7 +873,7 @@
            "children": []
           },
           {
-           "id": 53,
+           "id": 39520,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -910,7 +888,7 @@
            "children": []
           },
           {
-           "id": 54,
+           "id": 39521,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -925,7 +903,7 @@
            "children": []
           },
           {
-           "id": 55,
+           "id": 39522,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -940,7 +918,7 @@
            "children": []
           },
           {
-           "id": 56,
+           "id": 39523,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -955,7 +933,7 @@
            "children": []
           },
           {
-           "id": 57,
+           "id": 39524,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -970,7 +948,7 @@
            "children": []
           },
           {
-           "id": 58,
+           "id": 39525,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -985,7 +963,7 @@
            "children": []
           },
           {
-           "id": 59,
+           "id": 39526,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1000,7 +978,7 @@
            "children": []
           },
           {
-           "id": 60,
+           "id": 39527,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1015,7 +993,7 @@
            "children": []
           },
           {
-           "id": 61,
+           "id": 39528,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1030,7 +1008,7 @@
            "children": []
           },
           {
-           "id": 62,
+           "id": 39529,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1045,7 +1023,7 @@
            "children": []
           },
           {
-           "id": 63,
+           "id": 39530,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1060,7 +1038,7 @@
            "children": []
           },
           {
-           "id": 64,
+           "id": 39531,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1075,7 +1053,7 @@
            "children": []
           },
           {
-           "id": 65,
+           "id": 39532,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1090,7 +1068,7 @@
            "children": []
           },
           {
-           "id": 66,
+           "id": 39533,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1118,7 +1096,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'RegulatoryObligationCalendar' object has no attribute '_obligations'",
-   "dur_ms": 0.288,
+   "dur_ms": 0.108,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1132,7 +1110,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 67,
+     "id": 39534,
      "name": "get_obligation",
      "qual": "get_obligation",
      "file": "api/v1/routes/regulatory_calendar.py",
@@ -1141,7 +1119,7 @@
       "obligation_id": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -1154,7 +1132,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.818,
+   "dur_ms": 1.314,
    "node_count": 82,
    "provenance": [
     "computed"
@@ -1179,31 +1157,31 @@
    "truncated": [],
    "tree": [
     {
-     "id": 68,
+     "id": 39535,
      "name": "get_summary",
      "qual": "get_summary",
      "file": "api/v1/routes/regulatory_calendar.py",
      "line": 152,
      "args": {},
      "ret": "{'total_obligations': 25, 'rescinded_obligations': 1, 'by_framework': {'ETS2': 3, 'CSRD': 4, 'EU ETS': 2, 'SFDR': 3, 'EU Taxonomy': 2, 'CBAM': 2, 'BRSR': 2, 'EUDR': 2, 'EIOPA ORSA': 1, 'ISSB': 2, 'CSDDD': 2}, 'by_urgency': {'critical': 6, \u2026",
-     "dur_ms": 1.661,
+     "dur_ms": 1.218,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 69,
+       "id": 39536,
        "name": "get_summary",
        "qual": "RegulatoryObligationCalendar.get_summary",
        "file": "services/regulatory_obligation_calendar.py",
        "line": 663,
        "args": {},
        "ret": "{'total_obligations': 25, 'rescinded_obligations': 1, 'by_framework': {'ETS2': 3, 'CSRD': 4, 'EU ETS': 2, 'SFDR': 3, 'EU Taxonomy': 2, 'CBAM': 2, 'BRSR': 2, 'EUDR': 2, 'EIOPA ORSA': 1, 'ISSB': 2, 'CSDDD': 2}, 'by_urgency': {'critical': 6, \u2026",
-       "dur_ms": 1.624,
+       "dur_ms": 1.193,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 70,
+         "id": 39537,
          "name": "get_all",
          "qual": "RegulatoryObligationCalendar.get_all",
          "file": "services/regulatory_obligation_calendar.py",
@@ -1212,12 +1190,12 @@
           "include_rescinded": "False"
          },
          "ret": "[RegulatoryObligation(obligation_id='ETS2-001', framework='ETS2', short_name='ETS2 Monitoring Plan Submission', description='Regulated entities under ETS2 (fuel distributors for buildings + road transport) must submit a monitoring plan to \u2026",
-         "dur_ms": 0.566,
+         "dur_ms": 0.39,
          "sql": [],
          "error": null,
          "children": [
           {
-           "id": 71,
+           "id": 39538,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1226,13 +1204,13 @@
             "o": "RegulatoryObligation(obligation_id='CSRD-001', framework='CSRD', short_name='CSRD FY2024 First Report \u2014 Large PIEs', description='Large public-interest entities (PIEs) with >500 employees must publish their first CSRD sustainability report\u2026"
            },
            "ret": "'2025-01-31'",
-           "dur_ms": 0.002,
+           "dur_ms": 0.001,
            "sql": [],
            "error": null,
            "children": []
           },
           {
-           "id": 72,
+           "id": 39539,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1247,7 +1225,7 @@
            "children": []
           },
           {
-           "id": 73,
+           "id": 39540,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1262,7 +1240,7 @@
            "children": []
           },
           {
-           "id": 74,
+           "id": 39541,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1277,7 +1255,7 @@
            "children": []
           },
           {
-           "id": 75,
+           "id": 39542,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1292,7 +1270,7 @@
            "children": []
           },
           {
-           "id": 76,
+           "id": 39543,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1307,7 +1285,7 @@
            "children": []
           },
           {
-           "id": 77,
+           "id": 39544,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1322,7 +1300,7 @@
            "children": []
           },
           {
-           "id": 78,
+           "id": 39545,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1337,7 +1315,7 @@
            "children": []
           },
           {
-           "id": 79,
+           "id": 39546,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1352,7 +1330,7 @@
            "children": []
           },
           {
-           "id": 80,
+           "id": 39547,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1367,7 +1345,7 @@
            "children": []
           },
           {
-           "id": 81,
+           "id": 39548,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1382,7 +1360,7 @@
            "children": []
           },
           {
-           "id": 82,
+           "id": 39549,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1397,7 +1375,7 @@
            "children": []
           },
           {
-           "id": 83,
+           "id": 39550,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1412,7 +1390,7 @@
            "children": []
           },
           {
-           "id": 84,
+           "id": 39551,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1427,7 +1405,7 @@
            "children": []
           },
           {
-           "id": 85,
+           "id": 39552,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1442,7 +1420,7 @@
            "children": []
           },
           {
-           "id": 86,
+           "id": 39553,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1457,7 +1435,7 @@
            "children": []
           },
           {
-           "id": 87,
+           "id": 39554,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1472,7 +1450,7 @@
            "children": []
           },
           {
-           "id": 88,
+           "id": 39555,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1487,7 +1465,7 @@
            "children": []
           },
           {
-           "id": 89,
+           "id": 39556,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1502,7 +1480,7 @@
            "children": []
           },
           {
-           "id": 90,
+           "id": 39557,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1517,7 +1495,7 @@
            "children": []
           },
           {
-           "id": 91,
+           "id": 39558,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1532,7 +1510,7 @@
            "children": []
           },
           {
-           "id": 92,
+           "id": 39559,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1547,7 +1525,7 @@
            "children": []
           },
           {
-           "id": 93,
+           "id": 39560,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1562,7 +1540,7 @@
            "children": []
           },
           {
-           "id": 94,
+           "id": 39561,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1577,7 +1555,7 @@
            "children": []
           },
           {
-           "id": 95,
+           "id": 39562,
            "name": "<lambda>",
            "qual": "RegulatoryObligationCalendar.get_all.<locals>.<lambda>",
            "file": "services/regulatory_obligation_calendar.py",
@@ -1594,43 +1572,43 @@
          ]
         },
         {
-         "id": 96,
+         "id": 39563,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 679,
          "args": {
-          ".0": "<dict_valueiterator object at 0x000001BF115C4860>"
+          ".0": "<dict_valueiterator object at 0x0000013D49C465C0>"
          },
          "ret": "1",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 97,
-         "name": "<genexpr>",
-         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 679,
-         "args": {
-          ".0": "<dict_valueiterator object at 0x000001BF115C4860>"
-         },
-         "ret": "None",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 98,
+         "id": 39564,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 679,
+         "args": {
+          ".0": "<dict_valueiterator object at 0x0000013D49C465C0>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39565,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'ETS2'",
          "dur_ms": 0.001,
@@ -1639,13 +1617,13 @@
          "children": []
         },
         {
-         "id": 99,
+         "id": 39566,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSRD'",
          "dur_ms": 0.001,
@@ -1654,13 +1632,13 @@
          "children": []
         },
         {
-         "id": 100,
+         "id": 39567,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU ETS'",
          "dur_ms": 0.001,
@@ -1669,13 +1647,13 @@
          "children": []
         },
         {
-         "id": 101,
+         "id": 39568,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU ETS'",
          "dur_ms": 0.001,
@@ -1684,13 +1662,13 @@
          "children": []
         },
         {
-         "id": 102,
+         "id": 39569,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'SFDR'",
          "dur_ms": 0.001,
@@ -1699,13 +1677,13 @@
          "children": []
         },
         {
-         "id": 103,
+         "id": 39570,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU Taxonomy'",
          "dur_ms": 0.001,
@@ -1714,13 +1692,13 @@
          "children": []
         },
         {
-         "id": 104,
+         "id": 39571,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CBAM'",
          "dur_ms": 0.001,
@@ -1729,13 +1707,13 @@
          "children": []
         },
         {
-         "id": 105,
+         "id": 39572,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'BRSR'",
          "dur_ms": 0.001,
@@ -1744,13 +1722,13 @@
          "children": []
         },
         {
-         "id": 106,
+         "id": 39573,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'BRSR'",
          "dur_ms": 0.001,
@@ -1759,13 +1737,13 @@
          "children": []
         },
         {
-         "id": 107,
+         "id": 39574,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EUDR'",
          "dur_ms": 0.001,
@@ -1774,28 +1752,28 @@
          "children": []
         },
         {
-         "id": 108,
+         "id": 39575,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSRD'",
-         "dur_ms": 0.001,
+         "dur_ms": 0.0,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 109,
+         "id": 39576,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'SFDR'",
          "dur_ms": 0.001,
@@ -1804,13 +1782,13 @@
          "children": []
         },
         {
-         "id": 110,
+         "id": 39577,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU Taxonomy'",
          "dur_ms": 0.001,
@@ -1819,13 +1797,13 @@
          "children": []
         },
         {
-         "id": 111,
+         "id": 39578,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EIOPA ORSA'",
          "dur_ms": 0.001,
@@ -1834,13 +1812,13 @@
          "children": []
         },
         {
-         "id": 112,
+         "id": 39579,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSRD'",
          "dur_ms": 0.001,
@@ -1849,13 +1827,13 @@
          "children": []
         },
         {
-         "id": 113,
+         "id": 39580,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'ISSB'",
          "dur_ms": 0.001,
@@ -1864,13 +1842,13 @@
          "children": []
         },
         {
-         "id": 114,
+         "id": 39581,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CBAM'",
          "dur_ms": 0.001,
@@ -1879,13 +1857,13 @@
          "children": []
         },
         {
-         "id": 115,
+         "id": 39582,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'SFDR'",
          "dur_ms": 0.001,
@@ -1894,13 +1872,13 @@
          "children": []
         },
         {
-         "id": 116,
+         "id": 39583,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EUDR'",
          "dur_ms": 0.001,
@@ -1909,28 +1887,28 @@
          "children": []
         },
         {
-         "id": 117,
+         "id": 39584,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'ETS2'",
-         "dur_ms": 0.003,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 118,
+         "id": 39585,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'ISSB'",
          "dur_ms": 0.001,
@@ -1939,13 +1917,13 @@
          "children": []
         },
         {
-         "id": 119,
+         "id": 39586,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSDDD'",
          "dur_ms": 0.001,
@@ -1954,13 +1932,13 @@
          "children": []
         },
         {
-         "id": 120,
+         "id": 39587,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSDDD'",
          "dur_ms": 0.001,
@@ -1969,13 +1947,13 @@
          "children": []
         },
         {
-         "id": 121,
+         "id": 39588,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'ETS2'",
          "dur_ms": 0.001,
@@ -1984,13 +1962,13 @@
          "children": []
         },
         {
-         "id": 122,
+         "id": 39589,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'CSRD'",
          "dur_ms": 0.001,
@@ -1999,13 +1977,13 @@
          "children": []
         },
         {
-         "id": 123,
+         "id": 39590,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 683,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -2014,13 +1992,13 @@
          "children": []
         },
         {
-         "id": 124,
+         "id": 39591,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2029,13 +2007,13 @@
          "children": []
         },
         {
-         "id": 125,
+         "id": 39592,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2044,13 +2022,13 @@
          "children": []
         },
         {
-         "id": 126,
+         "id": 39593,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2059,13 +2037,13 @@
          "children": []
         },
         {
-         "id": 127,
+         "id": 39594,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2074,13 +2052,13 @@
          "children": []
         },
         {
-         "id": 128,
+         "id": 39595,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2089,13 +2067,13 @@
          "children": []
         },
         {
-         "id": 129,
+         "id": 39596,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2104,13 +2082,13 @@
          "children": []
         },
         {
-         "id": 130,
+         "id": 39597,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2119,13 +2097,13 @@
          "children": []
         },
         {
-         "id": 131,
+         "id": 39598,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'IN'",
          "dur_ms": 0.001,
@@ -2134,13 +2112,13 @@
          "children": []
         },
         {
-         "id": 132,
+         "id": 39599,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'IN'",
          "dur_ms": 0.001,
@@ -2149,13 +2127,13 @@
          "children": []
         },
         {
-         "id": 133,
+         "id": 39600,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2164,13 +2142,13 @@
          "children": []
         },
         {
-         "id": 134,
+         "id": 39601,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2179,28 +2157,13 @@
          "children": []
         },
         {
-         "id": 135,
+         "id": 39602,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
-         },
-         "ret": "'EU'",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 136,
-         "name": "<genexpr>",
-         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
-         "file": "services/regulatory_obligation_calendar.py",
-         "line": 684,
-         "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2209,13 +2172,13 @@
          "children": []
         },
         {
-         "id": 137,
+         "id": 39603,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2224,13 +2187,13 @@
          "children": []
         },
         {
-         "id": 138,
+         "id": 39604,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2239,13 +2202,28 @@
          "children": []
         },
         {
-         "id": 139,
+         "id": 39605,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
+         },
+         "ret": "'EU'",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 39606,
+         "name": "<genexpr>",
+         "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
+         "file": "services/regulatory_obligation_calendar.py",
+         "line": 684,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'AU'",
          "dur_ms": 0.001,
@@ -2254,13 +2232,13 @@
          "children": []
         },
         {
-         "id": 140,
+         "id": 39607,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2269,13 +2247,13 @@
          "children": []
         },
         {
-         "id": 141,
+         "id": 39608,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2284,13 +2262,13 @@
          "children": []
         },
         {
-         "id": 142,
+         "id": 39609,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2299,13 +2277,13 @@
          "children": []
         },
         {
-         "id": 143,
+         "id": 39610,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2314,13 +2292,13 @@
          "children": []
         },
         {
-         "id": 144,
+         "id": 39611,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'UK'",
          "dur_ms": 0.001,
@@ -2329,13 +2307,13 @@
          "children": []
         },
         {
-         "id": 145,
+         "id": 39612,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2344,13 +2322,13 @@
          "children": []
         },
         {
-         "id": 146,
+         "id": 39613,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2359,13 +2337,13 @@
          "children": []
         },
         {
-         "id": 147,
+         "id": 39614,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2374,13 +2352,13 @@
          "children": []
         },
         {
-         "id": 148,
+         "id": 39615,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "'EU'",
          "dur_ms": 0.001,
@@ -2389,13 +2367,13 @@
          "children": []
         },
         {
-         "id": 149,
+         "id": 39616,
          "name": "<genexpr>",
          "qual": "RegulatoryObligationCalendar.get_summary.<locals>.<genexpr>",
          "file": "services/regulatory_obligation_calendar.py",
          "line": 684,
          "args": {
-          ".0": "<list_iterator object at 0x000001BF115B54E0>"
+          ".0": "<list_iterator object at 0x0000013D49C26EF0>"
          },
          "ret": "None",
          "dur_ms": 0.001,

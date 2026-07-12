@@ -1,10 +1,10 @@
 {
  "domain": "comprehensive-reporting",
  "meta": {
-  "ts": "2026-06-30T14:00:04",
+  "ts": "2026-07-05T19:11:05",
+  "endpoints": 9,
   "module": "api.v1.routes.comprehensive_reporting",
-  "router_prefix": "/api/v1/comprehensive-reporting",
-  "endpoints": 9
+  "router_prefix": "/api/v1/comprehensive-reporting"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.22,
+   "dur_ms": 1.088,
    "node_count": 23,
    "provenance": [
     "computed"
@@ -41,7 +41,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2888,
      "name": "get_consistency_rules",
      "qual": "get_consistency_rules",
      "file": "api/v1/routes/comprehensive_reporting.py",
@@ -51,18 +51,18 @@
       "framework": "None"
      },
      "ret": "{'source': 'EFRAG IG Consistency Guidance; ISAE 3000 / ISSA 5000 assurance standards; CSRD Art 26a', 'total_rules': 20, 'blocking_rules': 9, 'advisory_rules': 11, 'frameworks_covered': ['CSRD', 'IFRS_S2', 'TCFD', 'TNFD', 'GRI', 'SFDR', 'PC\u2026",
-     "dur_ms": 0.612,
+     "dur_ms": 0.603,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 2889,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.005,
@@ -71,88 +71,28 @@
        "children": []
       },
       {
-       "id": 3,
+       "id": 2890,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
-       "dur_ms": 0.004,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 2891,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 5,
-       "name": "<genexpr>",
-       "qual": "get_consistency_rules.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 378,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 6,
-       "name": "<genexpr>",
-       "qual": "get_consistency_rules.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 378,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 7,
-       "name": "<genexpr>",
-       "qual": "get_consistency_rules.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 378,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 8,
-       "name": "<genexpr>",
-       "qual": "get_consistency_rules.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 378,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -161,13 +101,73 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 2892,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2893,
+       "name": "<genexpr>",
+       "qual": "get_consistency_rules.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 378,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2894,
+       "name": "<genexpr>",
+       "qual": "get_consistency_rules.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 378,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2895,
+       "name": "<genexpr>",
+       "qual": "get_consistency_rules.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 378,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2896,
+       "name": "<genexpr>",
+       "qual": "get_consistency_rules.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 378,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -176,13 +176,13 @@
        "children": []
       },
       {
-       "id": 10,
+       "id": 2897,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -191,13 +191,13 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 2898,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 378,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -206,13 +206,13 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 2899,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -221,28 +221,13 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 2900,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 14,
-       "name": "<genexpr>",
-       "qual": "get_consistency_rules.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 379,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -251,13 +236,13 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 2901,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -266,13 +251,13 @@
        "children": []
       },
       {
-       "id": 16,
+       "id": 2902,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -281,13 +266,13 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 2903,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -296,13 +281,13 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 2904,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -311,13 +296,13 @@
        "children": []
       },
       {
-       "id": 19,
+       "id": 2905,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -326,13 +311,13 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 2906,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -341,13 +326,13 @@
        "children": []
       },
       {
-       "id": 21,
+       "id": 2907,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -356,13 +341,13 @@
        "children": []
       },
       {
-       "id": 22,
+       "id": 2908,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -371,13 +356,28 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 2909,
        "name": "<genexpr>",
        "qual": "get_consistency_rules.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 379,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE724AF0>"
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2910,
+       "name": "<genexpr>",
+       "qual": "get_consistency_rules.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 379,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48801F90>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -395,7 +395,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.538,
+   "dur_ms": 2.104,
    "node_count": 75,
    "provenance": [
     "computed"
@@ -423,7 +423,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 2911,
      "name": "get_esrs_checklist",
      "qual": "get_esrs_checklist",
      "file": "api/v1/routes/comprehensive_reporting.py",
@@ -434,18 +434,18 @@
       "phase_in_filter": "None"
      },
      "ret": "{'source': 'EFRAG IG3 \u2014 Quantitative Mandatory Datapoints (2024); CSRD Delegated Regulation (EU) 2023/2772', 'total_dps_in_checklist': 62, 'mandatory_dps': 58, 'phase_in_relief_dps': 14, 'standards_summary': {'E1': {'total': 16, 'mandatory\u2026",
-     "dur_ms": 2.008,
+     "dur_ms": 1.688,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 25,
+       "id": 2912,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -454,13 +454,13 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 2913,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -469,13 +469,43 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 2914,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2915,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2916,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -484,13 +514,13 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 2917,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -499,13 +529,328 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 2918,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2919,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2920,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2921,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2922,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2923,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2924,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2925,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2926,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2927,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2928,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2929,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2930,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2931,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2932,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2933,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2934,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2935,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2936,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2937,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2938,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2939,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 310,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -514,13 +859,13 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 2940,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -529,13 +874,13 @@
        "children": []
       },
       {
-       "id": 31,
+       "id": 2941,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -544,13 +889,13 @@
        "children": []
       },
       {
-       "id": 32,
+       "id": 2942,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -559,13 +904,13 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 2943,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -574,13 +919,13 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 2944,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -589,13 +934,13 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 2945,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -604,13 +949,13 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 2946,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -619,13 +964,13 @@
        "children": []
       },
       {
-       "id": 37,
+       "id": 2947,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -634,28 +979,13 @@
        "children": []
       },
       {
-       "id": 38,
+       "id": 2948,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 39,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -664,13 +994,13 @@
        "children": []
       },
       {
-       "id": 40,
+       "id": 2949,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -679,13 +1009,13 @@
        "children": []
       },
       {
-       "id": 41,
+       "id": 2950,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -694,13 +1024,13 @@
        "children": []
       },
       {
-       "id": 42,
+       "id": 2951,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -709,13 +1039,13 @@
        "children": []
       },
       {
-       "id": 43,
+       "id": 2952,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -724,13 +1054,13 @@
        "children": []
       },
       {
-       "id": 44,
+       "id": 2953,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -739,13 +1069,13 @@
        "children": []
       },
       {
-       "id": 45,
+       "id": 2954,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -754,13 +1084,13 @@
        "children": []
       },
       {
-       "id": 46,
+       "id": 2955,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -769,13 +1099,13 @@
        "children": []
       },
       {
-       "id": 47,
+       "id": 2956,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -784,13 +1114,13 @@
        "children": []
       },
       {
-       "id": 48,
+       "id": 2957,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -799,28 +1129,13 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 2958,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 50,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -829,28 +1144,13 @@
        "children": []
       },
       {
-       "id": 51,
+       "id": 2959,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 52,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -859,28 +1159,13 @@
        "children": []
       },
       {
-       "id": 53,
+       "id": 2960,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 54,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -889,13 +1174,13 @@
        "children": []
       },
       {
-       "id": 55,
+       "id": 2961,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -904,13 +1189,13 @@
        "children": []
       },
       {
-       "id": 56,
+       "id": 2962,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -919,13 +1204,13 @@
        "children": []
       },
       {
-       "id": 57,
+       "id": 2963,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -934,13 +1219,13 @@
        "children": []
       },
       {
-       "id": 58,
+       "id": 2964,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -949,13 +1234,13 @@
        "children": []
       },
       {
-       "id": 59,
+       "id": 2965,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -964,13 +1249,13 @@
        "children": []
       },
       {
-       "id": 60,
+       "id": 2966,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -979,13 +1264,13 @@
        "children": []
       },
       {
-       "id": 61,
+       "id": 2967,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -994,13 +1279,13 @@
        "children": []
       },
       {
-       "id": 62,
+       "id": 2968,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -1009,13 +1294,13 @@
        "children": []
       },
       {
-       "id": 63,
+       "id": 2969,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -1024,328 +1309,28 @@
        "children": []
       },
       {
-       "id": 64,
+       "id": 2970,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 310,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 65,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 66,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 67,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 68,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 69,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 70,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 71,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 72,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 73,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 74,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 75,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 76,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 77,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 78,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 79,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 80,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 81,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.043,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 82,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.006,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 83,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 310,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 84,
+       "id": 2971,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.007,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 85,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -1354,58 +1339,13 @@
        "children": []
       },
       {
-       "id": 86,
+       "id": 2972,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 87,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 88,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 89,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -1414,13 +1354,13 @@
        "children": []
       },
       {
-       "id": 90,
+       "id": 2973,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -1429,13 +1369,13 @@
        "children": []
       },
       {
-       "id": 91,
+       "id": 2974,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -1444,73 +1384,13 @@
        "children": []
       },
       {
-       "id": 92,
+       "id": 2975,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 93,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 94,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 95,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
-       },
-       "ret": "1",
-       "dur_ms": 0.006,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 96,
-       "name": "<genexpr>",
-       "qual": "get_esrs_checklist.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 311,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -1519,13 +1399,103 @@
        "children": []
       },
       {
-       "id": 97,
+       "id": 2976,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2977,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2978,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2979,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2980,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2981,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2982,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
        "ret": "1",
        "dur_ms": 0.006,
@@ -1534,16 +1504,46 @@
        "children": []
       },
       {
-       "id": 98,
+       "id": 2983,
        "name": "<genexpr>",
        "qual": "get_esrs_checklist.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 311,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85C070>"
+        ".0": "<list_iterator object at 0x0000013D48924040>"
        },
-       "ret": "None",
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2984,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "1",
        "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2985,
+       "name": "<genexpr>",
+       "qual": "get_esrs_checklist.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 311,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48924040>"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -1558,7 +1558,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 4.963,
+   "dur_ms": 5.407,
    "node_count": 96,
    "provenance": [
     "computed"
@@ -1586,7 +1586,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 99,
+     "id": 2986,
      "name": "get_framework_mapping",
      "qual": "get_framework_mapping",
      "file": "api/v1/routes/comprehensive_reporting.py",
@@ -1597,33 +1597,33 @@
       "source_engine": "None"
      },
      "ret": "{'source': 'CSRD Delegated Regulation (EU) 2023/2772 + IFRS S1/S2 + TCFD 2021 + TNFD v1.0 + GRI 2021 + SFDR RTS 2022/1288', 'total_dp_mappings': 74, 'mandatory_dps': 70, 'frameworks_covered': ['CSRD', 'IFRS_S2', 'TCFD', 'TNFD', 'GRI', 'SFD\u2026",
-     "dur_ms": 4.134,
+     "dur_ms": 4.707,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 100,
+       "id": 2987,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'ESRS E1-1'",
-       "dur_ms": 0.005,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 101,
+       "id": 2988,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -1632,13 +1632,13 @@
        "children": []
       },
       {
-       "id": 102,
+       "id": 2989,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'S2-14'",
        "dur_ms": 0.003,
@@ -1647,43 +1647,43 @@
        "children": []
       },
       {
-       "id": 103,
+       "id": 2990,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 104,
+       "id": 2991,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'Strategy-b'",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 105,
+       "id": 2992,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -1692,13 +1692,13 @@
        "children": []
       },
       {
-       "id": 106,
+       "id": 2993,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1707,13 +1707,13 @@
        "children": []
       },
       {
-       "id": 107,
+       "id": 2994,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1722,13 +1722,13 @@
        "children": []
       },
       {
-       "id": 108,
+       "id": 2995,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1737,13 +1737,13 @@
        "children": []
       },
       {
-       "id": 109,
+       "id": 2996,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1752,223 +1752,253 @@
        "children": []
       },
       {
-       "id": 110,
+       "id": 2997,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.061,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 111,
+       "id": 2998,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 112,
+       "id": 2999,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 113,
+       "id": 3000,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 114,
+       "id": 3001,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 115,
+       "id": 3002,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 116,
+       "id": 3003,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 117,
+       "id": 3004,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 118,
+       "id": 3005,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'Core-D2'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 119,
+       "id": 3006,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 120,
+       "id": 3007,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'GRI 305'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 121,
+       "id": 3008,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 122,
+       "id": 3009,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "'PAI-1'",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 123,
+       "id": 3010,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 253,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D120>"
+        ".0": "<list_iterator object at 0x0000013D489262F0>"
        },
        "ret": "None",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 124,
+       "id": 3011,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3012,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3013,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -1977,13 +2007,118 @@
        "children": []
       },
       {
-       "id": 125,
+       "id": 3014,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3015,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3016,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3017,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3018,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3019,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3020,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3021,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -1992,178 +2127,148 @@
        "children": []
       },
       {
-       "id": 126,
+       "id": 3022,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 127,
+       "id": 3023,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 128,
+       "id": 3024,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 129,
+       "id": 3025,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 130,
+       "id": 3026,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 131,
+       "id": 3027,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.002,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 132,
+       "id": 3028,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 133,
+       "id": 3029,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.002,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 134,
+       "id": 3030,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.001,
+       "dur_ms": 0.016,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 135,
+       "id": 3031,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 136,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 137,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.008,
@@ -2172,13 +2277,28 @@
        "children": []
       },
       {
-       "id": 138,
+       "id": 3032,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3033,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2187,13 +2307,58 @@
        "children": []
       },
       {
-       "id": 139,
+       "id": 3034,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3035,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3036,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3037,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -2202,73 +2367,13 @@
        "children": []
       },
       {
-       "id": 140,
+       "id": 3038,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 141,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.025,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 142,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.034,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 143,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.013,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 144,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -2277,13 +2382,13 @@
        "children": []
       },
       {
-       "id": 145,
+       "id": 3039,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -2292,58 +2397,13 @@
        "children": []
       },
       {
-       "id": 146,
+       "id": 3040,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.01,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 147,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 148,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.007,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 149,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2352,13 +2412,343 @@
        "children": []
       },
       {
-       "id": 150,
+       "id": 3041,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3042,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3043,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3044,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3045,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3046,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3047,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3048,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3049,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3050,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3051,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3052,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3053,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3054,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3055,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3056,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3057,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3058,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3059,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3060,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3061,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3062,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3063,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.008,
@@ -2367,193 +2757,13 @@
        "children": []
       },
       {
-       "id": 151,
+       "id": 3064,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 152,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 153,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 154,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 155,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 156,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 157,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 158,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 159,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.001,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 160,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 161,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.021,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 162,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.005,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 163,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2562,28 +2772,13 @@
        "children": []
       },
       {
-       "id": 164,
+       "id": 3065,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.005,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 165,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2592,13 +2787,13 @@
        "children": []
       },
       {
-       "id": 166,
+       "id": 3066,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2607,13 +2802,73 @@
        "children": []
       },
       {
-       "id": 167,
+       "id": 3067,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3068,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3069,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3070,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3071,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -2622,13 +2877,13 @@
        "children": []
       },
       {
-       "id": 168,
+       "id": 3072,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2637,13 +2892,43 @@
        "children": []
       },
       {
-       "id": 169,
+       "id": 3073,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3074,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 3075,
+       "name": "<genexpr>",
+       "qual": "get_framework_mapping.<locals>.<genexpr>",
+       "file": "api/v1/routes/comprehensive_reporting.py",
+       "line": 261,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.004,
@@ -2652,28 +2937,13 @@
        "children": []
       },
       {
-       "id": 170,
+       "id": 3076,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 171,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2682,43 +2952,28 @@
        "children": []
       },
       {
-       "id": 172,
+       "id": 3077,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 173,
+       "id": 3078,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 174,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -2727,268 +2982,13 @@
        "children": []
       },
       {
-       "id": 175,
+       "id": 3079,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 176,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.011,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 177,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 178,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 179,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.01,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 180,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 181,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 182,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 183,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 184,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 185,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 186,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 187,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 188,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.005,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 189,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 190,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.017,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 191,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 192,
-       "name": "<genexpr>",
-       "qual": "get_framework_mapping.<locals>.<genexpr>",
-       "file": "api/v1/routes/comprehensive_reporting.py",
-       "line": 261,
-       "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.007,
@@ -2997,13 +2997,13 @@
        "children": []
       },
       {
-       "id": 193,
+       "id": 3080,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "1",
        "dur_ms": 0.003,
@@ -3012,16 +3012,16 @@
        "children": []
       },
       {
-       "id": 194,
+       "id": 3081,
        "name": "<genexpr>",
        "qual": "get_framework_mapping.<locals>.<genexpr>",
        "file": "api/v1/routes/comprehensive_reporting.py",
        "line": 261,
        "args": {
-        ".0": "<list_iterator object at 0x0000029FDE85D0F0>"
+        ".0": "<list_iterator object at 0x0000013D48925FC0>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -3036,7 +3036,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.557,
+   "dur_ms": 0.541,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -3064,7 +3064,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 195,
+     "id": 3082,
      "name": "get_xbrl_concepts",
      "qual": "get_xbrl_concepts",
      "file": "api/v1/routes/comprehensive_reporting.py",
@@ -3074,7 +3074,7 @@
       "period_type": "None"
      },
      "ret": "{'taxonomy_version': 'ESRS-XBRL-2024-01-01', 'taxonomy_ref': 'https://xbrl.efrag.org/taxonomy/ESRS-XBRL-2024-01-01/esrs-all.xsd', 'source': 'EFRAG ESRS XBRL Taxonomy (published 2024-01-01); ESAP Regulation (EU) 2023/2869', 'esap_mandate': \u2026",
-     "dur_ms": 0.035,
+     "dur_ms": 0.046,
      "sql": [],
      "error": null,
      "children": []
@@ -3141,7 +3141,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.284,
+   "dur_ms": 0.278,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -3155,7 +3155,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 196,
+     "id": 3083,
      "name": "calculate_readiness_score",
      "qual": "calculate_readiness_score",
      "file": "api/v1/routes/comprehensive_reporting.py",
@@ -3164,7 +3164,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.012,
      "sql": [],
      "error": null,
      "children": []

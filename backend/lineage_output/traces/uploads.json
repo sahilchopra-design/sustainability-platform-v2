@@ -1,7 +1,7 @@
 {
  "domain": "uploads",
  "meta": {
-  "ts": "2026-07-01T10:16:11",
+  "ts": "2026-07-05T19:17:19",
   "endpoints": 8,
   "module": "api.v1.routes.uploads",
   "router_prefix": "/uploads"
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 808.179,
+   "dur_ms": 292.407,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -29,7 +29,7 @@
       "mapping_templates"
      ],
      "rowcount": 0,
-     "dur_ms": 69.377,
+     "dur_ms": 64.597,
      "is_reference": false,
      "error": null
     }
@@ -45,16 +45,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42516,
      "name": "list_mapping_templates",
      "qual": "list_mapping_templates",
      "file": "api/v1/routes/uploads.py",
      "line": 429,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000022EF37E6120>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A2165A0>"
      },
      "ret": "[]",
-     "dur_ms": 770.826,
+     "dur_ms": 259.944,
      "sql": [
       0
      ],
@@ -69,7 +69,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Upload 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 368.696,
+   "dur_ms": 299.833,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -85,7 +85,7 @@
       "file_uploads"
      ],
      "rowcount": 0,
-     "dur_ms": 77.791,
+     "dur_ms": 61.78,
      "is_reference": false,
      "error": null
     }
@@ -98,17 +98,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 42517,
      "name": "get_upload_status",
      "qual": "get_upload_status",
      "file": "api/v1/routes/uploads.py",
      "line": 172,
      "args": {
       "upload_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000022EF392CE90>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A216C30>"
      },
      "ret": "None",
-     "dur_ms": 325.206,
+     "dur_ms": 270.826,
      "sql": [
       0
      ],
@@ -123,7 +123,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Upload 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 340.063,
+   "dur_ms": 281.303,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -139,7 +139,7 @@
       "file_uploads"
      ],
      "rowcount": 0,
-     "dur_ms": 84.029,
+     "dur_ms": 61.766,
      "is_reference": false,
      "error": null
     }
@@ -154,7 +154,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 42518,
      "name": "get_validation_errors",
      "qual": "get_validation_errors",
      "file": "api/v1/routes/uploads.py",
@@ -163,10 +163,10 @@
       "upload_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "error_type": "None",
       "severity": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000022EF3979A90>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B49B0>"
      },
      "ret": "None",
-     "dur_ms": 305.38,
+     "dur_ms": 251.833,
      "sql": [
       0
      ],
@@ -181,7 +181,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Upload 550e8400-e29b-41d4-a716-446655440001 not found",
-   "dur_ms": 338.811,
+   "dur_ms": 290.608,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -197,7 +197,7 @@
       "file_uploads"
      ],
      "rowcount": 0,
-     "dur_ms": 73.728,
+     "dur_ms": 57.741,
      "is_reference": false,
      "error": null
     }
@@ -211,7 +211,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 42519,
      "name": "get_upload_preview",
      "qual": "get_upload_preview",
      "file": "api/v1/routes/uploads.py",
@@ -219,10 +219,10 @@
      "args": {
       "upload_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "max_rows": "100",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000022EF39C2240>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D4A1B4530>"
      },
      "ret": "None",
-     "dur_ms": 300.256,
+     "dur_ms": 260.404,
      "sql": [
       0
      ],

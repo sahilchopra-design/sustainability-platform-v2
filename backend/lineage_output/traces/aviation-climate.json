@@ -1,10 +1,10 @@
 {
  "domain": "aviation-climate",
  "meta": {
-  "ts": "2026-06-30T13:59:22",
+  "ts": "2026-07-05T19:10:39",
+  "endpoints": 11,
   "module": "api.v1.routes.aviation_climate",
-  "router_prefix": "/api/v1/aviation-climate",
-  "endpoints": 11
+  "router_prefix": "/api/v1/aviation-climate"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.279,
+   "dur_ms": 0.196,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 497,
      "name": "ref_aircraft_intensity",
      "qual": "ref_aircraft_intensity",
      "file": "api/v1/routes/aviation_climate.py",
      "line": 312,
      "args": {},
      "ret": "{'status': 'success', 'data': {'co2_intensity_gco2_pkm': {'A380': 75.0, 'B777': 85.0, 'B787': 65.0, 'A350': 60.0, 'B737MAX': 70.0, 'A320neo': 68.0, 'regional_jet': 110.0, 'turboprop': 95.0, 'B747_classic': 120.0, 'A330': 90.0}, 'stranding_\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.146,
+   "dur_ms": 0.133,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 498,
      "name": "ref_corsia_phases",
      "qual": "ref_corsia_phases",
      "file": "api/v1/routes/aviation_climate.py",
      "line": 292,
      "args": {},
      "ret": "{'status': 'success', 'data': {'phase_1': {'years': [2021, 2022, 2023], 'description': 'Voluntary pilot phase', 'baseline_year': 2019, 'offset_factor': 0.0, 'eligible_units': ['VERRA_VCS', 'GOLD_STANDARD', 'ACR', 'CAR', 'CDM'], 'mandatory'\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.12,
+   "dur_ms": 0.109,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,7 +110,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 499,
      "name": "ref_iata_nzc_pathway",
      "qual": "ref_iata_nzc_pathway",
      "file": "api/v1/routes/aviation_climate.py",
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.131,
+   "dur_ms": 0.124,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,7 +149,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 500,
      "name": "ref_saf_mandates",
      "qual": "ref_saf_mandates",
      "file": "api/v1/routes/aviation_climate.py",
@@ -223,7 +223,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.161,
+   "dur_ms": 0.145,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -237,7 +237,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 501,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/aviation_climate.py",
@@ -246,7 +246,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

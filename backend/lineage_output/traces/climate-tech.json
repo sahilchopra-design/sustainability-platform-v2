@@ -1,10 +1,10 @@
 {
  "domain": "climate-tech",
  "meta": {
-  "ts": "2026-06-30T14:00:00",
+  "ts": "2026-07-05T19:11:01",
+  "endpoints": 8,
   "module": "api.v1.routes.climate_tech",
-  "router_prefix": "/api/v1/climate-tech",
-  "endpoints": 8
+  "router_prefix": "/api/v1/climate-tech"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.608,
+   "dur_ms": 0.446,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,7 +33,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 2662,
      "name": "get_ctvc_taxonomy",
      "qual": "get_ctvc_taxonomy",
      "file": "api/v1/routes/climate_tech.py",
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.394,
+   "dur_ms": 0.317,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 2663,
      "name": "get_iea_deployment",
      "qual": "get_iea_deployment",
      "file": "api/v1/routes/climate_tech.py",
      "line": 172,
      "args": {},
      "ret": "{'source': 'IEA World Energy Investment 2024 / Net Zero by 2050 (NZE 2023)', 'reporting_year': 2024, 'technology_count': 21, 'technologies': {'solar_pv_utility': {'display_name': 'Solar PV (Utility-Scale)', 'ctvc_sector': 'energy', 'curren\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.277,
+   "dur_ms": 2.396,
    "node_count": 78,
    "provenance": [
     "computed"
@@ -117,19 +117,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 2664,
      "name": "get_mac_curves",
      "qual": "get_mac_curves",
      "file": "api/v1/routes/climate_tech.py",
      "line": 189,
      "args": {},
      "ret": "{'source': 'IEA Net Zero by 2050 \u2014 MAC Curve (2023 edition)', 'technology_count': 25, 'total_abatement_potential_2030_gtco2': 22.5, 'total_abatement_potential_2050_gtco2': 67.7, 'cost_tiers': {'negative_cost': ['building_energy_efficiency'\u2026",
-     "dur_ms": 1.976,
+     "dur_ms": 2.078,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 2665,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -144,7 +144,7 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 2666,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -159,7 +159,7 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 2667,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -174,7 +174,7 @@
        "children": []
       },
       {
-       "id": 7,
+       "id": 2668,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -189,7 +189,7 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 2669,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -198,13 +198,13 @@
         "x": "{'technology': 'solar_pv_utility', 'mac_usd_tco2': -15, 'abatement_2030_gtco2': 2.8, 'abatement_2050_gtco2': 6.5, 'sector': 'energy', 'trl': 9, 'notes': 'LCOE below gas in most markets'}"
        },
        "ret": "-15",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 9,
+       "id": 2670,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -213,13 +213,13 @@
         "x": "{'technology': 'smart_grid', 'mac_usd_tco2': -5, 'abatement_2030_gtco2': 0.5, 'abatement_2050_gtco2': 1.5, 'sector': 'energy', 'trl': 9, 'notes': 'Demand response and flexibility'}"
        },
        "ret": "-5",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 2671,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -234,7 +234,7 @@
        "children": []
       },
       {
-       "id": 11,
+       "id": 2672,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -249,7 +249,7 @@
        "children": []
       },
       {
-       "id": 12,
+       "id": 2673,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -258,13 +258,13 @@
         "x": "{'technology': 'methane_flaring_reduction', 'mac_usd_tco2': -15, 'abatement_2030_gtco2': 0.9, 'abatement_2050_gtco2': 1.5, 'sector': 'energy', 'trl': 9, 'notes': 'Oil & gas sector methane capture'}"
        },
        "ret": "-15",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 13,
+       "id": 2674,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -279,7 +279,7 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 2675,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -294,7 +294,7 @@
        "children": []
       },
       {
-       "id": 15,
+       "id": 2676,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -303,13 +303,13 @@
         "x": "{'technology': 'offshore_wind', 'mac_usd_tco2': 20, 'abatement_2030_gtco2': 0.9, 'abatement_2050_gtco2': 3.5, 'sector': 'energy', 'trl': 9, 'notes': 'Higher CAPEX but growing rapidly'}"
        },
        "ret": "20",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 2677,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -324,7 +324,7 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 2678,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -339,7 +339,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 2679,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -354,7 +354,7 @@
        "children": []
       },
       {
-       "id": 19,
+       "id": 2680,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -369,7 +369,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 2681,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -378,13 +378,13 @@
         "x": "{'technology': 'ccs_ccus_industrial', 'mac_usd_tco2': 95, 'abatement_2030_gtco2': 0.7, 'abatement_2050_gtco2': 5.8, 'sector': 'industry', 'trl': 8, 'notes': 'Hard-to-abate sectors cement/steel'}"
        },
        "ret": "95",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 21,
+       "id": 2682,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -399,7 +399,7 @@
        "children": []
       },
       {
-       "id": 22,
+       "id": 2683,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -414,7 +414,7 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 2684,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -429,7 +429,7 @@
        "children": []
       },
       {
-       "id": 24,
+       "id": 2685,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -444,7 +444,7 @@
        "children": []
       },
       {
-       "id": 25,
+       "id": 2686,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -459,7 +459,7 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 2687,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -474,7 +474,7 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 2688,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -489,7 +489,7 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 2689,
        "name": "<lambda>",
        "qual": "get_mac_curves.<locals>.<lambda>",
        "file": "api/v1/routes/climate_tech.py",
@@ -504,13 +504,13 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 2690,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.8",
        "dur_ms": 0.002,
@@ -519,43 +519,43 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 2691,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.2",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 31,
+       "id": 2692,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.5",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 32,
+       "id": 2693,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.8",
        "dur_ms": 0.001,
@@ -564,13 +564,13 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 2694,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.8",
        "dur_ms": 0.001,
@@ -579,13 +579,13 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 2695,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.5",
        "dur_ms": 0.001,
@@ -594,13 +594,13 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 2696,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.8",
        "dur_ms": 0.001,
@@ -609,28 +609,28 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 2697,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.4",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 37,
+       "id": 2698,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.9",
        "dur_ms": 0.001,
@@ -639,13 +639,13 @@
        "children": []
       },
       {
-       "id": 38,
+       "id": 2699,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "3.5",
        "dur_ms": 0.001,
@@ -654,13 +654,13 @@
        "children": []
       },
       {
-       "id": 39,
+       "id": 2700,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.6",
        "dur_ms": 0.001,
@@ -669,13 +669,13 @@
        "children": []
       },
       {
-       "id": 40,
+       "id": 2701,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.9",
        "dur_ms": 0.001,
@@ -684,13 +684,13 @@
        "children": []
       },
       {
-       "id": 41,
+       "id": 2702,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.5",
        "dur_ms": 0.001,
@@ -699,13 +699,13 @@
        "children": []
       },
       {
-       "id": 42,
+       "id": 2703,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.0",
        "dur_ms": 0.001,
@@ -714,13 +714,13 @@
        "children": []
       },
       {
-       "id": 43,
+       "id": 2704,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.3",
        "dur_ms": 0.001,
@@ -729,13 +729,13 @@
        "children": []
       },
       {
-       "id": 44,
+       "id": 2705,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.5",
        "dur_ms": 0.002,
@@ -744,13 +744,13 @@
        "children": []
       },
       {
-       "id": 45,
+       "id": 2706,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.7",
        "dur_ms": 0.001,
@@ -759,13 +759,13 @@
        "children": []
       },
       {
-       "id": 46,
+       "id": 2707,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.4",
        "dur_ms": 0.001,
@@ -774,13 +774,13 @@
        "children": []
       },
       {
-       "id": 47,
+       "id": 2708,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.15",
        "dur_ms": 0.001,
@@ -789,13 +789,13 @@
        "children": []
       },
       {
-       "id": 48,
+       "id": 2709,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.3",
        "dur_ms": 0.001,
@@ -804,13 +804,13 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 2710,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.2",
        "dur_ms": 0.001,
@@ -819,13 +819,13 @@
        "children": []
       },
       {
-       "id": 50,
+       "id": 2711,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.5",
        "dur_ms": 0.001,
@@ -834,13 +834,13 @@
        "children": []
       },
       {
-       "id": 51,
+       "id": 2712,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.1",
        "dur_ms": 0.001,
@@ -849,13 +849,13 @@
        "children": []
       },
       {
-       "id": 52,
+       "id": 2713,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.1",
        "dur_ms": 0.001,
@@ -864,28 +864,28 @@
        "children": []
       },
       {
-       "id": 53,
+       "id": 2714,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.05",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 54,
+       "id": 2715,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 200,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -894,43 +894,43 @@
        "children": []
       },
       {
-       "id": 55,
+       "id": 2716,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "3.5",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 56,
+       "id": 2717,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.8",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 57,
+       "id": 2718,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "4.0",
        "dur_ms": 0.001,
@@ -939,13 +939,13 @@
        "children": []
       },
       {
-       "id": 58,
+       "id": 2719,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.2",
        "dur_ms": 0.001,
@@ -954,13 +954,13 @@
        "children": []
       },
       {
-       "id": 59,
+       "id": 2720,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "6.5",
        "dur_ms": 0.001,
@@ -969,13 +969,13 @@
        "children": []
       },
       {
-       "id": 60,
+       "id": 2721,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.5",
        "dur_ms": 0.001,
@@ -984,13 +984,13 @@
        "children": []
       },
       {
-       "id": 61,
+       "id": 2722,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "4.0",
        "dur_ms": 0.001,
@@ -999,13 +999,13 @@
        "children": []
       },
       {
-       "id": 62,
+       "id": 2723,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "4.5",
        "dur_ms": 0.001,
@@ -1014,13 +1014,13 @@
        "children": []
       },
       {
-       "id": 63,
+       "id": 2724,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.5",
        "dur_ms": 0.001,
@@ -1029,13 +1029,13 @@
        "children": []
       },
       {
-       "id": 64,
+       "id": 2725,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "5.5",
        "dur_ms": 0.001,
@@ -1044,13 +1044,13 @@
        "children": []
       },
       {
-       "id": 65,
+       "id": 2726,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.0",
        "dur_ms": 0.001,
@@ -1059,13 +1059,13 @@
        "children": []
       },
       {
-       "id": 66,
+       "id": 2727,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "3.5",
        "dur_ms": 0.001,
@@ -1074,13 +1074,13 @@
        "children": []
       },
       {
-       "id": 67,
+       "id": 2728,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.5",
        "dur_ms": 0.001,
@@ -1089,196 +1089,196 @@
        "children": []
       },
       {
-       "id": 68,
+       "id": 2729,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.0",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 69,
+       "id": 2730,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.5",
-       "dur_ms": 0.001,
+       "dur_ms": 0.037,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 70,
+       "id": 2731,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 71,
+       "id": 2732,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "5.8",
-       "dur_ms": 0.001,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 72,
+       "id": 2733,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "3.8",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 73,
+       "id": 2734,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.8",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 74,
+       "id": 2735,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.8",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 75,
+       "id": 2736,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.4",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 76,
+       "id": 2737,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "2.5",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 77,
+       "id": 2738,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.6",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 78,
+       "id": 2739,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "1.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 79,
+       "id": 2740,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "0.5",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 80,
+       "id": 2741,
        "name": "<genexpr>",
        "qual": "get_mac_curves.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 201,
        "args": {
-        ".0": "<list_iterator object at 0x00000263E26BB8B0>"
+        ".0": "<list_iterator object at 0x0000013D48903040>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -1293,7 +1293,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.979,
+   "dur_ms": 1.412,
    "node_count": 25,
    "provenance": [
     "computed"
@@ -1319,25 +1319,25 @@
    "truncated": [],
    "tree": [
     {
-     "id": 81,
+     "id": 2742,
      "name": "get_vc_market_data",
      "qual": "get_vc_market_data",
      "file": "api/v1/routes/climate_tech.py",
      "line": 217,
      "args": {},
      "ret": "{'source': 'CTVC State of Climate Tech 2024 / BloombergNEF Energy Transition Investment Trends 2024', 'reporting_year': 2024, 'total_climate_tech_investment_usd_bn': 161.0, 'total_deal_count': 1890, 'sectors': {'energy': {'total_capital_20\u2026",
-     "dur_ms": 0.652,
+     "dur_ms": 1.023,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 82,
+       "id": 2743,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "42.0",
        "dur_ms": 0.003,
@@ -1346,13 +1346,13 @@
        "children": []
       },
       {
-       "id": 83,
+       "id": 2744,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "35.0",
        "dur_ms": 0.002,
@@ -1361,43 +1361,43 @@
        "children": []
       },
       {
-       "id": 84,
+       "id": 2745,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "12.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 85,
+       "id": 2746,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "18.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 86,
+       "id": 2747,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "14.0",
        "dur_ms": 0.002,
@@ -1406,43 +1406,43 @@
        "children": []
       },
       {
-       "id": 87,
+       "id": 2748,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "5.5",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 88,
+       "id": 2749,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "8.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 89,
+       "id": 2750,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "7.0",
        "dur_ms": 0.001,
@@ -1451,13 +1451,13 @@
        "children": []
       },
       {
-       "id": 90,
+       "id": 2751,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "3.5",
        "dur_ms": 0.001,
@@ -1466,58 +1466,58 @@
        "children": []
       },
       {
-       "id": 91,
+       "id": 2752,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "10.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 92,
+       "id": 2753,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "6.0",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 93,
+       "id": 2754,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 235,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "None",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 94,
+       "id": 2755,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "380",
        "dur_ms": 0.002,
@@ -1526,13 +1526,13 @@
        "children": []
       },
       {
-       "id": 95,
+       "id": 2756,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "290",
        "dur_ms": 0.002,
@@ -1541,28 +1541,28 @@
        "children": []
       },
       {
-       "id": 96,
+       "id": 2757,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "180",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 97,
+       "id": 2758,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "150",
        "dur_ms": 0.001,
@@ -1571,28 +1571,28 @@
        "children": []
       },
       {
-       "id": 98,
+       "id": 2759,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "220",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 99,
+       "id": 2760,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "95",
        "dur_ms": 0.001,
@@ -1601,43 +1601,43 @@
        "children": []
       },
       {
-       "id": 100,
+       "id": 2761,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "160",
-       "dur_ms": 0.001,
+       "dur_ms": 0.007,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 101,
+       "id": 2762,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "110",
-       "dur_ms": 0.001,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 102,
+       "id": 2763,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "70",
        "dur_ms": 0.001,
@@ -1646,13 +1646,13 @@
        "children": []
       },
       {
-       "id": 103,
+       "id": 2764,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "140",
        "dur_ms": 0.001,
@@ -1661,13 +1661,13 @@
        "children": []
       },
       {
-       "id": 104,
+       "id": 2765,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "95",
        "dur_ms": 0.001,
@@ -1676,13 +1676,13 @@
        "children": []
       },
       {
-       "id": 105,
+       "id": 2766,
        "name": "<genexpr>",
        "qual": "get_vc_market_data.<locals>.<genexpr>",
        "file": "api/v1/routes/climate_tech.py",
        "line": 236,
        "args": {
-        ".0": "<dict_valueiterator object at 0x00000263E26DD760>"
+        ".0": "<dict_valueiterator object at 0x0000013D4885FAB0>"
        },
        "ret": "None",
        "dur_ms": 0.002,
@@ -1700,7 +1700,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'technology_name'",
-   "dur_ms": 0.262,
+   "dur_ms": 0.239,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1714,7 +1714,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 106,
+     "id": 2767,
      "name": "assess_technology",
      "qual": "assess_technology",
      "file": "api/v1/routes/climate_tech.py",
@@ -1723,7 +1723,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.011,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -1736,7 +1736,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'technology'",
-   "dur_ms": 0.25,
+   "dur_ms": 0.777,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1750,7 +1750,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 107,
+     "id": 2768,
      "name": "analyse_investment_opportunity",
      "qual": "analyse_investment_opportunity",
      "file": "api/v1/routes/climate_tech.py",
@@ -1759,7 +1759,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.006,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": []
@@ -1772,7 +1772,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'technology'",
-   "dur_ms": 0.2,
+   "dur_ms": 0.35,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1786,7 +1786,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 108,
+     "id": 2769,
      "name": "calculate_learning_curve",
      "qual": "calculate_learning_curve",
      "file": "api/v1/routes/climate_tech.py",
@@ -1795,7 +1795,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.01,
      "sql": [],
      "error": null,
      "children": []
@@ -1808,7 +1808,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'technology_list'",
-   "dur_ms": 0.197,
+   "dur_ms": 0.23,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1822,7 +1822,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 109,
+     "id": 2770,
      "name": "build_portfolio_analysis",
      "qual": "build_portfolio_analysis",
      "file": "api/v1/routes/climate_tech.py",
@@ -1831,7 +1831,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []

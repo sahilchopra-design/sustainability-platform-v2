@@ -1,10 +1,10 @@
 {
  "domain": "country-risk",
  "meta": {
-  "ts": "2026-06-30T14:00:12",
+  "ts": "2026-07-05T19:11:07",
+  "endpoints": 6,
   "module": "api.v1.routes.country_risk",
-  "router_prefix": "/api/v1/country-risk",
-  "endpoints": 6
+  "router_prefix": "/api/v1/country-risk"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2285.121,
+   "dur_ms": 432.647,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "dh_reference_data"
      ],
      "rowcount": 50,
-     "dur_ms": 114.878,
+     "dur_ms": 91.214,
      "is_reference": false,
      "error": null
     },
@@ -40,7 +40,7 @@
       "dh_reference_data"
      ],
      "rowcount": 500,
-     "dur_ms": 91.842,
+     "dur_ms": 59.582,
      "is_reference": false,
      "error": null
     },
@@ -51,7 +51,7 @@
       "dh_reference_data"
      ],
      "rowcount": 1,
-     "dur_ms": 30.625,
+     "dur_ms": 30.094,
      "is_reference": false,
      "error": null
     }
@@ -73,7 +73,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 3102,
      "name": "coal_capacity_by_country",
      "qual": "coal_capacity_by_country",
      "file": "api/v1/routes/country_risk.py",
@@ -81,10 +81,10 @@
      "args": {
       "country": "None",
       "limit": "50",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A1B50>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48903020>"
      },
      "ret": "{'total_countries': 112, 'showing': 50, 'countries': [{'country': 'Afghanistan', 'capacities': {'coal_capacity_announced': {'value_mw': 160.0, 'unit': 'MW'}, 'coal_capacity_announced_plus_pre-permit_plus_permitted': {'value_mw': 160.0, 'un\u2026",
-     "dur_ms": 2252.992,
+     "dur_ms": 400.348,
      "sql": [
       0,
       1,
@@ -101,7 +101,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Provide at least 2 comma-separated ISO3 codes",
-   "dur_ms": 0.907,
+   "dur_ms": 0.63,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -117,7 +117,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 3103,
      "name": "compare_countries",
      "qual": "compare_countries",
      "file": "api/v1/routes/country_risk.py",
@@ -125,10 +125,10 @@
      "args": {
       "countries": "'TEST_countries'",
       "index_name": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A1C40>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D8170>"
      },
      "ret": "None",
-     "dur_ms": 0.131,
+     "dur_ms": 0.028,
      "sql": [],
      "error": null,
      "children": []
@@ -141,7 +141,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: No data for country 550E8400-E29B-41D4-A716-446655440001",
-   "dur_ms": 356.282,
+   "dur_ms": 298.911,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -157,7 +157,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 0,
-     "dur_ms": 77.567,
+     "dur_ms": 73.533,
      "is_reference": false,
      "error": null
     }
@@ -170,17 +170,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 3104,
      "name": "get_country_profile",
      "qual": "get_country_profile",
      "file": "api/v1/routes/country_risk.py",
      "line": 81,
      "args": {
       "country_iso3": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0033A23C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D8C50>"
      },
      "ret": "None",
-     "dur_ms": 317.615,
+     "dur_ms": 269.422,
      "sql": [
       0
      ],
@@ -195,7 +195,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 325.508,
+   "dur_ms": 340.307,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -211,7 +211,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 1,
-     "dur_ms": 67.88,
+     "dur_ms": 63.068,
      "is_reference": false,
      "error": null
     },
@@ -222,7 +222,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 0,
-     "dur_ms": 29.515,
+     "dur_ms": 31.373,
      "is_reference": false,
      "error": null
     }
@@ -244,7 +244,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 3105,
      "name": "country_risk_heatmap",
      "qual": "country_risk_heatmap",
      "file": "api/v1/routes/country_risk.py",
@@ -252,10 +252,10 @@
      "args": {
       "index_name": "'TEST_index_name'",
       "year": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8170>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D8BF0>"
      },
      "ret": "{'index_name': 'TEST_index_name', 'year': 2023, 'data': []}",
-     "dur_ms": 296.633,
+     "dur_ms": 309.575,
      "sql": [
       0,
       1
@@ -271,7 +271,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1395.626,
+   "dur_ms": 311.246,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -287,7 +287,7 @@
       "dh_country_risk_indices"
      ],
      "rowcount": 4,
-     "dur_ms": 595.324,
+     "dur_ms": 77.577,
      "is_reference": false,
      "error": null
     }
@@ -305,16 +305,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 3106,
      "name": "list_available_indices",
      "qual": "list_available_indices",
      "file": "api/v1/routes/country_risk.py",
      "line": 53,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8830>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D9CD0>"
      },
      "ret": "{'indices': [{'index_name': 'CPI', 'full_name': 'Corruption Perceptions Index', 'source': 'Transparency International', 'scale': '0-100 (higher = less corrupt)', 'category': 'governance', 'record_count': 180, 'year_range': {'min': 2023, 'm\u2026",
-     "dur_ms": 1360.286,
+     "dur_ms": 280.003,
      "sql": [
       0
      ],
@@ -329,7 +329,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Unknown index '550e8400-e29b-41d4-a716-446655440001'. Available: ['CPI', 'FSI', 'FH_FIW', 'UNDP_GII']",
-   "dur_ms": 0.597,
+   "dur_ms": 0.528,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -347,7 +347,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 3107,
      "name": "get_index_rankings",
      "qual": "get_index_rankings",
      "file": "api/v1/routes/country_risk.py",
@@ -357,10 +357,10 @@
       "year": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001C0034D8380>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489D8080>"
      },
      "ret": "None",
-     "dur_ms": 0.027,
+     "dur_ms": 0.025,
      "sql": [],
      "error": null,
      "children": []

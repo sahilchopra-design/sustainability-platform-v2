@@ -1,10 +1,10 @@
 {
  "domain": "entity-data",
  "meta": {
-  "ts": "2026-06-30T14:01:49",
+  "ts": "2026-07-05T19:14:44",
+  "endpoints": 8,
   "module": "api.v1.routes.entity_data",
-  "router_prefix": "/api/v1/entity-data",
-  "endpoints": 8
+  "router_prefix": "/api/v1/entity-data"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3885.507,
+   "dur_ms": 304.18,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -39,7 +39,7 @@
       "esrs_s1_workforce"
      ],
      "rowcount": 15,
-     "dur_ms": 375.957,
+     "dur_ms": 64.186,
      "is_reference": false,
      "error": null
     }
@@ -57,30 +57,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11075,
      "name": "list_entities",
      "qual": "list_entities",
      "file": "api/v1/routes/entity_data.py",
      "line": 39,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887BB8B4A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AF1D0>"
      },
      "ret": "{'entities': [{'id': 'f4d3544c-fc90-42e6-9f00-8923cfd74468', 'legal_name': 'Enel SpA', 'sector': 'energy_developer', 'country_iso': 'ITA', 'net_turnover_meur': 92900.0, 'balance_sheet_meur': None, 'employees': 65000, 'fi_entity_id': None, \u2026",
-     "dur_ms": 3837.689,
+     "dur_ms": 275.842,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 11076,
        "name": "get_entity_list",
        "qual": "get_entity_list",
        "file": "services/csrd_entity_service.py",
        "line": 20,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887BB8B4A0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475AF1D0>"
        },
        "ret": "[{'id': 'f4d3544c-fc90-42e6-9f00-8923cfd74468', 'legal_name': 'Enel SpA', 'sector': 'energy_developer', 'country_iso': 'ITA', 'net_turnover_meur': 92900.0, 'balance_sheet_meur': None, 'employees': 65000, 'fi_entity_id': None, 'energy_entit\u2026",
-       "dur_ms": 3837.491,
+       "dur_ms": 275.726,
        "sql": [
         0
        ],
@@ -97,7 +97,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
-   "dur_ms": 2883.575,
+   "dur_ms": 270.954,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -113,7 +113,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 235.0,
+     "dur_ms": 56.514,
      "is_reference": false,
      "error": null
     }
@@ -126,32 +126,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11077,
      "name": "entity_profile",
      "qual": "entity_profile",
      "file": "api/v1/routes/entity_data.py",
      "line": 48,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C22D0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A917F0>"
      },
      "ret": "None",
-     "dur_ms": 2844.073,
+     "dur_ms": 242.808,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 11078,
        "name": "get_entity_profile",
        "qual": "get_entity_profile",
        "file": "services/csrd_entity_service.py",
        "line": 76,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C22D0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48A917F0>"
        },
        "ret": "None",
-       "dur_ms": 2844.016,
+       "dur_ms": 242.752,
        "sql": [
         0
        ],
@@ -168,7 +168,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or has no GHG data",
-   "dur_ms": 2092.769,
+   "dur_ms": 311.95,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -184,7 +184,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 772.293,
+     "dur_ms": 59.447,
      "is_reference": false,
      "error": null
     }
@@ -197,32 +197,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11079,
      "name": "entity_carbon_inputs",
      "qual": "entity_carbon_inputs",
      "file": "api/v1/routes/entity_data.py",
      "line": 61,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C2240>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2BA0>"
      },
      "ret": "None",
-     "dur_ms": 2047.059,
+     "dur_ms": 282.309,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 11080,
        "name": "get_carbon_inputs",
        "qual": "get_carbon_inputs",
        "file": "services/csrd_entity_service.py",
        "line": 124,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E3C2240>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2BA0>"
        },
        "ret": "None",
-       "dur_ms": 2047.003,
+       "dur_ms": 282.252,
        "sql": [
         0
        ],
@@ -239,7 +239,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or is not a Financial Institution entity",
-   "dur_ms": 566.26,
+   "dur_ms": 273.859,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -255,7 +255,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 62.3,
+     "dur_ms": 57.594,
      "is_reference": false,
      "error": null
     }
@@ -268,32 +268,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 11081,
      "name": "entity_ecl_inputs",
      "qual": "entity_ecl_inputs",
      "file": "api/v1/routes/entity_data.py",
      "line": 73,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9970>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E1A00>"
      },
      "ret": "None",
-     "dur_ms": 538.075,
+     "dur_ms": 243.681,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 11082,
        "name": "get_ecl_inputs",
        "qual": "get_ecl_inputs",
        "file": "services/csrd_entity_service.py",
        "line": 172,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9970>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E1A00>"
        },
        "ret": "None",
-       "dur_ms": 538.026,
+       "dur_ms": 243.623,
        "sql": [
         0
        ],
@@ -310,7 +310,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or has no biodiversity data",
-   "dur_ms": 1281.059,
+   "dur_ms": 360.534,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -326,7 +326,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 75.607,
+     "dur_ms": 60.111,
      "is_reference": false,
      "error": null
     }
@@ -339,32 +339,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 11083,
      "name": "entity_nature_inputs",
      "qual": "entity_nature_inputs",
      "file": "api/v1/routes/entity_data.py",
      "line": 89,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9F70>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2B40>"
      },
      "ret": "None",
-     "dur_ms": 1252.034,
+     "dur_ms": 320.814,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 11084,
        "name": "get_nature_inputs",
        "qual": "get_nature_inputs",
        "file": "services/csrd_entity_service.py",
        "line": 239,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4D9F70>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E2B40>"
        },
        "ret": "None",
-       "dur_ms": 1251.94,
+       "dur_ms": 320.759,
        "sql": [
         0
        ],
@@ -381,7 +381,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
-   "dur_ms": 1150.13,
+   "dur_ms": 299.838,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -397,7 +397,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 226.169,
+     "dur_ms": 59.168,
      "is_reference": false,
      "error": null
     }
@@ -410,32 +410,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 11085,
      "name": "entity_portfolio_asset",
      "qual": "entity_portfolio_asset",
      "file": "api/v1/routes/entity_data.py",
      "line": 129,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA570>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E1A30>"
      },
      "ret": "None",
-     "dur_ms": 1115.779,
+     "dur_ms": 255.492,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 11086,
        "name": "get_portfolio_asset_spec",
        "qual": "get_portfolio_asset_spec",
        "file": "services/csrd_entity_service.py",
        "line": 377,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA570>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E1A30>"
        },
        "ret": "None",
-       "dur_ms": 1115.731,
+       "dur_ms": 255.42,
        "sql": [
         0
        ],
@@ -452,7 +452,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found",
-   "dur_ms": 296.585,
+   "dur_ms": 282.898,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -468,7 +468,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 60.937,
+     "dur_ms": 54.457,
      "is_reference": false,
      "error": null
     }
@@ -481,32 +481,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 11087,
      "name": "entity_sector_inputs",
      "qual": "entity_sector_inputs",
      "file": "api/v1/routes/entity_data.py",
      "line": 117,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA8A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E32F0>"
      },
      "ret": "None",
-     "dur_ms": 258.999,
+     "dur_ms": 255.774,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 14,
+       "id": 11088,
        "name": "get_sector_inputs",
        "qual": "get_sector_inputs",
        "file": "services/csrd_entity_service.py",
        "line": 338,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DA8A0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E32F0>"
        },
        "ret": "None",
-       "dur_ms": 258.958,
+       "dur_ms": 255.702,
        "sql": [
         0
        ],
@@ -523,7 +523,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Entity '550e8400-e29b-41d4-a716-446655440001' not found or is not an Energy entity",
-   "dur_ms": 440.792,
+   "dur_ms": 280.251,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -539,7 +539,7 @@
       "csrd_entity_registry"
      ],
      "rowcount": 0,
-     "dur_ms": 68.249,
+     "dur_ms": 57.188,
      "is_reference": false,
      "error": null
     }
@@ -552,32 +552,32 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 11089,
      "name": "entity_stranded_inputs",
      "qual": "entity_stranded_inputs",
      "file": "api/v1/routes/entity_data.py",
      "line": 101,
      "args": {
       "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DABD0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46933BC0>"
      },
      "ret": "None",
-     "dur_ms": 410.318,
+     "dur_ms": 250.521,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 16,
+       "id": 11090,
        "name": "get_stranded_inputs",
        "qual": "get_stranded_inputs",
        "file": "services/csrd_entity_service.py",
        "line": 280,
        "args": {
         "entity_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000002887E4DABD0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46933BC0>"
        },
        "ret": "None",
-       "dur_ms": 410.268,
+       "dur_ms": 250.444,
        "sql": [
         0
        ],

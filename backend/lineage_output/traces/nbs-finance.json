@@ -1,10 +1,10 @@
 {
  "domain": "nbs-finance",
  "meta": {
-  "ts": "2026-06-30T14:03:23",
+  "ts": "2026-07-05T19:15:55",
+  "endpoints": 6,
   "module": "api.v1.routes.nbs_finance",
-  "router_prefix": "/api/v1/nbs-finance",
-  "endpoints": 6
+  "router_prefix": "/api/v1/nbs-finance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.713,
+   "dur_ms": 0.231,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,14 +33,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13560,
      "name": "ref_gbf_target_2",
      "qual": "ref_gbf_target_2",
      "file": "api/v1/routes/nbs_finance.py",
      "line": 144,
      "args": {},
      "ret": "{'gbf_target_2': {'target': 'Target 2', 'name': 'Restore 30% of Degraded Ecosystems by 2030 (30\u00d730 Restoration)', 'adopted': 'COP15, Kunming-Montreal, December 2022', 'headline': 'By 2030, ensure that at least 30% of areas of degraded terr\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.684,
+   "dur_ms": 0.17,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -75,14 +75,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13561,
      "name": "ref_iucn_criteria",
      "qual": "ref_iucn_criteria",
      "file": "api/v1/routes/nbs_finance.py",
      "line": 86,
      "args": {},
      "ret": "{'standard': 'IUCN Global Standard for Nature-based Solutions v2.0', 'edition': '2024', 'total_criteria': 8, 'scoring_note': 'Each criterion scored 0-100; composite = weighted average. Tiers: <40=not_eligible, 40-59=bronze, 60-74=silver, \u2265\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -95,7 +95,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.463,
+   "dur_ms": 0.281,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -115,26 +115,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13562,
      "name": "ref_nbs_categories",
      "qual": "ref_nbs_categories",
      "file": "api/v1/routes/nbs_finance.py",
      "line": 105,
      "args": {},
      "ret": "{'nbs_categories': {'reforestation': {'name': 'Reforestation & Afforestation', 'description': 'Planting trees on degraded or previously forested land', 'iucn_ecosystem': 'Terrestrial forests', 'sequestration_tco2_ha_yr': {'min': 3.0, 'max'\u2026",
-     "dur_ms": 0.167,
+     "dur_ms": 0.128,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 13563,
        "name": "get_nbs_benchmarks",
        "qual": "get_nbs_benchmarks",
        "file": "services/nbs_finance_engine.py",
-       "line": 993,
+       "line": 1140,
        "args": {},
        "ret": "{'nbs_categories': {'reforestation': {'name': 'Reforestation & Afforestation', 'description': 'Planting trees on degraded or previously forested land', 'iucn_ecosystem': 'Terrestrial forests', 'sequestration_tco2_ha_yr': {'min': 3.0, 'max'\u2026",
-       "dur_ms": 0.026,
+       "dur_ms": 0.015,
        "sql": [],
        "error": null,
        "children": []
@@ -149,7 +149,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.315,
+   "dur_ms": 0.137,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -172,14 +172,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13564,
      "name": "ref_vcmi_claims",
      "qual": "ref_vcmi_claims",
      "file": "api/v1/routes/nbs_finance.py",
      "line": 120,
      "args": {},
      "ret": "{'framework': 'VCMI Core Carbon Claims Framework', 'version': 'v1.0', 'published': '2023', 'purpose': 'Provides guidance for companies making credible carbon claims beyond regulatory compliance, linked to high-quality carbon credit retirem\u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -192,7 +192,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'nbs_category'",
-   "dur_ms": 0.561,
+   "dur_ms": 0.162,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -206,7 +206,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13565,
      "name": "assess_nbs",
      "qual": "assess_nbs",
      "file": "api/v1/routes/nbs_finance.py",
@@ -215,7 +215,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.02,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

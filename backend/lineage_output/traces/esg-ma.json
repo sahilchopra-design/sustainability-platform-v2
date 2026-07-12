@@ -1,10 +1,10 @@
 {
  "domain": "esg-ma",
  "meta": {
-  "ts": "2026-06-30T14:01:53",
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 10,
   "module": "api.v1.routes.esg_ma",
-  "router_prefix": "/api/v1/esg-ma",
-  "endpoints": 10
+  "router_prefix": "/api/v1/esg-ma"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.532,
+   "dur_ms": 2.044,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -38,14 +38,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11263,
      "name": "get_csddd_scope",
      "qual": "get_csddd_scope",
      "file": "api/v1/routes/esg_ma.py",
      "line": 240,
      "args": {},
      "ret": "{'directive': 'EU Corporate Sustainability Due Diligence Directive (CSDDD)', 'reference': 'Directive (EU) 2024/1760 \u2014 Article 3 Scope', 'published': '2024-07-05', 'transposition_deadline': '2026-07-26', 'scope_note': 'Applies to EU and non\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -58,7 +58,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.755,
+   "dur_ms": 1.594,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -79,14 +79,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11264,
      "name": "get_dd_checklist",
      "qual": "get_dd_checklist",
      "file": "api/v1/routes/esg_ma.py",
      "line": 151,
      "args": {},
      "ret": "{'total_items': 62, 'categories_count': 15, 'categories': {'GHG_Climate': [{'id': 'DD-E01', 'category': 'GHG_Climate', 'item': 'Scope 1/2/3 GHG inventory and verification status', 'weight': 3}, {'id': 'DD-E02', 'category': 'GHG_Climate', '\u2026",
-     "dur_ms": 0.037,
+     "dur_ms": 0.04,
      "sql": [],
      "error": null,
      "children": []
@@ -99,7 +99,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.685,
+   "dur_ms": 1.303,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -120,14 +120,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11265,
      "name": "get_deal_breakers",
      "qual": "get_deal_breakers",
      "file": "api/v1/routes/esg_ma.py",
      "line": 222,
      "args": {},
      "ret": "{'total_criteria': 12, 'category_breakdown': {'Human_Rights': 2, 'Community': 1, 'Environment': 1, 'Anti_Corruption': 1, 'Sanctions': 1, 'Climate': 1, 'Labour': 1, 'Data_Privacy': 1, 'Governance': 1, 'Biodiversity': 1, 'Arms': 1}, 'thresho\u2026",
-     "dur_ms": 0.013,
+     "dur_ms": 0.015,
      "sql": [],
      "error": null,
      "children": []
@@ -140,7 +140,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.57,
+   "dur_ms": 1.285,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -165,14 +165,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11266,
      "name": "get_ungp_principles",
      "qual": "get_ungp_principles",
      "file": "api/v1/routes/esg_ma.py",
      "line": 173,
      "args": {},
      "ret": "{'framework': 'UN Guiding Principles on Business and Human Rights (UNGPs)', 'endorsed': 'UN Human Rights Council Resolution 17/4 (June 2011)', 'total_principles': 31, 'pillar_I_count': 10, 'pillar_II_count': 14, 'pillar_III_count': 7, 'pil\u2026",
-     "dur_ms": 0.02,
+     "dur_ms": 0.021,
      "sql": [],
      "error": null,
      "children": []
@@ -185,7 +185,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.398,
+   "dur_ms": 1.513,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -206,14 +206,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 11267,
      "name": "get_valuation_ranges",
      "qual": "get_valuation_ranges",
      "file": "api/v1/routes/esg_ma.py",
      "line": 199,
      "args": {},
      "ret": "{'methodology': 'ESG purchase price adjustment \u2014 EBITDA multiple impact', 'data_sources': ['PwC M&A ESG Due Diligence 2023', 'EY Sustainability DD Guide 2024', 'KPMG ESG in M&A Report'], 'adjustment_types_count': 9, 'ranges': [{'finding_ty\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.013,
      "sql": [],
      "error": null,
      "children": []
@@ -298,7 +298,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.335,
+   "dur_ms": 1.572,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -312,7 +312,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 11268,
      "name": "valuation_impact_endpoint",
      "qual": "valuation_impact_endpoint",
      "file": "api/v1/routes/esg_ma.py",
@@ -321,7 +321,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.006,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []

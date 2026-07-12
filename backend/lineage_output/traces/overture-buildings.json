@@ -1,0 +1,70 @@
+{
+ "domain": "overture-buildings",
+ "meta": {
+  "ts": "2026-07-05T19:15:59",
+  "endpoints": 1,
+  "module": "api.v1.routes.overture_buildings",
+  "router_prefix": "/api/v1/overture-buildings"
+ },
+ "transactions": [
+  {
+   "domain": "overture-buildings",
+   "label": "GET /api/v1/overture-buildings/footprints",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.466,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "min_lon": "'TEST_min_lon' (mock-required)",
+    "min_lat": "'TEST_min_lat' (mock-required)",
+    "max_lon": "'TEST_max_lon' (mock-required)",
+    "max_lat": "'TEST_max_lat' (mock-required)",
+    "limit": "200 (default)",
+    "timeout_seconds": "45.0 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "buildings",
+     "count",
+     "source_unavailable",
+     "scan_complete",
+     "files_scanned",
+     "files_total",
+     "error",
+     "provenance"
+    ],
+    "n_keys": 8
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 13622,
+     "name": "footprints",
+     "qual": "footprints",
+     "file": "api/v1/routes/overture_buildings.py",
+     "line": 32,
+     "args": {
+      "min_lon": "'TEST_min_lon'",
+      "min_lat": "'TEST_min_lat'",
+      "max_lon": "'TEST_max_lon'",
+      "max_lat": "'TEST_max_lat'",
+      "limit": "200",
+      "timeout_seconds": "45.0"
+     },
+     "ret": "{'buildings': [], 'count': 0, 'source_unavailable': True, 'scan_complete': False, 'files_scanned': 0, 'files_total': 0, 'error': 'min_lon/min_lat must be less than max_lon/max_lat', 'provenance': {'source': 'Overture Maps Foundation \u2014 Buil\u2026",
+     "dur_ms": 0.005,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

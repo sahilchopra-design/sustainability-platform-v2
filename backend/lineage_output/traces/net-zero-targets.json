@@ -1,10 +1,10 @@
 {
  "domain": "net-zero-targets",
  "meta": {
-  "ts": "2026-06-30T14:03:25",
+  "ts": "2026-07-05T19:15:55",
+  "endpoints": 7,
   "module": "api.v1.routes.net_zero_targets",
-  "router_prefix": "/api/v1/net-zero-targets",
-  "endpoints": 7
+  "router_prefix": "/api/v1/net-zero-targets"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'app'",
-   "dur_ms": 2.132,
+   "dur_ms": 1.62,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -28,7 +28,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13566,
      "name": "get_assessment",
      "qual": "get_assessment",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -38,7 +38,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -51,7 +51,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'app'",
-   "dur_ms": 1.458,
+   "dur_ms": 1.014,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -66,7 +66,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13567,
      "name": "list_assessments",
      "qual": "list_assessments",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -76,7 +76,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 0.008,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -89,7 +89,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.524,
+   "dur_ms": 1.042,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -107,7 +107,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13568,
      "name": "get_frameworks",
      "qual": "get_frameworks",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -127,7 +127,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.058,
+   "dur_ms": 0.958,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -145,14 +145,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13569,
      "name": "get_pathways",
      "qual": "get_pathways",
      "file": "api/v1/routes/net_zero_targets.py",
      "line": 255,
      "args": {},
      "ret": "{'pathways': {'1_5c': {'name': '1.5\u00b0C pathway', 'near_term_min_pct': 50, 'long_term_min_pct': 90, 'residual_emissions_max_pct': 10, 'offset_limit_pct': 10, 'temperature_outcome_c': 1.5, 'overshoot': False}, 'well_below_2c': {'name': 'Well-\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -165,7 +165,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.999,
+   "dur_ms": 0.947,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -183,7 +183,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13570,
      "name": "get_sector_pathways",
      "qual": "get_sector_pathways",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -202,9 +202,9 @@
    "label": "POST /api/v1/net-zero-targets/assess",
    "status": "failed",
    "http_status": 500,
-   "error": "HTTPException: 500: unsupported operand type(s) for *: 'NoneType' and 'float'",
-   "dur_ms": 51.684,
-   "node_count": 3,
+   "error": "AttributeError: 'str' object has no attribute 'app'",
+   "dur_ms": 1.653,
+   "node_count": 8,
    "provenance": [
     "computed"
    ],
@@ -218,7 +218,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13571,
      "name": "run_full_assessment",
      "qual": "run_full_assessment",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -228,37 +228,137 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 50.148,
+     "dur_ms": 0.562,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 13572,
        "name": "run_full_assessment",
        "qual": "NetZeroTargetsEngine.run_full_assessment",
        "file": "services/net_zero_targets_engine.py",
-       "line": 514,
+       "line": 615,
        "args": {
         "entity_id": "'TEST_body_entity_id'",
         "entity_type": "'corporate'",
         "framework": "'sbti'"
        },
-       "ret": "None",
-       "dur_ms": 0.06,
+       "ret": "{'assessment_id': '06a9bb7e-1bc4-4e65-b53d-b0f8902a6412', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'entity_type': 'corporate', 'framework': 'sbti', 'base_year': 2019, 'base_year_emissions_tco2e': 0.0, 'scope1_tco2e': 0.0, '\u2026",
+       "dur_ms": 0.485,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 8,
-         "name": "_rng",
-         "qual": "NetZeroTargetsEngine._rng",
+         "id": 13573,
+         "name": "assess_targets",
+         "qual": "NetZeroTargetsEngine.assess_targets",
          "file": "services/net_zero_targets_engine.py",
-         "line": 266,
+         "line": 312,
          "args": {
-          "entity_id": "'TEST_body_entity_id'"
+          "entity_id": "'TEST_body_entity_id'",
+          "entity_type": "'corporate'",
+          "framework": "'sbti'",
+          "base_year": "2019",
+          "base_year_emissions": "0.0",
+          "scope1": "0.0",
+          "scope2": "0.0",
+          "scope3": "0.0",
+          "net_zero_target_year": "2050",
+          "near_term_target_year": "2030",
+          "near_term_reduction_pct": "0.0"
          },
-         "ret": "<random.Random object at 0x000002265B4F48C0>",
-         "dur_ms": 0.027,
+         "ret": "{'assessment_id': '06a9bb7e-1bc4-4e65-b53d-b0f8902a6412', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'entity_type': 'corporate', 'framework': 'sbti', 'base_year': 2019, 'base_year_emissions_tco2e': 0.0, 'scope1_tco2e': 0.0, '\u2026",
+         "dur_ms": 0.141,
+         "sql": [],
+         "error": null,
+         "children": [
+          {
+           "id": 13574,
+           "name": "_derive_pathway",
+           "qual": "NetZeroTargetsEngine._derive_pathway",
+           "file": "services/net_zero_targets_engine.py",
+           "line": 280,
+           "args": {
+            "reduction_pct_near": "0.0"
+           },
+           "ret": "'insufficient'",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13575,
+           "name": "_derive_temperature_score",
+           "qual": "NetZeroTargetsEngine._derive_temperature_score",
+           "file": "services/net_zero_targets_engine.py",
+           "line": 270,
+           "args": {
+            "reduction_pct_2030": "0.0"
+           },
+           "ret": "{'temperature_c': 4.0, 'classification': 'No credible target'}",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          },
+          {
+           "id": 13576,
+           "name": "_derive_validation_status",
+           "qual": "NetZeroTargetsEngine._derive_validation_status",
+           "file": "services/net_zero_targets_engine.py",
+           "line": 289,
+           "args": {
+            "cfg": "{'name': 'Science Based Targets initiative \u2014 Corporate Standard', 'version': 'SBTi Corporate Standard v2.0 (2023)', 'near_term_year': 2030, 'long_term_year': 2050, 'scope_requirements': {'scope1': 'mandatory', 'scope2': 'mandatory', 'scope\u2026",
+            "validation_issues": "['Near-term reduction 0.0% below SBTI minimum of 42%']",
+            "supplied_status": "None"
+           },
+           "ret": "'committed'",
+           "dur_ms": 0.003,
+           "sql": [],
+           "error": null,
+           "children": []
+          }
+         ]
+        },
+        {
+         "id": 13577,
+         "name": "generate_pathway",
+         "qual": "NetZeroTargetsEngine.generate_pathway",
+         "file": "services/net_zero_targets_engine.py",
+         "line": 402,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "assessment_id": "'06a9bb7e-1bc4-4e65-b53d-b0f8902a6412'",
+          "base_year": "2019",
+          "base_emissions": "0.0",
+          "net_zero_year": "2050",
+          "reduction_pct_2030": "0.0",
+          "reduction_pct_2050": "0.0",
+          "projected_emissions_by_year": "None",
+          "offset_plan_by_year": "None",
+          "abatement_cost_by_year": "None"
+         },
+         "ret": "[{'record_id': '8bdef973-6767-4285-a46a-1731e59ee18e', 'assessment_id': '06a9bb7e-1bc4-4e65-b53d-b0f8902a6412', 'entity_id': 'TEST_body_entity_id', 'year': 2024, 'required_reduction_pct': 0.0, 'required_emissions_tco2e': 0.0, 'projected_em\u2026",
+         "dur_ms": 0.128,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13578,
+         "name": "check_framework_compliance",
+         "qual": "NetZeroTargetsEngine.check_framework_compliance",
+         "file": "services/net_zero_targets_engine.py",
+         "line": 561,
+         "args": {
+          "entity_id": "'TEST_body_entity_id'",
+          "entity_type": "'corporate'",
+          "framework": "'sbti'",
+          "assessment_data": "{'assessment_id': '06a9bb7e-1bc4-4e65-b53d-b0f8902a6412', 'entity_id': 'TEST_body_entity_id', 'entity_name': None, 'entity_type': 'corporate', 'framework': 'sbti', 'base_year': 2019, 'base_year_emissions_tco2e': 0.0, 'scope1_tco2e': 0.0, '\u2026"
+         },
+         "ret": "{'entity_id': 'TEST_body_entity_id', 'framework': 'sbti', 'compliance_pct': 50, 'compliant': False, 'gaps': ['Near-term reduction 0.0% is below SBTI minimum of 42%', 'SBTI requires third-party SBTi validation \u2014 not yet obtained'], 'warning\u2026",
+         "dur_ms": 0.032,
          "sql": [],
          "error": null,
          "children": []
@@ -275,8 +375,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.133,
-   "node_count": 5,
+   "dur_ms": 2.529,
+   "node_count": 2,
    "provenance": [
     "computed"
    ],
@@ -310,7 +410,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13579,
      "name": "calculate_temperature_score",
      "qual": "calculate_temperature_score",
      "file": "api/v1/routes/net_zero_targets.py",
@@ -319,75 +419,30 @@
       "body": "TemperatureScoreRequest(entity_id='TEST_body_entity_id', scope1=1.0, scope2=1.0, scope3=1.0, reduction_targets=None)",
       "request": "'TEST_request'"
      },
-     "ret": "{'entity_id': 'TEST_body_entity_id', 'total_emissions_tco2e': 3.0, 'scope1_tco2e': 1.0, 'scope2_tco2e': 1.0, 'scope3_tco2e': 1.0, 'scope3_share_pct': 33.3, 'reduction_pct_2030': 44.9, 'reduction_pct_2050': 90.7, 'implied_temperature_c': 2.\u2026",
-     "dur_ms": 0.372,
+     "ret": "{'entity_id': 'TEST_body_entity_id', 'total_emissions_tco2e': 3.0, 'scope1_tco2e': 1.0, 'scope2_tco2e': 1.0, 'scope3_tco2e': 1.0, 'scope3_share_pct': 33.3, 'reduction_pct_2030': None, 'reduction_pct_2050': None, 'implied_temperature_c': No\u2026",
+     "dur_ms": 0.126,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 13580,
        "name": "calculate_temperature_score",
        "qual": "NetZeroTargetsEngine.calculate_temperature_score",
        "file": "services/net_zero_targets_engine.py",
-       "line": 420,
+       "line": 486,
        "args": {
         "entity_id": "'TEST_body_entity_id'",
         "scope1": "1.0",
         "scope2": "1.0",
         "scope3": "1.0",
-        "reduction_targets": "{}"
+        "reduction_targets": "{}",
+        "portfolio_coverage_pct": "None"
        },
-       "ret": "{'entity_id': 'TEST_body_entity_id', 'total_emissions_tco2e': 3.0, 'scope1_tco2e': 1.0, 'scope2_tco2e': 1.0, 'scope3_tco2e': 1.0, 'scope3_share_pct': 33.3, 'reduction_pct_2030': 44.9, 'reduction_pct_2050': 90.7, 'implied_temperature_c': 2.\u2026",
-       "dur_ms": 0.317,
+       "ret": "{'entity_id': 'TEST_body_entity_id', 'total_emissions_tco2e': 3.0, 'scope1_tco2e': 1.0, 'scope2_tco2e': 1.0, 'scope3_tco2e': 1.0, 'scope3_share_pct': 33.3, 'reduction_pct_2030': None, 'reduction_pct_2050': None, 'implied_temperature_c': No\u2026",
+       "dur_ms": 0.053,
        "sql": [],
        "error": null,
-       "children": [
-        {
-         "id": 11,
-         "name": "_rng",
-         "qual": "NetZeroTargetsEngine._rng",
-         "file": "services/net_zero_targets_engine.py",
-         "line": 266,
-         "args": {
-          "entity_id": "'TEST_body_entity_id:temp_score'"
-         },
-         "ret": "<random.Random object at 0x000002265B5124C0>",
-         "dur_ms": 0.036,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 12,
-         "name": "_derive_temperature_score",
-         "qual": "NetZeroTargetsEngine._derive_temperature_score",
-         "file": "services/net_zero_targets_engine.py",
-         "line": 270,
-         "args": {
-          "reduction_pct_2030": "44.86759430234575"
-         },
-         "ret": "{'temperature_c': 2.0, 'classification': '2\u00b0C aligned'}",
-         "dur_ms": 0.005,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 13,
-         "name": "_derive_pathway",
-         "qual": "NetZeroTargetsEngine._derive_pathway",
-         "file": "services/net_zero_targets_engine.py",
-         "line": 280,
-         "args": {
-          "reduction_pct_near": "44.86759430234575"
-         },
-         "ret": "'well_below_2c'",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        }
-       ]
+       "children": []
       }
      ]
     }

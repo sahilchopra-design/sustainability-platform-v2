@@ -1,10 +1,10 @@
 {
  "domain": "glidepath",
  "meta": {
-  "ts": "2026-06-30T14:02:35",
+  "ts": "2026-07-05T19:15:32",
+  "endpoints": 8,
   "module": "api.v1.routes.glidepath",
-  "router_prefix": "/api/v1/glidepath",
-  "endpoints": 8
+  "router_prefix": "/api/v1/glidepath"
  },
  "transactions": [
   {
@@ -13,8 +13,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3066.051,
-   "node_count": 38,
+   "dur_ms": 326.548,
+   "node_count": 26,
    "provenance": [
     "db-empty"
    ],
@@ -29,7 +29,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 0,
-     "dur_ms": 605.484,
+     "dur_ms": 64.474,
      "is_reference": false,
      "error": null
     }
@@ -55,7 +55,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12122,
      "name": "get_crrem_asset",
      "qual": "get_crrem_asset",
      "file": "api/v1/routes/glidepath.py",
@@ -67,107 +67,107 @@
       "country": "'EU'"
      },
      "ret": "{'asset_id': '550e8400-e29b-41d4-a716-446655440001', 'asset_name': 'Asset', 'stranding_year': None, 'current_intensity_kgco2_m2': None, 'pathway_source': 'data_hub', 'data_points': [{'year': 2020, 'actual_waci': None, 'nzba_target': 44.0, \u2026",
-     "dur_ms": 3063.347,
+     "dur_ms": 324.661,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12123,
        "name": "<module>",
        "qual": "<module>",
        "file": "services/data_hub_client.py",
        "line": 1,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.165,
+       "dur_ms": 0.224,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 3,
+         "id": 12124,
          "name": "_safe_query",
          "qual": "_safe_query",
          "file": "services/data_hub_client.py",
          "line": 42,
          "args": {
-          "fn": "<function get_emissions at 0x000001F58E1DB2E0>"
+          "fn": "<function get_emissions at 0x0000013D48A167A0>"
          },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB380>",
-         "dur_ms": 0.004,
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A16340>",
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 4,
+         "id": 12125,
          "name": "_safe_query",
          "qual": "_safe_query",
          "file": "services/data_hub_client.py",
          "line": 42,
          "args": {
-          "fn": "<function get_glidepath at 0x000001F58E1DB420>"
+          "fn": "<function get_glidepath at 0x0000013D48A16700>"
          },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB4C0>",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 5,
-         "name": "_safe_query",
-         "qual": "_safe_query",
-         "file": "services/data_hub_client.py",
-         "line": 42,
-         "args": {
-          "fn": "<function get_crrem_pathway at 0x000001F58E1DB560>"
-         },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB600>",
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A15260>",
          "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 6,
+         "id": 12126,
          "name": "_safe_query",
          "qual": "_safe_query",
          "file": "services/data_hub_client.py",
          "line": 42,
          "args": {
-          "fn": "<function get_carbon_price at 0x000001F58E1DB6A0>"
+          "fn": "<function get_crrem_pathway at 0x0000013D48A17F60>"
          },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58C8A9C60>",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 7,
-         "name": "_safe_query",
-         "qual": "_safe_query",
-         "file": "services/data_hub_client.py",
-         "line": 42,
-         "args": {
-          "fn": "<function get_sector_benchmark at 0x000001F58E1DB740>"
-         },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB7E0>",
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A15F80>",
          "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 8,
+         "id": 12127,
          "name": "_safe_query",
          "qual": "_safe_query",
          "file": "services/data_hub_client.py",
          "line": 42,
          "args": {
-          "fn": "<function get_dqs_summary at 0x000001F58E1DB880>"
+          "fn": "<function get_carbon_price at 0x0000013D48A0E0C0>"
          },
-         "ret": "<function _safe_query.<locals>.wrapper at 0x000001F58E1DB920>",
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A176A0>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12128,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_sector_benchmark at 0x0000013D48A0E980>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A0D260>",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12129,
+         "name": "_safe_query",
+         "qual": "_safe_query",
+         "file": "services/data_hub_client.py",
+         "line": 42,
+         "args": {
+          "fn": "<function get_dqs_summary at 0x0000013D48A0CC20>"
+         },
+         "ret": "<function _safe_query.<locals>.wrapper at 0x0000013D48A0C400>",
          "dur_ms": 0.001,
          "sql": [],
          "error": null,
@@ -176,233 +176,54 @@
        ]
       },
       {
-       "id": 9,
+       "id": 12130,
        "name": "wrapper",
        "qual": "_safe_query.<locals>.wrapper",
        "file": "services/data_hub_client.py",
        "line": 44,
        "args": {},
        "ret": "[{'year': 2020, 'intensity': 44, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2022, 'intensity': 40, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2024, 'intensity': 36, 'uni\u2026",
-       "dur_ms": 3058.371,
+       "dur_ms": 322.214,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 10,
+         "id": 12131,
          "name": "_get_db_session",
          "qual": "_get_db_session",
          "file": "services/data_hub_client.py",
          "line": 33,
          "args": {},
-         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E0AB110>",
-         "dur_ms": 0.082,
+         "ret": "<sqlalchemy.orm.session.Session object at 0x0000013D48BAD5B0>",
+         "dur_ms": 0.042,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 11,
+         "id": 12132,
          "name": "get_crrem_pathway",
          "qual": "get_crrem_pathway",
          "file": "services/data_hub_client.py",
          "line": 218,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E0AB110>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48BAD5B0>",
           "country": "'EU'",
           "asset_type": "'Office'",
           "scenario": "'1.5C'"
          },
          "ret": "[{'year': 2020, 'intensity': 44, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2022, 'intensity': 40, 'unit': 'kgCO2/m2/yr', 'source': 'CRREM v2.0 (reference fallback)'}, {'year': 2024, 'intensity': 36, 'uni\u2026",
-         "dur_ms": 2759.637,
+         "dur_ms": 288.939,
          "sql": [
           0
          ],
          "error": null,
-         "children": [
-          {
-           "id": 12,
-           "name": "<module>",
-           "qual": "<module>",
-           "file": "api/v1/routes/glidepath_serve.py",
-           "line": 1,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 59.897,
-           "sql": [],
-           "error": null,
-           "children": [
-            {
-             "id": 13,
-             "name": "<module>",
-             "qual": "<module>",
-             "file": "db/models/scenario_ingest.py",
-             "line": 1,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 21.397,
-             "sql": [],
-             "error": null,
-             "children": [
-              {
-               "id": 14,
-               "name": "NgfsScenarioData",
-               "qual": "NgfsScenarioData",
-               "file": "db/models/scenario_ingest.py",
-               "line": 20,
-               "args": {},
-               "ret": "None",
-               "dur_ms": 1.149,
-               "sql": [],
-               "error": null,
-               "children": []
-              },
-              {
-               "id": 15,
-               "name": "SbtiCompany",
-               "qual": "SbtiCompany",
-               "file": "db/models/scenario_ingest.py",
-               "line": 52,
-               "args": {},
-               "ret": "None",
-               "dur_ms": 1.271,
-               "sql": [],
-               "error": null,
-               "children": []
-              }
-             ]
-            },
-            {
-             "id": 16,
-             "name": "require_min_role",
-             "qual": "require_min_role",
-             "file": "api/dependencies.py",
-             "line": 156,
-             "args": {
-              "minimum_role": "'viewer'"
-             },
-             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E21F240>",
-             "dur_ms": 0.067,
-             "sql": [],
-             "error": null,
-             "children": [
-              {
-               "id": 17,
-               "name": "_role_rank",
-               "qual": "_role_rank",
-               "file": "api/dependencies.py",
-               "line": 125,
-               "args": {
-                "role": "'viewer'"
-               },
-               "ret": "0",
-               "dur_ms": 0.006,
-               "sql": [],
-               "error": null,
-               "children": []
-              }
-             ]
-            },
-            {
-             "id": 18,
-             "name": "require_min_role",
-             "qual": "require_min_role",
-             "file": "api/dependencies.py",
-             "line": 156,
-             "args": {
-              "minimum_role": "'viewer'"
-             },
-             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24AB60>",
-             "dur_ms": 0.118,
-             "sql": [],
-             "error": null,
-             "children": [
-              {
-               "id": 19,
-               "name": "_role_rank",
-               "qual": "_role_rank",
-               "file": "api/dependencies.py",
-               "line": 125,
-               "args": {
-                "role": "'viewer'"
-               },
-               "ret": "0",
-               "dur_ms": 0.007,
-               "sql": [],
-               "error": null,
-               "children": []
-              }
-             ]
-            },
-            {
-             "id": 20,
-             "name": "require_min_role",
-             "qual": "require_min_role",
-             "file": "api/dependencies.py",
-             "line": 156,
-             "args": {
-              "minimum_role": "'viewer'"
-             },
-             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24ADE0>",
-             "dur_ms": 0.063,
-             "sql": [],
-             "error": null,
-             "children": [
-              {
-               "id": 21,
-               "name": "_role_rank",
-               "qual": "_role_rank",
-               "file": "api/dependencies.py",
-               "line": 125,
-               "args": {
-                "role": "'viewer'"
-               },
-               "ret": "0",
-               "dur_ms": 0.006,
-               "sql": [],
-               "error": null,
-               "children": []
-              }
-             ]
-            },
-            {
-             "id": 22,
-             "name": "require_min_role",
-             "qual": "require_min_role",
-             "file": "api/dependencies.py",
-             "line": 156,
-             "args": {
-              "minimum_role": "'viewer'"
-             },
-             "ret": "<function require_min_role.<locals>._dependency at 0x000001F58E24B060>",
-             "dur_ms": 0.058,
-             "sql": [],
-             "error": null,
-             "children": [
-              {
-               "id": 23,
-               "name": "_role_rank",
-               "qual": "_role_rank",
-               "file": "api/dependencies.py",
-               "line": 125,
-               "args": {
-                "role": "'viewer'"
-               },
-               "ret": "0",
-               "dur_ms": 0.007,
-               "sql": [],
-               "error": null,
-               "children": []
-              }
-             ]
-            }
-           ]
-          }
-         ]
+         "children": []
         }
        ]
       },
       {
-       "id": 24,
+       "id": 12133,
        "name": "get_crrem_asset",
        "qual": "PCAFTimeSeriesEngine.get_crrem_asset",
        "file": "services/pcaf_time_series_engine.py",
@@ -416,12 +237,12 @@
         "crrem_pathway": "{2020: 44.0, 2022: 40.0, 2024: 36.0, 2026: 32.0, 2028: 28.0, 2030: 24.0, 2032: 20.0, 2034: 16.0, 2036: 12.0, 2038: 9.0, 2040: 6.0, 2042: 4.0, 2045: 2.0}"
        },
        "ret": "CRREMAssetResult(asset_id='550e8400-e29b-41d4-a716-446655440001', asset_name='Asset', asset_type='Office', country='EU', data_points=[GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=44.0, iea_nze_reference=None, rag_status='GRE\u2026",
-       "dur_ms": 0.229,
+       "dur_ms": 0.221,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 25,
+         "id": 12134,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -431,13 +252,13 @@
           "year": "2020"
          },
          "ret": "44.0",
-         "dur_ms": 0.005,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 26,
+         "id": 12135,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -447,13 +268,13 @@
           "year": "2025"
          },
          "ret": "34.0",
-         "dur_ms": 0.008,
+         "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 27,
+         "id": 12136,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -469,7 +290,7 @@
          "children": []
         },
         {
-         "id": 28,
+         "id": 12137,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -485,7 +306,7 @@
          "children": []
         },
         {
-         "id": 29,
+         "id": 12138,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -501,7 +322,7 @@
          "children": []
         },
         {
-         "id": 30,
+         "id": 12139,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -511,13 +332,13 @@
           "year": "2045"
          },
          "ret": "2.0",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 31,
+         "id": 12140,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -535,7 +356,7 @@
        ]
       },
       {
-       "id": 32,
+       "id": 12141,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -550,7 +371,7 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 12142,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -565,7 +386,7 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 12143,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -580,7 +401,7 @@
        "children": []
       },
       {
-       "id": 35,
+       "id": 12144,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -595,7 +416,7 @@
        "children": []
       },
       {
-       "id": 36,
+       "id": 12145,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -610,7 +431,7 @@
        "children": []
       },
       {
-       "id": 37,
+       "id": 12146,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -619,13 +440,13 @@
         "dp": "GlidepathDataPoint(year=2045, actual_waci=None, nzba_target=2.0, iea_nze_reference=None, rag_status='GREY', deviation_pct=None)"
        },
        "ret": "{'year': 2045, 'actual_waci': None, 'nzba_target': 2.0, 'iea_nze_reference': None, 'rag_status': 'GREY', 'deviation_pct': None}",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 38,
+       "id": 12147,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -649,7 +470,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1164.761,
+   "dur_ms": 316.961,
    "node_count": 4,
    "provenance": [
     "db-empty"
@@ -665,7 +486,7 @@
       "dh_crrem_pathways"
      ],
      "rowcount": 0,
-     "dur_ms": 97.62,
+     "dur_ms": 66.792,
      "is_reference": false,
      "error": null
     }
@@ -688,7 +509,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 39,
+     "id": 12148,
      "name": "get_crrem_pathway",
      "qual": "get_crrem_pathway",
      "file": "api/v1/routes/glidepath.py",
@@ -698,49 +519,49 @@
       "country": "'EU'"
      },
      "ret": "{'asset_type': '550e8400-e29b-41d4-a716-446655440001', 'country': 'EU', 'metric': 'kgCO2/m2', 'source': 'CRREM v2.0 (reference fallback)', 'pathway': [{'year': 2020, 'value': 45}, {'year': 2025, 'value': 35}, {'year': 2030, 'value': 25}, {\u2026",
-     "dur_ms": 1162.193,
+     "dur_ms": 315.346,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 40,
+       "id": 12149,
        "name": "wrapper",
        "qual": "_safe_query.<locals>.wrapper",
        "file": "services/data_hub_client.py",
        "line": 44,
        "args": {},
        "ret": "None",
-       "dur_ms": 1162.106,
+       "dur_ms": 315.286,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 41,
+         "id": 12150,
          "name": "_get_db_session",
          "qual": "_get_db_session",
          "file": "services/data_hub_client.py",
          "line": 33,
          "args": {},
-         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E0F8A40>",
-         "dur_ms": 0.046,
+         "ret": "<sqlalchemy.orm.session.Session object at 0x0000013D476576E0>",
+         "dur_ms": 0.038,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 42,
+         "id": 12151,
          "name": "get_crrem_pathway",
          "qual": "get_crrem_pathway",
          "file": "services/data_hub_client.py",
          "line": 218,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E0F8A40>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D476576E0>",
           "country": "'EU'",
           "asset_type": "'550e8400-e29b-41d4-a716-446655440001'",
           "scenario": "'1.5C'"
          },
          "ret": "None",
-         "dur_ms": 1131.574,
+         "dur_ms": 283.203,
          "sql": [
           0
          ],
@@ -759,7 +580,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2322.788,
+   "dur_ms": 303.64,
    "node_count": 4,
    "provenance": [
     "db-empty"
@@ -775,7 +596,7 @@
       "assets_pg"
      ],
      "rowcount": 0,
-     "dur_ms": 396.126,
+     "dur_ms": 62.829,
      "is_reference": false,
      "error": null
     }
@@ -800,57 +621,57 @@
    "truncated": [],
    "tree": [
     {
-     "id": 43,
+     "id": 12152,
      "name": "get_portfolio_dqs",
      "qual": "get_portfolio_dqs",
      "file": "api/v1/routes/glidepath.py",
      "line": 279,
      "args": {
       "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001F58E1DA520>, use_cache=True, scope=None)"
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'weighted_dqs': None, 'dqs_distribution': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'coverage_pct': 0, 'total_assets': 0, 'total_exposure': 0, 'improvement_actions': ['No assets found for this\u2026",
-     "dur_ms": 2306.42,
+     "dur_ms": 302.066,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 44,
+       "id": 12153,
        "name": "wrapper",
        "qual": "_safe_query.<locals>.wrapper",
        "file": "services/data_hub_client.py",
        "line": 44,
        "args": {},
        "ret": "None",
-       "dur_ms": 2306.375,
+       "dur_ms": 302.017,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 45,
+         "id": 12154,
          "name": "_get_db_session",
          "qual": "_get_db_session",
          "file": "services/data_hub_client.py",
          "line": 33,
          "args": {},
-         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E250FB0>",
-         "dur_ms": 0.048,
+         "ret": "<sqlalchemy.orm.session.Session object at 0x0000013D47656BA0>",
+         "dur_ms": 0.046,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 46,
+         "id": 12155,
          "name": "get_dqs_summary",
          "qual": "get_dqs_summary",
          "file": "services/data_hub_client.py",
          "line": 392,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250FB0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47656BA0>",
           "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
          },
          "ret": "None",
-         "dur_ms": 2264.028,
+         "dur_ms": 271.927,
          "sql": [
           0
          ],
@@ -869,7 +690,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 453.605,
+   "dur_ms": 306.917,
    "node_count": 4,
    "provenance": [
     "db-empty"
@@ -885,7 +706,7 @@
       "assets_pg"
      ],
      "rowcount": 0,
-     "dur_ms": 69.571,
+     "dur_ms": 66.845,
      "is_reference": false,
      "error": null
     }
@@ -906,57 +727,57 @@
    "truncated": [],
    "tree": [
     {
-     "id": 47,
+     "id": 12156,
      "name": "get_dqs_improvement_plan",
      "qual": "get_dqs_improvement_plan",
      "file": "api/v1/routes/glidepath.py",
      "line": 313,
      "args": {
       "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "_user": "Depends(dependency=<function require_min_role.<locals>._dependency at 0x000001F58E1DA8E0>, use_cache=True, scope=None)"
+      "_user": "Depends(_dependency)"
      },
      "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'current_weighted_dqs': None, 'improvement_plan': [], 'note': 'No assets found.'}",
-     "dur_ms": 450.142,
+     "dur_ms": 304.445,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 48,
+       "id": 12157,
        "name": "wrapper",
        "qual": "_safe_query.<locals>.wrapper",
        "file": "services/data_hub_client.py",
        "line": 44,
        "args": {},
        "ret": "None",
-       "dur_ms": 450.07,
+       "dur_ms": 304.398,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 49,
+         "id": 12158,
          "name": "_get_db_session",
          "qual": "_get_db_session",
          "file": "services/data_hub_client.py",
          "line": 33,
          "args": {},
-         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E253470>",
-         "dur_ms": 0.075,
+         "ret": "<sqlalchemy.orm.session.Session object at 0x0000013D47654C50>",
+         "dur_ms": 0.044,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 50,
+         "id": 12159,
          "name": "get_dqs_summary",
          "qual": "get_dqs_summary",
          "file": "services/data_hub_client.py",
          "line": 392,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E253470>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47654C50>",
           "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'"
          },
          "ret": "None",
-         "dur_ms": 421.406,
+         "dur_ms": 273.334,
          "sql": [
           0
          ],
@@ -975,7 +796,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 26.8,
+   "dur_ms": 1.471,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -998,7 +819,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 51,
+     "id": 12160,
      "name": "get_nzba_glidepath",
      "qual": "get_nzba_glidepath",
      "file": "api/v1/routes/glidepath.py",
@@ -1007,7 +828,7 @@
       "sector": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'metric': 'WACI tCO2e/MEUR', 'source': 'NZBA 2021 Guidelines (fallback)', 'glidepath': [{'year': 2020, 'value': 300}, {'year': 2025, 'value': 250}, {'year': 2030, 'value': 190}, {'year': 2\u2026",
-     "dur_ms": 0.018,
+     "dur_ms": 0.014,
      "sql": [],
      "error": null,
      "children": []
@@ -1020,7 +841,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1800.744,
+   "dur_ms": 305.852,
    "node_count": 27,
    "provenance": [
     "db-empty"
@@ -1040,7 +861,7 @@
       "esrs_e1_ghg_emissions"
      ],
      "rowcount": 0,
-     "dur_ms": 651.834,
+     "dur_ms": 89.086,
      "is_reference": false,
      "error": null
     }
@@ -1063,7 +884,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 52,
+     "id": 12161,
      "name": "get_glidepath_status_grid",
      "qual": "get_glidepath_status_grid",
      "file": "api/v1/routes/glidepath.py",
@@ -1071,25 +892,25 @@
      "args": {
       "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
       "sectors": "'Power,Oil & Gas,Steel,Shipping'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250EF0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E38FB0>"
      },
      "ret": "{'portfolio_id': '550e8400-e29b-41d4-a716-446655440001', 'sectors': ['Power', 'Oil & Gas', 'Steel', 'Shipping'], 'years': [2025, 2030, 2035, 2040, 2045, 2050], 'grid': [{'sector': 'Power', 'year': 2025, 'actual': None, 'target': 160.0, 'ra\u2026",
-     "dur_ms": 1763.462,
+     "dur_ms": 274.017,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 53,
+       "id": 12162,
        "name": "_compute_waci_rows",
        "qual": "_compute_waci_rows",
        "file": "api/v1/routes/glidepath.py",
        "line": 28,
        "args": {
         "portfolio_id": "'550e8400-e29b-41d4-a716-446655440001'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E250EF0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E38FB0>"
        },
        "ret": "[]",
-       "dur_ms": 1761.831,
+       "dur_ms": 273.29,
        "sql": [
         0
        ],
@@ -1097,7 +918,7 @@
        "children": []
       },
       {
-       "id": 54,
+       "id": 12163,
        "name": "build_status_grid",
        "qual": "PCAFTimeSeriesEngine.build_status_grid",
        "file": "services/pcaf_time_series_engine.py",
@@ -1108,12 +929,12 @@
         "time_series_rows": "[]"
        },
        "ret": "[GlidepathStatusRow(sector='Power', year=2025, actual=None, target=160.0, rag='GREY'), GlidepathStatusRow(sector='Power', year=2030, actual=None, target=80.0, rag='GREY'), GlidepathStatusRow(sector='Power', year=2035, actual=None, target=3\u2026",
-       "dur_ms": 1.176,
+       "dur_ms": 0.567,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 55,
+         "id": 12164,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1123,13 +944,13 @@
           "year": "2025"
          },
          "ret": "160.0",
-         "dur_ms": 0.015,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 56,
+         "id": 12165,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1139,13 +960,13 @@
           "year": "2030"
          },
          "ret": "80.0",
-         "dur_ms": 0.008,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 57,
+         "id": 12166,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1155,13 +976,13 @@
           "year": "2035"
          },
          "ret": "30.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 58,
+         "id": 12167,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1171,13 +992,13 @@
           "year": "2040"
          },
          "ret": "10.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 59,
+         "id": 12168,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1187,13 +1008,13 @@
           "year": "2045"
          },
          "ret": "5.0",
-         "dur_ms": 0.008,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 60,
+         "id": 12169,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1203,13 +1024,13 @@
           "year": "2050"
          },
          "ret": "0",
-         "dur_ms": 0.005,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 61,
+         "id": 12170,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1219,13 +1040,13 @@
           "year": "2025"
          },
          "ret": "580.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 62,
+         "id": 12171,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1235,13 +1056,13 @@
           "year": "2030"
          },
          "ret": "460.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 63,
+         "id": 12172,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1251,13 +1072,13 @@
           "year": "2035"
          },
          "ret": "320.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 64,
+         "id": 12173,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1267,13 +1088,13 @@
           "year": "2040"
          },
          "ret": "200.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 65,
+         "id": 12174,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1283,13 +1104,13 @@
           "year": "2045"
          },
          "ret": "100.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 66,
+         "id": 12175,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1299,13 +1120,13 @@
           "year": "2050"
          },
          "ret": "0",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 67,
+         "id": 12176,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1315,13 +1136,13 @@
           "year": "2025"
          },
          "ret": "1600.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 68,
+         "id": 12177,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1331,13 +1152,13 @@
           "year": "2030"
          },
          "ret": "1200.0",
-         "dur_ms": 0.005,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 69,
+         "id": 12178,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1347,13 +1168,13 @@
           "year": "2035"
          },
          "ret": "800.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 70,
+         "id": 12179,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1363,13 +1184,13 @@
           "year": "2040"
          },
          "ret": "400.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 71,
+         "id": 12180,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1379,13 +1200,13 @@
           "year": "2045"
          },
          "ret": "150.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 72,
+         "id": 12181,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1395,13 +1216,13 @@
           "year": "2050"
          },
          "ret": "0",
-         "dur_ms": 0.005,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 73,
+         "id": 12182,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1411,13 +1232,13 @@
           "year": "2025"
          },
          "ret": "950.0",
-         "dur_ms": 0.008,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 74,
+         "id": 12183,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1427,13 +1248,13 @@
           "year": "2030"
          },
          "ret": "750.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 75,
+         "id": 12184,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1443,13 +1264,13 @@
           "year": "2035"
          },
          "ret": "500.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 76,
+         "id": 12185,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1459,13 +1280,13 @@
           "year": "2040"
          },
          "ret": "300.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 77,
+         "id": 12186,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1475,13 +1296,13 @@
           "year": "2045"
          },
          "ret": "100.0",
-         "dur_ms": 0.007,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 78,
+         "id": 12187,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1491,7 +1312,7 @@
           "year": "2050"
          },
          "ret": "0",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -1508,7 +1329,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1380.344,
+   "dur_ms": 714.122,
    "node_count": 20,
    "provenance": [
     "db-empty"
@@ -1529,7 +1350,7 @@
       "esrs_e1_ghg_emissions"
      ],
      "rowcount": 0,
-     "dur_ms": 70.88,
+     "dur_ms": 61.772,
      "is_reference": false,
      "error": null
     },
@@ -1540,7 +1361,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 72.147,
+     "dur_ms": 81.421,
      "is_reference": false,
      "error": null
     },
@@ -1551,7 +1372,7 @@
       "dh_ngfs_scenario_data"
      ],
      "rowcount": 0,
-     "dur_ms": 36.102,
+     "dur_ms": 30.003,
      "is_reference": false,
      "error": null
     }
@@ -1578,7 +1399,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 79,
+     "id": 12188,
      "name": "get_sector_glidepath",
      "qual": "get_sector_glidepath",
      "file": "api/v1/routes/glidepath.py",
@@ -1587,25 +1408,25 @@
       "sector": "'550e8400-e29b-41d4-a716-446655440001'",
       "portfolio_id": "'TEST_portfolio_id'",
       "scenario": "'Net Zero 2050'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E252D80>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475579E0>"
      },
      "ret": "{'sector': '550e8400-e29b-41d4-a716-446655440001', 'portfolio_id': 'TEST_portfolio_id', 'current_rag': 'GREY', 'glidepath_source': 'fallback', 'data_points': [{'year': 2020, 'actual_waci': None, 'nzba_target': 300, 'iea_nze_reference': 270\u2026",
-     "dur_ms": 1349.209,
+     "dur_ms": 682.335,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 80,
+       "id": 12189,
        "name": "_compute_waci_rows",
        "qual": "_compute_waci_rows",
        "file": "api/v1/routes/glidepath.py",
        "line": 28,
        "args": {
         "portfolio_id": "'TEST_portfolio_id'",
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E252D80>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D475579E0>"
        },
        "ret": "[]",
-       "dur_ms": 894.284,
+       "dur_ms": 289.693,
        "sql": [
         0
        ],
@@ -1613,43 +1434,43 @@
        "children": []
       },
       {
-       "id": 81,
+       "id": 12190,
        "name": "wrapper",
        "qual": "_safe_query.<locals>.wrapper",
        "file": "services/data_hub_client.py",
        "line": 44,
        "args": {},
        "ret": "None",
-       "dur_ms": 454.319,
+       "dur_ms": 392.096,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 82,
+         "id": 12191,
          "name": "_get_db_session",
          "qual": "_get_db_session",
          "file": "services/data_hub_client.py",
          "line": 33,
          "args": {},
-         "ret": "<sqlalchemy.orm.session.Session object at 0x000001F58E2538C0>",
-         "dur_ms": 0.075,
+         "ret": "<sqlalchemy.orm.session.Session object at 0x0000013D46E533B0>",
+         "dur_ms": 0.038,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 83,
+         "id": 12192,
          "name": "get_glidepath",
          "qual": "get_glidepath",
          "file": "services/data_hub_client.py",
          "line": 158,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001F58E2538C0>",
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E533B0>",
           "sector": "'550e8400-e29b-41d4-a716-446655440001'",
           "scenario": "'Net Zero 2050'"
          },
          "ret": "None",
-         "dur_ms": 419.787,
+         "dur_ms": 362.614,
          "sql": [
           1,
           2
@@ -1660,7 +1481,7 @@
        ]
       },
       {
-       "id": 84,
+       "id": 12193,
        "name": "get_sector_glidepath",
        "qual": "PCAFTimeSeriesEngine.get_sector_glidepath",
        "file": "services/pcaf_time_series_engine.py",
@@ -1672,12 +1493,12 @@
         "data_hub_glidepath": "None"
        },
        "ret": "SectorGlidepathResult(sector='550e8400-e29b-41d4-a716-446655440001', portfolio_id='TEST_portfolio_id', data_points=[GlidepathDataPoint(year=2020, actual_waci=None, nzba_target=300, iea_nze_reference=270.0, rag_status='GREY', deviation_pct=\u2026",
-       "dur_ms": 0.243,
+       "dur_ms": 0.211,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 85,
+         "id": 12194,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1693,7 +1514,7 @@
          "children": []
         },
         {
-         "id": 86,
+         "id": 12195,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1703,13 +1524,13 @@
           "year": "2025"
          },
          "ret": "250.0",
-         "dur_ms": 0.006,
+         "dur_ms": 0.005,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 87,
+         "id": 12196,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1725,7 +1546,7 @@
          "children": []
         },
         {
-         "id": 88,
+         "id": 12197,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1735,13 +1556,13 @@
           "year": "2035"
          },
          "ret": "130.0",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 89,
+         "id": 12198,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1751,13 +1572,13 @@
           "year": "2040"
          },
          "ret": "80.0",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 90,
+         "id": 12199,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1773,7 +1594,7 @@
          "children": []
         },
         {
-         "id": 91,
+         "id": 12200,
          "name": "interpolate_glidepath",
          "qual": "interpolate_glidepath",
          "file": "services/pcaf_time_series_engine.py",
@@ -1791,7 +1612,7 @@
        ]
       },
       {
-       "id": 92,
+       "id": 12201,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1806,7 +1627,7 @@
        "children": []
       },
       {
-       "id": 93,
+       "id": 12202,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1821,7 +1642,7 @@
        "children": []
       },
       {
-       "id": 94,
+       "id": 12203,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1836,7 +1657,7 @@
        "children": []
       },
       {
-       "id": 95,
+       "id": 12204,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1851,7 +1672,7 @@
        "children": []
       },
       {
-       "id": 96,
+       "id": 12205,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1866,7 +1687,7 @@
        "children": []
       },
       {
-       "id": 97,
+       "id": 12206,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1881,7 +1702,7 @@
        "children": []
       },
       {
-       "id": 98,
+       "id": 12207,
        "name": "_dp_to_dict",
        "qual": "_dp_to_dict",
        "file": "api/v1/routes/glidepath.py",
@@ -1905,7 +1726,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.172,
+   "dur_ms": 1.529,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1924,26 +1745,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 99,
+     "id": 12208,
      "name": "list_glidepath_sectors",
      "qual": "list_glidepath_sectors",
      "file": "api/v1/routes/glidepath.py",
      "line": 100,
      "args": {},
      "ret": "{'sectors': ['Power', 'Oil & Gas', 'Steel', 'Shipping', 'Real Estate', 'Aviation', 'Cement', 'Aluminium', 'Other'], 'source': 'NZBA 2021 Guidelines / IEA WEO 2023 + NGFS live data'}",
-     "dur_ms": 0.052,
+     "dur_ms": 0.036,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 100,
+       "id": 12209,
        "name": "get_available_sectors",
        "qual": "PCAFTimeSeriesEngine.get_available_sectors",
        "file": "services/pcaf_time_series_engine.py",
        "line": 295,
        "args": {},
        "ret": "['Power', 'Oil & Gas', 'Steel', 'Shipping', 'Real Estate', 'Aviation', 'Cement', 'Aluminium', 'Other']",
-       "dur_ms": 0.007,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []

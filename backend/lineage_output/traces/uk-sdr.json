@@ -1,10 +1,10 @@
 {
  "domain": "uk-sdr",
  "meta": {
-  "ts": "2026-06-30T14:05:38",
+  "ts": "2026-07-05T19:17:16",
+  "endpoints": 8,
   "module": "api.v1.routes.uk_sdr",
-  "router_prefix": "/api/v1/uk-sdr",
-  "endpoints": 8
+  "router_prefix": "/api/v1/uk-sdr"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.073,
+   "dur_ms": 0.344,
    "node_count": 8,
    "provenance": [
     "computed"
@@ -35,55 +35,40 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 42395,
      "name": "ref_agr_requirements",
      "qual": "ref_agr_requirements",
      "file": "api/v1/routes/uk_sdr.py",
      "line": 264,
      "args": {},
      "ret": "{'total': 10, 'blocking': 6, 'effective_date': '31 May 2024', 'requirements': [{'req_id': 'AGR-01', 'title': 'Claims are fair, clear and not misleading', 'source': 'COBS 4.2.1R', 'blocking': True}, {'req_id': 'AGR-02', 'title': 'Sustainabi\u2026",
-     "dur_ms": 0.239,
+     "dur_ms": 0.141,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 42396,
        "name": "<genexpr>",
        "qual": "ref_agr_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/uk_sdr.py",
        "line": 269,
        "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
        },
        "ret": "1",
-       "dur_ms": 0.007,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 42397,
        "name": "<genexpr>",
        "qual": "ref_agr_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/uk_sdr.py",
        "line": 269,
        "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
-       },
-       "ret": "1",
-       "dur_ms": 0.003,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 4,
-       "name": "<genexpr>",
-       "qual": "ref_agr_requirements.<locals>.<genexpr>",
-       "file": "api/v1/routes/uk_sdr.py",
-       "line": 269,
-       "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
        },
        "ret": "1",
        "dur_ms": 0.002,
@@ -92,13 +77,13 @@
        "children": []
       },
       {
-       "id": 5,
+       "id": 42398,
        "name": "<genexpr>",
        "qual": "ref_agr_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/uk_sdr.py",
        "line": 269,
        "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -107,28 +92,13 @@
        "children": []
       },
       {
-       "id": 6,
+       "id": 42399,
        "name": "<genexpr>",
        "qual": "ref_agr_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/uk_sdr.py",
        "line": 269,
        "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
-       },
-       "ret": "1",
-       "dur_ms": 0.002,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 7,
-       "name": "<genexpr>",
-       "qual": "ref_agr_requirements.<locals>.<genexpr>",
-       "file": "api/v1/routes/uk_sdr.py",
-       "line": 269,
-       "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
        },
        "ret": "1",
        "dur_ms": 0.001,
@@ -137,13 +107,43 @@
        "children": []
       },
       {
-       "id": 8,
+       "id": 42400,
        "name": "<genexpr>",
        "qual": "ref_agr_requirements.<locals>.<genexpr>",
        "file": "api/v1/routes/uk_sdr.py",
        "line": 269,
        "args": {
-        ".0": "<list_iterator object at 0x0000021928404370>"
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42401,
+       "name": "<genexpr>",
+       "qual": "ref_agr_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/uk_sdr.py",
+       "line": 269,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
+       },
+       "ret": "1",
+       "dur_ms": 0.001,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 42402,
+       "name": "<genexpr>",
+       "qual": "ref_agr_requirements.<locals>.<genexpr>",
+       "file": "api/v1/routes/uk_sdr.py",
+       "line": 269,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D4A215AE0>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -161,7 +161,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.283,
+   "dur_ms": 0.131,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -182,14 +182,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 42403,
      "name": "ref_cross_framework",
      "qual": "ref_cross_framework",
      "file": "api/v1/routes/uk_sdr.py",
      "line": 299,
      "args": {},
      "ret": "{'note': 'Cross-framework mappings are approximate. A product eligible for an EU SFDR Article does not automatically qualify for the corresponding UK SDR label.', 'mappings': [{'framework': 'sfdr_art8', 'uk_sdr_label': 'sustainable_focus O\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -202,7 +202,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.636,
+   "dur_ms": 0.154,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -223,14 +223,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 42404,
      "name": "ref_labels",
      "qual": "ref_labels",
      "file": "api/v1/routes/uk_sdr.py",
      "line": 248,
      "args": {},
      "ret": "{'count': 4, 'labels': [{'label_id': 'sustainable_focus', 'label_name': 'Sustainable Focus', 'description': \"Invests primarily in assets that are environmentally and/or socially sustainable. At least 70% of assets must qualify as sustainab\u2026",
-     "dur_ms": 0.028,
+     "dur_ms": 0.007,
      "sql": [],
      "error": null,
      "children": []
@@ -243,7 +243,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.402,
+   "dur_ms": 0.114,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -266,14 +266,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 42405,
      "name": "ref_naming_rules",
      "qual": "ref_naming_rules",
      "file": "api/v1/routes/uk_sdr.py",
      "line": 279,
      "args": {},
      "ret": "{'effective_date': '2 December 2024', 'reference': 'FCA SDR Policy Statement PS 23/16 \u00a74 + Naming and Marketing Rules (NMR)', 'prohibited_without_label': ['sustainable', 'sustainability', 'ESG', 'responsible', 'green', 'climate', 'impact',\u2026",
-     "dur_ms": 0.009,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -286,7 +286,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.305,
+   "dur_ms": 0.114,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -307,14 +307,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 42406,
      "name": "ref_timeline",
      "qual": "ref_timeline",
      "file": "api/v1/routes/uk_sdr.py",
      "line": 315,
      "args": {},
      "ret": "{'regime': 'UK Sustainability Disclosure Requirements (SDR) \u2014 FCA PS 23/16', 'milestones': [{'date': '28 November 2023', 'event': 'FCA publishes PS 23/16 \u2014 SDR and Investment Labels Policy Statement'}, {'date': '31 May 2024', 'event': 'Ant\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -345,7 +345,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'product'",
-   "dur_ms": 0.499,
+   "dur_ms": 0.14,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -359,7 +359,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 42407,
      "name": "assess",
      "qual": "assess",
      "file": "api/v1/routes/uk_sdr.py",
@@ -368,7 +368,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.018,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -381,7 +381,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'products'",
-   "dur_ms": 0.23,
+   "dur_ms": 0.123,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -395,7 +395,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 42408,
      "name": "assess_batch",
      "qual": "assess_batch",
      "file": "api/v1/routes/uk_sdr.py",
@@ -404,7 +404,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.005,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []

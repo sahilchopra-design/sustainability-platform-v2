@@ -1,10 +1,10 @@
 {
  "domain": "ingestion",
  "meta": {
-  "ts": "2026-06-30T14:03:05",
+  "ts": "2026-07-05T19:15:46",
+  "endpoints": 23,
   "module": "api.v1.routes.ingestion",
-  "router_prefix": "/api/v1/ingestion",
-  "endpoints": 23
+  "router_prefix": "/api/v1/ingestion"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3785.616,
+   "dur_ms": 347.09,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -29,7 +29,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 67.97,
+     "dur_ms": 76.494,
      "is_reference": false,
      "error": null
     }
@@ -50,7 +50,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12570,
      "name": "cross_source_comparison",
      "qual": "cross_source_comparison",
      "file": "api/v1/routes/ingestion.py",
@@ -58,11 +58,11 @@
      "args": {
       "kpi_id": "None",
       "category": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x0000023938882DB0>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47650B90>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'comparisons': [], 'total': 0}",
-     "dur_ms": 3741.974,
+     "dur_ms": 318.479,
      "sql": [
       0
      ],
@@ -77,7 +77,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 13.544,
+   "dur_ms": 5.153,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -96,28 +96,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12571,
      "name": "list_ingesters",
      "qual": "list_ingesters",
      "file": "api/v1/routes/ingestion.py",
      "line": 55,
      "args": {
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'ingesters': [], 'total': 0}",
-     "dur_ms": 13.3,
+     "dur_ms": 4.963,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 3,
+       "id": 12572,
        "name": "_get_manager",
        "qual": "_get_manager",
        "file": "api/v1/routes/ingestion.py",
        "line": 42,
        "args": {},
-       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
-       "dur_ms": 13.223,
+       "ret": "<ingestion.manager.IngestionManager object at 0x0000013D476796A0>",
+       "dur_ms": 4.929,
        "sql": [],
        "error": null,
        "children": []
@@ -132,7 +132,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Unknown source_id: 550e8400-e29b-41d4-a716-446655440001",
-   "dur_ms": 0.403,
+   "dur_ms": 0.192,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -146,29 +146,29 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 12573,
      "name": "get_ingester_status",
      "qual": "get_ingester_status",
      "file": "api/v1/routes/ingestion.py",
      "line": 67,
      "args": {
       "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "None",
-     "dur_ms": 0.061,
+     "dur_ms": 0.035,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 12574,
        "name": "_get_manager",
        "qual": "_get_manager",
        "file": "api/v1/routes/ingestion.py",
        "line": 42,
        "args": {},
-       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
-       "dur_ms": 0.004,
+       "ret": "<ingestion.manager.IngestionManager object at 0x0000013D476796A0>",
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -183,7 +183,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 3238.712,
+   "dur_ms": 374.206,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -199,7 +199,7 @@
       "dh_sync_jobs"
      ],
      "rowcount": 1,
-     "dur_ms": 588.089,
+     "dur_ms": 60.994,
      "is_reference": false,
      "error": null
     },
@@ -209,8 +209,8 @@
      "tables": [
       "dh_sync_jobs"
      ],
-     "rowcount": 4,
-     "dur_ms": 490.084,
+     "rowcount": 8,
+     "dur_ms": 68.523,
      "is_reference": false,
      "error": null
     }
@@ -235,7 +235,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 12575,
      "name": "list_sync_jobs",
      "qual": "list_sync_jobs",
      "file": "api/v1/routes/ingestion.py",
@@ -245,11 +245,11 @@
       "status": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A470C80>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D491E9D60>",
+      "_user": "Depends(get_current_user)"
      },
-     "ret": "{'total': 4, 'limit': 50, 'offset': 0, 'jobs': [{'id': 'job_8ca58bf4c746', 'source_id': 'gdelt-events', 'triggered_by': 'manual', 'status': 'success', 'started_at': '2026-03-07T02:22:31.500438+00:00', 'completed_at': '2026-03-07T02:22:33.7\u2026",
-     "dur_ms": 2624.725,
+     "ret": "{'total': 8, 'limit': 50, 'offset': 0, 'jobs': [{'id': 'job_b1342f1f1199', 'source_id': 'flood-susceptibility-proxy', 'triggered_by': 'manual_cli', 'status': 'success', 'started_at': '2026-07-05T17:43:00.560734+00:00', 'completed_at': '202\u2026",
+     "dur_ms": 337.12,
      "sql": [
       0,
       1
@@ -265,7 +265,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Sync job not found",
-   "dur_ms": 1072.686,
+   "dur_ms": 373.222,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -281,7 +281,7 @@
       "dh_sync_jobs"
      ],
      "rowcount": 0,
-     "dur_ms": 64.448,
+     "dur_ms": 63.21,
      "is_reference": false,
      "error": null
     }
@@ -294,18 +294,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 12576,
      "name": "get_sync_job",
      "qual": "get_sync_job",
      "file": "api/v1/routes/ingestion.py",
      "line": 176,
      "args": {
       "job_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A471E20>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48785E50>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "None",
-     "dur_ms": 1042.759,
+     "dur_ms": 342.164,
      "sql": [
       0
      ],
@@ -320,7 +320,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2640.623,
+   "dur_ms": 265.745,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -336,7 +336,7 @@
       "dh_application_kpis"
      ],
      "rowcount": 13,
-     "dur_ms": 458.648,
+     "dur_ms": 59.005,
      "is_reference": false,
      "error": null
     }
@@ -354,17 +354,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 12577,
      "name": "list_kpi_categories",
      "qual": "list_kpi_categories",
      "file": "api/v1/routes/ingestion.py",
      "line": 480,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4B9400>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48787890>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'categories': [{'category': 'compliance', 'count': 1}, {'category': 'emissions', 'count': 8}, {'category': 'energy', 'count': 2}, {'category': 'esg', 'count': 8}, {'category': 'financial', 'count': 7}, {'category': 'governance', 'count': \u2026",
-     "dur_ms": 1942.884,
+     "dur_ms": 238.589,
      "sql": [
       0
      ],
@@ -379,7 +379,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 822.074,
+   "dur_ms": 367.589,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -396,7 +396,7 @@
       "dh_application_kpis"
      ],
      "rowcount": 1,
-     "dur_ms": 184.173,
+     "dur_ms": 55.429,
      "is_reference": false,
      "error": null
     },
@@ -407,7 +407,7 @@
       "dh_application_kpis"
      ],
      "rowcount": 51,
-     "dur_ms": 65.568,
+     "dur_ms": 73.543,
      "is_reference": false,
      "error": null
     },
@@ -418,7 +418,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 160.33,
+     "dur_ms": 29.192,
      "is_reference": false,
      "error": null
     }
@@ -443,7 +443,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 12578,
      "name": "list_kpis",
      "qual": "list_kpis",
      "file": "api/v1/routes/ingestion.py",
@@ -455,11 +455,11 @@
       "search": "None",
       "limit": "100",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4B9FA0>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48AC1160>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'total': 51, 'kpis': [{'id': '39266e74-80f8-467d-a15b-035eda621564', 'name': 'Adverse Media / Controversy Flag', 'slug': 'adverse_media_flag', 'category': 'compliance', 'sub_category': 'screening', 'description': None, 'unit': 'boolean', \u2026",
-     "dur_ms": 792.608,
+     "dur_ms": 338.485,
      "sql": [
       0,
       1,
@@ -476,7 +476,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: KPI not found",
-   "dur_ms": 410.355,
+   "dur_ms": 884.019,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -492,7 +492,7 @@
       "dh_application_kpis"
      ],
      "rowcount": 0,
-     "dur_ms": 62.931,
+     "dur_ms": 60.925,
      "is_reference": false,
      "error": null
     }
@@ -505,18 +505,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 10,
+     "id": 12579,
      "name": "get_kpi_detail",
      "qual": "get_kpi_detail",
      "file": "api/v1/routes/ingestion.py",
      "line": 419,
      "args": {
       "kpi_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA480>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48957BC0>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "None",
-     "dur_ms": 380.705,
+     "dur_ms": 843.469,
      "sql": [
       0
      ],
@@ -531,7 +531,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 888.142,
+   "dur_ms": 685.173,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -547,7 +547,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 1,
-     "dur_ms": 83.147,
+     "dur_ms": 57.848,
      "is_reference": false,
      "error": null
     },
@@ -558,7 +558,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 32.322,
+     "dur_ms": 31.796,
      "is_reference": false,
      "error": null
     }
@@ -582,7 +582,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 12580,
      "name": "list_mappings",
      "qual": "list_mappings",
      "file": "api/v1/routes/ingestion.py",
@@ -593,11 +593,11 @@
       "is_active": "None",
       "limit": "200",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA7E0>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D489E1370>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'total': 0, 'mappings': []}",
-     "dur_ms": 607.442,
+     "dur_ms": 656.258,
      "sql": [
       0,
       1
@@ -613,7 +613,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2533.595,
+   "dur_ms": 961.228,
    "node_count": 19,
    "provenance": [
     "real-db"
@@ -630,7 +630,7 @@
       "dh_application_kpis"
      ],
      "rowcount": 51,
-     "dur_ms": 227.324,
+     "dur_ms": 84.429,
      "is_reference": false,
      "error": null
     },
@@ -641,7 +641,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 39.798,
+     "dur_ms": 30.782,
      "is_reference": false,
      "error": null
     },
@@ -652,7 +652,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 150.0,
+     "dur_ms": 28.464,
      "is_reference": false,
      "error": null
     },
@@ -663,7 +663,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 32.369,
+     "dur_ms": 29.476,
      "is_reference": false,
      "error": null
     },
@@ -674,7 +674,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 39.478,
+     "dur_ms": 29.421,
      "is_reference": false,
      "error": null
     },
@@ -685,7 +685,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 34.066,
+     "dur_ms": 30.224,
      "is_reference": false,
      "error": null
     },
@@ -696,7 +696,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 34.376,
+     "dur_ms": 29.22,
      "is_reference": false,
      "error": null
     },
@@ -707,7 +707,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 419.002,
+     "dur_ms": 28.517,
      "is_reference": false,
      "error": null
     },
@@ -718,7 +718,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 55.412,
+     "dur_ms": 130.507,
      "is_reference": false,
      "error": null
     },
@@ -729,7 +729,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 165.062,
+     "dur_ms": 28.413,
      "is_reference": false,
      "error": null
     },
@@ -740,7 +740,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 55.66,
+     "dur_ms": 27.826,
      "is_reference": false,
      "error": null
     },
@@ -751,7 +751,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 35.247,
+     "dur_ms": 30.66,
      "is_reference": false,
      "error": null
     },
@@ -762,7 +762,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 31.934,
+     "dur_ms": 28.058,
      "is_reference": false,
      "error": null
     },
@@ -773,7 +773,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 32.788,
+     "dur_ms": 28.689,
      "is_reference": false,
      "error": null
     },
@@ -784,7 +784,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 138.65,
+     "dur_ms": 37.83,
      "is_reference": false,
      "error": null
     },
@@ -795,7 +795,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 56.539,
+     "dur_ms": 28.648,
      "is_reference": false,
      "error": null
     },
@@ -806,7 +806,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 31.611,
+     "dur_ms": 33.302,
      "is_reference": false,
      "error": null
     },
@@ -817,7 +817,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 40.988,
+     "dur_ms": 28.133,
      "is_reference": false,
      "error": null
     },
@@ -828,7 +828,7 @@
       "dh_kpi_mappings"
      ],
      "rowcount": 0,
-     "dur_ms": 33.005,
+     "dur_ms": 28.99,
      "is_reference": false,
      "error": null
     }
@@ -848,17 +848,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 12,
+     "id": 12581,
      "name": "get_module_coverage",
      "qual": "get_module_coverage",
      "file": "api/v1/routes/ingestion.py",
      "line": 778,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A8464E0>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48732060>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'modules': [{'module': 'carbon_calculator', 'total_kpis': 6, 'mapped_kpis': 0, 'coverage_pct': 0.0, 'source_count': 0}, {'module': 'cbam_calculator', 'total_kpis': 2, 'mapped_kpis': 0, 'coverage_pct': 0.0, 'source_count': 0}, {'module': '\u2026",
-     "dur_ms": 1985.177,
+     "dur_ms": 932.306,
      "sql": [
       0,
       1,
@@ -883,148 +883,13 @@
      "error": null,
      "children": [
       {
-       "id": 13,
+       "id": 12582,
        "name": "<genexpr>",
        "qual": "get_module_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/ingestion.py",
        "line": 802,
        "args": {
-        ".0": "<list_iterator object at 0x000002393A845630>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 14,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 15,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 16,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 17,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 18,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 19,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 20,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 21,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 22,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
+        ".0": "<list_iterator object at 0x0000013D48731ED0>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -1033,43 +898,13 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 12583,
        "name": "<genexpr>",
        "qual": "get_module_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/ingestion.py",
        "line": 816,
        "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 24,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 25,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
+        ".0": "<list_iterator object at 0x0000013D488688B0>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -1078,43 +913,13 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 12584,
        "name": "<genexpr>",
        "qual": "get_module_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/ingestion.py",
        "line": 816,
        "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 27,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
-       },
-       "ret": "None",
-       "dur_ms": 0.004,
-       "sql": [],
-       "error": null,
-       "children": []
-      },
-      {
-       "id": 28,
-       "name": "<genexpr>",
-       "qual": "get_module_coverage.<locals>.<genexpr>",
-       "file": "api/v1/routes/ingestion.py",
-       "line": 816,
-       "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -1123,13 +928,43 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 12585,
        "name": "<genexpr>",
        "qual": "get_module_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/ingestion.py",
        "line": 816,
        "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12586,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12587,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
        },
        "ret": "None",
        "dur_ms": 0.004,
@@ -1138,13 +973,178 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 12588,
        "name": "<genexpr>",
        "qual": "get_module_coverage.<locals>.<genexpr>",
        "file": "api/v1/routes/ingestion.py",
        "line": 816,
        "args": {
-        ".0": "<list_iterator object at 0x000002393A8443D0>"
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12589,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12590,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12591,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.002,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12592,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12593,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12594,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12595,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12596,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12597,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12598,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
+       },
+       "ret": "None",
+       "dur_ms": 0.003,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 12599,
+       "name": "<genexpr>",
+       "qual": "get_module_coverage.<locals>.<genexpr>",
+       "file": "api/v1/routes/ingestion.py",
+       "line": 816,
+       "args": {
+        ".0": "<list_iterator object at 0x0000013D487338B0>"
        },
        "ret": "None",
        "dur_ms": 0.003,
@@ -1162,7 +1162,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.486,
+   "dur_ms": 0.216,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1181,28 +1181,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 31,
+     "id": 12600,
      "name": "get_running_jobs",
      "qual": "get_running_jobs",
      "file": "api/v1/routes/ingestion.py",
      "line": 149,
      "args": {
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'running': [], 'count': 0}",
-     "dur_ms": 0.053,
+     "dur_ms": 0.039,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 32,
+       "id": 12601,
        "name": "_get_manager",
        "qual": "_get_manager",
        "file": "api/v1/routes/ingestion.py",
        "line": 42,
        "args": {},
-       "ret": "<ingestion.manager.IngestionManager object at 0x000002393A471A90>",
-       "dur_ms": 0.007,
+       "ret": "<ingestion.manager.IngestionManager object at 0x0000013D476796A0>",
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -1217,7 +1217,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 5.386,
+   "dur_ms": 2.486,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1238,28 +1238,28 @@
    "truncated": [],
    "tree": [
     {
-     "id": 33,
+     "id": 12602,
      "name": "get_scheduler_status",
      "qual": "get_scheduler_status",
      "file": "api/v1/routes/ingestion.py",
      "line": 209,
      "args": {
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'available': False, 'running': False, 'scheduled_jobs': [], 'next_runs': []}",
-     "dur_ms": 5.205,
+     "dur_ms": 2.372,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 34,
+       "id": 12603,
        "name": "_get_scheduler",
        "qual": "_get_scheduler",
        "file": "api/v1/routes/ingestion.py",
        "line": 48,
        "args": {},
-       "ret": "<ingestion.scheduler.IngestionScheduler object at 0x000002393A860050>",
-       "dur_ms": 5.175,
+       "ret": "<ingestion.scheduler.IngestionScheduler object at 0x0000013D48EDDA60>",
+       "dur_ms": 2.347,
        "sql": [],
        "error": null,
        "children": []
@@ -1274,7 +1274,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 809.202,
+   "dur_ms": 317.631,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1290,7 +1290,7 @@
       "dh_source_fields"
      ],
      "rowcount": 1,
-     "dur_ms": 76.505,
+     "dur_ms": 63.873,
      "is_reference": false,
      "error": null
     },
@@ -1301,7 +1301,7 @@
       "dh_source_fields"
      ],
      "rowcount": 0,
-     "dur_ms": 32.453,
+     "dur_ms": 31.606,
      "is_reference": false,
      "error": null
     }
@@ -1324,7 +1324,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 35,
+     "id": 12604,
      "name": "list_source_fields",
      "qual": "list_source_fields",
      "file": "api/v1/routes/ingestion.py",
@@ -1334,11 +1334,11 @@
       "search": "None",
       "limit": "200",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B60>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47679E50>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "{'total': 0, 'fields': []}",
-     "dur_ms": 776.006,
+     "dur_ms": 288.186,
      "sql": [
       0,
       1
@@ -1354,7 +1354,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 673.509,
+   "dur_ms": 411.288,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1370,7 +1370,7 @@
       "dh_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 85.01,
+     "dur_ms": 69.26,
      "is_reference": false,
      "error": null
     },
@@ -1381,7 +1381,7 @@
       "dh_data_sources"
      ],
      "rowcount": 50,
-     "dur_ms": 346.313,
+     "dur_ms": 104.762,
      "is_reference": false,
      "error": null
     }
@@ -1404,7 +1404,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 12605,
      "name": "list_data_sources",
      "qual": "list_data_sources",
      "file": "api/v1/routes/ingestion.py",
@@ -1414,11 +1414,11 @@
       "sync_enabled": "None",
       "limit": "50",
       "offset": "0",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B90>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D49448920>",
+      "_user": "Depends(get_current_user)"
      },
-     "ret": "{'total': 120, 'sources': [{'id': '29b29d02-9e76-4624-96d0-e344bce955c2', 'name': 'ACLED', 'category': 'Geopolitical', 'sub_category': 'Conflict', 'access_type': 'REST API', 'sync_enabled': False, 'sync_schedule': None, 'last_synced_at': N\u2026",
-     "dur_ms": 643.468,
+     "ret": "{'total': 124, 'sources': [{'id': '29b29d02-9e76-4624-96d0-e344bce955c2', 'name': 'ACLED', 'category': 'Geopolitical', 'sub_category': 'Conflict', 'access_type': 'REST API', 'sync_enabled': False, 'sync_schedule': None, 'last_synced_at': N\u2026",
+     "dur_ms": 379.01,
      "sql": [
       0,
       1
@@ -1434,7 +1434,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Data source not found",
-   "dur_ms": 452.979,
+   "dur_ms": 305.771,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -1450,7 +1450,7 @@
       "dh_data_sources"
      ],
      "rowcount": 0,
-     "dur_ms": 83.6,
+     "dur_ms": 64.386,
      "is_reference": false,
      "error": null
     }
@@ -1463,18 +1463,18 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 12606,
      "name": "get_data_source",
      "qual": "get_data_source",
      "file": "api/v1/routes/ingestion.py",
      "line": 278,
      "args": {
       "source_id": "'550e8400-e29b-41d4-a716-446655440001'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A860B00>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487511C0>",
+      "_user": "Depends(get_current_user)"
      },
      "ret": "None",
-     "dur_ms": 417.844,
+     "dur_ms": 276.204,
      "sql": [
       0
      ],
@@ -1489,7 +1489,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1378.074,
+   "dur_ms": 415.941,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -1506,7 +1506,7 @@
       "dh_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 180.196,
+     "dur_ms": 63.623,
      "is_reference": false,
      "error": null
     },
@@ -1517,7 +1517,7 @@
       "dh_data_sources"
      ],
      "rowcount": 1,
-     "dur_ms": 33.279,
+     "dur_ms": 29.114,
      "is_reference": false,
      "error": null
     },
@@ -1528,7 +1528,7 @@
       "dh_sync_jobs"
      ],
      "rowcount": 1,
-     "dur_ms": 36.44,
+     "dur_ms": 28.661,
      "is_reference": false,
      "error": null
     },
@@ -1539,7 +1539,7 @@
       "dh_sync_jobs"
      ],
      "rowcount": 1,
-     "dur_ms": 37.168,
+     "dur_ms": 28.905,
      "is_reference": false,
      "error": null
     },
@@ -1549,8 +1549,8 @@
      "tables": [
       "dh_sync_jobs"
      ],
-     "rowcount": 3,
-     "dur_ms": 39.016,
+     "rowcount": 5,
+     "dur_ms": 29.179,
      "is_reference": false,
      "error": null
     }
@@ -1572,17 +1572,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 38,
+     "id": 12607,
      "name": "get_ingestion_stats",
      "qual": "get_ingestion_stats",
      "file": "api/v1/routes/ingestion.py",
      "line": 225,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000002393A4BA7E0>",
-      "_user": "Depends(dependency=<function get_current_user at 0x000002393A161260>, use_cache=True, scope=None)"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48DEFE00>",
+      "_user": "Depends(get_current_user)"
      },
-     "ret": "{'total_sources': 120, 'enabled_sources': 9, 'total_sync_jobs': 4, 'failed_jobs': 1, 'latest_per_source': [{'source_id': 'irena-lcoe-benchmarks', 'status': 'success', 'completed_at': '2026-03-07T01:53:25.489918+00:00', 'rows_inserted': 409\u2026",
-     "dur_ms": 1089.716,
+     "ret": "{'total_sources': 124, 'enabled_sources': 11, 'total_sync_jobs': 8, 'failed_jobs': 3, 'latest_per_source': [{'source_id': 'irena-lcoe-benchmarks', 'status': 'success', 'completed_at': '2026-03-07T01:53:25.489918+00:00', 'rows_inserted': 40\u2026",
+     "dur_ms": 386.103,
      "sql": [
       0,
       1,

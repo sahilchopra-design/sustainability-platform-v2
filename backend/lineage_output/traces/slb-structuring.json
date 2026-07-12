@@ -1,0 +1,261 @@
+{
+ "domain": "slb-structuring",
+ "meta": {
+  "ts": "2026-07-05T19:17:03",
+  "endpoints": 9,
+  "module": "api.v1.routes.slb_structuring",
+  "router_prefix": "/api/v1/slb-structuring"
+ },
+ "transactions": [
+  {
+   "domain": "slb-structuring",
+   "label": "GET /api/v1/slb-structuring/ref/pathways",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.259,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "count",
+     "pathways",
+     "units",
+     "retrieved_at"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40407,
+     "name": "ref_pathways",
+     "qual": "ref_pathways",
+     "file": "api/v1/routes/slb_structuring.py",
+     "line": 212,
+     "args": {},
+     "ret": "{'label': 'Hand-authored sector decarbonization-pathway slopes \u2014 approximate annual intensity-reduction rates distilled from the cited published sources (IEA NZE 2023, SBTi SDA/CSA/FLAG, CRREM v2, IMO 2023 GHG Strategy, TPI, EU fleet stand\u2026",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "GET /api/v1/slb-structuring/ref/spo-checklist",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.169,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "standard",
+     "note",
+     "components",
+     "retrieved_at"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40408,
+     "name": "ref_spo_checklist",
+     "qual": "ref_spo_checklist",
+     "file": "api/v1/routes/slb_structuring.py",
+     "line": 224,
+     "args": {},
+     "ret": "{'standard': 'ICMA Sustainability-Linked Bond Principles (June 2023, incl. June 2024 updates)', 'note': 'Item wording paraphrases the published principles for checklist use; consult the ICMA text for legal drafting.', 'components': [{'comp\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "GET /api/v1/slb-structuring/ref/step-up-benchmarks",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.152,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "label",
+     "count",
+     "benchmarks",
+     "retrieved_at"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40409,
+     "name": "ref_step_up_benchmarks",
+     "qual": "ref_step_up_benchmarks",
+     "file": "api/v1/routes/slb_structuring.py",
+     "line": 439,
+     "args": {},
+     "ret": "{'label': 'Hand-authored extract of widely reported SLB step-up structures, summarized from public issuer disclosures. Market convention: a single 25bp coupon step-up applying from the observation date to maturity dominates issuance; 50bp+\u2026",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/ambition-analytics",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/calibrate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/calibrate-history",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/spo-preassessment",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'kpi_core_business'",
+   "dur_ms": 0.174,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 40410,
+     "name": "spo_preassessment",
+     "qual": "spo_preassessment",
+     "file": "api/v1/routes/slb_structuring.py",
+     "line": 1118,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/step-down-call",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "slb-structuring",
+   "label": "POST /api/v1/slb-structuring/structure-multi",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

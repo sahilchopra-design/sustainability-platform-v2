@@ -1,10 +1,10 @@
 {
  "domain": "health-climate",
  "meta": {
-  "ts": "2026-06-30T14:02:43",
+  "ts": "2026-07-05T19:15:39",
+  "endpoints": 10,
   "module": "api.v1.routes.health_climate",
-  "router_prefix": "/api/v1/health-climate",
-  "endpoints": 10
+  "router_prefix": "/api/v1/health-climate"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.532,
+   "dur_ms": 0.271,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,14 +34,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12528,
      "name": "get_country_profiles",
      "qual": "get_country_profiles",
      "file": "api/v1/routes/health_climate.py",
      "line": 298,
      "args": {},
      "ret": "{'source': 'WHO Climate Change and Health Country Profiles 2023; Lancet Countdown 2023', 'note': 'CCS = Climate-Sensitive disease burden Score (0-100, higher = more burden); health_resilience (0-100, higher = more resilient)', 'profiles': \u2026",
-     "dur_ms": 0.015,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.302,
+   "dur_ms": 0.156,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12529,
      "name": "get_lancet_indicators",
      "qual": "get_lancet_indicators",
      "file": "api/v1/routes/health_climate.py",
      "line": 260,
      "args": {},
      "ret": "{'source': 'Lancet Countdown on Health and Climate Change \u2014 2023 Report', 'publication': 'The Lancet, November 2023', 'indicator_domains': [{'domain': '1. Climate Change Impacts, Exposures and Vulnerabilities', 'indicators': [{'id': '1.1',\u2026",
-     "dur_ms": 0.015,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.233,
+   "dur_ms": 0.132,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -116,14 +116,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12530,
      "name": "get_who_guidelines",
      "qual": "get_who_guidelines",
      "file": "api/v1/routes/health_climate.py",
      "line": 211,
      "args": {},
      "ret": "{'source': 'WHO Global Air Quality Guidelines 2021', 'publication_date': '2021-09-22', 'eu_directive': 'EU Air Quality Directive 2024/2881 (revised 2024)', 'pollutants': [{'pollutant': 'PM2.5', 'who_annual_guideline_ugm3': 5.0, 'eu_annual_\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -208,8 +208,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.897,
-   "node_count": 12,
+   "dur_ms": 0.448,
+   "node_count": 11,
    "provenance": [
     "computed"
    ],
@@ -238,7 +238,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 12531,
      "name": "heat_stress_endpoint",
      "qual": "heat_stress_endpoint",
      "file": "api/v1/routes/health_climate.py",
@@ -246,183 +246,169 @@
      "args": {
       "req": "HeatStressRequest(entity_id='TEST_req_entity_id', country_code='IN', outdoor_worker_pct=30.0, sector='construction')"
      },
-     "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.4, 'heat_stress_risk_score': 90.0, 'productivity_loss_pct': 40.5, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
-     "dur_ms": 0.479,
+     "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.2, 'heat_stress_risk_score': 86.7, 'productivity_loss_pct': 39.0, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
+     "dur_ms": 0.234,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 5,
+       "id": 12532,
        "name": "assess_heat_stress_risk",
        "qual": "assess_heat_stress_risk",
        "file": "services/health_climate_engine.py",
-       "line": 104,
+       "line": 111,
        "args": {
         "entity_id": "'TEST_req_entity_id'",
         "country_code": "'IN'",
         "outdoor_worker_pct": "30.0",
-        "sector": "'construction'"
+        "sector": "'construction'",
+        "wbgt_observed_c": "None"
        },
-       "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.4, 'heat_stress_risk_score': 90.0, 'productivity_loss_pct': 40.5, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
-       "dur_ms": 0.39,
+       "ret": "{'country_code': 'IN', 'wbgt_max_c': 31.2, 'heat_stress_risk_score': 86.7, 'productivity_loss_pct': 39.0, 'mortality_per_100k': 4.29, 'rcp45_mortality_increase_pct': 1.29, 'rcp85_mortality_increase_pct': 2.57, 'osha_compliant': True, 'outd\u2026",
+       "dur_ms": 0.186,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 6,
-         "name": "_rng",
-         "qual": "_rng",
+         "id": 12533,
+         "name": "_country_profile",
+         "qual": "_country_profile",
          "file": "services/health_climate_engine.py",
-         "line": 84,
+         "line": 103,
          "args": {
-          "entity_id": "'TEST_req_entity_idheat'"
+          "country_code": "'IN'"
          },
-         "ret": "<random.Random object at 0x000001CE61D26180>",
-         "dur_ms": 0.048,
+         "ret": "{'heat_mortality_100k': 3.5, 'pm25_ugm3': 58.0, 'who_ccs_score': 72.0, 'health_resilience': 38.0, 'ncchap': True, 'ndc_health': True}",
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 7,
-         "name": "_country_profile",
-         "qual": "_country_profile",
+         "id": 12534,
+         "name": "_round",
+         "qual": "_round",
          "file": "services/health_climate_engine.py",
-         "line": 96,
+         "line": 99,
          "args": {
-          "country_code": "'IN'"
+          "val": "31.25",
+          "digits": "1"
          },
-         "ret": "{'heat_mortality_100k': 3.5, 'pm25_ugm3': 58.0, 'who_ccs_score': 72.0, 'health_resilience': 38.0, 'ncchap': True, 'ndc_health': True}",
+         "ret": "31.2",
          "dur_ms": 0.007,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 8,
-         "name": "_round",
-         "qual": "_round",
-         "file": "services/health_climate_engine.py",
-         "line": 92,
-         "args": {
-          "val": "31.422945044240763",
-          "digits": "1"
-         },
-         "ret": "31.4",
-         "dur_ms": 0.01,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 9,
+         "id": 12535,
          "name": "_clamp",
          "qual": "_clamp",
          "file": "services/health_climate_engine.py",
-         "line": 88,
+         "line": 95,
          "args": {
-          "val": "89.99999999999999",
+          "val": "86.66666666666666",
           "lo": "0.0",
           "hi": "100.0"
          },
-         "ret": "89.99999999999999",
-         "dur_ms": 0.005,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 10,
-         "name": "_round",
-         "qual": "_round",
-         "file": "services/health_climate_engine.py",
-         "line": 92,
-         "args": {
-          "val": "89.99999999999999",
-          "digits": "1"
-         },
-         "ret": "90.0",
-         "dur_ms": 0.004,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 11,
-         "name": "_round",
-         "qual": "_round",
-         "file": "services/health_climate_engine.py",
-         "line": 92,
-         "args": {
-          "val": "40.499999999999986",
-          "digits": "1"
-         },
-         "ret": "40.5",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 12,
-         "name": "_round",
-         "qual": "_round",
-         "file": "services/health_climate_engine.py",
-         "line": 92,
-         "args": {
-          "val": "4.2875000000000005",
-          "digits": "2"
-         },
-         "ret": "4.29",
-         "dur_ms": 0.003,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 13,
-         "name": "_round",
-         "qual": "_round",
-         "file": "services/health_climate_engine.py",
-         "line": 92,
-         "args": {
-          "val": "1.287",
-          "digits": "2"
-         },
-         "ret": "1.29",
+         "ret": "86.66666666666666",
          "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 14,
+         "id": 12536,
          "name": "_round",
          "qual": "_round",
          "file": "services/health_climate_engine.py",
-         "line": 92,
+         "line": 99,
          "args": {
-          "val": "2.574",
-          "digits": "2"
+          "val": "86.66666666666666",
+          "digits": "1"
          },
-         "ret": "2.57",
-         "dur_ms": 0.003,
+         "ret": "86.7",
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 15,
+         "id": 12537,
          "name": "_round",
          "qual": "_round",
          "file": "services/health_climate_engine.py",
-         "line": 92,
+         "line": 99,
+         "args": {
+          "val": "38.99999999999999",
+          "digits": "1"
+         },
+         "ret": "39.0",
+         "dur_ms": 0.002,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12538,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 99,
+         "args": {
+          "val": "4.2875000000000005",
+          "digits": "2"
+         },
+         "ret": "4.29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12539,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 99,
+         "args": {
+          "val": "1.287",
+          "digits": "2"
+         },
+         "ret": "1.29",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12540,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 99,
+         "args": {
+          "val": "2.574",
+          "digits": "2"
+         },
+         "ret": "2.57",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 12541,
+         "name": "_round",
+         "qual": "_round",
+         "file": "services/health_climate_engine.py",
+         "line": 99,
          "args": {
           "val": "0.75",
           "digits": "2"
          },
          "ret": "0.75",
-         "dur_ms": 0.003,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []

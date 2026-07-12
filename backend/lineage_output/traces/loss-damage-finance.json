@@ -1,10 +1,10 @@
 {
  "domain": "loss-damage-finance",
  "meta": {
-  "ts": "2026-06-30T14:03:03",
+  "ts": "2026-07-05T19:15:48",
+  "endpoints": 8,
   "module": "api.v1.routes.loss_damage_finance",
-  "router_prefix": "/api/v1/loss-damage",
-  "endpoints": 8
+  "router_prefix": "/api/v1/loss-damage"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.203,
+   "dur_ms": 0.494,
    "node_count": 7,
    "provenance": [
     "computed"
@@ -35,19 +35,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12895,
      "name": "ref_attribution_science",
      "qual": "ref_attribution_science",
      "file": "api/v1/routes/loss_damage_finance.py",
      "line": 257,
      "args": {},
      "ret": "{'status': 'success', 'framework': 'World Weather Attribution (WWA) \u2014 Fraction of Attributable Risk (FAR)', 'description': 'FAR measures the fraction of observed hazard probability attributable to anthropogenic climate change. FAR = 1 \u2212 (P\u2026",
-     "dur_ms": 0.474,
+     "dur_ms": 0.224,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 12896,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -56,13 +56,13 @@
         "x": "{'event_type': 'heat_wave', 'far': 0.9, 'far_pct': 90.0, 'confidence_level': 'very_high', 'method': 'FAR counterfactual modelling', 'reference': 'WWA 2021; IPCC AR6 WG1 Ch11.3', 'notes': 'Extreme heat events \u22655\u00d7 more likely due to human in\u2026"
        },
        "ret": "0.9",
-       "dur_ms": 0.013,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 3,
+       "id": 12897,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -71,13 +71,13 @@
         "x": "{'event_type': 'cyclone_intensification', 'far': 0.72, 'far_pct': 72.0, 'confidence_level': 'high', 'method': 'Rapid intensification probability shift \u2014 ensemble', 'reference': 'WWA / Kossin et al. 2020; AR6 WG1 Ch11.7', 'notes': 'Climate \u2026"
        },
        "ret": "0.72",
-       "dur_ms": 0.005,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 4,
+       "id": 12898,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -86,13 +86,13 @@
         "x": "{'event_type': 'drought', 'far': 0.55, 'far_pct': 55.0, 'confidence_level': 'medium', 'method': 'PDSI observational trend attribution', 'reference': 'WWA 2023; IPCC AR6 WG2 Ch16.2', 'notes': 'Lower confidence due to ENSO natural variabilit\u2026"
        },
        "ret": "0.55",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 5,
+       "id": 12899,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -101,13 +101,13 @@
         "x": "{'event_type': 'coastal_flooding', 'far': 0.65, 'far_pct': 65.0, 'confidence_level': 'high', 'method': 'Sea level rise contribution \u2014 tide gauge + altimetry', 'reference': 'IPCC AR6 WG1 Ch9; SROCC 2019', 'notes': 'Climate SLR significantly\u2026"
        },
        "ret": "0.65",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 6,
+       "id": 12900,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -116,13 +116,13 @@
         "x": "{'event_type': 'wildfire', 'far': 0.6, 'far_pct': 60.0, 'confidence_level': 'medium_high', 'method': 'Fire weather index trend attribution \u2014 reanalysis', 'reference': 'WWA 2021; Abatzoglou & Williams 2016', 'notes': 'Regional variation sig\u2026"
        },
        "ret": "0.6",
-       "dur_ms": 0.004,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 7,
+       "id": 12901,
        "name": "<lambda>",
        "qual": "ref_attribution_science.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -131,7 +131,7 @@
         "x": "{'event_type': 'crop_failure', 'far': 0.5, 'far_pct': 50.0, 'confidence_level': 'medium', 'method': 'Crop yield sensitivity \u2014 GAEZ climate scenarios', 'reference': 'IPCC AR6 WG2 Ch5; Lobell & Burke 2010', 'notes': 'Confounded by irrigation\u2026"
        },
        "ret": "0.5",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
@@ -146,7 +146,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.588,
+   "dur_ms": 0.17,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -165,14 +165,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 12902,
      "name": "ref_cop28_fund",
      "qual": "ref_cop28_fund",
      "file": "api/v1/routes/loss_damage_finance.py",
      "line": 236,
      "args": {},
      "ret": "{'status': 'success', 'data': {'formal_name': 'Fund for responding to Loss and Damage', 'established': 'COP28, Dubai, December 2023', 'legal_basis': 'Decision 5/CP.28; Paris Agreement Article 8', 'initial_pledges_usd_bn': 0.792, 'secretari\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -185,7 +185,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.039,
+   "dur_ms": 0.834,
    "node_count": 26,
    "provenance": [
     "computed"
@@ -206,19 +206,19 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 12903,
      "name": "ref_v20_profiles",
      "qual": "ref_v20_profiles",
      "file": "api/v1/routes/loss_damage_finance.py",
      "line": 171,
      "args": {},
      "ret": "{'status': 'success', 'count': 25, 'source': 'V20 Vulnerable Twenty Group; UNFCCC SIDS/LDC registry; World Bank CRED EM-DAT', 'data': [{'iso': 'TUV', 'name': 'Tuvalu', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.02, 'insured_loss\u2026",
-     "dur_ms": 0.752,
+     "dur_ms": 0.617,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 12904,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -227,13 +227,13 @@
         "x": "{'iso': 'BGD', 'name': 'Bangladesh', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 3.72, 'insured_loss_pct': 3.0, 'climate_vulnerability_score': 88, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': False, 'L\u2026"
        },
        "ret": "88",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 12905,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -242,13 +242,13 @@
         "x": "{'iso': 'PHL', 'name': 'Philippines', 'region': 'Southeast Asia', 'annual_economic_loss_usd_bn': 4.1, 'insured_loss_pct': 6.5, 'climate_vulnerability_score': 85, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member'\u2026"
        },
        "ret": "85",
-       "dur_ms": 0.003,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 12906,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -263,7 +263,7 @@
        "children": []
       },
       {
-       "id": 13,
+       "id": 12907,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -278,7 +278,7 @@
        "children": []
       },
       {
-       "id": 14,
+       "id": 12908,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -287,13 +287,13 @@
         "x": "{'iso': 'MDV', 'name': 'Maldives', 'region': 'South Asia', 'annual_economic_loss_usd_bn': 0.38, 'insured_loss_pct': 4.0, 'climate_vulnerability_score': 95, 'primary_peril': 'coastal_flooding', 'V20_member': True, 'SIDS_member': True, 'LDC_\u2026"
        },
        "ret": "95",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 15,
+       "id": 12909,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -302,13 +302,13 @@
         "x": "{'iso': 'FJI', 'name': 'Fiji', 'region': 'Pacific', 'annual_economic_loss_usd_bn': 0.22, 'insured_loss_pct': 5.5, 'climate_vulnerability_score': 83, 'primary_peril': 'cyclone_intensification', 'V20_member': True, 'SIDS_member': True, 'LDC_\u2026"
        },
        "ret": "83",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 12910,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -323,7 +323,7 @@
        "children": []
       },
       {
-       "id": 17,
+       "id": 12911,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -338,7 +338,7 @@
        "children": []
       },
       {
-       "id": 18,
+       "id": 12912,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -353,7 +353,7 @@
        "children": []
       },
       {
-       "id": 19,
+       "id": 12913,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -368,7 +368,7 @@
        "children": []
       },
       {
-       "id": 20,
+       "id": 12914,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -383,7 +383,7 @@
        "children": []
       },
       {
-       "id": 21,
+       "id": 12915,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -398,7 +398,7 @@
        "children": []
       },
       {
-       "id": 22,
+       "id": 12916,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -413,7 +413,7 @@
        "children": []
       },
       {
-       "id": 23,
+       "id": 12917,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -428,7 +428,7 @@
        "children": []
       },
       {
-       "id": 24,
+       "id": 12918,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -443,7 +443,7 @@
        "children": []
       },
       {
-       "id": 25,
+       "id": 12919,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -458,7 +458,7 @@
        "children": []
       },
       {
-       "id": 26,
+       "id": 12920,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -473,7 +473,7 @@
        "children": []
       },
       {
-       "id": 27,
+       "id": 12921,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -488,7 +488,7 @@
        "children": []
       },
       {
-       "id": 28,
+       "id": 12922,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -503,7 +503,7 @@
        "children": []
       },
       {
-       "id": 29,
+       "id": 12923,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -518,7 +518,7 @@
        "children": []
       },
       {
-       "id": 30,
+       "id": 12924,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -533,7 +533,7 @@
        "children": []
       },
       {
-       "id": 31,
+       "id": 12925,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -548,7 +548,7 @@
        "children": []
       },
       {
-       "id": 32,
+       "id": 12926,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -563,7 +563,7 @@
        "children": []
       },
       {
-       "id": 33,
+       "id": 12927,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -578,7 +578,7 @@
        "children": []
       },
       {
-       "id": 34,
+       "id": 12928,
        "name": "<lambda>",
        "qual": "ref_v20_profiles.<locals>.<lambda>",
        "file": "api/v1/routes/loss_damage_finance.py",
@@ -602,7 +602,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.329,
+   "dur_ms": 0.204,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -626,14 +626,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 35,
+     "id": 12929,
      "name": "ref_wim_structure",
      "qual": "ref_wim_structure",
      "file": "api/v1/routes/loss_damage_finance.py",
      "line": 210,
      "args": {},
      "ret": "{'status': 'success', 'mechanism': 'Warsaw International Mechanism for Loss and Damage (WIM)', 'established': 'COP19, Warsaw, November 2013 \u2014 Decision 2/CP.19', 'legal_basis': 'Paris Agreement Article 8', 'executive_committee': 'WIM ExCom \u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -646,7 +646,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: Internal server error during L&D assessment.",
-   "dur_ms": 11.603,
+   "dur_ms": 7.136,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -660,7 +660,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 36,
+     "id": 12930,
      "name": "assess_loss_damage",
      "qual": "assess_loss_damage",
      "file": "api/v1/routes/loss_damage_finance.py",
@@ -669,7 +669,7 @@
       "request": "'TEST_request'"
      },
      "ret": "None",
-     "dur_ms": 11.259,
+     "dur_ms": 6.948,
      "sql": [],
      "error": null,
      "children": []

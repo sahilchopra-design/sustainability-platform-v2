@@ -1,0 +1,257 @@
+{
+ "domain": "entsoe-grid",
+ "meta": {
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 3,
+  "module": "api.v1.routes.entsoe_grid",
+  "router_prefix": "/api/v1/entsoe"
+ },
+ "transactions": [
+  {
+   "domain": "entsoe-grid",
+   "label": "GET /api/v1/entsoe/day-ahead-prices",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.553,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "country_code": "'DE' (default)",
+    "date": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "country_code",
+     "country_label",
+     "date",
+     "units",
+     "hourly",
+     "source",
+     "upstream_error",
+     "retrieved_at",
+     "provenance",
+     "cache"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11135,
+     "name": "day_ahead_prices",
+     "qual": "day_ahead_prices",
+     "file": "api/v1/routes/entsoe_grid.py",
+     "line": 222,
+     "args": {
+      "country_code": "'DE'",
+      "date": "None"
+     },
+     "ret": "{'mode': 'demo-seed', 'country_code': 'DE', 'country_label': 'Germany-Luxembourg', 'date': '2026-07-05', 'units': 'EUR/MWh', 'hourly': [{'hour': 0, 'price_eur_mwh': 58}, {'hour': 1, 'price_eur_mwh': 54}, {'hour': 2, 'price_eur_mwh': 51}, {\u2026",
+     "dur_ms": 0.224,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11136,
+       "name": "_resolve_country",
+       "qual": "_resolve_country",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 197,
+       "args": {
+        "code": "'DE'"
+       },
+       "ret": "{'label': 'Germany-Luxembourg', 'eic': '10Y1001A1001A82H'}",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11137,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 148,
+       "args": {
+        "key": "('day-ahead', 'DE', '2026-07-05', False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.008,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11138,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 157,
+       "args": {
+        "key": "('day-ahead', 'DE', '2026-07-05', False)",
+        "value": "{'mode': 'demo-seed', 'country_code': 'DE', 'country_label': 'Germany-Luxembourg', 'date': '2026-07-05', 'units': 'EUR/MWh', 'hourly': [{'hour': 0, 'price_eur_mwh': 58}, {'hour': 1, 'price_eur_mwh': 54}, {'hour': 2, 'price_eur_mwh': 51}, {\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entsoe-grid",
+   "label": "GET /api/v1/entsoe/generation-mix",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.358,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "country_code": "'DE' (default)",
+    "date": "None (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "country_code",
+     "country_label",
+     "date",
+     "generation_mix",
+     "units",
+     "source",
+     "upstream_error",
+     "retrieved_at",
+     "provenance",
+     "cache"
+    ],
+    "n_keys": 11
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11139,
+     "name": "generation_mix",
+     "qual": "generation_mix",
+     "file": "api/v1/routes/entsoe_grid.py",
+     "line": 293,
+     "args": {
+      "country_code": "'DE'",
+      "date": "None"
+     },
+     "ret": "{'mode': 'demo-seed', 'country_code': 'DE', 'country_label': 'Germany-Luxembourg', 'date': '2026-07-05', 'generation_mix': [{'fuel': 'fossil_gas', 'perc': 15.0}, {'fuel': 'wind_onshore', 'perc': 27.0}, {'fuel': 'solar', 'perc': 12.0}, {'fu\u2026",
+     "dur_ms": 0.149,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11140,
+       "name": "_resolve_country",
+       "qual": "_resolve_country",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 197,
+       "args": {
+        "code": "'DE'"
+       },
+       "ret": "{'label': 'Germany-Luxembourg', 'eic': '10Y1001A1001A82H'}",
+       "dur_ms": 0.004,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11141,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 148,
+       "args": {
+        "key": "('gen-mix', 'DE', '2026-07-05', False)"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11142,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/entsoe_grid.py",
+       "line": 157,
+       "args": {
+        "key": "('gen-mix', 'DE', '2026-07-05', False)",
+        "value": "{'mode': 'demo-seed', 'country_code': 'DE', 'country_label': 'Germany-Luxembourg', 'date': '2026-07-05', 'generation_mix': [{'fuel': 'fossil_gas', 'perc': 15.0}, {'fuel': 'wind_onshore', 'perc': 27.0}, {'fuel': 'solar', 'perc': 12.0}, {'fu\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.005,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "entsoe-grid",
+   "label": "GET /api/v1/entsoe/status",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 0.163,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "mode",
+     "api_key_configured",
+     "api_key_env",
+     "note",
+     "countries",
+     "checked_at"
+    ],
+    "n_keys": 7
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11143,
+     "name": "status",
+     "qual": "status",
+     "file": "api/v1/routes/entsoe_grid.py",
+     "line": 204,
+     "args": {},
+     "ret": "{'source': 'ENTSO-E Transparency Platform', 'mode': 'demo-seed', 'api_key_configured': False, 'api_key_env': 'ENTSOE_API_TOKEN', 'note': 'No ENTSOE_API_TOKEN set \u2014 endpoints return a labeled seeded representative sample. Register free at t\u2026",
+     "dur_ms": 0.024,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

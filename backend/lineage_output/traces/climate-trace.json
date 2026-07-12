@@ -1,0 +1,230 @@
+{
+ "domain": "climate-trace",
+ "meta": {
+  "ts": "2026-07-05T19:11:04",
+  "endpoints": 3,
+  "module": "api.v1.routes.climate_trace",
+  "router_prefix": "/api/v1/climate-trace"
+ },
+ "transactions": [
+  {
+   "domain": "climate-trace",
+   "label": "GET /api/v1/climate-trace/definitions",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1612.559,
+   "node_count": 5,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "license",
+     "sectors",
+     "countries",
+     "cached"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2771,
+     "name": "definitions",
+     "qual": "definitions",
+     "file": "api/v1/routes/climate_trace.py",
+     "line": 62,
+     "args": {},
+     "ret": "{'source': 'Climate TRACE v6 (api.climatetrace.org)', 'license': 'CC-BY 4.0', 'sectors': ['buildings', 'fossil-fuel-operations', 'agriculture', 'forestry-and-land-use', 'manufacturing', 'mineral-extraction', 'waste', 'transportation', 'pow\u2026",
+     "dur_ms": 1612.019,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2772,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 37,
+       "args": {
+        "key": "'definitions'"
+       },
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2773,
+       "name": "_ct_get",
+       "qual": "_ct_get",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 52,
+       "args": {
+        "path": "'definitions/sectors'",
+        "params": "None"
+       },
+       "ret": "['buildings', 'fossil-fuel-operations', 'agriculture', 'forestry-and-land-use', 'manufacturing', 'mineral-extraction', 'waste', 'transportation', 'power', 'fluorinated-gases']",
+       "dur_ms": 896.339,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2774,
+       "name": "_ct_get",
+       "qual": "_ct_get",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 52,
+       "args": {
+        "path": "'definitions/countries'",
+        "params": "None"
+       },
+       "ret": "[{'alpha3': 'ABW', 'alpha2': 'AW', 'name': 'Aruba', 'continent': 'North America'}, {'alpha3': 'AFG', 'alpha2': 'AF', 'name': 'Afghanistan', 'continent': 'Asia'}, {'alpha3': 'AGO', 'alpha2': 'AO', 'name': 'Angola', 'continent': 'Africa'}, {\u2026",
+       "dur_ms": 712.774,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2775,
+       "name": "_cache_put",
+       "qual": "_cache_put",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 47,
+       "args": {
+        "key": "'definitions'",
+        "value": "{'source': 'Climate TRACE v6 (api.climatetrace.org)', 'license': 'CC-BY 4.0', 'sectors': ['buildings', 'fossil-fuel-operations', 'agriculture', 'forestry-and-land-use', 'manufacturing', 'mineral-extraction', 'waste', 'transportation', 'pow\u2026"
+       },
+       "ret": "None",
+       "dur_ms": 0.011,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-trace",
+   "label": "GET /api/v1/climate-trace/facilities",
+   "status": "failed",
+   "http_status": 502,
+   "error": "HTTPException: 502: Climate TRACE returned 400",
+   "dur_ms": 552.829,
+   "node_count": 3,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "country": "'TEST_country' (mock-required)",
+    "sector": "'TEST_sector' (mock-required)",
+    "year": "2024 (default)",
+    "limit": "100 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2776,
+     "name": "facilities",
+     "qual": "facilities",
+     "file": "api/v1/routes/climate_trace.py",
+     "line": 101,
+     "args": {
+      "country": "'TEST_country'",
+      "sector": "'TEST_sector'",
+      "year": "2024",
+      "limit": "100"
+     },
+     "ret": "None",
+     "dur_ms": 551.298,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 2777,
+       "name": "_cache_get",
+       "qual": "_cache_get",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 37,
+       "args": {
+        "key": "'TEST_COUNTRY:TEST_sector:2024:100'"
+       },
+       "ret": "None",
+       "dur_ms": 0.006,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 2778,
+       "name": "_ct_get",
+       "qual": "_ct_get",
+       "file": "api/v1/routes/climate_trace.py",
+       "line": 52,
+       "args": {
+        "path": "'assets'",
+        "params": "[('countries', 'TEST_COUNTRY'), ('sectors', 'TEST_sector'), ('year', 2024), ('limit', 100)]"
+       },
+       "ret": "None",
+       "dur_ms": 551.213,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "climate-trace",
+   "label": "GET /api/v1/climate-trace/health",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 615.112,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "ok",
+     "upstream_status"
+    ],
+    "n_keys": 2
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 2779,
+     "name": "ct_health",
+     "qual": "ct_health",
+     "file": "api/v1/routes/climate_trace.py",
+     "line": 163,
+     "args": {},
+     "ret": "{'ok': True, 'upstream_status': 200}",
+     "dur_ms": 613.84,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  }
+ ]
+}

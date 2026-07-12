@@ -1,0 +1,329 @@
+{
+ "domain": "gleif-graph",
+ "meta": {
+  "ts": "2026-07-05T19:15:30",
+  "endpoints": 6,
+  "module": "api.v1.routes.gleif_graph",
+  "router_prefix": "/api/v1/gleif"
+ },
+ "transactions": [
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/entity/{lei}",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: LEI must be a 20-character alphanumeric code",
+   "dur_ms": 0.241,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "lei": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "children_limit": "50 (default)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12113,
+     "name": "entity",
+     "qual": "entity",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 152,
+     "args": {
+      "lei": "'550e8400-e29b-41d4-a716-446655440001'",
+      "children_limit": "50"
+     },
+     "ret": "None",
+     "dur_ms": 0.018,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/ping",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 770.154,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "source",
+     "reachable",
+     "checked_at"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12114,
+     "name": "ping",
+     "qual": "ping",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 116,
+     "args": {},
+     "ret": "{'source': 'GLEIF api.gleif.org/api/v1 (free, keyless, CC0 1.0)', 'reachable': True, 'checked_at': '2026-07-05T23:15:28.667674+00:00'}",
+     "dur_ms": 770.023,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12115,
+       "name": "_cached_get",
+       "qual": "_cached_get",
+       "file": "api/v1/routes/gleif_graph.py",
+       "line": 56,
+       "args": {
+        "path": "'/lei-records'",
+        "params": "{'page[size]': 1}"
+       },
+       "ret": "{'meta': {'goldenCopy': {'publishDate': '2026-07-05T08:00:00Z'}, 'pagination': {'currentPage': 1, 'perPage': 1, 'from': 1, 'to': 1, 'total': 3363489, 'lastPage': 3363489}}, 'links': {'first': 'https://api.gleif.org/api/v1/lei-records?page%\u2026",
+       "dur_ms": 769.049,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/resolve-by-bic/{bic}",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: BIC must be 8-11 alphanumeric characters",
+   "dur_ms": 0.323,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "bic": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12116,
+     "name": "resolve_by_bic",
+     "qual": "resolve_by_bic",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 320,
+     "args": {
+      "bic": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D47554830>"
+     },
+     "ret": "None",
+     "dur_ms": 0.016,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/resolve-by-isin/{isin}",
+   "status": "failed",
+   "http_status": 422,
+   "error": "HTTPException: 422: ISIN must be a 12-character alphanumeric code",
+   "dur_ms": 0.209,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "isin": "550e8400-e29b-41d4-a716-446655440001 (mock id)",
+    "db": "<real db session>"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12117,
+     "name": "resolve_by_isin",
+     "qual": "resolve_by_isin",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 283,
+     "args": {
+      "isin": "'550e8400-e29b-41d4-a716-446655440001'",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D492C16A0>"
+     },
+     "ret": "None",
+     "dur_ms": 0.008,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/search",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 785.702,
+   "node_count": 2,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "q": "'TEST_q' (mock-required)",
+    "limit": "15 (default)"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "query",
+     "total",
+     "results",
+     "source",
+     "retrieved_at"
+    ],
+    "n_keys": 5
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12118,
+     "name": "search",
+     "qual": "search",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 131,
+     "args": {
+      "q": "'TEST_q'",
+      "limit": "15"
+     },
+     "ret": "{'query': 'TEST_q', 'total': 0, 'results': [], 'source': 'GLEIF api.gleif.org/api/v1 (CC0 1.0)', 'retrieved_at': '2026-07-05T23:15:29.453529+00:00'}",
+     "dur_ms": 785.475,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 12119,
+       "name": "_cached_get",
+       "qual": "_cached_get",
+       "file": "api/v1/routes/gleif_graph.py",
+       "line": 56,
+       "args": {
+        "path": "'/lei-records'",
+        "params": "{'filter[fulltext]': 'TEST_q', 'page[size]': 15}"
+       },
+       "ret": "{'meta': {'goldenCopy': {'publishDate': '2026-07-05T08:00:00Z'}, 'pagination': {'currentPage': 1, 'perPage': 15, 'from': None, 'to': None, 'total': 0, 'lastPage': 1}}, 'links': {'first': 'https://api.gleif.org/api/v1/lei-records?filter%5Bf\u2026",
+       "dur_ms": 784.488,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "gleif-graph",
+   "label": "GET /api/v1/gleif/typeahead",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 1034.267,
+   "node_count": 2,
+   "provenance": [
+    "db-empty"
+   ],
+   "source_tables": [
+    "entity_lei"
+   ],
+   "sources": [
+    {
+     "id": 0,
+     "sql": "'SELECT lei, status FROM entity_lei WHERE lei = ANY(%(leis)s)'",
+     "tables": [
+      "entity_lei"
+     ],
+     "rowcount": 0,
+     "dur_ms": 63.251,
+     "is_reference": false,
+     "error": null
+    }
+   ],
+   "inputs": {
+    "q": "'TEST_q' (mock-required)",
+    "limit": "15 (default)",
+    "db": "<real db session>"
+   },
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "query",
+     "results",
+     "source",
+     "retrieved_at"
+    ],
+    "n_keys": 4
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 12120,
+     "name": "typeahead",
+     "qual": "typeahead",
+     "file": "api/v1/routes/gleif_graph.py",
+     "line": 226,
+     "args": {
+      "q": "'TEST_q'",
+      "limit": "15",
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D46E2F1A0>"
+     },
+     "ret": "{'query': 'TEST_q', 'results': [{'value': 'testeq GmbH', 'lei': '5299001J62AAT8HXOB03', 'entity_status_hint': None}, {'value': 'TestEquity LLC', 'lei': '5493005Q4FYS6J9A0V74', 'entity_status_hint': None}, {'value': 'TEST & QUALITY SOLUTION\u2026",
+     "dur_ms": 1003.377,
+     "sql": [
+      0
+     ],
+     "error": null,
+     "children": [
+      {
+       "id": 12121,
+       "name": "_cached_get",
+       "qual": "_cached_get",
+       "file": "api/v1/routes/gleif_graph.py",
+       "line": 56,
+       "args": {
+        "path": "'/fuzzycompletions'",
+        "params": "{'field': 'entity.legalName', 'q': 'TEST_q', 'page[size]': 15}"
+       },
+       "ret": "{'data': [{'type': 'fuzzycompletions', 'attributes': {'value': 'testeq GmbH'}, 'relationships': {'lei-records': {'data': {'type': 'lei-records', 'id': '5299001J62AAT8HXOB03'}, 'links': {'related': 'https://api.gleif.org/api/v1/lei-records/\u2026",
+       "dur_ms": 730.193,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

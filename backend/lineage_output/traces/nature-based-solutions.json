@@ -1,10 +1,10 @@
 {
  "domain": "nature-based-solutions",
  "meta": {
-  "ts": "2026-06-30T14:03:17",
+  "ts": "2026-07-05T19:15:49",
+  "endpoints": 10,
   "module": "api.v1.routes.nature_based_solutions",
-  "router_prefix": "/api/v1/nature-based-solutions",
-  "endpoints": 10
+  "router_prefix": "/api/v1/nature-based-solutions"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.345,
+   "dur_ms": 0.246,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13139,
      "name": "ref_ecosystem_types",
      "qual": "ref_ecosystem_types",
      "file": "api/v1/routes/nature_based_solutions.py",
      "line": 211,
      "args": {},
      "ret": "{'ecosystems': [{'ecosystem': 'mangrove', 'seq_rate_tco2_ha_pa': 6.2, 'permanence_risk': 'low', 'vcs_methodology': 'VM0033'}, {'ecosystem': 'seagrass', 'seq_rate_tco2_ha_pa': 1.8, 'permanence_risk': 'medium', 'vcs_methodology': 'VM0024'}, \u2026",
-     "dur_ms": 0.012,
+     "dur_ms": 0.011,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.202,
+   "dur_ms": 0.169,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -72,14 +72,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13140,
      "name": "ref_methodologies",
      "qual": "ref_methodologies",
      "file": "api/v1/routes/nature_based_solutions.py",
      "line": 228,
      "args": {},
      "ret": "{'methodologies': [{'code': 'VM0007', 'name': 'REDD+ Methodology Framework', 'standard': 'Verra VCS', 'project_type': 'Avoided Deforestation', 'permanence_years': 100}, {'code': 'VM0033', 'name': 'Tidal Wetland and Seagrass Restoration', '\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -110,7 +110,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.224,
+   "dur_ms": 0.182,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -124,7 +124,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13141,
      "name": "arr_assessment",
      "qual": "arr_assessment",
      "file": "api/v1/routes/nature_based_solutions.py",
@@ -133,7 +133,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []
@@ -182,7 +182,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.248,
+   "dur_ms": 0.276,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -196,7 +196,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13142,
      "name": "iucn_assessment",
      "qual": "iucn_assessment",
      "file": "api/v1/routes/nature_based_solutions.py",
@@ -205,7 +205,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.045,
      "sql": [],
      "error": null,
      "children": []

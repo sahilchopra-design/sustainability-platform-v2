@@ -1,10 +1,10 @@
 {
  "domain": "infrastructure-finance",
  "meta": {
-  "ts": "2026-06-30T14:02:46",
+  "ts": "2026-07-05T19:15:41",
+  "endpoints": 12,
   "module": "api.v1.routes.infrastructure_finance",
-  "router_prefix": "/api/v1/infrastructure-finance",
-  "endpoints": 12
+  "router_prefix": "/api/v1/infrastructure-finance"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.46,
+   "dur_ms": 0.186,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 12564,
      "name": "ref_blended_structures",
      "qual": "ref_blended_structures",
      "file": "api/v1/routes/infrastructure_finance.py",
      "line": 382,
      "args": {},
      "ret": "{'status': 'success', 'data': {'structures': {'first_loss': {'description': 'Junior equity or debt tranche absorbs first losses to de-risk senior tranches', 'typical_components': ['grant', 'junior_equity', 'concessional_debt'], 'crowding_i\u2026",
-     "dur_ms": 0.047,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.25,
+   "dur_ms": 0.125,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 12565,
      "name": "ref_ep_principles",
      "qual": "ref_ep_principles",
      "file": "api/v1/routes/infrastructure_finance.py",
      "line": 350,
      "args": {},
      "ret": "{'status': 'success', 'data': {'principles': [{'id': 1, 'name': 'Review and Categorisation', 'weight': 0.1, 'description': 'Categorise project as A, B or C based on potential E&S impacts'}, {'id': 2, 'name': 'Environmental and Social Asses\u2026",
-     "dur_ms": 0.005,
+     "dur_ms": 0.002,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.192,
+   "dur_ms": 0.111,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,14 +110,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 12566,
      "name": "ref_ifc_ps",
      "qual": "ref_ifc_ps",
      "file": "api/v1/routes/infrastructure_finance.py",
      "line": 363,
      "args": {},
      "ret": "{'status': 'success', 'data': {'PS1': {'name': 'Assessment and Management of E&S Risks and Impacts', 'description': 'Establish, maintain and improve ESMS; assess and manage E&S risks', 'key_requirements': ['ESIA', 'ESMS', 'stakeholder enga\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.001,
      "sql": [],
      "error": null,
      "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.256,
+   "dur_ms": 0.198,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,7 +149,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 12567,
      "name": "ref_paris_alignment",
      "qual": "ref_paris_alignment",
      "file": "api/v1/routes/infrastructure_finance.py",
@@ -205,7 +205,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.245,
+   "dur_ms": 0.142,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -219,7 +219,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 12568,
      "name": "dscr_stress",
      "qual": "dscr_stress",
      "file": "api/v1/routes/infrastructure_finance.py",
@@ -228,7 +228,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.009,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -259,7 +259,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 0.192,
+   "dur_ms": 0.132,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -273,7 +273,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 12569,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/infrastructure_finance.py",
@@ -282,7 +282,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []

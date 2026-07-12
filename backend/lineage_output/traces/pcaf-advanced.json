@@ -1,10 +1,10 @@
 {
  "domain": "pcaf-advanced",
  "meta": {
-  "ts": "2026-06-30T14:03:34",
+  "ts": "2026-07-05T19:16:00",
+  "endpoints": 10,
   "module": "api.v1.routes.pcaf_advanced",
-  "router_prefix": "/api/v1/pcaf/advanced",
-  "endpoints": 10
+  "router_prefix": "/api/v1/pcaf/advanced"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.49,
+   "dur_ms": 0.248,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -34,7 +34,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13626,
      "name": "list_gics_sub_sectors",
      "qual": "list_gics_sub_sectors",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -54,7 +54,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.161,
+   "dur_ms": 0.141,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 13627,
      "name": "list_indices",
      "qual": "list_indices",
      "file": "api/v1/routes/pcaf_advanced.py",
      "line": 1326,
      "args": {},
      "ret": "{'count': 8, 'source': 'MSCI ESG Research / S&P Trucost / Bloomberg ESG / PCAF Index Tracker 2024', 'indices': {'MSCI_WORLD': {'name': 'MSCI World', 'constituents': 1509, 'carbon_footprint_tco2e_meur': 68.2, 'waci_tco2e_meur': 145.3, 'impl\u2026",
-     "dur_ms": 0.011,
+     "dur_ms": 0.009,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Index '550e8400-e29b-41d4-a716-446655440001' not found. Available: ['MSCI_WORLD', 'SP500', 'STOXX_EUROPE_600', 'MSCI_EM', 'BLOOMBERG_GLOBAL_AGG', 'MSCI_ACWI_IMI', 'FTSE_ALL_WORLD', 'MSCI_WORLD_PAB']",
-   "dur_ms": 0.178,
+   "dur_ms": 0.144,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -108,7 +108,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13628,
      "name": "get_index_profile",
      "qual": "get_index_profile",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -117,7 +117,7 @@
       "index_key": "'550e8400-e29b-41d4-a716-446655440001'"
      },
      "ret": "None",
-     "dur_ms": 0.018,
+     "dur_ms": 0.016,
      "sql": [],
      "error": null,
      "children": []
@@ -130,7 +130,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.14,
+   "dur_ms": 0.108,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -149,7 +149,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 13629,
      "name": "list_nace_gics_mapping",
      "qual": "list_nace_gics_mapping",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -169,7 +169,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.117,
+   "dur_ms": 0.107,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -189,7 +189,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13630,
      "name": "list_nze_pathways",
      "qual": "list_nze_pathways",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -209,7 +209,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.381,
+   "dur_ms": 0.353,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -229,14 +229,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 13631,
      "name": "list_sovereign_coverage",
      "qual": "list_sovereign_coverage",
      "file": "api/v1/routes/pcaf_advanced.py",
      "line": 1425,
      "args": {},
      "ret": "{'countries': 122, 'source': 'EDGAR v8.0 / Global Carbon Budget 2023 / UNFCCC CRF / IMF WEO Apr 2024 / World Bank WDI', 'data': {'AE': {'emissions_mtco2e': 190, 'gdp_ppp_usd_tn': 0.84, 'intensity_tco2e_per_usdm_gdp': 226190.48}, 'AL': {'em\u2026",
-     "dur_ms": 0.167,
+     "dur_ms": 0.154,
      "sql": [],
      "error": null,
      "children": []
@@ -267,8 +267,8 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 117.833,
-   "node_count": 56,
+   "dur_ms": 1.228,
+   "node_count": 35,
    "provenance": [
     "computed"
    ],
@@ -311,7 +311,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13632,
      "name": "assess_fund",
      "qual": "assess_fund",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -320,18 +320,18 @@
       "req": "FundInput(fund_id=None, fund_isin=None, fund_name='TEST_req_fund_name', fund_type='equity_fund', total_nav_eur=1.0, expense_ratio_pct=0, benchmark_index=None, holdings=[SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=Non\u2026"
      },
      "ret": "FundResult(fund_id=None, fund_name='TEST_req_fund_name', fund_type='equity_fund', total_nav_eur=1.0, holdings_count=1, coverage_by_mv_pct=100.0, financed_scope1_tco2e=60.0, financed_scope2_tco2e=40.0, financed_scope3_tco2e=350.0, financed_\u2026",
-     "dur_ms": 117.39,
+     "dur_ms": 0.872,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13633,
        "name": "<genexpr>",
        "qual": "assess_fund.<locals>.<genexpr>",
        "file": "api/v1/routes/pcaf_advanced.py",
        "line": 1100,
        "args": {
-        ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+        ".0": "<list_iterator object at 0x0000013D48C42830>"
        },
        "ret": "1.0",
        "dur_ms": 0.002,
@@ -340,22 +340,22 @@
        "children": []
       },
       {
-       "id": 9,
+       "id": 13634,
        "name": "<genexpr>",
        "qual": "assess_fund.<locals>.<genexpr>",
        "file": "api/v1/routes/pcaf_advanced.py",
        "line": 1100,
        "args": {
-        ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+        ".0": "<list_iterator object at 0x0000013D48C42830>"
        },
        "ret": "None",
-       "dur_ms": 0.002,
+       "dur_ms": 0.001,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 13635,
        "name": "_assess_security",
        "qual": "_assess_security",
        "file": "api/v1/routes/pcaf_advanced.py",
@@ -366,12 +366,12 @@
         "year": "2024"
        },
        "ret": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026",
-       "dur_ms": 116.613,
+       "dur_ms": 0.194,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 11,
+         "id": 13636,
          "name": "_auto_dqs",
          "qual": "_auto_dqs",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -380,13 +380,13 @@
           "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026"
          },
          "ret": "5",
-         "dur_ms": 0.003,
+         "dur_ms": 0.004,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 12,
+         "id": 13637,
          "name": "_get_sector_ef",
          "qual": "_get_sector_ef",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -396,288 +396,13 @@
           "gics_sub": "None"
          },
          "ret": "{'s1': 60.0, 's2': 40.0, 's3': 350.0}",
-         "dur_ms": 116.34,
+         "dur_ms": 0.013,
          "sql": [],
          "error": null,
-         "children": [
-          {
-           "id": 13,
-           "name": "<module>",
-           "qual": "<module>",
-           "file": "api/v1/routes/pcaf_asset_classes.py",
-           "line": 1,
-           "args": {},
-           "ret": "None",
-           "dur_ms": 114.11,
-           "sql": [],
-           "error": null,
-           "children": [
-            {
-             "id": 14,
-             "name": "DataGap",
-             "qual": "DataGap",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 284,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.014,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 15,
-             "name": "AssetEmissionResult",
-             "qual": "AssetEmissionResult",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 292,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.087,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 16,
-             "name": "RegulatoryDisclosure",
-             "qual": "RegulatoryDisclosure",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 327,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.024,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 17,
-             "name": "PortfolioSummary",
-             "qual": "PortfolioSummary",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 344,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.116,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 18,
-             "name": "ListedEquityAsset",
-             "qual": "ListedEquityAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 393,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.708,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 19,
-             "name": "ListedEquityRequest",
-             "qual": "ListedEquityRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 427,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.345,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 20,
-             "name": "BusinessLoanAsset",
-             "qual": "BusinessLoanAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 601,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.38,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 21,
-             "name": "BusinessLoanRequest",
-             "qual": "BusinessLoanRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 619,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.118,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 22,
-             "name": "ProjectFinanceAsset",
-             "qual": "ProjectFinanceAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 754,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.539,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 23,
-             "name": "ProjectFinanceRequest",
-             "qual": "ProjectFinanceRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 771,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.118,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 24,
-             "name": "CREAsset",
-             "qual": "CREAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 897,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.506,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 25,
-             "name": "CRERequest",
-             "qual": "CRERequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 915,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.155,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 26,
-             "name": "MortgageAsset",
-             "qual": "MortgageAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1036,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.433,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 27,
-             "name": "MortgageRequest",
-             "qual": "MortgageRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1052,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.111,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 28,
-             "name": "VehicleLoanAsset",
-             "qual": "VehicleLoanAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1169,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.345,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 29,
-             "name": "VehicleLoanRequest",
-             "qual": "VehicleLoanRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1186,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.149,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 30,
-             "name": "SovereignBondAsset",
-             "qual": "SovereignBondAsset",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1293,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.283,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 31,
-             "name": "SovereignBondRequest",
-             "qual": "SovereignBondRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1305,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.131,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 32,
-             "name": "MultiAssetSummary",
-             "qual": "MultiAssetSummary",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1418,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.068,
-             "sql": [],
-             "error": null,
-             "children": []
-            },
-            {
-             "id": 33,
-             "name": "MultiAssetRequest",
-             "qual": "MultiAssetRequest",
-             "file": "api/v1/routes/pcaf_asset_classes.py",
-             "line": 1436,
-             "args": {},
-             "ret": "None",
-             "dur_ms": 0.553,
-             "sql": [],
-             "error": null,
-             "children": []
-            }
-           ]
-          }
-         ]
+         "children": []
         },
         {
-         "id": 34,
+         "id": 13638,
          "name": "_nze_alignment",
          "qual": "_nze_alignment",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -688,13 +413,13 @@
           "year": "2024"
          },
          "ret": "(4.5, 'diverging')",
-         "dur_ms": 0.017,
+         "dur_ms": 0.012,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 35,
+         "id": 13639,
          "name": "_transition_risk_score",
          "qual": "_transition_risk_score",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -704,7 +429,7 @@
           "intensity": "450000000.0"
          },
          "ret": "(40, 'medium')",
-         "dur_ms": 0.007,
+         "dur_ms": 0.006,
          "sql": [],
          "error": null,
          "children": []
@@ -712,7 +437,7 @@
        ]
       },
       {
-       "id": 36,
+       "id": 13640,
        "name": "_aggregate_securities",
        "qual": "_aggregate_securities",
        "file": "api/v1/routes/pcaf_advanced.py",
@@ -723,18 +448,18 @@
         "benchmark_key": "None"
        },
        "ret": "{'total_s1': 60.0, 'total_s2': 40.0, 'total_s3': 350.0, 'total_fin': 450.0, 'cf': 450000000.0, 'waci': 450000000.0, 'implied_temp': 4.5, 'w_dqs': 5.0, 'avg_comp': 0.0, 'top5_pct': 100.0, 'top10_pct': 100.0, 'fossil_pct': 0.0, 'green_pct': \u2026",
-       "dur_ms": 0.498,
+       "dur_ms": 0.46,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 37,
+         "id": 13641,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 919,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "60.0",
          "dur_ms": 0.002,
@@ -743,13 +468,13 @@
          "children": []
         },
         {
-         "id": 38,
+         "id": 13642,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 919,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -758,13 +483,13 @@
          "children": []
         },
         {
-         "id": 39,
+         "id": 13643,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 920,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "40.0",
          "dur_ms": 0.001,
@@ -773,13 +498,13 @@
          "children": []
         },
         {
-         "id": 40,
+         "id": 13644,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 920,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -788,13 +513,13 @@
          "children": []
         },
         {
-         "id": 41,
+         "id": 13645,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 921,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "350.0",
          "dur_ms": 0.001,
@@ -803,13 +528,13 @@
          "children": []
         },
         {
-         "id": 42,
+         "id": 13646,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 921,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -818,13 +543,13 @@
          "children": []
         },
         {
-         "id": 43,
+         "id": 13647,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 935,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "5.0",
          "dur_ms": 0.002,
@@ -833,13 +558,13 @@
          "children": []
         },
         {
-         "id": 44,
+         "id": 13648,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 935,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -848,13 +573,13 @@
          "children": []
         },
         {
-         "id": 45,
+         "id": 13649,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 939,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "0.0",
          "dur_ms": 0.001,
@@ -863,13 +588,13 @@
          "children": []
         },
         {
-         "id": 46,
+         "id": 13650,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 939,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5AF8AA10>"
+          ".0": "<list_iterator object at 0x0000013D476AAA10>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -878,7 +603,7 @@
          "children": []
         },
         {
-         "id": 47,
+         "id": 13651,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -887,19 +612,19 @@
           "x": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026"
          },
          "ret": "450.0",
-         "dur_ms": 0.001,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 48,
+         "id": 13652,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 943,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "450.0",
          "dur_ms": 0.001,
@@ -908,13 +633,13 @@
          "children": []
         },
         {
-         "id": 49,
+         "id": 13653,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 943,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -923,13 +648,13 @@
          "children": []
         },
         {
-         "id": 50,
+         "id": 13654,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 944,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "450.0",
          "dur_ms": 0.001,
@@ -938,13 +663,13 @@
          "children": []
         },
         {
-         "id": 51,
+         "id": 13655,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 944,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -953,13 +678,13 @@
          "children": []
         },
         {
-         "id": 52,
+         "id": 13656,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 947,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -968,43 +693,13 @@
          "children": []
         },
         {
-         "id": 53,
+         "id": 13657,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 951,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
-         },
-         "ret": "None",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 54,
-         "name": "<genexpr>",
-         "qual": "_aggregate_securities.<locals>.<genexpr>",
-         "file": "api/v1/routes/pcaf_advanced.py",
-         "line": 957,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
-         },
-         "ret": "0.0",
-         "dur_ms": 0.002,
-         "sql": [],
-         "error": null,
-         "children": []
-        },
-        {
-         "id": 55,
-         "name": "<genexpr>",
-         "qual": "_aggregate_securities.<locals>.<genexpr>",
-         "file": "api/v1/routes/pcaf_advanced.py",
-         "line": 957,
-         "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1013,13 +708,13 @@
          "children": []
         },
         {
-         "id": 56,
+         "id": 13658,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
-         "line": 958,
+         "line": 957,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "0.0",
          "dur_ms": 0.001,
@@ -1028,13 +723,13 @@
          "children": []
         },
         {
-         "id": 57,
+         "id": 13659,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
-         "line": 958,
+         "line": 957,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1043,13 +738,43 @@
          "children": []
         },
         {
-         "id": 58,
+         "id": 13660,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
+         },
+         "ret": "0.0",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13661,
+         "name": "<genexpr>",
+         "qual": "_aggregate_securities.<locals>.<genexpr>",
+         "file": "api/v1/routes/pcaf_advanced.py",
+         "line": 958,
+         "args": {
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
+         },
+         "ret": "None",
+         "dur_ms": 0.001,
+         "sql": [],
+         "error": null,
+         "children": []
+        },
+        {
+         "id": 13662,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 963,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1058,13 +783,13 @@
          "children": []
         },
         {
-         "id": 59,
+         "id": 13663,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 967,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C889D80>"
+          ".0": "<list_iterator object at 0x0000013D48DF9120>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1073,7 +798,7 @@
          "children": []
         },
         {
-         "id": 60,
+         "id": 13664,
          "name": "_waci_to_temp",
          "qual": "_waci_to_temp",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1088,7 +813,7 @@
          "children": []
         },
         {
-         "id": 61,
+         "id": 13665,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1097,13 +822,13 @@
           "x": "('Default', 450.0)"
          },
          "ret": "-450.0",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 62,
+         "id": 13666,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1129,7 +854,7 @@
    "status": "failed",
    "http_status": 400,
    "error": "HTTPException: 400: Portfolio must contain at least 1 fund or direct holding",
-   "dur_ms": 0.235,
+   "dur_ms": 0.179,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -1143,7 +868,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 63,
+     "id": 13667,
      "name": "assess_portfolio",
      "qual": "assess_portfolio",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -1152,7 +877,7 @@
       "req": "PortfolioInput(portfolio_id=None, portfolio_name='TEST_req_portfolio_name', reporting_year=2024, reporting_date=None, base_currency='EUR', benchmark_index=None, funds=None, direct_holdings=None)"
      },
      "ret": "None",
-     "dur_ms": 0.012,
+     "dur_ms": 0.008,
      "sql": [],
      "error": null,
      "children": []
@@ -1165,7 +890,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.054,
+   "dur_ms": 0.969,
    "node_count": 35,
    "provenance": [
     "computed"
@@ -1197,7 +922,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 64,
+     "id": 13668,
      "name": "assess_securities",
      "qual": "assess_securities",
      "file": "api/v1/routes/pcaf_advanced.py",
@@ -1206,18 +931,18 @@
       "req": "SecurityBatchRequest(securities=[SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value\u2026"
      },
      "ret": "SecurityBatchResponse(reporting_year=2024, total_securities=1, total_mv_eur=1.0, financed_total_tco2e=450.0, carbon_footprint_tco2e_per_meur=450000000.0, waci_tco2e_per_meur=450000000.0, implied_temperature_c=4.5, weighted_dqs=5.0, benchma\u2026",
-     "dur_ms": 0.768,
+     "dur_ms": 0.721,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 65,
+       "id": 13669,
        "name": "<genexpr>",
        "qual": "assess_securities.<locals>.<genexpr>",
        "file": "api/v1/routes/pcaf_advanced.py",
        "line": 1058,
        "args": {
-        ".0": "<list_iterator object at 0x000001FE5C8C0AC0>"
+        ".0": "<list_iterator object at 0x0000013D48D9FF40>"
        },
        "ret": "1.0",
        "dur_ms": 0.002,
@@ -1226,13 +951,13 @@
        "children": []
       },
       {
-       "id": 66,
+       "id": 13670,
        "name": "<genexpr>",
        "qual": "assess_securities.<locals>.<genexpr>",
        "file": "api/v1/routes/pcaf_advanced.py",
        "line": 1058,
        "args": {
-        ".0": "<list_iterator object at 0x000001FE5C8C0AC0>"
+        ".0": "<list_iterator object at 0x0000013D48D9FF40>"
        },
        "ret": "None",
        "dur_ms": 0.001,
@@ -1241,7 +966,7 @@
        "children": []
       },
       {
-       "id": 67,
+       "id": 13671,
        "name": "_assess_security",
        "qual": "_assess_security",
        "file": "api/v1/routes/pcaf_advanced.py",
@@ -1252,12 +977,12 @@
         "year": "2024"
        },
        "ret": "SecurityResult(identifier='unknown', name=None, instrument_type='equity', pcaf_asset_class='listed_equity', sector='Default', country_iso2=None, attribution_factor=0.1, af_formula='MV / EVIC', market_value_eur=1.0, weight_pct=100.0, financ\u2026",
-       "dur_ms": 0.157,
+       "dur_ms": 0.145,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 68,
+         "id": 13672,
          "name": "_auto_dqs",
          "qual": "_auto_dqs",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1266,13 +991,13 @@
           "s": "SecurityInput(isin=None, cusip=None, sedol=None, ticker=None, name=None, instrument_type='equity', pcaf_asset_class=None, sector=None, gics_sub_industry=None, nace_code=None, country_iso2=None, market_value_eur=1.0, weight_pct=None, evic_e\u2026"
          },
          "ret": "5",
-         "dur_ms": 0.002,
+         "dur_ms": 0.001,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 69,
+         "id": 13673,
          "name": "_get_sector_ef",
          "qual": "_get_sector_ef",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1282,13 +1007,13 @@
           "gics_sub": "None"
          },
          "ret": "{'s1': 60.0, 's2': 40.0, 's3': 350.0}",
-         "dur_ms": 0.01,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 70,
+         "id": 13674,
          "name": "_nze_alignment",
          "qual": "_nze_alignment",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1299,13 +1024,13 @@
           "year": "2024"
          },
          "ret": "(4.5, 'diverging')",
-         "dur_ms": 0.01,
+         "dur_ms": 0.008,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 71,
+         "id": 13675,
          "name": "_transition_risk_score",
          "qual": "_transition_risk_score",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1323,7 +1048,7 @@
        ]
       },
       {
-       "id": 72,
+       "id": 13676,
        "name": "_aggregate_securities",
        "qual": "_aggregate_securities",
        "file": "api/v1/routes/pcaf_advanced.py",
@@ -1334,18 +1059,18 @@
         "benchmark_key": "None"
        },
        "ret": "{'total_s1': 60.0, 'total_s2': 40.0, 'total_s3': 350.0, 'total_fin': 450.0, 'cf': 450000000.0, 'waci': 450000000.0, 'implied_temp': 4.5, 'w_dqs': 5.0, 'avg_comp': 0.0, 'top5_pct': 100.0, 'top10_pct': 100.0, 'fossil_pct': 0.0, 'green_pct': \u2026",
-       "dur_ms": 0.442,
+       "dur_ms": 0.415,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 73,
+         "id": 13677,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 919,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "60.0",
          "dur_ms": 0.001,
@@ -1354,13 +1079,13 @@
          "children": []
         },
         {
-         "id": 74,
+         "id": 13678,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 919,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1369,13 +1094,13 @@
          "children": []
         },
         {
-         "id": 75,
+         "id": 13679,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 920,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "40.0",
          "dur_ms": 0.001,
@@ -1384,13 +1109,13 @@
          "children": []
         },
         {
-         "id": 76,
+         "id": 13680,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 920,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1399,13 +1124,13 @@
          "children": []
         },
         {
-         "id": 77,
+         "id": 13681,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 921,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "350.0",
          "dur_ms": 0.001,
@@ -1414,13 +1139,13 @@
          "children": []
         },
         {
-         "id": 78,
+         "id": 13682,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 921,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1429,13 +1154,13 @@
          "children": []
         },
         {
-         "id": 79,
+         "id": 13683,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 935,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "5.0",
          "dur_ms": 0.001,
@@ -1444,13 +1169,13 @@
          "children": []
         },
         {
-         "id": 80,
+         "id": 13684,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 935,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1459,13 +1184,13 @@
          "children": []
         },
         {
-         "id": 81,
+         "id": 13685,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 939,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "0.0",
          "dur_ms": 0.001,
@@ -1474,13 +1199,13 @@
          "children": []
         },
         {
-         "id": 82,
+         "id": 13686,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 939,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0B80>"
+          ".0": "<list_iterator object at 0x0000013D48D9FF40>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1489,7 +1214,7 @@
          "children": []
         },
         {
-         "id": 83,
+         "id": 13687,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1504,13 +1229,13 @@
          "children": []
         },
         {
-         "id": 84,
+         "id": 13688,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 943,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "450.0",
          "dur_ms": 0.001,
@@ -1519,13 +1244,13 @@
          "children": []
         },
         {
-         "id": 85,
+         "id": 13689,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 943,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1534,13 +1259,13 @@
          "children": []
         },
         {
-         "id": 86,
+         "id": 13690,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 944,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "450.0",
          "dur_ms": 0.001,
@@ -1549,13 +1274,13 @@
          "children": []
         },
         {
-         "id": 87,
+         "id": 13691,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 944,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1564,13 +1289,13 @@
          "children": []
         },
         {
-         "id": 88,
+         "id": 13692,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 947,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1579,13 +1304,13 @@
          "children": []
         },
         {
-         "id": 89,
+         "id": 13693,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 951,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1594,13 +1319,13 @@
          "children": []
         },
         {
-         "id": 90,
+         "id": 13694,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 957,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "0.0",
          "dur_ms": 0.001,
@@ -1609,13 +1334,13 @@
          "children": []
         },
         {
-         "id": 91,
+         "id": 13695,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 957,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1624,13 +1349,13 @@
          "children": []
         },
         {
-         "id": 92,
+         "id": 13696,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 958,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "0.0",
          "dur_ms": 0.001,
@@ -1639,13 +1364,13 @@
          "children": []
         },
         {
-         "id": 93,
+         "id": 13697,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 958,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1654,13 +1379,13 @@
          "children": []
         },
         {
-         "id": 94,
+         "id": 13698,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 963,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1669,13 +1394,13 @@
          "children": []
         },
         {
-         "id": 95,
+         "id": 13699,
          "name": "<genexpr>",
          "qual": "_aggregate_securities.<locals>.<genexpr>",
          "file": "api/v1/routes/pcaf_advanced.py",
          "line": 967,
          "args": {
-          ".0": "<list_iterator object at 0x000001FE5C8C0EB0>"
+          ".0": "<list_iterator object at 0x0000013D48DFB580>"
          },
          "ret": "None",
          "dur_ms": 0.001,
@@ -1684,7 +1409,7 @@
          "children": []
         },
         {
-         "id": 96,
+         "id": 13700,
          "name": "_waci_to_temp",
          "qual": "_waci_to_temp",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1693,13 +1418,13 @@
           "waci": "450000000.0"
          },
          "ret": "4.5",
-         "dur_ms": 0.004,
+         "dur_ms": 0.003,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 97,
+         "id": 13701,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",
@@ -1714,7 +1439,7 @@
          "children": []
         },
         {
-         "id": 98,
+         "id": 13702,
          "name": "<lambda>",
          "qual": "_aggregate_securities.<locals>.<lambda>",
          "file": "api/v1/routes/pcaf_advanced.py",

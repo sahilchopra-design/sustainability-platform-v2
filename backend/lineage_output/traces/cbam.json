@@ -1,10 +1,10 @@
 {
  "domain": "cbam",
  "meta": {
-  "ts": "2026-06-30T13:59:48",
+  "ts": "2026-07-05T19:10:53",
+  "endpoints": 21,
   "module": "api.v1.routes.cbam",
-  "router_prefix": "/api/v1/cbam",
-  "endpoints": 21
+  "router_prefix": "/api/v1/cbam"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 669.15,
+   "dur_ms": 325.4,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -29,7 +29,7 @@
       "cbam_certificate_price"
      ],
      "rowcount": 24,
-     "dur_ms": 68.297,
+     "dur_ms": 73.66,
      "is_reference": false,
      "error": null
     }
@@ -52,17 +52,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 921,
      "name": "cert_prices",
      "qual": "cert_prices",
      "file": "api/v1/routes/cbam.py",
      "line": 220,
      "args": {
       "scenario": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CAC9B13F20>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48731760>"
      },
      "ret": "[{'date': '2025', 'ets_price': 70.0, 'cbam_price': 70.0, 'scenario': 'Current Trend', 'is_projection': False}, {'date': '2025', 'ets_price': 65.0, 'cbam_price': 65.0, 'scenario': 'Conservative', 'is_projection': False}, {'date': '2025', 'e\u2026",
-     "dur_ms": 634.175,
+     "dur_ms": 294.745,
      "sql": [
       0
      ],
@@ -77,7 +77,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 296.074,
+   "dur_ms": 324.417,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -93,7 +93,7 @@
       "cbam_country_risk"
      ],
      "rowcount": 20,
-     "dur_ms": 59.761,
+     "dur_ms": 73.736,
      "is_reference": false,
      "error": null
     }
@@ -117,16 +117,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 922,
      "name": "list_countries",
      "qual": "list_countries",
      "file": "api/v1/routes/cbam.py",
      "line": 207,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB0A3F80>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48751730>"
      },
      "ret": "[{'country_code': 'RU', 'country_name': 'Russia', 'has_carbon_pricing': False, 'carbon_price_eur': 0.0, 'grid_emission_factor': 0.337, 'risk_score': 0.9, 'risk_category': 'Very High'}, {'country_code': 'IN', 'country_name': 'India', 'has_c\u2026",
-     "dur_ms": 266.571,
+     "dur_ms": 293.237,
      "sql": [
       0
      ],
@@ -141,7 +141,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 542.615,
+   "dur_ms": 528.178,
    "node_count": 2,
    "provenance": [
     "real-db"
@@ -160,7 +160,7 @@
       "cbam_supplier"
      ],
      "rowcount": 1,
-     "dur_ms": 63.252,
+     "dur_ms": 70.15,
      "is_reference": false,
      "error": null
     },
@@ -171,7 +171,7 @@
       "cbam_product_category"
      ],
      "rowcount": 1,
-     "dur_ms": 33.13,
+     "dur_ms": 34.741,
      "is_reference": false,
      "error": null
     },
@@ -182,7 +182,7 @@
       "cbam_country_risk"
      ],
      "rowcount": 1,
-     "dur_ms": 34.948,
+     "dur_ms": 37.363,
      "is_reference": false,
      "error": null
     },
@@ -193,7 +193,7 @@
       "cbam_embedded_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 35.03,
+     "dur_ms": 34.481,
      "is_reference": false,
      "error": null
     },
@@ -204,7 +204,7 @@
       "cbam_supplier"
      ],
      "rowcount": 1,
-     "dur_ms": 33.06,
+     "dur_ms": 29.473,
      "is_reference": false,
      "error": null
     },
@@ -215,7 +215,7 @@
       "cbam_product_category"
      ],
      "rowcount": 6,
-     "dur_ms": 34.451,
+     "dur_ms": 31.696,
      "is_reference": false,
      "error": null
     },
@@ -226,7 +226,7 @@
       "cbam_embedded_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 32.469,
+     "dur_ms": 29.978,
      "is_reference": false,
      "error": null
     }
@@ -250,30 +250,30 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 923,
      "name": "dashboard",
      "qual": "dashboard",
      "file": "api/v1/routes/cbam.py",
      "line": 54,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB0D42F0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48730CB0>"
      },
      "ret": "{'total_suppliers': 2, 'total_products': 15, 'total_countries': 20, 'emissions_records': 1, 'high_risk_suppliers': 2, 'total_embedded_emissions_tco2': 7400.0, 'sector_breakdown': {'Cement': 3, 'Iron & Steel': 4, 'Hydrogen': 1, 'Fertilizers\u2026",
-     "dur_ms": 508.14,
+     "dur_ms": 493.364,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 924,
        "name": "get_cbam_dashboard",
        "qual": "get_cbam_dashboard",
        "file": "services/cbam_service.py",
        "line": 188,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB0D42F0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48730CB0>"
        },
        "ret": "{'total_suppliers': 2, 'total_products': 15, 'total_countries': 20, 'emissions_records': 1, 'high_risk_suppliers': 2, 'total_embedded_emissions_tco2': 7400.0, 'sector_breakdown': {'Cement': 3, 'Iron & Steel': 4, 'Hydrogen': 1, 'Fertilizers\u2026",
-       "dur_ms": 508.084,
+       "dur_ms": 493.282,
        "sql": [
         0,
         1,
@@ -296,7 +296,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 346.082,
+   "dur_ms": 308.088,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -312,7 +312,7 @@
       "cbam_embedded_emissions"
      ],
      "rowcount": 1,
-     "dur_ms": 63.956,
+     "dur_ms": 62.414,
      "is_reference": false,
      "error": null
     }
@@ -342,7 +342,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 925,
      "name": "list_emissions",
      "qual": "list_emissions",
      "file": "api/v1/routes/cbam.py",
@@ -350,10 +350,10 @@
      "args": {
       "supplier_id": "None",
       "year": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB10C2C0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48751520>"
      },
      "ret": "[{'id': 'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8', 'supplier_id': '0d13eb59-dd1c-452b-b0c4-524a7f5a6122', 'product_category_id': '7644757b-1535-408d-b44e-db1a4377e14e', 'reporting_year': 2025, 'reporting_quarter': 1, 'import_volume_tonnes': 5\u2026",
-     "dur_ms": 312.693,
+     "dur_ms": 273.973,
      "sql": [
       0
      ],
@@ -368,7 +368,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.195,
+   "dur_ms": 0.288,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -388,14 +388,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 926,
      "name": "ets_scenarios",
      "qual": "ets_scenarios",
      "file": "api/v1/routes/cbam.py",
      "line": 200,
      "args": {},
      "ret": "{'Current Trend': {2025: 70, 2026: 75, 2027: 80, 2028: 85, 2030: 95, 2035: 120, 2040: 150, 2050: 200}, 'Ambitious': {2025: 80, 2026: 90, 2027: 105, 2028: 120, 2030: 160, 2035: 250, 2040: 350, 2050: 500}, 'Conservative': {2025: 65, 2026: 68\u2026",
-     "dur_ms": 0.003,
+     "dur_ms": 0.004,
      "sql": [],
      "error": null,
      "children": []
@@ -408,7 +408,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.138,
+   "dur_ms": 0.116,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -434,14 +434,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 927,
      "name": "free_alloc_schedule",
      "qual": "free_alloc_schedule",
      "file": "api/v1/routes/cbam.py",
      "line": 195,
      "args": {},
      "ret": "{2026: 97.5, 2027: 95.0, 2028: 90.0, 2029: 77.5, 2030: 51.5, 2031: 39.0, 2032: 26.5, 2033: 14.0, 2034: 0.0}",
-     "dur_ms": 0.002,
+     "dur_ms": 0.003,
      "sql": [],
      "error": null,
      "children": []
@@ -454,7 +454,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 476.858,
+   "dur_ms": 284.702,
    "node_count": 16,
    "provenance": [
     "real-db"
@@ -470,7 +470,7 @@
       "cbam_product_category"
      ],
      "rowcount": 15,
-     "dur_ms": 202.305,
+     "dur_ms": 60.828,
      "is_reference": false,
      "error": null
     }
@@ -496,243 +496,243 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 928,
      "name": "list_products",
      "qual": "list_products",
      "file": "api/v1/routes/cbam.py",
      "line": 66,
      "args": {
       "sector": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB10D700>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487C7EC0>"
      },
      "ret": "[{'id': 'c2fc5a62-2cc8-494f-a94e-aa4909b800bc', 'cn_code': '76012000', 'hs_code': '760120', 'sector': 'Aluminium', 'product_name': 'Aluminium alloys', 'default_direct_emissions': 1.253, 'default_indirect_emissions': 5.6, 'default_total_emi\u2026",
-     "dur_ms": 446.408,
+     "dur_ms": 254.605,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 9,
+       "id": 929,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3230>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800D10>"
        },
        "ret": "{'id': 'c2fc5a62-2cc8-494f-a94e-aa4909b800bc', 'cn_code': '76012000', 'hs_code': '760120', 'sector': 'Aluminium', 'product_name': 'Aluminium alloys', 'default_direct_emissions': 1.253, 'default_indirect_emissions': 5.6, 'default_total_emis\u2026",
-       "dur_ms": 0.016,
+       "dur_ms": 0.011,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 10,
+       "id": 930,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3260>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800D40>"
        },
        "ret": "{'id': '1b60475f-662c-4db7-b061-c46d8af62237', 'cn_code': '76061100', 'hs_code': '760611', 'sector': 'Aluminium', 'product_name': 'Aluminium plates/sheets', 'default_direct_emissions': 1.68, 'default_indirect_emissions': 7.2, 'default_tota\u2026",
-       "dur_ms": 0.01,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 11,
+       "id": 931,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3290>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800D70>"
        },
        "ret": "{'id': '58914c72-6141-4ecc-978f-671c8e47f068', 'cn_code': '76011000', 'hs_code': '760110', 'sector': 'Aluminium', 'product_name': 'Unwrought aluminium, not alloyed', 'default_direct_emissions': 1.514, 'default_indirect_emissions': 6.8, 'de\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 12,
+       "id": 932,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D32C0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800DA0>"
        },
        "ret": "{'id': '7644757b-1535-408d-b44e-db1a4377e14e', 'cn_code': '25231000', 'hs_code': '252310', 'sector': 'Cement', 'product_name': 'Cement clinker', 'default_direct_emissions': 0.846, 'default_indirect_emissions': 0.05, 'default_total_emission\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 13,
+       "id": 933,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D32F0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800DD0>"
        },
        "ret": "{'id': '7b173121-9c3a-4f40-9e40-988d8bd41e61', 'cn_code': '25232900', 'hs_code': '252329', 'sector': 'Cement', 'product_name': 'Other hydraulic cement', 'default_direct_emissions': 0.498, 'default_indirect_emissions': 0.055, 'default_total\u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 14,
+       "id": 934,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3320>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800E00>"
        },
        "ret": "{'id': '443656e9-fdac-42b3-940d-ae985997f340', 'cn_code': '25232100', 'hs_code': '252321', 'sector': 'Cement', 'product_name': 'Portland cement', 'default_direct_emissions': 0.525, 'default_indirect_emissions': 0.06, 'default_total_emissio\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 15,
+       "id": 935,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3350>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800E30>"
        },
        "ret": "{'id': 'c319f579-5c27-433c-8b92-ca870bee5fc8', 'cn_code': '27160000', 'hs_code': '271600', 'sector': 'Electricity', 'product_name': 'Electrical energy', 'default_direct_emissions': 0.376, 'default_indirect_emissions': 0.0, 'default_total_e\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 16,
+       "id": 936,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3380>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800E60>"
        },
        "ret": "{'id': 'e3290bd0-fcf6-4e78-b12a-b0db742b0ad0', 'cn_code': '31051000', 'hs_code': '310510', 'sector': 'Fertilizers', 'product_name': 'Mineral/chemical fertilizers with NPK', 'default_direct_emissions': 1.2, 'default_indirect_emissions': 0.1\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 17,
+       "id": 937,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D33B0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800E90>"
        },
        "ret": "{'id': '09be0009-8b28-4253-8dbf-338922a88a20', 'cn_code': '28342100', 'hs_code': '283421', 'sector': 'Fertilizers', 'product_name': 'Potassium nitrate', 'default_direct_emissions': 2.694, 'default_indirect_emissions': 0.2, 'default_total_e\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 18,
+       "id": 938,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D33E0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800EC0>"
        },
        "ret": "{'id': '8b1b8b2a-913f-4c9a-a096-bb05f57bb69d', 'cn_code': '31021000', 'hs_code': '310210', 'sector': 'Fertilizers', 'product_name': 'Urea', 'default_direct_emissions': 1.578, 'default_indirect_emissions': 0.18, 'default_total_emissions': 1\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 19,
+       "id": 939,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3410>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800EF0>"
        },
        "ret": "{'id': 'd7399416-415d-4032-b9c1-a53e93aaca04', 'cn_code': '28041000', 'hs_code': '280410', 'sector': 'Hydrogen', 'product_name': 'Hydrogen', 'default_direct_emissions': 9.0, 'default_indirect_emissions': 2.5, 'default_total_emissions': 11.\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 20,
+       "id": 940,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3440>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800F20>"
        },
        "ret": "{'id': '63261dba-4216-4ed4-9002-f4d6f31a825a', 'cn_code': '72142000', 'hs_code': '721420', 'sector': 'Iron & Steel', 'product_name': 'Bars and rods of iron', 'default_direct_emissions': 1.32, 'default_indirect_emissions': 0.2, 'default_tot\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 21,
+       "id": 941,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D3470>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800F50>"
        },
        "ret": "{'id': '3f6c435f-4bb3-4f5f-b485-f59358884a66', 'cn_code': '72083900', 'hs_code': '720839', 'sector': 'Iron & Steel', 'product_name': 'Flat-rolled iron/steel', 'default_direct_emissions': 1.535, 'default_indirect_emissions': 0.232, 'default\u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 22,
+       "id": 942,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D34A0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800F80>"
        },
        "ret": "{'id': 'cf01640c-3fa0-4790-8920-c52c805bda6f', 'cn_code': '72061000', 'hs_code': '720610', 'sector': 'Iron & Steel', 'product_name': 'Iron - ingots', 'default_direct_emissions': 1.283, 'default_indirect_emissions': 0.195, 'default_total_em\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 23,
+       "id": 943,
        "name": "_product_dict",
        "qual": "_product_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 234,
        "args": {
-        "p": "<db.models.cbam.CBAMProductCategory object at 0x000001CACB4D34D0>"
+        "p": "<db.models.cbam.CBAMProductCategory object at 0x0000013D48800FB0>"
        },
        "ret": "{'id': '780835f2-76ad-444d-8e0e-dc3fbfb071fe', 'cn_code': '72071100', 'hs_code': '720711', 'sector': 'Iron & Steel', 'product_name': 'Semi-finished iron/steel', 'default_direct_emissions': 1.419, 'default_indirect_emissions': 0.214, 'defau\u2026",
-       "dur_ms": 0.008,
+       "dur_ms": 0.004,
        "sql": [],
        "error": null,
        "children": []
@@ -747,7 +747,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1773.194,
+   "dur_ms": 261.659,
    "node_count": 1,
    "provenance": [
     "real-db"
@@ -763,7 +763,7 @@
       "cbam_product_category"
      ],
      "rowcount": 6,
-     "dur_ms": 241.333,
+     "dur_ms": 55.482,
      "is_reference": false,
      "error": null
     }
@@ -783,16 +783,16 @@
    "truncated": [],
    "tree": [
     {
-     "id": 24,
+     "id": 944,
      "name": "product_sectors",
      "qual": "product_sectors",
      "file": "api/v1/routes/cbam.py",
      "line": 83,
      "args": {
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB10D910>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487C7FB0>"
      },
      "ret": "[{'sector': 'Cement', 'product_count': 3, 'avg_emissions': 0.678}, {'sector': 'Iron & Steel', 'product_count': 4, 'avg_emissions': 1.5995}, {'sector': 'Hydrogen', 'product_count': 1, 'avg_emissions': 11.5}, {'sector': 'Fertilizers', 'produ\u2026",
-     "dur_ms": 1719.138,
+     "dur_ms": 233.46,
      "sql": [
       0
      ],
@@ -807,7 +807,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Product not found",
-   "dur_ms": 570.298,
+   "dur_ms": 282.783,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -823,7 +823,7 @@
       "cbam_product_category"
      ],
      "rowcount": 0,
-     "dur_ms": 64.579,
+     "dur_ms": 62.198,
      "is_reference": false,
      "error": null
     }
@@ -836,17 +836,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 25,
+     "id": 945,
      "name": "get_product",
      "qual": "get_product",
      "file": "api/v1/routes/cbam.py",
      "line": 75,
      "args": {
       "pid": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB10DF40>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D487521E0>"
      },
      "ret": "None",
-     "dur_ms": 535.425,
+     "dur_ms": 251.423,
      "sql": [
       0
      ],
@@ -861,7 +861,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 324.137,
+   "dur_ms": 273.226,
    "node_count": 8,
    "provenance": [
     "db-empty"
@@ -877,7 +877,7 @@
       "cbam_supplier"
      ],
      "rowcount": 0,
-     "dur_ms": 67.819,
+     "dur_ms": 58.896,
      "is_reference": false,
      "error": null
     }
@@ -897,80 +897,80 @@
    "truncated": [],
    "tree": [
     {
-     "id": 26,
+     "id": 946,
      "name": "supplier_risk_profile",
      "qual": "supplier_risk_profile",
      "file": "api/v1/routes/cbam.py",
      "line": 319,
      "args": {
       "supplier_id": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D2BD0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488007D0>"
      },
      "ret": "{'score': 0, 'status': 'unknown'}",
-     "dur_ms": 291.342,
+     "dur_ms": 244.438,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 27,
+       "id": 947,
        "name": "<module>",
        "qual": "<module>",
        "file": "services/cbam_calculator.py",
        "line": 1,
        "args": {},
        "ret": "None",
-       "dur_ms": 0.873,
+       "dur_ms": 0.359,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 28,
+         "id": 948,
          "name": "CBAMEmissionsCalculator",
          "qual": "CBAMEmissionsCalculator",
          "file": "services/cbam_calculator.py",
          "line": 21,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.386,
+         "dur_ms": 0.123,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 29,
+         "id": 949,
          "name": "CBAMCostProjector",
          "qual": "CBAMCostProjector",
          "file": "services/cbam_calculator.py",
          "line": 154,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.132,
+         "dur_ms": 0.028,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 30,
+         "id": 950,
          "name": "CBAMComplianceScorer",
          "qual": "CBAMComplianceScorer",
          "file": "services/cbam_calculator.py",
          "line": 310,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.046,
+         "dur_ms": 0.005,
          "sql": [],
          "error": null,
          "children": []
         },
         {
-         "id": 31,
+         "id": 951,
          "name": "CBAMTransitionParams",
          "qual": "CBAMTransitionParams",
          "file": "services/cbam_calculator.py",
          "line": 396,
          "args": {},
          "ret": "None",
-         "dur_ms": 0.014,
+         "dur_ms": 0.009,
          "sql": [],
          "error": null,
          "children": []
@@ -978,22 +978,22 @@
        ]
       },
       {
-       "id": 32,
+       "id": 952,
        "name": "__init__",
        "qual": "CBAMComplianceScorer.__init__",
        "file": "services/cbam_calculator.py",
        "line": 313,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D2BD0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488007D0>"
        },
        "ret": "None",
-       "dur_ms": 0.004,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 33,
+       "id": 953,
        "name": "score_supplier_compliance",
        "qual": "CBAMComplianceScorer.score_supplier_compliance",
        "file": "services/cbam_calculator.py",
@@ -1002,7 +1002,7 @@
         "supplier_id": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'"
        },
        "ret": "{'score': 0, 'status': 'unknown'}",
-       "dur_ms": 285.425,
+       "dur_ms": 242.984,
        "sql": [
         0
        ],
@@ -1019,7 +1019,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 819.578,
+   "dur_ms": 300.452,
    "node_count": 3,
    "provenance": [
     "real-db"
@@ -1035,7 +1035,7 @@
       "cbam_supplier"
      ],
      "rowcount": 2,
-     "dur_ms": 65.519,
+     "dur_ms": 61.864,
      "is_reference": false,
      "error": null
     }
@@ -1062,7 +1062,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 34,
+     "id": 954,
      "name": "list_suppliers",
      "qual": "list_suppliers",
      "file": "api/v1/routes/cbam.py",
@@ -1070,41 +1070,41 @@
      "args": {
       "country": "None",
       "risk": "None",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D2390>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48801070>"
      },
      "ret": "[{'id': '0d13eb59-dd1c-452b-b0c4-524a7f5a6122', 'supplier_name': 'China Steel Corp', 'country_code': 'CN', 'verification_status': 'unverified', 'has_domestic_carbon_price': False, 'domestic_carbon_price': 12.0, 'risk_score': 0.7, 'risk_cat\u2026",
-     "dur_ms": 751.962,
+     "dur_ms": 270.214,
      "sql": [
       0
      ],
      "error": null,
      "children": [
       {
-       "id": 35,
+       "id": 955,
        "name": "_supplier_dict",
        "qual": "_supplier_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 243,
        "args": {
-        "s": "<db.models.cbam.CBAMSupplier object at 0x000001CACB5094C0>"
+        "s": "<db.models.cbam.CBAMSupplier object at 0x0000013D48802BD0>"
        },
        "ret": "{'id': '0d13eb59-dd1c-452b-b0c4-524a7f5a6122', 'supplier_name': 'China Steel Corp', 'country_code': 'CN', 'verification_status': 'unverified', 'has_domestic_carbon_price': False, 'domestic_carbon_price': 12.0, 'risk_score': 0.7, 'risk_cate\u2026",
-       "dur_ms": 0.014,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 36,
+       "id": 956,
        "name": "_supplier_dict",
        "qual": "_supplier_dict",
        "file": "api/v1/routes/cbam.py",
        "line": 243,
        "args": {
-        "s": "<db.models.cbam.CBAMSupplier object at 0x000001CACB5094F0>"
+        "s": "<db.models.cbam.CBAMSupplier object at 0x0000013D48802C00>"
        },
        "ret": "{'id': 'c78d0880-cd0b-4234-87e3-88f455fc9547', 'supplier_name': 'fal', 'country_code': 'IN', 'verification_status': 'unverified', 'has_domestic_carbon_price': False, 'domestic_carbon_price': 0.0, 'risk_score': 0.85, 'risk_category': 'Very \u2026",
-       "dur_ms": 0.009,
+       "dur_ms": 0.006,
        "sql": [],
        "error": null,
        "children": []
@@ -1119,7 +1119,7 @@
    "status": "failed",
    "http_status": 404,
    "error": "HTTPException: 404: Supplier not found",
-   "dur_ms": 488.128,
+   "dur_ms": 306.163,
    "node_count": 1,
    "provenance": [
     "db-empty"
@@ -1135,7 +1135,7 @@
       "cbam_supplier"
      ],
      "rowcount": 0,
-     "dur_ms": 99.722,
+     "dur_ms": 61.724,
      "is_reference": false,
      "error": null
     }
@@ -1148,17 +1148,17 @@
    "truncated": [],
    "tree": [
     {
-     "id": 37,
+     "id": 957,
      "name": "get_supplier",
      "qual": "get_supplier",
      "file": "api/v1/routes/cbam.py",
      "line": 122,
      "args": {
       "sid": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D2C60>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48801040>"
      },
      "ret": "None",
-     "dur_ms": 452.443,
+     "dur_ms": 272.26,
      "sql": [
       0
      ],
@@ -1173,7 +1173,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 807.094,
+   "dur_ms": 309.89,
    "node_count": 2,
    "provenance": [
     "db-empty"
@@ -1189,7 +1189,7 @@
       "cbam_supplier"
      ],
      "rowcount": 0,
-     "dur_ms": 56.416,
+     "dur_ms": 59.924,
      "is_reference": false,
      "error": null
     }
@@ -1206,33 +1206,33 @@
    "truncated": [],
    "tree": [
     {
-     "id": 38,
+     "id": 958,
      "name": "supplier_projections",
      "qual": "supplier_projections",
      "file": "api/v1/routes/cbam.py",
      "line": 139,
      "args": {
       "sid": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D3650>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488005C0>"
      },
      "ret": "[]",
-     "dur_ms": 647.994,
+     "dur_ms": 279.479,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 39,
+       "id": 959,
        "name": "project_supplier_costs",
        "qual": "project_supplier_costs",
        "file": "services/cbam_service.py",
        "line": 144,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB4D3650>",
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D488005C0>",
         "supplier_id": "'cab2dcca-d552-4e1f-9154-f3a3fceb9bb8'",
         "scenarios": "None"
        },
        "ret": "[]",
-       "dur_ms": 647.885,
+       "dur_ms": 279.442,
        "sql": [
         0
        ],
@@ -1249,7 +1249,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.451,
+   "dur_ms": 0.285,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -1272,7 +1272,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 40,
+     "id": 960,
      "name": "calc_cost",
      "qual": "calc_cost",
      "file": "api/v1/routes/cbam.py",
@@ -1281,12 +1281,12 @@
       "body": "CostCalcRequest(emissions_tco2=1.0, eu_ets_price=1.0, domestic_carbon_price=0, free_allocation_pct=0)"
      },
      "ret": "{'gross_cost_eur': 1.0, 'domestic_credit_eur': 0.0, 'free_allocation_reduction_eur': 0.0, 'net_cbam_cost_eur': 1.0}",
-     "dur_ms": 0.072,
+     "dur_ms": 0.041,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 41,
+       "id": 961,
        "name": "calculate_cbam_cost",
        "qual": "calculate_cbam_cost",
        "file": "services/cbam_service.py",
@@ -1298,7 +1298,7 @@
         "free_allocation_pct": "0"
        },
        "ret": "{'gross_cost_eur': 1.0, 'domestic_credit_eur': 0.0, 'free_allocation_reduction_eur': 0.0, 'net_cbam_cost_eur': 1.0}",
-       "dur_ms": 0.018,
+       "dur_ms": 0.012,
        "sql": [],
        "error": null,
        "children": []
@@ -1313,7 +1313,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1532.086,
+   "dur_ms": 317.877,
    "node_count": 3,
    "provenance": [
     "db-empty"
@@ -1330,7 +1330,7 @@
       "cbam_product_category"
      ],
      "rowcount": 0,
-     "dur_ms": 61.896,
+     "dur_ms": 59.956,
      "is_reference": false,
      "error": null
     },
@@ -1341,7 +1341,7 @@
       "cbam_supplier"
      ],
      "rowcount": 0,
-     "dur_ms": 292.473,
+     "dur_ms": 29.476,
      "is_reference": false,
      "error": null
     }
@@ -1372,37 +1372,37 @@
    "truncated": [],
    "tree": [
     {
-     "id": 42,
+     "id": 962,
      "name": "calculate_emissions",
      "qual": "calculate_emissions",
      "file": "api/v1/routes/cbam.py",
      "line": 267,
      "args": {
       "body": "CalcEmissionsRequest(supplier_id='TEST_body_supplier_id', product_category_id='TEST_body_product_category_id', production_volume_tonnes=1.0, electricity_consumed_mwh=None, use_default_values=False, direct_emissions_data=None, indirect_emis\u2026",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB508980>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48802150>"
      },
-     "ret": "{'calculation_id': 'd82df9f2-5a98-472c-a0a4-9cea25e6f051', 'supplier_id': 'TEST_body_supplier_id', 'product_category_id': 'TEST_body_product_category_id', 'production_volume_tonnes': 1.0, 'specific_direct_emissions': 0.0, 'specific_indirec\u2026",
-     "dur_ms": 1239.967,
+     "ret": "{'calculation_id': '7bb9423c-95d8-4f1a-bd20-4a7ba4752d18', 'supplier_id': 'TEST_body_supplier_id', 'product_category_id': 'TEST_body_product_category_id', 'production_volume_tonnes': 1.0, 'specific_direct_emissions': 0.0, 'specific_indirec\u2026",
+     "dur_ms": 288.143,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 43,
+       "id": 963,
        "name": "__init__",
        "qual": "CBAMEmissionsCalculator.__init__",
        "file": "services/cbam_calculator.py",
        "line": 32,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB508980>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48802150>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
       },
       {
-       "id": 44,
+       "id": 964,
        "name": "calculate_embedded_emissions",
        "qual": "CBAMEmissionsCalculator.calculate_embedded_emissions",
        "file": "services/cbam_calculator.py",
@@ -1416,8 +1416,8 @@
         "electricity_consumed_mwh": "None",
         "use_defaults": "False"
        },
-       "ret": "{'calculation_id': 'd82df9f2-5a98-472c-a0a4-9cea25e6f051', 'supplier_id': 'TEST_body_supplier_id', 'product_category_id': 'TEST_body_product_category_id', 'production_volume_tonnes': 1.0, 'specific_direct_emissions': 0.0, 'specific_indirec\u2026",
-       "dur_ms": 1239.827,
+       "ret": "{'calculation_id': '7bb9423c-95d8-4f1a-bd20-4a7ba4752d18', 'supplier_id': 'TEST_body_supplier_id', 'product_category_id': 'TEST_body_product_category_id', 'production_volume_tonnes': 1.0, 'specific_direct_emissions': 0.0, 'specific_indirec\u2026",
+       "dur_ms": 288.065,
        "sql": [
         0,
         1
@@ -1471,7 +1471,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 465.669,
+   "dur_ms": 293.707,
    "node_count": 5,
    "provenance": [
     "db-empty"
@@ -1487,7 +1487,7 @@
       "cbam_supplier"
      ],
      "rowcount": 0,
-     "dur_ms": 68.805,
+     "dur_ms": 60.637,
      "is_reference": false,
      "error": null
     }
@@ -1509,45 +1509,45 @@
    "truncated": [],
    "tree": [
     {
-     "id": 45,
+     "id": 965,
      "name": "project_costs",
      "qual": "project_costs",
      "file": "api/v1/routes/cbam.py",
      "line": 294,
      "args": {
       "body": "ProjectCostsRequest(supplier_id='TEST_body_supplier_id', start_year=2026, end_year=2040, scenario='current_trend')",
-      "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB5093A0>"
+      "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48750230>"
      },
      "ret": "{'supplier_id': 'TEST_body_supplier_id', 'scenario': 'current_trend', 'total_net_cbam_cost_eur': 0, 'projections': []}",
-     "dur_ms": 433.211,
+     "dur_ms": 263.612,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 46,
+       "id": 966,
        "name": "__init__",
        "qual": "CBAMCostProjector.__init__",
        "file": "services/cbam_calculator.py",
        "line": 190,
        "args": {
-        "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB5093A0>"
+        "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48750230>"
        },
        "ret": "None",
-       "dur_ms": 0.046,
+       "dur_ms": 0.02,
        "sql": [],
        "error": null,
        "children": [
         {
-         "id": 47,
+         "id": 967,
          "name": "__init__",
          "qual": "CBAMEmissionsCalculator.__init__",
          "file": "services/cbam_calculator.py",
          "line": 32,
          "args": {
-          "db": "<sqlalchemy.orm.session.Session object at 0x000001CACB5093A0>"
+          "db": "<sqlalchemy.orm.session.Session object at 0x0000013D48750230>"
          },
          "ret": "None",
-         "dur_ms": 0.004,
+         "dur_ms": 0.002,
          "sql": [],
          "error": null,
          "children": []
@@ -1555,7 +1555,7 @@
        ]
       },
       {
-       "id": 48,
+       "id": 968,
        "name": "project_supplier_costs",
        "qual": "CBAMCostProjector.project_supplier_costs",
        "file": "services/cbam_calculator.py",
@@ -1567,7 +1567,7 @@
         "scenario": "'current_trend'"
        },
        "ret": "[]",
-       "dur_ms": 432.982,
+       "dur_ms": 263.483,
        "sql": [
         0
        ],
@@ -1575,16 +1575,16 @@
        "children": []
       },
       {
-       "id": 49,
+       "id": 969,
        "name": "<genexpr>",
        "qual": "project_costs.<locals>.<genexpr>",
        "file": "api/v1/routes/cbam.py",
        "line": 300,
        "args": {
-        ".0": "<list_iterator object at 0x000001CACB509660>"
+        ".0": "<list_iterator object at 0x0000013D48802950>"
        },
        "ret": "None",
-       "dur_ms": 0.003,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []

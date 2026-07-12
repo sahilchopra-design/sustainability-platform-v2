@@ -1,0 +1,253 @@
+{
+ "domain": "financial-model-engine",
+ "meta": {
+  "ts": "2026-07-05T19:15:21",
+  "endpoints": 8,
+  "module": "api.v1.routes.financial_model_engine",
+  "router_prefix": "/api/v1/financial-model"
+ },
+ "transactions": [
+  {
+   "domain": "financial-model-engine",
+   "label": "GET /api/v1/financial-model/ref/templates",
+   "status": "passed",
+   "http_status": 200,
+   "error": null,
+   "dur_ms": 4.113,
+   "node_count": 4,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": {
+    "type": "object",
+    "keys": [
+     "mode",
+     "label",
+     "templates"
+    ],
+    "n_keys": 3
+   },
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11480,
+     "name": "templates_endpoint",
+     "qual": "templates_endpoint",
+     "file": "api/v1/routes/financial_model_engine.py",
+     "line": 2416,
+     "args": {},
+     "ret": "{'mode': 'reference', 'label': 'Hand-authored illustrative templates (editable defaults, not market data)', 'templates': [{'id': 'solar_100mw', 'name': '100 MW Solar PV \u2014 70% geared, sculpted senior', 'inputs': {'project_name': '100 MW Sol\u2026",
+     "dur_ms": 3.679,
+     "sql": [],
+     "error": null,
+     "children": [
+      {
+       "id": 11481,
+       "name": "_template_solar",
+       "qual": "_template_solar",
+       "file": "api/v1/routes/financial_model_engine.py",
+       "line": 2350,
+       "args": {},
+       "ret": "ModelInputs(project_name='100 MW Solar PV (illustrative)', timeline=TimelineConfig(construction_months=18, operations_years=25, periodicity='annual', periods_per_year=1), capex=CapexConfig(total_capex_musd=85.0, drawdown_curve='logistic', \u2026",
+       "dur_ms": 1.604,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11482,
+       "name": "_template_bess",
+       "qual": "_template_bess",
+       "file": "api/v1/routes/financial_model_engine.py",
+       "line": 2354,
+       "args": {},
+       "ret": "ModelInputs(project_name='400 MWh / 100 MW BESS (illustrative)', timeline=TimelineConfig(construction_months=12, operations_years=20, periodicity='annual', periods_per_year=1), capex=CapexConfig(total_capex_musd=100.0, drawdown_curve='line\u2026",
+       "dur_ms": 0.651,
+       "sql": [],
+       "error": null,
+       "children": []
+      },
+      {
+       "id": 11483,
+       "name": "_template_wind_carbon",
+       "qual": "_template_wind_carbon",
+       "file": "api/v1/routes/financial_model_engine.py",
+       "line": 2384,
+       "args": {},
+       "ret": "ModelInputs(project_name='50 MW onshore wind + carbon revenue (illustrative)', timeline=TimelineConfig(construction_months=15, operations_years=25, periodicity='annual', periods_per_year=1), capex=CapexConfig(total_capex_musd=65.0, drawdow\u2026",
+       "dur_ms": 0.623,
+       "sql": [],
+       "error": null,
+       "children": []
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/consolidate",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/run",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/scenario-matrix",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'inputs'",
+   "dur_ms": 0.236,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11484,
+     "name": "scenario_matrix_endpoint",
+     "qual": "scenario_matrix_endpoint",
+     "file": "api/v1/routes/financial_model_engine.py",
+     "line": 1762,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.007,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/sensitivity",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/simulate",
+   "status": "failed",
+   "http_status": 500,
+   "error": "AttributeError: 'str' object has no attribute 'uncertain'",
+   "dur_ms": 0.193,
+   "node_count": 1,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {
+    "req": "'TEST_req' (mock)"
+   },
+   "output_summary": null,
+   "truncated": [],
+   "tree": [
+    {
+     "id": 11485,
+     "name": "simulate_endpoint",
+     "qual": "simulate_endpoint",
+     "file": "api/v1/routes/financial_model_engine.py",
+     "line": 1903,
+     "args": {
+      "req": "'TEST_req'"
+     },
+     "ret": "None",
+     "dur_ms": 0.006,
+     "sql": [],
+     "error": null,
+     "children": []
+    }
+   ]
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/solve",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  },
+  {
+   "domain": "financial-model-engine",
+   "label": "POST /api/v1/financial-model/solve-frontier",
+   "status": "skipped",
+   "http_status": null,
+   "error": "mutation endpoint \u2014 skipped in read-only mode (protects production DB)",
+   "dur_ms": null,
+   "node_count": 0,
+   "provenance": [
+    "computed"
+   ],
+   "source_tables": [],
+   "sources": [],
+   "inputs": {},
+   "output_summary": null,
+   "truncated": [],
+   "tree": []
+  }
+ ]
+}

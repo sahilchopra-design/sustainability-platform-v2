@@ -1,10 +1,10 @@
 {
  "domain": "epc-retrofit",
  "meta": {
-  "ts": "2026-06-30T14:01:49",
+  "ts": "2026-07-05T19:15:14",
+  "endpoints": 5,
   "module": "api.v1.routes.epc_retrofit",
-  "router_prefix": "/api/v1/epc-retrofit",
-  "endpoints": 5
+  "router_prefix": "/api/v1/epc-retrofit"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.226,
+   "dur_ms": 0.254,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -32,14 +32,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 11144,
      "name": "get_energy_prices",
      "qual": "get_energy_prices",
      "file": "api/v1/routes/epc_retrofit.py",
      "line": 264,
      "args": {},
      "ret": "{'energy_prices_eur_kwh': {'NL': 0.18, 'GB': 0.22, 'FR': 0.14, 'DE': 0.2, 'US': 0.12, 'EU': 0.16}, 'grid_emission_factors_kgco2_kwh': {'NL': 0.38, 'GB': 0.21, 'FR': 0.06, 'DE': 0.35, 'US': 0.4, 'EU': 0.25}}",
-     "dur_ms": 0.003,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -52,7 +52,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.165,
+   "dur_ms": 0.198,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -71,14 +71,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 11145,
      "name": "get_measure_catalogue",
      "qual": "get_measure_catalogue",
      "file": "api/v1/routes/epc_retrofit.py",
      "line": 233,
      "args": {},
      "ret": "{'measures': [{'measure_id': 'LED', 'name': 'LED Lighting Upgrade', 'category': 'lighting', 'capex_eur_m2': 8.0, 'energy_saving_kwh_m2': 12.0, 'carbon_saving_pct': 5.0, 'typical_lifetime_years': 15, 'epc_improvement_steps': 0, 'applicabili\u2026",
-     "dur_ms": 0.01,
+     "dur_ms": 0.02,
      "sql": [],
      "error": null,
      "children": []
@@ -91,7 +91,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.134,
+   "dur_ms": 0.157,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -110,14 +110,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 11146,
      "name": "get_meps_timelines",
      "qual": "get_meps_timelines",
      "file": "api/v1/routes/epc_retrofit.py",
      "line": 255,
      "args": {},
      "ret": "{'timelines': {'NL': [{'year': 2023, 'minimum_epc': 'C', 'scope': 'office > 100m2', 'penalty_eur_m2': 0}, {'year': 2030, 'minimum_epc': 'A', 'scope': 'office all', 'penalty_eur_m2': 25.0}, {'year': 2050, 'minimum_epc': 'A+', 'scope': 'all \u2026",
-     "dur_ms": 0.004,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -148,7 +148,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "AttributeError: 'str' object has no attribute 'properties'",
-   "dur_ms": 0.158,
+   "dur_ms": 0.179,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -162,7 +162,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 11147,
      "name": "assess_transition_risk",
      "qual": "assess_transition_risk",
      "file": "api/v1/routes/epc_retrofit.py",
@@ -171,7 +171,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.007,
+     "dur_ms": 0.006,
      "sql": [],
      "error": null,
      "children": []

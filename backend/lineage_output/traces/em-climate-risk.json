@@ -1,10 +1,10 @@
 {
  "domain": "em-climate-risk",
  "meta": {
-  "ts": "2026-06-30T14:01:09",
+  "ts": "2026-07-05T19:14:34",
+  "endpoints": 12,
   "module": "api.v1.routes.em_climate_risk",
-  "router_prefix": "/api/v1/em-climate-risk",
-  "endpoints": 12
+  "router_prefix": "/api/v1/em-climate-risk"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 2.708,
+   "dur_ms": 2.202,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -33,7 +33,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 10044,
      "name": "ref_concessional_windows",
      "qual": "ref_concessional_windows",
      "file": "api/v1/routes/em_climate_risk.py",
@@ -53,7 +53,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 15.419,
+   "dur_ms": 1.545,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -74,14 +74,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 2,
+     "id": 10045,
      "name": "ref_country_profiles",
      "qual": "ref_country_profiles",
      "file": "api/v1/routes/em_climate_risk.py",
      "line": 301,
      "args": {},
      "ret": "{'status': 'success', 'country_count': 54, 'data_sources': ['ND-GAIN Country Index 2024', 'IEA World Energy Outlook 2024', 'UNFCCC NDC Registry 2025', 'GCF Portfolio Dashboard 2024', 'PCAF GEMS Database', 'BloombergNEF EM Green Finance 202\u2026",
-     "dur_ms": 0.008,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -94,7 +94,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 16.137,
+   "dur_ms": 1.546,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -115,14 +115,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 10046,
      "name": "ref_gems_multipliers",
      "qual": "ref_gems_multipliers",
      "file": "api/v1/routes/em_climate_risk.py",
      "line": 359,
      "args": {},
      "ret": "{'status': 'success', 'methodology': 'PCAF GEMS Database; IPCC AR6 WG2 regional damage function uplift', 'region_count': 6, 'data': {'Sub-Saharan Africa': 38.0, 'South Asia': 45.0, 'East Asia Pacific': 32.0, 'Latin America': 25.0, 'MENA': \u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.017,
      "sql": [],
      "error": null,
      "children": []
@@ -135,7 +135,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 14.898,
+   "dur_ms": 1.429,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -156,14 +156,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 4,
+     "id": 10047,
      "name": "ref_ifc_ps6_thresholds",
      "qual": "ref_ifc_ps6_thresholds",
      "file": "api/v1/routes/em_climate_risk.py",
      "line": 374,
      "args": {},
      "ret": "{'status': 'success', 'standard': 'IFC Performance Standard 6 \u2014 Biodiversity Conservation and Sustainable Management (2012)', 'tier_count': 3, 'data': {'critical_habitat': {'tier': 1, 'description': 'Habitat of significant importance to cr\u2026",
-     "dur_ms": 0.006,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -176,7 +176,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 26.377,
+   "dur_ms": 1.329,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -197,14 +197,14 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 10048,
      "name": "ref_ndc_tiers",
      "qual": "ref_ndc_tiers",
      "file": "api/v1/routes/em_climate_risk.py",
      "line": 342,
      "args": {},
      "ret": "{'status': 'success', 'tier_count': 4, 'standard': 'UNFCCC NDC Registry \u2014 Paris Agreement Article 4; Climate Action Tracker methodology', 'data': {'highly_ambitious': {'score_range': [80, 100], 'tier': 'Highly Ambitious', 'description': 'N\u2026",
-     "dur_ms": 0.007,
+     "dur_ms": 0.005,
      "sql": [],
      "error": null,
      "children": []
@@ -217,7 +217,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'model_dump'",
-   "dur_ms": 1.766,
+   "dur_ms": 1.385,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -231,7 +231,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 6,
+     "id": 10049,
      "name": "full_assessment",
      "qual": "full_assessment",
      "file": "api/v1/routes/em_climate_risk.py",
@@ -240,12 +240,12 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.051,
+     "dur_ms": 0.054,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 7,
+       "id": 10050,
        "name": "_req_to_entity",
        "qual": "_req_to_entity",
        "file": "api/v1/routes/em_climate_risk.py",
@@ -254,7 +254,7 @@
         "req": "'TEST_req'"
        },
        "ret": "None",
-       "dur_ms": 0.006,
+       "dur_ms": 0.005,
        "sql": [],
        "error": null,
        "children": []
@@ -359,7 +359,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'entity_id'",
-   "dur_ms": 1.394,
+   "dur_ms": 3.246,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -373,7 +373,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 8,
+     "id": 10051,
      "name": "portfolio_assessment",
      "qual": "portfolio_assessment",
      "file": "api/v1/routes/em_climate_risk.py",
@@ -382,7 +382,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 0.014,
+     "dur_ms": 0.022,
      "sql": [],
      "error": null,
      "children": []

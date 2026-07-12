@@ -1,10 +1,10 @@
 {
  "domain": "pcaf-unified",
  "meta": {
-  "ts": "2026-06-30T14:03:42",
+  "ts": "2026-07-05T19:16:02",
+  "endpoints": 16,
   "module": "api.v1.routes.pcaf_unified",
-  "router_prefix": "/api/v1/pcaf-module",
-  "endpoints": 16
+  "router_prefix": "/api/v1/pcaf-module"
  },
  "transactions": [
   {
@@ -13,7 +13,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.363,
+   "dur_ms": 0.511,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -37,26 +37,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 1,
+     "id": 13798,
      "name": "ref_asset_classes",
      "qual": "ref_asset_classes",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 460,
      "args": {},
      "ret": "[{'id': 'listed_equity', 'label': 'Listed Equity & Corporate Bonds', 'pcaf_part': 'A', 'attribution_method': 'evic', 'formula': 'AF = Outstanding / EVIC', 'dqs_table_ref': 'Table 5.1', 'scope_coverage': 'S1+S2 mandatory, S3 encouraged'}, {\u2026",
-     "dur_ms": 0.858,
+     "dur_ms": 0.31,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 2,
+       "id": 13799,
        "name": "get_asset_class_registry",
        "qual": "PCAFUnifiedEngine.get_asset_class_registry",
        "file": "services/pcaf_unified_engine.py",
        "line": 1868,
        "args": {},
        "ret": "[{'id': 'listed_equity', 'label': 'Listed Equity & Corporate Bonds', 'pcaf_part': 'A', 'attribution_method': 'evic', 'formula': 'AF = Outstanding / EVIC', 'dqs_table_ref': 'Table 5.1', 'scope_coverage': 'S1+S2 mandatory, S3 encouraged'}, {\u2026",
-       "dur_ms": 0.711,
+       "dur_ms": 0.257,
        "sql": [],
        "error": null,
        "children": []
@@ -71,7 +71,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.805,
+   "dur_ms": 0.292,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -92,26 +92,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 3,
+     "id": 13800,
      "name": "ref_deal_types",
      "qual": "ref_deal_types",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 490,
      "args": {},
      "ret": "[{'deal_type': 'bond_underwriting', 'label': 'Bond Underwriting', 'attribution_note': 'AF = underwritten / (total x 3)', 'pcaf_reference': 'PCAF Global GHG Standard v2.0 Part C'}, {'deal_type': 'equity_placement', 'label': 'Equity Placemen\u2026",
-     "dur_ms": 0.438,
+     "dur_ms": 0.161,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 4,
+       "id": 13801,
        "name": "get_deal_type_metadata",
        "qual": "PCAFUnifiedEngine.get_deal_type_metadata",
        "file": "services/pcaf_unified_engine.py",
        "line": 1925,
        "args": {},
        "ret": "[{'deal_type': 'bond_underwriting', 'label': 'Bond Underwriting', 'attribution_note': 'AF = underwritten / (total x 3)', 'pcaf_reference': 'PCAF Global GHG Standard v2.0 Part C'}, {'deal_type': 'equity_placement', 'label': 'Equity Placemen\u2026",
-       "dur_ms": 0.353,
+       "dur_ms": 0.128,
        "sql": [],
        "error": null,
        "children": []
@@ -126,7 +126,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 1.089,
+   "dur_ms": 0.261,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -148,26 +148,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 5,
+     "id": 13802,
      "name": "ref_dqs_framework",
      "qual": "ref_dqs_framework",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 472,
      "args": {},
      "ret": "{'dqs_levels': [{'score': 1, 'label': 'Audited emissions data', 'description': 'Verified GHG emissions data (Scope 1, 2, and relevant Scope 3 categories) directly reported by the borrower/investee and assured by an accredited third party (\u2026",
-     "dur_ms": 0.398,
+     "dur_ms": 0.097,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 6,
+       "id": 13803,
        "name": "get_dqs_framework",
        "qual": "PCAFUnifiedEngine.get_dqs_framework",
        "file": "services/pcaf_unified_engine.py",
        "line": 1890,
        "args": {},
        "ret": "{'dqs_levels': [{'score': 1, 'label': 'Audited emissions data', 'description': 'Verified GHG emissions data (Scope 1, 2, and relevant Scope 3 categories) directly reported by the borrower/investee and assured by an accredited third party (\u2026",
-       "dur_ms": 0.01,
+       "dur_ms": 0.003,
        "sql": [],
        "error": null,
        "children": []
@@ -182,7 +182,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.647,
+   "dur_ms": 0.258,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -210,26 +210,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 7,
+     "id": 13804,
      "name": "ref_emission_factors",
      "qual": "ref_emission_factors",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 466,
      "args": {},
      "ret": "{'sector_intensities_gics': {'Energy': 820.0, 'Materials': 410.0, 'Industrials': 180.0, 'Consumer Discretionary': 85.0, 'Consumer Staples': 110.0, 'Health Care': 55.0, 'Financials': 12.0, 'Information Technology': 28.0, 'Communication Serv\u2026",
-     "dur_ms": 0.29,
+     "dur_ms": 0.1,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 8,
+       "id": 13805,
        "name": "get_emission_factor_library",
        "qual": "PCAFUnifiedEngine.get_emission_factor_library",
        "file": "services/pcaf_unified_engine.py",
        "line": 1873,
        "args": {},
        "ret": "{'sector_intensities_gics': {'Energy': 820.0, 'Materials': 410.0, 'Industrials': 180.0, 'Consumer Discretionary': 85.0, 'Consumer Staples': 110.0, 'Health Care': 55.0, 'Financials': 12.0, 'Information Technology': 28.0, 'Communication Serv\u2026",
-       "dur_ms": 0.033,
+       "dur_ms": 0.018,
        "sql": [],
        "error": null,
        "children": []
@@ -244,7 +244,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.703,
+   "dur_ms": 0.289,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -265,26 +265,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 9,
+     "id": 13806,
      "name": "ref_insurance_lobs",
      "qual": "ref_insurance_lobs",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 484,
      "args": {},
      "ret": "[{'lob': 'motor_personal', 'label': 'Motor Personal', 'default_ef_tco2e_per_m_premium': 42.0, 'calculation_method': 'Fleet emission model'}, {'lob': 'motor_commercial', 'label': 'Motor Commercial', 'default_ef_tco2e_per_m_premium': 85.0, '\u2026",
-     "dur_ms": 0.313,
+     "dur_ms": 0.167,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 10,
+       "id": 13807,
        "name": "get_insurance_lob_metadata",
        "qual": "PCAFUnifiedEngine.get_insurance_lob_metadata",
        "file": "services/pcaf_unified_engine.py",
        "line": 1906,
        "args": {},
        "ret": "[{'lob': 'motor_personal', 'label': 'Motor Personal', 'default_ef_tco2e_per_m_premium': 42.0, 'calculation_method': 'Fleet emission model'}, {'lob': 'motor_commercial', 'label': 'Motor Commercial', 'default_ef_tco2e_per_m_premium': 85.0, '\u2026",
-       "dur_ms": 0.248,
+       "dur_ms": 0.137,
        "sql": [],
        "error": null,
        "children": []
@@ -299,7 +299,7 @@
    "status": "passed",
    "http_status": 200,
    "error": null,
-   "dur_ms": 0.474,
+   "dur_ms": 0.198,
    "node_count": 2,
    "provenance": [
     "computed"
@@ -322,26 +322,26 @@
    "truncated": [],
    "tree": [
     {
-     "id": 11,
+     "id": 13808,
      "name": "ref_regulatory_mappings",
      "qual": "ref_regulatory_mappings",
      "file": "api/v1/routes/pcaf_unified.py",
      "line": 478,
      "args": {},
      "ret": "[{'mapping_id': 'pcaf_sfdr_pai1', 'pcaf_metric': 'Total financed emissions (Scope 1 + 2 + 3)', 'target_framework': 'SFDR', 'target_reference': 'PAI 1 \u2014 GHG emissions (Scope 1, 2, and 3 financed)', 'description': 'PCAF financed emissions di\u2026",
-     "dur_ms": 0.133,
+     "dur_ms": 0.056,
      "sql": [],
      "error": null,
      "children": [
       {
-       "id": 12,
+       "id": 13809,
        "name": "get_regulatory_mappings",
        "qual": "PCAFUnifiedEngine.get_regulatory_mappings",
        "file": "services/pcaf_unified_engine.py",
        "line": 1901,
        "args": {},
        "ret": "[{'mapping_id': 'pcaf_sfdr_pai1', 'pcaf_metric': 'Total financed emissions (Scope 1 + 2 + 3)', 'target_framework': 'SFDR', 'target_reference': 'PAI 1 \u2014 GHG emissions (Scope 1, 2, and 3 financed)', 'description': 'PCAF financed emissions di\u2026",
-       "dur_ms": 0.006,
+       "dur_ms": 0.002,
        "sql": [],
        "error": null,
        "children": []
@@ -374,7 +374,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'holdings'",
-   "dur_ms": 12.758,
+   "dur_ms": 5.288,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -388,7 +388,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 13,
+     "id": 13810,
      "name": "bridge_scenario",
      "qual": "bridge_scenario",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -397,7 +397,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 12.458,
+     "dur_ms": 5.143,
      "sql": [],
      "error": null,
      "children": []
@@ -410,7 +410,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'holdings'",
-   "dur_ms": 16.053,
+   "dur_ms": 6.559,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -424,7 +424,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 14,
+     "id": 13811,
      "name": "calculate_portfolio",
      "qual": "calculate_portfolio",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -433,7 +433,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 11.669,
+     "dur_ms": 6.305,
      "sql": [],
      "error": null,
      "children": []
@@ -446,7 +446,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'holding'",
-   "dur_ms": 8.904,
+   "dur_ms": 4.557,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -461,7 +461,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 15,
+     "id": 13812,
      "name": "calculate_asset_class",
      "qual": "calculate_asset_class",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -471,7 +471,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 8.221,
+     "dur_ms": 4.345,
      "sql": [],
      "error": null,
      "children": []
@@ -484,7 +484,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'holdings'",
-   "dur_ms": 17.246,
+   "dur_ms": 5.051,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -498,7 +498,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 16,
+     "id": 13813,
      "name": "dqs_assessment",
      "qual": "dqs_assessment",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -507,7 +507,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 16.774,
+     "dur_ms": 4.868,
      "sql": [],
      "error": null,
      "children": []
@@ -520,7 +520,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'deals'",
-   "dur_ms": 6.933,
+   "dur_ms": 3.785,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -534,7 +534,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 17,
+     "id": 13814,
      "name": "calculate_facilitated",
      "qual": "calculate_facilitated",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -543,7 +543,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 6.495,
+     "dur_ms": 3.472,
      "sql": [],
      "error": null,
      "children": []
@@ -574,7 +574,7 @@
    "status": "failed",
    "http_status": 500,
    "error": "HTTPException: 500: 'str' object has no attribute 'policies'",
-   "dur_ms": 9.751,
+   "dur_ms": 6.203,
    "node_count": 1,
    "provenance": [
     "computed"
@@ -588,7 +588,7 @@
    "truncated": [],
    "tree": [
     {
-     "id": 18,
+     "id": 13815,
      "name": "calculate_insurance",
      "qual": "calculate_insurance",
      "file": "api/v1/routes/pcaf_unified.py",
@@ -597,7 +597,7 @@
       "req": "'TEST_req'"
      },
      "ret": "None",
-     "dur_ms": 9.295,
+     "dur_ms": 5.494,
      "sql": [],
      "error": null,
      "children": []
