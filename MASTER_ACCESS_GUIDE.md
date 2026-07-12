@@ -3,6 +3,13 @@
 This describes the RBAC system that powers `/admin` — the console for granting
 team members "Master Access" (full platform) or hand-picked module access.
 
+> Deploy-webhook verification marker: 2026-07-12. If you're reading this on the
+> live site and the sidebar module count still doesn't match this repo's
+> current module count, the Railway service's GitHub auto-deploy webhook is
+> not firing on new commits — reconnect the source (Settings → Source →
+> Disconnect, then Connect Repo again) rather than clicking "Redeploy" on an
+> old deployment entry, which just re-runs the same pinned commit.
+
 ## Concepts
 
 - **Master Access** = the existing `super_admin` RBAC role. It is not a new
