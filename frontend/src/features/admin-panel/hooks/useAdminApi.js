@@ -4,11 +4,13 @@ import axios from 'axios';
 /**
  * useAdminApi — replaces localStorage mock store with real backend API calls.
  *
- * Backend endpoints (all require super_admin Bearer token):
- *   Users:   GET/POST /api/admin/users, PUT /api/admin/users/{id}/role, POST /api/admin/users/{id}/deactivate
- *   Presets: GET/POST /api/admin/presets, PUT /api/admin/presets/{id}, POST /api/admin/presets/{id}/deactivate
- *   Invites: GET/POST /api/admin/invites, PUT /api/admin/invites/{id}, POST /api/admin/invites/{id}/revoke
+ * Backend endpoints (all require super_admin session, except maturity-map):
+ *   Users:   GET/POST /api/admin/users, PUT /api/admin/users/{id}/role,
+ *            DELETE /api/admin/users/{id} (deactivate), POST /api/admin/users/{id}/activate
+ *   Presets: GET/POST /api/admin/presets, PUT /api/admin/presets/{id}, DELETE /api/admin/presets/{id} (deactivate)
+ *   Invites: GET/POST /api/admin/invites, PUT /api/admin/invites/{id}
  *   Access:  POST /api/admin/access/grant, POST /api/admin/access/deny, DELETE /api/admin/access/{id}
+ *            PUT /api/admin/users/{id}/modules — replace-all pick-and-choose {grants:[], denies:[]}
  *   Modules: GET /api/admin/modules/status, PUT /api/admin/modules/review, POST /api/admin/modules/feedback
  *            PUT /api/admin/modules/bulk-review, GET /api/admin/modules/maturity-map
  */
@@ -49,21 +51,34 @@ export default function useAdminApi() {
 
   // ── Users CRUD ────────────────────────────────────────────────
   const createUser = useCallback(async (data) => {
-    // data: { email, name, password, rbac_role, preset_id?, is_read_only?, access_duration_days?, display_org? }
+    // data: { email, name, role, preset_id?, duration_days?, password? }
     const res = await axios.post('/api/admin/users', data);
     await loadAll();
     return res.data;
   }, [loadAll]);
 
   const updateUserRole = useCallback(async (userId, data) => {
-    // data: { rbac_role?, preset_id?, is_read_only?, access_duration_days?, display_org? }
+    // data: { role?, preset_id?, is_read_only?, duration_days? }
     const res = await axios.put(`/api/admin/users/${userId}/role`, data);
     await loadAll();
     return res.data;
   }, [loadAll]);
 
   const deactivateUser = useCallback(async (userId) => {
-    const res = await axios.post(`/api/admin/users/${userId}/deactivate`);
+    const res = await axios.delete(`/api/admin/users/${userId}`);
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  const activateUser = useCallback(async (userId) => {
+    const res = await axios.post(`/api/admin/users/${userId}/activate`);
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  // ── Bulk module pick-and-choose (replaces all overrides in one call) ──
+  const setUserModules = useCallback(async (userId, grants, denies = []) => {
+    const res = await axios.put(`/api/admin/users/${userId}/modules`, { grants, denies });
     await loadAll();
     return res.data;
   }, [loadAll]);
@@ -84,21 +99,21 @@ export default function useAdminApi() {
   }, [loadAll]);
 
   const deactivatePreset = useCallback(async (presetId) => {
-    const res = await axios.post(`/api/admin/presets/${presetId}/deactivate`);
+    const res = await axios.delete(`/api/admin/presets/${presetId}`);
     await loadAll();
     return res.data;
   }, [loadAll]);
 
   // ── Invites CRUD ──────────────────────────────────────────────
   const createInvite = useCallback(async (data) => {
-    // data: { email, rbac_role, preset_id?, module_overrides?, display_org?, access_duration_days? }
+    // data: { email, role, preset_id?, module_overrides?, display_org?, duration_days? }
     const res = await axios.post('/api/admin/invites', data);
     await loadAll();
     return res.data;
   }, [loadAll]);
 
   const revokeInvite = useCallback(async (inviteId) => {
-    const res = await axios.post(`/api/admin/invites/${inviteId}/revoke`);
+    const res = await axios.put(`/api/admin/invites/${inviteId}`, { status: 'revoked' });
     await loadAll();
     return res.data;
   }, [loadAll]);
@@ -178,7 +193,7 @@ export default function useAdminApi() {
     loading, error,
     // Actions
     loadAll,
-    createUser, updateUserRole, deactivateUser,
+    createUser, updateUserRole, deactivateUser, activateUser, setUserModules,
     createPreset, updatePreset, deactivatePreset,
     createInvite, revokeInvite,
     grantModule, denyModule, removeAccess,

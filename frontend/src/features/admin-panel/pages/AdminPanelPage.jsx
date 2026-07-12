@@ -757,13 +757,15 @@ function DashboardTab({ store }) {
 /* ─────────────────────────────────────────────────────────────
    USER PROFILE DRAWER
 ───────────────────────────────────────────────────────────── */
-function UserProfileDrawer({ user, store, update, addAudit, onClose }) {
+function UserProfileDrawer({ user, store, update, addAudit, onClose, api, apiConnected }) {
   const { presets } = store;
   const [sec, setSec]             = useState('overview');
   const [editRole, setEditRole]   = useState(user?.role || 'viewer');
   const [editPreset, setEditPreset] = useState(user?.presetId || '');
   const [grantPaths, setGrant]    = useState(user?.grantedPaths || []);
   const [denyPaths,  setDeny]     = useState(user?.deniedPaths  || []);
+  const [saving, setSaving]       = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -780,22 +782,49 @@ function UserProfileDrawer({ user, store, update, addAudit, onClose }) {
     presets
   );
 
-  const save = () => {
+  const save = async () => {
     const oldRole = user.role;
-    update(s => ({
-      ...s,
-      users: s.users.map(u => u.id === user.id
-        ? { ...u, role: editRole, presetId: editPreset, grantedPaths: grantPaths, deniedPaths: denyPaths }
-        : u),
-    }));
+    setSaveError('');
+    if (apiConnected && api) {
+      setSaving(true);
+      try {
+        await api.updateUserRole(user.id, { role: editRole, preset_id: editPreset || null });
+        // super_admin already implies every module — only persist overrides for other roles.
+        if (editRole !== 'super_admin') {
+          await api.setUserModules(user.id, grantPaths, denyPaths);
+        }
+      } catch (e) {
+        setSaving(false);
+        setSaveError(e?.response?.data?.detail || 'Failed to save — see console for details');
+        return;
+      }
+      setSaving(false);
+    } else {
+      update(s => ({
+        ...s,
+        users: s.users.map(u => u.id === user.id
+          ? { ...u, role: editRole, presetId: editPreset, grantedPaths: grantPaths, deniedPaths: denyPaths }
+          : u),
+      }));
+    }
     if (oldRole !== editRole) addAudit('Admin', 'role_change', user.name, `${oldRole} → ${editRole}`, 'medium');
     else addAudit('Admin', 'module_update', user.name, `${effectivePaths.length} effective modules`, 'low');
     onClose();
   };
 
-  const toggleStatus = () => {
+  const toggleStatus = async () => {
     const next = user.status === 'active' ? 'inactive' : 'active';
-    update(s => ({ ...s, users: s.users.map(u => u.id === user.id ? { ...u, status: next } : u) }));
+    if (apiConnected && api) {
+      try {
+        if (next === 'inactive') await api.deactivateUser(user.id);
+        else await api.activateUser(user.id);
+      } catch (e) {
+        setSaveError(e?.response?.data?.detail || 'Failed to update status');
+        return;
+      }
+    } else {
+      update(s => ({ ...s, users: s.users.map(u => u.id === user.id ? { ...u, status: next } : u) }));
+    }
     addAudit('Admin', next === 'inactive' ? 'user_suspended' : 'user_activated', user.name, '', 'high');
     onClose();
   };
@@ -835,6 +864,28 @@ function UserProfileDrawer({ user, store, update, addAudit, onClose }) {
               { l: 'Last Login', v: formatTime(user.lastLogin) }, { l: 'Created', v: formatTime(user.createdAt) }].map(i => (
               <div key={i.l}><Label>{i.l}</Label><div style={{ fontSize: 13, color: T.text }}>{i.v}</div></div>
             ))}
+          </div>
+          <div
+            onClick={() => setEditRole(editRole === 'super_admin' ? (user.role !== 'super_admin' ? user.role : 'team_member') : 'super_admin')}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer',
+              background: editRole === 'super_admin' ? T.accent + '18' : T.surface,
+              border: `1px solid ${editRole === 'super_admin' ? T.accent + '55' : T.border}`,
+              borderRadius: 8, padding: '12px 14px',
+            }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: editRole === 'super_admin' ? T.accent : T.text }}>🔓 Master Access</div>
+              <div style={{ fontSize: 11, color: T.muted, marginTop: 2 }}>Full platform — every module, no picking required</div>
+            </div>
+            <div style={{
+              width: 40, height: 22, borderRadius: 11, position: 'relative', flexShrink: 0,
+              background: editRole === 'super_admin' ? T.accent : T.border, transition: 'background 0.15s',
+            }}>
+              <div style={{
+                position: 'absolute', top: 2, left: editRole === 'super_admin' ? 20 : 2,
+                width: 18, height: 18, borderRadius: '50%', background: '#fff', transition: 'left 0.15s',
+              }} />
+            </div>
           </div>
           <div>
             <Label>Role</Label>
@@ -907,8 +958,13 @@ function UserProfileDrawer({ user, store, update, addAudit, onClose }) {
         </div>
       )}
 
+      {saveError && (
+        <div style={{ marginTop: 12, padding: '8px 12px', borderRadius: 6, background: T.red + '18', border: `1px solid ${T.red}44`, color: T.red, fontSize: 12 }}>
+          {saveError}
+        </div>
+      )}
       <div style={{ display: 'flex', gap: 10, marginTop: 24, paddingTop: 16, borderTop: `1px solid ${T.border}` }}>
-        <Btn onClick={save} variant="primary">Save Changes</Btn>
+        <Btn onClick={save} variant="primary" disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</Btn>
         <Btn onClick={onClose} variant="secondary">Cancel</Btn>
         <Btn onClick={toggleStatus} variant={user.status === 'active' ? 'danger' : 'success'} style={{ marginLeft: 'auto' }}>
           {user.status === 'active' ? 'Suspend' : 'Activate'}
@@ -921,7 +977,7 @@ function UserProfileDrawer({ user, store, update, addAudit, onClose }) {
 /* ─────────────────────────────────────────────────────────────
    USERS TAB
 ───────────────────────────────────────────────────────────── */
-function UsersTab({ store, update, addAudit }) {
+function UsersTab({ store, update, addAudit, api, apiConnected }) {
   const { users, presets } = store;
   const [search, setSearch]       = useState('');
   const [roleFilter, setRoleF]    = useState('');
@@ -929,6 +985,8 @@ function UsersTab({ store, update, addAudit }) {
   const [drawerUser, setDrawer]   = useState(null);
   const [showCreate, setCreate]   = useState(false);
   const [newU, setNewU] = useState({ name: '', email: '', role: 'team_member', presetId: '', department: '', timezone: 'UTC' });
+  const [createError, setCreateError] = useState('');
+  const [tempPassword, setTempPassword] = useState(null);
 
   const filtered = useMemo(() => users.filter(u => {
     const q = search.toLowerCase();
@@ -938,8 +996,24 @@ function UsersTab({ store, update, addAudit }) {
     return true;
   }), [users, search, roleFilter, statusFilter]);
 
-  const createUser = () => {
+  const createUser = async () => {
     if (!newU.name || !newU.email) return;
+    setCreateError('');
+    if (apiConnected && api) {
+      try {
+        const res = await api.createUser({
+          email: newU.email, name: newU.name, role: newU.role,
+          preset_id: newU.presetId || null,
+        });
+        addAudit('Admin', 'user_created', newU.name, `Role: ${newU.role}`, 'low');
+        setCreate(false);
+        if (res.generated_password) setTempPassword({ email: newU.email, password: res.generated_password });
+        setNewU({ name: '', email: '', role: 'team_member', presetId: '', department: '', timezone: 'UTC' });
+      } catch (e) {
+        setCreateError(e?.response?.data?.detail || 'Failed to create user');
+      }
+      return;
+    }
     const u = {
       id: 'user_' + generateId(), ...newU,
       grantedPaths: [], deniedPaths: [], status: 'active',
@@ -952,9 +1026,13 @@ function UsersTab({ store, update, addAudit }) {
     setNewU({ name: '', email: '', role: 'team_member', presetId: '', department: '', timezone: 'UTC' });
   };
 
-  const removeUser = (userId, name) => {
-    if (!window.confirm(`Remove ${name}?`)) return;
-    update(s => ({ ...s, users: s.users.filter(u => u.id !== userId) }));
+  const removeUser = async (userId, name) => {
+    if (!window.confirm(`Suspend ${name}?`)) return;
+    if (apiConnected && api) {
+      await api.deactivateUser(userId);
+    } else {
+      update(s => ({ ...s, users: s.users.filter(u => u.id !== userId) }));
+    }
     addAudit('Admin', 'user_deleted', name, '', 'high');
   };
 
@@ -1055,6 +1133,11 @@ function UsersTab({ store, update, addAudit }) {
               </Sel>
             </div>
           </div>
+          {createError && (
+            <div style={{ padding: '8px 12px', borderRadius: 6, background: T.red + '18', border: `1px solid ${T.red}44`, color: T.red, fontSize: 12 }}>
+              {createError}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 10 }}>
             <Btn onClick={createUser} variant="primary">Create User</Btn>
             <Btn onClick={() => setCreate(false)} variant="secondary">Cancel</Btn>
@@ -1062,11 +1145,26 @@ function UsersTab({ store, update, addAudit }) {
         </div>
       </Modal>
 
+      <Modal open={!!tempPassword} onClose={() => setTempPassword(null)} title="User Created">
+        {tempPassword && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ fontSize: 13, color: T.text }}>
+              A temporary password was generated for <b>{tempPassword.email}</b>. Share it securely — it will not be shown again.
+            </div>
+            <div style={{ fontFamily: T.mono, fontSize: 16, fontWeight: 700, color: T.accent, background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 14px' }}>
+              {tempPassword.password}
+            </div>
+            <Btn onClick={() => setTempPassword(null)} variant="primary">Done</Btn>
+          </div>
+        )}
+      </Modal>
+
       <Drawer open={!!drawerUser} onClose={() => setDrawer(null)} title={drawerUser ? `Edit — ${drawerUser.name}` : ''}>
         {drawerUser && (
           <UserProfileDrawer
             user={store.users.find(u => u.id === drawerUser.id) || drawerUser}
             store={store} update={update} addAudit={addAudit}
+            api={api} apiConnected={apiConnected}
             onClose={() => setDrawer(null)}
           />
         )}
@@ -1172,7 +1270,7 @@ function RoleMatrixTab() {
 /* ─────────────────────────────────────────────────────────────
    MODULE MANAGER TAB
 ───────────────────────────────────────────────────────────── */
-function ModuleManagerTab({ store, update, addAudit }) {
+function ModuleManagerTab({ store, update, addAudit, api, apiConnected }) {
   const { users, presets } = store;
   const [selectedUser, setSelUser] = useState('');
   const [localPaths, setLocal]     = useState([]);
@@ -1187,17 +1285,21 @@ function ModuleManagerTab({ store, update, addAudit }) {
 
   const handleChange = (paths) => { setLocal(paths); setDirty(true); };
 
-  const save = () => {
+  const save = async () => {
     if (!user) return;
     const preset = presets.find(p => p.id === user.presetId);
     const basePaths = new Set(preset ? preset.paths : []);
     const newSet = new Set(localPaths);
     const granted = localPaths.filter(p => !basePaths.has(p));
     const denied  = [...basePaths].filter(p => !newSet.has(p));
-    update(s => ({
-      ...s,
-      users: s.users.map(u => u.id === selectedUser ? { ...u, grantedPaths: granted, deniedPaths: denied } : u),
-    }));
+    if (apiConnected && api) {
+      await api.setUserModules(selectedUser, granted, denied);
+    } else {
+      update(s => ({
+        ...s,
+        users: s.users.map(u => u.id === selectedUser ? { ...u, grantedPaths: granted, deniedPaths: denied } : u),
+      }));
+    }
     addAudit('Admin', 'module_update', user.name, `${localPaths.length} effective modules`, 'medium');
     setDirty(false);
   };
@@ -1288,17 +1390,33 @@ function ModuleManagerTab({ store, update, addAudit }) {
 /* ─────────────────────────────────────────────────────────────
    INVITES TAB
 ───────────────────────────────────────────────────────────── */
-function InvitesTab({ store, update, addAudit }) {
+function InvitesTab({ store, update, addAudit, api, apiConnected }) {
   const { invites, presets, users } = store;
   const [statusFilter, setStatusF] = useState('');
   const [showCreate, setCreate]    = useState(false);
   const [showPicker, setPicker]    = useState(false);
   const [form, setForm] = useState({ email: '', role: 'team_member', presetId: '', paths: [], note: '', expireDays: 7 });
+  const [inviteError, setInviteError] = useState('');
 
   const filtered = useMemo(() => invites.filter(i => !statusFilter || i.status === statusFilter), [invites, statusFilter]);
 
-  const sendInvite = () => {
+  const sendInvite = async () => {
     if (!form.email) return;
+    setInviteError('');
+    if (apiConnected && api) {
+      try {
+        await api.createInvite({
+          email: form.email, role: form.role, preset_id: form.presetId || null,
+          module_overrides: form.paths, duration_days: null,
+        });
+        addAudit('Admin', 'invite_sent', form.email, `Role: ${form.role}, ${form.paths.length} modules`, 'low');
+        setCreate(false);
+        setForm({ email: '', role: 'team_member', presetId: '', paths: [], note: '', expireDays: 7 });
+      } catch (e) {
+        setInviteError(e?.response?.data?.detail || 'Failed to send invite');
+      }
+      return;
+    }
     const inv = {
       id: 'inv_' + generateId(), email: form.email, role: form.role,
       presetId: form.presetId, paths: form.paths, status: 'pending', note: form.note,
@@ -1311,14 +1429,25 @@ function InvitesTab({ store, update, addAudit }) {
     setForm({ email: '', role: 'team_member', presetId: '', paths: [], note: '', expireDays: 7 });
   };
 
-  const revoke = (id, email) => {
-    update(s => ({ ...s, invites: s.invites.map(i => i.id === id ? { ...i, status: 'expired' } : i) }));
+  const revoke = async (id, email) => {
+    if (apiConnected && api) {
+      await api.revokeInvite(id);
+    } else {
+      update(s => ({ ...s, invites: s.invites.map(i => i.id === id ? { ...i, status: 'expired' } : i) }));
+    }
     addAudit('Admin', 'invite_revoked', email, '', 'medium');
   };
 
-  const resend = (inv) => {
-    const n = { ...inv, id: 'inv_' + generateId(), status: 'pending', createdAt: Date.now(), expiresAt: Date.now() + 7 * 86400000 };
-    update(s => ({ ...s, invites: [n, ...s.invites] }));
+  const resend = async (inv) => {
+    if (apiConnected && api) {
+      await api.createInvite({
+        email: inv.email, role: inv.role, preset_id: inv.presetId || null,
+        module_overrides: inv.paths || [], duration_days: null,
+      });
+    } else {
+      const n = { ...inv, id: 'inv_' + generateId(), status: 'pending', createdAt: Date.now(), expiresAt: Date.now() + 7 * 86400000 };
+      update(s => ({ ...s, invites: [n, ...s.invites] }));
+    }
     addAudit('Admin', 'invite_resent', inv.email, '', 'low');
   };
 
@@ -1417,6 +1546,11 @@ function InvitesTab({ store, update, addAudit }) {
             </div>
             {showPicker && <div style={{ marginTop: 10 }}><ModulePicker selected={form.paths} onChange={p => setForm(f => ({ ...f, paths: p }))} /></div>}
           </div>
+          {inviteError && (
+            <div style={{ padding: '8px 12px', borderRadius: 6, background: T.red + '18', border: `1px solid ${T.red}44`, color: T.red, fontSize: 12 }}>
+              {inviteError}
+            </div>
+          )}
           <div style={{ display: 'flex', gap: 10 }}>
             <Btn onClick={sendInvite} variant="primary">Send Invite</Btn>
             <Btn onClick={() => setCreate(false)} variant="secondary">Cancel</Btn>
@@ -1430,7 +1564,7 @@ function InvitesTab({ store, update, addAudit }) {
 /* ─────────────────────────────────────────────────────────────
    PRESETS TAB
 ───────────────────────────────────────────────────────────── */
-function PresetsTab({ store, update, addAudit }) {
+function PresetsTab({ store, update, addAudit, api, apiConnected }) {
   const { presets, users } = store;
   const [editing, setEditing]   = useState(null);
   const [showCreate, setCreate] = useState(false);
@@ -1438,25 +1572,37 @@ function PresetsTab({ store, update, addAudit }) {
 
   const openEdit = (p) => { setEditing(p); setForm({ name: p.name, role: p.role, description: p.description, paths: [...p.paths] }); };
 
-  const saveEdit = () => {
-    update(s => ({ ...s, presets: s.presets.map(p => p.id === editing.id ? { ...p, ...form, updatedAt: Date.now() } : p) }));
+  const saveEdit = async () => {
+    if (apiConnected && api) {
+      await api.updatePreset(editing.id, { name: form.name, role_type: form.role, description: form.description, module_paths: form.paths });
+    } else {
+      update(s => ({ ...s, presets: s.presets.map(p => p.id === editing.id ? { ...p, ...form, updatedAt: Date.now() } : p) }));
+    }
     addAudit('Admin', 'preset_update', form.name, `${form.paths.length} modules`, 'medium');
     setEditing(null);
   };
 
-  const createPreset = () => {
+  const createPreset = async () => {
     if (!form.name) return;
-    const p = { id: 'preset_' + generateId(), ...form, createdAt: Date.now(), updatedAt: Date.now() };
-    update(s => ({ ...s, presets: [...s.presets, p] }));
+    if (apiConnected && api) {
+      await api.createPreset({ name: form.name, role_type: form.role, description: form.description, module_paths: form.paths });
+    } else {
+      const p = { id: 'preset_' + generateId(), ...form, createdAt: Date.now(), updatedAt: Date.now() };
+      update(s => ({ ...s, presets: [...s.presets, p] }));
+    }
     addAudit('Admin', 'preset_created', form.name, `${form.paths.length} modules`, 'low');
     setCreate(false);
     setForm({ name: '', role: 'team_member', description: '', paths: [] });
   };
 
-  const deletePreset = (id, name) => {
+  const deletePreset = async (id, name) => {
     const inUse = users.filter(u => u.presetId === id).length;
     if (inUse > 0 && !window.confirm(`${name} is used by ${inUse} user(s). Delete anyway?`)) return;
-    update(s => ({ ...s, presets: s.presets.filter(p => p.id !== id) }));
+    if (apiConnected && api) {
+      await api.deactivatePreset(id);
+    } else {
+      update(s => ({ ...s, presets: s.presets.filter(p => p.id !== id) }));
+    }
     addAudit('Admin', 'preset_deleted', name, '', 'high');
   };
 
@@ -2100,13 +2246,13 @@ export default function AdminPanelPage() {
       <Tabs tabs={tabsWithCounts} active={activeTab} onChange={setActiveTab} style={{ marginBottom: 24 }} />
 
       {activeTab === 'dashboard' && <DashboardTab store={effectiveStore} />}
-      {activeTab === 'users'     && <UsersTab store={effectiveStore} update={update} addAudit={addAudit} />}
+      {activeTab === 'users'     && <UsersTab store={effectiveStore} update={update} addAudit={addAudit} api={api} apiConnected={apiConnected} />}
       {activeTab === 'roles'     && <RoleMatrixTab />}
-      {activeTab === 'modules'   && <ModuleManagerTab store={effectiveStore} update={update} addAudit={addAudit} />}
+      {activeTab === 'modules'   && <ModuleManagerTab store={effectiveStore} update={update} addAudit={addAudit} api={api} apiConnected={apiConnected} />}
       {activeTab === 'maturity'  && <MaturityTab api={api} />}
       {activeTab === 'refinement'&& <RefinementBoardTab api={api} />}
-      {activeTab === 'invites'   && <InvitesTab store={effectiveStore} update={update} addAudit={addAudit} />}
-      {activeTab === 'presets'   && <PresetsTab store={effectiveStore} update={update} addAudit={addAudit} />}
+      {activeTab === 'invites'   && <InvitesTab store={effectiveStore} update={update} addAudit={addAudit} api={api} apiConnected={apiConnected} />}
+      {activeTab === 'presets'   && <PresetsTab store={effectiveStore} update={update} addAudit={addAudit} api={api} apiConnected={apiConnected} />}
       {activeTab === 'audit'     && <AuditLogTab store={store} />}
       {activeTab === 'settings'  && <SettingsTab store={store} update={update} addAudit={addAudit} />}
     </div>

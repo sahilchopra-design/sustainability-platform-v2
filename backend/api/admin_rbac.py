@@ -99,6 +99,10 @@ class DenyAccessReq(BaseModel):
     user_id: str
     module_path: str
 
+class SetModulesReq(BaseModel):
+    grants: List[str] = []
+    denies: List[str] = []
+
 class ReviewActionReq(BaseModel):
     module_path: str
     action: str  # submit | approve | promote | reject
@@ -163,7 +167,8 @@ def create_user(body: CreateUserReq, admin=Depends(require_super_admin), db: Ses
         raise HTTPException(400, "Email already registered")
 
     user_id = f"user_{uuid.uuid4().hex[:12]}"
-    pw_hash = _hash_pw(body.password) if body.password else _hash_pw(secrets.token_urlsafe(16))
+    generated_password = None if body.password else secrets.token_urlsafe(12)
+    pw_hash = _hash_pw(body.password) if body.password else _hash_pw(generated_password)
     now = datetime.now(timezone.utc)
 
     db.execute(text("""
@@ -185,7 +190,21 @@ def create_user(body: CreateUserReq, admin=Depends(require_super_admin), db: Ses
     })
 
     db.commit()
-    return {"user_id": user_id, "email": body.email, "rbac_role": body.role}
+    return {
+        "user_id": user_id, "email": body.email, "rbac_role": body.role,
+        # Only present when the admin didn't supply one — surfaced once so it
+        # can be shared with the teammate; never stored or returned again.
+        "generated_password": generated_password,
+    }
+
+
+@router.post("/users/{user_id}/activate")
+def activate_user(user_id: str, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Reactivate a previously suspended user."""
+    db.execute(text("UPDATE users_pg SET is_active = true WHERE user_id = :uid"), {"uid": user_id})
+    db.execute(text("UPDATE rbac_user_profiles SET is_active = true WHERE user_id = :uid"), {"uid": user_id})
+    db.commit()
+    return {"status": "activated", "user_id": user_id}
 
 
 @router.put("/users/{user_id}/role")
@@ -430,6 +449,30 @@ def remove_access_override(access_id: str, admin=Depends(require_super_admin), d
     if result.rowcount == 0:
         raise HTTPException(404, "Access override not found")
     return {"status": "removed", "id": access_id}
+
+
+@router.put("/users/{user_id}/modules")
+def set_user_modules(user_id: str, body: SetModulesReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Replace a user's entire set of module grant/deny overrides in one call.
+
+    Used by the admin panel's module picker to persist an exact pick-and-choose
+    selection instead of one grant/deny at a time. Existing overrides for this
+    user are dropped and replaced with exactly what's passed in.
+    """
+    now = datetime.now(timezone.utc)
+    db.execute(text("DELETE FROM rbac_module_access WHERE user_id = :uid"), {"uid": user_id})
+    for mp in body.grants:
+        db.execute(text("""
+            INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
+            VALUES (:id, :uid, :mp, 'grant', :admin, :now)
+        """), {"id": str(uuid.uuid4()), "uid": user_id, "mp": mp, "admin": admin["user_id"], "now": now})
+    for mp in body.denies:
+        db.execute(text("""
+            INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
+            VALUES (:id, :uid, :mp, 'deny', :admin, :now)
+        """), {"id": str(uuid.uuid4()), "uid": user_id, "mp": mp, "admin": admin["user_id"], "now": now})
+    db.commit()
+    return {"status": "updated", "user_id": user_id, "grants": len(body.grants), "denies": len(body.denies)}
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

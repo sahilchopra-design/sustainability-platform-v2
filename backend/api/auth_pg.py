@@ -337,6 +337,22 @@ def accept_invite(
     invite.accepted_by_user_id = user.user_id
     invite.accepted_at = now
 
+    # Apply any per-module picks the admin made on this invite (in addition to
+    # whatever the role/preset already grant) as explicit grant overrides.
+    if invite.module_overrides:
+        from db.models.rbac import RbacModuleAccessPG
+        db.query(RbacModuleAccessPG).filter(
+            RbacModuleAccessPG.user_id == user.user_id,
+            RbacModuleAccessPG.module_path.in_(invite.module_overrides),
+        ).delete(synchronize_session=False)
+        for module_path in invite.module_overrides:
+            db.add(RbacModuleAccessPG(
+                user_id=user.user_id,
+                module_path=module_path,
+                access_type="grant",
+                granted_by="invite_accept",
+            ))
+
     session_token = _create_session(db, user.user_id)
     db.commit()
 
