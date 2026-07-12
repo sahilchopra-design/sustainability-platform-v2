@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Bind the reporting dashboard to the real attribution engines (analytics ladder: rung 1 → 2)
+
+**What.** §7's finding is distinctive: "no PRNG *and* no calculation except a single average" — this is a static reporting dashboard whose every figure (the 2020–2025 alpha table, risk-reduction metrics, PRI scores, maturity ratings, client KPIs) is a hard-coded constant, with exactly one derived value (`avgAlpha = 1.77`, displayed as the guide's "≈+1.2% p.a." — which doesn't even match its own table). The promised FF5+ESG regression lives in the §8 spec. Rather than duplicate it, Evolution A makes this module the *consumer* dashboard of the factor stack being built in `esg-backtesting` and `esg-factor-alpha`.
+
+**How.** (1) The alpha table and attribution tiles bind to `esg-factor-alpha`'s regression endpoints (α_ESG with t-stat per year) and `esg-factor-attribution`'s BHB output — real numbers, computed elsewhere, reported here. (2) Risk-reduction evidence (drawdown/vol vs benchmark) computed from the shared monthly-return store — trivial once the store exists. (3) PRI assessment and process-maturity scores become maintained records with assessment-cycle dates and evidence links (they are self-assessments — the honest provenance is "entered by the ESG team on date X against PRI methodology Y," not a computation). (4) Client KPIs bind to real report-delivery/audit data where the platform tracks it. (5) Fix the headline: the displayed average must equal the arithmetic of the displayed table.
+
+**Prerequisites.** The two upstream factor modules' Evolutions A (this is a pure downstream consumer — sequence it after them); PRI-record entry UX. **Acceptance:** every tile names its source (engine endpoint or dated self-assessment); the headline alpha equals the table's mean; changing an upstream regression window visibly changes this dashboard.
+
+### 9.2 Evolution B — Client-quarterly ESG-integration narrative drafter (LLM tier 2)
+
+**What.** This dashboard exists to answer one client question — "is your ESG integration actually working?" — quarterly, in writing. A tool-calling drafter pulls the bound data (alpha with significance, risk-reduction stats, PRI cycle scores, process-maturity movement) and produces the client-letter section: evidence-first prose where every performance claim carries its statistic and period, insignificant results are described as such, and process claims (maturity, PRI) are attributed to their self-assessment provenance rather than implied to be computed.
+
+**How.** Tools: the upstream engines' read endpoints plus this module's PRI/maturity record queries. Grounding corpus = this Atlas record plus the Fama-French/PRI references; the drafting rules encode the module's core honesty risk — conflating self-assessed process scores with computed performance evidence — by requiring distinct framing for each ("our PRI self-assessment" vs "regression-estimated alpha of X bps, t = Y"). Inherits the multiple-testing and significance disciplines from the factor modules' copilots. Renders through report-studio into the client pack.
+
+**Prerequisites (hard).** Evolution A — drafting client letters from the current hard-coded table would send fabricated performance claims to fee-paying clients, the platform's most direct commercial-liability scenario. **Acceptance:** every numeric in a golden letter matches a tool response; self-assessed vs computed figures are verbally distinguished; an insignificant alpha year is never described as outperformance.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Replace the PRNG balance sheet with engine-computed SEEA accounts (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the page never calls its own API — the 40-site "natural capital balance sheet" and the 30-company nature-dependency screen are `sr()`-seeded synthetics (with one real overlay, `BIODIVERSITY_COUNTRY_DATA`), while a real backend exists at `/api/v1/nature-capital-accounting/*` computing SEEA accounts (`monetary_flow = area × mid_rate × condition_index` per §5's extracted lines), TEV, NCP assessment, TNFD-LEAP, and SBTN readiness, with reference GETs for SEEA ecosystem types, ENCORE dependencies, valuation benchmarks, and the LEAP framework (all `passed`). Evolution A wires the UI to the engine and grounds the company screen in ENCORE.
+
+**How.** (1) Balance-sheet tab posts site definitions (area, ecosystem-type fractions, condition) to `POST /seea-accounts`, rendering the engine's physical and monetary flows; the 40 seeded sites become an optional demo set computed through the same endpoint, eliminating the PRNG path entirely (platform rule: random-as-data is purged). (2) Portfolio tab derives `natureDependency`/`waterDep`/`pollinationDep` from `GET /ref/encore-dependencies` sector mappings applied to each company's GICS sector — replacing seeded 0–100 scores with the materiality ratings ENCORE actually publishes. (3) TNFD tab drives `POST /tnfd-leap` so LEAP phase outputs are engine-assessed, not decorative.
+
+**Prerequisites.** POST endpoints blocked by REQUIRE_AUTH need verification; the ENCORE mapping needs a sector-resolution step for the 30 named companies (GLEIF/OpenFIGI layer). **Acceptance:** no `sr()` call remains in any rendered metric; a site's monetary flow reproduces `area × mid_rate × condition` from the valuation-benchmark reference table.
+
+### 9.2 Evolution B — TNFD-LEAP walkthrough analyst (LLM tier 2)
+
+**What.** A tool-calling analyst that takes a company through the TNFD LEAP process conversationally: "run LEAP for a Brazilian beef processor with 200k ha of pasture" → Locate (ecosystem types via `/ref/seea-ecosystem-types`), Evaluate (dependencies via `/ref/encore-dependencies`), Assess (`POST /tnfd-leap`, `POST /ncp-assess`, TEV via `/tev`), Prepare (drafted disclosure language citing each computed result) — producing the quantitative skeleton of a TNFD report where every figure is an endpoint output.
+
+**How.** Tool schemas from the module's 9 OpenAPI operations; system prompt from this Atlas page plus the TNFD v1.0 and SEEA framework references named in §5 so framework terminology is quoted, not paraphrased. Disclosure drafting is templated to TNFD's four pillars with per-sentence provenance (which tool call grounded it); the `POST /sbtn-readiness` endpoint adds a "what would SBTN targets require next" closing section. Fabrication validator matches all valuation figures to tool outputs; hedged language required where the engine returned `insufficient_data`.
+
+**Prerequisites (hard).** Evolution A first — the copilot must never narrate the current seeded balance sheet; the mismatch between guide-described capability and rendered synthetic data is precisely what an LLM layer would otherwise amplify. **Acceptance:** a drafted LEAP output cites a tool call for every number; asking for a valuation of an ecosystem type absent from the reference tables yields a refusal naming the coverage gap.

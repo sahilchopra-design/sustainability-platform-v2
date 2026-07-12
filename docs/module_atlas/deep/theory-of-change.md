@@ -1,0 +1,105 @@
+## 7 · Methodology Deep Dive
+
+### 7.1 What the module computes
+
+The page generates 30 synthetic "impact investments" and, for each, builds a **5-stage Theory of
+Change (ToC) ladder** — Inputs → Activities → Outputs → Outcomes → Impact — plus a counterfactual
+additionality calculation and an impact-verification record. There is no backend engine; everything
+is produced client-side by `genInvestments(30)` using the platform's seeded PRNG
+`sr(s) = frac(sin(s+1)×10⁴)`.
+
+Core formula (displayed verbatim in the UI, Tab "Counterfactual Analysis"):
+
+```
+Additionality % = (WithInvestment − CounterfactualBase) / WithInvestment × 100
+```
+
+### 7.2 Parameterisation
+
+| Constant | Value / range | Provenance |
+|---|---|---|
+| `TOC_STAGES` | Inputs, Activities, Outputs, Outcomes, Impact | Standard logic-model taxonomy (Kellogg Foundation / USAID ToC convention) |
+| `SECTORS` | 10 impact sectors (Clean Energy, Affordable Housing, Healthcare Access...) | Synthetic demo taxonomy |
+| `TEMPLATES` | Per-sector input/activity/output/outcome/impact statement lists for 5 of the 10 sectors | Hand-authored illustrative text; sectors without a template fall back to `defaultTemplate` |
+| `invested` | `round((sr(i·67+230)×40+5)×10)/10` → $5M–$45M | Synthetic demo value |
+| `counterfactualBase` | `round(sr(i·43+240)×30+10)` → 10–40 impact units | Synthetic demo value |
+| `withInvestment` | `round(counterfactualBase×(1+sr(i·53+250)×1.5+0.3))` → base × 1.3–2.8 | Synthetic demo value |
+| `VERIFICATION_STATUSES` | Verified / In Progress / Pending / Not Started | Standard impact-reporting statuses |
+| `EVIDENCE_QUALITY` | High / Medium / Low | Synthetic demo value |
+| `thirdPartyVerifier` | KPMG / PwC / EY / Deloitte / BSR / Sustainalytics (random pick) | Real assurance-provider names, randomly assigned |
+| `isae3000` | `sr(i·47+320) > 0.6` (40% true) | ISAE 3000 is the real IAASB assurance standard for non-financial information; the boolean flag is synthetic |
+
+### 7.3 Calculation walkthrough
+
+For each synthetic investment `i` (0–29):
+1. Three PRNG draws select a name prefix/suffix and a sector: `pIdx=⌊s1×15⌋`, `sIdx=⌊s2×10⌋`,
+   `secIdx=⌊s3×10⌋`.
+2. The sector's `TEMPLATES` entry (or `defaultTemplate`) supplies the qualitative statement text
+   for each of the 5 ToC stages; each statement gets a synthetic `target`/`actual` pair
+   (`Math.round(sr(seed)×1000+100)` / `×900+50`) and a stage-level `progress` score
+   (`Math.round(sr(seed)×50+40)`, i.e. 40–90%).
+3. `overallProgress = round(Σ stage.progress / 5)` — a simple unweighted mean across the 5 stages.
+4. Counterfactual pair (`counterfactualBase`, `withInvestment`) is drawn independently of the ToC
+   stage progress — the two halves of the page are **not mathematically linked**, only
+   thematically.
+5. `additionality = round((withInvestment − counterfactualBase) / withInvestment × 100)`.
+6. Verification fields (`verificationStatus`, `evidenceQuality`, `isae3000`, `thirdPartyVerifier`)
+   and free-text `risks`/`assumptions` (filtered from fixed candidate lists by a PRNG threshold)
+   round out the record; none feed back into the additionality or progress numbers.
+
+### 7.4 Worked example (Investment #1, `i=0`)
+
+| Step | Computation | Result |
+|---|---|---|
+| Sector draw | `secIdx=⌊sr(120)×10⌋=1` | **Affordable Housing** |
+| Name draw | `pIdx=⌊sr(100)×15⌋=3`, `sIdx=⌊sr(110)×10⌋=4` | **"Edu Initiative"** |
+| Invested | `round((sr(297)×40+5)×10)/10` | **$11.3M** |
+| Counterfactual base | `round(sr(340)×30+10)` | **29 units** |
+| With investment | `round(29×(1+sr(350)×1.5+0.3))` | **40 units** |
+| Additionality | `(40−29)/40×100` | **28%** |
+| Verification status idx | `⌊sr(360)×4⌋=0` | **Verified** |
+| Evidence quality idx | `⌊sr(370)×3⌋=0` | **High** |
+
+The additionality of 28% would be read as: "of the 40 impact units observed with the investment in
+place, 11 are attributable to the investment; the other 29 would likely have occurred anyway."
+
+### 7.5 Companion analytics
+
+- **Outcome Measurement tab** — bar chart of mean stage progress across all 30 investments, a
+  line chart of one investment's 8-quarter progress trajectory (`quarterlyProgress`, each quarter's
+  input/output/outcome progress computed independently via further `sr()` draws, not derived from
+  the stage progress numbers), and a full sortable table.
+- **Counterfactual Analysis tab** — bar chart contrasting `counterfactualBase` vs `withInvestment`
+  per investment, sorted by additionality, with an explicit on-page methodology note.
+- **Impact Verification tab** — pie charts of verification-status and evidence-quality distribution
+  across the portfolio, plus a table cross-referencing ISAE 3000 alignment and named verifier.
+
+### 7.6 Data provenance & limitations
+
+- **100% synthetic demo data.** All 30 investments, their sector assignment, financial size, ToC
+  stage progress, counterfactual baselines and verification metadata are generated by the seeded
+  PRNG `sr(s)=frac(sin(s+1)×10⁴)` — deterministic across renders but not sourced from any real
+  portfolio or evidence base.
+- The counterfactual (additionality) block and the ToC stage-progress block are computed from
+  **independent PRNG seeds** — in a real impact-measurement system the counterfactual estimate
+  should be an input to (or output of) the Outcome stage, not a parallel, disconnected calculation.
+- No standard errors, confidence intervals, or sensitivity ranges are attached to the
+  additionality estimate, even though real counterfactual/additionality assessment (e.g. IRIS+,
+  the Impact Management Project's "what would have happened anyway" test) is inherently uncertain
+  and typically reported as a range.
+- `isae3000` and `thirdPartyVerifier` are cosmetic flags — no underlying assurance workflow,
+  evidence document, or verifier engagement record exists.
+
+### 7.7 Framework alignment
+
+- **Theory of Change methodology** (Kellogg Foundation Logic Model / USAID ADS 201): the
+  Inputs→Activities→Outputs→Outcomes→Impact chain is standard nonprofit/impact-investing practice;
+  the module implements the ladder structure but not the underlying assumptions-testing rigor
+  (explicit causal-pathway validation) a full ToC exercise requires.
+- **Counterfactual / additionality analysis** (IMP "Impact Management Norms", GIIN additionality
+  guidance): the displayed formula matches the standard definition, but the module's baseline and
+  with-investment figures are illustrative, not estimated via comparison-group, matched-cohort, or
+  regression-discontinuity methods used in production impact evaluation.
+- **ISAE 3000** (International Standard on Assurance Engagements 3000, revised): the real standard
+  governs third-party assurance of non-financial/sustainability information; the module only shows
+  a binary "aligned" flag with no assurance report or scope statement.

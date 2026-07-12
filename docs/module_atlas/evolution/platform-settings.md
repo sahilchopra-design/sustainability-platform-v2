@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real configuration state and completeness scoring (analytics ladder: rung 1 → 2)
+
+**What.** This is an admin control plane, not a climate-quant module — 4 tabs (General, Integration, Feature Flags, System Health) rendering config tables plus system telemetry. §7 flags that the guide's Configuration Completeness metric (`C = configured_params / total_params × 100`) is not computed, and the System Health tab is synthetic (`cpu = 24 + sr()·30`, `memory = 45 + sr()·25`, `uptimePct = 99.97` hard-coded). There is no financial/risk quantity here, so §8 correctly notes no production model applies. Evolution A makes the control plane operate on real platform state.
+
+**How.** (1) Back the config tables with the platform's actual settings store — feature flags, integration credentials, data-source toggles that the rest of the platform actually reads (rather than display-only tables), so toggling a flag has a real effect. This connects to the roadmap's multi-tenancy work (D2): settings become org-scoped, RLS-protected configuration. (2) Implement the Configuration Completeness score (`C = configured / total × 100`) against the real mandatory-parameter schema, so admins see genuine setup progress. (3) Replace the synthetic System Health telemetry (`sr()`-seeded cpu/memory/cache) with real metrics from the platform's infrastructure — the same real-telemetry path as `pipeline-dashboard` and `platform-analytics`. This is an ops/config surface, so rung-2 (real state + completeness) is the honest ceiling; no predictive modelling applies.
+
+**Prerequisites.** A real settings store with read-through to consuming modules (the harder part — today's flags are display-only); real infra metrics for System Health; org-scoping per D2. Remove the seeded health telemetry. **Acceptance:** toggling a feature flag changes platform behavior; Configuration Completeness reflects the real schema; System Health shows real cpu/memory/uptime.
+
+### 9.2 Evolution B — Admin-configuration copilot (LLM tier 2, RBAC-gated)
+
+**What.** A copilot for the administrator users §1 targets: "which mandatory settings are unconfigured?", "enable the CDP integration and set the reporting period to quarterly", "what feature flags are on for this org?", "is the platform healthy?" — grounded in real config state (post-Evolution-A) and the OWASP ASVS / NIST SP 800-63 references named in §5 for security-setting guidance.
+
+**How.** Tier 1 explains configuration state and completeness from the real settings store: system prompt from this Atlas page and the config schema; the copilot reports what's set, what's missing, and health status. Tier 2 executes configuration changes as tool calls — but this is a high-privilege surface, so every mutating action (enabling integrations, changing access controls, toggling flags) requires explicit confirmation and hard RBAC gating to platform-admin, per the roadmap's Tier-2 mutating-endpoint pattern; the copilot inherits the user's session, never a service account. Security-sensitive settings changes (access controls, API keys) should require step-up confirmation and cite the relevant OWASP/NIST guidance.
+
+**Prerequisites (hard).** Evolution A's real settings store (a copilot toggling display-only flags does nothing); strict RBAC on the copilot endpoint (admin-only); confirmation on every write. **Acceptance:** config queries reflect real state; every settings change requires confirmation and admin RBAC; security-setting changes cite the applicable standard and require step-up.

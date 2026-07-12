@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real gas-price feeds, storage-site capacity constraints, and 45Q logic (analytics ladder: rung 2 → 3)
+
+**What.** This is a genuinely quantitative module: `calcBlueH2Lcoh` is a real annuitised LCOH stack (feedstock + CAPEX/kg + OPEX/kg + CO₂ T&S + carbon tax), six production routes with defensible techno-economics, a methane-slip lifecycle overlay converted at a scientifically correct GWP100 = 28, and gas/carbon sensitivity sweeps (rung 2). The `CARBON_STORES` are six real projects (Sleipner, Northern Lights, Porthos, Quest). What's static: gas price is a slider, the 45Q credit is described in the overview but not clearly wired into the cost stack, and storage-site capacity/injection-rate constraints are display-only. Evolution A grounds the inputs and completes the credit logic.
+
+**How.** (1) Natural-gas feedstock price from real series (the platform's EIA/ENTSO-E gas data) with regional selection, since gas cost dominates blue-H2 LCOH and the sensitivity tab already proves its leverage. (2) Wire 45Q explicitly: $85/tCO₂ geological-storage credit on captured tonnes as a distinct LCOH reduction, with the 12-year credit window (the overview claims a $0.4–0.7/kg impact — make it computed, not asserted). (3) Storage-site selection constrains project scale: `CARBON_STORES` capacity/injection rates cap the deliverable CO₂, so a project matched to a near-full site faces a real bottleneck. (4) Rung 3: calibrate LCOH outputs against published blue-H2 cost ranges (IEA/Global CCS Institute) per route and pin a reference in bench_quant. Extract to `POST /api/v1/blue-hydrogen/lcoh`.
+
+**Prerequisites.** Gas price series coverage; a 45Q parameter set (rate, tenor, capture-threshold eligibility). **Acceptance:** LCOH responds to real regional gas prices; the 45Q credit appears as an itemised $/kg reduction over its window; a capacity-constrained storage site limits project size; outputs land in IEA's cited ranges.
+
+### 9.2 Evolution B — Blue-hydrogen project-economics copilot (LLM tier 2)
+
+**What.** "Is an ATR-with-pre-combustion-CCS plant in the US Gulf competitive with grey H2 at $4/MMBtu gas and $85/t 45Q?" combines feedstock, capture route, credit, and lifecycle emissions — a natural tool-calling workflow. The copilot runs the Evolution-A LCOH model across routes, reports the grey/blue/green comparison, and narrates the methane-slip sensitivity (the module's genuine analytical strength — upstream leakage >2% erodes the emissions advantage), every $/kg and kgCO₂/kg from tool output.
+
+**How.** Backend extraction of `calcBlueH2Lcoh` and the emissions overlay (`POST /api/v1/blue-hydrogen/lcoh`); tool schemas from it. Grounding corpus: this Atlas record — §7.1's cost-stack formula and §7.2's route table — plus the IEA/45Q references. The copilot's honesty duty centres on the methane-slip claim: it must report lifecycle emissions inclusive of the GWP100-weighted slip and flag when upstream leakage assumptions dominate the blue-vs-grey verdict. Storage-site selection and its capacity constraint are surfaced from the `CARBON_STORES` data.
+
+**Prerequisites.** Evolution A's backend extraction and 45Q wiring. **Acceptance:** every LCOH and emissions figure traces to a tool response; the methane-slip assumption is stated in any blue-vs-grey comparison; 45Q impact is shown as a computed $/kg over its window, not an asserted range.

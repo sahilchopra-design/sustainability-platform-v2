@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the IPCC Tier-1 SOC stock-change chain (analytics ladder: rung 1 → 2)
+
+**What.** §7's flag is total: the guide's own methodology — `ΔSOC = (SOC_t1 − SOC_t0) × BD × d × (44/12)`, IPCC 2006 Vol. 4 Tier 1 — is absent; there is no bulk-density or depth field, no baseline comparison, no 44/12 conversion. `soilCarbon` and `annualSeq` are independent draws with no causal link to which practices a farm adopted, the per-practice `seqByPractice` table is unreconciled with per-farm totals, the 8-year trajectories drift upward unconditionally (ignoring the sequestration saturation IPCC documents at ~10–20 years), and the MRV method is cosmetic with no uncertainty discount. Evolution A implements the stock-change chain with practice-derived sequestration and MRV-tiered uncertainty.
+
+**How.** (1) Farm schema gains the missing physical fields: `soc_t0_pct`, `soc_t1_pct`, `bulk_density`, `sampling_depth_cm`, sample dates; `POST /api/v1/regen-ag/soc-change` computes the Tier-1 formula exactly, per parcel. (2) Where measurements are absent, `annualSeq` builds bottom-up from adopted practices via a documented per-practice factor table (IPCC/VM0042 default factors), reconciling the two currently disconnected data structures — a No-Till + Cover Crop farm's total is the sum of its parts with a declared interaction cap. (3) Each MRV method carries an uncertainty percentage applying a VM0042-style conservativeness deduction to creditable tonnes. (4) Trajectories gain saturation (asymptotic to an equilibrium SOC) instead of unconditional drift.
+
+**Prerequisites.** Practice-factor table curated with citations; the seeded farm book demoted to fixtures. **Acceptance:** a bench parcel with SOC 1.8%→2.1%, BD 1.3, depth 30cm reproduces the hand-computed ΔSOC×3.667; creditable tonnes decrease when a lower-precision MRV method is selected.
+
+### 9.2 Evolution B — MRV documentation copilot for credit programmes (LLM tier 1 → 2)
+
+**What.** Regenerative-ag credit generation is document-heavy: VM0042 monitoring reports, practice evidence, baseline justifications. The copilot supports programme managers: "what evidence does VM0042 require for our no-till claim on parcel 12?", "draft the monitoring-report section for this year's soil sampling round, flagging parcels where measured ΔSOC diverges from the practice-based estimate" — the divergence check being a genuinely useful computed comparison Evolution A makes possible.
+
+**How.** Tier 1: RAG over this Atlas record plus VM0042/SBTi-FLAG methodology texts (§5 cites them) via the standard router; requirement answers cite methodology sections. Tier 2: parcel-specific questions call `POST /soc-change` and the practice-estimate endpoint, and the measured-vs-modelled divergence table is a canned tool. Drafted monitoring text quotes computed tonnes with their MRV uncertainty deduction attached — the copilot's standing rule is that creditable and measured quantities are never conflated. Before Evolution A, no quantitative copilot: today's sequestration figures are random draws attributed to templated farms.
+
+**Prerequisites.** Evolution A; methodology texts licensed/chunked (Verra methodologies are public). **Acceptance:** monitoring-report numbers match endpoint output including deductions; evidence-requirement answers cite VM0042 clause anchors; divergent parcels are listed with both figures side by side.

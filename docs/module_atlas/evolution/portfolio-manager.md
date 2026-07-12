@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Persist to the backend and add a real ITR and rebalancer (analytics ladder: rung 2 → 4)
+
+**What.** §7 rates this one of the more grounded portfolio pages: holdings come from the real `GLOBAL_COMPANY_MASTER` (with an MSCI/enrichment merge), the WACI is a genuine PCAF-style exposure-weighted intensity, and `resolveCompanyData` sensibly layers manual/enrichment/base data with honest fallbacks. Two gaps: holdings persist only to `localStorage` (not the tier-A `portfolios_pg` backend the 11 endpoints expose), and the implied-temperature is a 6-bucket step function on WACI (`<50→1.5…else 3.5`), not a target/trajectory ITR as SBTi defines it. §8 specifies the production ITR. Evolution A backs it with the real engine and replaces the ITR heuristic.
+
+**How.** (1) Persist holdings to `portfolios_pg` via the real endpoints (`POST/PATCH/DELETE /portfolios/{id}/holdings`) instead of `localStorage`, so portfolios survive sessions and feed the shared `portfolio_analytics_engine` — this also connects to `CarbonCreditContext` for cross-module propagation. (2) Replace the WACI-bucket implied-temperature with a real SBTi-methodology ITR (target/trajectory-based, shared with the `paris-alignment` and `portfolio-temperature-score` siblings). (3) Implement the rebalancing tool (§1) the page describes as a real tracking-error-constrained optimiser (scipy — the rung-4/5 step) that suggests ESG-improving trades within a TE budget, and the performance attribution by ESG factor. The genuine WACI engine and data-merge logic stay.
+
+**Prerequisites.** Portfolio-analytics endpoints (auth-gated); SBTi ITR inputs (shared resolver); scipy for the rebalancer; the `0.1203` INR→USD constant should become a live FX lookup. Blast radius 48 via shared engine — pin first. **Acceptance:** holdings persist to `portfolios_pg` and survive reload; ITR uses SBTi trajectory logic, not a WACI bucket; the rebalancer returns TE-constrained trades.
+
+### 9.2 Evolution B — ESG-portfolio-management copilot (LLM tier 2)
+
+**What.** A copilot for the day-to-day workflow §1 describes: "what's my portfolio ESG score vs the benchmark?", "which holdings fail the SFDR SI threshold?", "suggest trades to lift ESG within 1.5% tracking error", "attribute my return by ESG factor" — executed against the real portfolio engine and the (Evolution-A) rebalancer, with every figure a computed output.
+
+**How.** Tool calls to the portfolio-analytics endpoints and the rebalancer; system prompt from this Atlas page's §5 (`PortfolioScore = Σ wᵢ·ESGᵢ`, tracking error) and the MSCI ESG / EU Taxonomy / SFDR references named in §5. Rebalancing suggestions come from the optimiser (TE-constrained), not the LLM's judgment; SFDR/taxonomy classification and attribution are tool calls. The fabrication validator matches every score/weight/TE figure to a response. Trade execution and holding changes are mutating actions — explicit confirmation + RBAC per the roadmap's Tier-2 pattern; the copilot inherits the user's session.
+
+**Prerequisites.** Evolution A's backend persistence and rebalancer (the WACI/ESG aggregation is grounded today, but rebalancing and persistence need the backend); confirmation gating on writes. **Acceptance:** every ESG/WACI/TE figure traces to a tool call; rebalance suggestions come from the constrained optimiser; holding changes require confirmation and RBAC.

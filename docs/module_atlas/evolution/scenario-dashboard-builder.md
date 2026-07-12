@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A real module-output bus behind the widgets (analytics ladder: pre-rung-1 layout tool → 2)
+
+**What.** §7 is clear-eyed: this is a widget-composition UI by design ("no calculation" is the guide's own claim), but the guide's other claim — that widgets "pull data from all climate risk modules via module output bus" — is unimplemented: every widget renders the same seeded placeholder series (`40 + sr(...)×30`) regardless of which analytics module it nominally represents, so a "Board Report" template shows decorative lines labelled VaR or ITR. Evolution A builds the output bus §7.4 prescribes, making this the platform's composition layer over real computed artifacts.
+
+**How.** (1) A widget-data contract: each widget type declares its source module, endpoint, and series shape; a backend aggregation endpoint (`POST /api/v1/dashboards/resolve`) fans out to the source modules' existing APIs (scenario-stress-test VaR, quant-dashboard ITR, emissions trajectories) and returns typed series with per-widget provenance (module, endpoint, computed-at). The Atlas endpoint map is the registry for what each widget may bind to. (2) Widgets with unavailable sources render an explicit "source not connected" state — honest nulls, never the placeholder series. (3) Saved dashboards persist widget bindings org-scoped (share/schedule already exist as UI concepts; scheduling now re-resolves real data). (4) The placeholder generator is deleted.
+
+**Prerequisites.** Source modules exposing stable response shapes (this evolution consumes the sibling evolutions' backends — sequence accordingly); dashboard persistence tables. **Acceptance:** a VaR widget's series matches the stress-test module's endpoint for the same portfolio; disconnecting a source flips the widget to its unavailable state; no widget renders the placeholder formula.
+
+### 9.2 Evolution B — Dashboard-composition assistant (LLM tier 2 → 3)
+
+**What.** With a real bus, dashboard assembly becomes a natural-language task: "build me a quarterly board view — portfolio climate VaR under two NGFS scenarios, financed-emissions trend, top regulatory deadlines, and the CRREM alignment chart" — the copilot maps each request clause to a widget type and binding from the registry, assembles the layout, and explains what each widget will show and where its data comes from.
+
+**How.** The widget registry (source module → endpoint → series shape) is the tool surface: composition requests resolve via registry search (the `module_tags.json` taxonomy and Atlas interconnection graph route ambiguous asks — "emissions trend" → scope3-engine vs real-time monitor, the copilot asks or picks by portfolio context). This is a small desk-orchestration precursor: the copilot touches many modules' outputs but only through the declared bus, inheriting each source's provenance. Guardrails: it composes and binds, never fabricates a series; requested widgets with no computable source are declined with the reason ("no scenario run exists for this portfolio — run scenario-stress-test first"), turning gaps into actionable next steps.
+
+**Prerequisites.** Evolution A's bus and registry; binding-permission checks (RBAC per source module inherited). **Acceptance:** every widget in a generated dashboard has a valid registry binding; unavailable requests produce the actionable refusal; the assembled board view renders only live data.

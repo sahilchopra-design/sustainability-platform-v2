@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Ingested enforcement records with entity-resolved portfolio links (analytics ladder: rung 1 → 2)
+
+**What.** §7.7 documents fabrication over a real taxonomy: 200 synthetic actions (fines, deterrence scores) across a genuinely comprehensive 26-regulator list, a portfolio "link" that is a modulo-200 seed match rather than an entity join, and the guide's `EE = Σ(fine × sector_relevance)/peer_count` unimplemented — the closest analogues (`heatScore`, `portfolioScore`) measure different things and don't reconcile. Enforcement is one of the few domains where the cited sources are actually harvestable: SEC litigation releases, FCA final notices, ESMA sanctions registers, and AMF decisions are public, dated, and structured enough to ingest. Evolution A builds that ingestion and a real join.
+
+**How.** (1) An `enforcement_actions` table populated by per-regulator ingesters starting with the machine-readable ones (SEC Litigation/ALJ RSS, FCA final-notice list); each record carries regulator, date, entity name, violation category (mapped to the existing 10-type taxonomy), fine amount, source URL. (2) Entity resolution via the platform's GLEIF/`entity-match` cascade so holdings link to actions by LEI — replacing the modulo trick and enabling honest "your holding X was fined by Y" statements. (3) Implement the guide's EE with a documented sector-relevance mapping, and separate it explicitly from `heatScore` (action density) — two named metrics, defined and reconciled. (4) Fabricated `deterrenceScore` deleted; retained analytics recompute from ingested records.
+
+**Prerequisites.** Ingestion effort per regulator (start with 3–4, labelled coverage); entity-match layer from `reference-data-explorer`'s evolution. **Acceptance:** every action row carries a source URL; portfolio exposure changes when a holding's LEI matches a new ingested action; EE and heatScore have distinct documented definitions.
+
+### 9.2 Evolution B — Greenwashing-precedent research analyst (LLM tier 2)
+
+**What.** The high-value question is precedent-shaped: "what have regulators fined for fund-naming greenwashing, and how does our marketing language compare?", "summarize enforcement themes in EU disclosure cases this year", "which violation categories are accelerating for our sectors?" — legal-intelligence work over ingested action texts, exactly the retrieval-plus-synthesis pattern LLMs handle well when grounded.
+
+**How.** Tier-2: the copilot queries the actions table by category/jurisdiction/sector (tool calls), then summarizes the retrieved records with per-case citations (regulator, date, source URL); trend claims come from computed aggregates, not impressionistic recall. Comparative-exposure answers use the entity-resolved portfolio join. Hard guardrails: no legal advice — thematic summaries and precedent lists only, with the consult-counsel boundary in the prompt; no claims about entities absent from ingested records (defamation-adjacent risk makes the no-fabrication rule existential here, not just methodological). Full-text case documents, where ingested, are chunked for retrieval so quotes are verbatim-checkable.
+
+**Prerequisites (hard).** Evolution A's real records — a precedent analyst over fabricated fines attributed to real regulators is the platform's worst possible failure mode; source-URL fields mandatory. **Acceptance:** every cited case resolves to its source URL; trend statistics match table aggregates; questions about un-ingested jurisdictions receive a coverage disclaimer.

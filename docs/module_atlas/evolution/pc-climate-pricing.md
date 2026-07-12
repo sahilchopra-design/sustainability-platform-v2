@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Resolve the identity crisis, then ground the P&C pricing engine (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag is a wholesale mislabel: the guide describes a preferred-creditor concessional development-finance tool (Concessionality Index `CI = 1 − NPV(ProjectTerms)/NPV(MarketTerms)`, MDB/DFI benchmarking), but the code is a P&C climate-peril *insurance pricing* engine — loss ratios, expense ratios, cat loading, technical rate, rate-on-line, combined ratio across 10 perils × 7 regions, with the actuarial decomposition correctly built. The seed datasets (`PERILS`, `REINSURANCE_AVAIL`) confirm it's an insurance tool. Evolution A picks the module's true identity and grounds the actuarial engine.
+
+**How.** (1) Decide the module's real identity — the code is a P&C climate-pricing engine; either rename it to match (and let a genuine concessionality tool live elsewhere) or, if the concessionality tool is the intent, §8 specifies it and this becomes a fresh build. Assuming the P&C engine stays: (2) ground the seeded actuarial inputs (`premiumRate` 0.8–6.8%, `lossRatio` 40–75%, `catLoading` 2–10%) in real peril-region loss data — the platform's NatCat/digital-twin hazard grids give cat-loading a real basis, and reinsurance availability can key to real market conditions. (3) The technical-rate decomposition (`expLoss + catLoading + expenseRatio×0.5`) is correct; feed it sourced expected-loss estimates so ROL and combined ratio are defensible.
+
+**Prerequisites.** An identity/naming decision (the atlas mislabel misleads users and any copilot); real peril-region loss data for the cat-loading; documenting the pricing model per Atlas §8. Remove `sr()` from rate inputs. **Acceptance:** the module name matches its actual function; technical rate and combined ratio derive from sourced loss data; cat loading ties to real hazard exposure.
+
+### 9.2 Evolution B — Climate-peril underwriting copilot (LLM tier 2)
+
+**What.** Assuming the P&C identity: a copilot for insurance underwriters answering "what's the technical rate for wind cover in this region?", "how does the combined ratio change if I raise the cat load?", "what's the rate-on-line and is it profitable?" — executed against the actuarial engine, decomposing the technical rate into expected-loss, cat-loading, and expense components.
+
+**How.** Tool calls to endpoints wrapping the rate decomposition (`technicalRate`, `ROL`, `combinedRatio`, `profit`); system prompt from this Atlas page's §5/§7.1 actuarial formulas and the (corrected) insurance references — critically, the system prompt must reflect the module's *actual* P&C function, not the guide's development-finance description, or the copilot will misrepresent it entirely. Sensitivity questions (cat load, expense ratio) are recomputations; fabrication validator matches every ratio and rate to a tool response. The copilot must convey these are technical/pure-premium rates, not bound quotes.
+
+**Prerequisites (hard).** Evolution A's identity resolution — a copilot built on the current guide description would tell users this is a concessionality calculator when it prices insurance, the most damaging possible misrepresentation. **Acceptance:** the copilot's self-description matches the P&C engine; every rate/ratio traces to a tool call; sensitivity behaves monotonically; no development-finance framing leaks in.

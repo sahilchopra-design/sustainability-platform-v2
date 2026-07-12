@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real corresponding-adjustment double-entry ledger (analytics ladder: rung 1 → 2)
+
+**What.** The page is a tier-B browsing dashboard over 30 PRNG-generated agreements and 60 synthetic ITMOs, with a documented guide↔code mismatch: the promised double-entry corresponding-adjustment accounting (`Net_NDC_contribution = ITMOs_issued − ITMOs_cancelled`) does not exist — `correspondingAdj` is a random boolean, and quality scores are draws in plausible bands, not ICVCM assessments. Evolution A builds the module's first backend vertical: an actual CA ledger where each first transfer debits the host country's emissions balance and credits the acquirer's, per Decision 3/CMA.3.
+
+**How.** (1) Tables `a6_agreements`, `a6_itmo_units`, `a6_ca_entries` — the CA entry is a paired debit/credit row; an unbalanced pair is a constraint violation, making double-claiming structurally impossible to record. (2) Seed from the public UNFCCC Article 6 database (Art 6.2 initial reports and authorisations are published) rather than regenerating synthetic rows; keep the already-real `VCM_CREDIT_PRICES_2023` block (GAP-009) as the price reference. (3) Endpoints: `GET /ndc-balance/{country}` (net adjustment from ledger), `GET /reconciliation` (transfers lacking matching CA entries → the double-claiming risk flag the guide promises). (4) Rung 2: what-if — "if all Pending authorisations complete, host NDC balances shift by X."
+
+**Prerequisites.** Retire the seeded-PRNG generator including the degenerate i=0 seeding artefact (all field seeds collapse to `sr(0)`); Alembic migration; UNFCCC data is partial and lagged — the ledger must represent unauthorised/unreported trades as explicit unknowns. **Acceptance:** for any transfer, host debit + acquirer credit sum to zero; the reconciliation endpoint flags a deliberately-inserted unmatched transfer; NDC balance recomputes correctly after a cancellation.
+
+### 9.2 Evolution B — ITMO integrity analyst over the ledger (LLM tier 2)
+
+**What.** A tool-calling analyst for the Article 6 desk: "does the Ghana–Switzerland agreement have complete corresponding adjustments?" answered by calling `GET /reconciliation` and `GET /ndc-balance/{country}` and narrating actual ledger state; "explain why this 6.4 unit carries a 5% share of proceeds" answered from the module's one correctly-encoded rule (the Art 6.4 Adaptation Fund levy) with the CMA decision citation.
+
+**How.** Tool schemas from the Evolution-A OpenAPI surface (read-only ledger queries — no confirmation gating; ledger writes stay out of LLM reach entirely, since a fabricated CA entry would be the exact double-claiming failure the module exists to prevent). Grounding corpus: this Atlas page's §7.6 rulebook summary (Glasgow Rulebook CA mechanics, ITMO lifecycle vocabulary Authorised→Transferred→Used→Cancelled) plus the module's methodology tab. The refusal path is critical pre-Evolution-A: the copilot must state that quality scores are synthetic and no CA accounting exists, so a tier-1 slice shipped today would be limited to explaining Article 6 mechanics, never asserting per-agreement compliance.
+
+**Prerequisites (hard).** Evolution A's ledger — narrating the current PRNG agreement set as if they were real bilateral deals would be fabrication with a UI. **Acceptance:** every balance/volume the analyst quotes traces to a ledger endpoint response; asked about an agreement absent from the UNFCCC-sourced data, it reports no-record rather than inventing one.

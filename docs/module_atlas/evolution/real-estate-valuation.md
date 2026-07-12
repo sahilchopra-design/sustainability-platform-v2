@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Internally consistent climate-adjusted valuation with retrofit NPV (analytics ladder: rung 2 → 3)
+
+**What.** The valuation mechanics are sound RICS practice — direct income capitalisation with EPC/BREEAM cap-rate premia (the platform's reference implementation of a green-value adjustment) — but §7.7 flags internal inconsistencies a model validator would fail: the Valuation tab's `climateHaircutPct` and the Risk Overlay tab's `climateRiskScores` are drawn from different, uncorrelated seeds for the same property; `scenarioHaircuts` mixes a property's own haircut with the portfolio-average hazard multiplier; and the guide's energy-upgrade capex (£142/m²) appears nowhere — retrofit cost is never netted from value. Evolution A makes the module self-consistent and completes the upgrade-scenario feature.
+
+**How.** (1) Derive the haircut from the property's own hazard scores: one climate-risk vector per asset (from the digital-twin scorer once geocoded), feeding both the overlay display and the haircut via a documented score→discount function — one source, two views. (2) `scenarioHaircuts` scales the property's own hazards by scenario factor, fixing the portfolio-average leak. (3) Implement upgrade economics: retrofit capex (per-m² cost by EPC jump) vs value uplift from the existing `EPC_PREMIUM` ladder, yielding an upgrade NPV and payback — closing the guide's promised workflow step. (4) Port the valuation chain behind the existing `/api/v1/valuation/*` routes (backend endpoints exist but the page computes client-side) and pin the §7.4 worked example.
+
+**Prerequisites.** Geocoding for the register; score→haircut function documented with basis (the emerging brown-discount literature) per Atlas §8 convention. **Acceptance:** the same property's overlay scores and valuation haircut are algebraically linked (changing one hazard changes both); an EPC D→B upgrade scenario reports capex, uplift, and NPV that reconcile with the premium ladder.
+
+### 9.2 Evolution B — Valuer's assistant with Red-Book-aware narration (LLM tier 2)
+
+**What.** Surveyors need the number and the defensible narrative. The copilot drafts valuation commentary from computed state: "explain the £2.1M green delta on this asset — which certification premium drives it, and what comparable evidence supports the cap rate?", using the module's own `compEvidence` comparable-selection output; and runs what-ifs ("value at EPC B post-retrofit under Disorderly") as tool calls against the Evolution-A endpoints.
+
+**How.** Tier-2 tool schemas over the valuation/upgrade/scenario endpoints; system prompt grounded in §7.2's premium tables and §7.7's method limitations, so commentary always states the method (single-period income capitalisation, RICS-permitted for stabilised assets — not a multi-period DCF) rather than implying more. Comparable-evidence citations name the specific register rows the `compEvidence` filter selected. Hard rule inherited from platform convention: valuation figures for real addresses are never asserted — the register's property names are labels, and the copilot must present outputs as model valuations of entered inputs, not market appraisals.
+
+**Prerequisites.** Evolution A consistency fixes (narrating today's uncorrelated haircut/overlay pair would expose the contradiction §7.7 documents); endpoint wiring. **Acceptance:** commentary figures match tool outputs; the method statement appears in every draft; upgrade advice quotes the computed NPV, not a generic claim.

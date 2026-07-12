@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Back-test triggers against real hazard history (analytics ladder: rung 1 → 3)
+
+**What.** §7 shows the parametric *logic* is genuinely correct: the trigger→exit attachment ramp (linear and stepped payout functions) matches real CCRIF/ARC contract structures, and peril-specific thresholds (rainfall mm, wind km/h, temperature °C, earthquake Mw, NDVI, river level) are properly differentiated. The historical-catastrophe overlay and sovereign-programme table are real. What's synthetic: the 60 `PRODUCTS` are `sr()` draws, and — critically — the "Historical Simulation" and basis-risk claims (§1) cannot be validated because no product is back-tested against actual index history. Evolution A wires triggers to real hazard time series.
+
+**How.** (1) Connect trigger indices to the platform's real hazard data: rainfall/temperature from NASA POWER / Open-Meteo (already integrated per project memory), wind from IBTrACS cyclone tracks (digital twin), earthquake from USGS — so a designed trigger can be back-tested against decades of real index values, computing actual historical payout frequency. (2) Compute real basis risk (`Var(ActualLoss − Payout)` per §5) by pairing the back-tested payouts against a loss proxy, replacing the synthetic basis-risk number with a measured one. (3) Climate-adjusted pricing (§1) applies AR6 hazard-frequency shifts to the historical distribution rather than a seeded multiplier.
+
+**Prerequisites.** Hazard time-series wiring (NASA POWER/IBTrACS/USGS exist in the platform); a loss proxy for basis-risk pairing (the hard part — parametric's whole point is no loss adjustment, so basis risk needs an independent loss reference). **Acceptance:** a rainfall trigger back-tests against real station history with a computed payout frequency; basis risk is measured, not seeded; climate adjustment shifts the historical distribution.
+
+### 9.2 Evolution B — Parametric product-design copilot (LLM tier 2)
+
+**What.** A copilot for the NGO/sovereign/corporate users §1 targets: "design a drought trigger for this region at the 1-in-10-year rainfall percentile", "how would this wind trigger have paid out over the last 20 hurricane seasons?", "what's the basis risk versus a 90% payout structure?" — executed against the (Evolution-A) back-testing engine, with payout and basis-risk figures traced to real index history.
+
+**How.** Tool calls to endpoints wrapping the trigger-calibration, historical-simulation, and basis-risk functions; system prompt from this Atlas page's §5 formulas and the World Bank IBRD / InsuResilience / Munich Re references named in §5 so parametric-contract mechanics (trigger, exit, attachment) are explained correctly. Trigger design becomes an interactive calibration (threshold at a chosen historical percentile), and the historical simulation is a real back-test tool call. Fabrication validator matches every payout %, basis-risk, and premium to a tool response; the copilot must convey that basis risk is the fundamental parametric trade-off (fast payout vs imperfect loss correlation).
+
+**Prerequisites.** Compute endpoints; Evolution A for real back-testing (the trigger *structure* logic works today, but historical simulation needs real index data). **Acceptance:** every payout/basis-risk figure traces to a tool call over real hazard history; trigger design reflects real percentiles; the copilot explains the basis-risk trade-off honestly.

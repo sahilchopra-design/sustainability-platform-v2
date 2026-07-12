@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Calibrate the base matrix to real data and fix the ceiling-compression artefact (analytics ladder: rung 2 → 3)
+
+**What.** This is one of the batch's simplest, most transparent modules (§7.1): a hand-authored 10-sector × 5-geography base matrix scaled by clean scenario multipliers (CP 0.8×, B2C 1.0×, NZ 1.35×), no PRNG, directionally sensible. Two rung-limiting issues per §7.6: (1) the 50-cell base scores are expert-judgment estimates with no cited derivation from the IPCC AR6 / NGFS Phase 5 sources the guide names; (2) the 100-point cap creates a compression artefact — §7.4 shows Energy cells at base 85 and 92 both saturate to 100 under Net Zero 2050, erasing real differentiation, and much of the "Net Zero is riskier near-term" signal is actually just ceiling-clipping. Only 3 of NGFS's 5 scenarios are modelled.
+
+**How.** (1) Derive base scores from real sector-geography transition-risk indicators: NGFS Phase 5 sector damage/repricing factors and IPCC AR6 regional projections, replacing hand-set values with sourced ones (rung 3). (2) Fix the compression: either raise the cap or (better) compute risk on an unbounded scale and only band for display, so base-85 and base-92 stay distinguishable under multipliers. (3) Add the missing NGFS scenarios (Delayed Transition, Divergent NDC) — the §7.7 note that a single time-less multiplier can't represent the disorderly-transition nuance argues for a per-scenario, per-horizon factor rather than one scalar. (4) Bench-pin the §7.4 Energy/NZ worked example.
+
+**Prerequisites.** NGFS Phase 5 sector/regional factor tables (largely public); a decision on the display scale to eliminate compression. **Acceptance:** base cells trace to a cited NGFS/IPCC factor; two distinct base scores never collapse to the same displayed value through capping; all 5 NGFS scenarios available.
+
+### 9.2 Evolution B — Heatmap-narration copilot for portfolio positioning (LLM tier 1)
+
+**What.** A copilot answering "which sector-geography cells are CRITICAL under Net Zero, and why?", "how much of Energy's risk jump is real vs ceiling-capping?", "compare Middle East vs Europe transition risk across sectors" — narrating the matrix, its multipliers, and the scenario-sensitivity comparison.
+
+**How.** Tier 1, grounded in this Atlas record and page state: the calculation is fully transparent (`min(100, base × multiplier)`, §7.1), so the copilot reproduces and explains every cell, the band thresholds, and the scenario ordering (NZ>B2C>CP front-loading, the genuine NGFS insight §7.7 credits). Critically, an honest copilot should surface the compression artefact §7.4 documents — when a user asks why two Energy cells both read 100, it explains the ceiling effect rather than implying they're truly equal-risk. Pre-Evolution-A it discloses base scores are expert judgment, not modelled (§7.6). The module is frontend-only (tier B, EP-CD2) so tool-calling awaits a route port; the matrix is small enough that tier-1 reasoning over page state fully covers the use case.
+
+**Prerequisites.** None for tier 1; Evolution A's calibration makes the copilot's "why" answers cite real factors instead of expert judgment. **Acceptance:** every cell value in an answer reproduces from base × multiplier; the copilot flags ceiling-capped cells rather than overstating their equivalence; base-score provenance is labelled expert-judgment until Evolution A.

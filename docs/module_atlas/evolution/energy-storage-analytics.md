@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Discounted LCOS, real price series, and true dispatch optimization (analytics ladder: rung 2 → 5, staged through 3)
+
+**What.** §7's verdict: the LCOS is "substantively implemented" over a realistic 8-chemistry `TECH` table (BNEF/Lazard-consistent capex, RTE, cycle life), with two defects — it's **undiscounted** (the guide's `(1+r)^t` terms are missing) and the computed value is **nudged by a random adjustment** before display (`lcosAdj = lcos·10 + sr(i·31)·20`). Revenue stacking is heuristic: seeded service revenues, an arbitrage line at a flat $35/MWh spread, IRR with `sr()` noise. The 50 projects are synthetic. Evolution A fixes the math, grounds prices, and then does the thing the roadmap names this engine family for: prescriptive revenue stacking.
+
+**How.** Stage 1 (rung 3): move to `services/storage_economics_engine.py` with properly discounted LCOS (bench-pinned against a Lazard v8.0 worked example), delete the random nudge outright (it's a guardrail-violating fabrication pattern), and replace flat arbitrage assumptions with real price series — ENTSO-E day-ahead and EIA prices are already wired into the platform from the data-sources wave-1 work. Stage 2 (rung 5): dispatch optimization via scipy (the roadmap explicitly names BESS-stacking a natural first mover for the prescriptive rung) — maximize revenue over price/frequency series subject to c-rate, DoD, and cycle-budget constraints, yielding an *optimized* revenue stack per project instead of seeded service revenues.
+
+**Prerequisites (hard).** The `sr()` nudge and seeded IRR removed first (rung-3 credibility gate); price-series coverage per region (GB/CAISO/NEM need sources beyond ENTSO-E — disclose coverage). **Acceptance:** discounted LCOS reproduces the Lazard reference within tolerance; optimizer output beats the naive single-service baseline on the same series (testable claim); zero `sr()` in any economics path.
+
+### 9.2 Evolution B — Storage project screening analyst (LLM tier 2)
+
+**What.** A tool-calling analyst for developer/investor questions: "screen a 100 MW / 4h LFP project in GB: LCOS, optimized revenue stack, IRR, and how sensitive is it to cycle life?" It chains Evolution A's endpoints — LCOS computation, dispatch optimization on the region's real price series, sensitivity sweep — and drafts the screening memo with the revenue-stack decomposition (FFR vs capacity vs arbitrage shares) from the optimizer's actual output, including the degradation trade-off the optimizer surfaces (cycling harder raises revenue but burns cycle budget).
+
+**How.** Tool schemas from the engine endpoints; grounding corpus = this Atlas record's §5 LCOS formula and §7 tech-parameter table so chemistry comparisons quote real capex/RTE/cycle values. What-ifs ("same project as flow battery") are recomputation calls. The validator covers $/MWh, IRR, and revenue figures; region-specific market rules the engine doesn't model (GB capacity-market derating specifics) trigger the refusal path with a pointer to what *is* modeled.
+
+**Prerequisites (hard).** Evolution A stage 1 minimum — an analyst narrating the current randomly-nudged LCOS and seeded IRRs would put fabricated economics in front of investment decisions. **Acceptance:** a golden GB-LFP screen reproduces from scripted tool calls; the memo's revenue shares sum to the optimizer total; chemistry-comparison figures match the TECH table exactly.

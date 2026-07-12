@@ -16,6 +16,7 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "docs", "module_atlas")
 BATCH_DIR = os.path.join(OUT, "notion_batches")
+DEEP_DIR = os.path.join(OUT, "deep")
 os.makedirs(BATCH_DIR, exist_ok=True)
 
 atlas = json.load(open(os.path.join(OUT, "atlas.json"), encoding="utf-8"))
@@ -26,6 +27,14 @@ SLICES = 8
 
 def esc(s):
     return str(s).replace("|", "/").replace("\n", " ").strip()
+
+
+def read(p):
+    try:
+        with open(p, encoding="utf-8") as f:
+            return f.read()
+    except OSError:
+        return ""
 
 
 def content_md(mid, m):
@@ -47,12 +56,21 @@ def content_md(mid, m):
     comps = m.get("components") or []
     if comps:
         L.append("**Frontend components:** " + ", ".join(f"`{c}`" for c in comps[:15]))
+    if g.get("userInteraction"):
+        L.append("\n**How an analyst works this module:**")
+        for u in g["userInteraction"][:12]:
+            L.append(f"- {esc(u)}")
     computed = m.get("computed") or []
     if computed:
         L.append("\n**UI-layer derived values (variable ← expression):**")
         L.append("| Variable | Expression |\n|---|---|")
-        for c in computed[:12]:
-            L.append(f"| `{c['name']}` | `{esc(c['expr'])[:120]}` |")
+        for c in computed[:24]:
+            L.append(f"| `{c['name']}` | `{esc(c['expr'])[:220]}` |")
+    if m.get("seed_schemas"):
+        L.append("\n**Seed dataset schemas:**")
+        L.append("| Dataset | Rows | Fields |\n|---|---|---|")
+        for s in m["seed_schemas"][:12]:
+            L.append(f"| `{s['name']}` | {s.get('rows') or '—'} | {', '.join('`'+f+'`' for f in s['fields'])} |")
     brs = m.get("backend_routes") or []
     if brs:
         L.append("\n**Backend endpoints:**")
@@ -60,34 +78,39 @@ def content_md(mid, m):
         n = 0
         for br in brs:
             for ep in br["endpoints"]:
-                if n >= 10:
+                if n >= 20:
                     break
                 L.append(f"| {ep['method']} | `{esc(ep['path'])}` | `{ep['handler']}` |")
                 n += 1
-    for ed in (m.get("engine_detail") or [])[:2]:
+    for ed in (m.get("engine_detail") or [])[:3]:
         if ed.get("functions"):
             L.append(f"\n**Engine `{ed['name']}` functions:**")
             L.append("| Function | Purpose |\n|---|---|")
-            for fn in ed["functions"][:12]:
-                L.append(f"| `{esc(fn['name'])}` | {esc(fn['doc'])[:110]} |")
+            for fn in ed["functions"][:24]:
+                L.append(f"| `{esc(fn['name'])}` | {esc(fn['doc'])[:220]} |")
+        if ed.get("constants"):
+            L.append(f"\n**Engine `{ed['name']}` — reference constants / scoring weights:**")
+            L.append("| Constant | Value |\n|---|---|")
+            for c in ed["constants"][:14]:
+                L.append(f"| `{c['name']}` | `{esc(c['value'])[:300]}` |")
 
     # ── Lineage ──
     L.append("\n## Data Lineage (source → transformation → UI)")
     dps = g.get("dataPoints") or []
     if dps:
         L.append("| UI metric | Formula | Source |\n|---|---|---|")
-        for d in dps[:12]:
+        for d in dps[:32]:
             L.append("| {} | {} | {} |".format(
-                esc(d.get("name", ""))[:55],
-                f"`{esc(d['formula'])[:80]}`" if d.get("formula") else "—",
-                esc(d.get("source", "—"))[:55]))
-    for dl_ in (g.get("dataLineage") or [])[:6]:
+                esc(d.get("name", ""))[:80],
+                f"`{esc(d['formula'])[:160]}`" if d.get("formula") else "—",
+                esc(d.get("source", "—"))[:80]))
+    for dl_ in (g.get("dataLineage") or [])[:12]:
         L.append(f"- **{esc(dl_.get('source',''))}** → {esc(dl_.get('flow',''))} → **{esc(dl_.get('output',''))}**")
-    for t in (m.get("trace") or [])[:3]:
+    for t in (m.get("trace") or [])[:6]:
         L.append(f"\n**Traced chain — {esc(t['label'])}** (provenance {t['provenance']}; "
-                 f"tables: {', '.join('`'+s+'`' for s in t['source_tables'][:6]) or '—'})")
+                 f"tables: {', '.join('`'+s+'`' for s in t['source_tables'][:10]) or '—'})")
         if t.get("call_chain"):
-            L.append("```\n" + "\n".join(t["call_chain"][:10]) + "\n```")
+            L.append("```\n" + "\n".join(t["call_chain"][:20]) + "\n```")
 
     # ── Transformation logic ──
     ce = g.get("calculationEngine") or {}
@@ -95,14 +118,16 @@ def content_md(mid, m):
     if ce or forms:
         L.append("\n## Transformation Logic")
         if ce.get("methodology"):
-            L.append(f"**Methodology:** {esc(ce['methodology'])[:300]}")
+            L.append(f"**Methodology:** {esc(ce['methodology'])[:400]}")
         if ce.get("formula"):
-            L.append(f"**Headline formula:** `{esc(ce['formula'])[:200]}`")
+            L.append(f"**Headline formula:** `{esc(ce['formula'])[:300]}`")
+        if ce.get("brief"):
+            L.append(f"\n{esc(ce['brief'])[:1200]}")
         if ce.get("standards"):
-            L.append(f"**Standards:** {esc(ce['standards'])[:200]}")
-        for name, fl in forms[:1]:
+            L.append(f"\n**Standards:** {esc(ce['standards'])[:300]}")
+        for name, fl in forms[:2]:
             L.append(f"\n**Engine `{name}` — extracted transformation lines:**")
-            L.append("```python\n" + "\n".join(f[:120] for f in fl[:10]) + "\n```")
+            L.append("```python\n" + "\n".join(f[:160] for f in fl[:20]) + "\n```")
 
     # ── Sources / provenance ──
     L.append("\n## Data Sources & Provenance")
@@ -110,9 +135,9 @@ def content_md(mid, m):
     if m.get("tables"):
         shared = set(m.get("shared_tables") or [])
         L.append("**DB tables:** " + ", ".join(
-            f"`{t}`{' *(shared)*' if t in shared else ''}" for t in m["tables"][:14]))
+            f"`{t}`{' *(shared)*' if t in shared else ''}" for t in m["tables"][:28]))
     if m.get("seed_constants"):
-        L.append("**Frontend seed datasets:** " + ", ".join(f"`{s}`" for s in m["seed_constants"][:10]))
+        L.append("**Frontend seed datasets:** " + ", ".join(f"`{s}`" for s in m["seed_constants"][:20]))
     if m.get("contexts"):
         L.append("**Shared context buses:** " + ", ".join(f"`{c}`" for c in m["contexts"]))
 
@@ -120,12 +145,17 @@ def content_md(mid, m):
     L.append("\n## Interconnections & Change Risk")
     L.append(f"**Blast radius:** {m.get('blast_radius', 0)} connected module(s).")
     if m.get("shared_engines"):
-        L.append("**Shared engines (edits propagate):** " + ", ".join(f"`{e}`" for e in m["shared_engines"][:8]))
+        L.append("**Shared engines (edits propagate):** " + ", ".join(f"`{e}`" for e in m["shared_engines"][:16]))
     ics = m.get("interconnections") or []
     if ics:
         L.append("| Connected module | Shared via |\n|---|---|")
-        for ic in ics[:8]:
-            L.append(f"| `{ic['module']}` | {esc(', '.join(ic['via']))[:100]} |")
+        for ic in ics[:16]:
+            L.append(f"| `{ic['module']}` | {esc(', '.join(ic['via']))[:180]} |")
+
+    # ── Methodology Deep Dive (the whole point of this expansion) ──
+    deep_md = read(os.path.join(DEEP_DIR, f"{mid.replace('::', '__')}.md")).strip()
+    if deep_md:
+        L.append("\n" + deep_md)
     return "\n".join(L)
 
 

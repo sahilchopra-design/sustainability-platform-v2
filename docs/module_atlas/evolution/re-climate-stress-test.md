@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Full income-capitalisation stress with scenario-responsive assets (analytics ladder: rung 2 → 3)
+
+**What.** §7 flags two concrete defects: only the LTV term of the guide's stress chain is implemented (`stressedValue = portfolioValue × (1 + ltv_impact/100)`), while NOI, cap-rate, and vacancy impacts sit in KPI cards without entering the NAV — and the 20-asset heatmap is scenario-invariant, its per-asset `physStress`/`transStress` seeded once at load, so switching Net Zero 2050 to Current Policies changes the banner but not one asset row. Evolution A implements the full revaluation the guide specifies: `Stressed_NOI = NOI × (1 + ΔNOI − Δvacancy)`, `Stressed_CapRate = CapRate + Δcap`, `StressedValue = Stressed_NOI / Stressed_CapRate`, applied per asset with sector-differentiated sensitivities from the (already correctly ranked) `SECTOR_RISK` table.
+
+**How.** (1) Give each asset NOI and cap-rate fields (derived from value at a sector-typical yield if not supplied) so the income-cap formula is computable per asset. (2) Per-asset stress = scenario impact × sector risk multiplier — making the heatmap scenario-responsive fixes the §7.3 inconsistency where the table contradicts the KPI cards above it. (3) Recalibrate the Current Policies row: §7.2 notes its −28% LTV / +10.5pp vacancy exceeds the ECB 2022 severe-scenario CRE benchmark (~10–15%) the module itself cites — either justify with a cited source or bring within the benchmark band. (4) Move to a small backend route so bench_quant pins the §7.4 example.
+
+**Prerequisites.** Sector-typical cap-rate defaults documented; scenario parameter provenance table extended with citations per row. **Acceptance:** switching scenarios changes every asset row; the four impact channels all move stressed NAV (zeroing any one changes the result); Current Policies magnitudes carry a citation.
+
+### 9.2 Evolution B — TCFD scenario-disclosure copilot (LLM tier 1 → 2)
+
+**What.** The module's stated users — REIT CFOs preparing TCFD scenario disclosures and lenders answering supervisors — need narrative built on the stress outputs. The copilot drafts it: "write the TCFD strategy-resilience paragraph for our portfolio under NGFS Below 2°C, quantifying the NAV impact and naming the most exposed sector", grounded in the computed stress table and the module's scenario parameter provenance.
+
+**How.** Tier 1 first: RAG over this Atlas record (§7.2's parameterisation table with its honesty notes is core corpus) via the standard copilot router, with current-page stress results injected as context. Tier 2 after Evolution A: scenario comparisons run as paired calls to the new stress endpoint, letting the copilot produce the side-by-side NZ2050-vs-CurrentPolicies table §7.4 hand-computes. Required honesty behaviors: disclose that scenario parameters are directional calibrations, not ECB-published shock sets; refuse asset-level physical-risk claims beyond the sector-score granularity the module actually has (per-coordinate hazard belongs to `property-physical-risk`, and the copilot should route there).
+
+**Prerequisites.** Evolution A endpoint for tier 2; scenario-parameter citations completed (a disclosure draft citing uncited shocks is a compliance risk, not a convenience). **Acceptance:** a drafted disclosure's every €M figure matches the stress endpoint; the parameter-provenance caveat appears whenever magnitudes are quoted.

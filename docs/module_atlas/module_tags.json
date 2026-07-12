@@ -1,0 +1,7618 @@
+{
+ "abatement-cost-curve": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "act-assessment": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "adaptation-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 4,
+  "blast_radius": 45,
+  "tier": "A",
+  "engines": [
+   "adaptation_finance_engine"
+  ]
+ },
+ "additionality-assessment": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "admin-panel": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "advanced-reactor-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 1,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": []
+ },
+ "advanced-report-studio": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": []
+ },
+ "africa-climate-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "agri-biodiversity": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "agri-finance-hub": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "agricultural-climate-risk": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ai-compliance-agent": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ai-data-live-platform": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ai-engagement": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ai-governance": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 4,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": [
+   "ai_governance_engine"
+  ]
+ },
+ "ai-hub": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ai-sentiment": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "air-quality-finance": {
+  "sector": "Health, Air Quality & Climate-Related Human Impact",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "air-quality-health-risk": {
+  "sector": "Health, Air Quality & Climate-Related Human Impact",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "air-quality-investment": {
+  "sector": "Health, Air Quality & Climate-Related Human Impact",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "airline-saf-procurement": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "anomaly-detection": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "anomaly-detection-engine": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "anti-corruption": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "api-gateway-monitor": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 3,
+  "blast_radius": 93,
+  "tier": "A",
+  "engines": [
+   "adaptation_finance_engine",
+   "agriculture_risk_calculator",
+   "agriculture_risk_engine",
+   "ai_governance_engine"
+  ]
+ },
+ "api-orchestration": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "approval-workflows": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "aquaculture-climate-finance": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "article6-markets": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "asean-gcc-transition": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "assessment-audit-trail-v2": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "assessment-configuration": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "assessment-engine-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "asset-exposure-explorer": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "asset-valuation-engine": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "assurance-readiness-engine": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "assurance_readiness_engine"
+  ]
+ },
+ "audit-trail": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "audit-trail-viewer": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "auth": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "aviation-corsia": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "avoided-emissions-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "avoided_emissions_engine"
+  ]
+ },
+ "avoided-emissions-portfolio": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "avoided_emissions_engine"
+  ]
+ },
+ "baseline-additionality-analyzer": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "battery-ev-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "battery-revenue-stacker": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": []
+ },
+ "battery-tech-supply-chain": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "beccs-project-finance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "benchmark-analytics": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 60,
+  "tier": "A",
+  "engines": []
+ },
+ "bess-grid-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "bess-project-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "bifacial-agrivoltaic-finance": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "big-climate-database": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "biochar-beccs-finance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "biodiversity-credits": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "biodiversity_credit_engine"
+  ]
+ },
+ "biodiversity-footprint": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "biodiversity-natural-capital": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "bioenergy-lcoe-economics": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "blended-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 3,
+  "blast_radius": 53,
+  "tier": "A",
+  "engines": [
+   "blended_finance_engine"
+  ]
+ },
+ "blended-finance-structurer": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 3,
+  "blast_radius": 53,
+  "tier": "A",
+  "engines": [
+   "blended_finance_engine"
+  ]
+ },
+ "blended-finance-structuring": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 3,
+  "blast_radius": 53,
+  "tier": "A",
+  "engines": [
+   "blended_finance_engine"
+  ]
+ },
+ "blockchain-carbon-registry": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "blue-bond-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "blue-carbon-finance": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "blue-hydrogen-ccs": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "blue-hydrogen-ccus": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "board-climate-competence": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "board-climate-oversight": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "board-composition": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "board-diversity": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "brsr-bridge": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "building-energy-performance": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "calculation-engine-monitor": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "capital-markets-taxonomy": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "carbon-accounting-ai": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "carbon_accounting_ai_engine"
+  ]
+ },
+ "carbon-adjusted-valuation": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-arbitrage-portfolio": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-aware-allocation": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-budget": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-calculator": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-capture-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-credit-audit-trail": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-credit-pricing": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-derivatives-desk": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 92,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "carbon_price_ets_engine",
+   "climate_derivatives_engine",
+   "methodology_engine"
+  ]
+ },
+ "carbon-economy": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-footprint-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-forward-curve": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-institutions-taxonomy": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-integrity-mrv-analytics": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-market-intelligence": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-offtake-structurer": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 70,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "carbon_credit_quality_engine",
+   "methodology_engine"
+  ]
+ },
+ "carbon-project-lifecycle": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-reduction-projects": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-removal": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "carbon_removal_engine"
+  ]
+ },
+ "carbon-removal-markets": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 63,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "carbon_removal_engine",
+   "methodology_engine"
+  ]
+ },
+ "carbon-storage-geology": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "carbon-wallet": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "carbon_calculator",
+   "methodology_engine"
+  ]
+ },
+ "cascading-default-modeler": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cat-bond-ils": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "catastrophe-modelling": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cbam-analytics-compliance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cbam-compliance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cbam-trade-exposure-mapper": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-arr-reforestation": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-bicrs-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-ccs-biochar-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-certificate-mgmt": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-clean-cooking": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-dac": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-energy-efficiency-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-engine-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-grid-renewables": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-ifm-credits": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-industrial-gases": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-landfill-wastewater": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-livestock-methane": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-methodology-comparison": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-mineralization": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-portfolio-analytics": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-redd-wetlands-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-registry-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-retirement-workflow": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-rice-cultivation": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cc-soil-carbon": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ccts-offset-registration": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ccus-market-intelligence": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ccus-project-finance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cdfi-climate-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cdm-methodology-calculator": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cdr-credit-markets": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cdr-portfolio-netzero": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ceda-emission-factors": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "central-bank-climate": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "change-management": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "china-india-transition": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "circular-economy-finance": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "circular_economy_engine"
+  ]
+ },
+ "circular-economy-investment": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "circular_economy_engine"
+  ]
+ },
+ "circular-economy-tracker": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "circular_economy_engine"
+  ]
+ },
+ "circular-supply-chain-finance": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "city-climate-risk-rating": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "city-net-zero-tracker": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cleantech-investment": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "client-pitch": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "client-portal": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "client-report": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "client-transition-command-center": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-adaptation-pathways": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-adaptation-portfolio": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-banking-hub": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-benchmark-constructor": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-blended-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-bond-index-tracker": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-capital-adequacy": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-capital-markets": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-claims-forecasting": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-commodity-analytics": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-credit-integration": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-credit-pricing": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-credit-risk-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-cvar-suite": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-data-marketplace": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-derivatives": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 3,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "climate_derivatives_engine"
+  ]
+ },
+ "climate-displacement-risk": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-emissions-intelligence": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-executive-pay": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-finance-hub": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "climate_finance_engine"
+  ]
+ },
+ "climate-finance-tracker": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "climate_finance_engine"
+  ]
+ },
+ "climate-financial-statements": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "climate_financial_statements_engine"
+  ]
+ },
+ "climate-fintech-hub": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-health-hub": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-health-risk-analytics": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-insurance": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "climate_insurance_engine"
+  ]
+ },
+ "climate-legal-intelligence-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-litigation": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 3,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "climate_litigation_engine"
+  ]
+ },
+ "climate-litigation-risk-scorer": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "climate_litigation_engine"
+  ]
+ },
+ "climate-litigation-tracker": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "climate_litigation_engine"
+  ]
+ },
+ "climate-ma-due-diligence": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-migration-risk": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-mortality-longevity": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-mortgage-analytics": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-nature-repo": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-news-sentiment-feed": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-patent-intelligence": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-physical-risk": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-policy": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 3,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": [
+   "climate_policy_tracker_engine"
+  ]
+ },
+ "climate-policy-intelligence": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 3,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": [
+   "climate_policy_tracker_engine"
+  ]
+ },
+ "climate-portfolio-optimizer": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-reg-policy-tracker": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-reserve-adequacy": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-resilient-design": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-revenue-bond-modeler": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-risk-budget-allocator": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "assessment_methodology_manager",
+   "assessment_runner",
+   "climate_integrated_risk",
+   "climate_physical_risk_engine",
+   "climate_transition_risk_engine"
+  ]
+ },
+ "climate-risk-premium": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "assessment_methodology_manager",
+   "assessment_runner",
+   "climate_integrated_risk",
+   "climate_physical_risk_engine",
+   "climate_transition_risk_engine"
+  ]
+ },
+ "climate-smart-infrastructure": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-solution-taxonomy": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-sovereign-bonds": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-stress-test": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "climate_stress_test_engine"
+  ]
+ },
+ "climate-stress-test-suite": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "climate_stress_test_engine"
+  ]
+ },
+ "climate-tech": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "climate_tech_engine"
+  ]
+ },
+ "climate-trade-flow-analytics": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-transition-risk": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-underwriting-workbench": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 4,
+  "blast_radius": 95,
+  "tier": "A",
+  "engines": [
+   "facilitated_emissions_engine",
+   "insurance_climate_risk",
+   "pcaf_unified_engine"
+  ]
+ },
+ "climate-var-engine": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "climate-wacc-engine": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "co-investment": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "coastal-flood-risk-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "coastal-resilience-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "commercial-re-climate-risk": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "commercial_re_engine"
+  ]
+ },
+ "commodity-deforestation": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "commodity-derivatives-climate": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "commodity-hub": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "commodity-intelligence": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "commodity-inventory": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "community-climate-resilience": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "community-impact": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "company-profiles": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 3,
+  "blast_radius": 58,
+  "tier": "A",
+  "engines": [
+   "peer_benchmark_engine"
+  ]
+ },
+ "compliance-carbon-desk": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 21,
+  "tier": "A",
+  "engines": [
+   "carbon_price_ets_engine",
+   "dcm_engine"
+  ]
+ },
+ "compliance-evidence": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "compliance-workflow-automation": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "compound-event-modeler": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "comprehensive-reporting": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "comprehensive_reporting_engine"
+  ]
+ },
+ "conflict-minerals": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "conflict-stability-tracker": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "consumer-carbon-hub": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "controversy-materiality": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "controversy-monitor": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "controversy-rating-impact": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "copula-tail-risk": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "corporate-governance": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "corporate-just-transition": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "corporate-nature-strategy": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "corporate_nature_strategy_engine"
+  ]
+ },
+ "corporate-offset-optimizer": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "counterparty-ownership-graph": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 3,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": []
+ },
+ "covenant-breach-predictor": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cpace-climate-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "credit-integrity-dd": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "credit-quality-screener": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "credit-risk-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "credit-spread-climate-monitor": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": []
+ },
+ "critical-mineral-constraint": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "critical-mineral-geo-risk": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "critical-mineral-geopolitics": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "critical-minerals": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 4,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": [
+   "critical_minerals_engine"
+  ]
+ },
+ "critical-minerals-climate": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 4,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": [
+   "critical_minerals_engine"
+  ]
+ },
+ "cross-asset-contagion": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "cross-entity-intelligence-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "crrem": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "crrem_green_buildings_engine"
+  ]
+ },
+ "crypto-climate": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "crypto_climate_engine"
+  ]
+ },
+ "csddd-compliance": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "csddd-engine": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "csddd_engine"
+  ]
+ },
+ "csrd-dma": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "csrd_dma_engine"
+  ]
+ },
+ "csrd-esrs-automation": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "csrd-esrs-full-suite": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "csrd-ixbrl": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "damage-function-calculator": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-capture-hub": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-governance": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-hub-ingester": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 3,
+  "blast_radius": 61,
+  "tier": "A",
+  "engines": [
+   "data_hub_service",
+   "sync_orchestrator"
+  ]
+ },
+ "data-infra-hub": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-lineage": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "data_lineage_service",
+   "lineage_orchestrator"
+  ]
+ },
+ "data-quality-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-quality-monitor": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-reconciliation": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-source-manager": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-source-registry": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-validation": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "data-versioning": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "db-explorer": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "db-migration-console": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "decarbonisation-hub": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "decarbonisation-roadmap": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "decommissioning-cost-engine": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "deforestation-risk": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "digital-mrv": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "digital-product-passport": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "digital_product_passport_engine"
+  ]
+ },
+ "direct-air-capture": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "direct-air-capture-finance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "disclosure-adequacy-analyzer": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "disclosure-hub": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "distributed-community-solar": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "diversity-equity-inclusion": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-alerts": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_alert_engine"
+  ]
+ },
+ "dme-competitive": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-contagion": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_contagion_engine"
+  ]
+ },
+ "dme-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-entity": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-financial-risk": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-hub": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-index": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-ml-materiality": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-nlp-engine": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_nlp_pulse_engine"
+  ]
+ },
+ "dme-pd-engine": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-portfolio": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-risk-engine": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "dme-scenarios": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "document-similarity": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "double-materiality": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "double_materiality_engine"
+  ]
+ },
+ "double-materiality-workshop": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "double_materiality_engine"
+  ]
+ },
+ "ecosystem-services": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "em-carbon-credit-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "em-climate-risk": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "em_climate_risk_engine"
+  ]
+ },
+ "em-debt-climate-risk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "em-sovereign-climate-debt": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "embodied-carbon": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "employee-wellbeing": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "enablement-methodology": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-asset-registry": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-decommissioning-liability": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-revenue-split": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-sector-taxonomy": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-security-transition": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-segment-analysis": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-storage-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-supplier-network": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "energy-transition-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "generation_transition",
+   "grid_ef_trajectory"
+  ]
+ },
+ "energy-transition-credit-portal": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "basel_capital_engine",
+   "generation_transition",
+   "grid_ef_trajectory"
+  ]
+ },
+ "energy-transition-dashboard": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "generation_transition",
+   "grid_ef_trajectory"
+  ]
+ },
+ "energy-transition-lending": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "generation_transition",
+   "grid_ef_trajectory"
+  ]
+ },
+ "engagement-outcome-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "enhanced-geothermal-systems": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "enhanced-weathering-finance": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ensemble-prediction-engine": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "enterprise-climate-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "entity-360": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "epd-lca-database": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "epr-compliance-intelligence": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "equator-principles": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "equitable-earth-methodologies": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-backtesting": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-controversy": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "esg_controversy_engine"
+  ]
+ },
+ "esg-data-quality": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "esg_data_quality_assurance_engine",
+   "esg_data_quality_engine"
+  ]
+ },
+ "esg-factor-alpha": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-factor-attribution": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-governance-scorer": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-integration-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-momentum-scanner": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-narrative-intelligence": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-portfolio-optimizer": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-ratings-comparator": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "esg_ratings_engine"
+  ]
+ },
+ "esg-ratings-hub": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 3,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "esg_ratings_engine"
+  ]
+ },
+ "esg-ratings-uplift": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 3,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "esg_ratings_engine"
+  ]
+ },
+ "esg-report-parser": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-screener": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-time-series-forecaster": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esg-value-chain": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esms": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "esrs-datapoint-navigator": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "et-commodity-risk": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "etl-pipeline": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "eu-compliance-cockpit": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "eu-taxonomy": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "eu_taxonomy_engine"
+  ]
+ },
+ "eu-taxonomy-engine": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 3,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "eu_taxonomy_engine"
+  ]
+ },
+ "eudr-engine": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eudr_engine"
+  ]
+ },
+ "ev-fleet-finance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ev-transition-finance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ev-v2g-grid-integration": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "exchange-intelligence": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "executive-pay-analytics": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "export-credit-esg": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "export_credit_esg_engine"
+  ]
+ },
+ "facility-emissions-attribution": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-client-portfolio-analyzer": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-concentration-monitor": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-instrument-exposure": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-line-of-business": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-net-zero-pathways": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-regulatory-capital-overlay": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-taxonomy-pcaf-bridge": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fi-transition-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fiduciary-climate-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "financed-emissions-attributor": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "financial-flow": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "financial-modeling-studio": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 17,
+  "tier": "A",
+  "engines": []
+ },
+ "fisheries-climate-risk": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fixed-income-esg": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "floating-offshore-wind": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "floating-solar-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "flood-loss-calibrator": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "flood-resilience-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "food-supply-chain-emissions": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "food-system-transition": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "food_system_engine"
+  ]
+ },
+ "forced-labour-msv2": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "forced_labour_engine"
+  ]
+ },
+ "forestry-timber-finance": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fossil-fuel-worker-transition": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "framework-interop": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "frontier-market-climate": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "fund-of-funds": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "gas-network-decarbonisation": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geo-transition-nexus": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geopolitical-ai-gov": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geopolitical-dashboard": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geopolitical-esg-hub": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geopolitical-risk-index": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "geothermal-direct-use": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "geothermal-lcoe-economics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "geothermal-market-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "geothermal-power-markets": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "geothermal-project-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": []
+ },
+ "gfanz-sector-pathways": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "global-disclosure-tracker": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "global-taxonomy-interop-v2": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "governance-hub": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-ammonia-country-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-ammonia-offtake-markets": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-ammonia-policy-credits": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-ammonia-production-economics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-ammonia-shipping-storage": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-asset-ratio": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-bond-portfolio-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 2,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": []
+ },
+ "green-bond-portfolio-optimizer": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 2,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": []
+ },
+ "green-bond-pricing-desk": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 2,
+  "blast_radius": 5,
+  "tier": "A",
+  "engines": []
+ },
+ "green-building-cert": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-building-certification": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-building-certification-finance": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-building-code-finance": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-building-valuation": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-cement-concrete-finance": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-central-banking": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-chemistry-finance": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-debt-structuring": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-hydrogen": {
+  "sector": "Energy & Power",
+  "strategic_signal": 4,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "green_hydrogen_engine"
+  ]
+ },
+ "green-hydrogen-ammonia-carbon": {
+  "sector": "Energy & Power",
+  "strategic_signal": 4,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "green_hydrogen_engine"
+  ]
+ },
+ "green-hydrogen-economics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 4,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "green_hydrogen_engine"
+  ]
+ },
+ "green-hydrogen-lcoh": {
+  "sector": "Energy & Power",
+  "strategic_signal": 4,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "green_hydrogen_engine"
+  ]
+ },
+ "green-jobs-growth": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-jobs-pipeline-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-loan-framework": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-mortgage-retrofit-finance": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-procurement-intelligence": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-securitisation": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "green_securitisation_engine"
+  ]
+ },
+ "green-securitization": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-steel-lcop-engine": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "green-taxonomy-navigator": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "greenium-signal": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "greenwashing-detection": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 4,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "greenwashing_engine"
+  ]
+ },
+ "greenwashing-detector": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 4,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "greenwashing_engine"
+  ]
+ },
+ "greenwashing-exposure-monitor": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 4,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "greenwashing_engine"
+  ]
+ },
+ "gresb-real-assets-esg": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "gresb-scoring": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "gri-alignment": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "grid-carbon-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": []
+ },
+ "grid-flexibility-markets": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "grid-stability-transition": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "hard-to-abate-transition": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "health-adaptation-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "heat-adaptation-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "heat-mortality-risk": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "heat-stress-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "holdings-deep-dive": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "human-rights-dd": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "human-rights-risk": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "hybrid-project-workbench": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": []
+ },
+ "hydrogen-derivatives-comparison": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 4,
+  "tier": "A",
+  "engines": [
+   "hydrogen_economy_engine"
+  ]
+ },
+ "hydrogen-economy-modeler": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 4,
+  "tier": "A",
+  "engines": [
+   "hydrogen_economy_engine"
+  ]
+ },
+ "hydrogen-market-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 4,
+  "tier": "A",
+  "engines": [
+   "hydrogen_economy_engine"
+  ]
+ },
+ "hydrogen-project-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 4,
+  "tier": "A",
+  "engines": [
+   "hydrogen_economy_engine"
+  ]
+ },
+ "hydrogen-storage-transport": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 4,
+  "tier": "A",
+  "engines": [
+   "hydrogen_economy_engine"
+  ]
+ },
+ "impact-attribution": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "impact-bond-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "impact-hub": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "impact-measurement-hub": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "impact-verification": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "impact-weighted-accounts": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "implied-temp-regression": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "india-ccts": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "india-green-infra-finance": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "indigenous-rights-fpic": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "industrial-ccs": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "industrial-electrification-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "industrial-hydrogen-integration": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infra-debt-portfolio-manager": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 2,
+  "blast_radius": 13,
+  "tier": "A",
+  "engines": []
+ },
+ "infra-esg-dd": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infrastructure-climate-resilience": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infrastructure-debt-utility-bonds": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infrastructure-esg": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infrastructure-resilience-scorer": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "infrastructure-valuation": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "insurance-climate-hub": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 4,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": [
+   "insurance_climate_risk"
+  ]
+ },
+ "insurance-portfolio-climate": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 4,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": [
+   "insurance_climate_risk"
+  ]
+ },
+ "insurance-protection-gap": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 4,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": [
+   "insurance_climate_risk"
+  ]
+ },
+ "insurance-transition": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 4,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": [
+   "insurance_climate_risk"
+  ]
+ },
+ "integrated-carbon-emissions": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "internal-carbon-price": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "internal_carbon_price_engine"
+  ]
+ },
+ "invoice-parser": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "iot-emissions-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "iris-metrics": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "issb-disclosure": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "issb-materiality": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "issb-tcfd": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "jetp-analytics": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "just-transition": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 48,
+  "tier": "A",
+  "engines": [
+   "just_transition_engine"
+  ]
+ },
+ "just-transition-adaptation": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 48,
+  "tier": "A",
+  "engines": [
+   "just_transition_engine"
+  ]
+ },
+ "just-transition-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 48,
+  "tier": "A",
+  "engines": [
+   "just_transition_engine"
+  ]
+ },
+ "just-transition-finance-hub": {
+  "sector": "Energy & Power",
+  "strategic_signal": 4,
+  "blast_radius": 48,
+  "tier": "A",
+  "engines": [
+   "just_transition_engine"
+  ]
+ },
+ "just-transition-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 3,
+  "blast_radius": 48,
+  "tier": "A",
+  "engines": [
+   "just_transition_engine"
+  ]
+ },
+ "land-use-carbon": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "land-use-change-finance": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "land-use-deforestation": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "latam-transition-engine": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ldes-investment": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "lifecycle-assessment": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "live-carbon-price-monitor": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "live-feed-manager": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "living-wage": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "living-wage-tracker": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "llm-esg-extractor": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "loss-and-damage-finance": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "loss-damage": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "loss_damage_engine",
+   "loss_damage_finance_engine"
+  ]
+ },
+ "lp-reporting": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "macro-esg-intelligence": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "macro-transition": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "marine-blue-carbon-finance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "maritime-imo-compliance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "maritime_engine"
+  ]
+ },
+ "materiality-hub": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "materiality-scenarios": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "materiality-trends": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "maturity-wall-monitor": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 14,
+  "tier": "A",
+  "engines": []
+ },
+ "mdb-climate-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "mdb-climate-finance-dh": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "mdb-sub-sovereign-lending": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "mental-health-climate-risk": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "metrics-data-architecture": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ml-feature-engineering": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ml-governance-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ml-risk-scorer": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ml-taxonomy-scoring": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "model-governance": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "modern-slavery-intel": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "modern_slavery_engine"
+  ]
+ },
+ "module-navigator": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "monte-carlo-climate": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "monte_carlo_engine"
+  ]
+ },
+ "monte-carlo-uncertainty-engine": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "monte_carlo_engine"
+  ]
+ },
+ "monte-carlo-var": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 4,
+  "blast_radius": 9,
+  "tier": "A",
+  "engines": [
+   "monte_carlo_engine"
+  ]
+ },
+ "multi-dim-transition-scorer": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "multi-factor-integration": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "multi-standard-compliance": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "multi-tenancy-audit": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "municipal-climate-resilience-hub": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "municipal-green-bond": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "municipal-green-bond-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "narrative-intelligence": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "natcat-loss-engine": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nature-based-adaptation": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nature-based-solutions-finance": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "nature_based_solutions_engine"
+  ]
+ },
+ "nature-capital-accounting": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "nature_capital_accounting_engine"
+  ]
+ },
+ "nature-hub": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nature-loss-risk": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nature-scenarios": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nbs-finance": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "nbs_finance_engine"
+  ]
+ },
+ "ndc-alignment-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "negative-emissions-tech": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "net-zero-commitment-tracker": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "net-zero-credibility-index": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "net-zero-portfolio-alignment": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "net-zero-portfolio-builder": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ngfs-iea-scenario": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ngfs-scenarios": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 2,
+  "blast_radius": 57,
+  "tier": "A",
+  "engines": [
+   "ngfs_seeder"
+  ]
+ },
+ "nlp-disclosure-parser": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nuclear-decommissioning": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nuclear-fuel-cycle": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nuclear-lcoe-economics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nuclear-market-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "nuclear-smr-viability": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ocean-carbon-credit-market": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ocean-cdr-finance": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ocean-health-finance": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ocean-marine-risk": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offset-permanence-risk": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offset-portfolio-tracker": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offshore-grid-infrastructure": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offshore-wind-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offshore-wind-om": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "offshore-wind-resource": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "owid-evic-analytics": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pandemic-climate-finance": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pandemic-climate-nexus": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "parametric-insurance": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "paris-alignment": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pc-climate-pricing": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pcaf-financed-emissions": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pcaf-india-brsr": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pcaf-universal-attributor": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pe-deal-pipeline": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pe-esg-diligence": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pe-vc-esg": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "peer-clustering-segmentation": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "peer-transition-benchmarker": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pf-credit-rating-engine": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": []
+ },
+ "physical-hazard-map": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "physical_hazard_engine"
+  ]
+ },
+ "physical-risk-early-warning": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "physical-risk-portfolio": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "physical-risk-pricing": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "physical_risk_pricing_engine"
+  ]
+ },
+ "physical-transition-nexus": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "pipeline-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "plastic-credits-epr-finance": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "plastics-pollution-finance": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "platform-analytics": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 2,
+  "blast_radius": 6,
+  "tier": "A",
+  "engines": []
+ },
+ "platform-settings": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "policy-regulatory-impact": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "polysilicon-wafer-supply-chain": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "port-climate-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "portfolio-climate-pulse": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-climate-var": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 4,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-manager": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-optimizer": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-stress-test-drilldown": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-suite": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 4,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-temperature-score": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "portfolio-transition-alignment": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 66,
+  "tier": "A",
+  "engines": [
+   "portfolio_analytics_engine",
+   "portfolio_analytics_engine_v2"
+  ]
+ },
+ "power-grid-transmission-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "power-to-x-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ppa-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ppa-revenue-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ppa-structuring-desk": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": []
+ },
+ "ppa-xva-engine": {
+  "sector": "Energy & Power",
+  "strategic_signal": 1,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "ppa_risk_scorer",
+   "renewable_project_engine"
+  ]
+ },
+ "predictive-analytics-hub": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "predictive-esg": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "private-assets-transition": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "private-credit": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "private-credit-climate": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "private-markets-esg-hub": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "private-markets-hub": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "procurement-climate-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "product-anatomy": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "product-carbon-handprint": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "project-finance-debt-sizer": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 3,
+  "blast_radius": 42,
+  "tier": "A",
+  "engines": [
+   "project_finance_engine"
+  ]
+ },
+ "property-physical-risk": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "proxy-voting-climate": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "proxy-voting-intel": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "quant-dashboard": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "quant-esg-hub": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "quantitative-nlp-research": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ratings-methodology-decoder": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "ratings-migration-momentum": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "rbi-climate-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "re-climate-stress-test": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "re-portfolio-dashboard": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 4,
+  "blast_radius": 15,
+  "tier": "A",
+  "engines": [
+   "re_portfolio_engine"
+  ]
+ },
+ "real-assets-climate": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "real-estate-carbon-analytics": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 2,
+  "blast_radius": 58,
+  "tier": "A",
+  "engines": [
+   "real_estate_carbon_analytics_engine"
+  ]
+ },
+ "real-estate-climate-risk": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "real-estate-esg-hub": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "real-estate-valuation": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 2,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "real_estate_db_service",
+   "real_estate_valuation_engine"
+  ]
+ },
+ "real-time-emissions-monitor": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "recycled-content-markets": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "reference-data-explorer": {
+  "sector": "Energy & Power",
+  "strategic_signal": 2,
+  "blast_radius": 58,
+  "tier": "A",
+  "engines": []
+ },
+ "regenerative-agriculture": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regional-carbon-market-hub": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regional-climate-impact": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regional-economic-impact": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulated-utility-rate-case": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-calendar": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "regulatory_obligation_calendar"
+  ]
+ },
+ "regulatory-capital": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "regulatory_capital_optimizer_engine"
+  ]
+ },
+ "regulatory-change-radar": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-deadline-tracker": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-enforcement-monitor": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-gap": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-horizon": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "regulatory_horizon_engine"
+  ]
+ },
+ "regulatory-stress-submission": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "regulatory-submission": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "reinsurance-climate": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "renewable-asset-management": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "renewable-lca-epd": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "renewable-ml-forecasting": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "renewable-portfolio-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "renewable-project-pipeline": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "report-generator": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "report-quality-engine": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "reporting-hub": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "pe_impact_framework",
+   "pe_irr_sensitivity",
+   "pe_reporting_engine"
+  ]
+ },
+ "residential-re-assessment": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "residential_re_engine"
+  ]
+ },
+ "resilience-bond-analytics": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "resource-efficiency-analytics": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "risk-attribution": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "saf-carbon-credits": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "saf-feedstock-supply-chain": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "saf-lcof-engine": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "saf-policy-mandate": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "saf-project-finance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sanctions-climate-finance": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 6,
+  "tier": "A",
+  "engines": []
+ },
+ "sanctions-screening-desk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 3,
+  "blast_radius": 6,
+  "tier": "A",
+  "engines": []
+ },
+ "sanctions-trade-monitor": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 6,
+  "tier": "A",
+  "engines": []
+ },
+ "sanctions-watchlist": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 6,
+  "tier": "A",
+  "engines": []
+ },
+ "satellite-climate-monitor": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sbti-climate-trace": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sbti-credibility-scorer": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sbti-target-setter": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "scenario-blending-optimizer": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "scenario-conditional-prediction": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "scenario-dashboard-builder": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "scenario-stress-test": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "scheduled-reports": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "scheduled_reports_service"
+  ]
+ },
+ "scope3-category-analytics": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "scope3_analytics_engine"
+  ]
+ },
+ "scope3-engine": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "scope3_analytics_engine"
+  ]
+ },
+ "scope3-materiality-engine": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "scope3_analytics_engine"
+  ]
+ },
+ "scope3-upstream-tracker": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": [
+   "scope3_analytics_engine"
+  ]
+ },
+ "scope4-avoided-emissions": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sdg-alignment-engine": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sdg-bond-impact": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sec-climate-disclosure": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "sec_climate_engine"
+  ]
+ },
+ "sec-climate-rule": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "sec_climate_engine"
+  ]
+ },
+ "sector-benchmarking": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sector-peer-benchmarking-engine": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sector-sustainability-benchmark": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sector-transition-scorecard": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sentiment-alpha-engine": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "sentiment_analysis_engine"
+  ]
+ },
+ "sentiment-analysis": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "sentiment_analysis_engine"
+  ]
+ },
+ "sentiment-pipeline": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "sentiment_analysis_engine"
+  ]
+ },
+ "sfdr-art9": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "sfdr_art9_engine"
+  ]
+ },
+ "sfdr-classification": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sfdr-pai": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "sfdr_pai_engine"
+  ]
+ },
+ "sfdr-pai-dashboard": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "sfdr_pai_engine"
+  ]
+ },
+ "sfdr-v2-reporting": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "shareholder-activism": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "shareholder-climate-engagement": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "shareholder-resolution-analyzer": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "shipping-decarbonisation": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "shipping-decarbonization-finance": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "site-biodiversity-screener": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "slb-structurer": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 10,
+  "tier": "A",
+  "engines": []
+ },
+ "sll-slb-v2": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 46,
+  "tier": "A",
+  "engines": [
+   "sll_slb_v2_engine"
+  ]
+ },
+ "smart-city-climate-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "smr-project-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "social-alternative-data": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "social-bond": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "social_bond_engine"
+  ]
+ },
+ "social-hub": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "social-impact": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "social-license-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "social-taxonomy": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "social_taxonomy_engine"
+  ]
+ },
+ "solar-cell-technology-analyzer": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-developer-carbon-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-manufacturer-carbon-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-manufacturing-carbon-lca": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-module-manufacturing-economics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-module-quality-bankability": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-plus-storage-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-project-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-repowering-analytics": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-resource-performance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solar-trade-policy-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "solvency-capital-climate": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-climate-intelligence": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-climate-risk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "sovereign_climate_risk_engine"
+  ]
+ },
+ "sovereign-corporate-bridge": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "pcaf_sovereign_engine",
+   "sovereign_climate_risk_engine"
+  ]
+ },
+ "sovereign-debt-sustainability": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-esg": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-esg-hub": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-esg-scorer": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-green-bond-analytics": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-hub": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-nature-risk": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-physical-risk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-social-index": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sovereign-swf": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 2,
+  "blast_radius": 46,
+  "tier": "A",
+  "engines": [
+   "sovereign_swf_engine"
+  ]
+ },
+ "spending-carbon": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sscf": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sscf_engine"
+  ]
+ },
+ "stakeholder-impact": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stewardship-report-generator": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "stewardship_engine"
+  ]
+ },
+ "stewardship-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "stewardship_engine"
+  ]
+ },
+ "stochastic-scenarios": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stranded-asset-analyzer": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stranded-asset-litigation-tracker": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stranded-asset-watchlist": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stranded-assets": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 2,
+  "blast_radius": 62,
+  "tier": "A",
+  "engines": [
+   "stranded_asset_calculator",
+   "stranded_asset_db_service"
+  ]
+ },
+ "stranded-recovery-pathways": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "stress-test-orchestrator": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 2,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "stress_test_orchestrator_engine"
+  ]
+ },
+ "structured-credit-climate": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "supervisory-scenario-runner": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "supervisory-stress-orchestrator": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "supplier-engagement": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "supplier-esg-scorecard": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "supply-chain-carbon": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-contagion": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-emissions-mapper": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-esg-hub": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 3,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-labor-climate": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-map": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-network-viz": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "supply-chain-resilience": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 2,
+  "blast_radius": 87,
+  "tier": "A",
+  "engines": []
+ },
+ "sustainability-linked-finance": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 37,
+  "tier": "A",
+  "engines": [
+   "sustainability_calculator"
+  ]
+ },
+ "sustainability-linked-instruments": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 37,
+  "tier": "A",
+  "engines": [
+   "sustainability_calculator"
+  ]
+ },
+ "sustainability-report-builder": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 37,
+  "tier": "A",
+  "engines": [
+   "sustainability_calculator"
+  ]
+ },
+ "sustainable-agriculture-investment": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sustainable-aviation-fuel": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "sustainable-transport-hub": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "systemic-climate-risk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "systemic-esg-risk": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tail-risk-analyzer": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "target-vs-action-tracker": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tax-equity-transferability": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 2,
+  "blast_radius": 3,
+  "tier": "A",
+  "engines": []
+ },
+ "taxonomy-hub": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "taxonomy-ml-classifier": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "taxonomy-risk-report": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tcfd-physical-risk-assessment": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tech-displacement-modeler": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tech-disruption-watchlist": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "technology-risk": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "technology_risk_engine"
+  ]
+ },
+ "temperature-alignment": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "temperature_alignment_engine"
+  ]
+ },
+ "temperature-alignment-waterfall": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "temperature_alignment_engine"
+  ]
+ },
+ "template-manager": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tenant-engagement-esg": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "theory-of-change": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tnfd-biodiversity-baseline": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "tnfd-leap": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "tnfd_leap_engine"
+  ]
+ },
+ "trade-carbon-policy": {
+  "sector": "Commodities & Trade Intelligence",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-alpha-signal-generator": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-bond-credibility": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-credibility": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-finance": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "transition_finance_engine"
+  ]
+ },
+ "transition-finance-engine": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 3,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "transition_finance_engine"
+  ]
+ },
+ "transition-finance-screener": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 3,
+  "blast_radius": 44,
+  "tier": "A",
+  "engines": [
+   "transition_finance_engine"
+  ]
+ },
+ "transition-plan-builder": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "transition_plan_engine"
+  ]
+ },
+ "transition-planning-hub": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "transition_plan_engine"
+  ]
+ },
+ "transition-reg-reporting": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-risk-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-risk-dcf": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-risk-heatmap": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-risk-taxonomy-browser": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transition-scenario-modeller": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "transport-decarbonisation": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "treasury-climate-risk": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "uk-sdr": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "uk_sdr_engine"
+  ]
+ },
+ "underwriting-esg": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "undp-blended-finance": {
+  "sector": "Climate & Blended Finance Instruments",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "universal-entity-comparator": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "urban-climate-adaptation": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "urban-mobility-transition": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "user-role-management": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "utility-physical-climate-resilience": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "utility-solar-epc-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "value-chain-dashboard": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "vc-impact": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "vcm-cross-registry-tracker": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 2,
+  "blast_radius": 8,
+  "tier": "A",
+  "engines": []
+ },
+ "vcm-integrity": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "vcm_integrity_engine"
+  ]
+ },
+ "vcm-registry-analytics": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 2,
+  "blast_radius": 8,
+  "tier": "A",
+  "engines": []
+ },
+ "vintage-cohort-stranded": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "virtual-power-plant": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "waste-to-energy-biogas-finance": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "waste-to-energy-finance": {
+  "sector": "Circular Economy & Resource Efficiency",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "water-agriculture-risk": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "water-food-energy-nexus": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "water-risk": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "water_risk_engine",
+   "water_stewardship_engine"
+  ]
+ },
+ "water-risk-analytics": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "water_risk_engine",
+   "water_stewardship_engine"
+  ]
+ },
+ "water-stress": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "water-wastewater-utility-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "wellbeing-adjusted-returns": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "wind-energy-finance": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "wind-repowering-intelligence": {
+  "sector": "Energy & Power",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "worker-heat-stress": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "workforce-transition-tracker": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "workplace-health-safety": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "xbrl-climate-taxonomy": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "xbrl-export-wizard": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "xbrl_export_engine",
+   "xbrl_ingestion_engine"
+  ]
+ },
+ "xbrl-ingestion": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "yieldco-dropdown-analyzer": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 0,
+  "blast_radius": 0,
+  "tier": "B",
+  "engines": []
+ },
+ "api::ai_risk": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "ai_risk_engine"
+  ]
+ },
+ "api::am": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "am_engine"
+  ]
+ },
+ "api::analysis": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "custom_scenario_builder",
+   "impact_calculator",
+   "portfolio_upload",
+   "report_generator",
+   "scenario_comparison_service"
+  ]
+ },
+ "api::analyst_portfolios": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::asia_regulatory": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "asia_regulatory_engine",
+   "cbi_data_client"
+  ]
+ },
+ "api::attribution_benchmark": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "benchmark_analytics",
+   "esg_attribution_engine"
+  ]
+ },
+ "api::audit_log": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::aviation_climate": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "aviation_climate_engine"
+  ]
+ },
+ "api::banking_risk": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "banking_risk_engine"
+  ]
+ },
+ "api::basel3_liquidity": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "basel3_liquidity_engine"
+  ]
+ },
+ "api::biodiversity_finance": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "biodiversity_finance_engine"
+  ]
+ },
+ "api::biodiversity_finance_v2": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "biodiversity_finance_v2_engine"
+  ]
+ },
+ "api::blue_economy": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "blue_economy_engine"
+  ]
+ },
+ "api::ca100": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::carbon_markets_intel": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "carbon_markets_intel_engine"
+  ]
+ },
+ "api::carbon_prices": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::cbam": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "cbam_calculator",
+   "cbam_service"
+  ]
+ },
+ "api::cdm_tools": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "activity_guide_catalog",
+   "cdm_tools_engine"
+  ]
+ },
+ "api::cdp_scoring": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "cdp_scoring_engine"
+  ]
+ },
+ "api::cdr": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "cdr_engine"
+  ]
+ },
+ "api::china_trade": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "china_trade_engine"
+  ]
+ },
+ "api::climate_mrv": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "climate_mrv_engine"
+  ]
+ },
+ "api::climate_trace": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::counterparties": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::country_risk": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::csrd_reports": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::dashboard_analytics": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::data_hub_catalog": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::data_intake": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::data_preview": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::disclosure_trends": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "disclosure_completeness",
+   "trend_analytics"
+  ]
+ },
+ "api::dme_dmi": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_dmi_engine"
+  ]
+ },
+ "api::dme_factor_registry": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_factor_registry"
+  ]
+ },
+ "api::dme_greenwashing": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_greenwashing_engine"
+  ]
+ },
+ "api::dme_policy_tracker": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_policy_tracker_engine"
+  ]
+ },
+ "api::dme_velocity": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "dme_velocity_engine"
+  ]
+ },
+ "api::ead": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "ead_calculator"
+  ]
+ },
+ "api::eba_pillar3": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eba_pillar3_engine"
+  ]
+ },
+ "api::ecl_climate": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::ecl_gar_pillar3": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "ecl_gar_pillar3_orchestrator"
+  ]
+ },
+ "api::eiopa_stress": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eiopa_stress_engine"
+  ]
+ },
+ "api::emissions_data": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::energy_data": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::energy_emissions": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "csrd_auto_populate",
+   "methane_ogmp",
+   "scope3_cat11"
+  ]
+ },
+ "api::entity360": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "entity360_engine",
+   "entity_resolution_service"
+  ]
+ },
+ "api::entity_data": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "csrd_entity_service"
+  ]
+ },
+ "api::entity_resolution": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "entity_resolution_service"
+  ]
+ },
+ "api::epc_retrofit": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "epc_transition_engine",
+   "retrofit_planner"
+  ]
+ },
+ "api::esg_ma": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "esg_ma_engine"
+  ]
+ },
+ "api::esma_fund_names": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "esma_fund_names_engine"
+  ]
+ },
+ "api::esrs_e2_e5": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "esrs_e2_e5_engine"
+  ]
+ },
+ "api::eu_ets": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eu_ets_engine"
+  ]
+ },
+ "api::eu_gbs": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eu_gbs_engine"
+  ]
+ },
+ "api::eu_taxonomy_gar": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "eu_taxonomy_gar_engine"
+  ]
+ },
+ "api::exports": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::facilitated_emissions": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "facilitated_emissions_engine"
+  ]
+ },
+ "api::factor_overlays": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "factor_overlay_engine"
+  ]
+ },
+ "api::financial_data": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::fund_management": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "fund_structure_engine"
+  ]
+ },
+ "api::gar": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "counterparty_climate_scorer",
+   "gar_calculator",
+   "gar_db_service"
+  ]
+ },
+ "api::gbif_screening": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::gdelt_controversy": {
+  "sector": "ESG Data, Ratings & Analytics",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::glidepath": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "data_hub_client",
+   "pcaf_time_series_engine"
+  ]
+ },
+ "api::glidepath_serve": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::green_premium_tenant": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "green_premium_engine",
+   "tenant_esg_tracker"
+  ]
+ },
+ "api::gri_standards": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "gri_standards_engine"
+  ]
+ },
+ "api::health_climate": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "health_climate_engine"
+  ]
+ },
+ "api::ifrs_s1": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "ifrs_s1_engine"
+  ]
+ },
+ "api::infrastructure_finance": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "infrastructure_finance_engine"
+  ]
+ },
+ "api::ingestion": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::insurance_risk": {
+  "sector": "Insurance & Catastrophe Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "insurance_risk_engine"
+  ]
+ },
+ "api::iorp_pension": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "iorp_pension_engine"
+  ]
+ },
+ "api::irena_five_pillars": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::issb_s2": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "issb_s2_engine"
+  ]
+ },
+ "api::lgd_vintage": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "lgd_downturn_engine",
+   "vintage_analyzer"
+  ]
+ },
+ "api::mas_regulatory": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::methane_fugitive": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "methane_fugitive_engine"
+  ]
+ },
+ "api::mifid_spt": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "mifid_spt_engine"
+  ]
+ },
+ "api::mining": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "mining_risk_calculator"
+  ]
+ },
+ "api::model_validation": {
+  "sector": "AI, ML & Data Platform Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "model_validation_framework"
+  ]
+ },
+ "api::mrv": {
+  "sector": "Carbon Markets & Credits",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "mrv_engine"
+  ]
+ },
+ "api::nature_capital": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "nature_capital_engine"
+  ]
+ },
+ "api::nature_data": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::nature_re_integration": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "nature_re_integration_engine"
+  ]
+ },
+ "api::nature_risk": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "nature_risk_calculator",
+   "nature_risk_seed_data",
+   "nature_risk_spatial"
+  ]
+ },
+ "api::net_zero_targets": {
+  "sector": "Generic AI / Anomaly & Reporting Tooling",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "net_zero_targets_engine"
+  ]
+ },
+ "api::ngfs_scenarios_extract": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::openfema_claims": {
+  "sector": "Cross-Cutting / Other",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::organisations": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "demo_portfolio_seeder"
+  ]
+ },
+ "api::parameter_governance": {
+  "sector": "Governance, Social & Human Capital",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::pcaf_asset_classes": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::pcaf_ecl_bridge": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "pcaf_ecl_bridge"
+  ]
+ },
+ "api::pcaf_quality": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "pcaf_quality_engine"
+  ]
+ },
+ "api::pcaf_regulatory": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::pe_deals": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "pe_db_service",
+   "pe_deal_engine"
+  ]
+ },
+ "api::pe_portfolio": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "pe_db_service",
+   "pe_portfolio_monitor",
+   "pe_value_creation"
+  ]
+ },
+ "api::peer_benchmark": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 2,
+  "blast_radius": 1,
+  "tier": "A",
+  "engines": [
+   "peer_benchmark_engine"
+  ]
+ },
+ "api::portfolio_health": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "alert_engine",
+   "portfolio_health_engine"
+  ]
+ },
+ "api::portfolio_pg": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::portfolio_reporting": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::priips_kid": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "priips_kid_engine"
+  ]
+ },
+ "api::prudential_climate_risk": {
+  "sector": "Prudential Banking & Insurance Regulation",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "prudential_climate_risk_engine"
+  ]
+ },
+ "api::public_reference_data": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::rbac_admin": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "email_service"
+  ]
+ },
+ "api::re_clvar": {
+  "sector": "Real Estate & Built Environment",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "crrem_stranding_engine",
+   "re_clvar_engine"
+  ]
+ },
+ "api::real_asset_decarb": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "real_asset_decarb_engine"
+  ]
+ },
+ "api::reference_catalog": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "reference_data_catalog"
+  ]
+ },
+ "api::regulatory_penalties": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "regulatory_penalties_engine"
+  ]
+ },
+ "api::regulatory_reports": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "regulatory_report_compiler"
+  ]
+ },
+ "api::rics_esg": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "rics_esg_engine"
+  ]
+ },
+ "api::sasb_industry": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sasb_industry_engine"
+  ]
+ },
+ "api::sat_coal_checker": {
+  "sector": "Platform Operations & Admin",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::scenario_analysis": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "scenario_analysis_engine"
+  ]
+ },
+ "api::scenario_builder_v2": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "builder_engine"
+  ]
+ },
+ "api::scenario_data": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::scenarios": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "ngfs_sync_service",
+   "scenario_builder_service",
+   "scenario_impact_service"
+  ]
+ },
+ "api::scope3_categories": {
+  "sector": "PCAF, Financed Emissions & Carbon Accounting",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "scope3_categories_engine"
+  ]
+ },
+ "api::sector_assessments": {
+  "sector": "Energy & Power",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::sector_calculators": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "shipping_calculator",
+   "steel_calculator"
+  ]
+ },
+ "api::sfdr_annex": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sfdr_annex_engine"
+  ]
+ },
+ "api::sfdr_exclusion": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "exclusion_list_engine",
+   "sfdr_report_generator"
+  ]
+ },
+ "api::sfdr_product_reporting": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sfdr_product_reporting_engine"
+  ]
+ },
+ "api::shipping_maritime": {
+  "sector": "Transport & Mobility",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "shipping_maritime_engine"
+  ]
+ },
+ "api::sl_finance": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sl_finance_engine"
+  ]
+ },
+ "api::sovereign_debt_climate": {
+  "sector": "Sovereign, Macro & Systemic Risk",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sovereign_debt_climate_engine"
+  ]
+ },
+ "api::spatial": {
+  "sector": "Agriculture, Food & Land Use",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "api::spatial_hazard": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "spatial_hazard_service"
+  ]
+ },
+ "api::stress_testing": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "pd_backtester",
+   "stress_test_runner"
+  ]
+ },
+ "api::sub_parameter": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "analysis_export",
+   "sub_parameter_engine"
+  ]
+ },
+ "api::supply_chain_workflow": {
+  "sector": "Industrials & Heavy Manufacturing",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "supply_chain_workflow_engine"
+  ]
+ },
+ "api::sustainable_trade_finance": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "sustainable_trade_finance_engine"
+  ]
+ },
+ "api::tcfd_metrics": {
+  "sector": "Regulatory & Disclosure Infrastructure",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "tcfd_metrics_engine"
+  ]
+ },
+ "api::tnfd_assessment": {
+  "sector": "Nature & Biodiversity",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "tnfd_assessment_engine"
+  ]
+ },
+ "api::tpt_transition_plan": {
+  "sector": "Corporate Climate Strategy & Intelligence Hubs",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "tpt_transition_plan_engine"
+  ]
+ },
+ "api::trade_finance_esg": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "trade_finance_engine"
+  ]
+ },
+ "api::unified_valuation": {
+  "sector": "Financial Services & Capital Markets",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "unified_valuation_engine"
+  ]
+ },
+ "api::universal_exports": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 3,
+  "blast_radius": 2,
+  "tier": "A",
+  "engines": [
+   "export_service",
+   "portfolio_analytics_engine",
+   "sustainability_calculator"
+  ]
+ },
+ "api::uploads": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "upload_service",
+   "validation_service"
+  ]
+ },
+ "api::validation_summary": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "validation_summary_engine"
+  ]
+ },
+ "api::violations": {
+  "sector": "Entity, Counterparty & Reference Data Services",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": []
+ },
+ "global-physical-risk-atlas": {
+  "sector": "Climate Physical & Transition Risk Science",
+  "strategic_signal": 1,
+  "blast_radius": 0,
+  "tier": "A",
+  "engines": [
+   "global_physical_risk_engine"
+  ]
+ }
+}

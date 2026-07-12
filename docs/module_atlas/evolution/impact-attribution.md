@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real-holdings attribution on the platform portfolio spine (analytics ladder: rung 1 → 2)
+
+**What.** The one load-bearing formula here is correct — `attrFactor = outstanding / EVIC` is exact PCAF attribution — but everything it multiplies is fabricated: 100 `genHoldings(100)` synthetic companies with PRNG outstanding, EVIC, jobs, CO₂, lives; real IRIS+ codes carrying random values; and an `impactPerM` composite whose weights (jobs×1, co2×0.01, lives×0.1) §7.5 correctly calls "not a recognised impact-efficiency metric". Evolution A rebuilds on real data: holdings from `portfolios_pg` (the populated portfolio table), EVIC/outstanding from the company master and refdata fundamentals, gross impact metrics from user-supplied or reported company data with honest nulls — and the bespoke composite retired in favour of per-metric attributed intensities (attributed tCO₂e/$M, attributed jobs/$M) reported separately, which is what PCAF-style attribution actually supports.
+
+**How.** (1) A first backend vertical `POST /impact-attribution/attribute` taking a portfolio id, joining holdings to EVIC, returning per-holding attribution factors and attributed metrics with PCAF data-quality tiers. (2) An impact-data intake table (holding × IRIS+ code × period × value × source) so IRIS+ values become entered evidence, not draws. (3) The 12-quarter trend derives from stored periods rather than `sr(i*12+q*17+500)` noise. (4) The scatter/top-20 views re-point to per-metric intensities.
+
+**Prerequisites.** The `genHoldings` PRNG generation removed (this page currently fabricates entire companies, names included); impact-data intake UX or import. Note there is no MODULE_GUIDES entry for this route — writing one is part of the work. **Acceptance:** attribution factors reproducible from stored outstanding/EVIC pairs; holdings without reported impact data show nulls, not numbers.
+
+### 9.2 Evolution B — LP-report drafting copilot with attribution provenance (LLM tier 2)
+
+**What.** The page already sketches its own LLM use case: `REPORT_SECTIONS` lists an 8-section impact report (Executive Summary → IRIS+ Appendix) with a CSV export. Evolution B drafts that report conversationally: "summarise attributed impact for Q4-25", "explain the attribution methodology section for a non-PCAF audience", "which holdings drive attributed CO₂ per dollar?" — every figure pulled from the Evolution A endpoint, every methodology sentence grounded in this Atlas page's §7.1 formulas.
+
+**How.** Tier 2: tool schema over `/impact-attribution/attribute`; the report skeleton follows `REPORT_SECTIONS` with each section's numerics validated against tool output by the no-fabrication checker — impact reporting is precisely the domain where LLM-invented numbers would be greenwashing, so the validator is load-bearing, not decorative. The methodology section must state attribution shares (outstanding/EVIC) and data-quality tiers per holding; the copilot refuses to monetise impact ("total impact value in dollars") because no such model exists in the module. Rendered output composes into the report-studio layer per the roadmap's tier-3 pattern.
+
+**Prerequisites (hard).** Evolution A first — drafting LP reports from the current synthetic holdings would put fabricated impact numbers into investor communications. **Acceptance:** a generated report contains zero numerics absent from logged tool responses; the methodology section correctly describes PCAF attribution and its limits (no additionality claim).

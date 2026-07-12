@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Regional assessments computed by the engine, sourced from ILO data (analytics ladder: rung 2 → 3)
+
+**What.** The page computes honest arithmetic over its 10-region table — `netJobs = green − fossil`, `wageGap`, `jtfGap = need − avail`, a 5-pillar weighted composite per the §5 ILO formula — and it already joins a real reference dataset (`_JT_ILO_MAP` built from `ILO_LABOR_INDICATORS`). But the region rows themselves (fossil/green jobs, wages, reskill cost, JTF need/avail) are authored constants, the pillar scores driving the radar are static, and the shared `just_transition_engine` — whose `assess_ilo_principles` implements exactly this weighted composite with tier thresholds, and whose `model_workforce_transition` computes the same net-jobs/wage-gap/reskilling chain — is never called (all POSTs `skipped` in the sweep). Evolution A: region records move to the shared `COAL_COMMUNITY_PROFILES` orbit with ILO STAT/IRENA sourcing per field; pillar scores and vulnerability come from engine calls; the financing-gap denominator aligns with the JT-finance-hub's single-sourced instrument table so "need vs available" is consistent family-wide.
+
+**How.** (1) The region deep-dive calls `POST /ilo-assessment` and `/workforce-transition` with the sourced inputs; the UI's local diff arithmetic remains as instant feedback, reconciled against engine output. (2) `GREEN_SECTORS` 2030/2040 projections re-anchored to IRENA's published jobs outlook with vintage. (3) Tier labels come from the engine's `_ILO_TIER_THRESHOLDS`/`_JT_RISK_TIERS` constants rather than local bands. (4) Engine changes additive — 5 modules share it, 51-module table blast radius.
+
+**Prerequisites.** Region input sourcing (ILO STAT employment, national wage data); coordination with the JT family's shared-table work. **Acceptance:** the radar renders engine-returned pillar scores; each region field carries a source; the family's JTF gap figures agree; POSTs appear exercised in the lineage sweep.
+
+### 9.2 Evolution B — Regional JT intelligence copilot (LLM tier 2)
+
+**What.** A tool-calling analyst for the module's comparative questions: "rank the 10 regions by residual vulnerability after accounting for available JTF funding", "what does South Asia's wage gap imply for reskilling investment per worker?", "which green sectors absorb displaced coal workers fastest given reskill months?" (the `GREEN_SECTORS` reskill_months × wage_premium fields make this a real matching argument, not vibes). Multi-region what-ifs run `model_workforce_transition` per region and compose the comparison.
+
+**How.** Tool schemas over the just-transition route family (shared with the sibling modules — one tool registry serves five pages); the four reference GETs ground qualitative claims with their `source` fields. Discipline: pillar-weight arithmetic shown when composites are compared (the §5 weights 0.25/0.20/0.30/0.15/0.10 are quoted, not assumed); JTF-gap answers state the need-estimation basis; green-jobs projections cite the IRENA vintage; regions outside the assessed 10 get a scope refusal pointing to the engine's generic assessment path rather than invented figures.
+
+**Prerequisites.** Phase 2 tooling (the engine routes are live today); Evolution A's sourcing for citation-grade answers. **Acceptance:** comparative rankings reproduce from logged engine responses; every wage/jobs figure carries a source or engine-call reference; weight arithmetic visible in composite explanations.

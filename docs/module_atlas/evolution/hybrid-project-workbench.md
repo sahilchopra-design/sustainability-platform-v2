@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Multi-year LP allocator with shape constraints (analytics ladder: rung 2 → 5)
+
+**What.** This is a healthy tier-A composition module: it orchestrates five live engines (solar/wind yield, `POST /ppa-structuring/shape-analysis`, `POST /bess-stacking/stack`, `POST /pf-debt-sizing/size`) and its two pieces of original math — the three-way-`min()` curtailment-to-BESS recovery and the greedy fractional-knapsack offtake allocator — are hand-verified to the cent (§7.3–7.4). Its documented limits are the target: the allocator is Year-1 screening only (never re-run as solar degradation shifts the tranche split), tranches carry pure annual-volume caps with no shape/firmness, wind is held flat, and `BESS_RTE = 0.88` is hardcoded rather than read from the NX2-07 engine. Evolution A upgrades the allocator to a multi-year linear program with optional hourly-shape constraints — genuine rung-5 prescriptive optimisation.
+
+**How.** (1) A small backend route (`hybrid-workbench/allocate`) wrapping `scipy.optimize.linprog`: decision variables = tranche allocation per year (and per season-hour block where a tranche declares a shape requirement, reusing the shape engine's 96-point archetypes); greedy remains the fast screening path and the LP must reduce to it when all caps are annual — that equivalence is the regression test. (2) Re-run allocation per year over the existing degradation-adjusted `model` table. (3) Read RTE from the bess-stacking response instead of the duplicated constant, closing the documented synchronisation dependency. (4) Add wind degradation as a labeled input defaulting to 0 for continuity.
+
+**Prerequisites.** None blocking — all upstream engines exist; §8.5 already flags the greedy-optimality boundary this work crosses. **Acceptance:** LP equals greedy on annual-cap-only cases ($22,445,538 in the §7.4 worked example, pinned in bench_quant); a shape-constrained case produces a documented allocation the greedy cannot.
+
+### 9.2 Evolution B — Hybrid-project desk orchestrator (LLM tier 3)
+
+**What.** The workbench already *is* a manual desk orchestration — a user keys inputs and the page fans out to four modules' engines. Evolution B makes that conversational: "screen a 200 MW solar + 120 MW wind Iberian hybrid with a 250 MW connection, 60% contracted at €52 — is a 40 MW BESS worth it, and how much debt does it carry?" The orchestrator sequences the exact live chain the page uses (yield → shape-analysis → bess-stack → workbench composition → pf-debt-sizing) and returns an engine-sourced memo.
+
+**How.** Tier 3 per the roadmap: routing across the five endpoints via the Atlas interconnection map (this page's §6 documents the ppa-structuring-desk coupling); the workbench's composition formulas (§8.3) become a deterministic tool, not LLM arithmetic. Two guardrails inherit directly from the page's own conventions: the carbon-adjusted CFADS variant is surfaced only with its "not lender-grade cash" label, and a 404 from the debt-sizing route produces the same honest "route not yet deployed" statement rather than a synthesized debt figure. Output composes into the report-studio render layer as an IC-ready screening memo.
+
+**Prerequisites.** Tier-2 tool-calling infrastructure on the four upstream modules; the no-fabrication validator over multi-tool conversations. **Acceptance:** a full screening memo's every figure traces to one of the five engine calls; the shadow-carbon caveat appears verbatim whenever that variant is used.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement true SDI and scenario-conditional VaR over the workbench (analytics ladder: rung 2 → 3)
+
+**What.** §7 rates this an unusually well-grounded tier-A module: a real NGFS Phase IV workbench built on curated (not `sr()`) scenario, carbon-price, and 20-NACE-sector PD-uplift tables, plus real OWID/IEA/EDGAR country emissions, with 9 live backend endpoints (`/compare`, `/{id}/time-series`, `/filter`, etc.). Two documented gaps: the guide's Scenario Divergence Index (`SDI = Σ|Var(A)−Var(B)|/Baseline`) is only approximated as a per-variable spread, not the normalised pairwise difference; and the promised scenario-conditional VaR/expected shortfall is not computed at all.
+
+**How.** (1) Implement SDI properly in `ngfs_v2.py`: normalised pairwise variable differences across the comparison set, returned by `/compare` so the workbench reports a single divergence metric per scenario pair rather than an unnormalised range. (2) Add the missing scenario-conditional VaR/ES: apply each scenario's `SECTOR_PD_UPLIFT` (already in bp per NACE sector) to a portfolio's sector exposures to produce a loss distribution, then VaR/ES — this reuses the sector-PD data the module already curates and connects it to `portfolios_pg`. (3) With 52 modules in blast radius consuming this workbench, expose these as versioned engine outputs so downstream modules inherit the calibration.
+
+**Prerequisites.** Portfolio sector-mapping for the VaR path; regression pinning before any change given the 52-module blast radius (shared scenario data — edits propagate widely); the interpolation logic (`val = ts[prev] + frac·(ts[next]−ts[prev])`, §5) stays as-is. **Acceptance:** SDI matches the §5 normalised formula on a hand-computed scenario pair; scenario-conditional VaR responds to real portfolio sector exposure; downstream consumers see a version stamp.
+
+### 9.2 Evolution B — NGFS scenario-application analyst (LLM tier 2, cross-module hub)
+
+**What.** Given 52 modules depend on this workbench, it is a natural tier-2/tier-3 hub. The analyst answers "apply Disorderly to my energy book and give me scenario-conditional VaR", "compare carbon-price paths across all six scenarios at 2040", "which NACE sectors face the worst PD uplift under Delayed Transition" — executed against the 9 real endpoints (`/compare`, `/{id}/time-series`, `/{id}/parameters`, plus the Evolution-A VaR endpoint).
+
+**How.** Tool schemas from the module's OpenAPI operations (mostly read-only GETs, already Pydantic-typed); system prompt from this Atlas page's §5/§7 and the NGFS Phase IV Technical Documentation named in §5. The analyst narrates real curated scenario data and computed VaR, never invented figures; because this workbench feeds 52 modules, its tool outputs are the grounding other desks' copilots should call (roadmap Tier-3 desk orchestration routes through it). Fabrication validator matches every carbon price, PD-uplift bp, and VaR figure to a tool response; provenance expander cites the NGFS scenario ID and vintage.
+
+**Prerequisites.** Evolution A for the VaR/ES workflow; the compare/time-series GETs already function (lineage sweep shows the extract endpoints `passed`). **Acceptance:** every scenario figure traces to a named endpoint and NGFS vintage; asking for a non-NGFS scenario yields a refusal listing the six canonical scenarios; VaR answers cite the portfolio and scenario applied.

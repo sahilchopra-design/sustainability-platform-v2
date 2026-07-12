@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Physical-quantity monetisation replacing revenue-percentage draws (analytics ladder: rung 1 → 2)
+
+**What.** The IWA accounting skeleton is faithful — the P&L bridge `impactWeightedProfit = opProfit + totalImpact` mirrors Harvard's structure — but §7.5 identifies the substantive gap: monetisation is a synthetic `sr()` percentage of a synthetic revenue (carbon cost = `sr()·revenue·0.08`) rather than the real IWA method of *quantities × coefficients* (tCO₂e × SCC, m³ × water-scarcity value, headcount × living-wage gap), and the 80 companies are PRNG-named. The `impactReturn` uplift (×5 on impact/revenue) has no basis at all. Evolution A implements the §8 spec: `EnvCost = E_CO2e·SCC + Water·WaterValue + …`, `EmployQuality = Σ headcount·max(0, LivingWage − Wage)`, on real issuers.
+
+**How.** (1) Ingest the monetisation coefficient tables §8.3 names into the refdata layer: SCC ($185/tCO₂e Rennert 2022, with the $51–190 US IWG scenario band exposed as a parameter), WRI Aqueduct water-scarcity values, ILO/WageIndicator living wages — the platform's living-wage module family already touches this data. (2) A backend vertical `POST /iwa/compute` taking company physical quantities (scope 1–2 from `GLOBAL_COMPANY_MASTER`; water/waste/wages from an intake path with honest nulls) and returning the full IWA bridge with per-line coefficient citations. (3) Validation per §8.5: cement/steel issuers show deeply negative EP-margin, clean tech positive — rank-correlated against the published HBS IWA dataset. (4) The ad-hoc `impactReturn` uplift deleted.
+
+**Prerequisites.** The `genCompanies(80)` fabrication removed; SCC/living-wage refdata ingestion. **Acceptance:** an IWA P&L decomposes into quantity × cited coefficient per line; switching SCC $51→$185 moves EP-margin deterministically and the SCC used is disclosed in the output.
+
+### 9.2 Evolution B — "True profitability" explainer and SCC-sensitivity analyst (LLM tier 2)
+
+**What.** IWA's central communication problem — explaining to an IC why reported profit of $150M becomes $128M impact-weighted — is a language task over structured arithmetic, ideal for a copilot. Evolution B answers "walk me through this company's IWA bridge", "why is its EP-margin −22%?", "how sensitive is the ranking to the SCC choice?" — with every dollar from the Evolution A endpoint and every methodological claim from this page's §8 spec and the Harvard framework citations.
+
+**How.** Tier 2: tool schema over `/iwa/compute`; SCC-sensitivity questions execute as paired tool calls at $51 and $185 with the delta narrated — operationalising §8.6's instruction to always disclose the SCC and present ranges. The system prompt encodes two discipline rules: (a) contested-coefficient candour — SCC spans 4× across authorities and the copilot says so whenever monetised environmental cost is quoted; (b) data-quality flags — Scope-3 and wage-band gaps surface as coverage caveats per holding, mirroring the honest-nulls convention. Serves the sibling `impact-hub` rollup (which the deep-dive designates as this module's consumer) as the authoritative IWA source.
+
+**Prerequisites (hard).** Evolution A — narrating the current revenue-percentage draws would give fabricated externalities a credible voice. **Acceptance:** every monetised figure traces to a tool call with its coefficient vintage; SCC-sensitivity answers show both scenario results, never a single point.

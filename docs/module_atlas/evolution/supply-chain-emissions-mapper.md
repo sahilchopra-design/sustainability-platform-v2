@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the real 15-category Scope 3 inventory with EXIOBASE factors and WACI (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag documents a comprehensive gap: the guide promises `S3_cat_i = ActivityData × EmissionFactor` across all 15 GHG Protocol categories plus a revenue-weighted `WACI_S3`, but **none exists** — the `CATEGORIES` list is an 8-item business-function taxonomy (not the numbered Scope 3 Categories 1–15), there is no activity × EF calculation, no WACI, and `scope1/scope2/scope3Upstream` are independent `sr()` draws with no relationship to `spendMn` or sector, so implied emission intensity is effectively random. `sbtiCommitted` is even independent of `pathway` (a supplier can be "Business As Usual" and SBTi-committed). Yet the backend has the real assets — `emission_factor_library` (real-db, passing) and `scope3_assessments`/`sbti_targets` tables — while the compute routes fail. Blast radius is 81. Evolution A builds the real inventory.
+
+**How.** (1) Triage the failing `POST /scope3/calculate` and `/sbti-target` routes and seed the empty assessment/target tables. (2) Replace the 8-category business taxonomy with the real 15 GHG Protocol Scope 3 categories and compute `S3_cat_i = ActivityData_i × EF_i` using EXIOBASE/MRIO factors from the `emission_factor_library` — the guide's actual formula. (3) Compute the WACI_S3 revenue-weighted intensity aggregate the guide names as the headline output. (4) Apply PCAF DQ 1–5 scoring from the actual data source used per category (not a random draw). (5) Fix the `sbtiCommitted`/`pathway` inconsistency by deriving commitment from the SBTi target registry.
+
+**Prerequisites.** The two route failures and empty tables are the gate; EXIOBASE factors need loading into the emission-factor library; the 15-category schema. This is a substantial build — the real Scope 3 inventory is essentially absent today. **Acceptance:** the inventory covers all 15 categories via activity × EF; WACI_S3 computes; PCAF DQ reflects the real data source; no supplier is both BAU and SBTi-committed.
+
+### 9.2 Evolution B — Scope 3 disclosure and target-setting analyst (LLM tier 2)
+
+**What.** A tool-calling analyst for the CSRD ESRS E1 / SBTi workflow: "build our 15-category Scope 3 inventory from this activity data", "which categories and suppliers drive 80% of emissions?", "set an SBTi 1.5°C-aligned Scope 3 target with 67% coverage" — calling the compute and SBTi endpoints and the emission-factor library, narrating the category build-up, the PCAF data-quality scores, and the SBTi trajectory, never inventing emission factors.
+
+**How.** Tool schemas from the module's OpenAPI operations (2 POST compute + the real-DB GET routes); grounding = this Atlas record. The inventory build narrates each category's activity × EF with its EXIOBASE/supplier-specific source and PCAF DQ; SBTi answers cite the `calculate_sbti_target` trajectory and coverage threshold. The no-fabrication validator checks every tCO₂e and factor against tool output.
+
+**Prerequisites (hard).** Evolution A — the compute routes fail and there is no real 15-category inventory, so the analyst would narrate random per-supplier draws as if they were an EEIO-computed inventory. **Acceptance:** every category emission traces to an activity × EF tool computation with its EXIOBASE source; the WACI matches the engine; an SBTi target cites the real trajectory and coverage.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real anomaly z-scores over ingested observation series (analytics ladder: rung 1 → 3)
+
+**What.** §7 flags a double fabrication: no z-score/baseline statistics exist despite the guide's `(Current − BaselineMean)/σ` methodology — `thermalAnomaly` is a 30% coin-flip and "baseline" is just 0.8× the asset's own random base value — and real company names (ExxonMobil, Shell, Vale, JBS) are attached to fabricated emissions, leak-rate, and deforestation figures, which §7.5 calls the module's primary misinterpretation risk. The platform's data estate makes an honest version feasible: GWIS fire data already populates the wildfire digital-twin grid, and NASA POWER / Open-Meteo supply per-coordinate meteorological series. Evolution A builds real anomaly detection on those feeds.
+
+**How.** (1) Per monitored asset (user-entered coordinates), maintain observation series from the ingestible sources — fire detections within radius (GWIS/FIRMS), temperature/precipitation (NASA POWER daily), drought proxies (precipitation deficit) — in an `asset_observations` table. (2) Implement the guide's formula properly: rolling baseline mean/σ per asset per indicator (multi-year window), anomaly index as the z-score, flags at documented thresholds — the statistical machinery is a few honest lines once real series exist. (3) Real-name fabrication removed: assets are user-registered locations; no pre-seeded corporate attributions. (4) The reported-vs-satellite emissions comparison (§7.5 notes the form is sound, Climate-TRACE-style) is deferred to `sbti-climate-trace`'s facility-level evolution rather than duplicated here with fake operands.
+
+**Prerequisites.** Ingestion cadence per source (daily FIRMS, daily POWER); baseline-window convention documented. **Acceptance:** an asset's anomaly index recomputes as `(reading − baseline)/σ` verifiably from stored observations; injecting a synthetic heat spike into the test series triggers the flag at the documented threshold; no pre-seeded company names remain.
+
+### 9.2 Evolution B — Alert-triage copilot for portfolio monitoring (LLM tier 2)
+
+**What.** Once anomalies are real, the workflow is triage: "three assets flagged this week — summarize each anomaly (indicator, magnitude, duration, nearby fire detections) and which portfolio exposures they touch", "is the Brazil facility's drought signal a trend or noise?" (answerable from the z-score series and baseline window), "draft the weekly physical-risk monitoring note".
+
+**How.** Tier-2 tool calls over the observation/anomaly endpoints and the portfolio linkage; trend-vs-noise answers quote the statistical context (consecutive periods above threshold, magnitude vs σ) rather than gut feel — the module's own machinery provides the discipline. Monitoring notes render via report studio with per-alert source data (satellite product, observation dates). Guardrails: no causal attribution beyond the data (a thermal anomaly is not "a methane leak" without a measurement that says so); indicator coverage limits stated per asset (e.g. no flood indicator where grid coverage is sparse); severity language mapped to documented threshold bands only.
+
+**Prerequisites (hard).** Evolution A — triaging coin-flip alerts attached to real company names is the exact failure §7.5 warns about; alert persistence. **Acceptance:** every alert fact in a note traces to stored observations; trend claims cite the consecutive-period count; coverage disclaimers appear for missing indicators.

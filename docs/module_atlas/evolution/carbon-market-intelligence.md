@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sourced market data and real price-forecast models (analytics ladder: rung 1 → 3)
+
+**What.** This is a macro carbon-market intelligence page (8 compliance markets, VCM history, policy tracker, Article 6 bilateral deals, exchanges, regional readiness scores, 3 forecast models) whose aggregations are honest sums over curated tables (`totalComplianceCap`, `totalVCMIssuance`, `retirementRate`, `art6Volume`). But the `COMPLIANCE_MARKETS`, `VCM_HISTORY`, `POLICY_EVENTS`, `BILATERAL_DEALS`, and `demandForecast` tables are all curated/hard-coded constants, the price-forecast multipliers (`taxMult`, `ndcMult`) are simple linear knobs, and the `itmoPriceScatter` mixes real ITMO prices with seeded VCM prices. The registered backend is the generic `carbon.py` suite. Evolution A sources the market data and builds real forecasts.
+
+**How.** (1) Compliance-market data (EU ETS, California, RGGI, China, Korea…) from real sources — ICAP Carbon Action Map and World Bank Carbon Pricing Dashboard are freely licensed and cover exactly these markets — with vintages, replacing the curated `COMPLIANCE_MARKETS`. (2) VCM issuance/retirement history from registry aggregates (Verra/GS public data). (3) Article 6 bilateral deals from the UNFCCC Article 6 database (shared with the `article6-markets` module — coordinate). (4) The 3 forecast models become real: the module's own `taxMult`/`ndcMult` structure generalises to a scenario model over NGFS carbon-price paths plus a supply/demand-gap model from the issuance/retirement trend. (5) Rung 3: the demand-gap forecast benchmarked against published VCM demand projections. As a backend vertical, a dedicated market-data route.
+
+**Prerequisites.** ICAP/World Bank/UNFCCC ingestion (all fit the ingester scaffold); NGFS paths for the price forecast. **Acceptance:** compliance-market prices/caps carry sources and vintages; VCM and Article 6 volumes derive from registries/UNFCCC; the forecast models produce scenario-conditioned paths; the demand-gap projection cites its basis.
+
+### 9.2 Evolution B — Carbon-market strategy copilot (LLM tier 2)
+
+**What.** Corporate strategists and policy analysts ask "which compliance markets are tightening fastest?", "what's the VCM supply-demand gap forecast to 2030?", "how did the last EU ETS reform move prices?" (from the real `POLICY_EVENTS` impacts), "what Article 6 bilateral deals involve this host country?" — the copilot runs the Evolution-A market-data and forecast tools, every figure and forecast tool-traced.
+
+**How.** Tool schemas over the Evolution-A market-data/forecast routes; grounding corpus is this Atlas record plus the ICAP/World Bank/NGFS references. The copilot's honesty duty: market data has vintages (carbon prices move daily), so it states the as-of date; forecasts are scenario-conditioned, so it states the assumptions (carbon-tax level, NDC ambition) behind any projection rather than presenting a single number. Policy-impact claims cite the `POLICY_EVENTS` record. This macro-intelligence module feeds the Tier-3 desk orchestrator's carbon-market view.
+
+**Prerequisites (hard).** Evolution A's sourced data and real forecasts — a copilot narrating curated market figures as current or presenting linear-knob forecasts as models would misinform strategy. **Acceptance:** every market figure states its as-of date; forecasts state their scenario assumptions; policy-impact claims cite the event record; the supply-demand gap traces to the forecast tool.

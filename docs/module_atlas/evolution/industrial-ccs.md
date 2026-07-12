@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Calibrate the young LCOC calculator and add T&S network realism (analytics ladder: rung 2 → 3)
+
+**What.** This module's atlas record is internally split: the §7 deep-dive was written against an empty feature directory and flags the module as unbuilt, but the §2 function map now documents a working page — a 9-row `SOURCES` table (sector, purity, capex, O&M, energy GJ/t, capture rate, flue CO₂) driving exactly the §8.3 formulas: `LCOC = (CAPEX·CRF + FixedOM + Energy·P + VarOM)/CO2_captured`, `AbatementCost = (LCOC + T&S − avoidedValue)/(captureRate·EF)`, `NetCost = AbatementCost − 45Q − ETS`. So the honest baseline is rung 2 (deterministic LCOC with price/rate what-ifs), not zero. Evolution A executes the §8.5 validation plan the spec already wrote: benchmark each source's LCOC against IEAGHG/IEA published ranges (high-purity ammonia $15–35/t lowest, dilute cement $60–120/t highest), and replace the scalar `tsCost` with a T&S network model — distance-to-hub and storage-access, since §8.6 names stranded-source risk as the key real-world failure mode.
+
+**How.** (1) Refresh the §7 deep-dive to match the shipped code (the "unimplemented" flag is stale and misleading). (2) Add per-source provenance to the `SOURCES` rows and pin 2–3 LCOC reference cases in bench_quant against IEAGHG figures. (3) T&S becomes `f(distance_km, mode, storage_type)` with a FOAK capex premium toggle per §8.6. (4) Cross-link to the operating-project benchmarks §8.5 names (Boundary Dam, Northern Lights) as reality-check rows.
+
+**Prerequisites.** Reconciling the atlas record (rerunning the builder is out of scope here, but the mismatch must be logged); IEAGHG/GCCSI cost-curve data collection. **Acceptance:** each source's computed LCOC lands within (or is flagged against) its published range; a source 300 km from storage prices differently than one at a hub; the deep-dive no longer claims the module is unbuilt.
+
+### 9.2 Evolution B — CCS retrofit-screening copilot (LLM tier 1 → 2)
+
+**What.** A copilot for industrial decarbonisation teams: "why is the ammonia plant's LCOC a quarter of the cement kiln's?" (answer: source purity — the concentration-to-cost relationship in the `SOURCES` table), "at what ETS price does this refinery retrofit go NPV-positive net of 45Q?", "what's the abatement cost if capture rate slips to 85%?" These are explanation and sweep questions over the page's deterministic calculator.
+
+**How.** Tier 1 first: this Atlas page (§8's parameter table with the 45Q $85/t, energy-penalty 2.5–4 GJ/t anchors) plus current slider state (`r`, `pEnergy`, `tsCost`, `etsPrice`, `credit45q`) as context, so the copilot explains the on-screen rows. Tier 2 requires promoting the in-page math to a backend route (`POST /industrial-ccs/lcoc`) — currently frontend-only, so there is nothing to tool-call; once exposed, breakeven questions run as bisection tool-call loops. Discipline: policy-credit figures (45Q saline $85/t) must cite the parameter table with vintage, since IRA guidance evolves; the copilot routes users to the CDR/BECCS modules for non-industrial capture per the §7.5 pointer.
+
+**Prerequisites.** Copilot infrastructure (Phase 1); route extraction for tier 2. **Acceptance:** every $/t figure matches page state or a logged tool call; purity-cost explanations reference the actual `purity` field of the named source row.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the two real metrics: greenium vs a conventional curve and ICMA framework scoring (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag identifies that the module's two headline deliverables **don't exist in code**: there is no conventional-bond yield curve, so the greenium (`YieldConventional − YieldGreen`) can't be computed even in principle — `greenium` is a synthetic per-bond draw; and there is no `FrameworkScore = Σ[wᵢ × CategoryScoreᵢ]` or ICMA GBP category breakdown at all. The 65-bond catalogue is fully synthetic with round-robin issuer/verifier assignment, and the guide's cited market facts ($290Bn outstanding, −3 to −8bp average greenium) are context, not reproduced. Evolution A builds the two metrics that are the module's entire reason to exist.
+
+**How.** (1) Ingest real sovereign green bonds and, critically, each issuer's **conventional** curve so greenium is a genuine matched-maturity yield differential — the free sources are limited, but government DMO issuance data and the ICMA/CBI sovereign bond databases provide the instruments; a matched-pair methodology (green bond vs interpolated conventional yield at equal maturity) delivers the real greenium the guide promises. (2) Implement `FrameworkScore` as the ICMA GBP four-component weighted assessment (Use of Proceeds / Process for Evaluation / Management of Proceeds / Reporting), scoring each real framework against the SPO and post-issuance report. (3) Replace synthetic bonds with the real issued universe, reconciling aggregates against the cited market facts.
+
+**Prerequisites.** Conventional-curve data per sovereign issuer is the hard input (needed even in principle for greenium); ICMA-category scoring needs the framework documents. **Acceptance:** greenium is a matched-maturity yield differential reproducible from two real bonds; `FrameworkScore` decomposes into the four ICMA categories; portfolio aggregates reconcile to real market figures.
+
+### 9.2 Evolution B — Sovereign-GSSSB framework and relative-value copilot (LLM tier 2)
+
+**What.** A tool-calling analyst for the sovereign-debt-fund / reserve-manager users: "score this country's green bond framework against ICMA GBP", "what's the greenium on this bond versus the conventional curve?", "which sovereign GSS bonds screen as Paris-aligned with credible reporting?" — calling the (Evolution-A) greenium and framework-scoring endpoints and reading the SPO documents, never inventing yields or scores.
+
+**How.** Tier-2 pattern once the metrics are real: greenium and framework-score become tools; the copilot narrates the four-component ICMA breakdown and the matched-maturity greenium, citing the SPO/CBI verification for each framework claim. The framework-quality assessment (reading the SPO text) is an LLM extraction task feeding the deterministic category scores. The no-fabrication validator checks every basis-point and score against tool output.
+
+**Prerequisites (hard).** Evolution A — with no conventional curve and no framework scorer, the copilot could only restate synthetic draws as if they were market greeniums, exactly the fabrication risk the §7 flag warns of. **Acceptance:** every greenium traces to a matched-pair calculation; framework scores decompose to ICMA categories with SPO citations; a bond lacking a conventional-curve match returns "greenium not computable," not a number.

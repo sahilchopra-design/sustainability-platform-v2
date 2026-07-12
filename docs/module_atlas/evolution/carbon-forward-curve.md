@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Live ICE/CME curves and NGFS long-dated extrapolation (analytics ladder: rung 2 → 3)
+
+**What.** The module claims to integrate "real exchange data from ICE/CME" for EUA/CCA/ACCU/NZU with NGFS long-dated forecasts, contango/backwardation analysis, and an implied-vol surface — but the data is seeded: `EU_PRICE_HISTORY` (21 rows), `FORWARD_SCENARIOS`, `VCM_PRICE_DATA`, `TRADING_DATA`, and `CAP_SCHEDULE` are all in-page constructed tables, and the registered backend is the generic `carbon.py` credit suite (no exchange feed). The contango/backwardation and hedging logic is real arithmetic over fake curves. Evolution A connects real market data.
+
+**How.** (1) Live EUA spot and forward curve from ICE (and CCA from CME) where licensable — the module is already correctly EU-focused (formats in EUR). Nascent markets (ACCU, NZU) have thinner data and should be labelled as such rather than presented with false precision. (2) The NGFS overlay extends the liquid curve using real NGFS Phase-5 shadow-price trajectories (ingested vintages), so the long-dated extrapolation is scenario-grounded — this is the module's genuine value: no liquid market exists beyond ~3 years, so the NGFS-anchored extension is the honest way to price long-dated exposure. (3) The EU ETS cap-reduction schedule from the actual regulatory trajectory (`CAP_SCHEDULE` becomes the real LRF path). (4) Rung 3: contango/backwardation and the vol surface calibrated to observed data; hedging-cost outputs benchmarked. Coordinate with `carbon-derivatives-desk` (shares the EUA/vol domain) on one curve/vol source of truth.
+
+**Prerequisites.** ICE/CME data licensing (the binding constraint — a labelled historical fallback if unavailable); NGFS trajectory data; the real EU ETS cap schedule. **Acceptance:** the front of the curve is live exchange data with timestamps; the long-dated extension is NGFS-anchored with the scenario stated; the cap schedule matches the regulatory LRF; illiquid-market curves carry data-quality caveats.
+
+### 9.2 Evolution B — Carbon-curve and hedging copilot (LLM tier 2)
+
+**What.** Corporate hedgers and project financiers ask "is the EUA curve in contango and what does that imply?", "what's the hedge cost for 500kt of 2028 EUA exposure?", "extend the curve to 2035 under NGFS disorderly" — the copilot runs the Evolution-A curve, NGFS-overlay, and hedging tools, reporting term structure, hedge cost, and portfolio sensitivity per €10 move, every figure tool-traced.
+
+**How.** Tool schemas over the Evolution-A curve/overlay/hedging routes; grounding corpus is this Atlas record plus the EU ETS/NGFS references. The copilot's honesty duty is the liquid/illiquid boundary: it states which part of any curve is observed market data versus NGFS-extrapolated, and never presents a long-dated forward as a market price — the whole point of the NGFS overlay is that the market doesn't quote those tenors. Hedging answers state the curve date and scenario. Shares the carbon-market tool set with `carbon-derivatives-desk` for the desk orchestrator.
+
+**Prerequisites (hard).** Evolution A's real curve data — a copilot quoting hedge costs off seeded curves would misprice real exposure. **Acceptance:** every price, hedge cost, and sensitivity traces to a tool response; the market-observed vs NGFS-extrapolated boundary is stated on every curve answer; long-dated forwards are never presented as market quotes.

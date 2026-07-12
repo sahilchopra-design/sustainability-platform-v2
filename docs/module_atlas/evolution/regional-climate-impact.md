@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Channel-specific scenario response on sourced regional data (analytics ladder: rung 2 → 3)
+
+**What.** The module is honest hand-curation, not PRNG fabrication — 21 regions × 8 hazard probabilities with a live SSP multiplier — but §7.7 lists structural limits: one flat multiplier (0.6/1.0/1.4/1.8) scales GDP, agriculture, and labor losses identically though these channels respond to warming at different rates; hazard probabilities don't vary by SSP even though the first tab is a scenario-labelled hazard heatmap (an internal inconsistency); and the baseline figures are directionally right but not source-linked. Evolution A makes the scenario engine channel- and hazard-specific, with citations.
+
+**How.** (1) Replace the scalar multiplier with a per-channel × per-SSP response matrix (agriculture diverging early, fiscal/infrastructure losses lagging), each row documented against IPCC AR6 WGII regional tables or NGFS damage-function outputs — the platform's NGFS scenario assets are the natural source. (2) Hazard probabilities gain SSP-dependence per peril (heat stress scaling steeply, seismic not at all), fixing the heatmap inconsistency. (3) Wire the displayed-but-disconnected WBGT reference formula into the labor-loss channel: labor productivity loss derived from WBGT threshold exceedance by region and scenario rather than a scaled constant. (4) Source-link each of the 21 regional baselines in a provenance column (AR6 Table 12.12 / World Bank CCKP, as §7.7 itself suggests), served via a small `GET /ref/regional-baselines` endpoint.
+
+**Prerequisites.** The sourcing pass (research effort, not code); NGFS damage-function extraction. **Acceptance:** switching SSP changes the hazard heatmap, not just losses; agriculture and fiscal losses diverge at different rates across scenarios per the documented matrix; every baseline row carries a citation.
+
+### 9.2 Evolution B — Regional-briefing copilot for country/sector questions (LLM tier 1 → 2)
+
+**What.** The module answers "how bad is region X under scenario Y" — a briefing-shaped question. The copilot drafts regional climate-risk briefs: "summarize South Asia's exposure under SSP3-7.0 — dominant perils, GDP transmission channels, labor-productivity impact — for our country-risk committee", grounded in the curated dataset and its new citations, with the transmission decomposition (Direct 35% / Supply Chain 25% / Insurance Gap 18% / Fiscal 12% / Productivity 10%) explained as an illustrative structure where it remains unsourced.
+
+**How.** Tier 1: RAG over this Atlas record and the provenance-annotated regional table; the guardrail is citation fidelity — quantitative claims carry the region row's source, and the copilot distinguishes curated-with-citation from illustrative fields (the §7.2 provenance table is machine-readable for exactly this). Tier 2 after Evolution A: scenario what-ifs call the response-matrix endpoint, and cross-region comparisons are computed rankings, not recalled ones. Cross-module routing: asset-specific questions redirect to `property-physical-risk`/digital-twin modules per the interconnection graph — this module's granularity is regional, and the copilot must say so.
+
+**Prerequisites.** Evolution A's provenance column (a briefing tool without citations invites misuse of illustrative figures); corpus embedding. **Acceptance:** every figure in a brief carries source or "illustrative" labelling matching the provenance column; asset-level questions get the granularity redirect.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the DCF ROI and GHG model the guide already specifies (analytics ladder: rung 1 → 2)
+
+**What.** The §7 mismatch flag is stark: the guide specifies a discounted avoided-cost ROI (`Σ[(EnergySavings+MobilitySavings+WaterSavings+DisasterAvoidance−TechInvestment)/(1+r)^t]`) and a factor-based GHG model (`EnergySavings×GridEF + MobilityShift×TravelEF`), but **neither is implemented** — every displayed quantity (`carbonReduction`, `energySavings`, `techInvestment`, `climateResilienceScore`) is an independent `sr()` draw per city, and the five feature booleans are uncorrelated with tier (a "Leading" city can have 0/5 features). The page even carries a §8 "specification — not yet implemented" block for exactly this work. Evolution A builds the module's first real computation from that spec.
+
+**How.** (1) Implement the DCF: a small backend endpoint taking per-technology savings assumptions, tech CAPEX, discount rate, and horizon, returning NPV/IRR/payback across the four avoided-cost streams — the guide's formula, made real. (2) GHG co-benefit via grid emission factors (the platform's `referenceData.js` and NGFS/IEA grid intensities are available) times energy savings, plus modal-shift travel factors — so `carbonReduction` becomes a function of `energySavings` and geography, not an unconnected draw. (3) Savings-factor tables sourced from IEA Smart City Energy Systems 2023 and C40/World Bank avoided-cost methodologies (all cited in the guide but currently feeding nothing). (4) An EU Smart City Mission eligibility screen — a real rule set, replacing the descriptive-only reference.
+
+**Prerequisites.** Per-technology savings-factor sourcing (one-time literature pass); grid EF reference rows. **Acceptance:** carbon reduction moves when energy savings or grid EF change; NPV is reproducible by hand from the stated cash-flow streams; no headline figure is a raw `sr()` draw.
+
+### 9.2 Evolution B — Smart-city investment-appraisal copilot (LLM tier 1)
+
+**What.** A copilot for the city-CFO / project-finance user the module targets: "what's the payback on citywide smart-grid IoT for a mid-size city?", "which financing structure — green bond, ESCO, or PPP — fits this profile?", "does this project qualify for the EU Smart City Mission?" — answered from the Evolution-A DCF outputs and the framework reference tables the page already cites.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/smart-city-climate-finance/ask`, corpus = this Atlas record plus the IEA/C40/World Bank/EU-Mission references. What-if requests re-run the DCF endpoint with the user's parameters and narrate NPV/GHG deltas; financing-structure guidance is drawn from the ESCO/PPP/green-bond characteristics the page catalogues, not invented terms. Eligibility answers cite the specific EU Mission criterion.
+
+**Prerequisites (hard).** Evolution A — until the DCF exists, every number the copilot could cite is a random draw, so a shipped copilot would narrate fabricated ROI. Ship as explanation-only against the framework references until then, with an explicit "figures illustrative" banner. **Acceptance:** every ROI or GHG figure in an answer traces to a DCF endpoint response; an eligibility answer quotes the Mission criterion applied; questions about cities outside the 55-city set return a scoped, assumption-driven estimate clearly labelled as such.

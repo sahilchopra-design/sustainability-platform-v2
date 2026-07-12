@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Replace static ρ with a real DCC-GARCH estimate (analytics ladder: rung 2 → 4)
+
+**What.** §7's partial note is nuanced: the headline integrated-CVaR formula (`IntCVaR = CVaR_trans + CVaR_phys + ρ×√(CVaR_trans×CVaR_phys)`) *is* genuinely computed, and the per-sector `(physScore, transScore, ρ_base, cvarPhys, cvarTrans, weight)` tuples produce a real weight-normalised portfolio CVaR. What is *not* implemented is the page's own in-app claim that ρ is "estimated via DCC-GARCH on physical hazard index vs carbon price returns" — ρ is actually a static per-sector constant times a user slider. So the interaction arithmetic is real; the DCC-GARCH attribution is false flavour text. Evolution A makes the claim true.
+
+**How.** (1) Actually estimate ρ_dynamic via DCC-GARCH (or a defensible simpler dynamic-correlation model) on real time series: a physical-hazard index (from the digital-twin/NatCat data) versus carbon-price returns (NGFS/market data) per sector — the `arch`/statsmodels tooling supports DCC-GARCH; this turns ρ from a slider constant into an estimated, time-varying quantity, the rung-4 predictive step. (2) Ground the per-sector CVaR components (`cvarPhys`, `cvarTrans`) in the sibling physical and transition modules' real outputs rather than static tuples — the physical-risk-portfolio and transition modules already compute these. (3) The double-hit stress test (§1) then applies real simultaneous shocks, not a uniform scaling.
+
+**Prerequisites.** Time series for the DCC-GARCH fit (hazard index + carbon-price returns per sector — the hard input); the CVaR arithmetic is correct, so this is a data/estimation upgrade; document the GARCH model per Atlas §8. **Acceptance:** ρ is estimated from real return series, not a slider constant, and the in-app DCC-GARCH claim becomes accurate; sector CVaRs trace to the physical/transition modules; the interaction CVaR reproduces the §5 formula.
+
+### 9.2 Evolution B — Integrated-risk copilot with tool-called stress (LLM tier 2)
+
+**What.** A copilot for the compound-risk workflow §1 describes: "what's my integrated physical+transition CVaR under NGFS Disorderly × SSP5-8.5?", "which sectors have the highest interaction risk and why?", "run the double-hit stress test" — executed against the IntCVaR engine, decomposing the integrated CVaR into its transition, physical, and interaction terms per sector.
+
+**How.** Tool calls to endpoints wrapping the IntCVaR computation and the double-hit stress test; system prompt from this Atlas page's §5 formula and the NGFS / IPCC AR6 / ECB CST references named in §5. The sector-interaction explanation cites the real ρ (post-Evolution-A: estimated; today: the static per-sector constant — the copilot must say which). Scenario combinations (20 NGFS×SSP) are tool calls; the fabrication validator matches every CVaR/ρ/loss figure to a response. Critically, the copilot must not repeat the false DCC-GARCH claim until Evolution A makes it true — it should describe ρ honestly as a static per-sector constant times a user adjustment in the current state.
+
+**Prerequisites.** Compute endpoints; the IntCVaR arithmetic works today, but the copilot must not narrate the DCC-GARCH attribution until Evolution A. **Acceptance:** every CVaR figure traces to a tool call; ρ is described accurately for the current implementation state (static, not GARCH-estimated, pre-Evolution-A); double-hit results come from the stress endpoint.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the rigorous backend engine into the UI's finance waterfall (analytics ladder: rung 2 → 3)
+
+**What.** §7's mismatch flag: the backend (`nature_based_solutions_engine.py` — VCS VM0007/VM0033/VM0024 implementations, IUCN GS v2.0 assessment, IPCC Tier 1–3 soil carbon, honest "insufficient_data" null handling) is never called; no `fetch` exists in `NatureBasedSolutionsFinancePage.jsx`. The page runs its own simplified client-side `calcNbsFinancing` waterfall on archetype averages, and nine of ten tabs are static tables. Evolution A connects the two so credit volumes in the finance model come from methodology-grade calculations, then benchmarks prices against real VCU data.
+
+**How.** (1) Replace the archetype `annVcus = projectHa × vcuYield` shortcut with engine calls — `POST /redd-plus` (which computes `net_credits = avoided_deforestation × (1−leakage)(1−buffer)` per §5's extracted lines), `/blue-carbon`, `/arr-assessment`, `/soil-carbon` — feeding `netAnnVcus` into the existing NPV/IRR waterfall; the two reference GETs (`/ref/ecosystem-types`, `/ref/methodologies`, both `passed` in the lineage sweep) populate the archetype selector. (2) Add the sequestration ramp from `/sequestration-timeseries` so revenue is year-varying instead of flat-annuity, materially changing REDD+ vs A/R IRR comparisons. (3) Replace the static `VCU_BENCHMARKS` tab with periodically refreshed public price indications (e.g. Verra issuance-weighted category medians), dated and sourced.
+
+**Prerequisites.** The eight POST endpoints need auth-passing verification (REQUIRE_AUTH currently blocks POSTs platform-wide); UI must render the engine's `insufficient_data` nulls honestly rather than defaulting. **Acceptance:** changing leakage/buffer inputs flows through the engine to a different IRR; page results match direct API calls exactly.
+
+### 9.2 Evolution B — Project-screening analyst across the 8 assessment tools (LLM tier 2)
+
+**What.** This module's backend is unusually tool-rich: eight typed POST endpoints covering IUCN assessment, REDD+, blue carbon, soil carbon, ARR, AFOLU balance, credit quality, and sequestration time series. Evolution B composes them into a screening analyst: "assess this 15,000 ha Indonesian peatland project — IUCN criteria, credit volume under VM0007, quality score, and a 10-year revenue profile at $12 VCU" becomes an orchestrated sequence of those calls, synthesized into an investment-screen memo where every figure is a tool output.
+
+**How.** Tool schemas from the module's OpenAPI operations (all Pydantic-typed already); system prompt from this Atlas page's §5/§7 including the engine's documented default-sourcing so the analyst explains which inputs were defaulted versus supplied. The multi-endpoint composition is the tier-2 differentiator: the analyst chains `iucn-assessment` → methodology-appropriate carbon endpoint → `credit-quality` → `sequestration-timeseries`, then runs the finance waterfall, presenting a "show work" trail of all calls (roadmap Tier-2 provenance UX). Fabrication validator matches memo numerics to tool responses.
+
+**Prerequisites (hard).** Evolution A's wiring first — the copilot must drive the real engine, and the POST-auth blocker must be resolved. **Acceptance:** a generated screen memo's every number traces to a named endpoint call; requesting an assessment for an ecosystem type outside `/ref/ecosystem-types` yields a refusal listing supported types.

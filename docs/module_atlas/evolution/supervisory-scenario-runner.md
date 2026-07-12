@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Live IIASA refresh, full variable cube, and a path-integrated stress metric (analytics ladder: rung 2 → 3)
+
+**What.** This module is honest and functional: it serves a labelled, seeded extract of NGFS Phase 5 scenario paths (carbon price, GDP impact, CO₂, primary-energy shares) across 6 scenarios × 4 regions × 6 vintages, computes a stress delta against the Current Policies baseline, and the backend is a clean read/filter layer over a static JSON whose `_meta` disclaimer states its provenance directly ("EXTRACT FOR ILLUSTRATION — conservative approximations of published NGFS Phase 5 paths, rounded and interpolated... refresh from data.ene.iiasa.ac.at/ngfs for production precision"). Its limits are exactly what that disclaimer says: it's a hand-extracted snapshot of headline variables (4 regions, 6 of NGFS's hundreds of variable paths), and the stress delta is a static end-year comparison, not path-integrated or probability-weighted. Evolution A upgrades it toward production precision.
+
+**How.** (1) Build an ingestion path from the IIASA Scenario Explorer bulk download (NGFS publishes no public REST API, so a periodic bulk-refresh job replacing the hand-rounded JSON is the mechanism) with vintage stamps, so values are the actual REMIND-MAgPIE marker outputs rather than approximations. (2) Expand the variable cube beyond 6 headline variables and 4 regions toward the fuller NGFS set the ingestion makes available. (3) Replace the end-year stress delta with a path-integrated metric (cumulative deviation or NPV-style discounting over 2025–2050) and optionally probability-weight scenarios. (4) Keep the honest `_meta` provenance discipline the module already models.
+
+**Prerequisites.** IIASA bulk-download parsing and a refresh cadence; the path-integrated metric needs a discounting convention. **Acceptance:** values match a named IIASA vintage rather than "conservative approximations"; the variable cube exceeds the current 6×4 subset; the stress metric integrates over the path, not just the end year.
+
+### 9.2 Evolution B — NGFS scenario-navigation copilot (LLM tier 1)
+
+**What.** A copilot for the supervisory/risk analyst: "what's the carbon-price path for the EU under Delayed Transition?", "how much larger is the GDP hit under Fragmented World versus Below 2°C at 2040?", "which scenario has the fastest fossil phase-out?" — answered directly from the seeded (or Evolution-A live) NGFS extract, narrating the scenario paths and the stress deltas the module computes.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/supervisory-scenario-runner/ask`, corpus = this Atlas record plus the `GET /variables` metadata and the extract's `_meta` provenance. Path questions read the data cube directly; comparison answers narrate the computed stress delta; the copilot carries the extract's own disclaimer forward (illustrative approximations pre-Evolution-A) so users know the precision level. Refusal for variables/regions outside the extracted cube.
+
+**Prerequisites.** None hard — the data and read layer already exist and are honestly labelled; Evolution A lets the copilot drop the "approximation" caveat once values are IIASA-sourced. **Acceptance:** every path value cited matches the extract; scenario comparisons match the computed delta; a variable or region outside the cube returns "not in the extract," with a pointer to the IIASA source.

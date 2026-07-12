@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — History-calibrated p(miss) as the default, with correlated multi-KPI joint risk (analytics ladder: rung 3 → 4)
+
+**What.** This is a flagship tier-A desk: all math runs in a 1,200-line backend (6 POST + 3 GET routes), the frontend does zero independent arithmetic, and the reference tables are hand-authored *and cited* (`SECTOR_PATHWAYS` rows cite IEA NZE 2023, SBTi SDA/CSA/FLAG, CRREM v2, IMO 2023, TPI). It already reaches rung 3 — the logistic ambition mapping is calibrated to sector pathways, and `POST /calibrate-history` derives a data-driven p(miss) from the issuer's own KPI history (ln-OLS trend). The gap to rung 4 is that the predictive path is optional and the multi-KPI joint mode uses an explicit independence assumption (`p_joint = Π p_i`) that §7.6 flags as a conservative lower bound because real decarbonisation KPIs are positively correlated.
+
+**How. **(1) Make `/calibrate-history` the default whenever sufficient KPI history exists, falling back to the logistic mapping with a `calibration_basis` flag (mirrors the platform's resolution-tier honesty pattern). (2) Add a correlation parameter to `/structure-multi` joint mode — a Gaussian-copula or explicit correlation-matrix aggregation of per-KPI p(miss), so joint risk sits between the independence lower bound and the perfect-correlation upper bound, both reported. (3) Widen the historical calibration from single-issuer OLS to a sector-pooled prior (shrinkage) so thin issuer histories borrow strength. (4) Backtest realised SPT outcomes from the `SLB_STEP_UP_BENCHMARKS` named issues (Enel, Novartis, Chanel, Tesco) where public.
+
+**Prerequisites.** Issuer KPI history is user-supplied today; a persisted `slb_kpi_history` table enables sector pooling. **Acceptance:** an issuer with history defaults to the empirical p(miss); joint multi-KPI risk under correlation ρ>0 exceeds the independence product and is bounded by min(p_i).
+
+### 9.2 Evolution B — SLB structuring analyst over the nine endpoints (LLM tier 2)
+
+**What.** A tool-calling structuring analyst that operates the whole desk: "calibrate a 30% SPT for this steel issuer against SBTi", "add a second water-intensity KPI and price the joint step-up", "run the cost-of-ambition sweep and tell me where the greenium offsets the step-up". Each is a call to `POST /calibrate`, `/structure-multi`, or `/ambition-analytics`; the analyst narrates the returned economics and the SPO pre-assessment RAG score, never computing coupons itself.
+
+**How.** Tool schemas from the module's OpenAPI spec (6 POST + 3 GET, all compute/read-only); grounding corpus = this Atlas page (§7.2 SPT ambition math and the cited `SECTOR_PATHWAYS`). The `/spo-preassessment` output — a weighted RAG against ICMA SLBP five components, already labelled "a desk pre-screen, not an SPO" — becomes the copilot's structured verdict, with that caveat asserted in every answer. Provenance UX shows the endpoint calls and the cited pathway source per SPT.
+
+**Prerequisites.** None hard — the backend is the platform's cleanest API-driven module; the copilot inherits its no-frontend-arithmetic discipline directly. **Acceptance:** every coupon, greenium, and p(miss) figure in an answer traces to a tool call in the session; the SPO score always carries its "not an SPO" disclaimer; asking for a sector outside the 12 `SECTOR_PATHWAYS` rows prompts a user-override request, not a fabricated slope.

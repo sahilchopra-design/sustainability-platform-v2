@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Live Comtrade/BACI refresh replacing the hand-compiled extract (analytics ladder: rung 2 → 3)
+
+**What.** This is the most production-ready of the three CBAM modules: it genuinely calls the real platform CBAM engine (`cbam_service.py` via `/free-allocation-schedule`, `/ets-price-scenarios`, `/calculate-cost`) and a live UN Comtrade endpoint, over 60 CBAM sector×HS rows across the 6 covered sectors. Crucially, it is *honest about its data provenance*: `DATA_LABEL` explicitly states the trade extract is "hand-compiled approximations (UN Comtrade / Eurostat COMEXT ~2023-24) — refresh from CEPII BACI bulk for production precision." So the model and engine wiring are real; only the trade-flow snapshot is a manual approximation. Evolution A closes exactly the gap the module itself names.
+
+**How.** (1) Replace the hand-compiled `CBAM_SECTORS` origins with a live Comtrade/CEPII BACI pull (the `LiveComtradeVerificationPanel` and `COMTRADE_API` wiring already exist — the module is built for this) so exposure reflects current EU import patterns per HS code and origin. (2) Wire the more advanced `cbam_calculator.py` endpoints the page doesn't yet call (`/calculate-emissions`, `/project-costs`, `/portfolio-exposure`, `/supplier-risk/{id}`) — the backend already exceeds the frontend. (3) The exemption/liable-trade logic (`isExempt`, `liableTradeEurBn`) validated against the actual CBAM scope definitions. (4) Rung 3: the origin-substitution analyzer (which ranks origins by CBAM-cost-per-unit) benchmarked against real supplier carbon prices. This module is the natural consolidation point for the CBAM trio — its backend is the fullest.
+
+**Prerequisites.** CEPII BACI bulk access (or scaled Comtrade); the advanced `cbam_calculator.py` endpoints exposed to the frontend. **Acceptance:** trade flows refresh from a live bulk source (not hand-compiled); the advanced calculator endpoints are wired; exemptions match CBAM scope; substitution analysis uses real supplier carbon prices.
+
+### 9.2 Evolution B — CBAM trade-strategy and supplier-risk copilot (LLM tier 2)
+
+**What.** Procurement and trade teams ask "which origins minimise our CBAM cost per tonne of steel?", "what's our exposure matrix across all 6 sectors?", "how does our 2026-2034 cost projection ramp?", "which suppliers carry the highest CBAM risk?" — the copilot runs the Evolution-A exposure, cost-projection, substitution, and supplier-risk tools over live trade data, every figure tool-traced.
+
+**How.** Tool schemas over the real `cbam_service.py`/`cbam_calculator.py` routes (the fullest CBAM backend on the platform); grounding corpus is this Atlas record plus the CBAM Regulation references. The copilot's honesty duty: it states the trade-data vintage (CBAM exposure shifts with import patterns) and the ETS-price scenario per projection, and the origin-substitution advice accounts for whether a lower-CBAM origin's carbon price is documented (the deduction requires evidence). Supplier-risk answers cite the `/supplier-risk` engine output. This is the CBAM tool set the Tier-3 trade/compliance desk orchestrator routes to.
+
+**Prerequisites.** Evolution A's live trade refresh and the advanced endpoints wired — the current hand-compiled snapshot is honest but static, and a copilot should quote current exposure. **Acceptance:** every exposure, cost, and supplier-risk figure traces to a tool response; each states the trade-data vintage and ETS scenario; substitution advice notes the origin-carbon-price evidence requirement.

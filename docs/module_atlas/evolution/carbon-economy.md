@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sourced macro data and a real abatement cost curve (analytics ladder: rung 1 → 2)
+
+**What.** This is a macro carbon-economy explorer with a strong personal/consumer angle (country per-capita footprints, carbon-diet/transport/housing comparisons, a "carbon clock", personal-action savings). Its live arithmetic is real but simple — carbon-cost overlays (`carbon_cost = carbon_kg × price / 1000`), 1.5°C budget gap (`per_capita − 2.3t`), lifetime carbon by category — over hand-curated reference tables. The overview promises an "abatement cost curve ranking decarbonisation options by $/tCO₂" (the classic MACC), which the seed tables gesture at but don't compute as an ordered marginal-cost curve. Evolution A sources the macro data and builds the real MACC.
+
+**How.** (1) Country footprints, carbon-price coverage, and market-size figures from real sources (Our World in Data / World Bank Carbon Pricing Dashboard — both freely licensed) with vintages, replacing curated constants. (2) A genuine marginal abatement cost curve: abatement options ordered by $/tCO₂ with associated volumes (McKinsey-MACC-style), sourced from published abatement-cost literature — the module's headline analytic, currently absent as a computed curve. (3) The carbon-clock's `GLOBAL_EMISSIONS_PER_SEC = 1169` and budget constants sourced and vintage-tagged. (4) Rung 2: the carbon-tax scenarios (`[51, 100, 200]/t`) become a parameterised policy sweep over real footprint distributions. As a backend vertical, a dedicated macro-data route.
+
+**Prerequisites.** OWID/World Bank ingestion (fits the existing ingester scaffold); abatement-cost literature for the MACC (values differ widely by source — the curve must cite its basis). **Acceptance:** country footprints and market size carry sources and vintages; the abatement curve is an ordered marginal-cost function with cited option costs/volumes; the carbon clock's rate is sourced.
+
+### 9.2 Evolution B — Carbon-economy literacy copilot (LLM tier 1)
+
+**What.** This module's consumer-facing framing (what does my footprint cost, how do I compare, which actions matter most) is ideal for a tier-1 explainer: "what's the carbon cost of my daily commute at $100/t?", "which personal action saves the most?", "how does my country's per-capita footprint compare to the 1.5°C budget?" — answered from the page's real overlays and sourced tables, grounded in this Atlas record.
+
+**How.** Standard Tier-1 pattern (pgvector corpus from this record, Haiku serving, prompt-cached). This is a public-education-flavoured module, so the copilot's tone stays factual and non-preachy, and it always states the carbon-price assumption behind any cost figure (a footprint "cost" is a shadow price, not a bill). The refusal path scopes to the module's data: it answers from the sourced footprint/action tables and the MACC, and doesn't invent personalised numbers beyond the country-average model the page provides. After Evolution A, it can cite the abatement curve to rank interventions by cost-effectiveness.
+
+**Prerequisites.** Copilot router; Evolution A's sourcing materially improves answer credibility but a first slice ships on the current record. **Acceptance:** every cost figure states its carbon-price assumption; footprint comparisons cite the source table and vintage; action rankings reflect the real savings data, not invented estimates.

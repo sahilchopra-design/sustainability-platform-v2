@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real cross-module scorecard over live portfolios (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the guide describes a hub consolidating 12 portfolio-analytics sub-modules with a portfolio ESG composite (`ESG_p = Σ wᵢ·ESGᵢ/Σwᵢ`) and a Climate Risk Flag from a "Climate Pulse Engine," but the code is a generic filterable list of 50 synthetic portfolios (`ITEMS`, `aum = sr()·5000+100`) with strategy/region filters and KPI cards — a directory landing table, not an analytics engine. There is no ESG composite over real holdings and no cross-module scorecard. Evolution A makes it the real hub it claims to be, over `portfolios_pg`.
+
+**How.** (1) Replace the 50 synthetic portfolios with the real registry via `GET /portfolios` and per-portfolio `/analytics`/`/dashboard` (the shared `portfolio_analytics_engine`, feeding 48 modules). (2) Build the cross-module summary scorecard the guide promises: for a selected portfolio, pull the real ESG composite, WACI, temperature score, and climate VaR from the specialist sibling modules' engines (this suite is their consolidation layer) — the ESG composite `Σ wᵢ·ESGᵢ/Σwᵢ` computed over real holdings, not absent. (3) The suite-navigation tiles (§1) deep-link to the specialist modules pre-loaded with the selected portfolio, and the consolidated report (§1) uses the `/reports/generate` endpoint. This is primarily an orchestration/wiring build.
+
+**Prerequisites.** The portfolio-analytics endpoints (auth-gated); the specialist modules' engines (many need their own Evolution-A wiring first — this suite depends on them being real); consistent portfolio selection across modules. **Acceptance:** the suite lists real `portfolios_pg` portfolios; the scorecard shows real ESG/WACI/temp/VaR from the specialist engines; tiles deep-link with the selected portfolio.
+
+### 9.2 Evolution B — Portfolio-desk orchestrator (LLM tier 3)
+
+**What.** This suite is the natural home for the roadmap's Tier-3 Desk Orchestrator: a persona-level assistant that routes across the portfolio family — "give me a full climate review of this portfolio" → ESG composite (portfolio-manager) → temperature score → climate VaR → stress test → synthesized memo, each figure sourced from the real specialist engine. It is the "single entry point for portfolio sustainability analytics" the guide describes, made conversational.
+
+**How.** Routing uses the module atlas interconnection graph (this suite already links the sub-modules) and `module_tags.json`; the orchestrator calls each specialist module's tier-2 tools in sequence, composing results into a consolidated portfolio memo via the report-studio render layer (roadmap Tier-3 output). Every figure carries its source engine and provenance; the fabrication validator spans the whole multi-module conversation. The consolidated ESG/climate report (§1) becomes an engine-sourced, LLM-drafted deliverable. RBAC and confirmation gate any writes; the orchestrator inherits the user's session.
+
+**Prerequisites (hard).** Evolution A here plus the specialist modules' own Evolution-A wiring — a desk orchestrator is only as sound as the engines it routes to; composing over the current synthetic sub-modules would launder fabrication at scale. **Acceptance:** every figure in a consolidated memo traces to a specific specialist-engine tool call; the orchestrator routes only to real (non-synthetic) module engines; writes require confirmation and RBAC.

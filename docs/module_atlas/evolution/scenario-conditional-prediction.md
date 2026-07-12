@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Calibrated coefficients and non-linear response (analytics ladder: rung 2 → 3)
+
+**What.** §7 corrects the label: this is a transparent fixed-coefficient linear model (carbon-price, GDP, tech-cost, policy sliders → entity score), not the "ensemble" the guide claims — one deterministic formula, coefficients (0.03, 2.0, 15, 0.1) hand-set with no calibration source, and a purely additive structure whose "2D sensitivity surface" is therefore always a flat plane, unable to represent the threshold effects real climate-risk sensitivities exhibit (§7.5). Entity baselines are seeded. Evolution A keeps the virtue (transparency) while earning the sophistication: calibrated coefficients, interaction/threshold terms, and honest entity anchoring.
+
+**How.** (1) Anchor entity baselines to real company data (`GLOBAL_COMPANY_MASTER` sector/intensity fields) instead of seeded draws, so a utility and a software firm respond differently by construction. (2) Coefficients per sector derived from a documented source — NGFS scenario output sensitivities (how sector value-added responds to carbon price/GDP across scenarios) give defensible, citable response magnitudes; hand-set values remain as labelled fallbacks. (3) Add the minimum non-linearity that matters: sector-specific carbon-price thresholds (a hinge term where pass-through breaks down) and one carbon-price × policy-stringency interaction — making the sensitivity surface genuinely curved and the module's own visualization meaningful. (4) Rename the methodology honestly (multi-factor response model) or build an actual ensemble (linear + hinge variants averaged) if the label must stay; server-side port with a bench case.
+
+**Prerequisites.** NGFS sensitivity extraction; sector mapping for the entity universe. **Acceptance:** the 2D surface shows curvature where thresholds bind; sector responses differ verifiably; every coefficient carries a source or a fallback label; the bench entity's score reproduces by hand.
+
+### 9.2 Evolution B — What-if exploration copilot (LLM tier 2)
+
+**What.** The module is already an interactive what-if tool; the copilot makes it conversational and portfolio-aware: "which of our holdings flips from resilient to stressed between €130 and €180 carbon?", "explain why the steel entity's score drops non-linearly past €150" (the hinge term, once built, gives a mechanical answer), "sweep policy stringency at three carbon prices and summarize the interaction".
+
+**How.** Tier-2 tool calls over the scoring endpoint with parameter sweeps enumerated (flip-point questions solved by bisection over actual calls); explanations decompose into the model's named terms (base, carbon effect, threshold penalty, interaction) with coefficients and their sources quoted. The copilot's epistemic framing is fixed in the prompt: outputs are conditional response-model scores under stated assumptions, not predictions — the module's own name ("conditional prediction") invites the confusion the copilot must dispel. Cross-module routing: full portfolio loss distributions belong to `scenario-stress-test`; this copilot handles entity-level response shape and hands off.
+
+**Prerequisites.** Evolution A (explaining hand-set coefficients as if calibrated would overstate the model; flat-plane sensitivity makes sweep questions degenerate); sweep tooling. **Acceptance:** flip points reproduce from enumerated calls; term decompositions sum to the score; the conditional-not-predictive framing appears in every summary.

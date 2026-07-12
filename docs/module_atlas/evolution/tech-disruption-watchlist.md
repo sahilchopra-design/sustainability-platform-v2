@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the DisruptionScore and feed it real patent/VC signals (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag: the guide's `DisruptionScore = TRL × PatentGrowth × VCFunding × (1/YearsToCrossover)` is never computed — the 15 disruptions' `signal` labels are hand-typed literals, and §7.4's worked example shows the labels are directionally consistent with the formula but nothing connects them in code, so updating TRL/VC/patent figures would silently strand the labels. Patent and VC "history" series are linear-growth constructions despite footer citations to WIPO/Espacenet and PitchBook (§7.5). Evolution A implements the composite and grounds its inputs.
+
+**How.** (1) Implement the formula (normalised per factor to avoid unit-driven dominance — raw $B × TRL multiplication overweights funding) and derive `signal` bands from score quantiles; the §7.4 comparison (AI Grid 8.62 vs Quantum 2.23) becomes the bench case. (2) Replace the constructed patent series with real filing counts: EPO's Open Patent Services API (free, keyed) queried by CPC class per technology (e.g. H01M-10 for solid-state batteries), refreshed by an ingester per the platform's 19-ingester scaffold; `PatentGrowth` then computes as an actual YoY rate. (3) VC funding stays a curated annual table (PitchBook has no free tier — an honest citation with `as_of` vintage, per the data-sources-wave-1 lesson that assumed feeds often aren't available). (4) Wire the tipping-point caption's asserted "16% S-curve inflection" to the sibling `tech-displacement-modeler`'s genuine logistic function, as §7's framework note itself suggests.
+
+**Prerequisites.** CPC-class mapping table per technology, hand-authored once; OPS API key. **Acceptance:** editing any input field changes the derived signal; patent trend for one pilot technology matches an independent OPS query; every non-live field displays its vintage.
+
+### 9.2 Evolution B — Watchlist triage copilot with portfolio-exposure reasoning (LLM tier 1)
+
+**What.** The watchlist's user does periodic review: "what changed, what threatens my holdings?" A tier-1 copilot answers "which near-crossover disruptions hit ArcelorMittal, and how strong is the evidence?" by composing the `DISRUPTIONS` table, the 8-company `PORTFOLIO_COMPANIES` sector-exposure mapping, and the countdown thresholds (≤4yr near-term band) — the joins a human does by eye across the 6 tabs.
+
+**How.** No backend exists (tier B, EP-CL6 frontend-only), so grounding is this Atlas record plus page state per the roadmap tier-1 pattern. The copilot's discipline matters more than its reach: per §7.5, TRL/funding/crossover values are illustrative research judgment and the exposure `riskLevel` is hand-assigned — every answer must attribute them as analyst estimates, never as live EPO/PitchBook data (the current footer citations overstate provenance, and the copilot must not amplify that). Post-Evolution-A, answers upgrade automatically: computed DisruptionScores with factor decomposition ("Very Strong because crossover ≤2yr and patent growth +88%") and real patent trends become citable. Watchlist-diff summaries ("what moved since last quarter") arrive once inputs are versioned.
+
+**Prerequisites.** None for the disclaimered tier-1 slice; Evolution A for evidence-graded answers. **Acceptance:** exposure claims trace to explicit `exposedSectors`↔company-sector joins; provenance questions get the illustrative-data answer; no invented funding rounds or patent counts appear for any named technology.

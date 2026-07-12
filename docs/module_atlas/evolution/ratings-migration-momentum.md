@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real rating-history panel behind correct machinery (analytics ladder: rung 1 → 3)
+
+**What.** §7's verdict is the useful kind: the machinery is methodologically correct — a proper 7×7 transition-count matrix, notch-change momentum, provider lead-lag — but the panel it runs on (150 companies × 6 providers × 12 quarters) is `sr()`-seeded, and the Alpha Signal Builder's PnL is a direct random draw (`pnl = sr(c.id·123)·30−5`), which is fabrication in the platform's strict sense even though the surrounding logic is sound. Evolution A keeps the analytics and replaces the panel: a persisted `esg_rating_history` table populated from whatever the platform can legitimately hold (user-uploaded licensed histories, the platform's own disclosure-derived scores over time, CDP score vintages), with the transition/momentum/lead-lag code ported server-side and pinned.
+
+**How.** (1) `api/v1/routes/ratings_migration.py`: `POST /migration-matrix` (the existing 7×7 count logic over stored history, with row-normalised probabilities added — the standard estimator the page stops short of), `POST /momentum` implementing the guide's recency-weighted `Mᵢ = Σ(up − down)/T × w(t)` which the code approximates without the recency weight today. (2) The Alpha Signal Builder's seeded PnL is deleted, not migrated — signal backtests only become legitimate when both rating history and return history exist; until then the tab shows signal ranks without PnL claims. (3) Bench pin: a hand-built 3-company panel with known transitions reproducing its matrix exactly.
+
+**Prerequisites.** A real rating-history source (the gating decision — user upload path is the licensing-safe default); coordination with `predictive-esg`, which needs the same panel as training labels. **Acceptance:** matrix row sums equal cohort counts; momentum scores recompute identically from stored history; no PnL figure appears anywhere without a returns dataset behind it.
+
+### 9.2 Evolution B — Momentum-watchlist copilot (LLM tier 2)
+
+**What.** The module's output is a long/short candidate list for engagement or tilt decisions. The copilot operationalizes it: "which holdings show 2+ consecutive downgrade quarters across at least 3 providers?", "explain this issuer's momentum score — which provider moved first, and did the others follow?" — the lead-lag question being exactly what the module's provider lead-lag tab computes and an LLM can narrate from tool output (`POST /momentum`, `POST /migration-matrix`, the lead-lag endpoint).
+
+**How.** Tier-2 tool schemas over the Evolution-A endpoints; system prompt carries the Avramov et al. rating-uncertainty framing the guide cites — the copilot must present cross-provider disagreement as signal-relevant uncertainty, not average it away silently. Watchlist exports compose with the sibling `proxy-voting-climate`/`predictive-esg` copilots via the desk-orchestration tier later; in this module's scope, answers stay within its own computed surface. Every notch change, consecutive-quarter count, and momentum score validated against tool outputs.
+
+**Prerequisites (hard).** Evolution A panel with real or clearly-fixture data — narrating seeded migrations as issuer history is the exact fabrication class the platform purged. **Acceptance:** a watchlist answer's every count reproduces from the migration endpoint, and momentum explanations name the actual first-moving provider from the lead-lag output.

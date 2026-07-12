@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute nature risk from its own biodiversity inputs with real IPBES/WWF data (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag documents a decorrelation defect that makes the module structurally self-contradictory: the guide's `Nature Risk = (Biodiversity Loss × 0.35) + (Ecosystem Dependence × 0.35) + (Protection Gap × 0.30)` is **not computed** — `natRisk`, `physRisk`, and `transRisk` are each independent `sr()` draws with no arithmetic tie to the `bii`, `natGdp`, or `protArea` fields shown on the same page, so a country can display near-maximum biodiversity intactness alongside high nature risk, which the stated formula makes impossible. The dataset is 100% synthetic; the Kunming-Montreal 23-target list is reproduced verbatim but completion % is fabricated; IUCN threatened-species counts are random draws despite the guide citing the Red List. Evolution A builds the real score.
+
+**How.** (1) Implement the composite formula for real: `natRisk` computed from biodiversity loss (Living Planet Index / BII trend), ecosystem-service GDP dependence (`natGdp`), and the protected-area gap versus the GBF 30×30 Target 3 — so the score responds to its own inputs. (2) Ingest real data the guide names: WWF Living Planet Index, IPBES indicators, IUCN Red List threatened-species counts, and protected-area coverage (WDPA/Protected Planet, free). (3) Ground the GBF target completion % in the actual Kunming-Montreal monitoring framework rather than random draws. (4) Remove the independently-randomised `creditRating`/`incomeClass` that the deep-dive warns must not be cross-referenced.
+
+**Prerequisites.** Living Planet / IUCN / WDPA ingestion; a defensible normalisation for the three composite components. This is a substantial build — the score is currently entirely disconnected from its inputs. **Acceptance:** a country with high biodiversity intactness and low ecosystem dependence scores low nature risk (the current impossibility); threatened-species counts trace to the IUCN Red List; GBF progress reflects real monitoring.
+
+### 9.2 Evolution B — TNFD-aligned sovereign nature-screening copilot (LLM tier 1)
+
+**What.** A copilot for the sovereign-bond ESG / TNFD-screening user: "why is this country's nature risk high?", "how does it track against GBF 30×30?", "which ecosystem services is its economy most dependent on?" — answered from the computed composite and its real biodiversity/ecosystem/protection inputs, structured around the TNFD LEAP taxonomy the module already carries.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/sovereign-nature-risk/ask`, corpus = this Atlas record (the composite formula, GBF targets, TNFD LEAP structure, IPBES/WWF framework notes) plus live page state. Risk explanations decompose the score into biodiversity-loss, dependence, and protection-gap contributions; GBF-progress answers cite the real target completion; ecosystem-dependence answers read the sector breakdown. Refusal for countries outside coverage.
+
+**Prerequisites (hard).** Evolution A — with `natRisk` decorrelated from every biodiversity field, the copilot's "why is nature risk high?" would have no honest answer; it could only cite a random draw. **Acceptance:** every score decomposition ties to the biodiversity/dependence/protection inputs and sums to the composite; GBF and species claims trace to real data; a country outside coverage returns a refusal.

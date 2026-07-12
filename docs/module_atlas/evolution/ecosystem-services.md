@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the TEEB valuation the guide promises, on real asset locations (analytics ladder: rung 1 → 2)
+
+**What.** The page's real asset is the ENCORE dependency matrix (21 services × 11 sectors, honest ratings) driving `totalScore` and nature-risk classes. But the guide's headline methodology — `ESV = Σ Area × BiomeCoefficient × ConditionMultiplier` with TEEB/de Groot 2012 coefficients, spatial overlay, and BII condition scores — is not implemented: the monetary layer is a heuristic (`valAtRisk = totalScore·weight·42 + s·50`, part-seeded) and SBTN status is a PRNG draw. Evolution A builds the actual valuation vertical.
+
+**How.** (1) New backend `api/v1/routes/ecosystem_services.py` + tables `es_asset_locations` (PostGIS points/polygons — the digital-twin work already proved this stack) and `es_biome_coefficients` seeded from the public de Groot et al. (2012) ESVD coefficient set ($/ha/yr by biome × service). (2) Spatial overlay: asset coordinates → WWF terrestrial-ecoregion biome (public shapefile) → coefficient row; condition multiplier from a coarse public proxy first (Natural History Museum BII raster) with `resolution_tier` disclosure, mirroring the physical-risk resolution-cascade pattern. (3) Replace `valAtRisk` with computed ESV-at-risk; SBTN status becomes a user-entered field or an honest null. (4) Rung 2: the existing degradation-scenario slider becomes a server-side sweep (condition multiplier −10/−25/−50%) over real ESV.
+
+**Prerequisites.** ESVD licensing check (the database is free for research; verify commercial terms); asset-location capture UX (portfolios currently lack coordinates — the energy-asset-registry pattern applies). **Acceptance:** a fixture asset (1,000 ha temperate forest, condition 0.7) reproduces the TEEB arithmetic by hand; two same-sector companies with different geographies produce different ESV; zero `seed()` in the valuation path.
+
+### 9.2 Evolution B — TNFD LEAP walkthrough assistant (LLM tier 2)
+
+**What.** TNFD's LEAP process (Locate → Evaluate → Assess → Prepare) is a guided workflow, not a single calculation — ideal for a tool-calling assistant that walks an analyst through it against this module's data: Locate (query `es_asset_locations` overlays for priority biomes), Evaluate (pull the ENCORE dependency row and computed ESV per site), Assess (rank value-at-risk under the degradation scenarios), Prepare (draft the TNFD disclosure sections with every figure from tool output, gaps disclosed).
+
+**How.** Tools from Evolution A's endpoints plus a `get_encore_dependencies(sector)` reference call; grounding corpus = this Atlas record's §5/§7 (TEEB formula, ENCORE rating scale, the RATING_SCORES mapping) and the TNFD v1.1 reference text. The assistant tracks LEAP-stage state so a session resumes where it left off; the Prepare stage renders through report-studio. Refusal behavior matters here: asked for species-level impact metrics (not computed), it says so and points to the biodiversity-footprint roadmap rather than inventing a mean-species-abundance figure.
+
+**Prerequisites (hard).** Evolution A — a LEAP walkthrough over the current seeded `valAtRisk` and PRNG SBTN statuses would produce a TNFD disclosure with fabricated commitments attributed to real companies. **Acceptance:** a golden two-site walkthrough produces a Prepare draft where every $ figure and dependency rating matches tool responses; ungeocoded assets are listed as Locate-stage gaps, not silently skipped.

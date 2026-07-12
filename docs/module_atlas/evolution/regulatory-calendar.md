@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the page to its own live engine, then entity-scope it (analytics ladder: rung 1 → 2)
+
+**What.** §7's finding is the platform's cleanest wiring gap: a genuinely well-built backend (`regulatory_obligation_calendar.py`, 26 real obligations with article-level references — CSRD, SFDR, CBAM, ISSB, EUDR, CSDDD — and urgency computed live from `deadline − today`) that the frontend never calls. The page renders its own 21-item array with a hardcoded `status` field that never recomputes — a deadline marked 'Completed' stays 'Completed' forever, and passed deadlines silently stay 'Upcoming'. A stale compliance calendar is worse than none. Evolution A wires the UI to `GET /api/v1/regulatory-calendar/obligations` and `/alerts` (both already implemented), then adds the entity-profile filtering the overview promises.
+
+**How.** (1) Replace the static `DEADLINES` array with the engine's response; the hardcoded status field is deleted, urgency badges render `_compute_urgency` output (≤14d critical / ≤45d high / ≤90d medium). (2) Entity applicability: an org profile (size, sector, jurisdiction, listed status) filters the 26 obligations by their applicability metadata — CSRD thresholds, BRSR top-500 scope, CBAM importer status — so the calendar is *this entity's* obligations, per the documented workflow step. (3) Implement the guide's Compliance Timeline Score as §7.7 sketches (`Σ(days_i × materiality_i)/n` over upcoming alerts) or drop the claim. (4) Owner assignment and completion become persisted per-org state (a `regulatory_calendar_status` table), giving the promised audit trail.
+
+**Prerequisites.** Essentially none for the wiring (endpoints exist); applicability metadata added to the 26 records. **Acceptance:** the UI's urgency changes as today's date advances with no code change; an entity profile change adds/removes obligations; completion marks persist per org with timestamps.
+
+### 9.2 Evolution B — Deadline concierge with obligation explainers (LLM tier 1 → 2)
+
+**What.** A compliance copilot on the calendar: "what does the ETS2 deadline actually require us to file, and are we in scope?", "brief the CFO on everything due in the next 90 days with owners and status", "the SEC climate rule shows rescinded — what replaced it?" — grounded in the engine's obligation records, whose article-level `regulatory_reference` fields make citation-faithful answers unusually feasible here.
+
+**How.** Tier 1: RAG over the 26 obligation records plus the referenced regulation texts (public EU/SEBI/ISSB documents chunked with article anchors); scope answers combine the entity profile with the obligation's applicability clause and cite both. Tier 2: the 90-day briefing composes from `GET /alerts` tool calls plus per-org status rows — every date, urgency, and owner from live data. Guardrails: the copilot states the record's last-verified date on every obligation (regulatory facts decay — the SEC rescission already illustrates it) and refuses interpretive legal advice beyond the stored reference ("consult counsel" boundary encoded in the prompt).
+
+**Prerequisites.** Evolution A (a concierge over the stale static array would confidently misreport compliance status — the worst failure mode this module can have); regulation texts chunked. **Acceptance:** briefing dates/urgencies match live `/alerts` output; every requirement claim cites an article anchor; scope determinations name the applicability rule applied.

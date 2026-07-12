@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sector MACCs and a CCC price model replacing the two heuristics (analytics ladder: rung 2 → 3)
+
+**What.** This is one of the platform's most grounded modules — a real `cctsEngine` implementing all 9 BEE methodologies and 18 tools with ISO 14064/14065 audit trails, real CEA grid factors, PAT benchmarks and live REC/PAC prices. §7.6 isolates exactly two synthetic elements: the offset-project pipeline sizing (`sr(seed)` capacities and credit multipliers) and the Financial Impact Simulator's tech-abatement scaling (`techReductionPct = min(0.4, invest·0.0004)` — a linear ₹-to-% heuristic the deep-dive itself says "would benefit from a real marginal-abatement-cost model"). Evolution A replaces both: sector MACCs (steel scrap/EAF, cement clinker substitution, per the CCTS benchmark intensities already in `SECTORS`) drive the investment→abatement mapping, and the forward CCC price becomes a supply/demand model instead of a bare slider.
+
+**How.** (1) An abatement-lever table per CCTS sector (CAPEX, ₹/tCO₂e, potential) sourced from CEEW/BEE sector studies; the simulator deploys levers in ascending cost against the entity's compliance gap. (2) CCC price scenarios derived from aggregate sector surplus/deficit (the module already computes `TOTAL_AVOIDED_MT` and per-sector targets) with the S&P $7–15 band as the calibration anchor. (3) Offset pipeline re-seeded from actual BEE-registered project announcements as they publish, honest-empty until then. (4) Pin the §7.4 worked example (₹450 cr compliance cost, ₹138 cr NPV) in bench_quant before refactoring.
+
+**Prerequisites.** Sector abatement-cost data collection; the `sr()` pipeline draws removed. **Acceptance:** the simulator's investment→abatement curve is piecewise (lever-ordered), not linear; a documented lever list backs every abatement %; CCC price scenarios respond to the sector-target inputs.
+
+### 9.2 Evolution B — CCTS compliance analyst over the methodology engine (LLM tier 2)
+
+**What.** The module's 14-tab breadth is exactly what a copilot compresses: "am I an obligated entity, and what's my FY 2025-26 target?", "which BM methodology fits a 25 MW captive solar project, and which BM-T tools does it require?", "run the CCC calculation for this landfill-gas project and draft the assurance checklist", "how much CBAM liability does ₹900 CCC pricing offset for my steel exports?" Tier 2 tool-calls the real `cctsEngine` (validate → baseline/project/leakage → CCC issuance → assurance report) rather than reciting regulation from memory.
+
+**How.** Expose the frontend-imported engine as a backend route (`POST /india-ccts/calculate`) so it becomes tool-callable — the engine logic already exists, this is transport. Tool schemas also cover the CBAM dual-price offset and the financial simulator. The system prompt grounds on this page's exceptional regulatory corpus (§5's methodology pipeline, the `INSTITUTIONS`/`COMPLIANCE_STEPS`/`JCM_AGREEMENTS` tables); every statutory citation (CCTS Rules 2023 S.O. 2825(E), 2× penalty, Oct-Nov 2026 trading start) must quote the curated rows, never free recall — Indian carbon regulation is moving fast and the tables carry the vintage. Methodology selection answers must cite the `TOOL_METH_MAP` dependency matrix.
+
+**Prerequisites.** Engine route extraction; Phase 2 tool-calling. **Acceptance:** a CCC calculation answer reproduces the engine's audit trail verbatim; every regulatory fact traces to a seed-table row; out-of-scope sectors (thermal power — PAT-only) get correct refusals.

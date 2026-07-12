@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Unify the two hand-authored country tables and live-source the inputs (analytics ladder: rung 2 → 3)
+
+**What.** This is a genuinely well-built tier-A module: it joins a corporate portfolio to sovereign-of-domicile climate risk via a live call to `sovereign_climate_risk_engine` (`POST /assess`) and applies the real PCAF Part D sovereign attribution formula (`attribution_factor = outstanding_bn / govt_debt_bn × ghg_inventory_tco2e`) using real IMF debt and UNFCCC GHG-inventory figures — and it honestly labels the PCAF panel a "sovereign-linkage lens," not the holding's actual financed emissions. Blast radius is 12, so it's foundational. Its §7.6 limitations are specific: the two composed engines carry **separate hand-authored country tables** (60 vs 40 countries, disagreeing debt/GDP — 123.0% vs 122.5% for the US), and the frontend re-implements tier thresholds (`tierOf`) client-side rather than calling `assess_portfolio`, creating drift risk.
+
+**How.** (1) Merge `SOVEREIGN_PROFILES` (climate engine) and the PCAF `country-profiles` into one canonical sovereign reference table so debt/GDP and coverage agree — the single highest-value fix given both engines cite the same IMF/World Bank sources. (2) Live-source that unified table from ND-GAIN, IMF WEO, and UNFCCC national inventories (all free) with dated vintages, replacing hand-typed statics. (3) Call the engine's `assess_portfolio` for tiering instead of the client-side `tierOf`, removing the drift risk. (4) Bench-pin the PCAF attribution against a worked example.
+
+**Prerequisites.** Coordinating a schema merge across two engines (blast radius 12 — needs the shared-engine regression check); ND-GAIN/IMF/UNFCCC ingestion. **Acceptance:** both panels read one country table with identical debt/GDP per country; portfolio tiers come from `assess_portfolio`; the PCAF attribution reproduces a hand-checked case.
+
+### 9.2 Evolution B — Sovereign-linkage desk orchestrator (LLM tier 3)
+
+**What.** With blast radius 12 and two composed engines, this module is a natural cross-module orchestration node. Evolution B is a desk-level assistant: "for this corporate portfolio, profile the sovereign climate risk of each domicile, compute PCAF Part D sovereign-linkage emissions, and flag concentration in high-transition-risk jurisdictions" — routing across the sovereign-climate-risk engine, the PCAF sovereign engine, and the climate-policy-radar country endpoints, synthesising a memo.
+
+**How.** Tier-3 pattern: the orchestrator sequences tool calls (`POST /pcaf-sovereign/portfolio` → `POST /sovereign-climate-risk/portfolio` → `GET /climate-policy/country/{iso3}`), each returning real engine output, and composes the result into a report-studio artifact. The PCAF panel's crucial framing — sovereign-linkage proxy, not corporate financed emissions — is asserted by the orchestrator in every memo, preserving the page's own good disclosure practice. Provenance UX shows every engine call and the IMF/UNFCCC source vintages.
+
+**Prerequisites (hard).** Evolution A's unified country table — an orchestrator drawing debt/GDP that differs between the two engines for the same country would produce internally inconsistent memos. **Acceptance:** every figure in a synthesised memo traces to a specific engine call; the sovereign-linkage caveat appears wherever PCAF Part D numbers do; a domicile absent from the unified table is flagged, not silently dropped.

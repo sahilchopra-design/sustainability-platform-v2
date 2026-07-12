@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Formula-based UFLPA scoring and live capacity data (analytics ladder: rung 2 → 3)
+
+**What.** §7 confirms the module is broadly sound: it genuinely computes the Herfindahl-Hirschman Index (textbook `Σ(share%)²`, natural range 0–10,000, >2,500 = concentrated, divisions guarded), China/region concentration, and averages over a well-curated 20-supplier dataset with real capacity announcements (Tongwei 300GW, GCL 270, Daqo 180), real cost splits ($5.1–19.2/kg), and real price history (the 2021–22 spike to $38/kg and 2024 crash to $5.4 both visible). The one gap: `uyghurRisk` is a hand-assigned 0–9 scalar (Chinese 6–9, Western 0), not the `f(Xinjiang_sourcing, audit_gaps, traceability)` function the guide's formula implies. §8 specifies that scoring model. Evolution A builds it and refreshes the curated data.
+
+**How.** (1) Implement the UFLPA-risk formula as a real composite: Xinjiang-sourcing share (the module already knows China %), audit-gap indicator (from the `certs` field — RBA/OECD signatory status), and traceability score — so a supplier's risk responds to its actual sourcing and certification rather than a hand-assigned integer. Ground it in the SEIA UFLPA Traceability protocol and CBP Entity List (both named in §5) — CBP publishes the actual UFLPA Entity List, so a supplier's presence on it is a hard input, not a guess. (2) Refresh capacity/cost from IEA Solar PV Supply Chain data (named in §5) on a schedule rather than hand-maintaining. (3) The HHI and concentration math are correct — keep them.
+
+**Prerequisites.** CBP UFLPA Entity List ingestion (public); SEIA traceability criteria; IEA capacity data refresh. The HHI is textbook-correct — pin it in `bench_quant`. **Acceptance:** UFLPA risk reproduces from sourcing/audit/traceability inputs (and Entity-List membership is a hard flag), not a hand-assigned integer; capacity data refreshes from IEA; HHI matches the pinned reference.
+
+### 9.2 Evolution B — Supply-chain-diligence copilot for solar financiers (LLM tier 2)
+
+**What.** A copilot for the developer/EPC/lender users §1 targets: "what's the polysilicon market HHI and top producers?", "which suppliers are UFLPA-high-risk and why?", "compare Siemens vs FBR process economics", "model a China polysilicon export restriction" — executed against the HHI/concentration engine and the (Evolution-A) UFLPA-scoring function, decomposing each supplier's risk into its sourcing/audit/traceability components.
+
+**How.** Tool calls to endpoints wrapping the HHI, concentration, and UFLPA-scoring functions; system prompt from this Atlas page's §5 formulas and the CBP UFLPA / SEIA / IEA references named in §5. The UFLPA-risk explanation cites the specific driver (Xinjiang sourcing %, missing RBA cert, Entity-List presence) rather than an opaque score — auditable for a lender's compliance file; the geopolitical-scenario tab (§1) recomputes concentration under supply shocks. Fabrication validator matches every HHI/risk/cost figure to a tool response; the copilot must ground UFLPA determinations in the CBP Entity List, not infer forced-labor claims beyond the data.
+
+**Prerequisites.** Compute endpoints; Evolution A for the formula-based UFLPA score (HHI/concentration work today on curated data). **Acceptance:** every HHI/concentration/cost figure traces to a tool call; UFLPA-risk explanations cite specific sourcing/audit drivers and Entity-List status; the copilot avoids unsupported forced-labor assertions.

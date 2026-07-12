@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Fragility-curve EAL on the digital-twin hazard grids (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag is comprehensive: 60 PRNG-seeded assets, a linear hazard composite with author-judgement weights (0.28/0.22/0.22/0.18/0.10) rather than the promised engineering fragility curves, "TCFD scenarios" that are three flat loss multipliers, a heuristic adaptation cost (12% of value-weighted gap), and a climate-adjusted discount rate computed but never used to discount anything — no NPV exists. Evolution A implements the §8 spec — `EAL = Σ_h Σ_T (λ_T − λ_{T+1})·DF_h(i_T)·V_a` with JRC/HAZUS fragility curves, SSP intensity multipliers, and a genuine discounted `AdaptNPV/BCR` — and it has an unfair advantage: the platform's Physical Risk Digital Twin already holds five populated hazard grids (earthquake/cyclone/wildfire/flood/sea-level from USGS/IBTrACS/GWIS/OpenFEMA/IPCC-AR6), so hazard-by-location is a lookup, not a build.
+
+**How.** (1) Replace `sr()` hazard draws with coordinate lookups against the `ref_*_zones` PostGIS grids via the existing composite scoring engine. (2) A fragility-curve library keyed by (asset class, hazard) from JRC global flood depth-damage and LIFELINES sector curves, in refdata with citations. (3) EAL by return-period discretisation; the CADR finally discounts `ΔEAL` streams into the §8.3 AdaptNPV and BCR. (4) Validation: portfolio BCRs land in UNEP's 4:1–9:1 adaptation range; flood/sea-level grid thinness (48/152 rows) reported via `resolution_tier`, not hidden.
+
+**Prerequisites.** Real asset register (geolocated) replacing the seeded 60; fragility-curve sourcing; flood-grid upgrade helps but honest fallback suffices. **Acceptance:** two same-type assets at different coordinates produce different EALs traceable to grid cells; AdaptNPV is an actual discounted sum; zero `sr()` in the risk path.
+
+### 9.2 Evolution B — Adaptation-disclosure copilot for Taxonomy/TCFD workflows (LLM tier 2)
+
+**What.** The module's buyers need documents: EU Taxonomy Annex II adaptation screening (DNSH + substantial contribution), TCFD physical-risk disclosure, Equator Principles EP4 packs. Evolution B drafts them from computed results: "generate the Annex II adaptation assessment for the portfolio's water assets", "which assets fail the 70-resilience band and what interventions clear them at BCR > 4?", "explain this asset's EAL decomposition to a lender."
+
+**How.** Tier 2 over the Evolution A endpoints (EAL, AdaptNPV/BCR, intervention ranking); disclosure templates map to Annex II's actual screening criteria with each claim bound to a computed value or an explicit gap statement ("hazard data resolution: country-tier for drought — site study required"), mirroring the honest-nulls convention. Intervention recommendations must cite the catalogue entry and its BCR from tool output — adaptation advice with invented benefit ratios is the greenwashing failure mode this module must avoid. Until Evolution A ships, the copilot is limited to tier-1 methodology explanation and must state per §7.6 that current figures are synthetic demo data unsuitable for disclosure.
+
+**Prerequisites (hard).** Evolution A — regulatory disclosure drafted over PRNG assets would be a compliance liability, not a feature. Phase 2 tool-calling. **Acceptance:** every figure in a generated disclosure traces to a tool call; data-resolution caveats appear per asset; pre-Evolution-A, disclosure generation refuses with the synthetic-data explanation.

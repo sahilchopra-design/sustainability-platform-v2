@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Close the wiring gap: page numbers from the engine (analytics ladder: rung 2 → 3)
+
+**What.** §7.6 identifies the platform's cleanest kind of fix: the backend `REPortfolioEngine` is genuinely rigorous (Decimal precision, real CRREM pathway interpolation with country/property-type knot points, accurate MEPS/MEES minimum-EPC timelines, INREV/RICS-cited NAV roll-up, seven live endpoints) while the frontend renders a hand-curated 20-property book whose CRREM stranding years, GRESB scores, and carbon intensities are mutually unverifiable — "a wiring gap, not a modelling gap." Evolution A wires the page to its own engine and fixes two aggregation defects: `avgCarbon`/`avgEnergy` are unweighted per-property means (the engine's GAV/area-weighted versions are correct for portfolio reporting), and the `gresbRadar` peer comparison is `sr()`-jittered rather than data-driven.
+
+**How.** (1) On portfolio load/edit, call `POST /re-portfolio/nav`, `/crrem`, `/epc`, `/carbon`, `/concentration`; per-property stranding years and MEPS compliance render from responses, with the local book kept only as the editable input register. (2) Replace unweighted means with the engine's weighted metrics; delete the seeded radar jitter (peer values become nulls until a real GRESB benchmark import exists — honest-nulls convention). (3) Implement the missing GRESB composite (`0.3×Mgmt + 0.7×Perf` per the guide) in the engine so the score is derived from aspect inputs rather than hand-set. (4) bench_quant pins one property's CRREM stranding year against a hand-interpolated pathway.
+
+**Prerequisites.** None architectural — endpoints exist; the localStorage↔API portfolio handshake with the CRREM/stress sibling modules kept consistent. **Acceptance:** editing a property's energy intensity changes its engine-computed stranding year on screen; portfolio carbon intensity is area-weighted and matches the engine payload exactly.
+
+### 9.2 Evolution B — Investor-reporting copilot over engine output (LLM tier 2)
+
+**What.** The module's last documented workflow step — "generate investor reporting pack aligned to GRESB standards" — has no generator. Evolution B builds it as a tool-calling copilot: "draft the quarterly ESG section: GRESB position, CRREM alignment %, MEPS non-compliance list with remediation deadlines by country" — each figure fetched from the module's endpoints, the MEPS deadlines quoted from the engine's own country timeline tables rather than model memory.
+
+**How.** Tier-2 tool schemas over the seven existing operations (this module can skip tier 1 because its backend is already trustworthy once Evolution A wires it); narrative templates composed per the `3-outputs` report-studio pattern the roadmap designates as the render layer. System prompt grounded in §7.6/§7.7: the copilot must state that GRESB scores are portfolio-entered (not GRESB-verified) until a submission import exists, and route stranding-methodology questions to the CRREM pathway data (`GET /crrem-pathways`) it can actually cite. Every kgCO₂e/m², %, and year in a generated pack validated against tool outputs.
+
+**Prerequisites.** Evolution A (a reporting pack narrating today's unverifiable hand-set numbers would launder them); report-studio integration for rendering. **Acceptance:** a generated pack's stranding table equals the `/crrem` response row-for-row, and the GRESB-provenance caveat appears whenever scores are quoted.

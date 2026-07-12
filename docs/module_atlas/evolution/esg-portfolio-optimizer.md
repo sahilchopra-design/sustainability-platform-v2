@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Run the QP the module is named for (analytics ladder: rung 1 → 5, staged)
+
+**What.** The §7 flag: "no optimiser runs" — the page's 50 "portfolios" carry both `weight` and `optWeight`, both `carbonInt` and `optCarbonInt`, but the "optimised" figures are independent `sr()` draws; the "efficient frontier" is a scatter of synthetic (vol, return) pairs, not a computed frontier. The guide's model is fully specified: `max wᵀμ − (λ/2)wᵀΣw` subject to `wᵀESG ≥ ESG_min`, `wᵀCI ≤ CI_max`, full investment. This is the roadmap's rung-5 rung made literal — portfolio construction via scipy is named as a natural prescriptive first mover — and the §8 spec exists.
+
+**How.** Stage 1: `services/esg_optimizer_engine.py` solving the QP with scipy (SLSQP or a proper QP via cvxpy if dependency review clears it) over a real universe: holdings/benchmark from `portfolios_pg`, ESG scores and carbon intensities from the company master, covariance from the shared monthly-return store (sample covariance with shrinkage first; factor-model Σ later). Stage 2: the genuine efficient frontier by λ-sweep, constrained vs unconstrained, so "ESG constraint cost (bps)" becomes a computed difference — the §4 metric that today is asserted. Stage 3: turnover/liquidity constraints and trade-list export per the workflow. Bench pins: a 3-asset analytic QP case with hand-checkable solution, plus the constraint-binding identity (active constraints reported with shadow prices).
+
+**Prerequisites (hard).** The seeded `optWeight` columns deleted at ship (displaying solver-look-alike numbers next to a real solver would be indistinguishable poison); return/covariance data from the factor-stack Evolutions A; PAB rule encoding (50% CI reduction) documented. **Acceptance:** the bench QP reproduces the analytic optimum; the frontier is monotone and the constrained frontier lies weakly below the unconstrained; the trade list sums to zero net weight change.
+
+### 9.2 Evolution B — Mandate-design analyst over the real optimizer (LLM tier 2)
+
+**What.** A tool-calling analyst for product/mandate design: "build a Paris-aligned version of our benchmark: what does the 50% carbon reduction cost in expected return and tracking error, which sectors get squeezed, and where does the ESG-minimum constraint start binding?" It runs Evolution A's optimizer across constraint configurations, reads shadow prices to explain *which* constraint drives each distortion, and drafts the mandate-design memo — constraint costs quoted only from computed frontier differences.
+
+**How.** Tools: `optimize(universe, constraints, lambda)`, `compute_frontier(constraints, sweep)`, `compare_solutions(a, b)`, `get_binding_constraints(solution)`. Grounding corpus = this Atlas record's §5 QP formulation and the PAB regulation reference, so constraint semantics quoted match the implementation. The analyst's explanatory edge is shadow-price narration ("the CI ceiling binds at 41bps of expected return; the ESG floor is slack") — real optimizer outputs, not intuition. Infeasible constraint combinations are reported as such with the minimal relaxation suggested by the solver, never silently softened.
+
+**Prerequisites (hard).** Evolution A — a mandate memo over seeded `optWeight`s would advise real product launches on fabricated optimization. **Acceptance:** a golden mandate memo's costs match frontier recomputation; binding-constraint claims match solver output; an infeasible request returns the infeasibility certificate, not a fudged portfolio.

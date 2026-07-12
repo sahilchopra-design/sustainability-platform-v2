@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A real energy loan book with computed GAR, PCAF, and temperature score (analytics ladder: rung 1 → 2)
+
+**What.** The overview promises the EU bank disclosure triad — green asset ratio, PCAF financed emissions, portfolio temperature score — but none is computed: the page's 40 lenders are entirely `sr()`-seeded (commitments, spreads, DSCR/LLCR, watchlist flags), and while the module nominally shares the real `generation_transition`/`grid_ef_trajectory` engines, the page never uses them for anything lending-specific. Evolution A builds the loan-book vertical the module's name and EP-DO4 charter describe.
+
+**How.** (1) `et_loan_book` table (borrower via `entity_lei`, technology/asset class, commitment, tenor, spread, covenants), replacing the seeded generator; DSCR/LLCR become entered or fed metrics, not draws. (2) Compute the triad by composition, not reimplementation: GAR numerator via the taxonomy screening from `energy-sector-taxonomy`/`eu-taxonomy-engine` applied to each loan's activity; PCAF financed emissions via `enablement-methodology`'s Evolution-A engine with loan-appropriate attribution (outstanding/total-capital for project finance); temperature score from borrower NDC/SBTi alignment data. (3) Use the engines this page already imports for what they're for: coal-exit loan analysis calls `POST /fleet-transition` on the borrower's fleet; renewable-loan avoided emissions call `/avoided-emissions` with the loan's country and generation. (4) Rung 2: GAR-trajectory what-ifs ("€2B new renewable lending by 2027") over the real book.
+
+**Prerequisites.** The two upstream engines' Evolutions A (taxonomy screening on real assets, PCAF engine); a demo loan book fixture. **Acceptance:** GAR reproduces as taxonomy-aligned exposure ÷ total covered assets for the fixture book; PCAF per sub-sector reconciles to the shared engine; zero `sr()` in the book path.
+
+### 9.2 Evolution B — ECB/EBA disclosure-pack analyst for the energy book (LLM tier 2)
+
+**What.** The workflow ends at "generate EBA/ECB climate risk energy sector disclosure" — a templated, high-stakes deliverable. A tool-calling analyst assembles it: pulls the computed GAR, PCAF by sub-sector, and temperature score from Evolution A's endpoints, populates the EBA Pillar 3 ESG templates' energy rows, and drafts the qualitative sections (concentration commentary, coal-exit progress citing actual fleet-transition plan outputs) — every figure tool-traced, every gap disclosed.
+
+**How.** Tools: `get_loan_book(filters)`, `compute_gar(book)`, `compute_pcaf(book)`, `get_fleet_plan(borrower)`, plus the EBA template structure as a typed output schema so the draft lands in the right rows rather than free prose. Grounding corpus = this Atlas record plus the EBA Pillar 3 ESG ITS references. The temperature score's methodology limitations (coverage, proxy use) are auto-included from the engine's own metadata — supervisors read the caveats first. Validator on all €, %, and tCO₂e figures.
+
+**Prerequisites (hard).** Evolution A end-to-end — an EBA disclosure pack generated from seeded DSCRs and invented commitments is the exact regulatory-fabrication scenario the platform's guardrails exist to prevent. **Acceptance:** a golden book's template rows match scripted endpoint outputs; qualitative claims about coal-exit progress cite fleet-transition responses; missing borrower emissions data appears as PCAF data-quality disclosure, not imputation.

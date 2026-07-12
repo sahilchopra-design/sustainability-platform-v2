@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the tainted-flow ratio over screened flows (analytics ladder: rung 1 → 2)
+
+**What.** §7 flags that the guide's headline metric — `Tainted Flow Ratio = climate finance to sanctioned entities / total climate finance` — is uncomputable as coded: no total-climate-finance denominator exists, the 100-company screening universe's `exposureScore` is seeded PRNG rather than a screen against any list, and the 16 `CLIMATE_PROJECTS` are illustrative composites under real sanction-regime names. The one real computation (redirected-finance sums by destination) is a useful fragment. Critically, the platform already has genuine screening infrastructure: `sanctions-screening-desk` runs live CSL (25,830-row daily download) plus UFLPA matching. Evolution A composes it rather than rebuilding.
+
+**How.** (1) Climate-finance flow register: user-entered or imported deals (counterparty, amount, instrument, jurisdiction) as the denominator base. (2) Each counterparty screened through the screening desk's existing endpoint (confidence-scored CSL/UFLPA matches), replacing the seeded `exposureScore` with real match results; jurisdiction-level exposure from the regime metadata. (3) The tainted-flow ratio finally computes: flagged-flow value / total register value, with the numerator decomposed by match confidence band — a ratio built on fuzzy matches must carry its confidence structure, not present a false binary. (4) The redirected-flows analytic stays, now sourced from register rows with dates.
+
+**Prerequisites.** Screening-desk endpoint stability; flow-register schema; the illustrative projects demoted to labelled fixtures. **Acceptance:** the ratio reproduces from register rows and screening responses; a counterparty added to the CSL (test fixture) moves the ratio on next screen; every flagged flow links to its match record with confidence score.
+
+### 9.2 Evolution B — Green-integrity compliance copilot (LLM tier 2)
+
+**What.** The module's users sit at the awkward intersection of sanctions compliance and green-finance integrity. The copilot works that seam: "our Central Asia solar fund has two medium-confidence CSL matches — summarize the match evidence and the escalation options", "draft the integrity annex for this green bond: screening coverage, tainted-flow ratio, unresolved matches" — composition over screening results and register aggregates.
+
+**How.** Tier-2 tool calls to the flow register, screening endpoints, and ratio computation; match-evidence summaries quote the actual matched list entries (CSL source list, program, match score) — the screening desk's own disclaimer ("screening aid, not a compliance determination") propagates verbatim into every copilot answer as a structural guardrail. Escalation options are constrained to a documented playbook vocabulary; the copilot never clears or blocks a counterparty — it organizes evidence for the compliance officer's decision. Annex drafts render via report studio with the confidence-band decomposition included.
+
+**Prerequisites (hard).** Evolution A's real screening integration — narrating seeded exposure scores as sanctions risk would be a legal hazard, not just an accuracy bug; playbook vocabulary agreed with compliance. **Acceptance:** every match claim traces to a screening response; the disclaimer appears in all outputs; no answer renders a clear/block determination.

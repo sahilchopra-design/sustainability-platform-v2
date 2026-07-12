@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Fix the inverted tranche waterfall and ingest real hazard data (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag records a confirmed, material defect: the tranche loss waterfall is **inverted**. Real securitisation subordination absorbs losses bottom-up (Equity → Junior → Mezzanine → Senior), but the code processes `TRANCHES` in declared order `[AAA Senior, AA Mezz, BBB Junior, Equity]`, applying `remainingLoss` to **Senior first** — the trailing `.reverse()` only flips the display, not the numeric assignment. The §7.4 worked example shows a 3% pool loss attributed entirely to AAA Senior with Equity at zero — the exact opposite of how CDO/RMBS work, which would badly mislead any credit analyst. The 500 loans are `sr()`-synthetic (no FEMA/CoreLogic data ingested despite being named), but the PCAF Class 5/7/8 formulas and the tranche proportions/spreads are correctly modelled. Evolution A fixes the waterfall and grounds the hazard data.
+
+**How.** (1) Reorder the loss-allocation loop to process Equity → Junior → Mezzanine → Senior (reverse `TRANCHES` *before* the loop, not after) so `absorbed` accrues bottom-up as subordination requires — the single highest-priority fix. (2) Ingest real hazard data: FEMA National Flood Hazard Layer and CoreLogic/USFS wildfire scores keyed to loan property coordinates, replacing the state-conditioned `sr()` flood/fire/coastal flags (the platform's physical-risk digital twin already has flood/wildfire PostGIS grids to draw on). (3) Calibrate the haircut coefficients (currently hand-tuned 5/8/3 base points, 60/90/40 multipliers) against a catastrophe model or historical loss-given-hazard study. (4) Bench-pin the tranche waterfall against a worked subordination example.
+
+**Prerequisites.** The waterfall fix is trivial and urgent; hazard ingestion uses the existing digital-twin grids. **Acceptance:** a modest pool loss hits Equity first and Senior last; loan hazard flags derive from FEMA/CoreLogic by coordinate; the bench case reproduces correct subordination.
+
+### 9.2 Evolution B — Structured-credit climate-overlay copilot (LLM tier 1)
+
+**What.** A copilot for the securitisation/credit analyst: "how does this pool's tranche loss distribute under SSP5-8.5?", "which loans drive the collateral haircut?", "what's the senior tranche's loss attachment point given the physical risk?" — answered from the (fixed) tranche waterfall, the loan-level haircuts, and the PCAF financed-emissions overlay.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/structured-credit-climate/ask`, corpus = this Atlas record (the haircut formula, the subordination structure, PCAF Class 5/7/8 / FEMA / CoreLogic framework notes) plus live page state (pool, SSP scenario). Tranche-loss answers narrate the corrected bottom-up waterfall; haircut explanations decompose the flood/fire/coastal contributions per SSP multiplier; the copilot explains subordination correctly (post-Evolution-A).
+
+**Prerequisites (hard).** Evolution A's waterfall fix — a copilot narrating the current inverted waterfall would tell analysts their AAA senior tranche absorbs first losses, a dangerously wrong statement about credit risk. **Acceptance:** every tranche-loss figure reflects correct bottom-up subordination; haircut decompositions match the computed per-hazard contributions; a pool loss scenario shows Equity absorbing before Senior.

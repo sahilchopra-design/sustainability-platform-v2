@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Calibrate the multi-factor pricing model against real VCM data (analytics ladder: rung 2 → 3)
+
+**What.** The page implements a genuine multi-factor pricing model (`price = methodBase × vintageAdj × permFactor × liqFactor × regPrem × verPrem × qualAdj`) with a coherent structure — the six-factor decomposition the overview promises is real arithmetic. But the credit universe is seeded (`sr(seed+n)`-driven methodology, vintage, liquidity, quality, Sylvera/BeZero ratings) and the factor multipliers are authorial constants with no calibration. It carries real reference blocks (`VCM_AVG_PRICES`, `VCM_BENCH`, CORSIA phases). Evolution A calibrates the model to observed prices.
+
+**How.** (1) Seed the credit universe from real registry data (Verra/Gold Standard project listings — public) rather than PRNG: real methodology, vintage, buffer pool, verifier per credit. (2) Calibrate the factor multipliers against observed VCM transaction prices: regress realised price on the factor set (vintage, methodology, quality rating, liquidity) so `vintageAdj`, `permFactor`, `qualAdj` are fitted coefficients, not `+0.04/yr`-style guesses — this is the rung-3 move (calibrated to observed data). (3) Quality ratings from real Sylvera/BeZero data where licensable, or clearly labelled proxy. (4) The forward curve and CORSIA-eligibility logic (already partly rule-based — `corsiaEligible` checks methodology + quality ≥50) grounded in the real CORSIA Eligible Emissions Unit list. As it shares the `carbon.py` backend, extract the pricing model to a dedicated route.
+
+**Prerequisites.** VCM price data for calibration (transaction data is the constraint — much is OTC/opaque, so the calibration must report its sample and confidence); registry project data. **Acceptance:** credits derive from real registry projects; factor multipliers are fitted with published coefficients and fit statistics; CORSIA eligibility matches the official EEU list; the calibration sample and its limitations are disclosed.
+
+### 9.2 Evolution B — Carbon-credit pricing copilot (LLM tier 2)
+
+**What.** Buyers and traders ask "what should a 2021-vintage REDD+ credit with a BeZero A rating price at?", "why is this cookstove credit trading at a discount?", "which of these credits are CORSIA-eligible?" — the copilot runs the Evolution-A pricing model, decomposes the price into its factors (vintage premium, quality adjustment, liquidity), and reports CORSIA eligibility, every figure tool-traced.
+
+**How.** Tool schemas over the Evolution-A pricing and eligibility routes; grounding corpus is this Atlas record plus the calibration coefficients so the copilot explains *why* a factor moves the price (citing the fitted vintage-premium coefficient, not a guess). The honesty duty is central given VCM integrity concerns: the copilot presents quality ratings as the rating provider assessed them, states the calibration's data limitations (VCM prices are opaque), and never asserts a credit is "high quality" beyond what the rating and factor model support — the module operates in a market where overstated quality is the core risk.
+
+**Prerequisites (hard).** Evolution A's calibration — a copilot quoting prices from uncalibrated authorial multipliers over seeded credits would misprice a real market. **Acceptance:** every price and factor traces to a tool response; price decompositions cite the fitted coefficients; CORSIA verdicts match the official list; quality claims stay within the rating/model basis with the calibration caveat stated.

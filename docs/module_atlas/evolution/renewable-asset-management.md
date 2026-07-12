@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Weather-adjusted performance analytics on ingested resource data (analytics ladder: rung 1 → 2)
+
+**What.** §7 documents three unimplemented guide formulas: no true performance ratio (`PR = Actual/(Irradiation × Capacity)` needs measured irradiance that isn't in the schema — the code substitutes a capacity-factor proxy that conflates resource quality with technical performance), no availability from a downtime log (it's a 90–99% random draw), and no repowering/CapEx-per-MWh economics at all. Worse, a flat 25% capacity factor is applied to all five technologies including offshore wind (~45%+) and battery storage, where the metric doesn't even apply. Evolution A builds the weather-adjusted layer using resource data the platform already ingests.
+
+**How.** (1) Per-asset expected generation from location: NASA POWER GHI/wind-speed (already wired into `renewable_project_engine` as an optional lat/lon path — reuse it) gives the irradiation denominator, so `PR = actual / (irradiance × capacity × η_ref)` becomes computable for solar, with wind analogues via the engine's Weibull machinery; technology-appropriate metrics per class (PR for solar, energy-based availability for wind, round-trip efficiency and cycles for storage — retiring the misapplied CF). (2) Generation/downtime intake via CSV (monthly meter data is universally exportable; SCADA integration is a later increment) into `ram_asset_readings`. (3) Repowering economics as a real calculation: incremental capex vs uplifted yield, reusing the platform's LCOE/CRF engine (`/renewable-ppa/lcoe`). (4) Technology-specific CF defaults where measurements are absent, flagged as estimates.
+
+**Prerequisites.** Reading-intake schema; NASA POWER call budget for portfolio-scale enrichment. **Acceptance:** a solar asset's PR responds to both its meter data and its location's irradiance; offshore wind default CF differs from solar's; a repowering case reproduces a hand-computed IRR.
+
+### 9.2 Evolution B — Portfolio-performance review copilot (LLM tier 2)
+
+**What.** Asset managers run monthly performance reviews. The copilot drafts them: "which assets underperformed P50 by more than 5% this quarter, and is it resource or technical?" — the resource-vs-technical split being exactly what the Evolution-A PR decomposition answers (low irradiance vs low PR); "draft the lender report section on availability and degradation trends"; "rank repowering candidates by computed IRR". Each is a tool call over readings, PR calculations, and the repowering endpoint.
+
+**How.** Tier-2 tool schemas over the Evolution-A endpoints; the underperformance decomposition is mechanical (generation delta = resource delta × capacity + PR delta × resource) and the copilot must present both terms so weather excuses are quantified, not asserted. Lender-report drafts follow the module's cited IEA/WindEurope conventions from the corpus and render via report studio. Guardrails: assets with estimate-flagged CFs are labelled as such in any ranking; no forecast claims (this module is operational analytics; forecasting belongs to `renewable-ml-forecasting`, and the copilot routes there).
+
+**Prerequisites (hard).** Evolution A's readings and PR machinery — reviewing seeded availability draws would produce fictional performance narratives; per-field estimate flags. **Acceptance:** the resource/technical split sums to the observed delta; report figures match endpoint output; estimate-based rows carry their flag into generated text.

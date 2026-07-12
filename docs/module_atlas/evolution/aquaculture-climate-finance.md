@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the claimed climate-adjusted IRR with dose-response production risk (analytics ladder: rung 1 → 2)
+
+**What.** The page is tier-B frontend-only: 6 hard-coded sectors, and the only live computations are `totalProduction`, `avgClimRisk`, and the carbon-cost slider. The guide's headline formula — `Climate-Adjusted IRR = Base IRR − Physical Risk Discount + Certification Premium` with `Production Risk = f(SST, pH, storms)` — is documented in §7.1 as **not implemented**. Evolution A builds it honestly, as this module's first backend engine, deriving production risk from the data the page already carries: `TEMP_STRESS_CURVE` (species growth/mortality vs temperature), `ACID_SCENARIOS` (pH → shell-formation impact), and the per-sector acid/temp/storm sub-scores.
+
+**How.** (1) New route `api/v1/routes/aquaculture_finance.py` with `POST /production-risk` (site + species + scenario → volume discount via interpolation on the stress curve and pH pathway) and `POST /climate-irr` (cash-flow model applying the discount and the `CERTIFICATION_PREMIUM` uplift). (2) Replace static SST assumptions with per-site lookups from the platform's NASA-POWER/Open-Meteo integrations for observed baselines, with SSP deltas from the seeded scenario tables. (3) Scenario grid (rung 2): the 4-row stress matrix (Orderly 1.5°C → Catastrophic 4°C+) becomes computed output, not a static table.
+
+**Prerequisites.** Fix the documented `ReferenceLine` missing-import bug before adding tabs; source citations per seed cell (the guide attributes values to ASC/FAO/SROCC/Swiss Re but no cell-level provenance exists). **Acceptance:** salmon IRR at a 16 °C-optimal site exceeds the same site shifted +6 °C on the stress curve; oyster risk responds to pH pathway choice; a species/temperature pair outside the curve returns an honest null, not an extrapolation.
+
+### 9.2 Evolution B — Blue-finance deal-screening copilot (LLM tier 1)
+
+**What.** A copilot on the page answering "why is tropical shrimp WATCH-listed?" (climRisk 81 ≥ 78 per the deal-screener rubric), "what does the carbon credit for seaweed mean?" (negative co2KgPerKg of −1.2 flips the cost sign), and "which certification maximises premium per year-to-achieve?" — strictly from this Atlas record and the page's seed tables, with the mandatory disclosure that all figures are synthetic demo values without cell-level citations.
+
+**How.** Standard Tier-1 pattern: pgvector-embedded corpus from this module's Atlas sections (§7.2 seed tables, §7.3 rubric thresholds, §7.4 worked examples are the grounding); Haiku-tier serving with prompt-cached module context. The refusal path matters unusually much here: until Evolution A ships, the copilot must refuse IRR questions ("this module does not compute IRR — the guide's formula is not implemented") rather than parroting the over-claiming guide text; the system prompt therefore embeds §7.1's mismatch note verbatim. After Evolution A, the copilot upgrades to tier 2 by tool-calling `POST /climate-irr` for what-ifs.
+
+**Prerequisites.** None beyond the platform copilot router (`module_copilot.py`) — the grounding corpus already exists in this Atlas record. **Acceptance:** asked for a climate-adjusted IRR pre-Evolution-A, the copilot refuses and cites the mismatch; every threshold it quotes (65/78 eligibility cut-offs, +18% ASC premium) matches the seed tables exactly.

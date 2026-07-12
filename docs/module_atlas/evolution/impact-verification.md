@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the VCS on a per-claim evidence store (analytics ladder: rung 1 → 2)
+
+**What.** The module's taxonomies are genuinely good — the real IMP five-dimension weights (25/20/25/15/15), a J-PAL-style evidence hierarchy (RCT 95% → anecdotal 30%), 8 curated impact-washing flags, and a real verifier panel (DNV, CICERO, KPMG…) — but §7.5 is blunt: per-company scores are `seed()` draws over real `GLOBAL_COMPANY_MASTER` names, and the guide's Verification Confidence Score is not computed (the page's composite is the IMP-weighted mean, a different metric). Evolution A implements the §8 spec: `VCS = 0.35·EvidenceQuality + 0.25·MethodologyRobustness + 0.25·Independence + 0.15·DataAuditability`, computed from a real per-claim evidence store rather than PRNG.
+
+**How.** (1) Tables `verification_claims` (holding × IRIS+ metric × claim), `verification_evidence` (design type, verifier id, data-source flags) — the workflow the §1 overview describes (create request → assign verifier → upload evidence → receive opinion) finally gets persistence. (2) `POST /impact-verification/vcs` computing the score with §8.3's hard cap `VCS ≤ 0.5` when Independence = 0 — the anti-self-reporting rule is the spec's most important line. (3) Impact-washing flags become rule-evaluated from claim data (e.g. output-outcome conflation detected when a claimed outcome metric maps to an IRIS+ output code). (4) Distribution reconciled against BlueMark published verification tiers per §8.5.
+
+**Prerequisites.** The `enrichHolding` seeded scoring removed (real names + fabricated verification statuses is the exact impact-washing pattern this module exists to police); an evidence-upload path. **Acceptance:** an RCT-backed arms-length claim scores ≥ 0.85; a self-reported claim caps at 0.5; every VCS decomposes into its four stored components.
+
+### 9.2 Evolution B — Verification-workflow copilot with evidence-grading discipline (LLM tier 2)
+
+**What.** A copilot for impact analysts running the verification desk: "which claims fall below the 0.60 re-verify threshold?", "recommend a verifier for a health-outcome DIB claim in East Africa" (matching the `VERIFIERS` panel's specialty/region/cost fields), "explain why this claim's VCS dropped after the auditability recode." A second, higher-value behaviour: pre-screening uploaded evidence documents — classifying evaluation design (RCT / quasi-experimental / survey / anecdotal) as a *suggested* tier for human confirmation, which is a classic LLM-assist task over the module's own evidence hierarchy.
+
+**How.** Tier 2: tool schemas over the Evolution A `/vcs` and claim-query routes; verifier recommendations rank the real panel table by specialty match and cost, shown with the ranking arithmetic. Evidence-design suggestions are always labeled machine-suggested with the confidence rationale, never auto-committed — §8.6 flags inter-rater variance as the model risk, and the copilot must not become an unaccountable rater. The no-fabrication validator covers all VCS figures and thresholds (0.80 credible / 0.60 re-verify come from §8.3, cited).
+
+**Prerequisites (hard).** Evolution A — a verification copilot narrating seeded statuses would be impact-washing with extra steps. Document-upload pipeline for the pre-screening behaviour. **Acceptance:** every VCS/threshold figure traces to a tool call or §8.3; evidence-tier suggestions carry a visible "pending human confirmation" state in the workflow.

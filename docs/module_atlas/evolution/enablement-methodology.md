@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A real PCAF attribution engine under the enablement framing (analytics ladder: rung 1 → 2)
+
+**What.** The guide promises a regulatory-grade PCAF Scope 3 Cat.15 engine (`EE = Financing/EVIC × Investee_GHG`, DQ scores 1–5, avoided-emissions annex). The code computes none of it: product-level `enabledReduction` and `financedEmissions` are independent seeded draws (making the headline enablement `ratio` meaningless by construction), the quarterly trend is generated, and GFANZ alignment counts are hard-coded percentages (`alignedCount = 0.72·total`). Evolution A builds the actual attribution engine — the platform's only PCAF implementation today is a partial one inside `dme-portfolio`; this module is where the full standard belongs.
+
+**How.** (1) `services/pcaf_engine.py` + `api/v1/routes/enablement.py`: holdings from `portfolios_pg`, EVIC and GHG inventories from the company master, attribution factor per PCAF Part A asset class (listed equity/bonds/loans/project finance mapping per position), and the 1–5 DQ score assigned by data provenance (reported+audited → 1, sector proxy → 5) — honestly, since much of the master will score 4–5. (2) Avoided emissions (Part B) computed only for positions with actual project data (grid displacement factor × generation), else null — no seeded "enabled reduction." (3) `dme-portfolio`'s PCAF tile consumes this engine rather than duplicating. (4) Rung 2: attribution-factor sensitivity (EVIC vs total-equity denominators) and portfolio what-ifs (divest top-N emitters).
+
+**Prerequisites.** Company-master GHG coverage audit (DQ distribution will be dominated by proxies at first — disclose it); D0 demo portfolio. **Acceptance:** a fixture position's financed emissions reproduce `Financing/EVIC × GHG` by hand; the DQ distribution chart reflects actual provenance classes; the seeded PRODUCTS array and hard-coded alignment split are deleted.
+
+### 9.2 Evolution B — PCAF data-quality improvement advisor (LLM tier 2)
+
+**What.** PCAF's practical pain isn't the arithmetic — it's improving DQ scores position by position. A tool-calling advisor that queries Evolution A's engine for the portfolio's Score 4–5 positions (the workflow explicitly says "flag Score 4–5 for improvement"), explains per position what data would lift it a tier (reported Scope 1+2 → Score 2; verified → Score 1), estimates the financed-emissions revision range if proxies are replaced, and drafts the investee data-request letters — then assembles the PCAF-format disclosure with the DQ-weighted confidence framing the standard requires.
+
+**How.** Tools: `get_position_dq(portfolio)`, `compute_financed_emissions(position, overrides)` (for the what-if revision ranges — real engine calls with hypothetical better data, clearly labeled hypothetical), `get_pcaf_asset_class_rules`. Grounding corpus = this Atlas record's §5 plus the PCAF 2022 standard references; the drafted disclosure tables pull only engine outputs, and revision estimates are always presented as ranges from actual recomputation, never point guesses.
+
+**Prerequisites (hard).** Evolution A — advising DQ improvements on seeded positions would send data-request letters about holdings whose emissions were invented. **Acceptance:** the advisor's Score 4–5 list matches the engine's DQ query exactly; every revision range reproduces from the override recomputation; disclosure tables contain zero numbers absent from engine responses.

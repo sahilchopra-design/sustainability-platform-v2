@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real holdings and calibrated repricing constants under NGFS vintages (analytics ladder: rung 2 → 3)
+
+**What.** The scenario machinery is genuinely rung 2: six NGFS Phase IV scenarios with well-populated parameter tables (carbon prices, physical/transition weights, GDP impact, SLR), linear 2030→2050 interpolation, and coherent repricing formulas (`scenarioAdjustedPD`, `strandedAssetProb = 1 − exp(−exposureFactor·t/10)`, WACC uplift, EL). The weaknesses: holdings and exposures are seeded (`basePD = 0.005 + sr(h,2)·0.04`, seeded `physExposure`/`fossilRevPct`), and three load-bearing constants are asserted, not calibrated — LGD fixed at 45%, the 2.5× valuation repricing multiple, and the `/10` stranding time-scale. Evolution A grounds inputs and constants.
+
+**How.** (1) Holdings from `portfolios_pg`; `fossilRevPct` and carbon intensity from company-master fields with honest nulls (no sector-guess fallbacks); baseline PDs from the dme-pd-engine vertical rather than seeds. (2) Scenario parameters read from the platform's ingested NGFS dataset (the Financial Modeling Studio's climate-integrated PF model already consumes NGFS vintages) so Phase V updates propagate without hand-editing the 7-row table. (3) Calibration: LGD by seniority/sector from public LGD studies instead of flat 45%; the 2.5× repricing multiple derived from a documented DCF duration argument with sensitivity bounds published in the response. (4) Server-side endpoint (`POST /api/v1/dme-scenarios/reprice`) with bench-pinned worked example per scenario.
+
+**Prerequisites.** dme-pd-engine Evolution A (baseline PD supply); NGFS ingester coverage check. **Acceptance:** fixture portfolio repricing reproduces the §7.1 formulas by hand under Net Zero 2050 and Hot House; changing NGFS vintage changes outputs without code edits; the three formerly-hard-coded constants carry documented provenance.
+
+### 9.2 Evolution B — TCFD scenario-analysis narrator with divergence drill-down (LLM tier 2)
+
+**What.** The module's export step — "divergence analysis for TCFD strategy disclosure" — becomes a tool-calling analyst: "compare our portfolio under Delayed Transition vs Net Zero 2050 at 2035; which names drive the divergence and why?" It runs Evolution A's reprice endpoint per scenario, decomposes deltas by driver (carbon-price path vs physical weight vs sector multiplier), and drafts the TCFD Strategy-section narrative with the scenario descriptions taken from the stored NGFS metadata, never from model memory (scenario definitions drift between phases — a real hazard).
+
+**How.** Tool schemas from the reprice endpoint plus a scenario-metadata GET; grounding corpus = this Atlas record's §7.1–7.2 (formulas + the scenario parameter table). Each narrative claim carries the scenario/horizon/entity triple it derives from; the no-fabrication validator checks PD deltas, stranding probabilities, and valuation impacts against tool outputs. Custom scenarios ("carbon price 30% above NZ2050") are expressed as typed parameter overrides to the endpoint — the analyst may not free-hand a scenario.
+
+**Prerequisites (hard).** Evolution A — narrating divergence between seeded exposures would produce a TCFD disclosure built on fabricated fossil-revenue shares. **Acceptance:** a golden two-scenario comparison memo has every figure tool-traceable; asking about a scenario not in the loaded NGFS vintage refuses with the list of available scenarios.

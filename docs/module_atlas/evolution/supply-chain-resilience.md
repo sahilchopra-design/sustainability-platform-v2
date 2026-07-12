@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the resilience quotient and a real expected-annual-loss simulation (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag identifies that the headline `Resilience = Diversification × ClimateAdaptation × BusinessContinuity / SupplyConcentration` is not computed — `resilience` is an independent `sr()` draw with no link to those factors — and the "Monte Carlo Expected Annual Loss" chart is a 50-point random scatter, not a converged simulation, with `eal = revenue-at-risk × 0.15` conflating loss-given-disruption with expected annual loss. But the module has genuine real formulas: node criticality (`throughput/10 × (100−substitutability)/100`), the SPOF screen (`substitutability<25 && throughput>500`, consistent with ISO 22301 business-impact analysis), and RCP/horizon hazard scaling. Blast radius 81. Evolution A implements the headline resilience and a real EAL.
+
+**How.** (1) Compute the resilience quotient from its actual factors: diversification (the real HHI over supplier countries), climate adaptation (measures adopted per node), business continuity (BCP coverage/testing), divided by supply concentration (single/sole-source dependencies) — replacing the random draw. (2) Build a genuine Monte Carlo EAL: integrate loss-given-disruption × probability-of-occurrence over a year across the node network (using the 12-quarter disruption history for frequency priors), replacing the flat 15% haircut and the random scatter. (3) Ground node hazard exposure in the platform's physical-risk grids keyed to node locations. (4) Optimise the redesign scenarios (nearshoring, dual-sourcing, etc.) against the actual node network rather than hand-scripted `resilienceImprove` values. (5) Calibrate RCP/horizon multipliers to an NGFS/IPCC damage function.
+
+**Prerequisites.** Physical-risk grids (exist); disruption-frequency priors from the history; the shared compute-route fixes. **Acceptance:** resilience is the computed quotient of its four factors; EAL is a converged loss×probability integration, not a 15% haircut; changing diversification or concentration moves the resilience score.
+
+### 9.2 Evolution B — Resilience-planning copilot (LLM tier 2)
+
+**What.** A copilot for the business-continuity/procurement planner: "what's our supply-chain resilience score and what drags it down?", "run a disruption stress test on our top supplier and show revenue impact", "which redesign option — nearshoring or dual-sourcing — improves resilience most?" — driving the (Evolution-A) resilience quotient, the EAL simulation, and the redesign optimisation.
+
+**How.** Tier-2 pattern once the formulas are real: the resilience calculation, the EAL Monte Carlo, and the SPOF/criticality screens become tools; the copilot narrates the resilience decomposition (diversification/adaptation/continuity/concentration), the stress-test revenue impact, and the network-optimised redesign recommendation, citing ISO 22301 concepts. The no-fabrication validator checks every score/EAL figure against tool output.
+
+**Prerequisites (hard).** Evolution A — with resilience as a random draw and EAL as a random scatter, the copilot would narrate fabricated resilience scores and a Monte Carlo that doesn't converge. **Acceptance:** every resilience/EAL figure traces to the computed model; redesign recommendations reflect network optimisation; a node outside the network returns a refusal.

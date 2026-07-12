@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the funnel: TAS from per-holding assessments, not literals (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag documents that the hub's 14 headline KPIs and 5-step funnel (`taxEligibility=72.4`, `taxAlignment=41.8`, `dnshCompliance=89`...) are hard-coded literals, while a genuinely computed per-holding aggregate (`consistencyData`, §7.3) sits on the same page unreconciled — filtering holdings changes the table but the frozen KPIs stay put. Worse, the synthetic generator draws `eu_tax_aligned` independently of `eu_tax_eligible`, so ~13.5% of holdings are logically-impossible aligned-but-ineligible (§7.5). Evolution A makes every headline number derive from the holdings layer, per the §8 spec already written.
+
+**How.** (1) Fix the generator's conditional structure immediately: `aligned` drawn only within `eligible`, DNSH and safeguards as gates per §8.3's indicator-function chain — eligibility strictly a superset of alignment. (2) Replace the 14 literals with roll-ups: `PortfolioTAS = Σ TAS(h)×w_h / Σw_h`, funnel steps computed as successive conditional shares so the funnel actually funnels. (3) Wire real inputs where they exist: large EU issuers' disclosed Taxonomy KPI tables (mandatory under CSRD Art. 8 from FY2024) seeded for the `GLOBAL_COMPANY_MASTER` names the page already pulls, with a PCAF-style data-quality flag for estimated rows (§8.6). (4) `AlignmentRatio` defined as 0 when `EligibleRevenue=0`, per §8.6's NaN warning.
+
+**Prerequisites.** Activity-level revenue splits are the hard data gap (§8.4) — start company-level with disclosed KPIs, defer activity-level TSC assessment to the linked EU Taxonomy sub-module. **Acceptance:** filtering holdings moves every headline KPI; zero aligned-but-ineligible rows possible by construction; computed portfolio TAS reconciles with `consistencyData` on the same page.
+
+### 9.2 Evolution B — Multi-jurisdiction taxonomy navigator copilot (LLM tier 1)
+
+**What.** As a navigation hub over 5 live sub-modules (EU Taxonomy, SFDR, ISSB Materiality, GRI Alignment, Framework Interop) with accurate deadline and country-adoption reference tables, this module's LLM fit is a router-explainer: "we're a German asset manager with UK and Singapore holdings — which frameworks bind us, in what order do deadlines hit, and which sub-module do I use for each?" answered from `DEADLINES`, `COUNTRY_ADOPTION`, `MODULES`, and this Atlas record.
+
+**How.** Tier 1 per the roadmap: the hub has no backend (EP code None), so the corpus is its static reference tables — which §7.6 confirms are accurate regulatory content (CSRD ESRS 2026-04-30, SFDR PAI, ISSB S2 mandatory dates for AU/SG/HK) — plus each linked sub-module's Atlas overview so the copilot routes users to the right page rather than answering beyond the hub's surface. This is a natural precursor to the roadmap's tier-3 desk orchestration: the hub already encodes the module graph for the disclosure desk. Guardrails: while headline KPIs remain literals (pre-Evolution-A), the copilot must not present them as portfolio measurements — the §7 mismatch text is embedded precisely so it can say "this figure is a static placeholder."
+
+**Prerequisites.** Deadline table given an `as_of` vintage field and a refresh owner — stale regulatory dates are worse than none. **Acceptance:** every deadline/jurisdiction claim cites its reference row; routing suggestions name only the 5 real sub-module paths; KPI questions pre-Evolution-A get the placeholder disclaimer.

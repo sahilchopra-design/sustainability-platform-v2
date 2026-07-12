@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sector contributions computed from holdings, not hand-authored (analytics ladder: rung 2 → 3)
+
+**What.** The additive waterfall is genuinely implemented — `portfolioITR = 1.5 + Σ itrContrib` recomputes live as the What-If Simulator toggles sectors (§7.2), a real scenario capability. But per §7.6 the ten `itrContrib` values are hand-authored literals, the 12-company drill-down carries independent static ITRs unreconciled with the sector layer, the shared `temperature_alignment_engine` is never called, and §7.4 exposes a documentation drift: the guide's headline "2.4°C" doesn't reconcile with the array's actual 3.25°C sum. Evolution A derives every waterfall bar from the engine.
+
+**How.** (1) Compute per-sector contribution bottom-up: `itrContrib(sector) = Σ_companies weight_i × (ITR_i − 1.5)` using company-level ITR from `POST /itr` (WACI-interpolated via the engine's MSCI/Carbon Delta anchor table), so sector bars, company drill-down, and scope splits are one consistent dataset instead of two static layers. (2) The What-If Simulator gains company-granularity toggles (the module's stated purpose — "toggle holdings on/off" — currently only works at sector level). (3) Fix the two documented code smells: the dead module-scope `PORTFOLIO_ITR = useMemoCalc()` (§7.6) and the misleading hook-style naming. (4) Refresh the guide's 2.4°C example from the computed default portfolio, closing the §7.4 reconciliation gap.
+
+**Prerequisites.** Shared with the sibling module: the traced `POST /itr`/`POST /assess` failures fixed, and a seeded demo portfolio with emissions/revenue per holding. Edits to `temperature_alignment_engine` propagate to `temperature-alignment` (§6) — coordinate. **Acceptance:** sum of company contributions per sector equals the sector bar; toggling any single holding moves the headline ITR; guide example matches computed output.
+
+### 9.2 Evolution B — Attribution copilot narrating the waterfall (LLM tier 1 → 2)
+
+**What.** Decomposition displays beg "why" questions. The copilot answers "why does Energy add +0.82°C?" (weight × excess-ITR arithmetic, Scope 1/3 dominance from the scope decomposition), "what single exclusion gets us under 2°C?" (evaluate each toggle against the additive sum), and "what would GFANZ sector-pathway alignment require here?" from the engine's `ref/sector-pathways` reference payload.
+
+**How.** Tier 1 works today because the waterfall math is transparent and on-page: grounding is this Atlas record (§7.2–7.4 document the formula, construction, and worked sums) plus live component state; exclusion what-ifs are simple additive arithmetic the copilot can verify against the recomputed KPI rather than generate. Tier 2 binds the module's 11 mapped engine routes as tools once Evolution A wires them — then "re-run the waterfall assuming Utilities halve their WACI" is an executed `POST /assess` call, and answers can cite PACTA alignment percentages the engine computes. Until then, the copilot must state that sector contributions are illustrative hand-authored values (§7.6), not PACTA-derived.
+
+**Prerequisites.** None for the tier-1 slice; Evolution A for tool-called what-ifs. **Acceptance:** every °C figure in an answer reproduces from `1.5 + Σ active contributions`; exclusion recommendations are exhaustively verified against all single-toggle outcomes; pre-Evolution-A answers carry the static-data caveat verbatim.

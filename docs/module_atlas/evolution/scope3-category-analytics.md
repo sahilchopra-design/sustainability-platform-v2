@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the analytics engine with consistent DQ and weighted aggregation (analytics ladder: rung 1 → 2)
+
+**What.** §7 finds a tier-A label over a client-side page: 50 seeded companies with all 15 Scope 3 categories, zero backend calls despite `scope3_analytics_engine.py` existing unwired; data-quality scores are uniform random draws internally inconsistent with the `method` field beside them (a "Primary Data" cell can show DQ 4.5-worse than a "Spend-Based" cell by chance); `avgOverallDQ` is a flat mean rather than emissions-weighted, understating Cat 1/Cat 11 influence; and reduction targets are static percentage cuts with no year-by-year path. Evolution A wires the engine and makes the deep-dive categories (1, 4, 11, 15) genuinely deep.
+
+**How.** (1) Company/category data comes from `scope3-engine`'s deterministic estimation over real portfolio holdings (that sibling already computes all 15 categories from `GLOBAL_COMPANY_MASTER` financials — this module should consume its output, not maintain a second seeded universe). (2) DQ derived from method: a documented method→DQ-band mapping (primary data 1–2, activity-based 2–3, spend-based 4–5, per PCAF/Pathfinder conventions) so the two columns can't contradict; user overrides allowed with evidence notes. (3) Aggregation emissions-weighted (`Σ DQ×emissions / Σ emissions`) as §7.6 prescribes. (4) Category deep-dives gain their promised mechanics via the unwired engine: Cat 1 supplier-engagement ROI from supplier-level intensity spreads, Cat 11 use-phase modelling from product energy assumptions, Cat 15 delegating to the platform's PCAF financed-emissions logic. (5) Reduction pathways become year-by-year trajectories with named levers.
+
+**Prerequisites.** Sibling-engine output contract; method→DQ mapping documented. **Acceptance:** a company's Cat-1 figure here equals `scope3-engine`'s for the same inputs; DQ is consistent with method by construction; weighted DQ shifts when a large category's quality changes while the flat mean wouldn't.
+
+### 9.2 Evolution B — Category-strategy copilot for reduction planning (LLM tier 2)
+
+**What.** The module's four focus categories each have distinct reduction playbooks; the copilot matches diagnosis to play: "Cat 1 is 62% of our footprint at DQ 4.1 — sequence the data-quality uplift and supplier-engagement moves, with the emissions-weighted DQ improvement each step buys", "model Cat 11 under a 20% product-efficiency improvement" — each quantified via tool calls to the engagement-ROI and pathway endpoints.
+
+**How.** Tier-2 tool schemas over the Evolution-A endpoints; recommendations draw from a per-category lever library (supplier data programs, logistics modal shift, product design, portfolio reallocation) grounded in the GHG Protocol category guidance chunked into the corpus, with each suggested lever's impact computed, not asserted. DQ-uplift sequencing uses the weighted-aggregation math so the copilot targets high-emissions categories first — the analytically right order the flat mean obscured. SBTi coverage checks (67% Scope 3 threshold) evaluate the actual computed shares. All tonnes and percentages validated against tool output.
+
+**Prerequisites (hard).** Evolution A — sequencing advice from internally contradictory seeded DQ would be wrong in direction, not just magnitude; lever library authored. **Acceptance:** every lever impact reproduces from an endpoint call; DQ-uplift plans order by emissions weight verifiably; SBTi coverage claims match computed shares.

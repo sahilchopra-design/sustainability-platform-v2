@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A solved frontier with calibrated covariance (analytics ladder: rung 2 → 5)
+
+**What.** The risk engine is mostly as documented — portfolio variance, VaR, correlation matrix, DSCR, WACI all implemented — but §7's mismatch is the headline capability: `buildFrontier()` is a heuristic tilt sweep (a hand-picked `[-1, -0.5, +1, +0.3, +0.2]` vector, clipped and renormalised), not the guide's Markowitz QP, so nothing guarantees the drawn "frontier" is efficient for the stated Σ; and σ/correlation values are hand-set rather than calibrated (§7.6). Evolution A ships the solved optimisation — a natural first mover for the platform's prescriptive rung, since scipy is already in the environment.
+
+**How.** (1) `POST /api/v1/re-portfolio-intel/frontier`: solve `min wᵀΣw` s.t. `w·μ = μ_target, Σw = 1, w ≥ bounds` via `scipy.optimize` (SLSQP or a QP formulation) across a target-return grid; add practical constraints the tilt sweep couldn't express (max single-technology weight, minimum DSCR, taxonomy-alignment floor) — turning the tab into an allocation tool rather than a picture. (2) Calibrate Σ where data allows: technology-level generation covariance estimable from resource-data history (ENTSO-E generation by type is ingested platform-side); hand-set values retained as documented defaults elsewhere. (3) DNSH stops being a scalar haircut: per-objective flags (water, biodiversity, circular economy, pollution) per asset, aggregated honestly per the EU Taxonomy's actual five-objective structure. (4) Bench pin: a 3-asset analytic case whose frontier is solvable by hand.
+
+**Prerequisites.** Backend port of the portfolio-statistics chain; covariance-calibration data audit. **Acceptance:** solver output dominates the tilt sweep's portfolios (equal or lower σ at every μ_target — directly checkable); constraint activation is reported per solution; the 3-asset bench matches the analytic answer.
+
+### 9.2 Evolution B — LP due-diligence copilot over the 18-tab surface (LLM tier 2)
+
+**What.** Institutional LPs interrogate portfolios along exactly this module's axes. The copilot fields the DD dialogue: "what's the marginal VaR contribution of adding 100MW offshore wind?", "walk me through the taxonomy-alignment calculation and its DNSH basis", "re-solve the frontier with a 30% single-technology cap and show what we give up in expected return" — the last a direct constrained-solver tool call whose give-up is the computed μ delta, the kind of precise trade-off answer that distinguishes tool-calling from chat.
+
+**How.** Tier-2 tool schemas over the frontier/VaR/attribution/taxonomy endpoints; marginal-risk answers use recomputation (portfolio with and without the candidate asset) rather than approximation, since the engine is cheap. System prompt grounded in §7.1's aggregation formulas and §7.6's calibration caveats — hand-set correlation defaults are disclosed whenever VaR or frontier results depend on them, an LP-credibility requirement. DD-pack drafting composes computed tables through report studio. No performance claims about the synthetic demo book as if it were a live fund.
+
+**Prerequisites (hard).** Evolution A's solver and the calibration-provenance flags; golden Q&A on the 3-asset bench. **Acceptance:** trade-off answers quote solver outputs for both constraint sets; every correlation-dependent figure carries its calibration-basis disclosure; marginal-VaR numbers reproduce from paired tool calls.

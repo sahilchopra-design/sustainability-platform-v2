@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the existing scheduler backend and make SLA real (analytics ladder: rung 1 → 2)
+
+**What.** §7 documents the familiar disconnect: a real backend (`scheduled_reports_service.py`, 8 endpoints) the frontend never calls — all schedule and execution-log state lives in `localStorage`, hand-authored. Two metric defects compound it: `successRate` counts completion, not on-time delivery (a systematically late schedule scores misleadingly high, contradicting the guide's own formula intent), and `dataReadiness` freshness flags are static despite presenting as a live dependency check. Evolution A wires the UI to its backend and makes both metrics honest.
+
+**How.** (1) Replace localStorage state with the 8 existing endpoints; schedules, runs, and logs become server-side, org-scoped, and shareable — the scheduling concept only means anything when a server actually executes on schedule (a background job runner ticking the service is part of this stage if not already live). (2) On-time SLA: each run records scheduled-vs-actual delivery timestamps; `successRate` splits into completion rate and on-time-within-tolerance rate, both reported. (3) `dataReadiness` computed from real dependency freshness — the source modules' last-computed timestamps (the widget-bus/artifact metadata the dashboard-builder evolution establishes serves double duty here), so a report scheduled on stale scenario data warns before it sends. (4) Delivery integrates with `report-generator`'s compose pipeline so what ships is the engine-sourced document, not a placeholder.
+
+**Prerequisites.** Job-runner infrastructure confirmed; artifact-freshness metadata from sibling modules. **Acceptance:** a schedule created in the UI appears via the backend API and fires without the browser open; late-but-complete runs degrade the on-time rate, not the completion rate; readiness flags change when a dependency actually goes stale.
+
+### 9.2 Evolution B — Subscription concierge and delivery-failure triage (LLM tier 2)
+
+**What.** Scheduling UIs accumulate cruft; a copilot keeps them intentional: "set up a monthly financed-emissions pack for the credit committee, first business day, DOCX, only if the underlying data refreshed this month" — natural-language schedule creation mapped onto the backend's schedule schema with the freshness condition attached; and triage: "why did Tuesday's board pack not deliver?" answered from the execution log (dependency stale, generation error, delivery failure) with the specific cause quoted.
+
+**How.** Tier-2 tool calls over the schedule/run/log endpoints; schedule creation is a confirmation-gated mutation (the copilot drafts the schedule object, the user approves — the roadmap's RBAC-gated write pattern). Failure triage reads the run's recorded error states and dependency snapshot, mapping each to a documented remediation ("scenario run is 45 days old — re-run scenario-stress-test or relax the freshness condition"). Subscription reviews ("which schedules delivered to no active recipients last quarter?") are computed log queries proposed for cleanup, never auto-deleted.
+
+**Prerequisites (hard).** Evolution A's live backend and logged runs — triaging a hand-authored demo log is theatre; mutation confirmation flow. **Acceptance:** created schedules match the confirmed draft exactly; every triage explanation quotes logged states; cleanup proposals list only schedules matching the stated computed criteria.

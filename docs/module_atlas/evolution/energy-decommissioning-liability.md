@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Discounted ARO mechanics on registry-linked assets (analytics ladder: rung 2 → 3)
+
+**What.** §7 rates the module faithful to its guide: `Gap = EstimatedLiability − Provision` implemented exactly, with a real NGFS scenario overlay (cost multipliers + retirement acceleration) — genuine rung 2. The flagged simplification is material, though: provisions and estimates are **undiscounted nominal figures**, whereas an IFRS/GAAP Asset Retirement Obligation is a discounted present value that unwinds over time. And the 19-asset table is hand-authored, disconnected from the platform's `energy-asset-registry`. Evolution A adds proper ARO mechanics and real cost anchors.
+
+**How.** (1) `services/decommissioning_engine.py`: per-asset ARO = discounted expected cost at the retirement date (discount-rate input, accretion/unwind schedule per IAS 37 / ASC 410), so the funding gap becomes PV-correct and the scenario overlay reprices both timing (acceleration shortens the discount period, *raising* PV — an effect the current nominal model cannot show) and cost. (2) Assets join the registry's `energy_assets` table (its Evolution A) instead of a parallel list — retirement dates and book values come from one source. (3) Rung 3: calibrate per-type cost benchmarks against published decommissioning actuals (North Sea Transition Authority cost estimates for offshore, IEA/NEA data for nuclear, EPA bonding data for coal), replacing the authored `est_cost_mn` values with sourced ranges; bench-pin the PV arithmetic with a worked unwind schedule.
+
+**Prerequisites.** Registry Evolution A (shared asset table); discount-rate policy decision (risk-free vs credit-adjusted, disclosed). **Acceptance:** a fixture asset's ARO reproduces a hand-computed PV and unwind table; NZ2050 acceleration shows the PV-increase effect; each cost estimate cites its benchmark source.
+
+### 9.2 Evolution B — Provisioning what-if analyst for CFO and regulator questions (LLM tier 2)
+
+**What.** A tool-calling analyst for the module's decision questions: "if Delayed Transition brings coal retirements forward 8 years, what's our PV funding gap, which jurisdictions' bond requirements bind, and what annual top-up closes the gap by retirement?" It chains Evolution A's endpoints — ARO recompute per scenario, per-jurisdiction bond rules from the existing 11-row `JURISDICTIONS` table (promoted to reference data), funding-schedule solver — and drafts the provisioning memo with every figure from tool output.
+
+**How.** Tools: `compute_aro(asset, scenario, discount_rate)`, `get_funding_gap(portfolio, scenario)`, `get_bond_requirements(jurisdiction)`, `solve_funding_schedule(gap, years)`. Grounding corpus = this Atlas record's §7.1 formulas plus the scenario multiplier table, so the analyst explains *why* acceleration raises PV rather than hand-waving. The memo distinguishes regulatory bond shortfalls (hard obligations) from economic underfunding (judgment), a distinction already latent in the module's `bond_required` field.
+
+**Prerequisites (hard).** Evolution A — the current nominal arithmetic would have the analyst confidently reporting gaps that ignore discounting, and the hand-authored assets aren't anyone's real book. **Acceptance:** a golden scenario memo's gap equals the engine's PV output; the funding schedule's terminal value closes the gap exactly; jurisdictions absent from the reference table are reported as uncovered.

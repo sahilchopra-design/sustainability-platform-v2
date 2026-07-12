@@ -4,10 +4,21 @@
 ## 1 · Overview
 5 NGFS scenarios with entity contribution waterfall, taxonomy drill-down, and reverse stress test.
 
+**How an analyst works this module:**
+- Scenario Selection applies NGFS stress
+- Entity Contribution shows waterfall of losses by holding
+- Reverse Stress solves for breaking conditions
+
 ## 2 · Function Map
 
 ### 2.1 Frontend (1 files)
 **Components/functions:** `Badge`, `Card`, `HOLDINGS`, `KPI`, `Pill`, `SCENARIOS`, `TABS`
+
+**Seed dataset schemas (record structure of each in-page dataset):**
+
+| Dataset | Rows | Fields |
+|---|---|---|
+| `SCENARIOS` | 6 | `name`, `carbonPrice`, `gdpShock`, `color` |
 
 **Derived values computed in the UI layer:**
 
@@ -16,6 +27,7 @@
 | `portfolioImpact` | `useMemo(() => SCENARIOS.map(s => ({` |
 | `entityContrib` | `useMemo(() => HOLDINGS.map(h => ({` |
 | `histComparison` | `useMemo(() => ['2024-Q1','2024-Q2','2024-Q3','2024-Q4','2025-Q1'].map((q,qi) => {` |
+| `reverseStress` | `useMemo(() => { const threshold = -20;` |
 | `multiplier` | `baseImpact !== 0 ? threshold / baseImpact : 0;` |
 
 ### 2.2 Backend endpoints
@@ -36,15 +48,17 @@
 | GET | `/api/v1/portfolio-analytics/enums` | `get_enum_values` | api/v1/routes/portfolio_analytics.py |
 | POST | `/api/v1/portfolio-analytics/seed-sample-data` | `seed_sample_data` | api/v1/routes/portfolio_analytics.py |
 | POST | `/api/v1/portfolio-analytics/{portfolio_id}/pcaf-run` | `run_pcaf_for_portfolio` | api/v1/routes/portfolio_analytics.py |
+| GET | `/api/v1/portfolio-analytics/{portfolio_id}/pcaf-results` | `get_pcaf_results` | api/v1/routes/portfolio_analytics.py |
+| GET | `/api/v1/portfolio-analytics/{portfolio_id}/waci-history` | `get_waci_history` | api/v1/routes/portfolio_analytics.py |
 
 ### 2.3 Engine `portfolio_analytics_engine` (services/portfolio_analytics_engine.py)
 | Function | Args | Purpose |
 |---|---|---|
 | `_get_db_engine` |  | Lazy import to avoid circular imports at module load. |
-| `_resolve_emissions` | asset | Resolve Scope 1, 2, 3 emissions and PCAF DQS for one asset row. |
-| `_write_time_series` | db_engine, portfolio_id, sector, metric_type, actual_value, glidepath_value | Insert one record into pcaf_time_series. No-ops if table doesn't exist. |
-| `run_pcaf_calculation` | portfolio_id | Execute a full PCAF Standard v2.0 financed emissions calculation for |
-| `get_latest_pcaf_results` | portfolio_id | Return the most recent PCAF metrics from pcaf_time_series (cached). |
+| `_resolve_emissions` | asset | Resolve Scope 1, 2, 3 emissions and PCAF DQS for one asset row. Priority: DQS 3 -- scope1/2/3 columns populated in assets_pg DQS 4 -- Data Hub LEI lookup DQS 5 -- sector-average intensity x revenue (estimated proxy) Returns (scope1_tco2e, scope2_tco2e, scope3_tco2e, dqs_int) |
+| `_write_time_series` | db_engine, portfolio_id, sector, metric_type, actual_value, glidepath_value, unit, dqs_score | Insert one record into pcaf_time_series. No-ops if table doesn't exist. |
+| `run_pcaf_calculation` | portfolio_id | Execute a full PCAF Standard v2.0 financed emissions calculation for the given portfolio. Returns a serialisable dict with keys: data_available, portfolio_id, portfolio_name, reporting_year, portfolio_summary, dqs_distribution, sector_breakdown, investee_results, pai_indicators, validation_summary, parse_errors, engine_version, calculation_timestamp |
+| `get_latest_pcaf_results` | portfolio_id | Return the most recent PCAF metrics from pcaf_time_series (cached). Runs the engine on-demand if no cached record exists. |
 | `get_waci_history` | portfolio_id, years | Return year-by-year WACI vs glidepath for sparkline charts. |
 | `get_portfolio` | portfolio_id | Return portfolio metadata from portfolios_pg. |
 | `get_holdings` | portfolio_id | Return asset holdings for a portfolio from assets_pg. |
@@ -60,19 +74,47 @@
 | `_exec_scalar` | query, params |  |
 | `_exec_write` | query, params |  |
 | `_table_exists` | t | Return True if table exists in the public schema. |
-| `get_portfolio` | portfolio_id, org_id | Return portfolio dict — reads from portfolios_pg (primary) or legacy portfolios table. |
-| `list_portfolios` | org_id | List portfolios — reads from portfolios_pg (primary) or legacy portfolios table. |
+| `get_portfolio` | portfolio_id, org_id | Return portfolio dict — reads from portfolios_pg (primary) or legacy portfolios table. P0-2: When org_id is provided the row is only returned if portfolio.org_id matches, preventing cross-tenant data access. |
+| `list_portfolios` | org_id | List portfolios — reads from portfolios_pg (primary) or legacy portfolios table. P0-2: When org_id is provided only portfolios belonging to that org are returned. |
 | `get_portfolios_from_db` | org_id | Async wrapper - returns portfolios for the given org from Supabase. |
 | `_get_sector_ref` | sector | Look up reference data for a sector, with fuzzy matching. |
 | `_estimate_region_from_lei` | lei, sector | Estimate geographic region from LEI prefix or sector heuristic. |
-| `get_holdings` | portfolio_id | Return holdings from assets_pg (primary) or legacy portfolio_holdings table. |
-| `save_portfolio` | portfolio_id, portfolio | Persist a portfolio to portfolio_analytics (migration 005). |
-| `save_holding` | portfolio_id, holding | Persist a holding to portfolio_property_holdings (migration 005). |
+| `get_holdings` | portfolio_id | Return holdings from assets_pg (primary) or legacy portfolio_holdings table. Auto-estimates missing datapoints using sector reference data and flags them. |
+| `save_portfolio` | portfolio_id, portfolio | Persist a portfolio to portfolio_analytics (migration 005). Falls back to in-memory store when the table is unavailable. |
+| `save_holding` | portfolio_id, holding | Persist a holding to portfolio_property_holdings (migration 005). Falls back to in-memory store when the table is unavailable. |
 | `remove_holding` | portfolio_id, holding_id | Delete a holding from portfolio_property_holdings or in-memory store. |
 | `save_report` | report | Persist a report to portfolio_reports (migration 005) or in-memory fallback. |
 | `get_report` | report_id | Retrieve a report from portfolio_reports or in-memory fallback. |
 | `init_sample_data` |  | No-op: v2 uses real DB data, not sample data. |
 | `_get_climate_risk_summary` | portfolio_id | Query portfolio_climate_risk for this portfolio. |
+| `_get_exposure_assessments` | portfolio_id | Query exposure_assessments ordered by physical_var_pct DESC. |
+| `_get_financial_instruments` | portfolio_id | Query financial_instruments for this portfolio. |
+| `_get_entities_for_portfolio` | portfolio_id | Query entities joined to financial_instruments for this portfolio. |
+| `_get_emission_trends_db` | portfolio_id | Query scope3_category_emissions for this portfolio. |
+| `_get_top_exposed_assets_db` | portfolio_id, limit | Return top assets by exposure from exposure_assessments or financial_instruments. |
+| `get_portfolio_overview` | portfolio_id | Return portfolio overview KPIs from DB (no mock data). |
+| `get_climate_risk_heatmap` | portfolio_id | Return climate risk heatmap data from DB. |
+| `get_sector_breakdown` | portfolio_id | Return sector breakdown from DB. |
+| `get_emission_trends` | portfolio_id | Return emission trends from scope3_category_emissions. |
+| `get_top_exposed_assets` | portfolio_id, limit | Return top exposed assets from DB. |
+| `PortfolioAnalyticsEngine.calculate_analytics` | portfolio_id, scenario_id, time_horizon, as_of_date | Calculate comprehensive portfolio analytics. |
+| `PortfolioAnalyticsEngine._empty_analytics` | portfolio_id, calc_date | Return empty analytics for portfolio with no holdings. |
+| `PortfolioAnalyticsEngine._get_scenario_adjustment` | scenario_id, holding | Get scenario-specific value adjustment from DB scenario parameters. |
+| `PortfolioAnalyticsEngine._calculate_var` | portfolio_value, avg_risk, holdings | Calculate parametric Value-at-Risk (95% confidence). Uses sector-level volatility from exposure_assessments when available, otherwise applies a risk-score-calibrated volatility model: σ = base_vol + risk_premium × (risk_score / 100) where base_vol = 4% (institutional-grade RE) and risk_premium = 16%. |
+| `PortfolioAnalyticsEngine._calculate_concentration` | values_dict, total | Calculate concentration metrics (HHI). |
+| `PortfolioAnalyticsEngine.compare_scenarios` | portfolio_id, scenario_ids, time_horizon | Compare multiple scenarios for a portfolio. |
+| `PortfolioDashboardEngine.get_dashboard` | portfolio_id, scenario_id, time_horizon | Generate dashboard data for a portfolio. |
+| `PortfolioReportEngine.generate_report` | portfolio_id, report_type, scenario_id, time_horizon, include_charts, include_property_details | Generate a report for the portfolio. |
+
+**Engine `portfolio_analytics_engine_v2` — reference constants / scoring weights:**
+
+| Constant | Value |
+|---|---|
+| `SECTOR_REFERENCE_DATA` | `{'Technology': {'avg_pd': 0.015, 'avg_lgd': 0.4, 'avg_scope1_intensity': 5, 'avg_scope2_intensity': 25, 'avg_scope3_intensity': 50, 'avg_risk_score': 25}, 'Healthcare': {'avg_pd': 0.018, 'avg_lgd': 0.42, 'avg_scope1_intensity': 8, 'avg_scope2_intensity': 30, 'avg_scope3_intensity': 55, 'avg_risk_sco` |
+| `COUNTRY_REFERENCE_DATA` | `{'US': {'sovereign_spread': 0, 'regulatory_risk': 'low'}, 'UK': {'sovereign_spread': 10, 'regulatory_risk': 'low'}, 'Germany': {'sovereign_spread': 5, 'regulatory_risk': 'low'}, 'France': {'sovereign_spread': 8, 'regulatory_risk': 'low'}, 'Japan': {'sovereign_spread': 15, 'regulatory_risk': 'low'}, ` |
+| `GLOBAL_FALLBACK` | `{'avg_pd': 0.025, 'avg_lgd': 0.45, 'avg_scope1_intensity': 40, 'avg_scope2_intensity': 30, 'avg_scope3_intensity': 100, 'avg_risk_score': 35}` |
+| `_LEI_REGION_MAP` | `{'US': 'North America', 'GB': 'Europe', 'DE': 'Europe', 'FR': 'Europe', 'JP': 'Asia Pacific', 'CN': 'Asia Pacific', 'IN': 'Asia Pacific', 'BR': 'Latin America', 'AU': 'Asia Pacific', 'CA': 'North America', 'CH': 'Europe', 'NL': 'Europe', 'SE': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'KR': 'Asia Pa` |
+| `_SECTOR_REGION_HEURISTIC` | `{'Technology': 'North America', 'Financials': 'Europe', 'Energy': 'North America', 'Healthcare': 'North America', 'Industrials': 'Europe', 'Consumer': 'North America', 'Materials': 'Asia Pacific', 'Utilities': 'Europe', 'Real Estate': 'Europe', 'Communications': 'North America'}` |
 
 ## 3 · Data Sources & Provenance
 **Provenance classes:** `frontend-seed`
@@ -91,7 +133,11 @@
 ## 5 · Intermediate Transformation Logic
 **Methodology:** Reverse stress test
 **Headline formula:** `Solve for {CarbonPrice, GDP_shock} such that PortfolioLoss > 20%`
+
+Entity contribution waterfall shows which holdings drive portfolio-level stress loss. Taxonomy drill: click L1 to see topic-level loss contribution.
+
 **Standards:** ['NGFS', 'ECB CST']
+**Reference documents:** NGFS Phase 5; ECB CST Methodology
 
 **Engine `portfolio_analytics_engine` — extracted transformation lines:**
 ```python
@@ -117,21 +163,169 @@ HOLDING_PERIOD_DAYS = 250  # 1-year VaR
 risk_vol = BASE_VOL + RISK_PREMIUM * (avg_risk / 100.0)
 blended = 0.7 * realised_vol + 0.3 * risk_vol
 blended = BASE_VOL + RISK_PREMIUM * (avg_risk / 100.0)
+var_amount = float(portfolio_value) * blended * Z_95
+shares = [float(v) / total_float for v in values_dict.values()]
+hhi = sum(s ** 2 for s in shares)
+worst = sorted_rows[-1].scenario_name
+value_spread = sorted_rows[0].total_value - sorted_rows[-1].total_value
+top_missing = sorted(missing_fields_counter.items(), key=lambda x: -x[1])[:5]
+data_quality_report=DataQualityReport(**data_quality_report),
+uncertified = len(holdings) - cert_count
 ```
 
 ## 6 · Interconnections & Change Risk
-**Blast radius:** changes here can affect **66** other module(s).
+**Blast radius:** changes here can affect **48** other module(s).
 **Shared engines (edits propagate!):** `portfolio_analytics_engine` (used by 9 modules), `portfolio_analytics_engine_v2` (used by 9 modules)
 
 | Connected module | Shared via |
 |---|---|
-| `portfolio-transition-alignment` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-optimizer` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-temperature-score` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-dashboard` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-climate-var` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-suite` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-manager` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `portfolio-climate-pulse` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:datetime, table:db, table:decimal |
-| `stranded-assets` | table:datetime, table:db, table:decimal, table:schemas, table:uuid |
-| `real-estate-valuation` | table:datetime, table:db, table:decimal, table:schemas, table:uuid |
+| `portfolio-transition-alignment` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-climate-var` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-dashboard` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-climate-pulse` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-manager` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-optimizer` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-suite` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `portfolio-temperature-score` | engine:portfolio_analytics_engine, engine:portfolio_analytics_engine_v2, table:api, table:decimal, table:fields, table:middleware |
+| `real-estate-valuation` | table:decimal, table:schemas, table:uuid |
+| `sustainability-report-builder` | table:decimal, table:schemas, table:uuid |
+
+## 7 · Methodology Deep Dive
+
+> ⚠️ **Guide↔code note.** The guide's headline — 5 NGFS scenarios, entity-contribution waterfall,
+> taxonomy drill, reverse stress solving for `{CarbonPrice, GDP_shock}` such that loss > 20 % — is
+> *structurally* implemented. But the per-holding scenario losses are **synthetic `sr()` draws**, not
+> the output of any asset-repricing model; the "reverse stress" is a linear back-scaling of those
+> synthetic losses, not a genuine root-finding over a stress model. §8 specifies the real engine.
+
+### 7.1 What the module computes
+
+Weight-aggregated scenario losses and derived drills over 20 synthetic holdings:
+
+```js
+portfolioImpact[s] = Σ_h weight_h · scenarioImpact_h[s] / 100          // % portfolio loss
+entityContrib[h]   = weight_h · scenarioImpact_h[selScenario] / 100    // per-name contribution
+topicDrill[t]      = Σ_h (100 − topicScore_h[t]) · weight_h · 0.01      // gap-weighted topic risk
+histComparison     = portfolioImpact · (0.8 + qi·0.05)                 // synthetic time drift
+reverseStress[s]:  multiplier = threshold(−20) / baseImpact;
+                   carbonNeeded = carbonPrice_s · |multiplier|;
+                   gdpNeeded    = gdpShock_s · |multiplier|
+```
+
+The weight×impact aggregation is a legitimate loss-attribution; the inputs are the issue.
+
+### 7.2 Parameterisation / seed rubric
+
+| Quantity | Formula | Provenance |
+|---|---|---|
+| Scenario `carbonPrice` | NZ2050 250, Below2 180, Divergent 300, Delayed 120, Current 40 ($/t) | curated NGFS-flavoured constants |
+| Scenario `gdpShock` | −1.2 / −2.5 / −3.8 / −5.2 / −8.5 % | curated; hot-house worse (correct ordering) |
+| `scenarioImpact_h[s]` | `−[2,4,6,8,12] + (sr(·)·2−1)·[6,8,10,12,15]` | **synthetic**; centred worse per scenario |
+| `weight` | `3 + (sr(i·17)·2−1)·2.5` | synthetic demo value |
+| `topicScores` | `base + (sr(·)·2−1)·spread` across 8 ESG topics | synthetic demo value |
+| Reverse threshold | −20 % | configurable constant |
+
+The scenario-impact **centres** (−2 → −12) correctly worsen from Net Zero to Current Policies, so the
+portfolio loss ranking respects NGFS ordering even though each draw is random around its centre.
+
+### 7.3 Calculation walkthrough
+
+1. 20 holdings built with synthetic weights, ESG topic scores, and 5 scenario impacts each.
+2. `portfolioImpact` sums `weight·impact/100` per scenario → total % loss.
+3. `entityContrib` ranks holdings by their contribution to the selected scenario's loss (waterfall).
+4. `topicDrill` weights each ESG topic's *gap from 100* by holding weight (worse scores = more risk).
+5. `reverseStress` finds the multiplier that scales each scenario's base loss to the −20 % threshold,
+   then scales that scenario's carbon price and GDP shock by the same factor.
+
+### 7.4 Worked example
+
+Under Current Policies, two holdings: A (weight 4 %, impact −12), B (weight 3 %, impact −10):
+
+| Output | Computation | Result |
+|---|---|---|
+| A contribution | 4·(−12)/100 | −0.48 % |
+| B contribution | 3·(−10)/100 | −0.30 % |
+| portfolioImpact (2 names) | −0.48 − 0.30 | −0.78 % |
+| reverse multiplier | −20 / −0.78 | 25.6× |
+| carbonNeeded | 40 · 25.6 | ~$1,026/t |
+
+The reverse-stress "carbon needed" is a **linear extrapolation** — it assumes loss scales
+proportionally with the multiplier, which a real convex stress response would not.
+
+### 7.5 Data provenance & limitations
+
+- **Scenario losses and holdings are synthetic** (`sr(seed)=frac(sin(seed+1)×10⁴)`); only the
+  scenario carbon-price/GDP-shock parameters are curated NGFS-style constants.
+- Reverse stress is a proportional back-solve, not a genuine inversion of a loss function; it will
+  overstate the carbon price needed because real transition losses are nonlinear.
+- Taxonomy "drill" is an ESG-gap weighting, not an EU Taxonomy alignment calculation.
+
+**Framework alignment:** NGFS Phase-5 scenarios — the five scenarios and their carbon-price/GDP-shock
+ordering mirror the NGFS matrix (orderly → disorderly → hot-house) · ECB Climate Stress Test (CST) —
+the reverse-stress framing (find breaking conditions) follows CST practice, but the underlying loss
+model is absent.
+
+## 8 · Model Specification
+
+**Status: specification — not yet implemented in code.**
+
+### 8.1 Purpose & scope
+Compute NGFS-scenario portfolio losses from real asset repricing, with entity attribution and a true
+reverse-stress solver — for supervisory stress testing and board risk reporting.
+
+### 8.2 Conceptual approach
+A **scenario-conditioned valuation model** (transition carbon-cost pass-through + physical damage +
+macro GDP-to-earnings elasticity), mirroring the ECB economy-wide climate stress test and NGFS bank
+stress guidance, with reverse stress solved by numerical inversion of the loss surface (Newton /
+bisection), à la RiskMetrics reverse-stress methodology.
+
+### 8.3 Mathematical specification
+```
+Loss_i,s = w_i·[ δ_carbon(CarbonPrice_s, Emissions_i, passthrough_i)
+               + δ_macro(GDPShock_s, β_earnings_i)
+               + δ_phys(hazard_i, s) ]
+Loss_pf,s = Σ_i Loss_i,s
+Reverse:  solve (CarbonPrice*, GDPShock*) s.t. Loss_pf(CarbonPrice*, GDPShock*) = −θ   (θ=20%)
+          via Newton on the parametric loss surface (not linear scaling)
+```
+
+| Parameter | Calibration source |
+|---|---|
+| `CarbonPrice_s`, `GDPShock_s` | NGFS Phase IV scenario variables |
+| `passthrough_i`, `β_earnings_i` | sector cost pass-through & earnings-beta; ECB/EBA stress params |
+| `Emissions_i` | PCAF financed emissions (platform engine) |
+| `δ_phys` | hazard damage functions; IPCC AR6 / Swiss Re |
+| `θ` | reverse-stress threshold (policy-set) |
+
+### 8.4 Data requirements
+`financed_emissions`, `earnings_beta`, `sector`, `hazard_exposure`, `weight`, `enterprise_value`.
+Sources: PCAF engine, NGFS scenario data (free), ECB/EBA parameters, hazard engine. Weights and
+scenario parameters already exist.
+
+### 8.5 Validation & benchmarking plan
+Reconcile scenario losses against ECB CST sector results and MSCI/Aladdin transition-VaR; verify
+monotonicity (Current Policies physical loss ≥ Net Zero); check reverse-stress solution satisfies
+`Loss_pf = −θ` on the true surface (not the linear proxy).
+
+### 8.6 Limitations & model risk
+Loss surface is nonlinear and may be non-monotone in some regions (reverse solver needs bracketing);
+pass-through and earnings-beta are uncertain. Conservative fallback: grid-search the reverse solution
+and report a feasible region of `{CarbonPrice, GDPShock}` rather than a single point.
+
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real asset-repricing behind the stress structure (analytics ladder: rung 2 → 4)
+
+**What.** §7 confirms the *structure* is right: 5 NGFS scenarios with curated carbon-price/GDP-shock constants (NZ2050 $250/−1.2%, Divergent $300/−3.8%, hot-house worse — correct ordering), an entity-contribution waterfall (`weight_h · scenarioImpact_h`), a taxonomy topic drill, and a reverse-stress solve. But the per-holding scenario losses are synthetic `sr()` draws (`scenarioImpact = −[2,4,6,8,12] + (sr·2−1)·[6,8,10,12,15]`), and the "reverse stress" is a linear back-scaling of those synthetics, not genuine root-finding over a stress model. The weight×impact aggregation is legitimate; the inputs are the issue. Evolution A replaces the seeded losses with a real repricing model.
+
+**How.** (1) Compute per-holding scenario losses from an actual climate-repricing model: transition losses from sector carbon-price sensitivity × the scenario's carbon price (the `ngfs-scenarios` workbench provides real sector PD-uplift/shock data), physical losses from the physical-risk modules — over real `portfolios_pg` holdings via the shared engine. (2) The entity-contribution waterfall and taxonomy drill then attribute *real* losses. (3) Make the reverse stress a genuine root-find: solve for `{carbon price, GDP shock}` such that modelled portfolio loss > 20% by inverting the repricing function (scipy root-finder), not linearly scaling a synthetic base. This is the rung-4 predictive/scenario step. Blast radius 48 via shared engine.
+
+**Prerequisites.** Real sector-shock data (from `ngfs-scenarios`) and physical damage functions; the portfolio-analytics endpoints (auth-gated); pin before touching the shared engine. Remove `sr()` from scenario impacts. **Acceptance:** per-holding losses derive from carbon-price/physical repricing, not `sr()`; the waterfall attributes real losses; reverse stress root-finds real breaking conditions.
+
+### 9.2 Evolution B — Stress-test analyst copilot (LLM tier 2)
+
+**What.** A copilot for the stress workflow §1 describes: "run NGFS Divergent and show me the loss waterfall", "which holdings drive the stress loss?", "what carbon price breaks my portfolio past 20% loss?", "decompose the loss by taxonomy topic" — executed against the (Evolution-A) repricing and reverse-stress engines, with every loss traced to the model.
+
+**How.** Tool calls to the stress and reverse-stress endpoints (and the `/scenarios/compare` portfolio-analytics endpoint); system prompt from this Atlas page's §5 and the NGFS/ECB CST references named in §5. The entity-contribution and reverse-stress answers are tool calls; the fabrication validator matches every loss %/carbon price to a response, with scenario provenance in the "show work" expander. Because the shared engine feeds 48 modules, this analyst composes with the climate-VaR and temperature-score copilots for a full stress narrative.
+
+**Prerequisites (hard).** Evolution A — narrating the current seeded scenario losses as NGFS stress results, or the linear back-scale as a "reverse stress test," would present fabrication as regulatory stress-testing output. **Acceptance:** every loss/breaking-condition figure traces to a real repricing/root-find; the waterfall sums to portfolio loss; reverse-stress results come from genuine root-finding.

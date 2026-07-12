@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real BRSR completeness scoring over an actual data bridge (analytics ladder: rung 1 → 2)
+
+**What.** §7's mismatch flag: the guide promises a BRSR completeness scorer (`(Core_disclosed + Leadership_disclosed)/total × 100`, the 9 assured BRSR Core KPIs, YoY tracking), but the code is a **data-integration console** — a hard-coded 10-table schema catalogue, a 17-row field-mapping register, a 9-principle GRI/TCFD/SFDR/EU-Taxonomy crosswalk, 10 validation rules, a *simulated* Supabase sync, and 1,323 synthetic company records. `avgCompleteness` uses table row-counts as a fill proxy; `crosswalkCoverage` is an opaque `180/(17×20)` constant. Its genuinely valuable asset is the faithful NGRBC-principle crosswalk and field-mapping register. Evolution A turns the console into a real bridge with real scoring.
+
+**How. (1)** Make the Supabase sync real: the `BRSR_FIELD_MAP` (BRSR field → platform field with transforms like INR-Cr→USD-Mn at the currently-uncited `0.1203` factor) drives an actual pull from the platform's ESG data tables, so `companiesMapped` and completeness reflect real coverage, not synthetic rows. (2) Implement per-indicator completeness: for each of the 48 Core + 50 Leadership indicators, check whether the mapped platform field is populated, yielding the guide's real `Core_completeness = Core_disclosed/48` and the 9-KPI BRSR Core assurance-readiness view. (3) Source the FX factor and validation-rule bounds; keep the crosswalk (broadly consistent with public mappings) but cite it. (4) Rung 2: YoY tracking across reporting periods once real data flows.
+
+**Prerequisites.** Platform ESG data actually mapped to BRSR fields (the bridge's whole premise — currently simulated); the `0.1203` INR conversion and validation bounds need sourcing. **Acceptance:** completeness reflects populated vs missing mapped fields per company, not table row-counts; the 9 BRSR Core KPIs show real assurance-readiness; the FX factor is cited.
+
+### 9.2 Evolution B — BRSR disclosure-preparation copilot (LLM tier 2)
+
+**What.** BRSR's value is single-entry multi-framework disclosure — the copilot answers "which BRSR Core KPIs are we missing for FY2024 assurance?", "what GRI/TCFD disclosures does BRSR Principle 6 satisfy?" (from the real `CROSSWALK`), "map our Scope 1/2 data into the BRSR format" — running the Evolution-A completeness and mapping tools, every gap and value tool-traced, and drafting the BRSR-formatted disclosure tables the export promises.
+
+**How.** Tool schemas over the Evolution-A bridge routes (completeness, field-mapping, crosswalk lookup); grounding corpus is this Atlas record plus the SEBI BRSR / BRSR Core / GRI references in §5 and the faithful NGRBC-principle structure. The crosswalk is the copilot's highest-value surface: "we've disclosed this for GRI — what BRSR indicators does it also satisfy?" is answered from the real mapping, reducing duplicate reporting effort. The refusal path: completeness verdicts come from actual field population, so the copilot reports "not disclosed" for empty mapped fields rather than inferring.
+
+**Prerequisites (hard).** Evolution A's real data bridge — a copilot reporting completeness from synthetic row-counts would fabricate compliance status against a mandatory SEBI framework. **Acceptance:** every completeness figure and crosswalk mapping traces to a tool response; missing indicators are reported from real field checks; drafted disclosure tables cite the source platform field per value.

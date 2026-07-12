@@ -86,7 +86,8 @@ def engine_detail(name):
         return _engine_cache[name]
     path = os.path.join(BE, "services", f"{name}.py")
     src = read(path)
-    rec = {"name": name, "file": f"services/{name}.py", "functions": [], "formulas": []}
+    rec = {"name": name, "file": f"services/{name}.py", "functions": [], "formulas": [],
+           "constants": []}
     if src:
         try:
             tree = ast.parse(src)
@@ -98,21 +99,34 @@ def engine_detail(name):
                     if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
                         if n.name.startswith("__"):
                             continue
-                        doc = (ast.get_docstring(n) or "").strip().split("\n")[0][:160]
+                        doc = " ".join((ast.get_docstring(n) or "").strip().split())[:400]
                         args = [a.arg for a in n.args.args if a.arg not in ("self", "cls")]
                         rec["functions"].append({
                             "name": (f"{cls}." if cls else "") + n.name,
-                            "args": args[:10], "doc": doc,
+                            "args": args[:14], "doc": doc,
                         })
                     elif isinstance(n, ast.ClassDef):
                         visit(n, cls=n.name)
             visit(tree)
+            # module-level UPPER_CASE constants (dict/list/number) — scoring weights,
+            # thresholds, reference tables: the raw material of any methodology rubric
+            for n in tree.body:
+                if isinstance(n, ast.Assign) and len(n.targets) == 1 \
+                        and isinstance(n.targets[0], ast.Name) \
+                        and n.targets[0].id.isupper() \
+                        and isinstance(n.value, (ast.Dict, ast.List, ast.Tuple, ast.Constant)):
+                    try:
+                        txt = ast.unparse(n.value)
+                    except Exception:
+                        continue
+                    rec["constants"].append({"name": n.targets[0].id, "value": txt[:600]})
         for line in src.splitlines():
             m = FORMULA_RX.match(line)
             if m and not any(s in line for s in ('"', "'", "append(", "format(", "join(", "f-", "get(")):
                 rec["formulas"].append(line.strip()[:160])
-        rec["formulas"] = rec["formulas"][:25]
-        rec["functions"] = rec["functions"][:40]
+        rec["formulas"] = rec["formulas"][:50]
+        rec["functions"] = rec["functions"][:60]
+        rec["constants"] = rec["constants"][:20]
     _engine_cache[name] = rec
     return rec
 
@@ -127,7 +141,7 @@ if os.path.isdir(TRACES_DIR):
 
 
 def flatten_tree(node, out, depth=0):
-    if not isinstance(node, dict) or depth > 6 or len(out) >= 14:
+    if not isinstance(node, dict) or depth > 8 or len(out) >= 24:
         return
     nm = node.get("fn") or node.get("name") or node.get("function")
     if nm:
@@ -175,13 +189,74 @@ CTX_RX = re.compile(r"from\s+['\"][^'\"]*context[s]?/(\w+)['\"]", re.I)
 SHARED_RX = re.compile(r"from\s+['\"][^'\"]*_shared/(\w+)")
 SEED_RX = re.compile(r"^\s*(?:export\s+)?const\s+([A-Z][A-Z0-9_]{2,})\s*=\s*\[", re.M)
 
+SEED_SCHEMA_RX = re.compile(
+    r"^\s*(?:export\s+)?const\s+([A-Z][A-Z0-9_]{2,})\s*=\s*\[\s*\n?\s*\{(.{10,700}?)\}", re.M | re.S)
+
+
+def seed_schema(src):
+    """For each SEED_CONSTANT = [{...}] extract the first row's keys + row count —
+    the dataset's column schema, so pages can say what each seed record carries."""
+    out = []
+    for m in SEED_SCHEMA_RX.finditer(src):
+        name, first = m.group(1), m.group(2)
+        keys = re.findall(r"(?:^|[,{]\s*)([A-Za-z_]\w*)\s*:", first)
+        tail = src[m.start():]
+        # crude row count: object-opens at same nesting until the closing ];
+        block_end = tail.find("];")
+        rows = tail[:block_end].count("},") + 1 if block_end > 0 else None
+        if keys:
+            out.append({"name": name, "fields": list(dict.fromkeys(keys))[:20], "rows": rows})
+    return out
+
+
+def capture_computed(src):
+    """Multi-line aware derived-value capture: single-line matches plus
+    const X = useMemo(...)/reduce chains whose expression spans lines."""
+    out = []
+    lines = src.splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        m = COMPUTED_RX.match(line)
+        if m and "<" not in m.group(2) and "//" not in m.group(2)[:3]:
+            out.append({"name": m.group(1), "expr": m.group(2).strip()[:220]})
+            i += 1
+            continue
+        m2 = re.match(r"^\s*(?:const|let)\s+(\w{3,})\s*=\s*(useMemo\(|.*\.(?:reduce|map|filter)\($)", line)
+        if m2:
+            frag, j = line.split("=", 1)[1].strip(), i + 1
+            while j < len(lines) and len(frag) < 340 and j - i < 8:
+                nxt = lines[j].strip()
+                if "<" in nxt:  # JSX — stop
+                    break
+                frag += " " + nxt
+                if nxt.endswith((";", ");")):
+                    break
+                j += 1
+            if any(op in frag for op in ("*", "/", "+", "-", "Math.", ".reduce(", ".map(")):
+                out.append({"name": m2.group(1), "expr": frag[:340]})
+            i = j + 1
+            continue
+        i += 1
+    # dedupe by name keeping first occurrence
+    seen, ded = set(), []
+    for c in out:
+        if c["name"] not in seen:
+            seen.add(c["name"])
+            ded.append(c)
+    return ded
+
+
 FEATURES = os.path.join(FE, "features")
+DEEP = os.path.join(OUT, "deep")
+EVOL = os.path.join(OUT, "evolution")
+os.makedirs(DEEP, exist_ok=True)
 modules = {}
 for feat in sorted(os.listdir(FEATURES)):
     fdir = os.path.join(FEATURES, feat)
     if feat == "_shared" or not os.path.isdir(fdir):
         continue
-    comps, apis, computed, ctxs, shared, seeds, files = [], [], [], [], [], [], 0
+    comps, apis, computed, ctxs, shared, seeds, schemas, files = [], [], [], [], [], [], [], 0
     for dirpath, _d, fns in os.walk(fdir):
         for fn in fns:
             if not fn.endswith((".jsx", ".js")):
@@ -193,19 +268,18 @@ for feat in sorted(os.listdir(FEATURES)):
             ctxs += CTX_RX.findall(src)
             shared += SHARED_RX.findall(src)
             seeds += SEED_RX.findall(src)
-            for line in src.splitlines():
-                m = COMPUTED_RX.match(line)
-                if m and "<" not in m.group(2) and "//" not in m.group(2)[:3]:
-                    computed.append({"name": m.group(1), "expr": m.group(2).strip()[:150]})
+            schemas += seed_schema(src)
+            computed += capture_computed(src)
     route = route_map.get(feat, "/" + feat)
     modules[feat] = {
         "module_id": feat, "route": route, "files": files,
-        "components": sorted(set(comps))[:25],
-        "api_calls": sorted(set(apis))[:20],
-        "computed": computed[:30],
+        "components": sorted(set(comps))[:40],
+        "api_calls": sorted(set(apis))[:30],
+        "computed": computed[:60],
         "contexts": sorted(set(ctxs)),
         "shared_wrappers": sorted(set(shared)),
-        "seed_constants": sorted(set(seeds))[:15],
+        "seed_constants": sorted(set(seeds))[:25],
+        "seed_schemas": schemas[:15],
         "guide": GUIDES.get(route),
     }
 
@@ -308,32 +382,50 @@ def md_page(mod):
         L.append(f"\n## 1 · Overview\n{g['description']}")
     if g.get("valueSummary"):
         L.append(f"\n> **Business value:** {g['valueSummary']}")
+    if g.get("userInteraction"):
+        L.append("\n**How an analyst works this module:**")
+        for u in g["userInteraction"][:12]:
+            L.append(f"- {u}")
 
     # Function map
     L.append("\n## 2 · Function Map")
     L.append(f"\n### 2.1 Frontend ({mod['files']} files)")
     if mod["components"]:
         L.append("**Components/functions:** " + ", ".join(f"`{c}`" for c in mod["components"]))
+    if mod.get("seed_schemas"):
+        L.append("\n**Seed dataset schemas (record structure of each in-page dataset):**\n")
+        L.append("| Dataset | Rows | Fields |")
+        L.append("|---|---|---|")
+        for s in mod["seed_schemas"][:12]:
+            L.append(f"| `{s['name']}` | {s.get('rows') or '—'} | "
+                     f"{', '.join('`'+f+'`' for f in s['fields'])} |")
     if mod["computed"]:
         L.append("\n**Derived values computed in the UI layer:**\n")
         L.append("| Variable | Expression |")
         L.append("|---|---|")
-        for c in mod["computed"][:18]:
+        for c in mod["computed"][:40]:
             L.append(f"| `{c['name']}` | `{c['expr'].replace('|','\\|')}` |")
     if mod["backend_routes"]:
         L.append("\n### 2.2 Backend endpoints")
         L.append("| Method | Path | Handler | Route file |")
         L.append("|---|---|---|---|")
         for br in mod["backend_routes"]:
-            for ep in br["endpoints"][:15]:
+            for ep in br["endpoints"][:30]:
                 L.append(f"| {ep['method']} | `{ep['path']}` | `{ep['handler']}` | {br['file']} |")
         for ed in mod["engine_detail"]:
             if ed["functions"]:
                 L.append(f"\n### 2.3 Engine `{ed['name']}` ({ed['file']})")
                 L.append("| Function | Args | Purpose |")
                 L.append("|---|---|---|")
-                for fn in ed["functions"][:18]:
-                    L.append(f"| `{fn['name']}` | {', '.join(fn['args'][:6])} | {fn['doc'].replace('|','/')} |")
+                for fn in ed["functions"][:36]:
+                    L.append(f"| `{fn['name']}` | {', '.join(fn['args'][:8])} | {fn['doc'].replace('|','/')} |")
+            if ed.get("constants"):
+                L.append(f"\n**Engine `{ed['name']}` — reference constants / scoring weights:**\n")
+                L.append("| Constant | Value |")
+                L.append("|---|---|")
+                for c in ed["constants"][:14]:
+                    v = " ".join(c["value"].split()).replace("|", "\\|")[:300]
+                    L.append(f"| `{c['name']}` | `{v}` |")
 
     # Data sources
     L.append("\n## 3 · Data Sources & Provenance")
@@ -354,21 +446,21 @@ def md_page(mod):
         L.append("\n### 4.1 UI metrics — where every number comes from")
         L.append("| UI metric | Formula | Source | Interpretation |")
         L.append("|---|---|---|---|")
-        for d in dps[:16]:
+        for d in dps[:32]:
             L.append("| {} | {} | {} | {} |".format(
-                d.get("name","")[:60], f"`{d['formula']}`" if d.get("formula") else "—",
-                d.get("source","—")[:60], (d.get("interpretation","") or "")[:110].replace("|","/")))
-    for dl_ in (g.get("dataLineage") or [])[:8]:
+                d.get("name","")[:80], f"`{d['formula']}`" if d.get("formula") else "—",
+                d.get("source","—")[:80], (d.get("interpretation","") or "")[:220].replace("|","/")))
+    for dl_ in (g.get("dataLineage") or [])[:16]:
         L.append(f"- **{dl_.get('source','')}** → {dl_.get('flow','')} → **{dl_.get('output','')}**")
     if mod["trace"]:
         L.append("\n### 4.2 Traced backend call chains (lineage harness)")
-        for t in mod["trace"][:5]:
+        for t in mod["trace"][:8]:
             L.append(f"\n**{t['label']}** — status `{t['status']}`, provenance {t['provenance']}, "
                      f"source tables: {', '.join('`'+s+'`' for s in t['source_tables']) or '—'}")
             if t["call_chain"]:
                 L.append("```\n" + "\n".join(t["call_chain"]) + "\n```")
             if t["output_summary"]:
-                L.append(f"Output: `{t['output_summary'][:220]}`")
+                L.append(f"Output: `{t['output_summary'][:300]}`")
 
     # Transformation logic
     eng_forms = [(ed["name"], ed["formulas"]) for ed in mod["engine_detail"] if ed["formulas"]]
@@ -379,11 +471,15 @@ def md_page(mod):
             L.append(f"**Methodology:** {ce['methodology']}")
         if ce.get("formula"):
             L.append(f"**Headline formula:** `{ce['formula']}`")
+        if ce.get("brief"):
+            L.append(f"\n{ce['brief']}")
         if ce.get("standards"):
-            L.append(f"**Standards:** {ce['standards']}")
-        for name, forms in eng_forms[:3]:
+            L.append(f"\n**Standards:** {ce['standards']}")
+        if g.get("references"):
+            L.append("**Reference documents:** " + "; ".join(str(r) for r in g["references"][:10]))
+        for name, forms in eng_forms[:4]:
             L.append(f"\n**Engine `{name}` — extracted transformation lines:**")
-            L.append("```python\n" + "\n".join(forms[:14]) + "\n```")
+            L.append("```python\n" + "\n".join(forms[:28]) + "\n```")
 
     # Interconnections
     L.append("\n## 6 · Interconnections & Change Risk")
@@ -398,6 +494,15 @@ def md_page(mod):
             L.append(f"| `{ic['module']}` | {', '.join(ic['via'])} |")
     if mod["shared_wrappers"]:
         L.append("**Shared UI wrappers:** " + ", ".join(f"`{w}`" for w in mod["shared_wrappers"]))
+
+    # Methodology deep dive (LLM-authored, code-grounded; lives in deep/<mid>.md)
+    deep_md = read(os.path.join(DEEP, f"{mod['module_id'].replace('::', '__')}.md")).strip()
+    if deep_md:
+        L.append("\n" + deep_md)
+    # Future evolution (§9, two evolutions per module; lives in evolution/<mid>.md)
+    evol_md = read(os.path.join(EVOL, f"{mod['module_id'].replace('::', '__')}.md")).strip()
+    if evol_md:
+        L.append("\n" + evol_md)
     return "\n".join(L)
 
 

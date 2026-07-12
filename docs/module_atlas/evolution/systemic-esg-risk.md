@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the §8 pillar-weighted SERS composite (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag documents that the guide's `SERS = E_mag×w_e + S_mag×w_s + G_mag×w_g` has zero code presence: the 40 indicators carry a flat 7-category taxonomy (not E/S/G pillars), each score is independently `sr()`-seeded (so an indicator's `systemicScore` can flag "critical" while its own `severity` is moderate, §7.3), the 15-edge `CONTAGION` list is displayed but never traversed, and the 36-month `TREND` is manufactured linear drift. Evolution A builds the module's first real composite, per the §8 model specification already written.
+
+**How.** (1) Tag all 40 indicators with pillar membership and SASB-style relevance weights (§8.4's first data requirement); the pure physical tipping-point themes (AMOC, Greenland Melt) route to E or are moved to the Tipping Points tab as reference-only, resolving the documented ESG/climate boundary blur (§7.5). (2) Implement §8.3: within-category z-scores, relevance-weighted pillar magnitudes, `SERS = 50 + 10×Σ(pillar×weight)` with the 0.4/0.3/0.3 starting weights and disclosed rationale per IOSCO 2021. (3) Derive `systemicScore` from the six per-indicator dimensions instead of an independent seed, making the detail radar internally consistent. (4) Traverse `CONTAGION` for a first-order interconnection adjustment rather than leaving it decorative.
+
+**Prerequisites.** §8.6's small-sample caveat honoured: shrinkage toward a cross-category prior with only 5–8 indicators per category; `CorrelatedEventCount` explicitly deferred until real indicator history exists — no fabricated time series. **Acceptance:** SERS is reproducible from tagged inputs and stated weights; a ±20% pillar-weight sensitivity table (§8.5) renders; no indicator's dimensions can mutually contradict.
+
+### 9.2 Evolution B — Supervisory briefing copilot over indicators and tipping points (LLM tier 1)
+
+**What.** The module's target user writes macroprudential briefings (§1: "report to supervisors and internal risk committees"). A tier-1 copilot drafts that briefing: "summarise the accelerating indicators above the critical threshold, their contagion links, and nearest tipping points" — grounded in the page's computed KPIs (`critical`, `accelerating`, `tippingNear`, `catChart`), the hand-authored `CONTAGION` narrative links, and the genuinely IPCC AR6-consistent `TIPPING_POINTS` table (§7.4 notes this tab has real reference value independent of the SERS gap).
+
+**How.** No backend exists (EP code None), so this is strictly tier 1: corpus = this Atlas record (including the §7 caveats and §8 spec) embedded per the roadmap's `llm_corpus_chunks` pattern, plus live page state. The copilot cites indicator rows and tipping-point thresholds verbatim, explains what the SERS would require (from §8) versus what is shown, and — critically — labels all indicator scores as synthetic illustrative data in any draft destined for a supervisor, since §7.5 documents 100% `sr()`-seeded provenance. Refusal paths: "Governance Risk Premium" and "Correlated ESG Events" questions get "not computed by this module" (the guide names them; the code lacks them).
+
+**Prerequisites.** None beyond corpus embedding — but promotion to tier 2 requires Evolution A's backend SERS endpoint first. **Acceptance:** briefing drafts never present an `sr()`-seeded score as observed data; probes for the two phantom guide metrics are refused with the §7 citation.

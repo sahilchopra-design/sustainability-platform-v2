@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Derive haircut and BCR instead of storing them (analytics ladder: rung 1 → 2)
+
+**What.** The module is honest curation with one genuine identity: `resilience_score ≡ avg(5 pillars)` verifies across the 10 hand-authored assets (Thames Barrier, Rotterdam, Bangladesh Delta…), and the stored BCRs are internally consistent quotients (A07: 620/85 = 7.3). But §7.6 names the unbacked quantities: `climate_haircut` (2.1–32.5%) is a single hard-coded number per asset despite the guide claiming IPCC-damage-function calibration; retrofit BCR is a stored quotient, not a discounted avoided-loss calculation; pillar scores carry no evidence chain; and every trend line goes up by construction. Evolution A implements the §8 spec: haircut as discounted EAL impairment (`Σ EAL(t,scn)/(1+r)^t / V_a` per UNEP FI CVaR logic), BCR as `Σ ΔEAL/(1+r)^t / Capex`, and pillars from a weighted indicator library.
+
+**How.** (1) Reuse the hazard/EAL machinery specified for the sibling `infrastructure-climate-resilience` module (§8.3 cross-references it directly) — one EAL engine on the digital-twin grids should serve both modules rather than two parallel builds. (2) The 10 curated assets become the calibration set: computed haircuts compared against the stored ones, divergences documented (Bangladesh Delta's 32.5% is a strong prior to test). (3) Pillar indicators mapped to evidence fields (condition surveys, financial ratios) with per-indicator provenance. (4) Fix the stale atlas row count (JSON says 21, code defines 10) when the record is next rebuilt.
+
+**Prerequisites.** The shared EAL engine (sequence after or with `infrastructure-climate-resilience` Evolution A); fragility-curve library; discount-rate convention chosen and disclosed. **Acceptance:** haircut and BCR are computed outputs with visible EAL/discounting inputs; the A07 BCR reproduces from a cash-flow trace, not a stored quotient; trends derive from dated records.
+
+### 9.2 Evolution B — Retrofit capital-allocation copilot (LLM tier 1 → 2)
+
+**What.** The module's decision is capital allocation: which retrofits to fund first. Evolution B answers that conversationally: "why is Bangladesh Delta the top BCR at 7.3×?", "how much portfolio haircut do we remove per $100M of retrofit spend?", "what moves the California asset out of the CRITICAL band?" Tier 1 grounds on the curated table and this page's worked examples (§7.4 traces A07's full decomposition); tier 2, post-Evolution-A, executes allocation what-ifs against the computed BCR engine — including a budget-constrained ranking ("allocate $200M across the 10 assets to maximise discounted avoided loss"), which is a natural greedy/knapsack ordering over computed BCRs.
+
+**How.** Tier 1: atlas record + `ASSETS` into the corpus; the sort-field state passes as context. The copilot must distinguish stored from derived values with the §7.6 caveat — "haircut is author-assigned pending the EAL engine" — and must not present the illustrative all-upward trend arrays as measured improvement. Tier 2: tool schema over the Evolution A scoring/EAL routes; allocation answers show the BCR-ordered greedy trace. Band explanations quote the rubric cut-offs (≥80 RESILIENT … <50 CRITICAL) from §7.2.
+
+**Prerequisites.** Copilot infrastructure (Phase 1); Evolution A for allocation math on computed values. **Acceptance:** stored-vs-derived provenance stated in every quantitative answer pre-Evolution-A; post, allocation recommendations reproduce from the logged BCR ordering and budget arithmetic.

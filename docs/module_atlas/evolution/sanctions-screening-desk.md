@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Automated UFLPA refresh and multi-list expansion (analytics ladder: rung 2 → 3)
+
+**What.** This is the sanctions cluster's real engine: live screening of free-text names against the trade.gov Consolidated Screening List (25,830 rows, keyless daily download, disk+memory cached with serve-stale fallback) and the DHS UFLPA Entity List, returning confidence-scored matches with an explicit screening-aid disclaimer — honest by design. Its documented weak point (§7.7): the UFLPA side is a hand-authored extract of 23 of ~144 entities, dated "through June 2024", which the module itself says needs refreshing since the list is amended several times a year via Federal Register notices. Evolution A automates that refresh and extends coverage.
+
+**How.** (1) UFLPA ingester: scheduled scrape/parse of the DHS UFLPA Entity List page (structured HTML table) into a versioned reference table with addition dates and Federal Register citations, replacing the static extract; diffs between versions logged so screeners can see what changed. (2) Add the EU and UK OFSI consolidated lists (both published as open CSV/XML) as additional screening sources with per-list provenance in match results — turning a US-centric desk into the multi-regime screen the sibling `sanctions-trade-monitor` describes but doesn't implement. (3) Matching quality: alias/AKA expansion (CSL carries alt-names — ensure they're indexed), transliteration-tolerant scoring for Cyrillic/Chinese-origin names, with match-score calibration documented against a hand-labelled test set. (4) Batch screening endpoint for portfolio-scale runs feeding the sibling modules' evolutions.
+
+**Prerequisites.** Ingester scheduling (the platform's 19-ingester framework is the scaffold); labelled match test set (~100 name pairs). **Acceptance:** UFLPA table matches the live DHS list on spot check with version history; EU/UK matches carry list provenance; precision/recall on the labelled set is published in the module docs, not asserted.
+
+### 9.2 Evolution B — Match-adjudication assistant (LLM tier 2)
+
+**What.** The desk's output is match lists a human must adjudicate — the bottleneck is reading. The assistant accelerates it: "for these 6 medium-confidence matches, summarize the evidence for and against identity — name similarity, jurisdiction, list program, entity type — and rank by adjudication priority", turning a raw match list into a structured review queue. The disclaimer discipline the module already encodes (screening aid, not determination) is the assistant's constitution.
+
+**How.** Tier-2 tool calls to the screening endpoints plus entity enrichment via the platform's GLEIF resolution (a match candidate with a resolvable LEI and different registered jurisdiction is evidence against identity — a genuinely useful automated check). Evidence summaries quote list-entry fields verbatim; the for/against structure is a template, not free reasoning, keeping outputs auditable. Adjudication decisions are recorded by the human; the assistant's suggestion and the decision are both logged (an `llm_traces`-style record), building the calibration dataset for future match-score tuning. No clear/block language ever.
+
+**Prerequisites.** Evolution A's alias indexing and GLEIF cross-check plumbing; adjudication-log schema. **Acceptance:** every evidence item quotes a real list or GLEIF field; suggestions and human decisions are logged pairwise; outputs contain the disclaimer and no determination language.

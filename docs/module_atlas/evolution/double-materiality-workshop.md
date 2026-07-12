@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A real multi-participant session backend (analytics ladder: rung 1 → 2)
+
+**What.** The module rides on the genuine `double_materiality_engine` (same 12 endpoints as the sibling `double-materiality` page — ESRS 1 scoring, IRO identification, omission checks, all reference GETs lineage-`passed`), but everything workshop-*specific* in the overview — email invites, participant groups, live scoring rounds, consensus statistics, disagreement flags (CI > 20 pts) — has no backend: the page's `genTopicScores(n)` generates participant ratings client-side. Evolution A builds the collaboration layer, which is the module's actual reason to exist.
+
+**How.** (1) Tables `dma_workshops`, `dma_participants` (group: internal/value-chain/civil-society), `dma_score_submissions` (participant × topic × dimension × timestamp) with the platform's existing email-invite system (built in the 2026-04-07 admin work) handling registration. (2) Consensus endpoints: per-topic mean/σ/spread by group, the >20-point disagreement flag, and completion tracking — server-computed so all facilitator screens agree. (3) On close, submissions feed `POST /assess` as the entity's topic assessments and the participant log becomes the ESRS 2 IRO-1 stakeholder-engagement evidence pack — timestamps and attribution intact. (4) Rung 2: group-weighting sensitivity ("does the matrix change if civil-society voices weight 2×?") as a what-if over stored submissions.
+
+**Prerequisites.** RBAC roles for facilitator vs participant (participants must not see each other's raw scores mid-round); the sibling module's `dma_assessments` persistence so workshop output lands somewhere durable. **Acceptance:** two browsers submit scores and the facilitator heat map reflects both within a refresh; the exported engagement log lists real timestamped submissions; `genTopicScores` is deleted.
+
+### 9.2 Evolution B — Live facilitation copilot for deliberation rounds (LLM tier 2)
+
+**What.** The facilitator's hardest task is mid-workshop synthesis: "topic E3 has a 34-point spread — what are the two camps saying?" A tool-calling copilot reads the live session state (score distributions by group, submitted comments), summarizes the disagreement structure (e.g. internal raters scoring financial materiality low vs value-chain stakeholders scoring impact high), suggests the deliberation queue ordered by spread × topic weight, and — post-consensus — drafts the stakeholder-engagement narrative for the IRO-1 pack from the recorded session log.
+
+**How.** Tools: Evolution A's session-state endpoints (`get_topic_distribution`, `get_group_breakdown`, `get_comments`) plus the engine's `POST /materiality-matrix` for the closing matrix. Summaries quote actual participant comments (attributed by group, anonymized by name per workshop etiquette); every statistic cited comes from the consensus endpoints, validator-checked. The copilot never scores topics itself — it surfaces disagreement, humans deliberate, the engine computes.
+
+**Prerequisites (hard).** Evolution A — there is no session state to read today, and summarizing the current client-side generated scores would fabricate stakeholder views, precisely what ESRS 2 engagement documentation must not contain. **Acceptance:** in a scripted 10-participant fixture session, the copilot's spread figures match the consensus endpoint exactly; camp summaries only quote stored comments; the drafted engagement narrative contains zero claims not backed by session-log rows.

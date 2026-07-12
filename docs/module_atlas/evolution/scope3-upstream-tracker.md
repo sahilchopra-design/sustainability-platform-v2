@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A real supplier ledger with genuinely independent methodologies (analytics ladder: rung 1 → 2)
+
+**What.** §7.6 documents scale-out fabrication: 120 real company names × up to 200 synthetic suppliers each (24,000 fabricated supplier rows), every quantitative field seeded; the imported `EMISSION_FACTORS`/`SECTOR_BENCHMARKS` reference data goes unused; and the Methodology Comparison tab is structurally hollow — all three "methodologies" reuse the same `spendEmissions` base with independent random multipliers, so it cannot demonstrate real spend-based vs activity-based vs supplier-specific convergence. Evolution A rebuilds around a real supplier ledger where the three methods are computed independently, which is the tab's entire point.
+
+**How.** (1) `supplier_ledger` tables: user-imported procurement data (supplier, spend, category 1–8 mapping, country) — the input upstream Scope 3 actually starts from. (2) Three genuinely independent estimates per supplier line: spend-based (spend × EEIO factor from the Scope 3 cluster's versioned factor table), activity-based (where activity data is entered: tonnes-km for Cat 4, kWh for energy categories), supplier-specific (supplier-reported PCF/allocation where provided) — the comparison tab then shows real divergence, the diagnostic signal practitioners use to prioritise data collection. (3) DQ per line from method used (the cluster's shared mapping); engagement pipeline rows attach to actual ledger suppliers with status history. (4) The 120-company demo book deleted — real names with fabricated supplier networks is the pattern to purge.
+
+**Prerequisites.** Procurement-import format (CSV with category mapping assistance); factor-table dependency on `scope3-engine`'s Evolution A. **Acceptance:** the three method columns for a supplier line derive from different inputs and can genuinely disagree; portfolio Cat 1–8 totals reproduce from ledger sums; no seeded supplier rows remain.
+
+### 9.2 Evolution B — Supplier-engagement campaign copilot (LLM tier 2)
+
+**What.** Upstream Scope 3 improvement is a supplier-outreach campaign problem: "which 20 suppliers cover 60% of our Cat 1 spend-based estimate and lack supplier-specific data? Draft the data-request pack for each", "where do spend-based and supplier-reported figures diverge by >40% — and what should we ask those suppliers?" The copilot runs the prioritisation queries and drafts the outreach, the genuinely LLM-shaped half of the workflow.
+
+**How.** Tier-2 tool calls over the ledger/estimate/divergence endpoints; prioritisation is computed coverage math, and data-request drafts are populated from each supplier's actual ledger context (categories, spend band, current method) following Pathfinder/CDP supply-chain request conventions in the corpus. Divergence follow-ups cite both figures with their methods and vintages. Engagement-pipeline updates (stage changes as responses arrive) remain human-confirmed mutations. Guardrails: outreach drafts never state the supplier's emissions as fact — they state the buyer's current estimate and its method, requesting primary data; all counts and coverage percentages validated against tool output.
+
+**Prerequisites (hard).** Evolution A's ledger — drafting outreach to 24,000 fabricated suppliers is the reductio of the current design; request-pack templates. **Acceptance:** priority lists reproduce from coverage queries; each draft's figures match the supplier's ledger line; divergence answers quote both methods' computed values.

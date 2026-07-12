@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real companion-module data with a single consistent scoring layer (analytics ladder: rung 1 → 2)
+
+**What.** Social Hub is a tier-B aggregator: it composites 5 companion social modules (Board Diversity, Living Wage, Human Rights DD, Employee Wellbeing, Social Impact/SDG) into a portfolio-level score, and its weighted-composite math is genuinely auditable — but §7.6 documents three defects. All KPI, risk-dimension, and PAI values are `seed()`-synthetic; the 6-dimension `RISK_DIMENSIONS` weight set is **dead code** feeding only a radar chart, not the composite, so a user reading those weights is misled; and SFDR PAI 10–14 come from a **third independent seed layer** so PAI-13 (board gender diversity) and `moduleKPIs.femaleBoard` disagree for the same holding despite measuring the same thing. Evolution A makes the hub aggregate real companion-module outputs through one scoring layer.
+
+**How.** (1) Pull each holding's social KPIs from the actual companion modules' computed outputs (or a shared `social_kpis` table) rather than re-seeding — the hub becomes a true roll-up. (2) Unify the seed layers: PAI-13 must equal the same underlying board-diversity figure `moduleKPIs.femaleBoard` uses, computed once. (3) Either wire `RISK_DIMENSIONS` into the composite or clearly relabel it as radar-only, resolving the dead-weight misdirection. (4) Replace the guide's stated 50/50 workforce/supply-chain split — which §7 notes doesn't match the real 5-dimension weighting and lacks any distinct supply-chain sub-score — either by building a genuine supply-chain sub-score or correcting the guide to the implemented dimensions.
+
+**Prerequisites.** Companion modules must expose their per-holding scores (a shared table or internal API); `localStorage` portfolio dependence should fall back to `portfolios_pg`. **Acceptance:** PAI-13 and `femaleBoard` show the same number for a holding; the composite responds to real companion-module data; no displayed weight is dead.
+
+### 9.2 Evolution B — Stewardship-prioritisation copilot (LLM tier 1)
+
+**What.** The module already encodes an `ENGAGEMENT_MATRIX` escalation ladder (engage → escalate → vote against → divest) mirroring UK Stewardship Code / ICGN practice. Evolution B is a copilot that turns portfolio social scores into a prioritised engagement plan: "which holdings are the top social-risk engagement priorities and why?", "draft the engagement ask for this holding's living-wage gap" — grounded in the composite decomposition (board/livingWage/hr/wellbeing/sdg sub-scores) and the ILO/UNGP/GRI-400 material topics the KPIs map to.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/social-hub/ask`, corpus = this Atlas record plus the engagement-matrix ladder and framework references. Prioritisation narrates the deterministic composite (each priority cites its driving sub-score); the escalation recommendation reads off the matrix rung for the holding's score band, never invented. Engagement-ask drafts follow claim → sub-score evidence → specific request.
+
+**Prerequisites.** Evolution A's real data — prioritising synthetic scores would produce a plausible but meaningless engagement list. **Acceptance:** every priority ranking cites a computed sub-score; the escalation rung matches the `ENGAGEMENT_MATRIX` for that score; asking to prioritise a holding absent from the portfolio returns a refusal.

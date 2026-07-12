@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Ground the pillar scores in real rating data (analytics ladder: rung 1 → 3)
+
+**What.** §7 confirms this is a genuinely well-built weighted-composite benchmarker: the total (`Σ pillarScore × PILLAR_WEIGHT/100`, weights summing to 100), sector ranking (correct spread-copy sort, not in-place mutation), quartile classification, and best-in-class identification all match the guide. The 6-sector × 5-company universe uses real named companies with hand-set pillar scores that are directionally credible (Orsted top in Energy [92,90,88,85,82,78], Shell/BP low [45,40,35,50,42,38] — matching the real transition narrative). The gaps: pillar scores aren't sourced from a named rating provider, and the convergence `drift` alternates sign by index parity (a visual simulation, not real trend data). Evolution A grounds the scores.
+
+**How.** (1) Source the 6 pillar scores (Carbon, Technology, Policy, Market, Capital, Social) from real data per company — CDP/SBTi for carbon, patent/capex data for technology, InfluenceMap for policy (these are the same pillars as the sibling `multi-dim-transition-scorer`, so share the pillar-computation logic); store dated with provenance. (2) Replace the parity-based `drift` convergence simulation with real multi-year pillar-score history, so "are peers converging or diverging" (§1) reflects actual trajectories. (3) Widen each sector's peer group beyond 5 companies once scores are computed rather than hand-set. The correct weighted-composite and ranking math stays; only the inputs are grounded.
+
+**Prerequisites.** Real pillar-data sources (shared with `multi-dim-transition-scorer`); multi-year history for convergence; the weighting is internally consistent — keep it, cite it. **Acceptance:** pillar scores trace to named data sources with dates; convergence reflects real score history, not parity alternation; rankings reproduce from the weighted composite.
+
+### 9.2 Evolution B — Peer-benchmarking copilot for analysts (LLM tier 1 → 2)
+
+**What.** A copilot for the benchmarking workflow §1 describes: "how does Shell rank against its energy peers on transition?", "what do the Q1 companies do differently on the technology pillar?", "is the utilities sector converging?" — grounded in the weighted pillar scores and the MSCI/Sustainalytics references named in §5.
+
+**How.** Tier 1 works on the transparent composite: system prompt from this Atlas page's §5/§7.1 and the serialized `PEER_GROUPS` and `PILLAR_WEIGHTS`; the copilot explains a company's rank by decomposing its weighted total into the 6 pillars and comparing to the sector best-in-class, exactly as the "what do Q1 companies do differently" panel (§1) intends. Tier 2, post-Evolution-A: tool calls to the scoring engine for computed comparisons and convergence trends over real history, with the fabrication validator matching every pillar score and rank to outputs. The copilot must distinguish hand-set illustrative scores (today) from sourced scores (post-Evolution-A) in provenance.
+
+**Prerequisites.** Tier 1 works on current data with an illustrative-scores disclosure; sourced comparisons and real convergence need Evolution A. **Acceptance:** rank explanations decompose into the 6 weighted pillars and cite the sector leader; convergence answers (post-Evolution-A) trace to real history; the copilot flags whether scores are illustrative or sourced.

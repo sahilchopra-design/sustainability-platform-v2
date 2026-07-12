@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the spread adjustment instead of authoring it (analytics ladder: rung 1 → 3)
+
+**What.** The page's 51-country dataset is genuinely curated (debt/GDP, FX-debt share, green/SLB issuance, 12 real debt-for-nature deals, quarterly EMBI-style spreads), but its two headline outputs — `climateCreditRiskAdj` (bps) and `climateDebtRiskScore` — are **authored fields the page merely consumes**; the guide's model `OAS_climate = OAS_base + β_trans·TransitionRisk + β_phys·PhysicalRisk` is not implemented anywhere. Evolution A implements it, and calibrates the betas rather than asserting them.
+
+**How.** (1) Backend `services/em_debt_spread_engine.py`: physical risk from ND-GAIN scores (already an ETL source), transition risk from fossil-export dependence and NDC ambition (shareable with `em-climate-risk`'s engine profiles — these two modules should consume one country table, not two divergent ones). (2) Calibrate β_trans/β_phys by panel regression of the observed EMBI spreads on the vulnerability measures, following the module's own cited BIS WP 1089 / IMF WP/23/145 designs; report R² and confidence intervals in the response instead of presenting point adjustments as fact — this calibration is what earns rung 3. (3) The curated tables move to DB rows with `source`/`as_of_date`; `SPREAD_DATA` extends past its current Q4-23 endpoint via a market-data ingester. (4) The "unpriced risk premium" screen in the workflow becomes computable: observed spread minus model spread, per issuer.
+
+**Prerequisites.** Spread data licensing (EMBI is proprietary — decide on a public proxy like FRED EMBI aggregates or licensed feed); coordination with `em-climate-risk` on the shared country table. **Acceptance:** the displayed bps adjustment for a fixture country equals the regression model's output with published fit statistics; DNS and green-bond aggregations reconcile to sourced rows.
+
+### 9.2 Evolution B — EM relative-value screener with model-vs-market narration (LLM tier 2)
+
+**What.** The module's stated purpose — "identify climate-mispriced EM debt" — as a tool-calling analyst: "which single-B sovereigns trade tighter than their climate-adjusted fair value implies, and what's the vulnerability driver?" It queries Evolution A's model-spread endpoint, computes the mispricing gap per issuer from tool outputs, and drafts the relative-value note including the DNS/green-issuance context the page already curates (e.g. flagging when a candidate has an executed debt-for-nature swap that changes its effective debt service).
+
+**How.** Tools: `get_model_spread(country, scenario, horizon)`, `get_observed_spreads`, `query_countries(filters)`, `get_dns_deals(country)`. Grounding corpus = this Atlas record's §5 formula and §7.2 table definitions, plus the calibration statistics so the analyst can honestly caveat low-R² regions ("the model explains 40% of spread variance in Sub-Saharan Africa — treat gaps as screening signals, not alpha"). Every bps figure validator-checked; scenario definitions quoted from the NGFS metadata, not memory.
+
+**Prerequisites (hard).** Evolution A — today the copilot would present authored bps adjustments as model output, misrepresenting curation as calculation. **Acceptance:** a golden screen's mispricing list reproduces from scripted tool calls; the note always discloses model fit for the relevant region; countries without observed spread data are excluded with a stated reason, not imputed.

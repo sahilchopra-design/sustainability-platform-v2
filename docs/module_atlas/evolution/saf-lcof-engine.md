@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Bottom-up LCOF that the guide already specifies (analytics ladder: rung 1 → 2)
+
+**What.** §7 flags that the guide's genuine levelised-cost build — `LCOF = (CAPEX×CRF + OPEX)/AnnualProduction + FeedstockCost − §40B` — is not what runs: each pathway carries a hard-coded `lcof` (HEFA-UCO $1.85/gal, PtL-DAC $6.80/gal), the cost waterfall is one fixed 52/28/12/8 percentage split applied to every pathway (indefensible given pathways' materially different feedstock-vs-capex structures, per §7.5), no CRF or discount rate exists, feedstock prices don't flow through, and HEFA-UCO's $1.85 undercuts the guide's own $2.5–4.0/gal range. Evolution A implements the formula with pathway-specific cost structures.
+
+**How.** (1) `POST /api/v1/saf-lcof/compute`: the four cost lines built independently per pathway — CAPEX×CRF (the platform's standard annuity factor, reused from the renewable engines), fixed/variable OPEX, feedstock cost from `saf-feedstock-supply-chain`'s reference prices (finally linking the sibling modules' data), minus the CI-scaled §40B from the shared credit service the SAF-credits evolution establishes — summing to LCOF rather than splitting a preset total. (2) Wright's Law properly indexed: learning rate applied to cumulative-production trajectories per deployment scenario, replacing the un-anchored annual decay. (3) The hard-coded pathway values become validation targets: the bottom-up build should land within published ranges (ICAO/IEA SAF cost studies), with the HEFA-UCO discrepancy resolved against those sources. (4) The 24 project benchmarks recompute from project-specific inputs.
+
+**Prerequisites.** Pathway cost-structure research (capex per gal-capacity, opex shares — public techno-economic studies exist for all six ASTM D7566 pathways); sibling-module price linkage. **Acceptance:** waterfall components sum to LCOF and differ across pathways; a feedstock-price change propagates to LCOF; the bench HEFA case lands inside the cited published range.
+
+### 9.2 Evolution B — Pathway-economics copilot for developers and airlines (LLM tier 2)
+
+**What.** The module's users compare pathways under policy uncertainty: "at what UCO price does AtJ-Cellulosic beat HEFA in 2030, with and without §40B?", "explain PtL's $6.80/gal — which cost line dominates and what learning-rate assumption halves it by 2035?", "draft the offtake-committee comparison of three supply options". Each is a compute-endpoint tool call; crossover points are solved by parameter sweep, not model arithmetic.
+
+**How.** Tier-2 tool schemas over `/compute` and the learning-curve endpoint; crossover and sensitivity answers enumerate the actual sweep calls behind them. Explanations decompose into the four computed cost lines with their input citations (feedstock price source, capex study). Policy-dependency statements (§40B expiry, mandate trajectories) route to `saf-policy-mandate`'s data rather than being restated from memory — the SAF module cluster is a natural early desk-orchestration pilot, and this copilot should reference, not duplicate. All $/gal figures validated against tool output.
+
+**Prerequisites (hard).** Evolution A's bottom-up engine — narrating fixed percentage splits as cost structure would mislead investment decisions; sweep tooling. **Acceptance:** crossover answers reproduce from enumerated sweeps; decompositions sum to the quoted LCOF; policy claims cite the sibling module's data.

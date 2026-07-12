@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Server-side EGS engine with FORGE-anchored calibration (analytics ladder: rung 2 → 3)
+
+**What.** §7 rates this "one of the more quantitatively sound modules in the atlas": a genuine bottom-up LCOE engine (per-well-pair drilling + stimulation + $1.8M/MW ORC plant, capital-recovery annuity), Wright's-law learning curve matching the guide's formula, and Newton-Raphson IRR — real interactive engineering economics, already rung 2 via its sliders and P10/P50/P90 framing. The synthetic parts: the 9-project `EGS_PROJECTS` set and the flow-risk "Monte Carlo" (20 `sr()`-seeded samples around slider values, not a distributional simulation). Evolution A ports the engine server-side and calibrates it against the DOE data it cites.
+
+**How.** (1) `services/egs_economics_engine.py` porting the LCOE/IRR math verbatim, with `bench_quant` pins (a worked FORGE-like case: 2 well pairs, 3 km, 175°C). (2) Replace the seeded project set with the real, small universe — FORGE Utah, Fervo Cape Station, Eavor projects are publicly documented with depth/temperature/capacity — each row sourced. (3) Upgrade the flow-risk tab to an honest uncertainty model: proper Monte Carlo over flow-rate and temperature distributions parameterized from published FORGE results (5–8 kg/s achieved vs ≥10 target), reporting true P10/P50/P90 power output with the thermal-power formula already in code (`ṁ·cp·ΔT·η`). (4) Rung 3: calibrate the learning-curve base and rate against DOE EGS Shot liftoff-report cost trajectories; publish the fit alongside the $45/MWh target line.
+
+**Prerequisites.** DOE/FORGE data extraction (reports, not APIs — one-time curation with citations); seeded flow-risk chart replaced, not decorated. **Acceptance:** bench pin reproduces the LCOE build-up by hand; the P50 power output for FORGE-published parameters is consistent with its reported range; every project row carries a public source.
+
+### 9.2 Evolution B — Reservoir-economics copilot for developers and DOE-watchers (LLM tier 2)
+
+**What.** A tool-calling copilot for the module's engineering-finance loop: "at what flow rate does a 3.5 km, 190°C doublet clear a $70/MWh PPA — and how much drilling cost-down does $45/MWh need?" It runs Evolution A's engine endpoints (LCOE at given parameters, IRR at given PPA, learning-curve solve-for-inputs), and explains results using the module's real physics chain — flow × heat capacity × ΔT → thermal power → net MWh — citing the DOE FORGE benchmarks from the reference corpus for context.
+
+**How.** Tools: `compute_lcoe(params)`, `compute_irr(params, ppa)`, `solve_learning_gap(target_lcoe)`, `run_flow_uncertainty(params)`. Grounding corpus = this Atlas record's §7.1 formula block and the §4 threshold rows (≥10 kg/s, ≥175°C, $45/MWh with their DOE provenance). Inverse questions ("what drilling cost gets me to X?") are solver calls, not model arithmetic. Induced-seismicity questions answer from the stimulation-techniques reference data with its risk ratings, refusing site-specific seismic hazard claims the module doesn't compute.
+
+**Prerequisites (hard).** Evolution A's engine port (no endpoints exist today) and the honest uncertainty model — a copilot quoting the current seeded "Monte Carlo" would present fabricated P-values for drilling decisions. **Acceptance:** golden solve-for cases reproduce from scripted calls; every $/MWh and kg/s figure traces to a tool response or a cited DOE benchmark; site-seismicity questions refuse with the module's scope statement.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Aggregate real holding ITRs instead of a per-method constant (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the guide states `PortfolioTemp = Σ(weightᵢ × ITRᵢ)` from target-ambition + trajectory, but the headline gauge temperature is *not an aggregation at all* — it's a hard-coded per-methodology constant (`METHODOLOGIES[m].temp`: PACTA 2.7, SBTi 2.4, TPI 2.9, WA 2.6) plus a Scope-3 toggle (−0.3°C) and a year delta. The 60 per-holding temperatures *are* `sr()`-seeded and *are* weight-aggregated in some sub-tabs (and the engagement register's `livePortfolioTemp = Σ e.itr·e.weight/100` is a real weighted sum), but the gauge and KPIs read the constant. Evolution A makes the headline a real aggregation over real holdings.
+
+**How.** (1) Compute each holding's ITR from the SBTi Temperature Scoring v1.5 methodology (named in §5): target ambition vs the science-based sector pathway plus actual emission trajectory, with the documented "no target → 3.2°C default" fallback — over real `portfolios_pg` holdings via the shared engine, not `sr()` seeds. (2) The headline gauge then reads `Σ weightᵢ·ITRᵢ` (the sub-tabs already do this correctly — promote it to the gauge), so the methodology choice affects *how ITRs are computed*, not a lookup constant. (3) The what-if target-setting builder (§1) recomputes ITRs under committed targets. Shared with the `paris-alignment` and `portfolio-manager` ITR siblings — build one SBTi ITR engine.
+
+**Prerequisites.** SBTi ITR inputs (sector pathways, company targets/trajectories — shared resolver); the portfolio-analytics endpoints (auth-gated); blast radius 48 via shared engine — pin first. Remove `sr()` holding temps and the constant gauge. **Acceptance:** the gauge reads `Σ wᵢ·ITRᵢ` over real holdings; changing a holding or a target moves it; the methodology selection changes ITR computation, not a lookup.
+
+### 9.2 Evolution B — Temperature-alignment copilot (LLM tier 2)
+
+**What.** A copilot for the workflow §1 describes: "what's my portfolio temperature and is it 1.5°C-aligned?", "which holdings are hottest and why?", "how much does excluding Scope 3 change it?", "model the effect if these 5 companies commit to SBTi targets" — executed against the (Evolution-A) SBTi ITR engine, decomposing the weighted portfolio temperature into per-holding and per-sector contributions.
+
+**How.** Tool calls to endpoints wrapping the ITR computation and the what-if builder; system prompt from this Atlas page's §5 and the SBTi Temperature Scoring v1.5 / PACTA references named in §5. The what-if target-setting is a recomputation tool call, not an estimate; sector decomposition and target-gap answers come from the engine. Fabrication validator matches every temperature figure to a response; the copilot must convey ITR's methodology-dependence (SBTi vs PACTA vs TPI give different numbers — the module has all four) and the no-target default convention. Provenance cites which holdings had real targets vs the 3.2°C default.
+
+**Prerequisites (hard).** Evolution A — the current gauge is a hard-coded constant, and a copilot reporting it as "your portfolio's temperature" would present a lookup value as a computed Paris-alignment metric. **Acceptance:** every temperature figure traces to the SBTi ITR engine over real holdings; what-if scenarios recompute; the copilot flags methodology-dependence and default-ITR holdings.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real event-sourced audit trail with statistical drift detection (analytics ladder: rung 1 → 3)
+
+**What.** The page's own footer claims immutability, cryptographic hash chains, and 2-sigma Bollinger-band drift detection — §7's mismatch flag documents that **none of it exists**: all records are PRNG-regenerated React constants (`sr(seed)=frac(sin(seed+1)×10⁴)`), nothing persists, drift is a single random draw against a flat `|x| > 5` threshold, and q1/q2/q3 share a seed so "quarters" move in lockstep. Evolution A builds the real thing: a persisted, append-only score-change ledger with the statistical drift monitor the copy promises.
+
+**How.** (1) Table `assessment_score_events` (entity, node, old_value, new_value, reason, user_id, ts, prior_hash, row_hash) written by the actual scoring engines whenever a score changes — the platform's `AuditMiddleware` pattern is the precedent; hash chaining makes the tamper-evidence claim true. (2) Drift monitor computed from the event history: rolling 90-day mean ± 2σ per entity (the exact method the footer advertises), replacing the flat threshold — this is honest rung-3 territory because control limits are calibrated to each entity's observed variance. (3) The hand-built 5-node `LINEAGE` chain (the module's best content) generalises: lineage assembled from the event's node path in `TAXONOMY_TREE` plus the source metadata already carried in `REFERENCE_DATA_SOURCES`. (4) "Generate Audit Pack" produces an actual export (event slice + hash-chain verification result), not a boolean flip.
+
+**Prerequisites.** Scoring engines must emit change events (instrumentation work outside this module); Alembic migration; delete the PRNG generators — synthetic entries must never share a table with real evidence. **Acceptance:** mutating a historical row breaks chain verification; an entity with stable scores and one with volatile scores get different control limits; the audit pack downloads and re-verifies.
+
+### 9.2 Evolution B — Assurance-evidence copilot (LLM tier 2)
+
+**What.** Once real events exist, this module is the natural surface for assurance-preparation Q&A: "show me every change to Entity X's environmental score this quarter and who made them", "which entities breached their drift limits and was any breach methodology-driven?", "assemble the ISAE 3000 evidence bundle for the FY25 assessment" — each answered by tool calls against the event ledger and lineage endpoints, drafted in the evidence-pack structure §7.6 describes (attributed change log, version diffs, score-to-source lineage).
+
+**How.** Read-only tool schemas over the Evolution-A API (event query, drift status, lineage resolve, chain-verify); grounding corpus is this Atlas record plus ISAE 3000/3410 alignment notes in §7.6. The chain-verify tool is what makes the copilot assurance-credible: every evidence bundle it drafts embeds the verification result, so the LLM asserts integrity by citing a computed check, never by claiming it. Mutations are out of scope entirely — an audit trail an LLM can write to is not an audit trail.
+
+**Prerequisites (hard).** Evolution A end-to-end; a copilot narrating the current seeded-random change log would fabricate an audit history, the worst possible failure mode for a compliance module. **Acceptance:** every event, user, and delta in a copilot answer resolves to a ledger row; asked about a period with no events, it says so; evidence bundles include a passing chain-verification stamp.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — From workflow mockup to live submission pipeline (analytics ladder: rung 1 → 2)
+
+**What.** §7.7 is precise: no fabrication anywhere (hand-curated, no PRNG — the honest end of tier B), but the module is a mockup of a workflow tool — section `completeness` percentages are hand-set constants rather than computed from field-population state, the 8 realistic DQ checks (NGFS Phase 5 envelope, provisions-vs-ECL consistency) have no validation logic behind them, and nothing changes unless arrays are edited. There is also minor guide drift (3 vs 4 regulators; wrong deadline months). Evolution A wires the workflow to real state: template fields persisted per submission, completeness computed, DQ checks executable.
+
+**How.** (1) Tables `stress_submissions` and `stress_submission_fields` (org-scoped): each regulator template's sections become field schemas; `completeness = populated_required_fields / required_fields` computed live, replacing hand-set percentages. (2) The 8 DQ checks become executable rules over field values — e.g. the NGFS-envelope check compares submitted scenario losses against the platform's stored NGFS parameter ranges; the provisions-vs-ECL consistency check is an arithmetic assertion across fields — each returning pass/fail with the operands shown. (3) Where the platform already computes submission inputs (scenario-stress-test runs, regulatory-capital ratios), fields can be populated by reference to those artifacts, giving lineage from engine to submission cell. (4) Approval workflow and audit trail become timestamped rows (the module's stated purpose), and guide dates corrected.
+
+**Prerequisites.** Template field schemas transcribed per regulator (research-grade effort; start with ECB); artifact-reference conventions with sibling modules. **Acceptance:** filling a field moves completeness; a DQ check fails when its operands actually conflict and shows them; the audit trail records who populated/approved what, when.
+
+### 9.2 Evolution B — Submission-desk copilot with DQ triage (LLM tier 2)
+
+**What.** Stress-test submissions are deadline-driven form-filling with cross-checks — copilot territory: "what's blocking the ECB submission — list unpopulated required fields by section and the two failing DQ checks with their operands", "explain why the provisions-vs-ECL check fails and which artifact each side came from", "draft the internal sign-off memo summarizing completeness and open exceptions".
+
+**How.** Tier-2 tool calls over the Evolution-A endpoints (submission state, field lineage, DQ results); DQ explanations quote the rule's actual operands and the artifact references behind them — the lineage from stage (3) makes "this number came from scenario-run #214" a checkable statement. Sign-off memos are composed exclusively from stored workflow state. Guardrails: the copilot never suggests values for unpopulated fields (a submission assistant that invents regulatory data is disqualifying); it locates the platform artifact that could supply the value, or reports none exists. Mutations (approvals, status changes) stay behind confirmation-gated RBAC.
+
+**Prerequisites (hard).** Evolution A's field/DQ machinery — there is nothing real to triage today; artifact lineage fields. **Acceptance:** the blocking-items list equals the completeness endpoint's gaps; every DQ explanation shows real operands; no field value ever originates from the copilot.

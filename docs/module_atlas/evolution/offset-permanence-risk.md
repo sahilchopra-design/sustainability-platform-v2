@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Fitted survival model and empirical climate amplifiers (analytics ladder: rung 2 → 4)
+
+**What.** §7 shows a module that is honest about its heuristics: it models permanence decay (`remaining(t) = exp(−0.693·t/halfLife)` — a radioactive-decay analogy, ln(2) constant explicit), cumulative reversal (`P = 1 − (1−reversalDecade)^(t/10)`), and RCP-conditioned uplift, with `reversalDecade`/`permanenceYrs` as seed-table constants directionally consistent with published ranges (forest 5–15%/decade, DAC <0.1%). But §7.2 flags the weak spots: the half-life fraction (×0.7) has no survival-analysis basis, the RCP multipliers (1.0/1.25/1.55/2.10) are unsourced, and `expLoss95 = reversalDecade × 1.65 × 100` applies a z-score to a rate rather than a fitted distribution — "a simplification flagged as heuristic, not a proper VaR." Evolution A replaces heuristics with fitted models.
+
+**How.** (1) Replace the half-life analogy with an actual survival/hazard model fit to reversal-event history — the platform's wildfire and drought hazard grids (digital twin: 5,378 wildfire rows from GWIS) plus registry buffer-pool reversal records give real reversal observations to fit a Kaplan-Meier / parametric survival curve per offset type. (2) Derive the climate amplifiers from real wildfire/drought frequency projections under each SSP rather than the four hand-set multipliers — this is the rung-4 predictive step. (3) Compute a proper permanence VaR/CVaR from the fitted reversal distribution instead of the z-score-on-a-rate shortcut, aligned to the ICVCM and Verra Non-Permanence Risk Tool named in §5.
+
+**Prerequisites.** Reversal-event data for the fit (registry buffer-pool records are partially public; wildfire grids exist); documenting the survival model per Atlas §8. **Acceptance:** reversal probabilities derive from a fitted curve with confidence bands, not the ×0.7 analogy; climate amplifiers trace to SSP wildfire/drought projections; VaR is computed from the distribution, not `rate × 1.65`.
+
+### 9.2 Evolution B — Buffer-pool stress-test copilot (LLM tier 2)
+
+**What.** A copilot for the buffer-pool and reversal-risk workflows §1 describes: "does the buffer pool cover expected reversals for this ARR portfolio under RCP8.5?", "which offset types have the worst permanence VaR?", "how does the reversal curve change from RCP4.5 to RCP8.5?" — executed against the permanence engine, decomposing results into decay-curve, cumulative-reversal, and climate-amplifier terms.
+
+**How.** Tool calls to a `POST /offset-permanence/stress` endpoint wrapping the (Evolution-A fitted) engine; system prompt from this Atlas page's §5/§7 formulas and the ICVCM/Verra references named in §5. Scenario what-ifs (RCP switches) are recomputations; the fabrication validator matches every reversal probability and VaR to a tool response. Critically, the copilot must distinguish the current heuristic outputs from fitted ones in its provenance until Evolution A lands — narrating `expLoss95` as a "95% VaR" when §7 explicitly flags it as not a proper VaR would misrepresent the model's rigor.
+
+**Prerequisites.** The stress endpoint; Evolution A strongly preferred before quoting VaR figures with a confidence claim. **Acceptance:** every reversal/VaR figure traces to a tool call; RCP what-ifs recompute the amplifier; the copilot labels heuristic vs fitted outputs honestly and refuses to overstate the VaR's statistical basis pre-Evolution-A.

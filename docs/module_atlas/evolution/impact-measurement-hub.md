@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — First backend vertical: a KPI intake and measurement store (analytics ladder: rung 1 → 2)
+
+**What.** This is a thin tier-B page with no MODULE_GUIDES entry and no measurement model: §7.5 records that every quantity — `impactScore`, `additionalityScore`, `iwaProfitAdj` (−80…+120 $Mn), `co2Avoided`, `jobsCreated` — is an independent `sr()` draw with decorrelating seed offsets, over PRNG-assembled company names; alerts, ToC progress and engagement status are cosmetic scaffolding. Evolution A gives the module its first real substance: an investee-KPI intake vertical (holding × IRIS+ metric × period × value × evidence source) with a reporting-completeness model, so the hub measures *actual reported data* rather than inventing it. Scores stay out of scope until data exists — the honest first rung is a data layer with coverage analytics, not another synthetic composite.
+
+**How.** (1) Tables `impact_kpi_submissions` and `impact_engagements`; routes `POST /impact-measurement/kpi` and `GET /impact-measurement/portfolio-rollup`. (2) The dashboard KPIs recompute from stored submissions: `totCO2` = Σ reported CO₂-avoided values with period and source shown; `avgToC` from actual stage records entered through the engagement workflow the page already sketches. (3) Alerts become rule-driven (missing quarterly submission, metric regression vs prior period) instead of random type/severity draws. (4) A MODULE_GUIDES entry is written as part of this work, aligning the module to the `impact-weighted-accounts` §8 monetisation and `impact-verification` §8 VCS specs it should eventually consume.
+
+**Prerequisites.** The `sr()` holding generation deleted; portfolio spine from `portfolios_pg`. **Acceptance:** every dashboard number traces to a stored submission row; a portfolio with no submissions renders an honest empty state, not a populated dashboard.
+
+### 9.2 Evolution B — Board-report copilot over reported KPIs only (LLM tier 2)
+
+**What.** The page's `REPORT_SECTIONS` list (Executive Summary → Board Recommendations) is a ready-made deliverable skeleton. Evolution B drafts it: "prepare the Q3-25 impact KPI dashboard section", "which holdings regressed on jobs-created and what engagement is open?", "summarise SDG coverage honestly, including what's unverified." Every figure comes from the Evolution A rollup endpoint; every verification claim defers to the impact-verification module's status rather than asserting credibility itself.
+
+**How.** Tier 2: tool schemas over `/impact-measurement/portfolio-rollup` and the KPI query routes; the report skeleton maps to `REPORT_SECTIONS` with per-section numeric validation by the no-fabrication checker. The copilot's distinguishing rule is coverage candour: each section opens with data coverage ("14 of 40 holdings reported CO₂-avoided this quarter") because impact reporting that hides sparsity is impact-washing — the exact failure mode the sibling module's `IMPACT_WASHING_FLAGS` taxonomy catalogues. Board recommendations must be grounded in rule-driven alerts, not model speculation.
+
+**Prerequisites (hard).** Evolution A — drafting board reports from the current PRNG dashboard would formalise fabricated impact claims. Copilot infrastructure (Phase 1–2). **Acceptance:** generated sections contain zero numerics absent from tool responses; every section header carries its coverage statistic.

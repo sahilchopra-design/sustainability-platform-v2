@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Apply the documented methods to actual target derivation (analytics ladder: rung 1 → 2)
+
+**What.** §7's split verdict: the reference layer is excellent — four real SBTi methods with accurate formulas (Absolute Contraction's 4.2%/yr 1.5°C minimum, SDA convergence, Temperature Rating, Portfolio Coverage), real IEA NZE/MPP/CRREM/ICAO sector pathway intensities, real IPCC AR6 carbon budgets — but no company's displayed target is computed by any of them; `nearTermS12`, `tempScore` etc. are independent `sr()` draws, and `globalEmissions = 40Gt` understates the full-scope ~53–57Gt, which would overstate portfolio budget allocations (§7.5). Evolution A turns the reference layer into a working calculator: user inputs in, method-derived targets out.
+
+**How.** (1) `POST /api/v1/sbti-targets/derive`: given base-year emissions, sector, and target year, apply the selected method — Absolute Contraction as the linear-rate formula, SDA as convergence toward the sector's real `SECTOR_PATHS` intensity at the target year — returning the required reduction % with the formula's intermediate terms exposed (auditable target math, which is the whole point of "science-based"). (2) Fix the global-emissions constant to a cited full-scope figure with a scope note, correcting the portfolio-budget overstatement. (3) FLAG targets included where sector data supports them, or explicitly scoped out. (4) The seeded company registry replaced by the SBTi public dashboard export (shared ingest with `sbti-credibility-scorer`), so displayed statuses are real; derived-target calculations run on user-entered company data.
+
+**Prerequisites.** Method formulas unit-tested against SBTi's published worked examples (the criteria documents include them); dashboard ingest. **Acceptance:** an Absolute Contraction 1.5°C target for 2030 from a 2024 base reproduces 4.2%/yr × 6 years; an SDA cement target converges to the GCCA pathway intensity; the portfolio-budget example recomputes under the corrected global figure.
+
+### 9.2 Evolution B — Target-setting wizard copilot (LLM tier 2)
+
+**What.** SBTi target setting is a methodology maze (near-term vs net-zero, SDA vs ACA eligibility, FLAG thresholds, FI portfolio-coverage rules). The copilot guides it: "we're a mid-cap cement producer with 2.1 MtCO₂e Scope 1+2 — which method applies, what does a validated 1.5°C near-term target require, and compute it", combining criteria navigation (tier-1 RAG over SBTi criteria documents) with derivation tool calls (`POST /derive`).
+
+**How.** Method-eligibility answers cite SBTi criteria clauses (public documents, chunked); computed targets come exclusively from the derivation endpoint with intermediate terms shown, so the copilot can walk through the convergence math step by step — pedagogy grounded in real arithmetic. Boundary questions (FLAG threshold at 20% of emissions, Scope 3 requirement at 40%) evaluate the user's entered numbers against the cited rule. Guardrails: the copilot prepares target submissions but always states that validation is SBTi's determination; criteria versions are cited (SBTi revises criteria — vintage matters); no company-specific status claims beyond the ingested dashboard.
+
+**Prerequisites.** Evolution A's derivation engine and tested formulas; criteria corpus with version metadata. **Acceptance:** computed targets in copilot answers match the endpoint's derivation exactly; every eligibility claim cites a criteria clause and version; validation-outcome promises are refused.

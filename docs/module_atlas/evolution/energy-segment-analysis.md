@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Multi-issuer segment data with a computed transition score (analytics ladder: rung 1 → 2)
+
+**What.** §7 rates this a "static, transparent decomposition dashboard with one live calculation": hand-authored financials for three segments (guide says five; renewables/retail are folded into downstream detail), realistic operational metrics (8,420 mmboe reserves, 12,400 km pipeline), and a single render-time computation — the internal-carbon-price cost overlay `emissions × price / 1000`. The `transition_score` per segment (32/55/48) is a stored attribute, though the guide says it should be a taxonomy assessment weighted by segment revenue. Evolution A makes both the data and the score real.
+
+**How.** (1) Backend `energy_segments` table sourced from issuer filings' segment notes (shared collection effort with `energy-revenue-split`'s Evolution A — the same ~10 integrated majors, one ingestion pass, two consumers), replacing the single anonymous demo company with an issuer selector. (2) Compute the transition score as the guide specifies: each segment's activities mapped to taxonomy alignment (via the `eu-taxonomy-engine` / `energy-sector-taxonomy` screening) weighted by segment revenue — deleting the stored 32/55/48 constants. (3) Rung 2: the carbon-price overlay grows into a proper what-if — price path scenarios (EU ETS forward curve vs internal $85/t) applied to per-segment emissions, showing EBITDA erosion per segment per scenario. (4) Resolve the 3-vs-5 segment discrepancy explicitly: either model renewables/retail as segments or amend the guide.
+
+**Prerequisites.** Segment-note data collection (manual per issuer initially); taxonomy-engine availability for the score computation. **Acceptance:** a real issuer's segment revenue/EBITDA matches its filing; the transition score reproduces from the taxonomy-weighted formula; the carbon-cost overlay at $85/t reproduces the documented arithmetic.
+
+### 9.2 Evolution B — Segment-economics copilot (LLM tier 1)
+
+**What.** This module's LLM need is explanatory, not operational: analysts landing on the segment view ask "why does downstream have the highest revenue but lowest EBITDA margin?", "what does a $150/t carbon price do to upstream profitability?", "how is the transition score derived?" A tier-1 copilot answers from the page's loaded data and this Atlas record — including the honest caveat, pre-Evolution-A, that transition scores are stored assessments rather than computed values.
+
+**How.** Pure RAG per the roadmap's tier-1 pattern: this Atlas record (§7.1's formula, §7.2's segment and detail tables) embedded in `llm_corpus_chunks`, plus the page's current state (selected carbon price, active segment) passed as structured context. The carbon-cost question is answerable exactly — the formula and inputs are on the page — so the copilot walks the arithmetic rather than estimating. The refusal path covers what the module doesn't have: issuer comparisons (pre-Evolution-A there is one company), quarterly granularity, cash-flow forecasts.
+
+**Prerequisites.** Tier-1 copilot infrastructure (`module_copilot.py` router, corpus embedding) — no module-specific backend needed, which is why tier 1 is the right first rung here. **Acceptance:** golden Q&A (5 questions from §7 content) answered with correct figures and formula citations; the carbon-cost walkthrough matches the page's computed value at the same slider position; questions about unmodeled segments (renewables standalone) get the honest 3-segment explanation.

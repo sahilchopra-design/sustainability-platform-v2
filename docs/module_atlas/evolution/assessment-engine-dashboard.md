@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Weighted bottom-up scoring with real scenario conditioning (analytics ladder: rung 1 → 2)
+
+**What.** The dashboard has a documented triple mismatch: entity scores are seeded-PRNG draws (`round(25 + sr(i*8+j*3)×65)`) averaged **unweighted** over 9 L1 topics despite the guide's weighted formula; the portfolio score is a simple mean with no AUM field anywhere; and the Scenario Comparison tab applies random ±15-point jitter under NGFS labels — §7.5 warns "do not read them as stress results." Evolution A replaces fabrication with the aggregation the module already imports but never uses: `aggregateScores`, the L2–L4 hierarchy, per-leaf `quality` fields, and the taxonomy weights.
+
+**How.** (1) Score at leaf level and roll up through `TAXONOMY_TREE` weights — after renormalising them (§7.2 documents they sum to 1.15, not 1.00; harmless for sunburst sizing, wrong for scoring). (2) Add exposure weighting: entities gain an AUM/exposure field sourced from `portfolios_pg` holdings so "AUM-weighted" becomes true. (3) Scenario tab consumes the NGFS multipliers from the assessment-configuration console (its `NGFS_SCENARIOS` are the intended source) applied to scenario-sensitive topics only, replacing jitter — honest rung 2. (4) Leaf scores initially seeded from the taxonomy's named `dataSources` (EPA GHGRP, EU ETS EUTL, CDP) where the platform already ingests them; leaves without data render as honest nulls with the coverage KPI computed, not the current hard-coded "87%" string.
+
+**Prerequisites.** Weight renormalisation decision (rescale vs re-author); assessment-configuration's Evolution A (persisted config) so multipliers have a source of truth; purge the PRNG generator. **Acceptance:** a topic-skewed test entity produces materially different weighted vs unweighted scores (§7.4 predicts divergence); scenario ordering is monotonic in multiplier; coverage KPI equals the computed fraction of populated leaves.
+
+### 9.2 Evolution B — Methodology copilot, upgrading to scoring analyst (LLM tier 1 → 2)
+
+**What.** First slice: a tier-1 copilot answering "how is the B rating derived?", "what does the CE topic weight mean?", and "why can't any entity score E?" — the last from §7.2's genuinely interesting artefact (the 25–90 seed range makes E unreachable), which the copilot must disclose as a synthetic-data property, not a finding about the companies. Grounded strictly in this Atlas record (§7.2 rubric, §7.4 worked example) with the mismatch flag embedded so the copilot never presents the scenario tab as stress analysis.
+
+**How.** Standard Tier-1 pattern (pgvector corpus from this record, Haiku serving, prompt-cached context, refusal path required). After Evolution A, upgrade to tier 2: tool calls against the new scoring endpoints let it answer "re-rank the portfolio under Delayed Transition" or "which L3 nodes drag Shell's ET score?" from real aggregation output, with every figure validated against tool responses per the no-fabrication contract. The 10 entities are real companies (Shell, BP, Enel…), so the system prompt must forbid blending model scores with the LLM's background knowledge of those firms — scores come from the engine or not at all.
+
+**Prerequisites.** Copilot router for tier 1 (grounding corpus already exists); Evolution A for tier 2. **Acceptance:** tier-1 answers cite Atlas sections and refuse per-entity "why did BP score 61?" questions while scores are synthetic; tier-2 answers trace every score and delta to a scoring-endpoint response.

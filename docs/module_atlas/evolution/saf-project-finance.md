@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — One IRR mechanism, bounded inputs, engine-backed deals (analytics ladder: rung 2 → 3)
+
+**What.** §7 documents a split personality: the interactive Financial Model tab is genuinely correct project finance (annuity debt service, DSCR, a real Newton-Raphson equity IRR over a 21-period cash-flow vector), while the 20-deal "Deal Overview" carries independently seeded IRR/DSCR fields computed by no model at all — users comparing universe IRRs to their scenario IRR are comparing unrelated data sources. §7.5 adds that unbounded default inputs let the calculator silently produce economically nonsensical outputs, and `dscrProfile`'s 1.2%/yr growth is decorative. Evolution A unifies on the real mechanism.
+
+**How.** (1) Deal Overview rows become stored input sets (capex, capacity, offtake price, debt terms) run through the same `calcIRR` chain — one IRR mechanism, the seeded fields deleted; deals and the interactive scenario become directly comparable because they share a solver. (2) Input plausibility bounds with soft warnings (capex $/gal-capacity ranges per pathway from `saf-lcof-engine`'s cost structures; DSCR sanity floor) so nonsensical outputs are flagged at entry, not silently rendered. (3) `dscrProfile` derived from the actual modelled cash flows (revenue escalation and debt amortisation) instead of the decorative growth constant. (4) Port to `POST /api/v1/saf-pf/model` and consider deferring sizing mechanics to the platform's generic `project-finance-debt-sizer` (CFADS in, sculpted debt out) rather than growing a parallel sizer — this module keeps SAF-specific revenue construction.
+
+**Prerequisites.** Deal-input backfill for the 20 rows (or honest reduction to fewer, fully specified deals); bounds research per pathway. **Acceptance:** every displayed deal IRR reproduces via the solver from its stored inputs; out-of-bounds inputs trigger visible warnings; DSCR profile ties to the modelled cash-flow vector year by year.
+
+### 9.2 Evolution B — Blended-finance structuring copilot (LLM tier 2)
+
+**What.** The module's DFI/blended-finance framing is where structuring conversations happen: "at what concessional-debt share does this AtJ project clear a 1.4× DSCR and 12% equity IRR?", "how much does a 50% §40B haircut move the equity case?", "draft the DFI concept-note economics section with the risk register's top-5 items". The copilot solves these as parameter sweeps over `POST /model` and composes the note from computed outputs plus the register.
+
+**How.** Tier-2 tool schemas over the model endpoint and deal register; threshold-clearing questions are solved by sweep enumeration with the binding constraint named (mirroring the debt-sizer's constraint-contest vocabulary where that engine is used). Risk-register items enter drafts verbatim from stored records with their probability-impact coordinates. Guardrails: the input-bounds warnings propagate into copilot answers ("this capex is below the plausible band for FT-MSW — result flagged"); policy-credit assumptions cite the shared SAF credit service; no market offtake prices asserted beyond the entered scenario.
+
+**Prerequisites (hard).** Evolution A's unified solver and bounds — structuring advice from seeded deal IRRs would be fabricated diligence; sweep tooling. **Acceptance:** threshold answers name the binding constraint and reproduce from enumerated calls; concept-note figures match tool output; bound-violation flags appear in answers whenever inputs breach them.

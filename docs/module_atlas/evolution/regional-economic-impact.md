@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A live I/O recomputation with region-specific dynamics (analytics ladder: rung 1 → 2)
+
+**What.** The 10-region fossil-dependency dataset (Appalachia through Yorkshire) is hand-curated with no PRNG — honest but static. §7's key defect: the I/O multiplier slider (1.0–3.0×) rescales only an auxiliary stylised trajectory chart while each region's own `indirectJobs`/`inducedJobs` fields stay fixed — an internal inconsistency for a tool whose named tab is "Input-Output Model". Additionally, diversification scores and the migration curve are identical for every region despite the dashboard implying region-level analysis. Evolution A makes the I/O arithmetic live and region-differentiated.
+
+**How.** (1) Recompute employment effects from the slider per §7.6's own suggestion: `indirectJobs = directJobs × (multiplier − 1) × indirectShare`, `inducedJobs` from a documented induced-share, per region — the table and the trajectory chart then move together. (2) Region-specific multipliers seeded from published I/O literature (national statistical-agency employment multipliers for mining/energy sectors are public for the US, Germany, Poland, Australia — covering most of the 10 regions), each with a citation, the slider becoming an override on a cited default. (3) Region-specific migration/diversification: parameterise the shared curves by each region's own dependency share and diversification score so no two regions render identically. (4) Cross-check curated baselines against ILO Just Transition employment data and World Bank WDI, adding source stamps.
+
+**Prerequisites.** The multiplier-sourcing research pass; agreement on the induced-share convention. **Acceptance:** moving the slider changes the regional table, not just the chart; Appalachia and Shanxi show different multipliers with different citations; no two regions share identical migration curves.
+
+### 9.2 Evolution B — Just-transition policy brief copilot (LLM tier 1 → 2)
+
+**What.** The module's audience is policy-facing: transition authorities, development banks, corporate affairs teams working coal-region exits. The copilot drafts just-transition briefs: "summarize the employment and fiscal cliff for Silesia under a 2035 coal exit — direct/indirect/induced decomposition, fiscal gap, diversification options ranked by the region's own scores", every number from the Evolution-A computation and every baseline from a cited row.
+
+**How.** Tier 1: RAG over this Atlas record plus the sourced regional table; the copilot's framing guardrail is the one §7.6 implies — figures are curated estimates for comparative analysis, not official statistics, and the brief's methodology note must say so. Tier 2: multiplier what-ifs ("at 2.4× with a 40% induced share") run as tool calls against the recomputation endpoint; cross-region comparisons are computed rankings. Pairing with `regional-climate-impact`'s copilot via desk orchestration later gives the combined physical-plus-transition regional view; within this module, scope stays on economic transmission.
+
+**Prerequisites.** Evolution A (a policy brief quoting a slider that doesn't affect the table would embarrass everyone); source stamps for baselines. **Acceptance:** brief figures reproduce from the endpoint at the stated multiplier; the illustrative-data methodology note appears in every draft; regions outside the 10 covered are declined.

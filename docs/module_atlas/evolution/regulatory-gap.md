@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Server-side gap engine with evidence links and framework depth (analytics ladder: rung 2 → 3)
+
+**What.** §7.7 calls this the strongest provenance profile in its batch: no PRNG, every compliance status derived live from actual cross-module session state (portfolio, stewardship records, scenario runs, report templates), with a defensible half-credit-for-partial refinement of the guide's gap formula. Its ceilings: the derivation reads `localStorage` (so gaps are per-browser, unauditable, and invisible to a compliance team), `TCFD-M2` (Scope 3) is permanently 'gap' because the company master lacks the field, and the framework requirement set beyond TCFD/SFDR is shallow. Evolution A moves the engine server-side, deepens the requirement catalogs, and attaches evidence.
+
+**How.** (1) `api/v1/routes/regulatory_gap.py` with `POST /assess`: the same status-derivation rules evaluated against org-scoped DB state (portfolios_pg, saved scenario runs, report records) instead of browser storage — making the assessment shared, historical (snapshots per assessment date), and auditable. (2) Framework catalogs extended requirement-by-requirement for CSRD/ESRS (the refdata layer already holds ESRS catalogs per the platform state — join against them rather than re-authoring) with each requirement carrying its datapoint reference. (3) Evidence linking: a satisfied requirement records *which* platform artifact satisfied it (report ID, scenario-run ID), turning the green checkmark into a clickable audit trail. (4) Close the known Scope 3 hole by wiring the scope3-engine's outputs into the company master or marking the requirement "unassessable" with its cause.
+
+**Prerequisites.** Migration path from localStorage-derived state; ESRS catalog join keys. **Acceptance:** two teammates see the same gap assessment; each compliant requirement links to its evidence artifact; assessments are reproducible from a dated snapshot.
+
+### 9.2 Evolution B — Gap-remediation planner copilot (LLM tier 2)
+
+**What.** A gap analysis's output is a to-do list; the copilot turns it into a plan: "we're at 61% CSRD readiness — sequence the 14 open gaps by effort and dependency, and tell me which existing platform modules close each one", exploiting a capability unique to this module: it already knows which cross-module artifacts satisfy which requirements, so remediation advice can name the concrete module to use ("run scenario-stress-test to close TCFD-S2; the E1-6 gap needs scope3-engine data").
+
+**How.** Tier-2 tool calls to `POST /assess` and the evidence-link records; the module-recommendation logic is grounded in the requirement→artifact mapping plus the Atlas interconnection graph (existing artifacts, per the roadmap's routing-knowledge inventory). Drafted remediation plans carry per-gap effort bands only where the requirement metadata defines them — no invented timelines. The copilot also answers "why is this requirement partial?" by quoting the derivation rule's inputs (e.g. "GHG coverage 60% vs 80% threshold"), which the server-side engine exposes per requirement. Applicability questions route to the entity profile logic shared with `regulatory-calendar`.
+
+**Prerequisites.** Evolution A's engine and evidence links; derivation-rule transparency in the API payload. **Acceptance:** every recommended module actually maps to the gap it claims to close (checkable against the requirement→artifact table); partial-status explanations quote the rule's actual operands.

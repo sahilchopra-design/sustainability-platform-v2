@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the live threshold-evaluation engine the module's premise requires (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag is damning for a monitoring tool: the guide's `Alert = condition_met(carbon_price, rating_change, tech_crossover, regulation)` implies a live rule engine, but **no evaluation exists** — `alertCount` and `lastAlert` are independent `sr()` draws unrelated to `carbonPrice_trigger` or any threshold field. Worse, the in-page text claims `strandingRisk` comes from "a multi-factor model incorporating carbon price sensitivity, regulatory timeline, technology substitution curves, and financial leverage… calibrated to IEA NZE," when it is actually `round(15 + sr(i×13)×80)` — a single random draw with none of those factors present. The 20 assets and 8 trigger-log entries are static demo content. The module's entire premise (configurable monitoring with trigger events and alerts) is unimplemented. Evolution A builds the alert engine.
+
+**How.** (1) Implement live threshold evaluation: compare each asset's `carbonPrice_trigger`, rating, tech-crossover, and regulation thresholds against actual current values (carbon price from a live/refreshed source, ratings from a feed, regulation from the platform's climate-policy-radar) — the six `ALERT_TYPES` become real conditions, not toggles. (2) Compute `strandingRisk` from the four factors the page text claims, borrowing the sibling `stranded-asset-analyzer`'s real write-down/PD engine rather than a random draw. (3) Generate the trigger-events log from actual threshold breaches, not the hardcoded 2026-dated narrative entries. (4) Persist per-asset thresholds and engagement status server-side.
+
+**Prerequisites.** A live carbon-price and ratings source; the climate-policy-radar endpoints for the regulation trigger; sibling engine reuse for stranding risk. **Acceptance:** an alert fires only when a threshold is actually breached; `strandingRisk` responds to carbon price and leverage; the trigger log reflects real breaches, not demo content.
+
+### 9.2 Evolution B — Watchlist-monitoring copilot (LLM tier 1)
+
+**What.** A copilot for the portfolio monitor: "which assets breached their carbon-price trigger this week?", "why did this asset's stranding risk rise?", "what engagement status should I set given the latest regulatory trigger?" — answered from the (Evolution-A) live alert engine and the computed stranding factors, never inventing alerts.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/stranded-asset-watchlist/ask`, corpus = this Atlas record (the alert taxonomy, the stranding factors, IEA NZE / CA100+ framework notes) plus live watchlist state. Breach answers narrate which threshold conditions evaluated true and against what current values; stranding-risk explanations decompose the multi-factor model; engagement-status guidance maps to the CA100+-consistent escalation categories the module carries. Refusal for assets outside the watchlist.
+
+**Prerequisites (hard).** Evolution A — with alerts as random draws and stranding risk fabricated despite claiming a multi-factor model, the copilot would narrate fictional breaches and cite a model that doesn't exist. **Acceptance:** every alert cited corresponds to a real threshold evaluation; stranding-risk explanations reflect the actual factors; a claim about IEA NZE calibration is true only after Evolution A wires it.

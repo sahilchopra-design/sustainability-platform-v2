@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real project book, computed MAC curve, and DCF-based NPV (analytics ladder: rung 1 → 2)
+
+**What.** The page manages an internal abatement portfolio with a genuinely useful structure (MAC curve, project NPV, SBTi-progress tracking, pipeline governance, co-benefit valuation), but the 25 `PROJECTS` are seeded and the analytics are shortcuts: NPV scenarios are literal multipliers (`totalNpv100 = totalNpv75 × 1.31`, `totalNpv150 = ×1.68`) rather than re-discounted cash flows, `CUMULATIVE_DATA` vs SBTi is a static series, and the co-benefit value uses fixed conversion factors (`energy × 8.4 + water × 1.2 + waste × 0.18`). The registered backend is the generic `carbon.py` suite. Evolution A makes it a real abatement-management tool.
+
+**How.** (1) Real project data entered/persisted per project (capex, annual CO₂e, IRR, payback) via a dedicated route rather than the seed. (2) A computed MAC curve: projects ordered by real marginal abatement cost ($/tCO₂e = annualised net cost / annual abatement) with cumulative reduction — the module's headline analytic, currently an ordering of seeded MACs. (3) NPV scenarios re-run the DCF at each carbon price (using `carbon.py`'s `calculate_npv`) instead of the ×1.31/×1.68 multipliers. (4) SBTi progress computed against the company's real approved glide path (SBTi target database), tracking cumulative operational reductions vs the annual target. (5) Rung 2: pipeline what-ifs — reduction and cost trajectories under different project-approval sequences. Co-benefit conversion factors sourced.
+
+**Prerequisites.** A project data model + persistence; the SBTi target database; sourced co-benefit valuation factors. **Acceptance:** the MAC curve is computed from real project economics and correctly ordered; NPV scenarios are genuine re-discounted DCFs, not multipliers; SBTi progress tracks the real approved target; co-benefit factors are cited.
+
+### 9.2 Evolution B — Abatement-portfolio prioritisation copilot (LLM tier 2)
+
+**What.** Sustainability and finance teams ask "which projects give the most CO₂ reduction per dollar?", "what's our SBTi coverage if we approve the top-5 pipeline projects?", "show the MAC curve and where our SBTi target sits" — the copilot runs the Evolution-A MAC and SBTi tools, prioritises projects by marginal abatement cost, and reports cumulative reduction vs target, every figure tool-traced.
+
+**How.** Tool schemas over the Evolution-A MAC/NPV/SBTi routes; grounding corpus is this Atlas record plus the GHG Protocol Project Protocol and SBTi references. The copilot's core value is the prioritisation narrative the MAC curve enables — "these three negative-cost projects should proceed regardless; beyond $50/t you're better buying offsets" — with every cost and reduction figure tool-traced. The honesty duty: it distinguishes genuine operational abatement from offset reliance (the module's stated thesis — reduce dependency on external offsets), and reports SBTi coverage against the real target, not an assumed one. Abatement-portfolio reports for TCFD/CSRD compose into the report layer.
+
+**Prerequisites (hard).** Evolution A's real project book and computed MAC — a copilot prioritising seeded projects with multiplier-based NPVs would misdirect real capital allocation. **Acceptance:** every MAC, NPV, and SBTi-coverage figure traces to a tool response; prioritisation reflects computed marginal abatement cost; operational abatement is distinguished from offsets; SBTi progress cites the approved target.

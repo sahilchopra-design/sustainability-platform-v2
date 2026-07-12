@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Promote the parent quant library to a versioned server-side engine (analytics ladder: rung 2 → 3)
+
+**What.** §7 identifies this page as "the parent quant library the other DME pages port from" — velocity/acceleration signals, EMA smoothing, z-score regime classification, the four-branch PD strategy, and VaR/WACC/LCR/DMI/EL, applied to LocalStorage holdings enriched from `GLOBAL_COMPANY_MASTER`. Two problems: the library lives in frontend code (so dme-entity, dme-dashboard, and dme-pd-engine each carry divergent copies), and several scores blend real formulas with seeded noise (`impactScore = clamp(emissions·10 + transRisk·0.3 + sRand(s+60)·20)`, `pdBase` with a `sRand` term). Evolution A makes this the single, versioned, server-side DME quant engine.
+
+**How.** (1) Port `calculations.ts` to `services/dme_quant_lib.py`, registered in the engine registry with version stamps in every response (the roadmap's engine-platform requirement — this library is its most-duplicated candidate). (2) Strip every additive `sRand` noise term; where a term was papering over a missing input (e.g. reputational beta), return honest nulls with the missing-input named. (3) Sibling DME pages consume it via API; the atlas blast-radius for this module stops being 0 and becomes real — document the new edges. (4) Rung 3: `bench_quant.py` pins for each library function (velocity, EMA recursion, regime thresholds, all four PD branches, VaR scaling) so downstream refactors can't silently drift — the exact failure mode the "exact port" history invites.
+
+**Prerequisites.** Agreement with dme-pd-engine's Evolution A on ownership (PD branches live here; PD route consumes); real holdings via `portfolios_pg`. **Acceptance:** all sibling DME pages return engine-version headers pointing at one library; bench pins pass; grep finds zero copies of `mertonDD`/`varRealtime` in frontend code.
+
+### 9.2 Evolution B — Model-documentation copilot for validators and supervisors (LLM tier 1)
+
+**What.** As the quant core feeding TCFD and ECB-facing outputs, this module's LLM need isn't another analyst — it's *model validation support*: a copilot that answers "how exactly is the ESG-adjusted VaR computed, what are its assumptions, and where is it calibrated vs. asserted?" strictly from the module's Atlas record (§5 ERF formula, §7.1 signal dynamics, the library's constants) — the questions a supervisor or internal validation team asks first.
+
+**How.** Pure tier-1 RAG per the roadmap: this Atlas page plus the engine's §8 model card embedded in `llm_corpus_chunks`, per-module system prompt, prompt-cached. Distinctive guardrail: the copilot must *distinguish calibrated from authored parameters* — it should answer "the 1.645 is the 95% normal quantile; the sector haircuts are authored assumptions pending calibration (see §9.1)" rather than lending false authority. The refusal path covers performance claims: asked "how accurate is the PD model?", it cites the bench/calibration status honestly, including "not yet backtested" while that is true.
+
+**Prerequisites.** Evolution A's version stamps (answers must name the engine version they describe); the §8 model card kept current by the atlas builder. **Acceptance:** validation-team golden questions (10 Q&A written from §7) answered with correct formula citations; every parameter mentioned is labeled calibrated/authored consistent with the model card; zero invented accuracy statistics.

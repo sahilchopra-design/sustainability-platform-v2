@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the per-project CDR/MRV model the guide specifies (analytics ladder: rung 1 → 2)
+
+**What.** §7 splits the module cleanly: the mineral science is real (per-mineral CDR potentials — basalt 2.0, olivine 3.5 tCO₂/t rock), the scale-economics calculator is genuine Wright scaling (`(scale/1000)^−0.15`), and the LCOC learning curves are real exponential declines — but the guide's headline formula `CDR = application_rate × CDR_potential × weathering_rate × MRV_verification_factor` is **not implemented**: per-project `annualCDR` is a random draw, and no weathering-rate or verification-factor term exists in code. The §8 spec for the missing model is already written. Evolution A implements it.
+
+**How.** (1) `services/ew_cdr_engine.py`: per-project CDR from hectares × application rate × mineral potential × a climate-dependent weathering-rate factor (tropical vs temperate — the two-regime distinction the page already narrates) × MRV verification factor (0.5–0.7 band per the §4 lineage note, sourced to the UNDO/Nature references). (2) Project registry table replacing the 20 seeded projects — the real EW deployment universe is small and public (UNDO, Eion, Lithos, InPlanet purchases via the Frontier offtake database) and each row can carry its actual contracted tonnage. (3) The economics calculator then chains honestly: computed CDR × carbon price vs computed LCOC — margin from modeled quantities, not seeded ones. (4) Rung 2: sensitivity sweeps over the verification factor and weathering rate — the module's own stated principal risk becomes its principal what-if.
+
+**Prerequisites.** Weathering-rate parameterization decision (a coarse two-regime factor first, documented; soil-model sophistication later); Frontier offtake data curation. **Acceptance:** a fixture project (500 ha basalt at 10 t/ha, tropical, VF 0.6) reproduces the four-factor formula by hand; contracted-tonnage rows match Frontier records; zero seeded `annualCDR`.
+
+### 9.2 Evolution B — CDR buyer's diligence copilot (LLM tier 2)
+
+**What.** A tool-calling copilot for carbon buyers assessing EW purchases: "compare a basalt project in Brazil with an olivine project in Denmark at $250/t — delivered cost per verified tonne, MRV risk, and co-benefit case." It calls Evolution A's engine per project (CDR quantity with the verification-factor band, scaled LCOC, margin at the offered price), quotes the co-benefit values from the curated table with their agronomy-study provenance, and drafts the diligence note with the permanence/MRV caveats the module's own lineage rows emphasize.
+
+**How.** Tools: `compute_project_cdr(project, vf)`, `compute_scale_economics(volume, mineral, price)`, `get_mineral_profile(mineral)`, `get_project(id)`. Grounding corpus = this Atlas record's §5/§7 (the four-factor formula, the mineral library, the transport-cost share note). MRV risk framing is structural: answers always quote CDR as a range across the verification-factor band, never a point estimate — the honest representation of the module's stated principal uncertainty. Validator on all $/t and tCO₂ figures.
+
+**Prerequisites (hard).** Evolution A — a diligence note over randomly-drawn project CDR would advise real purchase decisions on fabricated tonnage. **Acceptance:** golden comparison reproduces from scripted calls; CDR always presented as a VF-band range; co-benefit claims carry their source labels; projects outside the registry refuse.

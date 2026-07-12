@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the wizard to the 6-framework backend engine (analytics ladder: rung 1 → 3)
+
+**What.** This module has a genuinely strong backend — `transition_plan_engine.py` scores a plan against all 6 frameworks (TPT, GFANZ, IIGCC NZIF, CSDDD, ESRS E1, CDP C4), with 17 mapped routes and 8 reference GETs tracing green. But §7.1 documents that the frontend only computes a basic field-completeness `readinessScore` in the wizard, and the 150-company Gap Analysis / Portfolio Readiness tabs are `sr()`-seeded with a documented incoherence: each company's top-level `readiness` and its 12 element scores are drawn from unrelated seeds, so a company can show 90% readiness with several TPT elements at 0 (§7.4). The rich `POST /assess`, `/assess-targets`, `/assess-sector-pathway`, `/csddd-compliance` engine capabilities aren't called.
+
+**How.** (1) Wire the wizard's completed plan to `POST /transition-plan/assess` — replacing the naive field-count with the engine's real 6-framework completeness/gap scoring (`_calc_completeness`, `_identify_gaps`, `_build_roadmap`). (2) Add target-credibility and sector-pathway analysis via `/assess-targets` and `/assess-sector-pathway` (the engine computes `gap_to_pathway` against SBTi SDA). (3) Replace the synthetic 150-company portfolio with real assessed plans, or make each company's `readiness` an actual rollup of its element scores so the two signals cohere (§7.6). (4) Surface CSDDD compliance via `/csddd-compliance` — a real EU regulatory requirement the engine already handles.
+
+**Prerequisites.** The `/assess` POST endpoints exercised (the 8 GETs trace green; POSTs weren't in the traced sample — verify live). Note the shared `transition_plan_engine` also powers `transition-planning-hub` (§6). **Acceptance:** the wizard produces a real 6-framework score, not a field count; company readiness equals its element rollup; CSDDD compliance is computed from plan data.
+
+### 9.2 Evolution B — Transition-plan drafting and gap-closing copilot (LLM tier 2)
+
+**What.** Building an IFRS S2 transition plan is the platform's highest-value LLM use case — a structured drafting + assessment workflow. The copilot guides a company through the TPT 5-pillar wizard, drafts disclosure text per pillar, runs `POST /assess` to score the draft against all 6 frameworks, and narrates the specific gaps ("your plan lacks the interim Scope 3 milestone ESRS E1 requires") with the roadmap to close them.
+
+**How.** Tier 2 is exceptionally well-supported here: the engine exposes 8 reference GETs (all green) that are ideal grounding — `ref/tpt-framework`, `ref/esrs-e1-disclosures`, `ref/csddd-requirements`, `ref/scoring-rubrics`, `ref/cross-framework-mapping` — so the copilot cites exact disclosure requirements, and `POST /assess`/`/assess-targets` are the scoring tools. The no-fabrication contract fits: completeness and gap scores come from the engine, not LLM judgment; the copilot drafts qualitative narrative but every score and gap traces to a tool call. This is the roadmap's tier-3 report-render pattern in miniature — the report-studio modules become the layer that turns the LLM-drafted, engine-scored plan into an IFRS S2 filing.
+
+**Prerequisites.** Evolution A's `/assess` wiring; a persisted plan record so drafts survive the session. **Acceptance:** every completeness/gap figure traces to an engine tool call; disclosure-requirement citations match the `ref/*` payloads; the copilot drafts narrative but never invents a framework score or a milestone the user didn't enter.

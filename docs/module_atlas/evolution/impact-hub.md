@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — From synthetic aggregation shell to live cross-module rollup (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag is clear: the hub's promised `IWR = Financial_return + Σ(ImpactKPI × Monetisation × Attribution)` is absent — every per-holding figure (`iwaEnvMn`, `additionalityScore`, `leverageRatio`, sparse `sdgsContrib` vectors, `impWashFlags`) is a `seed()` draw applied over real company names from `GLOBAL_COMPANY_MASTER`. But the hub's architecture points at its own fix: it is designed as an aggregation layer over the impact sub-modules (`MODULES` links to impact-weighted-accounts, impact-verification, blended finance, IRIS metrics). Evolution A makes it a *true* rollup: the hub stops generating numbers and instead reads each sub-module's computed/entered data, aggregating only what genuinely exists downstream.
+
+**How.** (1) Define a hub contract: per holding, the IWA total comes from the impact-weighted-accounts vertical (whose §8 monetisation spec the deep-dive already references as the authoritative model), verification status from impact-verification's records, blended leverage from actual deal structures, IRIS+ counts from stored metric selections. (2) A thin `GET /impact-hub/rollup?portfolio_id=` endpoint joining these sources with per-field provenance and honest nulls — `iwaComplete` then measures real data coverage rather than PRNG sparsity. (3) The IWR headline computes only over holdings with monetised KPIs, labeled with coverage %. (4) Delete `enrichHub`'s seeded generation.
+
+**Prerequisites (hard).** The sub-modules must have real data paths first — the deep-dive notes they are "also largely synthetic"; the hub cannot be more honest than its sources, so this evolution sequences *after* impact-weighted-accounts' own §8 implementation. **Acceptance:** every hub KPI traceable to a sub-module record; a holding with no downstream data shows nulls in the hub, not invented impact.
+
+### 9.2 Evolution B — Impact-desk orchestrator across the impact module family (LLM tier 3)
+
+**What.** The hub is the natural seat for a cross-module impact desk: "assess this holding's impact story" should walk IWA monetisation → IRIS+ metric coverage → verification status → additionality → impact-washing flags, each from its owning module, and synthesize an evidence-graded answer. That is the roadmap's tier-3 pattern, scoped to the impact family the hub already links.
+
+**How.** Routing via the `MODULES` map and the Atlas interconnection data; per-module tool schemas from the sub-modules' endpoints as they gain them (Evolution A's rollup endpoint is the first). The orchestrator's signature behaviour is evidence discipline borrowed from the hub's own `evidenceTier` concept: every claim in a synthesized impact memo carries the tier of its supporting evidence, and claims without downstream data are stated as gaps ("no verified GHG-avoided figure exists for this holding") rather than filled in — the LLM analogue of the platform's honest-nulls convention. Output renders through the report studio for LP-facing memos.
+
+**Prerequisites.** Evolution A's rollup (tier 3 without real sub-module data would orchestrate fabrications); tier-2 infrastructure on at least impact-weighted-accounts and impact-verification. **Acceptance:** a generated memo's every figure carries a module-of-origin citation; coverage gaps are enumerated explicitly; zero numerics fail the no-fabrication validator.

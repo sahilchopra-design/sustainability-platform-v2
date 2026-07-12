@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real component feeds and a validated rating cross-check (analytics ladder: rung 2 → 3)
+
+**What.** This is the rare DME page with **no mismatch flag** — the DMI construction (frScore·0.40 + esgScore·0.40 + velocity·0.20, EMA-smoothed with α=0.2, z-score regime classification, HHI concentration, Spearman rank agreement) matches its guide. The honest caveat is that all 40 entities are synthetic: component scores are `sr()` draws, index weights are seeded, and the rating cross-check compares against fabricated `msciLike`/`sustLike`/`issLike` values. Evolution A keeps the sound index machinery and replaces every input.
+
+**How.** (1) Component feeds from the sibling verticals as they land: frScore inputs (VaR/PD/WACC/liquidity percentiles) from the dme-financial-risk engine, esgScore components from real scored data (esg-ratings-hub / dme-entity topic scores), weights from actual market caps in the company master. (2) Move index computation to `services/dme_index_engine.py` with a persisted `dme_index_history` table — the 24-quarter `emaHistory` becomes real accumulating history instead of a seeded backfill, which is what makes velocity/acceleration meaningful. (3) Rung 3: replace the seeded rating proxies with genuine third-party ratings where licensed (or the public CDP/refinitiv-free subset) so the Spearman agreement statistic becomes a real external-validity check; pin the DMI arithmetic and EMA recursion into `bench_quant.py`.
+
+**Prerequisites.** dme-financial-risk and dme-entity Evolution A (component upstreams); ≥4 quarters of persisted history before momentum outputs unhide (honest-nulls until then). **Acceptance:** bench pin reproduces DMI/EMA/velocity for a fixture entity; the Spearman tab compares against real rating vectors or displays "no licensed ratings" — never seeded look-alikes.
+
+### 9.2 Evolution B — Custom-index construction analyst (LLM tier 2)
+
+**What.** The page already has the UI seams for custom indices (frW/esgW/velW weight sliders, sector heat map, top/bottom movers). Evolution B makes construction conversational: "build me a utilities-plus-energy index with double velocity weight and show the regime distribution and effective N" becomes a tool-call sequence against Evolution A's engine — compute custom DMI per entity, aggregate by sector, return HHI and effective-N — with the analyst narrating results and flagging concentration (`effN = 1/HHI`) against a stated diversification threshold.
+
+**How.** Tool schemas from the new index engine endpoints (compute-index, sector-aggregate, regime-distribution, history-query); grounding corpus = this Atlas record's §7.1 formula block so weight semantics are explained exactly as implemented (weights must sum to 100 with velW as residual, per the page's `velW = 100 − frW − esgW`). Export requests produce the time series through the existing CSV path plus a methodology note auto-drafted from §5. The validator matches every index value, HHI, and effective-N to tool outputs.
+
+**Prerequisites (hard).** Evolution A — a custom index over seeded components with fabricated rating agreement would give quant users a factor that correlates with nothing. **Acceptance:** a scripted replay of the analyst's tool calls reproduces its quoted index values exactly; requesting a backtest against realized returns (not yet built) triggers refusal with a pointer to the rung-4 roadmap, not an invented Sharpe ratio.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the page to its own unused ITR engine (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag documents the platform's clearest wiring gap: a real backend engine (`temperature_alignment_engine.py`) implements WACI, ITR-by-interpolation from the MSCI/Carbon Delta anchor table, PCAF DQS weighting, SBTi FI Net-Zero criteria scoring, and PACTA sector alignment — exposed via 11 routes, 6 of which trace green — yet the 57-line frontend makes **zero API calls**, rendering 60 companies whose `itr` is `sr(i×7)×3+1` random noise attached to real names (Exxon 3.6°C by seed coincidence, §7.4). The `PATHWAY` chart is separately hand-constructed, disconnected from the company table on the same page. Evolution A is not building an engine; it is connecting one.
+
+**How.** (1) Replace the seeded `COMPANIES` array with a portfolio flow: holdings (weight, scope 1/2 emissions, revenue) → `POST /waci` → `POST /itr` → per-company and portfolio ITR from the engine's anchor-table interpolation; the internally-consistent alignment bucketing (§7.2's one redeeming detail) becomes derived from real ITR cutoffs. (2) Diagnose the two traced POST failures (`/assess`, `/itr` — live 500s or auth-gating, per the harness) before wiring. (3) Seed real inputs: the SBTi target-status registry export (free) for `sbtiStatus`, disclosed Scope 1/2 for the 60 names. (4) Derive `PATHWAY` from the engine's sector-pathway reference data so the chart and KPI reconcile.
+
+**Prerequisites (hard).** POST failure root-cause; a demo portfolio with real emissions/revenue rows (the D0 credibility-gap seeding in the roadmap). **Acceptance:** page renders no number the engine didn't return; Exxon's ITR responds to its emissions inputs, not its array index; portfolio ITR equals the WACI-interpolated value from `ref/itr-table` anchors.
+
+### 9.2 Evolution B — Portfolio-alignment analyst over the live engine (LLM tier 2)
+
+**What.** Once wired, this module is the investor desk's headline metric surface. The copilot answers "why is our portfolio 2.7°C?" with the engine's decomposition (WACI by sector, worst-contributing holdings, PCAF data-quality caveats), runs what-ifs ("divest the top-3 ITR contributors", "assume Shell hits its 2030 target") as tool calls to `POST /assess`/`/waci`/`/itr`, and explains SBTi FI criterion scores from the engine's per-criterion notes.
+
+**How.** Tool schemas from the 11 existing routes (5 reference GETs already trace green and are the safe first slice); grounding corpus is this Atlas record plus the engine's reference payloads — `ref/itr-table` (anchors + key thresholds), `ref/sbti-fi-criteria`, `ref/pcaf-dqs` — which are precisely the explanatory material a copilot needs to answer "how is ITR interpolated from WACI?" with the actual anchor points. The PCAF DQS score should gate confidence language: high-DQS (poor data) portfolios get hedged phrasing, mirroring the engine's own quality convention. Every numeric passes the fabrication validator against tool outputs.
+
+**Prerequisites (hard).** Evolution A complete — a copilot on today's page would narrate seeded noise about named issuers, the exact failure mode the platform's honest-nulls convention exists to prevent. **Acceptance:** every ITR/WACI figure in an answer traces to a tool call; methodology answers quote the engine's anchor table, not memorised MSCI values; questions about a holding's real-world disclosures outside the portfolio data are refused.

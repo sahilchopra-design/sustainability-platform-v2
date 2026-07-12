@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Field-level Template Coverage Score per the §8 spec (analytics ladder: rung 1 → 2)
+
+**What.** The module is a genuinely functional template CRUD manager (create/edit/duplicate/import/export with localStorage persistence, a production-quality 29-item `SECTION_LIBRARY`, correct deep-copy semantics on duplicate — §7.1–7.3), but the guide's advertised calculation — `TCS = Populated Fields / Required Fields × 100` with an 80% completion alert — has zero code presence (§7 flag), and `usageCount` is a frozen seed value (139 total forever) never incremented by any report-generation action (§7.4). Evolution A implements the §8 specification.
+
+**How.** (1) Build the framework checklists §8.4 lists (GRI Universal Standards index, ESRS Set 1 datapoints, TCFD 11 recommendations, SFDR RTS Annex II/III — all freely published; the ESRS/GRI catalogs are already in the platform's refdata layer). (2) Author the section-to-field mapping table for the 29 library sections (many-to-one, per §8.3). (3) Compute TCS at **field level**, not section inclusion — §8.6's explicit warning: a template containing the "SFDR PAI" section heading with blank indicators must not score as covered. (4) Fire the <80% completion alert in the Editor and Gallery. (5) Move template persistence from localStorage to a backend table so `usageCount` can be incremented by actual report-generation events (from the report-builder modules that consume templates) instead of being a static literal.
+
+**Prerequisites.** Per-report-instance content-population status — the manager currently tracks structural inclusion only (§8.4's third requirement is the real build). **Acceptance:** the §8.5 validation — TCS agrees with a human checklist audit on a sample of reports within a few points; the headline reports-generated KPI moves when a report is actually produced.
+
+### 9.2 Evolution B — Template-assembly copilot over the section library (LLM tier 1)
+
+**What.** A copilot in the Editor that assembles a fit-for-purpose template from intent: "quarterly client report for an Article 8 fund with EU Taxonomy exposure" → proposes a section list from the 29-item library (SFDR PAI, EU Taxonomy, Climate Metrics, Stewardship...), a cover style, and branding defaults — explaining each inclusion against the target framework's requirements.
+
+**How.** Tier 1, grounded in the module's own genuinely-good reference content: `SECTION_LIBRARY` (name/category/description per section), `DEFAULT_TEMPLATES` as worked examples, and — post-Evolution-A — the framework checklists, which turn recommendations from taste into requirement citations ("ESRS E1 mandates transition-plan disclosure; adding the Scenario Analysis section covers datapoints X/Y"). Output is a draft template object the user saves through the existing create path — the copilot never writes storage directly, preserving the CRUD manager's audit trail. Pre-Evolution-A the copilot must not quote coverage percentages (none exist); post-Evolution-A it cites the computed TCS and flags the <80% alert with the specific missing fields.
+
+**Prerequisites.** None for section-recommendation drafting; Evolution A for any coverage claim. **Acceptance:** every recommended section exists in the library verbatim; framework justifications cite checklist entries once available; asking "what's this template's coverage score?" before Evolution A yields "not yet computed," matching the §7 mismatch documentation.

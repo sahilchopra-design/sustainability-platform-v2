@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — One RE asset register feeding sector-correct analytics (analytics ladder: rung 1 → 2)
+
+**What.** §7.7 catalogs the defects: 150 templated synthetic buildings, a flat 100 kWh/m² CRREM threshold that judges logistics and offices against the same bar (the atlas notes the sibling `real-estate-carbon-analytics` gets sector pathways right), the guide's `WLC = Operational + Embodied` never summed — and un-summable as coded, since the operands are in different units (kWh/m² vs kgCO₂e/m²) — alert text whose counts don't track the live dataset, and trend series seeded independently of the snapshot they claim to trend. Evolution A makes this hub what its name implies: a front door over one shared RE asset register and the platform's existing RE engines, not a fourth parallel implementation.
+
+**How.** (1) Adopt the shared portfolio register the RE sibling modules are converging on (`re-portfolio-dashboard`'s property model), rendering this hub's six sub-module views from it. (2) CRREM alignment via the `REPortfolioEngine` sector/country pathway interpolation, retiring the flat threshold. (3) Fix the WLC identity: convert operational energy intensity to carbon via the grid-factor conversion `real-estate-carbon-analytics` already uses, then sum with embodied — same units, honest total. (4) Alerts become computed triggers (EPC below MEPS minimum for its country/year, CRREM breach within 5 years, certification expiry) evaluated against the live register; trend series become stored snapshots accumulated over time, not synthetic curves.
+
+**Prerequisites.** Register convergence agreed across the four RE modules (the real work is organizational); grid factors per country available in refdata. **Acceptance:** an alert's quoted count equals the filtered register count; WLC for a bench property equals hand-converted operational + embodied in kgCO₂e/m²; logistics and office assets face different CRREM bars.
+
+### 9.2 Evolution B — Board-report generator over live triggers (LLM tier 2)
+
+**What.** The hub already gestures at a Board Report — §7.7 notes it's static templated text. Evolution B replaces it with an LLM-composed report grounded in computed state: "generate the quarterly RE ESG board pack — EPC distribution vs MEPS deadlines, CRREM alignment trajectory, certification pipeline, top-5 computed alerts with recommended actions" — every figure from register aggregations, every alert from the trigger engine, rendered via the report-studio layer.
+
+**How.** Tier-2 tool schemas over the Evolution-A register/alert/CRREM endpoints; the report template's numeric slots are filled exclusively from tool outputs with the no-fabrication validator as the gate. Recommended actions are constrained to the module's own action vocabulary (retrofit statuses, certification schemes, green-lease adoption) with cost figures only where the register carries them. Interactive follow-ups ("expand on the Berlin office cluster") drill into register queries. The copilot also fields tenant-engagement questions from the green-lease fields, a genuinely narrative domain where tier-1 explanation suffices.
+
+**Prerequisites (hard).** Evolution A — generating board reports from today's seeded book with mismatched alert counts would automate misinformation. **Acceptance:** every number in a generated pack reproduces from a register query; alerts in the pack match the trigger engine's current output exactly.

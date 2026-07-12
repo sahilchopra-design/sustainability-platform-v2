@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Render the engine's own response, then scenario-condition the P2R inputs (analytics ladder: rung 2 → 3)
+
+**What.** §7 documents the platform's most extreme wiring absurdity: a production-grade Basel IV/CRR3 engine (1,329 lines — SA-CR risk weights at CRR3 article level, FRTB SA/IMA, SA-CCR, CVA, NSFR/LCR, a correctly capped ECB 0–50bps climate P2R overlay, 8 working endpoints) whose `/calculate-ratios` response the frontend fetches, stores in `result`, and never renders — every visible KPI is an independent `rng(seed=108)` draw, static across all institution/approach/scenario selections. Evolution A is two-stage: the §7.7-prescribed wiring fix (render `result.cet1_ratio_pct` etc.; add the missing `/climate-p2r` POST for that tab — no backend work), then a real upgrade: scenario-conditioned physical/transition risk scores feeding the P2R composite.
+
+**How.** (1) The wiring fix ships first and alone — it converts decorative numbers into real capital ratios in a day. (2) Then connect the P2R composite's inputs (`0.40×physical + 0.60×transition`) to platform engines instead of user-typed scores: transition score from portfolio sector mix vs NGFS pathways, physical score from the digital-twin composite over collateral locations, each documented and overridable. (3) Add the engine's `/optimize` output (already implemented) to the UI so the capital-optimization capability stops being invisible. (4) bench_quant pins a reference institution through `/calculate-ratios` and `/climate-p2r`.
+
+**Prerequisites.** Field-name confirmation against `calculate_capital_ratios()`'s actual response schema (§7.7 flags this); no others for stage 1. **Acceptance:** changing institution inputs changes displayed ratios via the API; the P2R tab's bps add-on equals the endpoint's tier lookup; no `rng(seed=108)` reference remains in the page.
+
+### 9.2 Evolution B — Supervisory-dialogue copilot over the capital stack (LLM tier 2)
+
+**What.** Banks using this module face ICAAP/SREP dialogue. The copilot supports it: "decompose our CET1 movement if we shift €2bn from corporate to covered-bond exposure" (paired `/calculate-ratios` calls), "explain our 35bps climate P2R — which score drives it and what would move us down a tier?", "draft the ICAAP climate-capital section with the methodology description" — the last grounded in the engine's own documented tier ladder (composite <0.20→0bps … ≥0.80→50bps) and the CRR3 article references its risk-weight tables carry.
+
+**How.** Tier-2 tool schemas over all 8 endpoints plus the 6 `GET /ref/*` parameter tables, letting the copilot cite the actual supervisory factor or risk weight applied rather than reciting Basel from memory. System prompt encodes supervisory-communication discipline: computed ratios are model outputs under stated assumptions, not regulatory determinations; the ECB overlay is a supervisory-expectation proxy, and the copilot says so. What-if sweeps (approach comparisons, RWA sensitivity) run as batched tool calls rendered as exhibit tables. Every %, bps, and € figure validated against tool outputs.
+
+**Prerequisites (hard).** Evolution A stage 1 — a copilot must not narrate a page whose numbers §7.7 says "should not be cited as a real capital-adequacy" figure; golden Q&A from the engine's reference case. **Acceptance:** a drafted ICAAP section's every number traces to an endpoint response; tier-boundary questions quote the engine's own lookup table; requests to assert SREP outcomes are declined.

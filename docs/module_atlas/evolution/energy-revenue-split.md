@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Filings-sourced series for any issuer, not one editorial demo (analytics ladder: rung 2 → 3)
+
+**What.** §7 confirms a clean, faithful implementation: `GRR = renewable/total revenue`, IEA NZE 50% green-capex benchmark, internally-consistent hand-authored 2020–2025 series, realistic editorial peer values (Shell 14.2%, Equinor 18.2%…), and a live projection with 0.7×/1.0×/1.3× multipliers — honest rung 2, but for exactly one hard-coded subject company ("Demo Co"). Evolution A makes the decomposition data-driven and multi-issuer.
+
+**How.** (1) Backend `api/v1/routes/energy_revenue_split.py` + `energy_revenue_segments` table populated from company filings via the platform's market-data path (EODHD fundamentals are already an ETL source; segment-level green revenue needs the annual-report segment notes — start with the ~10 integrated majors whose disclosures break out low-carbon revenue). (2) Peer table becomes rows with `source` and `as_of_date`; ITR values either link to a computed methodology or are dropped (an unexplained ITR is ratings-theater). (3) Rung 3: benchmark the green-revenue classification against the EU Taxonomy alignment reported by the same issuers (the platform's `eu-taxonomy` module holds the framework) so "green %" has a defensible taxonomy rather than editorial judgment; pin the GRR arithmetic and projection math in `bench_quant.py`. (4) Projection multipliers gain provenance: tie accelerated/conservative to IEA NZE vs STEPS capex growth deltas instead of bare 1.3/0.7.
+
+**Prerequisites.** Segment-data collection effort per issuer (this is manual-ish; scope to 10 names first); taxonomy-mapping decision for ambiguous segments (gas trading, biofuels). **Acceptance:** the subject company selector offers ≥10 real issuers whose GRR reproduces from stored segment rows; every peer figure carries source+date; projection scenarios cite their IEA anchor.
+
+### 9.2 Evolution B — Transition-progress Q&A for IR and analyst calls (LLM tier 2)
+
+**What.** A tool-calling copilot answering the questions this dashboard exists to settle: "is Total's green capex trajectory NZE-aligned, and how does its GRR growth compare to Equinor's?" It queries Evolution A's per-issuer series, computes nothing itself — trend deltas and gap-to-50% come from a small stats endpoint — and drafts the comparison narrative with each percentage cited to a filing-sourced row, including the honest caveat when an issuer's green-revenue definition differs from the taxonomy baseline (the classification metadata from Evolution A).
+
+**How.** Tools: `get_revenue_split(issuer, years)`, `get_capex_split(issuer, years)`, `compare_peers(issuers, metric)`, `get_nze_gap(issuer)`. Grounding corpus = this Atlas record's §5/§7 (GRR definition, the 50% NZE bar and its IEA provenance). Definitional differences are first-class in answers — "Shell's 14.2% includes gas-and-power trading; on the taxonomy-strict basis it is X%" — because that's the substance of most real disputes about these numbers. Validator checks all percentages against tool outputs.
+
+**Prerequisites (hard).** Evolution A — a copilot narrating the current single editorial series would present authored demo figures as company facts on IR-adjacent questions. **Acceptance:** a golden two-issuer comparison reproduces from scripted tool calls; every figure carries issuer/year provenance; asking about an issuer outside the covered set refuses with the coverage list.

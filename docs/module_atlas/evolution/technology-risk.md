@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Surface the orphaned data-centre/AI carbon engine and derive the cyber scores (analytics ladder: rung 1 → 2)
+
+**What.** The §7 resolution note documents a rare situation: a genuine 986-line backend engine (`technology_risk_engine.py` — PUE-based data-centre carbon, cloud Scope 3, AI training/inference footprint, semiconductor water risk, e-waste, EED Art. 12 compliance) is exposed via 14 real routes but **never called by the frontend page**, which instead renders 45 `sr()`-seeded synthetic companies (§7.5, left as-is by design with a marker comment). Evolution A closes that gap and adds derived scoring to the cyber panel.
+
+**How.** (1) Wire the orphaned engine into the user-facing surface: either a new "Technology Footprint" tab on this page calling `POST /integrated-assessment` and the 7 reference GETs, or a dedicated module route — the engine already returns ESG scores and CSRD E1 data points. The lineage harness shows `POST /ai-carbon` currently fails: fix that first (it's a traced live failure, not hypothetical). (2) On the cyber panel, derive `overallRisk` from the seven dimension scores with documented weights instead of an independent random draw (§7.3 shows every score is separately seeded, so cross-tabs like AI-maturity-vs-AI-risk reflect PRNG coincidence). (3) Compute vendor concentration from company-level cloud-provider fields already in the dataset rather than the static 8-vendor table.
+
+**Prerequisites.** Decision on placement (new module vs tab) — the §7.5 marker comment anticipated exactly this pick-up; the `POST /ai-carbon` failure diagnosed and fixed. **Acceptance:** a user can obtain an AI-training carbon estimate through the UI end-to-end; `overallRisk` reproduces from the seven dimensions; the traced POST failure is green in the next lineage sweep.
+
+### 9.2 Evolution B — DORA/NIS2 readiness analyst over the regulatory reference layer (LLM tier 2)
+
+**What.** The module's genuine strength (§7.6) is its accurate regulatory landscape — 10 real regulations with correct citations (DORA, NIS2, EU AI Act, NIST CSF 2.0, ISO 27001:2022, GDPR Art. 32, NYDFS 500...). A copilot answers CISO/board questions — "which of our entities are in NIS2 scope and what incident-reporting deadlines apply?", "estimate the training carbon of a 70B-parameter run on 512 H100s" — the latter as a tool call to the engine's `POST /ai-carbon`, never estimated in-context.
+
+**How.** Tier 2 is unusually cheap here because the backend already exists: tool schemas auto-generate from the 14 Pydantic-typed routes (7 reference GETs are read-only and safe for the first slice). Grounding corpus: this Atlas record plus the `REG_READINESS` regulatory table and the engine's own benchmark payloads (`ref/pue-benchmarks`, `ref/grid-factors`, `ref/ai-benchmarks` — all traced passing). The copilot must partition its answers: engine outputs (carbon, PUE gaps, EED compliance) are computed and citable; the 45-entity cyber scores are synthetic demo data (§7.6) and must be labelled as such whenever quoted; regulatory text answers cite the named regulation.
+
+**Prerequisites.** The `POST /ai-carbon` fix (shared with Evolution A); regulation table given an `as_of` vintage. **Acceptance:** every carbon/energy numeric traces to an engine tool call; every regulatory claim names its instrument; asking "what is JPMorgan's actual cyber score?" gets the synthetic-data disclaimer, not an authoritative-sounding answer.

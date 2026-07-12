@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Refreshable inputs from the SBTi public dashboard (analytics ladder: rung 2 → 3)
+
+**What.** §7 rates this among the batch's most code-accurate modules: the 5-pillar additive score (validation + ambition + scope coverage + interim targets + capex) exactly implements the guide, over 30 hand-curated real companies — materially more defensible than PRNG fabrication, but §7.5 notes the inputs need periodic manual refresh as companies' actual SBTi statuses change (targets get validated, extended, removed), and the `capex` pillar (2–15 points) lacks an explicit scaling basis. Evolution A automates the refreshable pillars and documents the judgment-based ones.
+
+**How.** (1) Ingest the SBTi Target Dashboard export (public CSV: company, validation status, ambition classification, scope coverage, target years) on a schedule; the validation/ambition/scope/interim pillars derive from it with as-of dates, expanding coverage beyond 30 names to the full validated universe. (2) The capex pillar — genuinely judgment-based — gets a documented rubric (e.g. disclosed low-carbon capex share bands mapped to point ranges) with per-company evidence links; where no disclosure exists, the pillar reports null and the composite renormalises over available pillars rather than silently defaulting. (3) The say-do gap gains its natural counterpart: actual emissions trajectory vs target path (from disclosure-derived or `sbti-climate-trace` facility data), making "do" measurable rather than inferred from target architecture alone. (4) Backend route with the score decomposition per company; bench pin on a hand-scored reference company.
+
+**Prerequisites.** SBTi export ingester; capex rubric authored with citations; curated 30-company set kept as the validation fixture. **Acceptance:** a company's pillar values match the dashboard export for its as-of date; missing capex renormalises visibly; the bench company's score reproduces by hand.
+
+### 9.2 Evolution B — Engagement-prioritisation copilot (LLM tier 2)
+
+**What.** Credibility scores exist to direct stewardship attention. The copilot operationalises: "rank our holdings by credibility gap and draft engagement asks specific to each company's weakest pillar" — a low interim-target pillar yields a different ask than a low capex pillar, and the score decomposition makes that mapping mechanical; "explain why Company X scores 62 vs the sector average 71, pillar by pillar".
+
+**How.** Tier-2 tool calls over the scoring endpoints; engagement asks are template-mapped from pillar deficits (documented ask library per pillar) and populated with the company's actual values and as-of dates — the LLM personalizes the language, the pillar logic picks the substance. Sector comparisons quote computed averages. Guardrails: SBTi status claims only from the ingested dashboard vintage (statuses change; stale assertions about named companies are the risk); judgment-pillar values (capex) always cite their evidence link; the copilot distinguishes target architecture (what this module scores) from delivered decarbonisation (routing trajectory questions to the say-do extension or `sbti-climate-trace`).
+
+**Prerequisites.** Evolution A's ingested inputs and decomposition endpoint; ask library authored. **Acceptance:** every pillar value in an answer matches the endpoint with its vintage; asks map to the actual weakest pillars; status claims never exceed the ingested data's date.

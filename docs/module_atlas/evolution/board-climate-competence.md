@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the weighted rubric and source director data (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the guide's weighted score (`Score = Expertise(30) + Committee(25) + Training(20) + Diversity(15) + Accountability(10)`) is **not computed** — each company's `score` is a pre-baked constant in the 25-row `COMPANIES` seed sitting *beside* its component fields but never derived from them; the only live calc is a filtered mean of the stored scores. Evolution A implements the rubric the module already documents and sources its inputs.
+
+**How.** (1) Compute the composite from the component sub-fields per the documented weights — a small, purely deterministic change that makes the score reproducible from `expertise/committee/training/diversityScore/accountability` rather than asserted. (2) Source the component data: board climate-committee existence and meeting frequency are disclosed in proxy statements/annual reports; director climate credentials can be assembled from board bios. Even a curated-but-cited dataset (with a `source_url` and vintage per company) beats the current unattributed constants. (3) Publish the weight rationale per Atlas §8, since the 30/25/20/15/10 split is authorial. (4) Rung 3: benchmark the composite against an external board-governance index (Spencer Stuart Board Index, referenced by the sibling module) for the overlapping issuers and report rank correlation. As a backend vertical, `POST /api/v1/board-competence/score`.
+
+**Prerequisites.** A sourced governance dataset (the 25 companies are real names — their board attributes are publicly disclosable but currently uncited); a decision on refresh cadence (board composition changes annually). **Acceptance:** each company's score equals the weighted sum of its components (verifiable by hand); components carry source and vintage; the composite rank-correlates with the external index and the deviation is published.
+
+### 9.2 Evolution B — Board-governance stewardship copilot (LLM tier 1 → 2)
+
+**What.** Active-ownership teams use board-competence data for engagement, so the copilot's tier-1 job is comparison and explanation: "how does Shell's board climate competence compare to Equinor's?", "which Oil & Gas issuers lack a climate committee?" (Exxon, per §7.2's `committee:false` extremes), "what drives Ørsted's 92?" — grounded in this Atlas record with the honest caveat that scores are currently stored constants, not computed (until Evolution A). Tier 2 runs the scoring rubric as a tool for what-if engagement planning.
+
+**How.** Tier-1 corpus from this record (§7.2 rubric table, the company extremes); the refusal path discloses that the composite is not yet derived from its components. Tier 2 tool schemas over the Evolution-A scoring route; "if this company added two climate-expert directors and a committee, what score would it reach?" becomes a tool call recomputing from adjusted components — directly useful for stewardship engagement asks. The copilot cites the weight rationale and, once Evolution A benchmarks against Spencer Stuart, contextualises scores against the external index.
+
+**Prerequisites.** Copilot router (tier 1); Evolution A's rubric implementation (tier 2 — a what-if is only meaningful once the score is a function of inputs). **Acceptance:** tier-1 answers label scores as stored constants pre-Evolution-A; tier-2 what-ifs recompute from adjusted components and trace to the scoring tool; engagement scenarios state which components they changed.

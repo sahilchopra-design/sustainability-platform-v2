@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Close the loop: fitted GEV driving the exceedance curve and a consistent CDF (analytics ladder: rung 2 → 3)
+
+**What.** The module's `gevPdf` is textbook-correct and interactively parameterised (§7.1) — rare in this batch — but §7 documents three disconnects: the paired CDF is an unrelated Weibull form (`1−exp(−(x/15)^1.3)`), the 10yr→1000yr `LOSS_EXCEEDANCE` table is hand-typed rather than solved from the fitted distribution's quantile function, and μ=15/σ=8 are fixed constants never fitted to data. Evolution A makes the page a single coherent EVT analysis: one fitted distribution generating PDF, CDF, and return-period losses.
+
+**How.** (1) Replace the Weibull CDF with the true GEV CDF `exp(−(1+ξ(x−μ)/σ)^(−1/ξ))` using the same live μ/σ/ξ, so the two curves are integral/derivative pairs. (2) Derive the exceedance curve by inverting that CDF: `x_T = μ + (σ/ξ)((−ln(1−1/T))^(−ξ) − 1)` for T = 10…1000yr — the header's "1000yr Loss = 45.5%" becomes a computed quantile that moves with the shape slider instead of a static pill (§7.5 notes the two numbers currently coexist unlinked). (3) Fit μ/σ/ξ via L-moments to a real tail dataset the platform already holds — annual maxima from the ingested OpenFEMA NFIP claims or IBTrACS-derived loss proxies — with fit diagnostics (return-level plot, parameter CIs) shown. (4) Compute `SYSTEMIC_CONTRIB`'s margES/compES from an actual portfolio return series or retire the tab to labelled illustration.
+
+**Prerequisites.** A loss history table to fit against; scipy/statsmodels are already in the environment per the roadmap. **Acceptance:** slider moves reprice the 1000yr loss; CDF numerically integrates the PDF (max abs error < 1e-6 on the grid); bench pin reproduces the §7.5 worked PDF values.
+
+### 9.2 Evolution B — Tail-risk explainer with tool-called return-period queries (LLM tier 1 → 2)
+
+**What.** EVT is the platform's least self-explanatory methodology to non-quants. A copilot answers "what does shape ξ=0.25 mean for my 200-year loss?" and "why did the 1000yr loss jump when I moved the slider?" by reading the live GEV parameters and computed quantiles, and explains the 5 black-swan scenario cards (real IPCC AR6 tipping elements per §7.4) with their static probability/impact/hedging fields cited as authored estimates, not model outputs.
+
+**How.** Tier 1 ships against page state plus this Atlas record — §7.1's formula walkthrough, §7.5's worked example, and the Coles-2001 framing are the grounding corpus; the copilot's core skill is translating ξ (Fréchet-type heavy tail), return periods, and exceedance probability into plain language with the page's own numbers. Tier 2 requires Evolution A's backend: expose `POST /api/v1/tail-risk/quantile` (params μ/σ/ξ, T) and the fit routine as tools, so "compare 500yr losses at ξ=0.2 vs 0.35" is executed, not estimated. The insurance-gap tab's `gapPct` arithmetic is already citable as computed.
+
+**Prerequisites (hard).** Evolution A's CDF fix first — a copilot narrating today's page would have to explain a PDF and CDF from two different distribution families as if they matched, which is §7.2's documented inconsistency. **Acceptance:** every quantile in an answer traces to the tool or on-page computation; black-swan probabilities are always attributed as static scenario assumptions; asking for a fitted parameter's standard error before fitting exists yields a refusal.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Run an actual extraction pipeline over real filings (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag is total: the guide claims F1=0.91 GHG-extraction accuracy via BERT/FinBERT, but no NLP model runs — no tokeniser, no inference, no precision/recall. What exists is (a) a genuinely useful `DATA_SOURCES` table of 12 real free/public APIs and models (SEC EDGAR full-text, EFRAG ESRS, CDP, GRI, ClimateBERT on Hugging Face, Climate Policy Radar, UNFCCC NDC registry) that *could* power a pipeline, and (b) an 80-document synthetic corpus with `sr()`-generated confidence/greenwash scores. Evolution A builds the real parser the module is named for.
+
+**How.** (1) Stand up `POST /api/v1/nlp-parser/extract` running an actual pipeline: ingest a filing (PDF/HTML/XBRL), apply ClimateBERT (already identified in `DATA_SOURCES`, freely available on Hugging Face) for climate-domain NER, and extract GHG values, target years, and KPI labels mapped to the real `STANDARD_MAPPED` ESRS/IFRS codes (the 12 hand-written excerpt→datapoint pairs become the labelled seed set). (2) Compute the §5 F1 honestly against a hand-labelled validation set — replacing the asserted 0.91 with a measured, dated number and a model card per Atlas §8. (3) Unit-consistency and cross-document reconciliation checks (§1) as post-extraction validators. XBRL filings need no NLP — parse them structurally first, NLP only for narrative PDFs.
+
+**Prerequisites.** This is greenfield NLP — the current page has zero real extraction; ClimateBERT inference in the backend (the pinned fastapi/starlette venv constraint means model-serving may need a dedicated process); a labelled validation corpus. **Acceptance:** the same filing always yields the same extractions with a measured (not asserted) F1; XBRL Scope 1/2 values reconcile to the filing's tagged facts; no `sr()` in any score.
+
+### 9.2 Evolution B — Extraction-review copilot with source-span citations (LLM tier 2)
+
+**What.** This module is LLM-native by nature — the modern realization of "NLP disclosure parsing" is an LLM extraction agent. A copilot that, given a filing, extracts KPIs and lets the analyst verify each: "pull all Scope 3 figures with their source sentences", "which ESRS E1 datapoints are disclosed?", "flag unsubstantiated targets" — every extracted value carrying the exact source span it came from.
+
+**How.** Tool calls to the Evolution-A `/extract` endpoint; the LLM's role is orchestration and verification-surfacing, not extraction-by-hallucination — a hard rule here, since the whole failure mode of this module is fabricated confidence. Every extracted datapoint must cite a character span in the source document (the roadmap's Tier-2 provenance UX made literal); the fabrication validator rejects any KPI value not present in the source text. Greenwashing flags map to the real `GW_CATEGORIES` taxonomy with the triggering phrase quoted from the filing, not from `GW_PHRASES` templates. Structured JSON output tagged by standard (§1) is the deliverable.
+
+**Prerequisites (hard).** Evolution A's real pipeline — an LLM "extracting" from the current synthetic corpus would fabricate ESG data, the single worst outcome for a data-collection tool feeding downstream scoring. **Acceptance:** every extracted value resolves to a verbatim source span; asking for a KPI absent from the document yields "not disclosed", not an invented figure.

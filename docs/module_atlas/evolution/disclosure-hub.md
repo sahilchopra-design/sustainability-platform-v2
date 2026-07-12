@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — A computed DRI over real obligations and deadlines (analytics ladder: rung 1 → 2, honestly attained)
+
+**What.** The §7 flag is blunt: this is "a disclosure-workflow *dashboard mock*, not a readiness engine" — all 50 entities' completion rates, quality scores, gaps, and quarterly trends are `sr()`-seeded, and the guide's penalty/deadline-weighted DRI with its 0.85 escalation trigger is unimplemented. The real assets are the 8-framework obligation list and the workflow concepts. Evolution A builds the readiness engine: a persisted obligation register per entity, real filing deadlines, and the actual `DRI = Σ(completed/required × weight)` computation.
+
+**How.** (1) Tables `disclosure_obligations` (entity × framework × requirement-count × deadline) and `disclosure_progress` (items completed, section owner, sign-off state). Deadlines come from the existing `regulatory-calendar` backend (`api/v1/routes/regulatory_calendar.py`) rather than a new calendar. (2) Requirement counts per framework come from `disclosure-adequacy-analyzer`'s Evolution-A inventory (its §8 spec is explicitly cited by this page as the DCS feed) — the hub aggregates, it doesn't re-derive. (3) `services/disclosure_hub_engine.py` computes DRI with deadline-proximity and penalty-severity weights (documented constants, not seeds), plus the <0.85 escalation flag. (4) Q1–Q4 trend becomes a snapshot history table, replacing seeded `q1..q4` fields.
+
+**Prerequisites.** The adequacy analyzer's requirement inventory shipped first; seeded institution-name rows (BlackRock, NBIM…) replaced with org-scoped demo entities to avoid implying real firms' readiness. **Acceptance:** DRI for a fixture entity with 45/50 CSRD items done at T−20 days matches the documented weighted formula by hand; zero `sr()` in any KPI path.
+
+### 9.2 Evolution B — Disclosure-desk orchestrator across the reporting module family (LLM tier 3)
+
+**What.** The hub is the natural seat for a desk-level assistant, not a per-page copilot: "are we ready for our CSRD filing?" should route across modules — coverage gaps from `disclosure-adequacy-analyzer`, datapoint status from `esrs-datapoint-navigator`, deadlines from `regulatory-calendar`, taxonomy alignment from `eu-taxonomy` — and return a synthesized readiness memo with the DRI decomposition and the top remediation actions by owner.
+
+**How.** Routing knowledge from `module_tags.json` (disclosure/reporting sector tags) plus the Atlas interconnection graph; tool surface = the read-only endpoints of the 4–5 disclosure-family modules, auto-filtered per the Atlas endpoint map. Output composes into the report-studio render layer per the roadmap's tier-3 pattern, producing a signed-off-able readiness memo with a "show work" expander listing every tool call. Escalation behavior mirrors the engine: if computed DRI < 0.85, the memo leads with the breach, not buries it.
+
+**Prerequisites (hard).** Evolution A first — today every readiness number on this page is fabricated, and a tier-3 orchestrator narrating seeded completion rates would automate the fabrication. Sibling modules need their own honest scoring (see their §9 entries). **Acceptance:** the memo's every figure traces to a named module endpoint response; asking about a framework the entity hasn't registered obligations for yields "no obligation on file," not an invented status.

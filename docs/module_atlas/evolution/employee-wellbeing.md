@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — One WBI formula, real workforce data behind it (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag documents a formula fork: the guide's `WBI = 0.35·Engagement + 0.25·(1−Absenteeism) + 0.25·(1−Turnover) + 0.15·MH-Utilisation` vs the code's `0.30·Engagement + 0.15·absenteeism-term + 0.20·safety-term + 0.15·tenure + 0.20·training` — turnover and EAP utilisation (the advertised mental-health input) don't exist in the module at all. Meanwhile per-company metrics are hash-perturbed sector benchmarks (`turnover = bm.turnover_pct × (0.7 + h%60/100)`), i.e. synthetic variations around the real `SECTOR_HC_BENCHMARKS` table. Evolution A resolves the fork and builds the data path.
+
+**How.** (1) Decide the index: adopt the guide's four-dimension WBI (it matches the ISO 45003/GRI 403 framing better), add the missing `turnover` and `eap_utilisation` fields, and update the Atlas §5 if dimensions change — one formula, documented, with user-adjustable weights persisted per org. (2) Backend vertical: `wellbeing_metrics` table (org × period × metric), CSV/HRIS upload per the stated workflow, and a `services/wellbeing_engine.py` computing WBI and the GRI 403/SASB HC disclosure tables from stored data. (3) Benchmarks stay — but as *benchmarks*: portfolio companies without reported data show sector benchmark with a "benchmark, not reported" badge instead of hash-noise disguised as company data. (4) Rung 2: weight-sensitivity view (how rankings shift as weights move) over real records.
+
+**Prerequisites.** RBAC on workforce data (same sensitivity class as the DEI module's payroll microdata); benchmark table sourced and dated (Gallup/CIPD figures cited in §4 need as-of dates). **Acceptance:** WBI for a fixture company reproduces the documented formula by hand; reported vs benchmark provenance visible per cell; zero hash-perturbation in company-attributed figures.
+
+### 9.2 Evolution B — S-pillar disclosure drafter with strict provenance (LLM tier 2)
+
+**What.** The workflow ends at "generate GRI 403 and SASB HC disclosure tables" — a drafting task with a hard correctness bar. A tool-calling assistant pulls Evolution A's stored metrics, maps them to the specific GRI 403 disclosures (403-9 injury rates, 403-10 ill health) and SASB HC metrics, drafts the narrative sections around the tables, and flags every disclosure the org lacks data for as an explicit gap with the collection step needed — turning the module into the "audit-ready S-pillar" tool the overview claims.
+
+**How.** Tools: `get_metrics(org, period)`, `compute_wbi(org, weights)`, `get_benchmark(sector)`, plus GRI/SASB catalog lookups from the refdata layer (the ESRS/GRI catalogs are already in the DB). The prompt enforces the reported-vs-benchmark distinction from Evolution A: benchmark values may contextualize but never populate a disclosure cell. The validator checks each table figure against tool output; the fatality-rate and injury-rate fields get an extra consistency check (per-100k vs per-200k-hours units are a classic drafting error).
+
+**Prerequisites (hard).** Evolution A — drafting GRI 403 tables from the current hash-perturbed pseudo-data would fabricate injury statistics attributed to real portfolio names. **Acceptance:** every numeric in a golden org's draft matches a stored metric; missing EAP data yields a gap note, not a Gallup-median stand-in; unit labels validated against the metric definitions.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the double-materiality engine the guide describes (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag: the guide promises `EMS = 0.5·Financial + 0.5·Impact` with a double-materiality matrix, evidence trails, and IRO-1 documentation — "none of that exists in code." What runs instead is a four-branch climate-adjusted credit profiler (Exponential/Merton/Tabular/Monte-Carlo PD consensus, ESG-WACC, ECL, VaR/CVaR) over per-entity hash-seeded inputs (`pdBase = 0.01 + s(3)·0.12`, seeded 12-month "dmiHistory"). Evolution A builds the actual entity materiality vertical and relocates the credit machinery to where it belongs.
+
+**How.** (1) New backend `api/v1/routes/dme_entity.py` + tables `dme_topic_scores` (entity × topic × financial/impact score × date) and `dme_evidence_items` (source, URL, topic tag, relevance) — the persistence layer the whole DME family's §9 entries depend on. (2) Financial-materiality scoring seeded from real signals the platform already has: `esg-controversy` events, `dme-nlp-engine` sentiment, sector baselines from the SASB Materiality Map; impact scoring from severity/breadth/irremediability inputs entered per ESRS 1 §3.2 with the configurable 0.5/0.5 weighting. (3) The PD-consensus code moves server-side into `dme-pd-engine`'s vertical (its natural owner) rather than being deleted — the math is competent; only its synthetic inputs and its location are wrong. (4) Trend charts read persisted score history, not `sr()` drift.
+
+**Prerequisites.** Topic taxonomy fixed (ESRS AR16 topic list is in the refdata layer); agreement across DME siblings on the `dme_topic_scores` schema, since dashboard/competitive/alerts all consume it. **Acceptance:** the double-materiality matrix renders from DB rows; each plotted topic exposes ≥1 linked evidence item; zero `s(k)` draws in the rendered path.
+
+### 9.2 Evolution B — IRO-1 documentation-pack drafter with evidence citation (LLM tier 2)
+
+**What.** The overview's export step — "IRO-1 documentation pack with scored topics, evidence citations, and assessment rationale" — is the platform's clearest tier-2 use case: an assurance-facing document where every claim must be source-linked. The analyst drafts the ESRS 1 §3.2 assessment rationale per topic, pulling scores from `dme_topic_scores`, quoting evidence from `dme_evidence_items`, and flagging topics whose evidence base is too thin to defend under limited assurance.
+
+**How.** Tool surface = Evolution A's read endpoints (entity profile, topic scores, evidence query); drafting grounded in the ESRS 1 reference corpus already cited in §5. Every materiality conclusion in the draft carries the topic's computed score and its evidence-item IDs; the no-fabrication validator additionally checks that quoted evidence text matches the stored item verbatim (mis-quoted evidence in an assurance pack is worse than a wrong number). Output renders through report-studio; thin-evidence topics get an explicit "insufficient evidence — assessment provisional" block, mirroring honest-nulls.
+
+**Prerequisites (hard).** Evolution A end-to-end — today the page has no topic scores and no evidence repository, so there is literally nothing to cite; drafting IRO-1 from the current seeded credit profile would fabricate an assurance document. **Acceptance:** a golden entity's pack contains zero uncited materiality conclusions, and an auditor can resolve every citation to a stored evidence row.

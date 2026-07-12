@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the exposure product and the carbon-sink valuation (analytics ladder: rung 1 → 2)
+
+**What.** §7 flags the core gap: `exposureMn` is a direct PRNG draw ($30–630M) summed and filtered by a hard-coded EUDR risk flag — not the guide's `DeforestExposure = Σ[Revenue × DeforestationRate × CarbonLiability + RegulatoryRisk × RevenueAtRisk]` product — and `carbonStockMtCO2` exists but is never multiplied by a carbon price, so the promised `CarbonSinkValue = Area × Density × Price` is absent along with any TNFD LEAP output. Evolution A implements both formulas on real inputs: country deforestation rates from FAO FRA (already ingested for the sibling `land-use-deforestation` module via `forestData.js`), commodity revenue exposure from user supply-chain inputs, EUDR risk from the Commission's actual Article 29 benchmarking once published (hard-coded intuition until then, labeled), and sink value priced off the platform's live carbon-price feed instead of the synthetic `4 + i·1.5` path.
+
+**How.** (1) A supply-chain intake (company × commodity × origin country × revenue) so "revenue at risk" means the user's revenue, not a draw. (2) The exposure product computed per the §5 formula with each term's source shown; `highRiskExposure` becomes the product summed over high/critical origins. (3) Carbon-sink tab: `carbonStockMtCO2` re-based on FAO/IPCC densities × area, valued at the selected price scenario. (4) `REDD_PROJECTS` re-pointed at the platform's seeded Verra registry data (real project records exist platform-wide) instead of PRNG credits/prices. (5) A TNFD LEAP-structured export assembling the computed fields.
+
+**Prerequisites.** The `sr()` country numerics deleted; commodity risk/traceability figures cited (Trase publishes them); carbon-price feed join. **Acceptance:** exposure decomposes into revenue × rate × liability terms on screen; sink value moves with the price scenario; REDD rows match registry records.
+
+### 9.2 Evolution B — EUDR exposure copilot for supply-chain and lending teams (LLM tier 2)
+
+**What.** A tool-calling analyst for the module's three stated users: "which of our commodity origins trigger EUDR enhanced due diligence and how much revenue sits there?", "what's the carbon-sink value of the Indonesian sourcing landscape at $80/t?", "draft the TNFD LEAP 'Evaluate' section for our soy exposure." Each answer executes the Evolution A exposure/sink routes over the user's entered supply chain.
+
+**How.** Tier 2: tool schemas over the intake and computation routes; regulatory answers quote the EUDR commodity scope and country classification with vintage — EUDR is新 and shifting, so recalled regulation is dangerous; the curated commodity table (Palm 72% risk / 28% traceability etc.) grounds prioritisation logic with its source cited once Evolution A adds citations. LEAP drafting maps computed fields to the Locate/Evaluate/Assess/Prepare structure with data gaps enumerated per phase — TNFD disclosure candour mirrors the honest-nulls convention. Cross-module routing: parcel-level carbon accounting questions go to `land-use-carbon`, counterparty screening to `land-use-deforestation`, with the module boundary stated.
+
+**Prerequisites (hard).** Evolution A (a copilot summing PRNG exposures would invent EUDR liability for named commodity chains); Phase 2 tooling. **Acceptance:** every €/$ figure traces to a tool call over entered supply-chain data; EUDR classifications carry their legal-source vintage; LEAP sections list data gaps explicitly.

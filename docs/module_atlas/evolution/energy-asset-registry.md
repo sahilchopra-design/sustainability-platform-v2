@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real GPPD-backed assets with derived, not stored, intensity (analytics ladder: rung 1 → 2)
+
+**What.** §7 rates this a "faithful descriptive facility inventory rather than a calculation engine": 30 hand-authored fictional assets ("Blackrock Coal Station") whose `carbon_intensity` is stored rather than computed (several assets carry `annual_output_gwh: 0` yet display a CI), with placeholder `wri_id`s and only two derived quantities (mean CI, above-mean watchlist). The stored values are fuel-consistent and realistic — good editorial work — but the module's named cross-reference, the WRI Global Power Plant Database, is not actually wired. Evolution A makes the registry real.
+
+**How.** (1) Ingest a real GPPD subset (public CSV, ~35k plants with coordinates, fuel, capacity, generation, and estimated emissions) into an `energy_assets` table — the ingestion framework and PostGIS layer from the digital-twin work fit exactly; `wri_id` becomes a genuine join key. (2) Derive CI as the guide states — `CI = emissions/generation` where GPPD provides both; store CI only for asset types without output (LNG terminals, pipelines) with a `ci_provenance` flag distinguishing derived from assigned. (3) Because assets carry lat/lng, join each to the platform's populated hazard grids (`ref_*_zones`) for a physical-risk column — the registry becomes the asset backbone other energy modules (decommissioning-liability, supplier-network) can reference. (4) Rung 2: retirement what-ifs (portfolio CI trajectory as watchlist assets retire on schedule vs accelerated).
+
+**Prerequisites.** GPPD vintage choice (last release 2021 — supplement with Ember/EIA for recency where needed, disclosed per row); registry scoping (global vs portfolio-relevant subset). **Acceptance:** a known real plant (e.g. a GPPD coal station) shows CI reproducing emissions÷generation from source fields; fictional assets removed or flagged `demo`; each power asset resolves a real `wri_id`.
+
+### 9.2 Evolution B — Asset screening copilot over registry + hazard joins (LLM tier 2)
+
+**What.** A tool-calling copilot for asset-level due diligence: "show me coal assets in the registry over 40 years old, above sector-average CI, with high cyclone exposure, and their book values and retirement dates" — a query that spans the registry's own fields plus the physical-risk join from Evolution A. It answers with the filtered table, explains the watchlist rule applied (CI > sector mean, per the page's own logic), and drafts a one-page asset screen memo per candidate.
+
+**How.** Tools: `query_assets(filters)`, `get_asset_detail(wri_id)`, `get_asset_hazard_profile(asset_id)` (the digital-twin composite score endpoint applied to the asset's coordinates). Grounding corpus = this Atlas record's §7.2 fuel-CI anchor table, so the copilot can contextualize ("890 tCO₂/GWh is typical hard coal; the IEA operational band is 820–1,050"). All figures validator-checked against tool outputs; hazard scores carry the digital twin's `resolution_tier` disclosure.
+
+**Prerequisites (hard).** Evolution A — screening fictional assets by invented book values would be theater; the hazard join requires real coordinates. **Acceptance:** a golden screen's asset list matches a scripted query; every CI, MW, and hazard figure traces to a tool response; asking about an asset type the registry lacks (e.g. transmission lines) returns "not in registry."

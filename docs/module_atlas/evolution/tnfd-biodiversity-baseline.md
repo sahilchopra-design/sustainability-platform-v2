@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real spatial "Locate" and calibrated ENCORE/GLOBIO tables (analytics ladder: rung 2 → 3)
+
+**What.** This AdvisoryToolkit module is genuinely scenario-capable — a full deterministic worksheet (user-editable asset register, not PRNG), an IFC PS6 mitigation-hierarchy allocation model, a `Math.random()` triangular Monte Carlo, and tornado sensitivity (§7.3). Its rung-3 gaps per §7.6: the LEAP "Locate" step is a manually-entered "KBA km" number per asset, not a computed distance to the nearest KBA polygon; and `ENCORE_MATRIX`, `MSA_LOSS`, `WATER_FP`, `ES_SECTOR_MULT` are platform-authored approximations, directionally sound but not from the live ENCORE tool, a GLOBIO run, or the Water Footprint Network database.
+
+**How.** (1) Wire real spatial overlay: the platform's physical-risk digital twin already loads PostGIS hazard grids — add KBA/WDPA/protected-area polygons (IBAT/WDPA are the canonical sources) so `kbaDistanceKm` is computed from asset coordinates, turning "Locate" from a slider into a derived output. (2) Replace the four hand-calibrated lookup tables with sourced values: ENCORE's published sector-materiality matrix (dependency/impact across 21 ecosystem services), GLOBIO MSA-loss coefficients, WFN water-footprint archetypes — each cited, with the synthetic version retained only as fallback. (3) Attach data-quality flags per asset (§7.6 notes none exist) and report Monte Carlo P50/P95 with the input-range provenance. (4) Bench-pin the §7.4 worked example (243.1 ha MSA-equiv, $566K mitigation cost, 82% credibility).
+
+**Prerequisites.** WDPA/KBA polygon licensing (KBA data has access terms — verify, per the platform's data-sources lesson that assumed feeds often aren't free); asset coordinates added to the register. **Acceptance:** moving an asset's coordinates changes its KBA proximity and priority score; every lookup cell cites its source; mitigation-cost bench pin reproduces §7.4.
+
+### 9.2 Evolution B — LEAP-narrative copilot for the disclosure step (LLM tier 1)
+
+**What.** The module computes an Evaluate/Assess baseline but its "Prepare" phase (disclosure drafting) is where an LLM adds most: given the computed MSA footprint, water footprint, priority-asset list, mitigation plan, and RaR, the copilot drafts the TNFD/ESRS E4 disclosure narrative, mapping each figure to the `DISCLOSURE_CROSSWALK`'s real clause numbers (ESRS E4-1..E4-5, GRI 304-1..304-4).
+
+**How.** Tier 1 on worksheet state plus this Atlas record: the module's reference layer is unusually well-documented (§7.2's table of ENCORE/SBTN/IFC-PS6/GBF provenance, §7.7's framework alignment), giving the copilot grounded material to explain why an asset is flagged priority (dependency + impact + KBA proximity + species density, per the `Priority` formula) and what GBF target a mitigation action supports. Because the worksheet is deterministic and user-editable, every number the copilot cites is reproducible and stable — a strong no-fabrication position. The copilot must flag that pre-Evolution-A figures rest on hand-authored lookup tables and self-reported Locate completeness, not live spatial data.
+
+**Prerequisites.** None for tier 1; this AdvisoryToolkit family has no backend, so tool-calling (tier 2) awaits a route port. **Acceptance:** every disclosure-draft figure traces to a worksheet computation; clause citations match `DISCLOSURE_CROSSWALK` exactly; the copilot states the Locate step is self-reported until Evolution A's spatial overlay lands.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the greenium and alignment score instead of storing them (analytics ladder: rung 1 → 3)
+
+**What.** The page is a market explorer where the two headline analytics are pre-baked: the greenium is a **stored per-issuer field** (`greeniumBps`), not derived from a yield-curve comparison, and the alignment score is described but the page only aggregates static `USE_OF_PROCEEDS` shares. The 9 issuers, market-growth series, and framework/risk tables are all seed constants. Evolution A implements the two computations the module's methodology names (`Blue Premium = Yield(conventional) − Yield(blue)` and `Alignment = Σ category_weight × compliance`).
+
+**How.** (1) Real greenium: construct the issuer's vanilla yield curve from comparable conventional bonds (the platform's market-data seed / yfinance-style feeds carry govvie and corporate yields) and compute the blue-vs-matched-maturity spread — the module's own formula, currently short-circuited by a stored field. (2) Alignment scoring as a real weighted computation over ICMA Blue Bond Principles categories with a documented per-category compliance rubric, flagging the <70 greenwashing-risk band the §7.2 note cites. (3) Use-of-proceeds CO₂ impact and IRR sourced or clearly labelled rather than seeded. (4) Rung 3: benchmark computed greeniums against the Climate Bonds Initiative blue-bond database (a real dataset) and report the fit. As a backend vertical this becomes `POST /api/v1/blue-bonds/greenium` and `/alignment`.
+
+**Prerequisites.** A comparable-bond yield source for the vanilla curve (the hardest input — sovereign blue issuers like Seychelles have thin comparables, which the model must acknowledge with wide confidence); CBI database access. **Acceptance:** greenium is computed from a constructed curve, not read from a field; two issuers with different UoP mixes get different alignment scores; a sub-70 score triggers the greenwashing-risk flag.
+
+### 9.2 Evolution B — Blue-bond framework-alignment copilot (LLM tier 1 → 2)
+
+**What.** Tier 1: a copilot explaining the blue-bond market and ICMA principles — "what use-of-proceeds categories qualify?", "why does this sovereign bond show a larger greenium than the corporate one?", "what's the difference between CBI certification and standard green-equivalent?" — grounded in this Atlas record with the disclosure that greeniums and scores are currently stored demo values (until Evolution A). Tier 2 runs the alignment and greenium engines as tools for real issuer assessment.
+
+**How.** Tier-1 corpus from this record (§7.2 issuer/framework tables, the ICMA Blue Bond Principles and UNEP FI Sustainable Ocean Economy references in §5). The refusal path matters pre-Evolution-A: asked "what's this bond's real greenium?", the copilot states the figure is a stored demo value, not a computed spread. Tier 2 tool schemas over the new greenium/alignment routes; the copilot drafts an SPO-style alignment narrative citing per-category compliance, every score tool-traced, with the thin-comparables caveat surfaced for sovereign issuers.
+
+**Prerequisites.** Copilot router (tier 1); Evolution A's computation routes (tier 2). **Acceptance:** tier-1 answers label greeniums/scores as stored demo values; tier-2 alignment assessments trace every category score to a tool response; sovereign greeniums carry the comparable-scarcity caveat.

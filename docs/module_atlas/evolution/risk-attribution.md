@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Estimated premia and a real specific-risk term (analytics ladder: rung 2 → 3)
+
+**What.** §7 rates this the batch's most guide-faithful module: six factor exposures computed from real `GLOBAL_COMPANY_MASTER` fields (GHG intensity, ESG tilt, size, momentum with SBTi bonus), normalised sensibly. Its limits are the other half of a factor model: premia are static assumptions (2.1%, −3.4%, …) that never vary despite a `TIME_PERIODS` selector implying they do, the residual is a flat constant unrelated to composition, and benchmark weights are static. Evolution A estimates what is currently assumed: premia via cross-sectional regression of realised returns on exposures — the standard Barra/Axioma approach §7.5 names — and a diversification-aware specific-risk term.
+
+**How.** (1) `POST /api/v1/risk-attribution/estimate-premia`: monthly cross-sectional OLS of holding returns on the six exposures over the selected window, giving time-varying premia with t-stats reported (honesty about which factors are actually priced in the sample); requires the return-history layer the quant siblings also need — one shared market-data corpus, not three. (2) Residual risk from the regression's actual residual variance per holding, aggregated with weights — replacing the flat constant with a term that shrinks under diversification as it should. (3) Static premia remain the documented fallback when history is insufficient, labelled `basis: assumed`. (4) Bench pin: a 3-holding case with hand-computable exposures and a synthetic return panel with known premia the regression must recover.
+
+**Prerequisites.** Return-history coverage audit for the company master universe; window conventions per the `TIME_PERIODS` selector. **Acceptance:** the regression recovers the known premia on the synthetic bench panel; premia change across periods; the residual term falls as holdings are added, verifiably.
+
+### 9.2 Evolution B — Attribution-explainer for portfolio reviews (LLM tier 2)
+
+**What.** Attribution output is the classic "what am I looking at" table. The copilot explains it: "why is our carbon factor contribution −0.8% this quarter — exposure or premium?", "which five holdings drive the ESG-factor tilt, and what trade would neutralise it?", "draft the risk-review paragraph decomposing tracking error into factor and specific components" — each grounded in the model's own algebra (contribution = exposure × premium × weight), which makes every explanation mechanically checkable.
+
+**How.** Tier-2 tool schemas over the attribution/premia endpoints; the exposure-vs-premium decomposition is computed (paired evaluations holding one term fixed), not narrated impressionistically. Trade suggestions are constrained to exposure arithmetic — "reducing X by 2% lowers carbon exposure by Y" — with an explicit no-recommendation frame (the copilot quantifies mechanics; suitability stays with the PM). Premia quoted with their estimation basis and t-stats, or the `assumed` label pre-Evolution-A history. Review paragraphs render via report studio.
+
+**Prerequisites.** Evolution A for estimated premia (explaining assumed premia is acceptable at tier 1 if labelled, but the what-moved-this-quarter question needs estimation); golden Q&A from the bench case. **Acceptance:** decomposition answers sum to the reported contribution; every premium quoted carries its basis; trade-mechanics answers reproduce from exposure arithmetic.

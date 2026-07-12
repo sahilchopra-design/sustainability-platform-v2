@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Tax-shield-consistent sizing with stochastic CFADS (analytics ladder: rung 2 → 4)
+
+**What.** The sizer is already the platform's shared sculpting engine (`pf_debt_sizing.py`, 1,086 lines, no PRNG, DSCR/LLCR/PLCR binding-constraint contest, P50/P90 dual schedules, seven toggleable extension modules) — solid rung 2 via its P90 stress and breakeven solvers. Its two documented ceilings (§7.7): cash tax ignores the interest shield (a deliberately conservative simplification avoiding the debt↔tax circularity), and CFADS uncertainty enters only as two deterministic P50/P90 arrays. Evolution A closes both: an iterative tax-shield solve, and a distributional CFADS mode producing probability-of-covenant-breach rather than a single stressed schedule.
+
+**How.** (1) Add an opt-in `tax_mode: "interest_shield"` implementing the fixed-point iteration (size → interest → tax → CFADS → re-size, converging in a handful of passes; §8.6 already names this as the production requirement), with the current conservative mode as default and the delta reported. (2) `POST /size-stochastic`: user supplies generation-volatility parameters (or the module pulls P50/P75/P90 straight from `renewable_project_engine`'s yield endpoints, which already compute them); simulate CFADS paths with the standard-PRNG convention and report breach probability per covenant per year, min-DSCR distribution, and equity-IRR quantiles. (3) Reconcile the DSRA cross-check: §7.7 notes this module and `project_finance_engine` are independent implementations with different DSRA tables — pin both in bench_quant against one shared reference case.
+
+**Prerequisites.** The lineage-harness failures on `POST /calculate`, `/save`, and `GET /{power_plant_id}` (§4.2, all `failed`) fixed; the atlas blast-radius token artifact (§7.7) noted so downstream consumers aren't spooked by "42 modules affected". **Acceptance:** shield-mode debt exceeds conservative-mode debt for a taxable project (direction guaranteed by the math); stochastic breach probability at P90 CFADS reconciles with the deterministic P90 pass/fail.
+
+### 9.2 Evolution B — Lender-negotiation analyst over the sizing engine (LLM tier 2)
+
+**What.** The engine's request schema is rich (sculpting targets, mezz, mini-perm, FX, SLL overlay) and its consumers are structuring conversations by nature: "size this at 1.35× DSCR with a 7-year mini-perm — how much more debt does the SLL margin ratchet unlock, and where does LLCR start binding?" Evolution B ships a tool-calling analyst that translates term-sheet language into `POST /size` payloads, runs constraint comparisons as paired calls, and narrates which constraint binds per §7.3's contest logic.
+
+**How.** Tool schemas from the module's OpenAPI operations (`/size`, `GET /ref/dscr-benchmarks`); system prompt grounded in §7.3–7.5 mechanics and §7.7's caveats so the analyst always discloses the tax-shield simplification and the "benchmarks are editable conventions, not market quotes" label the backend itself carries. Multi-run what-ifs (tenor sweep, DSCR grid) execute as batched tool calls, rendered as the comparison table the page's CSV export already supports. No-fabrication validator on every $ and ratio.
+
+**Prerequisites.** Endpoint repairs above; golden Q&A from the §7.4 DSCR-vs-LLCR worked example. **Acceptance:** the analyst correctly identifies the binding constraint on the §7.4 reference case via a live call, and refuses to opine on market pricing (spreads/fees) beyond the labelled benchmark tables.

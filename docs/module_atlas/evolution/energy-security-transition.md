@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the three-pillar trilemma on real IEA/IRENA/World Bank series (analytics ladder: rung 1 → 2)
+
+**What.** The §7 flag: the guide's WEC-style `ETS = w₁·Security + w₂·Equity + w₃·Sustainability` is not implemented — there is no Equity pillar (no affordability, access, or household-burden term anywhere), just a bespoke `securityIndex` blending five inputs, and all 50 countries' attributes are `sr()` draws (with a lone hand-set net-exporter override for the Gulf three). The genuinely valuable data is geopolitical: the 9-chokepoint table (with daily bbl volumes and alternative routes) and 11 pipeline routes are real facts. The §8 spec for the proper trilemma already exists on this page; Evolution A implements it.
+
+**How.** (1) `services/energy_trilemma_engine.py`: Security from IEA import-dependency and supplier-HHI statistics (IEA free-tier country balances; EIA as fallback — both already platform ETL sources), Sustainability from IRENA renewable shares and carbon intensity, the missing Equity pillar from World Bank energy-access (EG.ELC.ACCS.ZS) and affordability series — all public, keyless. (2) Documented pillar weights with the WEC index as the external anchor: validate rank correlation of the computed ETS against the published WEC Trilemma rankings and report it (that check is the module's credibility test). (3) Chokepoints/pipelines move to reference tables and gain the scenario hook the module's premise demands (rung 2): "close Hormuz / cut Russian gas 80%" recomputes affected countries' import HHI and security scores through real flow shares.
+
+**Prerequisites.** Country-series ingester (IEA/IRENA/WB); deletion of the 50 synthetic rows in the same release. **Acceptance:** a fixture country's three pillars reproduce from sourced series; ETS rank correlation vs WEC published index reported; the Hormuz scenario changes exactly the chokepoint-dependent countries' scores.
+
+### 9.2 Evolution B — Sovereign energy-shock briefing analyst (LLM tier 2)
+
+**What.** A tool-calling analyst for the module's users (sovereign analysts, infrastructure investors): "brief me on Egypt: trilemma position, chokepoint exposure, and what a Suez disruption does to its security score and import bill." It chains Evolution A's endpoints — country profile, chokepoint-dependency lookup, shock recompute — and drafts the sovereign brief with the trade-off framing the module is named for: where transition acceleration would strain security (high renewables ambition + low grid reliability + high import HHI), stated from computed pillar components.
+
+**How.** Tools: `get_trilemma(country)`, `get_chokepoint_exposure(country)`, `run_shock(scenario, countries)`, `compare_countries(list)`. Grounding corpus = this Atlas record's §5 pillar definitions and the chokepoint reference table (real volumes and alternative routes make the briefings concrete). Every score, HHI, and bbl figure validator-checked against tool outputs; geopolitical *interpretation* is clearly framed as analysis over the computed exposure, and the brief cites data vintages (energy-balance years lag — disclose it).
+
+**Prerequisites (hard).** Evolution A — briefing on seeded country attributes would hand a sovereign analyst fabricated import dependencies for 50 named countries. **Acceptance:** a golden country brief's every numeric traces to a tool response; the shock scenario's affected-country list matches the chokepoint table's `countries` field; unavailable pillars (missing WB access data) are disclosed, not imputed.

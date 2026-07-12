@@ -6,26 +6,41 @@ Automated ingestion and parsing of XBRL sustainability filings; extracts structu
 
 > **Business value:** CSRD will generate 50,000+ machine-readable iXBRL sustainability reports annually from 2025; automated ingestion infrastructure is prerequisite for ESG data providers, benchmark administrators and supervisory data collection.
 
+**How an analyst works this module:**
+- Subscribe to ESMA, SEC EDGAR and HMRC XBRL filing feeds
+- Parse iXBRL documents using taxonomy-aware extraction engine
+- Map extracted elements to internal ESG data model
+- Flag ingestion failures and non-standard extensions for review
+- Make structured data available for benchmarking and analytics modules
+
 ## 2 · Function Map
 
 ### 2.1 Frontend (1 files)
-**Components/functions:** `DataWarehouse`, `FACT_CONCEPTS`, `FILINGS`, `FORMATS`, `FactMapping`, `FilingImport`, `INGEST_TREND`, `REGISTRANTS`, `TABS`, `TAXONOMIES`, `VALIDATION_RULES`, `ValidationPipeline`, `WAREHOUSE_TABLES`
+**Components/functions:** `API`, `DEMO_IXBRL`, `DataWarehouse`, `FactMapping`, `FilingImport`, `TABS`, `ValidationPipeline`
+
+**Seed dataset schemas (record structure of each in-page dataset):**
+
+| Dataset | Rows | Fields |
+|---|---|---|
+| `VALIDATION_RULES` | 13 | `name`, `category`, `severity` |
+| `TABS` | 5 | `label` |
 
 **Derived values computed in the UI layer:**
 
 | Variable | Expression |
 |---|---|
-| `pick` | `(arr, s) => arr[Math.floor(sr(s) * arr.length)];` |
-| `FORMATS` | `["iXBRL","XBRL Instance","Inline XBRL (HTML)","JSON-LD","CSV Taxonomy"];` |
-| `facts` | `Math.round(120 + sr(i * 7) * 1880);` |
-| `errors` | `Math.round(sr(i * 11) * 8);` |
-| `warnings` | `Math.round(1 + sr(i * 13) * 12);` |
-| `statusDist` | `["Clean","Warnings","Errors"].map(s => ({` |
-| `taxDist` | `TAXONOMIES.map(t => ({` |
+| `API` | `"http://localhost:8001";` |
+| `path` | `formatHint === "ixbrl" ? "/ingest/ixbrl" : formatHint === "xbrl_xml" ? "/ingest/xbrl-xml" : "/ingest";` |
+| `taxonomies` | `useMemo(() => ["All", ...Array.from(new Set(history.map(h => h.taxonomy)))], [history]);` |
+| `totalFacts` | `history.reduce((s, f) => s + f.facts, 0);` |
+| `avgMappingRate` | `history.length ? (history.reduce((s, f) => s + f.mappingRate, 0) / history.length) : 0;` |
+| `statusDist` | `["Clean", "Partial", "Unmapped", "Empty"].map(s => ({` |
+| `taxDist` | `Array.from(new Set(history.map(h => h.taxonomy))).map(t => ({` |
+| `mappingRows` | `useMemo(() => Object.entries(conceptMap \|\| {}).map(([concept, info]) => ({` |
 
 ## 3 · Data Sources & Provenance
 **Provenance classes:** `frontend-seed`
-**Frontend seed datasets:** `FACT_CONCEPTS`, `FORMATS`, `REGISTRANTS`, `TABS`, `TAXONOMIES`, `VALIDATION_RULES`, `WAREHOUSE_TABLES`
+**Frontend seed datasets:** `TABS`, `VALIDATION_RULES`
 
 ## 4 · End-to-End Data Lineage (source → transformation → UI)
 
@@ -33,14 +48,153 @@ Automated ingestion and parsing of XBRL sustainability filings; extracts structu
 | UI metric | Formula | Source | Interpretation |
 |---|---|---|---|
 | Reports Ingested (YTD) | — | Ingestion Engine | Total iXBRL sustainability reports ingested and parsed in current reporting year. |
-| Parse Rate | — | Ingestion Engine | Successful element extraction rate across all ingested filings; failures typically from non-standard taxonomy  |
-| Data Points Extracted | — | Database | Total structured ESG data points extracted from ingested XBRL filings available for analytics and benchmarking |
+| Parse Rate | — | Ingestion Engine | Successful element extraction rate across all ingested filings; failures typically from non-standard taxonomy extensions. |
+| Data Points Extracted | — | Database | Total structured ESG data points extracted from ingested XBRL filings available for analytics and benchmarking. |
 - **ESMA/EDGAR XBRL Filing Feeds, ESRS XBRL Taxonomy** → iXBRL parsing engine + taxonomy mapping + structured data extraction → **ESG data lake, benchmarking analytics, peer comparison dashboards, regulatory data quality reports**
 
 ## 5 · Intermediate Transformation Logic
 **Methodology:** Ingestion Parse Rate
 **Headline formula:** `IPR = Successfully Parsed Elements / Total Elements × 100`
+
+Proportion of XBRL elements successfully extracted and mapped to internal data model; below 90% triggers manual review flag.
+
 **Standards:** ['ESRS XBRL Taxonomy 2024', 'XBRL International Specification']
+**Reference documents:** ESRS XBRL Taxonomy (EFRAG 2024); SEC EDGAR XBRL Filing Requirements; ESMA XBRL Filing Manual 2023; XBRL International Specification 2.1
 
 ## 6 · Interconnections & Change Risk
 **Blast radius:** changes here can affect **0** other module(s).
+
+## 7 · Methodology Deep Dive
+
+> ⚠️ **Backend↔frontend disconnection.** A genuinely functional iXBRL parser exists at
+> `backend/services/xbrl_ingestion_engine.py` (514 lines) — real regex-based extraction of entity
+> name, LEI, period dates, and numeric facts from `<ix:nonFraction>`/`<ix:nonNumeric>` inline-XBRL
+> tags, with a concept-to-data-point mapping table (`CONCEPT_TO_DP`). **The frontend never calls it**
+> — no `axios`/`fetch` exists anywhere in `XbrlIngestionPage.jsx`. Every filing shown is generated by
+> the seeded PRNG, not parsed from any actual document.
+
+### 7.1 What the backend engine does (not currently displayed)
+
+```python
+name_match   = regex extract EntityName from <ix:nonNumeric name="...EntityName"...>
+lei_match    = regex extract LEI from <xbrli:identifier>
+period_matches = regex extract (startDate, endDate) pairs from <xbrli:startDate>/<xbrli:endDate>
+fact_pattern = regex extract (concept, contextRef, unitRef, decimals, value) from <ix:nonFraction ...>
+for each fact: value = float(value_str.replace(",","")); mapping = CONCEPT_TO_DP.get(concept)
+```
+
+This is a genuine, if regex-based (rather than a full XML/DOM parser), extraction pipeline — it would
+actually work against real-world iXBRL HTML filings for the tag patterns it targets, including
+comma-formatted numeric values and non-numeric-value warning capture.
+
+### 7.2 What the frontend actually displays (fully synthetic)
+
+`genFilings(n)` builds `n` synthetic filings, each independently seeded:
+
+```js
+facts    = 120 + sr(i·7)×1880          // 120–2,000 facts per filing
+errors   = round(sr(i·11)×8)            // 0–8 errors
+warnings = 1 + sr(i·13)×12              // 1–13 warnings
+status   = errors===0 ? (warnings<=3 ? 'Clean' : 'Warnings') : 'Errors'   // genuine rule, applied to random inputs
+mappedPct = 75 + sr(i·41)×24            // 75–99%
+```
+
+`registrant` (8 fictional company names), `taxonomy` (6 real-named taxonomies: EFRAG ESRS 2024, ESEF
+2023, UK IFRS 2023, US GAAP 2024, DRGEP 2024, GRI XBRL 2023), and `format` (5 real XBRL delivery
+formats) are picked via `pick(arr, seed) = arr[⌊sr(seed)×arr.length⌋]`.
+
+### 7.3 Calculation walkthrough
+
+1. `status` derivation (`errors===0 ? (warnings≤3?'Clean':'Warnings') : 'Errors'`) is a genuinely
+   sound three-tier classification rule — the only issue is that `errors`/`warnings` themselves are
+   random, not counted from any actual validation pass.
+2. `statusDist` and `taxDist` (Ingestion Dashboard tab) count filings by `status` and `taxonomy`
+   respectively across the synthetic filing set.
+3. `contexts = round(facts×0.15 + noise)` — an illustrative heuristic (contexts ≈ 15% of fact count)
+   with no basis in actual iXBRL document structure (context count depends on the number of distinct
+   reporting periods/entities/dimensions tagged, not a fixed ratio of facts).
+4. `VALIDATION_RULES` (13 named checks) and `FACT_CONCEPTS` (13 taxonomy-concept counts) and
+   `WAREHOUSE_TABLES` (10 named data-warehouse tables with `rows`/`lastLoad`/`status`) are additional
+   static/synthetic reference tables rendered on other tabs.
+
+### 7.4 Worked example
+
+Filing `i=5`: `facts = round(120 + sr(35)×1880)`. With `sr(35) = frac(sin(36)×10⁴)`, this produces
+some value in [120, 2000] — deterministic given the seed but disconnected from any real document.
+`errors = round(sr(55)×8)` — if this evaluates to 0, and `warnings = round(1+sr(65)×12)` evaluates to
+≤3, `status = 'Clean'`. A user cannot make this filing "dirty" by uploading a real problematic
+document — the status is fixed by the filing's array index at page-load time, not by any actual
+ingestion process.
+
+### 7.5 Data provenance & limitations
+
+- **All 30-ish (implied) filings are synthetic**, with plausible taxonomy/format/registrant labels
+  but no correspondence to any real ingested document.
+- **The backend's genuinely working regex-based iXBRL parser is entirely unused** — this is a
+  meaningful gap since, unlike some sibling modules where "no real model exists," here a real,
+  testable parsing pipeline already exists and just needs a file-upload UI wired to
+  `XBRLIngestionEngine.ingest_ixbrl()`.
+- `contexts = facts×0.15` is an unfounded heuristic that should be replaced by an actual count of
+  distinct `<xbrli:context>` elements once real parsing is wired in.
+
+**Framework alignment:** ESRS XBRL Taxonomy 2024 and XBRL International Specification (named in the
+guide) are represented by real taxonomy *names* in the `TAXONOMIES` list but not by any live parsing
+or validation against those taxonomies' actual concept dictionaries — see `xbrl-export-wizard`'s deep
+dive for the sibling backend engine (`xbrl_export_engine.py`) that already defines a real
+`ESRS_XBRL_TAXONOMY` dictionary this module's ingestion engine could reconcile extracted facts
+against.
+
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the upload UI to the real parser and persist extracted facts (analytics ladder: rung 1 (UI) / 2 (engine) → 3)
+
+**What.** §7's flag is unambiguous: a genuinely working regex-based iXBRL parser
+exists (`xbrl_ingestion_engine.py`, 514 lines — real extraction of entity/LEI/periods
+and `<ix:nonFraction>` facts with a `CONCEPT_TO_DP` mapping table), while the page
+renders `genFilings()` PRNG output — a filing's Clean/Warnings/Errors status is fixed
+by its array index, and "a user cannot make this filing dirty by uploading a real
+problematic document". Evolution A wires the existing upload path (the sibling route
+file already exposes `POST /ingest`, `/ingest/ixbrl`, `/ingest/xbrl-xml`) into the
+page: uploaded documents parse server-side, extracted facts persist to
+`xbrl_ingested_facts`, and the dashboard's history/status/taxonomy distributions
+aggregate real ingestion records instead of the synthetic array. Two engine upgrades
+promote it toward rung 3: replace the unfounded `contexts = facts×0.15` heuristic
+with an actual count of distinct `<xbrli:context>` elements (§7.5's prescription),
+and reconcile extracted facts against the sibling export engine's `ESRS_XBRL_TAXONOMY`
+dictionary so the parse-rate metric (§5's IPR) is computed against a real concept
+universe. Validate with a fixture set of genuine published ESEF filings.
+
+**How.** Frontend: file-upload component + history table backed by the new table;
+backend: persistence layer around the existing `ingest_auto()`; CI test parses the
+fixture filings and pins expected fact counts.
+
+**Prerequisites.** The synthetic filing generator deleted, not kept as default;
+fixture filings collected (ESMA's filings portal is public). **Acceptance:**
+uploading a malformed document produces an Errors status derived from actual
+warnings; the same document uploaded twice yields identical fact counts; IPR computes
+from mapped/total concepts, not a random draw.
+
+### 9.2 Evolution B — Peer-benchmarking analyst over ingested filings (LLM tier 2 → 3)
+
+**What.** The module's stated purpose is turning 50,000+ CSRD filings into analytics —
+the payoff is cross-company questions no single-module copilot can answer: "compare
+the Scope 3 intensity of the five utilities we've ingested", "which filings tag
+E1-9 transition-risk amounts, and how do their values distribute?" Evolution B is a
+tool-calling analyst over the ingested-facts store: `GET /facts` with concept/entity/
+period filters, plus the concept-mappings reference route, composing benchmark tables
+and narrative where every value cites its source filing (registrant, LEI, period,
+concept). This is also the natural bridge to tier-3 desk orchestration: ingested
+peer data becomes an input other desks (financed emissions, disclosure modules) can
+query through the same tools.
+
+**How.** Tier-2 stack: read-only tool schemas over the new facts endpoints; grounding
+corpus is this Atlas page plus `CONCEPT_TO_DP` definitions. Answers carry per-fact
+provenance (filing + concept + context) in the "show work" expander; the validator
+rejects any value not present in a tool payload.
+
+**Prerequisites (hard).** Evolution A — there are no real ingested facts to analyse
+today, and benchmarking synthetic filings would be fabricated peer intelligence;
+enough ingested filings (≥10) for comparisons to be meaningful. **Acceptance:** every
+benchmarked figure traces to a stored fact with its source filing named; companies
+without the queried concept are reported as not-disclosed rather than imputed; asked
+about a company never ingested, the analyst says so.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Risk-adjusted pipeline valuation with stage-dependent success probabilities (analytics ladder: rung 1 → 2)
+
+**What.** §7 shows both halves of the guide's formula missing: no NPV exists anywhere (`grep NPV` empty — the only "expected" output is capacity-weighted MW, not currency), and `probability` is an independent seeded draw with no dependence on stage, jurisdiction, technology, or the `developerExp` field that is generated but never read. The permitting-months ceiling (48mo) also undercuts the cited 3–7yr industry benchmark. Evolution A implements `PipelineEV = Σ[NPV_i × P(success_i) × discount_i]` with an honest probability model.
+
+**How.** (1) `P(success)` as a documented stage-ladder base rate (early-development → ready-to-build attrition rates are published in BloombergNEF/WindEurope pipeline studies; cite the bands) with multiplicative adjustments for permitting-risk tier and technology, so the field finally depends on the drivers the guide names — and `developerExp` either enters the model or is removed. (2) Per-project NPV from the platform's existing project-finance machinery: `renewable_project_engine.assess_project()` already computes IRR/NPV/LCOE from capacity, technology, and PPA price — call it rather than rebuilding; development-stage discounts applied on top. (3) `POST /api/v1/re-pipeline/valuation` returning MW-weighted and $-weighted pipeline views with per-project decomposition. (4) Permitting-month distributions recalibrated to the cited 3–7yr benchmark per region, source stamped.
+
+**Prerequisites.** Stage-attrition sourcing pass; engine-call plumbing for NPV. **Acceptance:** moving a project from "consented" to "early development" reduces its P(success) per the documented ladder; pipeline EV is a currency figure that reproduces from per-project NPV × P × discount; permit-month ranges match the cited benchmark bands.
+
+### 9.2 Evolution B — Pipeline-triage copilot for origination teams (LLM tier 2)
+
+**What.** Development-pipeline management is portfolio triage: "which late-stage projects carry the highest EV-at-risk from grid-connection delays?", "compare our Iberian solar cluster's risk-adjusted value against the Nordic wind cluster", "draft the quarterly pipeline report — EV bridge from last quarter, stage migrations, biggest probability movers". The copilot runs these as valuation-endpoint tool calls plus stage-history queries.
+
+**How.** Tier-2 tool schemas over the Evolution-A endpoints; the EV bridge (this quarter vs last) requires stage-transition history, which the persisted pipeline register provides via timestamped stage changes — the copilot narrates *why* EV moved (stage migration vs assumption change), a decomposition the endpoint exposes. Guardrails: probability bands are quoted with their source citation; the copilot does not forecast auction outcomes or permit decisions (it reports the model's base rates and flags projects deviating from them); cluster comparisons are computed aggregations. Report drafts render through report studio with the model-assumption annexe.
+
+**Prerequisites (hard).** Evolution A's valuation model and a persisted register with stage history — triaging seeded probabilities would misdirect real origination effort. **Acceptance:** the EV bridge's components sum to the observed delta; every probability quoted matches the model's ladder for that project's attributes; assumption-change effects are separated from stage-migration effects.

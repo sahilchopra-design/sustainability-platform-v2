@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the OceanESV and acidification-loss engine (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag is total: the guide defines an ocean ecosystem-service valuation (`OceanESV = Σ[Fisheries + Shipping + CoastalProtection + Tourism + CarbonSeq×CarbonPrice]`) and an acidification-loss formula (`ΔpH × CorrosionSensitivity × BiologicalStock`), but neither exists — there is no fisheries-revenue, shipping, coastal-protection, or tourism field, and `acidificationLevel` is a bare `sr()` draw. The 50 regions have real names (Great Barrier Reef, Bering Sea, Norwegian Sea) attached to 11 fully fabricated metrics. Evolution A builds the TEV engine the module is named for.
+
+**How.** (1) Stand up `POST /api/v1/ocean-health/esv` computing the documented OceanESV sum from real service components: fisheries revenue (FAO/Sea Around Us catch-value data, public), shipping-lane value (UNCTAD maritime statistics), coastal-protection value (mangrove/reef area × avoided-damage rates, reusing the digital-twin hazard grids), tourism (regional marine-tourism data), and carbon sequestration × carbon price. (2) Implement the acidification-loss formula with real inputs: ΔpH from IPCC SROCC/AR6 projections (named in §5), corrosion sensitivity by calcifying-species group, and biological stock from fisheries data — replacing the seeded `acidificationLevel`. (3) SEEA-Ocean-aligned account output (§1) as the structured deliverable.
+
+**Prerequisites.** This is greenfield — the current page has zero real computation; multiple data-source integrations (FAO, UNCTAD, SROCC projections); the digital-twin coastal hazard grids are thin for flood (48 rows) so coastal-protection coverage needs a caveat. **Acceptance:** OceanESV decomposes into the five named service terms from real data; acidification loss reproduces from ΔpH × sensitivity × stock; no `sr()` remains; a region's SEEA account reconciles to its service components.
+
+### 9.2 Evolution B — Blue-economy valuation copilot (LLM tier 1 → 2, scoped honestly)
+
+**What.** Given the page has no real computation today, the near-term LLM value is a framework-guidance copilot grounded in the SEEA Ocean, IPCC SROCC, and HLP Sustainable Ocean Economy references named in §5: "how does SEEA Ocean account for fisheries?", "what drives acidification loss for shellfisheries?", "what services make up ocean TEV?" It must not value the user's region until Evolution A exists.
+
+**How.** Tier 1 over the standards corpus (roadmap `llm_corpus_chunks`): the copilot explains the OceanESV framework, SEEA Ocean accounting structure, and acidification impact pathways with citations. The system prompt must encode the module's honest current state so it refuses "value the Great Barrier Sea's ecosystem services" with a pointer to the (post-Evolution-A) ESV endpoint — a hard refusal, because the current 50-region table's numbers are fabricated and must not be narrated as valuations. Tier 2 arrives with Evolution A: tool calls to the ESV/acidification engine, fabrication validator matching every dollar figure to outputs.
+
+**Prerequisites.** Standards ingestion; explicit current-capability statement in the system prompt. Any regional valuation is strictly gated on Evolution A. **Acceptance:** framework answers cite named references; asking the copilot to value or interpret the current 50-region metrics yields a refusal explaining they are placeholders.

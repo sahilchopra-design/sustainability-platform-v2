@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the correlated actuarial ESG the guide describes (analytics ladder: rung 2 → 3)
+
+**What.** The §7 flag shows a large scope gap but a genuinely sound engine underneath: the guide promises a full actuarial economic scenario generator (Vasicek/Hull-White mean-reverting rates, GBM equity, intensity credit model, **Cholesky-correlated** paths across rate/GDP/equity/credit/FX/carbon), but the code Monte-Carlo-samples **6 independent, uncorrelated climate-economy variables** with no mean reversion, no Cholesky matrix, and no financial-market paths at all — combined via a fixed-coefficient linear sensitivity into one portfolio impact. Critically, the Monte Carlo machinery itself is real and correct (proper Box-Muller normals, lognormal moment-matching, percentile/histogram statistics). Evolution A builds the missing stochastic structure onto that solid base.
+
+**How.** (1) Add the mean-reverting processes: Vasicek/Hull-White for interest rates, GBM for equity, an intensity model for credit — the `dX = κ(θ−X)dt + σdW` the guide specifies. (2) Introduce the Cholesky correlation the module names but lacks: build a correlation matrix across the financial and climate variables (carbon price, physical damage, and stranding are economically linked — the current independence understates tail co-movement) and generate correlated draws via Cholesky decomposition. (3) Fix the documented `'beta'` distribution mis-specification for `techBreakthrough` (clamping masks but doesn't fix it). (4) Calibrate variable means/vols to NGFS Phase IV / IEA WEO with cited vintages, and calibrate the impact coefficients rather than hand-setting them. (5) Bench-pin against an EIOPA stress reference.
+
+**Prerequisites.** Correlation-matrix estimation from historical/NGFS data; the mean-reversion parameters need calibration. **Acceptance:** paths exhibit mean reversion and cross-variable correlation via Cholesky; carbon-price and stranding co-move; the beta draw is correctly specified; means/vols cite NGFS/IEA.
+
+### 9.2 Evolution B — Scenario-generation copilot for actuarial/capital models (LLM tier 1)
+
+**What.** A copilot for the Solvency II / ORSA / IFRS 17 user the module targets: "generate 1,000 correlated scenarios with these mean-reversion and correlation parameters", "show the 99.5th-percentile carbon-price path", "what's the portfolio impact distribution under a delayed-transition overlay?" — driving the (Evolution-A) correlated engine and narrating the fan-chart percentiles and stress overlays, never inventing statistics.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/stochastic-scenarios/ask`, corpus = this Atlas record (the Vasicek/Cholesky methodology, the variable set, EIOPA/Wilkie framework notes) plus the computed scenario statistics. Configuration requests set the model parameters and re-run the Monte Carlo; percentile/fan-chart answers narrate the computed bands; the copilot explains the correlation structure driving tail co-movement. Export answers describe the actuarial-model output format.
+
+**Prerequisites.** Evolution A's correlated engine so the copilot can discuss correlation and mean reversion honestly rather than caveating that the engine samples independent variables. **Acceptance:** every percentile/impact figure traces to a Monte Carlo run with stated parameters; correlation explanations reflect the actual Cholesky structure; a request for an unmodelled variable (e.g. FX before Evolution A adds it) returns "not in the current variable set."

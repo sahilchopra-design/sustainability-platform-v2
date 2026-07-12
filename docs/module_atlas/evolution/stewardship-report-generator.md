@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the page to the real engine and fix the failing routes (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag is emphatic: this page computes nothing — every number (UK Stewardship Code principle compliance %, ICGN scores, PRI module scores, case-study outcomes, report completion %) is a **literal hardcoded constant**, no `sr()`, no formula, no API call in the 218-line file; the only "calculation" is averaging 4 hardcoded `completePct` values. Meanwhile a real 742-line backend (`stewardship_engine`, blast radius 2) implements genuine engagement-scoring and escalation logic citing GFANZ-E-2, and the module exposes working GET reference endpoints — but the lineage sweep records `POST /engagement`, `/escalation`, and `/portfolio` as **failed**. So the good engine is broken-and-unused while the page shows fixed demo content. Evolution A is remediation, not a new build.
+
+**How.** (1) Triage the three failing POST routes (deployment-prep methodology). (2) Replace the hardcoded `UK_PRINCIPLES`/`ICGN_DATA`/`PRI_SCORES` tables with calls to `POST /portfolio` and `/engagement` so compliance percentages are computed from an asset manager's actual engagement records, proxy votes, and initiative memberships (the engine's `assess_portfolio` signature already takes exactly these). (3) The `Compliance = Principles_met / Total_principles` formula the guide states becomes real, per framework. (4) Drive the escalation ladder from `POST /escalation` (GFANZ-E-2) and the reference `/ref/escalation-ladder` endpoint.
+
+**Prerequisites.** The three route failures are the gate; the engine and reference endpoints already exist — the fix is wiring plus repair. **Acceptance:** principle compliance percentages come from `/portfolio`, not constants; all three POST routes pass the sweep; changing engagement inputs changes the scores.
+
+### 9.2 Evolution B — Stewardship-report and case-study drafter (LLM tier 2)
+
+**What.** The module's entire purpose is report generation — "Case Study Generator creates engagement narratives," "Export produces PDF/Word." That is a tool-calling drafting task: the copilot calls `POST /engagement` and `/portfolio` for the real assessment figures, then drafts the UK Stewardship Code / ICGN / PRI report sections and per-engagement case-study narratives grounded in those computed scores — never inventing compliance percentages (the exact failure mode of the current hardcoded page).
+
+**How.** Tier-2 pattern once the routes work: engagement/portfolio assessment become tools; the copilot narrates the computed principle-by-principle compliance and drafts the framework report, citing `GET /ref/frameworks` for the principle text. Case-study generation reads real engagement records (escalation stage, outcome) and structures the narrative. Drafts route to the report-studio/export layer; the no-fabrication validator checks every compliance figure against tool output.
+
+**Prerequisites (hard).** Evolution A — the compute endpoints fail and the page is static demo content, so drafting from it would produce authoritative-looking reports built on hardcoded numbers, exactly what a stewardship disclosure must not be. **Acceptance:** every compliance percentage in a drafted report traces to a `/portfolio` or `/engagement` call; case studies reference real engagement records; a framework principle with no supporting engagement data is flagged as a gap, not fabricated as compliant.

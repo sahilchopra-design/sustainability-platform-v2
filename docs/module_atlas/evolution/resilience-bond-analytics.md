@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Actual issuance terms plus an EL-based spread model (analytics ladder: rung 1 → 2)
+
+**What.** §7.6 flags the citation hazard directly: 24 real, recognisable instrument names (World Bank Cat Bond 2024, Jamaica CAT 2023, CCRIF Parametric 2024) carrying entirely fabricated coupons, sizes, and ratings — users can mistake PRNG output for the terms of named instruments. The guide's pricing model (`Spread = EL × LGD × (1 + RiskPremium)` with EL from attachment probability) is absent (`grep` empty). Cat-bond terms are unusually recoverable: Artemis deal directories and issuer announcements publish size, coupon, trigger, and expected loss at issuance. Evolution A rebuilds the universe from actual terms and implements the spread decomposition.
+
+**How.** (1) A `cat_bond_universe` table populated from public issuance data (size, coupon spread, EL at issuance, trigger type, peril, tenor) with source URL and date per bond; the seeded generator deleted — under the platform's fabrication guardrail, real names with fake terms is the worst variant. (2) `POST /api/v1/resilience-bonds/spread-model`: multiple-of-EL analytics (spread ÷ EL, the market's standard richness metric) and the guide's decomposition for user-structured hypothetical bonds, with the risk-premium multiple benchmarked against the ingested universe by peril and rating band. (3) KPI-linked step-up mechanics become a real calculator over user-defined KPI schedules. (4) The credible qualitative assets (`TRIGGER_COMPARISON`, structuring guide) stay as reference with citations.
+
+**Prerequisites.** Issuance-data collection pass (public but manual; ~24 bonds is feasible); refresh cadence decision. **Acceptance:** every displayed bond term carries a source; spread-multiple rankings recompute from stored EL/spread pairs; a hypothetical bond's modelled spread decomposes to EL × multiple with the benchmark band cited.
+
+### 9.2 Evolution B — ILS screening copilot for allocators (LLM tier 2)
+
+**What.** ILS fund managers screen relative value: "which outstanding US-wind bonds trade rich to their EL multiple versus the peril average?", "compare parametric vs indemnity triggers for a Caribbean sovereign — basis risk, payout speed, pricing implications", "draft the IC one-pager for this new issuance against comparable deals". The copilot runs universe queries and the spread model as tools, and narrates trigger trade-offs from the curated comparison content.
+
+**How.** Tier-2 tool schemas over the universe/spread endpoints; relative-value answers quote the computed multiple and its peer distribution, with the as-of date of the underlying terms (issuance terms, not live secondary marks — a distinction the copilot must state, since the platform has no secondary ILS pricing feed). Trigger explanations ground in the module's qualitative comparison table plus cited ICMA/CBI criteria. IC one-pagers compose deal terms, peer comparables, and the KPI step-up schedule through report studio. Hard rule: no terms for bonds absent from the sourced universe; no implied recommendations on named live instruments beyond computed metrics.
+
+**Prerequisites (hard).** Evolution A's sourced universe — screening advice on fabricated terms attached to real bonds is reputationally disqualifying; date-stamped records. **Acceptance:** every term in a one-pager resolves to a sourced row; the issuance-vs-secondary caveat appears in relative-value answers; unsourced bonds are declined.

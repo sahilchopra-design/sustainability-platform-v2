@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Ship the real constrained optimiser and glide-path solver (analytics ladder: rung 1 → 5)
+
+**What.** §7's mismatch flag: the guide advertises a Net Zero Construction Score (`NZCS = α×Financial + β×ClimateAlignment + γ×GreenRevenue`) and a tracking-error optimiser, but neither exists — the page is a constraint-filter + weighted-aggregation screener over 200 synthetic holdings, and the "Efficient Frontier", "Optimization Engine", and glide-path series are pre-baked `sr()` arrays. Only `weightedITR` is a genuinely weighted aggregate; WACI/green/VaR headlines are unweighted means. Evolution A builds the optimiser the module claims to be.
+
+**How.** (1) Implement the constrained optimisation §1/§5 describe: `scipy.optimize.minimize` minimising tracking error to a benchmark subject to WACI-reduction, temperature-score-floor, and green-revenue-tilt constraints (the PAII Net Zero Investment Framework named in §5 supplies the constraint definitions) — this is the roadmap's rung-5 prescriptive tier, and Paris-aligned portfolio construction is a canonical use. (2) Compute the NZCS composite as a real objective term. (3) Replace the pre-baked glide path with a solved annual emission-reduction schedule to net-zero-by-2050 with interim waypoints, derived from the optimised holdings' trajectories rather than a seeded array. Real holdings via `portfolios_pg` + the shared emissions resolver used by the alignment siblings.
+
+**Prerequisites.** Covariance matrix from ingested return history (currently absent — the page has no Σ); the synthetic 200-holding universe replaced with a real investable set; a `bench_quant` case with a known optimum. **Acceptance:** the optimiser returns a solution provably minimising tracking error under the constraints (verifiable on a small hand-solved case); tightening the temperature floor changes the optimal weights and the glide path; no `sr()` remains in frontier/pathway series.
+
+### 9.2 Evolution B — Portfolio-construction analyst with tool-called optimisation (LLM tier 2)
+
+**What.** A tool-calling analyst: "build a net-zero portfolio tracking MSCI World within 1.5% TE, WACI 50% below benchmark, ITR ≤ 1.75°C, green-revenue tilt +20%" → calls the Evolution-A optimiser and presents the resulting weights, NZCS, and 2050 glide path, explaining which constraints bound and the financial cost of each climate tilt.
+
+**How.** Tool schema over `POST /nz-builder/optimize` with the constraint set as typed parameters; system prompt from this Atlas page's §5 and the PAII/EU Paris-Aligned Benchmark references named in §5. The analyst's explanations derive from optimiser diagnostics (binding constraints, tracking-error contribution, per-constraint shadow cost), not intuition; the "show work" expander lists the optimisation call and its inputs (roadmap Tier-2 provenance UX). Saving a constructed portfolio to `portfolios_pg` gates behind explicit confirmation + RBAC. Fabrication validator matches every weight/TE/WACI figure to the tool response.
+
+**Prerequisites (hard).** Evolution A — there is no optimiser or NZCS to call today, and narrating the current filter-screener's pre-baked frontier as optimisation output would be exactly the misrepresentation §7 flags. **Acceptance:** every reported metric traces to an optimiser call; asking for a glide path before Evolution A yields a refusal explaining the solver does not yet exist.

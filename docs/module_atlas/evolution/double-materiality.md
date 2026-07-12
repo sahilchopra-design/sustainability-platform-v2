@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Persist the assessment workflow and retire the cosmetic seeds (analytics ladder: rung 1 → 2)
+
+**What.** The backend is a real ESRS 1 vertical: `DoubleMaterialityEngine` implements the impact formula `max(scale·scope·irremediability/125, likelihood·scale/25)`, financial `likelihood·magnitude/25`, the 0.40 threshold, NACE baseline triggers, omission validation against ESRS 1 ¶29–35, completeness scoring, and CSRD wave inference — 12 endpoints, reference GETs all lineage-`passed`. The gaps: assessments live in LocalStorage (`LS_ASSESS`), and the frontend fabricates workflow metadata — `conf = 60 + sRand·35`, seeded review dates, seeded evidence labels ("Stakeholder consultation + quantitative data" chosen by PRNG). In an *assurance-facing* module, fabricated evidence labels are the worst kind of seed. Evolution A completes the vertical.
+
+**How.** (1) Tables `dma_assessments`, `dma_topic_scores`, `dma_stakeholder_inputs` (org-scoped) so `POST /assess` results persist and the sustainability-committee sign-off in the workflow is a recorded state transition, not UI theater. (2) Delete the seeded confidence/review-date/evidence fields; confidence and evidence become user-entered with the entry's author and date — real values or honest blanks. (3) Rung 2: threshold sensitivity endpoint (how does the material-topic set change as the 0.40 threshold sweeps 0.30–0.50?) and NACE-peer comparison (which topics do sector peers typically assess material vs. this entity's results) — both cheap given the engine's existing `_nace_baseline_scores`.
+
+**Prerequisites.** Alembic migration; RBAC on assessment records (assurance artifacts need author trails). **Acceptance:** an assessment survives a browser wipe; the lineage sweep shows the 5 POSTs `passed` with `dma_*` source tables; grep finds zero `sRand` in the page.
+
+### 9.2 Evolution B — Omission-justification and IRO-1 assurance assistant (LLM tier 2)
+
+**What.** The engine's most distinctive endpoint — `POST /check-omissions`, validating omission justifications against ESRS 1 ¶29–35 — pairs naturally with an LLM: a tool-calling assistant that reviews each proposed omission ("we don't report E4 because…"), runs the engine's rule check, and critiques the justification text against the actual paragraph criteria from `ref/omission-criteria`, then assembles the IRO-1 pack from persisted assessment data with completeness and assurance-readiness scores (`/completeness`, `_assess_assurance_readiness`) quoted from engine responses.
+
+**How.** Tool surface = the module's 12 existing endpoints (unusually complete for this use); grounding corpus = this Atlas record plus the ESRS 1 reference texts already in the refdata layer. The assistant's critiques cite the specific omission criterion failed; its pack-drafting only reports scores the engine computed — the division of labor is rules-engine-decides, LLM-explains-and-drafts. Low-confidence or contested omissions route to the human committee queue rather than auto-approval.
+
+**Prerequisites (hard).** Evolution A's persistence and seed removal — an assurance pack quoting seeded confidence values and PRNG-selected evidence labels would be a fabricated audit trail, the platform's cardinal sin. **Acceptance:** every score in a golden entity's IRO-1 pack matches an engine response; an omission justification that fails ¶30's criteria is flagged with the correct paragraph citation; the assistant refuses to invent stakeholder-engagement evidence that isn't in `dma_stakeholder_inputs`.

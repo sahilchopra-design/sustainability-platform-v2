@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Implement the SCES spend-weighted composite and real regulatory due-diligence (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag documents that the guide's headline `SCES = Σ(Supplier ESG × Spend Weight × Tier Discount)` **is not computed** — the page generates 200 `sr()`-synthetic suppliers with mutually independent per-field draws (ESG score unrelated to deforestation risk or resilience), aggregates unweighted means, and flags high-risk via an OR of four hard thresholds; the "risk factor weight" panel (ESG 30% / Deforestation 25% / etc.) is static display text wired to nothing, and `concIdx` (labelled "HHI") is a period-seeded random number unrelated to the concentration table beneath it. The period selector cosmetically shifts KPIs rather than re-slicing data. Blast radius is 81. Evolution A builds the real SCES and grounds the regulatory flags.
+
+**How.** (1) Implement the SCES composite: spend-weighted, tier-discounted aggregate of supplier ESG scores, with the displayed risk-factor weights actually driving the calculation. (2) Ingest real supplier data (spend, EcoVadis/CDP scores) replacing the 200 synthetic rows, so ESG score, deforestation risk, and resilience are correlated where real relationships exist. (3) Implement EUDR and CRMA compliance as the regulations' actual requirements (EUDR due-diligence statement + geolocation traceability; CRMA critical-mineral sourcing) rather than binary `sr()` flags, and derive LkSG/CSDDD coverage from real due-diligence records instead of reusing the unrelated `engaged` flag. (4) Compute `concIdx` as a genuine Herfindahl index from the mineral-concentration table. (5) Make the period selector re-slice real time-series data.
+
+**Prerequisites.** Real supplier/spend data; EUDR/CRMA requirement encoding; the shared supply-chain compute routes (failing) fixed. This is a substantial build. **Acceptance:** SCES is spend-weighted and tier-discounted with the displayed weights driving it; EUDR/CRMA flags reflect actual due-diligence status; the HHI is a real concentration calculation.
+
+### 9.2 Evolution B — Multi-tier due-diligence and board-reporting copilot (LLM tier 2)
+
+**What.** A copilot for the CSDDD/LkSG compliance officer the module targets: "which suppliers fail CSDDD due-diligence and why?", "what's our SCES by tier and where's the concentration risk?", "draft the board ESG supply-chain report" — reading the (Evolution-A) SCES, real risk flags, and regulatory-coverage data, and drafting the board report the module's `BOARD_SECTIONS` structure anticipates.
+
+**How.** Tier-2 pattern once SCES and the regulatory flags are real: the supply-chain compute endpoints become tools; the copilot narrates SCES decomposition, tier concentration (via the real HHI), and per-supplier due-diligence gaps, citing EUDR/CRMA/LkSG/CSDDD requirements. The board-report draft routes to the report-studio layer; the no-fabrication validator checks every score and coverage figure against tool output.
+
+**Prerequisites (hard).** Evolution A — the SCES doesn't exist, the risk-weight panel drives nothing, and regulatory flags are random, so the copilot would draft board reports on fabricated compliance status, the highest-stakes failure mode for CSDDD disclosure. **Acceptance:** every SCES/coverage figure traces to the computed model; due-diligence gaps cite the specific regulation's requirement; a supplier's regulatory flag reflects real status, not a draw.

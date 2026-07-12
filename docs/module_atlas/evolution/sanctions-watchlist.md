@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the ESG-overlap dimension the module is named for (analytics ladder: rung 1 → 2)
+
+**What.** §7's flag is definitional: the module's namesake methodology — an ESG Controversy Overlap Score combining sanctions status with controversy severity — has no implementation; no ESG or controversy field exists anywhere, `riskScore` is a seeded 70–99 draw too narrow to discriminate between entries, and match-type/compliance-action labels ("Fuzzy Name (87%)", "Block Transaction") are modulo-cycled decorations unrelated to any real matching logic. Evolution A makes the watchlist real and adds the dual-screening dimension honestly scoped to data the platform can hold.
+
+**How.** (1) Watchlist entries become persisted org-scoped records whose sanctions status and match confidence come from `sanctions-screening-desk`'s live CSL/UFLPA screening — the modulo-cycled labels deleted, real match scores rendered. (2) The ESG dimension built from available signals rather than a licensed controversy feed the platform lacks: the platform's own enforcement-action records (per `regulatory-enforcement-monitor`'s evolution), disclosure-derived scores, and UFLPA forced-labor designations (already an ESG-relevant list) — with the overlap score defined over these named components and its coverage limits documented; if RepRisk/MSCI feeds arrive later, they slot into the same component structure. (3) `riskScore` re-derived as match confidence × severity components across the full 0–100 range, with the formula published. (4) Watch alerts: re-screening on list updates flags status changes per entry.
+
+**Prerequisites.** Screening-desk integration; enforcement-record availability (sibling evolution dependency); honest relabeling if the controversy component stays thin. **Acceptance:** every match label reflects an actual screening response; the overlap score decomposes into its named components; two entries with different match evidence get discriminably different scores.
+
+### 9.2 Evolution B — Watchlist-review copilot (LLM tier 2)
+
+**What.** Watchlists rot without review. The copilot runs the review cycle: "which entries changed status since the last list update, and which have new enforcement actions?", "summarize the evidence file for this entry — sanctions designations, enforcement history, match confidence — for the quarterly compliance review", composing per-entry dossiers from screening results and linked records.
+
+**How.** Tier-2 tool calls over the watchlist, screening, and (where integrated) enforcement-record endpoints; dossiers quote list entries and enforcement records verbatim with source URLs/dates. Change detection uses ingested list version diffs. The dual-dimension framing is presented with its documented coverage limits — the copilot states which ESG components were checked and which were unavailable, mirroring the module's honest-scoping requirement rather than implying full controversy coverage. Non-determination discipline inherited from the screening desk; review outcomes (retain/escalate/remove) are human decisions the copilot records but never makes.
+
+**Prerequisites (hard).** Evolution A — dossiers built on modulo-cycled labels and a 70–99 random score would be fabricated compliance evidence; version-diff and linkage plumbing. **Acceptance:** every dossier item resolves to a stored record with source; change lists reproduce from diffs; component-coverage statements match what was actually queried.

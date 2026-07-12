@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Wire the hedonic/CRREM/MEES engine, then feed it real EPC records (analytics ladder: rung 2 → 3)
+
+**What.** Another documented frontend/backend disconnect (§7): a genuine engine (`residential_re_engine.py` — hedonic regression with cited coefficients, CRREM v2.3 residential 1.5°C stranding, MEES compliance, climate-adjusted LTV, 8 exposed endpoints) delivers zero user value because `ResidentialReAssessmentPage.jsx` makes no API calls, rendering instead an uncorrelated `sr()` book where EPC, value, and flood risk are independent draws — "misleading for any user assuming the scatter plots reflect real EPC-value relationships" (§7.6). Evolution A wires the page to its engine, then upgrades the engine's inputs with the UK EPC open-data source already integrated platform-side in wave 1.
+
+**How.** (1) Replace the synthetic `PROPERTIES` generator with portfolio intake (address/postcode, balance, valuation) resolved through the 8 endpoints; the hand-fit frontend `stressedLtv`/`affordData` approximations are deleted in favour of the backend's referenced coefficients. (2) EPC enrichment: postcode-matched lookups against the ingested UK EPC register (noting the wave-1 finding that EPC auth arrangements changed — use the working integration path), so EPC ratings are records, not draws. (3) Flood exposure from the digital-twin grids at property coordinates, coverage-tier flagged given sparse flood-grid rows today. (4) bench_quant pins one property through hedonic value → MEES status → CRREM stranding year → climate-adjusted LTV.
+
+**Prerequisites.** Intake schema for mortgage books (CSV first); EPC lookup quota handling. **Acceptance:** the EPC-value scatter shows the engine's hedonic relationship rather than noise; a property's MEES status matches its EPC record and the regulation's threshold year; no `sr()` remains in the page.
+
+### 9.2 Evolution B — Mortgage-book climate triage copilot (LLM tier 2)
+
+**What.** Lenders' questions over a residential book are triage-and-explain: "which loans face MEES non-lettability by 2028 and what's the aggregate balance?", "explain this property's climate-adjusted LTV — how much is flood, how much is EPC retrofit cost?", "draft the credit-committee note on our EPC F/G tail". The copilot answers via the engine's endpoints, whose decompositions (hedonic terms, CRREM overshoot, MEES year) make mechanical explanations possible.
+
+**How.** Tier-2 tool schemas over the 8 existing operations; explanation templates grounded in the engine's cited standards (RICS VPS 5/VPGA 12, MEES 2015, CRREM v2.3 — all named in §7's framework alignment) so regulatory statements carry their basis. Aggregations (balance at risk by EPC band, stranding-year distribution) are computed queries. Guardrails: property-level outputs are model estimates on stated inputs, not valuations — the RICS-adjacent disclaimer is structural; coverage tiers (EPC record found vs estimated, flood grid resolution) accompany every property answer; consumer-facing use is out of scope (this is portfolio analytics, and the prompt says so).
+
+**Prerequisites (hard).** Evolution A wiring — the copilot must never narrate the current uncorrelated synthetic book; per-response provenance fields. **Acceptance:** a credit-committee draft's every £ figure traces to an endpoint response; property explanations decompose into the engine's actual terms; estimated-EPC properties are flagged in any list they appear in.

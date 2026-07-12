@@ -1,0 +1,154 @@
+## 7 · Methodology Deep Dive
+
+> ⚠️ **Guide↔code mismatch flag.** The MODULE_GUIDES entry promises a *salient human rights
+> risk score* with the formula `SHRRS = Σ_k P(harm_k) × Severity_k × Breadth_k × Remediability_k`
+> — the four-factor UNGP Principle 14 salience calculus. **No such computation exists in the code.**
+> The page assigns each company a `riskScore`, `ungpScore` and `dueDiligence` score by drawing three
+> independent uniforms from the seeded PRNG and rescaling them; the "salient issues" list is a random
+> subset of a fixed issue vocabulary. The guide's KnowTheChain/Sedex data sources, remediation
+> resolution rates and audit-coverage metrics are likewise not wired to any input. The sections below
+> document what the code actually does; §8 specifies the SHRRS model the guide describes.
+
+### 7.1 What the module computes
+
+For **60 synthetic companies** (`COS`, real corporate names but fabricated scores) across 9 sectors,
+each company is characterised by scores drawn from the platform PRNG `sr(s)=frac(sin(s+1)×10⁴)`:
+
+```js
+riskScore     = round(sr(i*7)*70 + 20)      // 20–90
+ungpScore     = round(sr(i*11)*60 + 30)     // 30–90
+dueDiligence  = round(sr(i*13)*50 + 40)     // 40–90
+salient       = ISSUES.filter((_,j)=>sr(i*100+j*7)>0.5).slice(0, round(sr(i*17)*5+2))
+incidents     = round(sr(i*19)*15)
+grievances    = round(sr(i*23)*30)
+remediations  = round(grievances*(sr(i*29)*0.6+0.2))
+remediationRate = grievances>0 ? round(remediations/grievances*100) : 0
+```
+
+The only *derived* (non-random) quantity of substance is `remediationRate` — the share of grievances
+remediated — and the `severity` bucket, which is a threshold on `riskScore`:
+
+```
+severity = riskScore>70 ? 'Critical' : riskScore>50 ? 'High' : riskScore>30 ? 'Medium' : 'Low'
+```
+
+### 7.2 Parameterisation / scoring rubric
+
+| Constant | Value | Provenance |
+|---|---|---|
+| `ISSUES` vocabulary | 15 items (Forced Labour, Child Labour, Living Wage, Freedom of Association, Discrimination, Land Rights, Indigenous Rights…) | Hand-authored; aligns to UNGP/ILO salient-issue taxonomy |
+| Severity thresholds | 70 / 50 / 30 on `riskScore` | Synthetic cut-points, no external basis |
+| Salient inclusion rule | `sr(i*100+j*7) > 0.5` | Coin-flip per (company, issue) — ≈50% inclusion, capped 2–7 issues |
+| `riskScore` range | 20–90 | Synthetic demo value |
+| `remediations` factor | `0.2 + sr()*0.6` of grievances | Synthetic 20–80% remediation |
+
+None of the scores are anchored to a real benchmark (KnowTheChain, WBA CHRB, Sedex); the "UNGP
+score" and "risk score" are independent random draws, so a company can show high UNGP compliance
+and high risk simultaneously with no logical coupling.
+
+### 7.3 Calculation walkthrough
+
+1. `COS` is built once at module load: each company gets three headline scores, a salient-issue set,
+   incident/grievance/remediation counts, secondary scores (policy, transparency, engagement) and a
+   5-year `yearly` trend that perturbs `riskScore`/`ungpScore` with additional `sr()` noise plus a
+   deterministic drift (`+5 − y*2` on risk, `−3 + y*2` on UNGP).
+2. `filtered` applies search + sector filter + sort (spread-copied before sort).
+3. `stats` aggregates portfolio KPIs: `count`, `avgRisk`, `critical` count, `avgUNGP`,
+   `totalIncidents`, `avgRemediation`, `improving` count (`riskTrend==='Improving'`).
+4. `sectorRisk` averages `riskScore`/`ungpScore` per sector; `issueDist` tallies how many companies
+   flag each salient issue — driving the sector bar chart and salient-issue prevalence chart.
+5. The salient-issue × sector heatmap counts companies per (sector, issue) cell and colours cells
+   red/amber above count thresholds (>3 / >1).
+
+### 7.4 Worked example
+
+Company `i=4` (Nestlé, sector Consumer):
+
+| Step | Computation | Result |
+|---|---|---|
+| riskScore | `round(sr(28)*70+20)` — sr(28)=frac(sin(29)×10⁴) | e.g. **≈63** |
+| severity | 63 > 50 and ≤ 70 | **High** |
+| ungpScore | `round(sr(44)*60+30)` | e.g. **≈71** |
+| grievances | `round(sr(92)*30)` | e.g. **18** |
+| remediations | `round(18*(sr(116)*0.6+0.2))` | e.g. **9** |
+| remediationRate | `round(9/18*100)` | **50%** |
+
+The exact numbers depend on the JS `Math.sin` value at each seed; the point is that all three headline
+scores are independent draws — the arithmetic that matters (remediationRate) is a simple ratio.
+
+### 7.5 Companion analytics on the page
+
+- **Risk vs UNGP scatter** — plots `ungpScore` (x) against `riskScore` (y); because the two are
+  uncorrelated random draws, the scatter is structurally a random cloud, not a genuine risk↔governance
+  relationship.
+- **Detail panel** — per-company radar over Policy / Transparency / Due Diligence / Engagement /
+  Remediation and a 5-year risk/UNGP line.
+- **Due-diligence distribution** and **grievances-vs-remediation scatter** on the DD tab.
+
+### 7.6 Data provenance & limitations
+
+- **All company scores are synthetic**, generated by `sr(seed)=frac(sin(seed+1)×10⁴)`. Real company
+  names are used but the scores are fabricated demo values — a material caveat if a reader mistakes
+  the ranking for a genuine human-rights benchmark.
+- The guide's four-factor salience formula, breadth (people-at-risk) and remediability dimensions are
+  **not implemented** — salience here is a random binary flag, not a P×S×B×R product.
+- No supply-chain tier data, no geography risk index, no audit non-conformance ingestion despite the
+  guide's data-lineage claims.
+
+**Framework alignment:** UN Guiding Principles on Business & Human Rights (2011) — Principle 14
+salience (probability × severity, with severity scaled by scope/scale/irremediability) is *named* but
+not computed; ILO Core Labour Standards inform the `ISSUES` vocabulary only; EU CS3D (2024) Article 8
+action-plan trigger (>70 salient score) is referenced in the guide but no threshold logic ties a
+score to a CS3D obligation in code.
+
+## 8 · Model Specification — Salient Human Rights Risk Score (SHRRS)
+
+**Status: specification — not yet implemented in code.**
+
+### 8.1 Purpose & scope
+Prioritise human-rights issues across a supplier/investee portfolio so scarce due-diligence resource
+is directed at the most *salient* issues, per UNGP Principle 14 and the CS3D risk-based prioritisation
+obligation. Coverage: Tier-1/Tier-2 suppliers or portfolio companies, by commodity × sourcing country.
+
+### 8.2 Conceptual approach
+A salience model is a **multiplicative risk-prioritisation index**, mirroring (a) the WBA Corporate
+Human Rights Benchmark (CHRB) indicator-weighted scoring and (b) Verisk Maplecroft / KnowTheChain
+geography × sector risk indices. Salience = likelihood × severity where severity is itself the UNGP
+composite of *scale × scope × irremediability*, not just harm magnitude.
+
+### 8.3 Mathematical specification
+For company `c`, issue `k`:
+
+```
+Severity_k = (Scale_k + Scope_k + Irremediability_k) / 3            ∈ [0,1]
+P(harm)_ck = σ( β0 + β1·GeoRisk_ck + β2·SectorRisk_k + β3·(1−AuditCoverage_c)
+                    + β4·GrievanceRate_ck )                          logistic
+SHRRS_ck   = P(harm)_ck × Severity_k × Breadth_ck                   ∈ [0,1]
+Breadth_ck = log(1 + PeopleAtRisk_ck) / log(1 + MaxPeople)          normalised reach
+Company salience = max_k SHRRS_ck ; Portfolio = Σ_c w_c · mean_top5_k SHRRS_ck
+```
+
+| Parameter | Meaning | Calibration source |
+|---|---|---|
+| `GeoRisk_ck` | Country-issue risk 0–1 | Verisk Maplecroft / ITUC Global Rights Index / US DoL child-forced-labour list |
+| `SectorRisk_k` | Sector propensity for issue k | KnowTheChain sector benchmark; ILO sectoral data |
+| `Scale/Scope/Irremediability` | UNGP severity dimensions 0–1 | Expert-scored rubric; OHCHR interpretive guide |
+| `β0…β4` | Logistic weights | Fit to CHRB scores or incident databases (Business & Human Rights Resource Centre) |
+| `PeopleAtRisk` | Headcount exposed | Supplier workforce data (Sedex) |
+
+### 8.4 Data requirements
+Supplier master (commodity, country, Tier), Sedex/SMETA audit non-conformances by issue, grievance
+mechanism records, country-issue risk indices (ITUC, DoL, Maplecroft), sector benchmarks (KnowTheChain,
+CHRB). Platform already holds sector taxonomies and a company master; geography risk indices are **not**
+present and would need ingestion.
+
+### 8.5 Validation & benchmarking plan
+Backtest `P(harm)` against realised incidents in the BHRRC database (ROC-AUC ≥ 0.7 target). Reconcile
+company salience ranking against the WBA CHRB published scores (rank correlation). Sensitivity of
+portfolio salience to β weights and to geography-index vintage. Stability across quarters.
+
+### 8.6 Limitations & model risk
+Severity dimensions are inherently judgemental — irremediability especially. Geography indices lag
+real-world deterioration (coups, sanctions). Grievance data under-reports in repressive contexts
+(absence of grievances ≠ absence of harm) — apply a conservative floor `P(harm) ≥ P_min` in high
+GeoRisk countries to avoid false comfort.

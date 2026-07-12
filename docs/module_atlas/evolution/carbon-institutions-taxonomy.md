@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real registry projects and quality ratings replacing seeded scores (analytics ladder: rung 1 → 3)
+
+**What.** This is a rich VCM taxonomy/procurement page (20 tabs: registries, ICVCM CCPs, VCMI claims, Article 6 pilots, ICROA standards, MACC measures, offtake terms, permanence hazards) with a real multi-factor credit-quality composite (`overall = 0.25×add + 0.2×perm + 0.2×mrv + 0.2×cob + 0.15×sdg`). But every sub-score is seeded: `addScore`, `permScore`, `mrv`, `cob`, `sdg` are `sr(hash)`-driven bands keyed off project type and flags, and the 30 issuers / 25 VCM projects are synthetic. The CDP scores and SBTi targets are also PRNG trajectories. Its structure (permanence by removal type, CCP compliance, rating-provider comparison) is genuinely useful; the data is not real. Evolution A grounds it.
+
+**How.** (1) Real VCM projects from registry data (Verra/Gold Standard/ACR/CAR public listings): actual methodology, vintage, volume, standard per project. (2) Quality ratings from the real providers the module names — BeZero, Sylvera, Calyx Global — where licensable, or a clearly-labelled proxy; the current seeded `sylveraScore`-equivalents must not masquerade as real ratings. (3) ICVCM CCP compliance and CORSIA/ICROA eligibility from the actual assessment lists rather than seeded flags. (4) Issuer CDP scores and SBTi targets from the public CDP/SBTi databases. (5) Rung 3: the composite quality score calibrated so its factor weights reflect observed price/quality relationships. As a backend vertical, a dedicated taxonomy route.
+
+**Prerequisites.** Registry project data (public); rating-provider data licensing (the constraint — BeZero/Sylvera are commercial); CDP/SBTi databases (public). **Acceptance:** projects derive from real registries; quality ratings are real or explicitly proxied; CCP/CORSIA/ICROA eligibility matches official lists; issuer CDP/SBTi data is sourced.
+
+### 9.2 Evolution B — Carbon-credit procurement copilot (LLM tier 2)
+
+**What.** Procurement officers ask "shortlist high-integrity removal credits under $50/t with a BeZero A rating", "does this credit meet ICVCM CCP requirements?", "compare Sylvera vs Calyx ratings for these projects", "generate our offset procurement compliance report" — the copilot runs the Evolution-A screening and quality tools, ranks credits, and drafts the procurement policy report, every score and eligibility verdict tool-traced.
+
+**How.** Tool schemas over the Evolution-A project/quality/eligibility routes; grounding corpus is this Atlas record plus the ICVCM CCP / VCMI / ICROA / CORSIA reference structures the page carries. The copilot's honesty duty is paramount in this market: it presents quality ratings as the provider assessed them (never asserting integrity beyond the rating), reports permanence honestly by removal type (a REDD+ avoidance credit is not a durable removal), and flags avoidance-vs-removal explicitly since conflating them is the core VCM integrity failure. Procurement reports compose into the report layer.
+
+**Prerequisites (hard).** Evolution A's real ratings and projects — a procurement copilot ranking credits by seeded quality scores would drive real buying decisions on fabricated integrity data. **Acceptance:** every quality score, rating, and eligibility verdict traces to a tool response; avoidance vs removal is distinguished on every credit; ratings are attributed to their provider with no LLM-inflated integrity claims.

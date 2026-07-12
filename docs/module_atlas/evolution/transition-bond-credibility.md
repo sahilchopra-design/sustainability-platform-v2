@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Model P(miss) from KPI trajectories instead of hand-setting it (analytics ladder: rung 1 → 3)
+
+**What.** This module is unusually honest for its tier: 12 hand-curated real SLBs/transition bonds (Enel, Holcim, Pemex...) with the `expectedCost = pMiss × stepUpBps` identity verified consistent across all 8 step-up bonds (§7.4) — not PRNG noise. The rung-limiting gap per §7.6 is that `pMiss`, "the module's most consequential unmodelled input," is a single manually-set number per bond with no derivation; the guide frames it as `P(KPI < target)`, which needs a KPI trajectory model. And `planScore` claims a cross-reference to the EP-AL5 transition-plan module but is hardcoded (§7.6).
+
+**How.** (1) Derive `pMiss` from a KPI-trajectory model: for each bond's emissions-intensity (or other) KPI, project the issuer's historical run-rate to the SPT target date and compute miss probability via Monte Carlo around the trajectory — the sibling `sustainability-linked-instruments` module's pricing engine consumes exactly this input, so the two connect. (2) Replace the 12 hand-curated bonds with a real feed: SLB terms are disclosed in prospectuses; the Climate Bonds Initiative maintains a labelled-bond database. (3) Make the EP-AL5 cross-reference live: pull `planScore` from the actual transition-plan module rather than duplicating a literal. (4) Compute the 6 `KPI_DIMS` radar averages from per-bond sub-scores instead of separate hardcoded portfolio averages (§7.2).
+
+**Prerequisites.** Issuer KPI history (emissions series) for the trajectory model; a cross-module data contract with EP-AL5. **Acceptance:** `pMiss` moves when an issuer's emissions trajectory changes; `expectedCost` identity still holds; `planScore` matches the EP-AL5 module's live output for the same issuer.
+
+### 9.2 Evolution B — SLB credibility copilot for fixed-income analysts (LLM tier 1)
+
+**What.** A copilot answering "is this SLB's KPI genuinely ambitious or already-achieved greenwashing?" — grounded in the module's KPI-quality dimensions (Ambition, Materiality, External Verification, Science-Based...) and the verified expected-cost economics, explaining why the market prices weak-KPI issuers (Pemex 32 kpiScore) at high miss probability.
+
+**How.** Tier 1 on the module's genuinely-real curated data plus this Atlas record: the `expectedCost = pMiss × stepUpBps` relationship is verifiable arithmetic the copilot can reproduce and explain, and the KPI_DIMS map onto ICMA SLBP's five components (§7.7). The copilot distinguishes SLBs (real step-up mechanics, 8 bonds) from transition bonds (proceeds-based, `stepUpBps=0`, 4 bonds) — a genuine structural distinction it must respect rather than blur. It discloses per §7.6 that bond terms are illustrative representative values, not current market quotes for the named issuers, and that `pMiss` is currently a hand-set estimate (pre-Evolution-A) not a modelled probability. Post-Evolution-A, the copilot cites modelled miss probabilities with their trajectory basis.
+
+**Prerequisites.** None for tier 1; the module has no backend (tier B), so tool-calling awaits Evolution A's endpoints. **Acceptance:** every expected-cost figure reproduces from `pMiss × stepUpBps`; the SLB/transition-bond distinction is never conflated; `pMiss` is labelled hand-set until Evolution A, and the issuer-terms disclaimer appears whenever specific figures are quoted.

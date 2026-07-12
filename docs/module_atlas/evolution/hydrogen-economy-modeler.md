@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Endogenous Wright's-law parity engine (analytics ladder: rung 2 → 3)
+
+**What.** The §7 flag is methodological: the guide promises `Cost(t) = Cost₀ × (CumCap/CumCap₀)^(−LR)` but the page interpolates between hard-coded 2024/2030/2040/2050 anchors with a `sin(π·t)` curve-fitting bump, and even the shared engine's `project_cost_trajectory` uses time-based doublings (`(year−2024)/3`), not cumulative capacity. Parity is a static "~2032" string, not the crossover of computed curves. Evolution A implements the §8 spec in `hydrogen_economy_engine`: CAPEX declining with cumulative installed capacity (`b = −log₂(1−LR)`, LR 13–18% per IRENA), LCOH stack from the engine's existing CRF/electricity components, and parity year solved as `min{t: LCOH_green ≤ LCOH_gray + CarbonPrice(t)·EF_gray}` — so a policy shock finally moves the curve.
+
+**How.** (1) Ingest an installed-capacity trajectory (IEA Hydrogen Projects Database, public) as the `CumCap(t)` series; expose LR and carbon-price path (NGFS scenarios already in-platform) as request parameters on an upgraded `/cost-trajectory`. (2) Backtest per §8.5: reproduce realised 2015–2024 electrolyser price declines within tolerance — that pin goes into bench_quant. (3) The frontend's `costTimeline` and parity KPI switch from anchors to engine output, with the anchor table retained as a labeled comparison overlay. Engine changes are additive — 4 sibling modules share `hydrogen_economy_engine` (§6 blast radius).
+
+**Prerequisites.** Cumulative-capacity data ingestion; regression tests on the 5 dependent modules before the shared-engine change merges. **Acceptance:** parity year shifts when LR or carbon path shifts; backtest error against the BNEF/IRENA realised series reported in the response, not hidden.
+
+### 9.2 Evolution B — H₂ strategy analyst running the deployed route family (LLM tier 2)
+
+**What.** The page displays static anchors while five real POST endpoints sit underneath it largely uncalled (`/lcoh`, `/cost-trajectory`, `/demand-sector`, `/eu-h2-bank`, `/portfolio` — all `skipped` in the lineage sweep). Evolution B is a tool-calling analyst that puts them to work: "LCOH for a 500 MW PEM plant in Spain at 45% capacity factor?", "which demand sector abates carbon cheapest at $2.50/kg green H₂?", "what EU H₂ Bank subsidy would this project need, and does it fit under the ceiling?"
+
+**How.** Tier 2 per the roadmap: tool schemas auto-generated from the hydrogen route family (all read-only, Pydantic-typed); per-module system prompt from this Atlas page — §7.2's anchor tables and the §7.5 caveat that displayed curves are assumptions, which the analyst must repeat when asked "is parity endogenous?". Multi-step questions ("compare AEL vs PEM vs SOEC for my project") decompose into repeated `/lcoh` calls varying `production_pathway`, with the comparison table assembled from tool outputs only. Breakeven-carbon and subsidy figures quote the engine's own response fields (`breakeven_carbon`, `subsidy_eur_kg`, `total_subsidy_eur`).
+
+**Prerequisites.** Tool-calling infrastructure (Phase 2); no backend work needed — this is the rare module where tier 2 is deployable before Evolution A. **Acceptance:** every $/kg and subsidy figure matches a logged endpoint response; asked for parity-year sensitivity before Evolution A ships, the analyst explains the anchor-based limitation rather than inventing a sensitivity.

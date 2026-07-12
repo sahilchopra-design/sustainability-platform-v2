@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real ISS-QuickScore-style scoring on sourced director data (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the guide claims an ISS QualityScore composite (`0.30×Independence + 0.25×Skills + 0.25×Diversity + 0.20×Tenure`) with independence classification, a 12-competency matrix, committee-independence checks, an overboarding screener (>5 seats), and Say-on-Climate readiness — but the code computes a *different* composite (a diversity blend with no skills or tenure terms), the matrix has 10 competencies, the `governanceRating` (A+…C+) is **drawn at random**, and there is no ISS QS tab, committee check, overboarding screen (the field exists, capped at 3, never thresholded), or Say-on-Climate logic. 80 companies are real names with fully synthetic board attributes. Evolution A builds the model the guide describes.
+
+**How.** (1) Delete the random `governanceRating` immediately — assigning governance grades by PRNG is the platform's exact anti-pattern (P1). (2) Source board attributes from proxy statements/annual reports (independence, tenure, committee membership, director seat counts) — all publicly disclosed — replacing the seeded generators, with per-company source/vintage. (3) Implement the documented ISS-style composite from those real inputs (independence/skills/diversity/tenure weights) and the overboarding screener as an actual >5-seats threshold, not a display field. (4) Rung 3: benchmark against ISS QuickScore / MSCI IVA governance ratings for overlapping issuers (the module cites them) and report agreement. As a backend vertical, `POST /api/v1/board-composition/score`. Specialise vs the board-diversity/oversight siblings.
+
+**Prerequisites.** A sourced director-level dataset (the hardest input — board bios and independence classification require parsing proxies); coordination across the board cluster to avoid four overlapping composites. **Acceptance:** no random rating (guardrail passes); the composite derives from cited inputs per documented weights; overboarding flags directors above the 5-seat threshold; benchmark agreement with ISS QS is published.
+
+### 9.2 Evolution B — Proxy-season board-quality copilot (LLM tier 2)
+
+**What.** Investors engage boards ahead of AGMs, so the copilot answers "which portfolio boards fail ISS independence criteria this proxy season?", "flag directors who are overboarded", "is this board Say-on-Climate ready?" — running the Evolution-A scoring and screening tools and narrating findings against ISS/Glass Lewis criteria, every score and flag from tool output.
+
+**How.** Tool schemas over the Evolution-A scoring/overboarding/committee routes; grounding corpus is this Atlas record plus the ISS QuickScore / Glass Lewis / UK Governance Code references in §5. The refusal path is critical pre-Evolution-A: the current `governanceRating` is random, so a copilot must not present it as an assessment — tier 2 is gated on the random-rating removal. Once real, the copilot produces engagement-priority lists and drafts AGM voting rationale citing the specific criterion each concern triggers, composing into the report layer.
+
+**Prerequisites (hard).** Evolution A, especially the random-rating purge — a board-quality copilot quoting PRNG grades would be indefensible for stewardship. **Acceptance:** every score, independence classification, and overboarding flag traces to a tool response; no random component underlies any grade; engagement lists cite the failing criterion per company.

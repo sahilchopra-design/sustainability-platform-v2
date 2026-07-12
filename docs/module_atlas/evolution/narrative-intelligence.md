@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Build the promised greenwashing NLP pipeline as a first backend vertical (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag is categorical: the guide promises an NLP greenwashing-detection engine (LDA topic coherence, `greenwashing_risk = w1·coherence_gap + w2·commitment_gap + w3·controversy_gap`, Oxford Net Zero credibility scoring), but the code is a sustainability-report *authoring* toolkit — Hero's-Journey mapper, tone spectrum, component-mix L1 gap — with no text ingested and no NLP anywhere. Evolution A builds the detection engine the module is named for, keeping the (honest, useful) authoring toolkit as a separate tab group.
+
+**How.** (1) New route `api/v1/routes/narrative_intel.py` with `POST /analyze` accepting report text/PDF; the platform's existing NLP assets are the starting point — the DME sentiment pipeline and `nlp-disclosure-parser` module share this problem space, so reuse their extraction scaffolding rather than a parallel stack. (2) Implement the three documented gap components concretely: topic-share vs stated-priority divergence (TF-IDF topic shares are sufficient; LDA optional), pledge-vs-progress extraction (net-zero date, SBTi status regexed/parsed and compared to reported emissions trend from the refdata layer), and controversy-disclosure mismatch against ingested adverse-event data. (3) Weights `w1..w3` start documented-equal and get calibrated later against labelled cases (e.g. companies with public greenwashing enforcement actions under the EU Green Claims Directive regime).
+
+**Prerequisites.** Corpus acquisition path for reports (upload-first; no scraping dependency); explicit model card per Atlas §8 since "greenwashing risk" is a reputationally loaded output. **Acceptance:** the same report text always yields the same score with a visible three-component decomposition; a synthetic test report with a deliberate pledge/progress contradiction scores measurably worse than its corrected twin.
+
+### 9.2 Evolution B — Report-drafting copilot over the authoring toolkit (LLM tier 1)
+
+**What.** The code that actually exists — six stakeholder journeys, tone-spectrum weights across 8 report sections, message hierarchy, the component-mix benchmark with its L1 `gap` metric — is a natural grounding corpus for a *drafting* copilot: "rewrite this section for the regulator audience at accountable-formal tone", "my risk section is 80% narrative / 10% data; the benchmark says 45/40 — what should I add?" This is the rare module where LLM generation is the product, but it must stay grounded in the page's frameworks, not free-write.
+
+**How.** System prompt from this Atlas page plus the serialized `STAKEHOLDER_JOURNEYS`, `TONE_SECTIONS`, `MSG_LEVELS`, and `COMPONENT_MIX` constants; every suggestion must cite which framework element drove it (e.g. quoting the target mix numbers behind a recommendation). Rewrites operate only on user-supplied text. Critically, the copilot must not claim greenwashing-detection capability until Evolution A ships — a refusal path for "is this greenwashing?" pointing to the module's current scope is mandatory, given the guide's inflated description.
+
+**Prerequisites.** None hard; this grounds entirely on existing hand-authored constants. **Acceptance:** every tone/mix recommendation traceable to a constant's values; "score this report for greenwashing" refuses pre-Evolution-A rather than improvising a score.

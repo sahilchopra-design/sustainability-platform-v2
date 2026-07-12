@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Persist the genuine hash chain over real project lifecycle events (analytics ladder: rung 1 → 3)
+
+**What.** Unlike the platform's other audit modules, this one implements a **real SHA-256 hash chain in code** (`sha256Hex`, `verifyChain`, `recordHash = sha256(inputHash + outputHash + prevHash)`) with a working interactive tamper-test — a reviewer can mutate a record in the UI and watch verification detect the break and cascade forward, which is the actual value proposition. It also correctly models VVB workflows (CAR/CL/FAR tracking, ISO 14064-3 §6.7 uncertainty records). The gap: the event data is seeded (`simHash`, `sr()`-driven event types, ER results, users) and nothing persists — the hash chain protects synthetic data. Evolution A makes it a real audit trail.
+
+**How.** (1) Persist events server-side in an append-only `carbon_credit_events` table, computing and storing the `recordHash` chain on write (the JS SHA-256 logic ports directly, or moves to a backend hash) — so the tamper-evidence claim covers real records. (2) Feed real project lifecycle events: issuance, verification, CAR/CL/FAR from the registered `carbon.py` project routes (`create_project`, verification workflows) rather than seeded generators. (3) The ISO 14064-3 §6.7 uncertainty records and VVB CAR/CL/FAR tracking wire to actual verification data. (4) Rung 3: a `GET /verify/{project}` endpoint that re-verifies the stored chain and returns the ISO-compliant audit documentation, making the "generate compliant documentation" claim real. Distinct from the generic `audit-trail` modules by its carbon-credit-lifecycle and VVB specialisation.
+
+**Prerequisites.** An append-only events table + migration; real project/verification data flowing from `carbon.py`; retire the seeded event generators (the SHA-256 machinery stays — it's genuine). **Acceptance:** a stored event cannot be mutated without breaking chain verification; events derive from real project lifecycle actions; the ISO 14064-3 §6.7 documentation export re-verifies the chain.
+
+### 9.2 Evolution B — Credit-verification audit copilot (LLM tier 2)
+
+**What.** Project developers, corporate buyers (VCMI/SBTi claims), and VVBs ask "verify the audit chain for project PRJ-014", "what CARs are open and how long have they been unresolved?", "generate the ISO 14064-3 §6.7 audit pack for this vintage" — the copilot runs the Evolution-A chain-verification and CAR/CL/FAR tools, reports integrity status and open findings, and drafts the audit documentation, every event and hash from tool output.
+
+**How.** Read-only tool schemas over the Evolution-A verification and event-query routes; grounding corpus is this Atlas record plus the ISO 14064-3 / VCS / CDM references. The chain-verify tool result is embedded in every audit pack so integrity is asserted by computation, not by the LLM — the same discipline as the platform audit modules, but here it's already backed by real SHA-256. The copilot's honesty duty: it reports verification status as the tool returned it, and a broken chain is surfaced prominently, never smoothed — tamper detection is the module's entire purpose.
+
+**Prerequisites (hard).** Evolution A's persistence — a copilot verifying a chain over seeded events would attest integrity of fictional records, undermining the buyer/VVB trust the module exists to provide. **Acceptance:** every event, hash, and CAR status traces to a tool response; audit packs embed a chain-verification result; a tampered chain is reported as failed, never as clean.

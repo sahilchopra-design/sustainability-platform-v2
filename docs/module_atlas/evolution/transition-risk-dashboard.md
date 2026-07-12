@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Live cross-module aggregation and rule-derived risk flags (analytics ladder: rung 1 → 2)
+
+**What.** This "command centre" claims to aggregate figures from other Sprint CA–CE modules (Climate VaR EP-CE1, ITR EP-CC1, WACI EP-CC2, Stranded EP-CA2, Green Bond EP-CC3), but §7.6 documents every number is a hardcoded snapshot — the same figures appear verbatim in `transition-reg-reporting`, a shared manual baseline, not a shared pipeline. Worse, §7.4 finds the risk flags aren't rule-derived: testing the guide's own thresholds (CRITICAL<35, HIGH 35–50...) against the hardcoded `HOLDINGS` data, 3 of 8 flags are inconsistent (Shell scores 38 but is flagged CRITICAL, not HIGH; Vestas 79 is LEADER, not LOW) — direct evidence flags are hand-labelled, materially misleading in a real risk context.
+
+**How.** (1) Wire the 6 KPI cards to live queries against the named source modules — the dashboard already documents the EP-code system-of-record for each, so the integration targets are specified; this is the platform's lineage graph made executable (shared prerequisite with `transition-reg-reporting`). (2) Implement `flag = f(score)` as an actual render-time function over the threshold table, eliminating the §7.4 inconsistencies. (3) Derive the sector heatmap from holdings where coverage supports it, or label it an independent reference (§7.3 notes 10 holdings can't populate 8 sectors). (4) Generate the engagement pipeline from flagged holdings rather than a static thematically-linked list. (5) Make regulatory readiness reflect a real disclosure audit, not hand-set completion counts.
+
+**Prerequisites.** Live read access to the ~6 source EP-code modules; the same cross-module-query infrastructure `transition-reg-reporting`'s Evolution A needs — build once, share. **Acceptance:** every KPI card responds to its source module's current output; a holding's flag always matches its score-tier by construction; identical baseline figures no longer diverge between this module and the reg-reporting module.
+
+### 9.2 Executive climate-risk copilot with drill-through (LLM tier 1 → 2)
+
+**What.** An executive-summary copilot: "what's driving our 8.7% Climate VaR?", "which CRITICAL holdings need board escalation this quarter?", "summarise sector heatmap movements QoQ for the board pack" — narrating the dashboard's aggregates and, post-Evolution-A, drilling through to source-module detail via tool calls.
+
+**How.** Tier 1 grounds in this Atlas record and page state; the copilot explains the KPIs, the flag thresholds, and the stewardship escalation framework (P1/P2/P3, board-level for CRITICAL — genuine Climate Action 100+-style practice per §7.7). Tier 2 is the roadmap's desk-orchestration pattern: once Evolution A wires the source modules, the copilot routes drill-through queries ("show the stranded-asset detail behind the $2.1B") as tool calls to EP-CA2 et al., assembling board narratives with every figure source-traced. Hard guardrail pre-Evolution-A: the copilot must not present the hardcoded snapshot as live, and must not narrate flags it can see are internally inconsistent (§7.4) — it should surface that inconsistency, not paper over it.
+
+**Prerequisites.** Evolution A's live wiring and flag fix for trustworthy tier-2 drill-through. **Acceptance:** board-summary figures trace to KPI cards or source-module tool calls; flag references are self-consistent; pre-Evolution-A output carries the snapshot caveat.

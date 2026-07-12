@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Fix the unit/FX bugs, then live market prices (analytics ladder: rung 1 → 2)
+
+**What.** The three-market dataset (EU ETS, India CCTS, Japan GX-ETS) is curated real market data — a genuine asset — but §7.7 documents defects that make the computed layer unusable for decisions: the CBAM cost figures are materially wrong (a `×1000` vs `×1e6` unit bug plus a Steel-row `2024`/`1e9` typo), and the arbitrage spread subtracts EUR-denominated EU prices from USD-denominated India/Japan prices with no FX conversion. Evolution A fixes the arithmetic first (small, urgent), then upgrades the price layer from static 2025 point estimates to dated series.
+
+**How.** (1) Immediate: correct the two CBAM formula bugs and add FX normalisation to the arbitrage calc (currency field per market, conversion at a stored dated rate — the platform's `CURRENCIES` refdata pattern), with a bench case pinning each corrected formula. (2) Move the market profiles into a `ref_carbon_markets` table with per-field source/date stamps, ingesting published price series (ICAP allowance-price data is free and citable; EU ETS daily auctions are published) so the price-history tab shows dated observations rather than an authored shape — §7.7 itself recommends spot-checking against ICAP/World Bank before external use. (3) Derive the PAT-sector `escertEarned`/`overachieve` fields from `achieved − target` live (stored values already check out; make the formula the source of truth). (4) Expand back toward the overview's promised 8-market coverage (RGGI, California-Quebec, Korea, China) from the same ICAP source.
+
+**Prerequisites.** FX rate source; ICAP ingestion scoped. **Acceptance:** CBAM steel-row cost reproduces by hand in $M; EU–India spread is quoted in one currency with the rate and date shown; every market profile field carries a source stamp.
+
+### 9.2 Evolution B — Policy-risk briefing copilot (LLM tier 1 → 2)
+
+**What.** The hub's users — traders, policy advisors, treasury — consume market comparisons as briefings. The copilot generates them: "compare CBAM exposure for an Indian steel exporter under current CCTS pricing vs EU ETS parity", "summarize what changes for Japanese buyers when GX-ETS becomes mandatory in 2026", "what's the linking outlook between UK and EU ETS?" — grounded in the curated market profiles, reform timelines, and the corrected calculation endpoints.
+
+**How.** Tier 1: RAG over this Atlas record and the market-profile rows with their reform-timeline fields; policy answers cite the profile's stated mechanism and date (e.g. "free allocation phases out 2026 per the GX-ETS profile, updated [date]"), never asserting regulatory developments beyond the stored data's vintage — carbon-market policy moves fast, and staleness disclosure is the core guardrail. Tier 2: quantitative questions call the corrected CBAM and spread endpoints; scenario questions ("CBAM cost at €90") are parameterised tool calls, not model arithmetic. Briefings render via report studio with a data-vintage footer.
+
+**Prerequisites.** Evolution A's bug fixes are a hard gate — a copilot quoting today's CBAM tab would propagate wrong numbers with confidence; profile vintage fields. **Acceptance:** every $/€ figure in a briefing matches a tool response; every policy claim carries the profile's as-of date; questions beyond stored market coverage are declined.

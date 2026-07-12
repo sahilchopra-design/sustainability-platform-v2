@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real portfolio optimiser replacing the manual allocator (analytics ladder: rung 1 → 5)
+
+**What.** §7's partial mismatch: the guide promises a portfolio *optimiser* (`minimize Σ cost_i·qty_i s.t. Σqty_i ≥ target, permanence_i ≥ min`), but the "Portfolio Builder" is a manual allocation calculator — the user sets percentages, the page computes `removal_i = (spend_i/cost2030_i)·1000`. The underlying data is sound: six real NETs (DAC, BECCS, enhanced weathering, ocean alkalinity, biochar, soil carbon) with hand-authored realistic cost/permanence/scalability, and the DAC cost trajectory is a genuine Wright's-Law learning curve (`400·e^(−0.045·(yr−2024))`). Evolution A ships the actual constrained optimiser.
+
+**How.** (1) Implement the LP the guide states: `scipy.optimize.linprog` (or `minimize` with constraints) minimising blended cost subject to a total-removal floor, a permanence-weighted-average floor, and per-technology scalability caps (MtCO₂/yr potential) — the roadmap names scipy optimisation as the rung-5 prescriptive tier, and NET portfolio construction is exactly a first-mover for it. (2) Feed the optimiser the DAC learning-curve cost at the chosen target year so the optimal mix shifts toward DAC as its cost falls over time — coupling the two features the page currently keeps separate. (3) Return the efficient frontier (cost vs permanence) so the user sees the trade-off, not one point.
+
+**Prerequisites.** Cost/permanence/scalability figures should carry IPCC AR6 WGIII Ch.12 / IEA CCUS citations (named in §5) rather than bare hand-authoring; a pinned `bench_quant` case with a known LP optimum. **Acceptance:** the optimiser returns a provably minimum-cost mix meeting both constraints (verifiable against a hand-solved small case); raising the permanence floor shifts allocation away from soil carbon toward DAC/enhanced weathering as expected.
+
+### 9.2 Evolution B — CDR procurement copilot with tool-called optimisation (LLM tier 2)
+
+**What.** A copilot for a corporate CDR buyer: "build me a 100 ktCO₂ removal portfolio under $200/t average with at least 60% durable (>1000yr) removal", "how does the optimal DAC share change if I target 2035 instead of 2030?" — executed as calls to the Evolution-A optimiser and the DAC learning-curve model, presenting the recommended mix with per-technology rationale drawn from the real cost/permanence/scalability attributes.
+
+**How.** Tool schema over the new `POST /net-portfolio/optimize` endpoint (constraints as typed parameters) and a cost-trajectory tool; system prompt from this Atlas page's §5 optimisation statement and the six-NET attribute table so the copilot explains permanence tiers (1yr soil carbon → 10,000yr enhanced weathering) correctly. The year-sensitivity question becomes a swept sequence of optimiser calls rendered as a trajectory. No-fabrication validator matches every tonne/cost/percentage to a tool response; the copilot must not assert removal permanence beyond the attributes the data encodes.
+
+**Prerequisites (hard).** Evolution A — there is no optimiser to call today, and a copilot presenting the manual allocator's output as "optimal" would misrepresent it exactly as §7 warns. **Acceptance:** every recommended allocation traces to an optimiser call satisfying the stated constraints; asking for a NET not in the six-technology set yields a refusal listing what is modelled.

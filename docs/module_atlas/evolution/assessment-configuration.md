@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Persisted config with enforcement and impact preview (analytics ladder: rung 1 → 2)
+
+**What.** The console edits real calibration surfaces (L1 weights from `TAXONOMY_TREE`, A–E thresholds, 6 NGFS multipliers, DQ rules) but §7.5 documents the two gaps precisely: **no persistence and no enforcement** — edits are ephemeral component state that never reaches the scoring engines, the sum-to-100% rule is a colour warning rather than a save gate, and the 15-row audit log is hard-coded index math. Evolution A makes this the platform's actual single control point for scoring calibration.
+
+**How.** (1) Backend `assessment_config` table with versioned config rows (weights JSON, thresholds, multipliers, DQ params, effective_from, author) plus `GET/PUT /api/v1/assessment-config`; the scoring engines read the active version instead of their local defaults. (2) Server-side validation makes the gate real: weights must sum to 100 and thresholds must be strictly decreasing (A>B>C>D) or the PUT 422s. (3) Real audit log: every accepted PUT writes a config-change event (user from session, diff, reason field) — replacing the synthetic `AUDIT_LOG`. (4) Rung 2, the high-value piece: an impact-preview endpoint that re-scores a sample portfolio under the draft config before commit, quantifying the §7.4 effect ("raising B's floor to 70 re-rates 14 of 120 entities from B to C") so calibration changes are what-if-tested, not blind.
+
+**Prerequisites.** Identify which scoring engines consume these parameters and route them through the config service (integration inventory first); Alembic migration; RBAC — config writes should require an admin-tier role. **Acceptance:** a weight edit changes a downstream module's computed rating after save and not before; an invalid config (sum 96%) is rejected server-side; the audit log shows the real editor and diff.
+
+### 9.2 Evolution B — Calibration copilot with governed what-ifs (LLM tier 2)
+
+**What.** A copilot for the model-governance user: "what happens if I tighten the A threshold to 85?" answered by tool-calling the Evolution-A impact-preview endpoint and reporting the actual re-rating counts; "why is Delayed Transition's multiplier 1.30?" answered from the grounding corpus with the honest caveat §7.2 already records — the six scenario families are genuine NGFS, but the multiplier values are platform calibration choices, not NGFS-published numbers.
+
+**How.** Tools: read config, read audit history, run impact preview (all safe); `PUT /assessment-config` gated behind explicit user confirmation with a mandatory reason string, which then lands in the real audit log attributed to the session user — the copilot can draft a config change but only the user commits it. Grounding: this Atlas record (§7.2 defaults, §7.4 worked example, §7.6 PCAF DQ-gating and NGFS notes) embedded per the Tier-1 corpus pattern. The no-fabrication validator checks every re-rating count against the preview tool output.
+
+**Prerequisites (hard).** Evolution A — without persistence there is nothing for tools to read or write, and without the impact preview the copilot could only speculate about downstream effects, which is precisely what it must not do. **Acceptance:** every impact figure quoted matches a preview response; a commit without user confirmation is impossible by construction; the audit log entry for an LLM-drafted change names the human approver.

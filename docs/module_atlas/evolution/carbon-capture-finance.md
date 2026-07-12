@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real project finance replacing simplified seeded NPV (analytics ladder: rung 1 → 3)
+
+**What.** The page models CCUS economics (point-source, DAC, BECCS) with a `TECH_TYPES` table carrying real cost ranges/TRL, and correctly encodes the 45Q $85/t geological credit and EOR premium as region/storage-conditional. But the project pipeline is seeded (`captureRate`, `captureCost`, `capex`, `opex` all `sr()` draws) and the NPV is admittedly simplified (`npv20 = annualNetRevenue × 12 − capex + sr()×10` — a flat 12× multiple plus random noise, not a discounted cash flow). The registered backend is the generic `carbon.py` credit suite, which has a real `calculate_npv` and calibrated Monte Carlo the page doesn't use. Evolution A builds proper project finance.
+
+**How.** (1) Replace the flat-multiple NPV with a real discounted cash flow using the `carbon_calculator.calculate_npv` engine (already present, with discount rate and price-growth) — the `npvSensitivity` tab already does a proper `annNet × annuity − capex`, so extend that to the headline metric and drop the `+ sr()×10` noise. (2) Ground the technology cost ranges and learning curves in real CCUS data (IEA CCUS, Global CCS Institute — the `costTrajectory` DAC/BECCS curves are curated and should be sourced/vintage-tagged). (3) Wire 45Q properly: the $85/t geological and $60/t utilisation rates with the 12-year credit window (DAC gets the higher enhanced rate — the current flat $85 undercounts DAC). (4) Permanence-risk-adjusted CDR credit quality via `calculate_quality_score` (real engine function). (5) Rung 3: calibrate NPVs against published CCUS project economics and pin a reference.
+
+**Prerequisites.** Real project inputs (the seeded pipeline becomes user projects or sourced facilities); 45Q rate/tenor table by capture type; CCUS cost-curve sourcing. **Acceptance:** NPV is a real DCF (no noise term); DAC vs point-source get correct differentiated 45Q treatment; permanence risk adjusts CDR credit quality; learning curves carry sources.
+
+### 9.2 Evolution B — CCUS project-economics copilot (LLM tier 2)
+
+**What.** Industrial-decarbonisation and CDR investors ask "what's the NPV of a 500kt/yr point-source CCS project in the US Gulf with 45Q?", "how does DAC compare to BECCS on cost per tonne of durable removal?", "at what carbon price does this break even?" — the copilot runs the Evolution-A DCF and sensitivity tools, reports NPV/IRR/payback and permanence-adjusted credit quality, every figure tool-traced.
+
+**How.** Tool schemas over the `carbon.py` calculation routes (and the DCF extraction); the calibrated Monte Carlo supports distributional NPV answers. Grounding corpus: this Atlas record plus the IEA CCUS / 45Q references. The copilot's honesty duty spans two axes: the 45Q eligibility rules (capture-threshold, storage-vs-utilisation rate, credit window) are stated per project, and permanence is central to CDR credit value — the copilot reports durable-removal quality with its permanence basis, never conflating point-source-avoided with durable-removal credits (a real integrity distinction in CDR markets).
+
+**Prerequisites (hard).** Evolution A's real DCF — a copilot quoting the flat-12×-plus-noise NPV would misprice projects. **Acceptance:** every NPV/IRR/break-even traces to a tool response; 45Q treatment matches the project's capture type and storage; DAC/BECCS/point-source comparisons state permanence and credit-type distinctions.

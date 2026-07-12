@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sectoral pathways and the market-implied cross-check (analytics ladder: rung 2 → 3)
+
+**What.** The code's actual model is respectable: a PRNG-free, carbon-budget ITR on real `GLOBAL_COMPANY_MASTER` emissions (linear path to net-zero, cumulative 2025–2100 emissions vs the company's grandfathered slice of five IPCC AR6 budgets, interpolated ITR), plus a genuine closed-form OLS with adjusted R². Its §7.5 limitations: the decarbonisation path is linear (no sector-specific convergence), budget allocation is flat emissions-share grandfathering rather than a Sectoral Decarbonisation Approach, and the module's *name-sake* — the Dietz-style market-implied temperature regression on CDS/ERP/carbon prices — is entirely unimplemented. Evolution A does both upgrades: SDA-style sector pathways for the fundamental ITR, and a first slice of the §8 MIT model as the market cross-check.
+
+**How.** (1) Sector pathway intensities (SBTi SDA public tables) replace the linear path where a sector mapping exists, with `resolution_tier`-style reporting of which method applied. (2) For the MIT slice, start with the one market input the platform already holds — EU ETS price seeds — calibrating `P_carbon → T` against NGFS Phase IV scenario carbon-price/temperature pairs, deferring CDS/ERP ingestion (Markit/Damodaran) to a later increment as §8.4 acknowledges. (3) Move `computeCompanyITR` server-side so other alignment modules can share it. (4) Benchmarks per §8.5: reconcile ITR distribution against MSCI/ISS published portfolio ITR ranges; pin the §7.4 worked example (1.6°C, +50 Mt overshoot) in bench_quant.
+
+**Prerequisites.** SBTi SDA pathway tables ingested; NGFS carbon-price paths joined to temperatures. **Acceptance:** a steel company's ITR differs from a software company's at equal intensity for a documented sectoral reason; the carbon-price-implied temperature is reported alongside budget-ITR with its calibration R².
+
+### 9.2 Evolution B — Alignment-methodology copilot for the ITR family (LLM tier 1 → 2)
+
+**What.** ITR is the most methodology-sensitive number investors quote, and this page documents two different models (budget-overshoot vs the WACI threshold ladder in `lookupITR`) plus a promised third (MIT). Evolution B is a copilot that keeps users honest: "why is this holding 1.6°C here but 2.1°C in the temperature-score module?", "what does the regression R² actually mean?" (answer per §7.5: descriptive cross-section, not market pricing), "how would a 2045 net-zero target change our ITR?"
+
+**How.** Tier 1: this Atlas page — especially the §7 mismatch flag and §7.4 worked example — as the grounding corpus; the page's computed state (`holdingResults`, regression slope/R², `dataConf`) passed as context so answers reference the actual portfolio numbers. Tier 2 after Evolution A's server-side ITR: what-ifs ("set all uncommitted holdings to 1%/yr vs 2050 targets") run as tool calls, and cross-module comparisons cite each module's method by name. A hard rule: the copilot never calls the OLS a market signal — the §7 flag exists precisely because that conflation is tempting.
+
+**Prerequisites.** Copilot infrastructure (Phase 1); Evolution A for tool-called what-ifs. **Acceptance:** methodology-comparison answers correctly attribute each number to its model (budget-ITR / WACI ladder / MIT); every °C figure matches page state or a logged tool call.

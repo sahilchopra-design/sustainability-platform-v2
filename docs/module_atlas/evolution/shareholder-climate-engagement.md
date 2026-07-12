@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real CA100+ benchmark data with ISS-conditioned vote modelling (analytics ladder: rung 1 → 3)
+
+**What.** The module's best feature is already methodological, not data: §7.1 documents that `supportPct` is causally conditioned on management's recommendation (For→55 floor, Against→25), correctly encoding a real proxy-voting dynamic — but the 60 campaigns are synthetic against anonymised `Co. A…Z` names, and §7.6 flags that `issScore` is independently seeded despite ISS recommendations being the other dominant predictor of vote outcomes in reality. The overview promises "CA100+ benchmark tracking" across 10 indicators, which no data supports. Evolution A grounds both: ingest the publicly published Climate Action 100+ Net Zero Company Benchmark assessments (per-company, per-indicator, updated annually) and real resolution vote outcomes, then extend the conditioning model to include the ISS/Glass-Lewis signal.
+
+**How.** (1) A `ca100_benchmark_assessments` table seeded from the published CA100+ assessment releases (company × 10 indicators × criteria met), refreshed per cycle. (2) Fit the support model on real votes: support ~ f(mgmt rec, proxy-advisor rec, resolution type, year), replacing the `+sr()×35` noise term with fitted coefficients and residual bands — turning the module's already-correct causal structure into a calibrated one. (3) The escalation trigger (`EscalationRisk = 1 − progressRate` per §5) computes from actual benchmark-indicator movement over 3 cycles rather than invention.
+
+**Prerequisites.** CA100+ publishes assessments as web tables/PDFs — an extraction pass is needed; real vote outcomes need a proxy-record source (company 8-Ks report AGM results on EDGAR, free). **Acceptance:** a named focus company's 10-indicator panel matches the published CA100+ assessment; the fitted support model's coefficients are displayed with sample size.
+
+### 9.2 Evolution B — Engagement-report and voting-rationale drafter (LLM tier 1)
+
+**What.** The module's own workflow list ends with "Generate IIGCC-aligned engagement report and voting rationale" — a drafting task no deterministic code can do well. Evolution B is a copilot that composes the beneficiary-facing stewardship report and per-resolution voting rationale from grounded inputs: the company's CA100+ indicator status, the engagement history recorded in the module, the escalation-pathway position, and the IIGCC Net Zero Stewardship Toolkit structure the page already cites as its framework.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/shareholder-climate-engagement/ask`, corpus = this Atlas record plus the IIGCC toolkit section headings and the module's engagement records. Rationale drafts follow a fixed skeleton (benchmark status → engagement asks → progress assessment → vote decision with escalation logic) where the vote decision itself is the user's, never the LLM's — the copilot argues the recorded decision, or flags inconsistency ("voting For management while the escalation model signals stalled progress").
+
+**Prerequisites.** Evolution A's real benchmark data — drafting stewardship reports about `Co. A`'s synthetic progress has no use; ship after real assessments land. **Acceptance:** every benchmark claim in a draft cites a CA100+ indicator value in the DB; a draft contradicting the recorded vote decision is flagged, not silently produced.

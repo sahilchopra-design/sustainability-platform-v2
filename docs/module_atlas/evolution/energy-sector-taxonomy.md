@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Asset-level taxonomy screening wired to the platform's taxonomy engine (analytics ladder: rung 2 → 3)
+
+**What.** The page is a sprawling energy-transition analytics playground with genuinely good in-page math — CRF-annualized LCOE from the 11-row `TECH_PARAMS` table, Wright's-law learning curves (`lrToB = −ln(1−lr)/ln2`), MACC measures, a merit-order dispatch stack, NPV — and real regulatory constants (SC <100 gCO₂e/kWh, gas transitional <270 g direct, nuclear CDA 2022/1214). What's missing is the module's own name: no asset is actually *screened* against activity codes 4.1–4.30; `OG_PRODUCERS` alignment percentages and the DNSH step are generated/asserted, and the power stack is a stylized interpolation with `sr()` regional noise. Evolution A builds the screening path.
+
+**How.** (1) Consume the platform's `eu-taxonomy-engine` backend rather than reimplementing: this module contributes the *energy-specific* layer — activity-code mapping per generation asset (from `energy-asset-registry`'s real GPPD-backed rows), SC lifecycle-intensity screening using the asset's derived CI, gas/nuclear transitional tests with sunset dates. (2) DNSH climate-adaptation screening via the digital twin's hazard grids at asset coordinates — the platform already has the PostGIS layer that most taxonomy tools lack. (3) `TAS = Σ(Exposure·Aligned)/ΣExposure` computed over real screened assets. (4) Rung 3: bench-pin the LCOE/learning-curve math (already correct, deserves pins) and validate screening outcomes against a handful of published issuer taxonomy reports.
+
+**Prerequisites.** Registry and taxonomy-engine Evolutions A; lifecycle vs direct intensity data distinction handled honestly (SC needs lifecycle; registry CI is operational — disclose the gap or add lifecycle factors). **Acceptance:** a fixture CCGT with 240 g direct passes the transitional test and fails SC, with both verdicts citing the regulation article; TAS reproduces from screened rows; `sr()` remains only in chart cosmetics.
+
+### 9.2 Evolution B — Taxonomy-eligibility analyst for energy portfolios (LLM tier 2)
+
+**What.** A tool-calling analyst for the screening workflow: "screen our 14 generation assets — which are aligned, which fail DNSH on physical risk, and what's the portfolio TAS?" It chains Evolution A's endpoints (activity mapping → SC test → DNSH hazard check → transitional criteria → TAS aggregation), and drafts the alignment report citing the specific Delegated Regulation clauses the page already curates (2021/2139 Annex I, 4.29, CDA 2022/1214) per verdict.
+
+**How.** Tool schemas from the screening endpoints; grounding corpus = this Atlas record's §4.1 threshold table (the SC/transitional/nuclear rows are precise and citable) plus the taxonomy-engine's reference data. Verdict explanations must quote the failing criterion and the asset's measured value ("lifecycle 412 g vs 100 g SC bar"), all validator-checked. Borderline cases (data-gap on lifecycle intensity) are reported as "insufficient data — ineligible pending LCA" per taxonomy practice, not guessed.
+
+**Prerequisites (hard).** Evolution A — narrating the current generated alignment percentages would produce a taxonomy report with invented alignment for named O&G producers, exactly the regulatory exposure the module exists to manage. **Acceptance:** a golden 5-asset screen reproduces from scripted tool calls; every verdict carries a regulation citation and a measured value; portfolio TAS matches the aggregation endpoint.

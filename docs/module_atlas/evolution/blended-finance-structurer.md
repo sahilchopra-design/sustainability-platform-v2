@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Replace seeded deal tables with live engine calls (analytics ladder: rung 1 → 2)
+
+**What.** This module registers the same substantive `blended_finance_engine` as `blended-finance`, but its frontend is thinner and fully seeded: `DEALS` (6 rows), `TRANCHES`, `CATALYTIC_TREND`, and `FRONTIER_DATA` are all static/PRNG arrays, and its three visible tabs (Structure Builder, Tranche Designer, Impact-Financial Frontier) render them without calling the engine — the harness confirms the POSTs are `skipped`. Its distinct contribution versus the sibling is the tranche-designer and catalytic-ratio framing, so Evolution A makes those two views engine-backed.
+
+**How.** (1) The Structure Builder and Tranche Designer post to `model_concessional_layers` (senior/mezzanine/first-loss/grant shares, per-tier return targets, blended IRR) so `TRANCHES` becomes computed output; the catalytic ratio (`commercial_mobilized / concessional_deployed`, the module's headline formula) comes from `calculate_mobilisation_metrics` rather than the seeded `CATALYTIC_TREND`. (2) The Impact-Financial Frontier plots real per-tranche risk/return from the engine instead of `FRONTIER_DATA`. (3) The five deal templates become parameterised presets that pre-fill the engine call, not static rows. (4) Rung 2: the frontier sweep over tranche shares becomes a genuine what-if, which the engine's parameterised `tranche_shares` input already supports. Coordinate with `blended-finance` and `blended-finance-structuring` so the three sibling pages don't diverge in how they present the shared engine.
+
+**Prerequisites.** POST-failure triage (shared with the sibling modules); a decision on module-boundary — three modules over one engine should specialise, not duplicate. **Acceptance:** the tranche designer's IRR waterfall matches `/concessional-layers` output; the catalytic ratio is engine-computed from supplied finance amounts; the POSTs pass the harness.
+
+### 9.2 Evolution B — Tranche-design copilot (LLM tier 2)
+
+**What.** Scoped to this module's strength — tranche architecture — the copilot answers "what first-loss share gets commercial investors to a 10% hurdle on this deal?" by iterating `model_concessional_layers` and reporting the resulting waterfall, and "what catalytic ratio does that achieve?" from `calculate_mobilisation_metrics`. It narrates the risk-return frontier per layer from real engine output, never the seeded `FRONTIER_DATA`.
+
+**How.** Tool schemas over the shared engine routes (same OpenAPI surface as `blended-finance`); grounding corpus is this Atlas record plus the DFI Working Group / Convergence methodology notes in §5. The engine's honest-null contract carries through: per-tranche figures require supplied structuring inputs, so the copilot gathers tranche shares and return targets before calling, and reports `None` where the caller hasn't specified them. Because this and the sibling modules share the engine, the copilot's tool layer should be a single blended-finance tool set the desk orchestrator can route to, not three overlapping ones.
+
+**Prerequisites (hard).** Evolution A's engine wiring — the seeded `DEALS`/`TRANCHES` are not tool-callable and narrating them would fabricate deal economics. **Acceptance:** every tranche size, IRR, and catalytic ratio traces to an engine response; inverse hurdle-rate searches state their grid; missing structuring inputs prompt a request, not a default.

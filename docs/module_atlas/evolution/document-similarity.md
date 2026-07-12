@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — From 15 excerpts to an indexed corpus with a calibrated boilerplate threshold (analytics ladder: rung 1 → 3)
+
+**What.** §7 confirms this is one of the few pages with a genuine in-browser NLP pipeline — tokenization → smoothed TF-IDF → cosine similarity → Lloyd's K-means → deterministic PCA — over 15 real ESG-report excerpts, with no seeded data behind the core analysis. The limits are scale and validation: 15 hand-picked excerpts instead of the promised document repository, TF-IDF instead of the guide's transformer embeddings, and the CSS>0.92 boilerplate threshold asserted rather than calibrated. Evolution A builds the backend corpus and validates the threshold.
+
+**How.** (1) Backend vertical `api/v1/routes/document_similarity.py` with pgvector storage (`llm_corpus_chunks`-style table for report sections — the roadmap's D3 stage provides the extension) and real embedding vectors alongside TF-IDF (keep TF-IDF as the cheap fallback; it's already correct). (2) Ingestion via upload + the `esg-report-parser` path: section segmentation, year-tagging, peer-cohort metadata, so year-on-year comparison operates on actual document pairs rather than the current single-corpus view. (3) Calibration to earn rung 3: hand-label ~200 section pairs as boilerplate/substantive and report precision/recall of the 0.92 threshold (and of embedding-based CSS) — SEC/ESMA reviewers will ask where 0.92 comes from; the answer should be a labeled evaluation, not convention.
+
+**Prerequisites.** pgvector enabled on the Supabase instance; a corpus licensing check for redistributed report text (store embeddings + quotes, not full documents, where needed). **Acceptance:** uploading a two-year document pair yields section-level YoY similarity from the API; the boilerplate threshold ships with published precision/recall on the labeled set; the K-means/TF-IDF math is bench-pinned so the port doesn't drift.
+
+### 9.2 Evolution B — Boilerplate remediation assistant (LLM tier 2)
+
+**What.** Flagging stale sections is mechanical; fixing them is where teams stall. A tool-calling assistant takes each flagged section (CSS>threshold vs prior year), retrieves the most-differentiated peer sections on the same topic via the similarity index, and drafts *substantive-update guidance*: which quantitative datapoints are missing (the page already computes numeric-density per section), which peer framings are more specific, and what disclosure-quality reviewers have criticized — grounded in the module's SEC/ESMA reference corpus.
+
+**How.** Tools: `get_flagged_sections`, `find_similar_peer_sections` (vector search), `get_section_stats` (density/specificity scores the page already computes) from Evolution A's API. The assistant's output is guidance plus quoted peer examples — it does not ghost-write disclosure content wholesale, keeping the human disclosure owner in the loop and avoiding the irony of an LLM generating new boilerplate. Similarity scores and density stats in the answer are validator-checked against tool outputs.
+
+**Prerequisites (hard).** Evolution A's indexed corpus — with today's 15 excerpts, peer retrieval would return the same handful of companies for every query and the guidance would overfit to them. **Acceptance:** for a golden flagged section, every quoted peer passage resolves to an indexed document with its similarity score; suggested datapoints correspond to actual gaps in the section's computed numeric density, not generic advice.

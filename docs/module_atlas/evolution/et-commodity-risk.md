@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Compute the CTR composite from public production and price data (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag: the guide's `CTR = w_c·Concentration + w_d·DemandPressure + w_p·PriceVolatility + w_s·SubstitutionDifficulty` composite doesn't exist — the page shows four disconnected tables (seeded demand surges and price uplifts, a static HHI table, a seeded 20-name portfolio with `sr()` mineral exposures) and computes only weighted-average exposure. The good news: the CTR's ingredients are unusually public. Evolution A computes it.
+
+**How.** (1) Concentration: HHI computed from USGS Mineral Commodity Summaries production-by-country tables (free, annual) — separately for mining and refining stages, since the refining bottleneck (China REE >60%) is the §4 story worth telling with real numbers. (2) Demand pressure: IEA Critical Minerals demand projections by scenario (published datasets) vs supply forecasts → the NZE/STEPS gap per mineral per horizon. (3) Price volatility: realized σ from accessible price series (FRED carries several base-metal series; lithium/cobalt need a licensed or curated proxy — disclose which per mineral). (4) Substitution difficulty as a curated expert rating with citations (it is inherently judgmental — label it). (5) `services/commodity_risk_engine.py` assembles the CTR with documented weights; portfolio exposures replace `sr()` draws with company-level mineral-intensity estimates from sector intensity tables × real holdings. (6) Rung 3: bench-pin the HHI arithmetic; validate computed volatilities against published figures (the 2022 lithium >80% claim in §4 is checkable).
+
+**Prerequisites.** USGS/IEA ingesters; price-series licensing decisions per mineral; portfolio holdings from `portfolios_pg`. **Acceptance:** cobalt's mining HHI reproduces from USGS country shares; the CTR decomposes into four sourced components with provenance classes (computed/curated); zero `sr()` in exposures.
+
+### 9.2 Evolution B — Mineral-shock propagation analyst (LLM tier 2)
+
+**What.** The workflow's stress step — "run lithium +200% and propagate through portfolio input costs" — as a tool-calling analyst: it applies the shock via Evolution A's engine, propagates through per-company mineral cost shares, ranks holdings by margin impact, and drafts the risk-pack note with the transmission chain explicit ("Battery-Mfg holding X: lithium is ~14% of COGS via sector intensity table → gross margin −4.1pp under the shock"), every figure from tool output including the intensity table's provenance.
+
+**How.** Tools: `get_ctr(mineral)`, `run_price_shock(mineral, pct, horizon)`, `propagate_to_portfolio(shock, portfolio)`, `get_supply_profile(mineral)`. Grounding corpus = this Atlas record's §5 CTR definition and the IEA/USGS reference list. The propagation model's coarseness is disclosed structurally: sector-level intensity estimates carry wider bands than company-disclosed input costs, and the note says which applies per holding. Scenario framing maps to the engine's typed scenarios; free-form shocks are parameter overrides, not narrative inventions.
+
+**Prerequisites (hard).** Evolution A — propagating shocks through seeded exposures would produce authoritative-sounding nonsense about named holdings' margins. **Acceptance:** a golden lithium-shock note reproduces from scripted calls; each holding's impact carries its intensity-data provenance; minerals without price-series coverage refuse the volatility component with the disclosed gap.

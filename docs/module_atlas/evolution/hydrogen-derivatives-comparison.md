@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Full delivered-LCOH chain replacing the synthetic production term (analytics ladder: rung 2 → 3)
+
+**What.** The module's strength is its externally-grounded `CARRIERS` table (IRENA/IEA/DNV physical constants); its documented weaknesses are that the delivered-cost stack's production term is a `sr(idx*7)` placeholder ($15–23/GJ, unrelated to pathway economics), reconversion is a crude `(100−η)×0.3` linear proxy, and transport is linear in distance with no boil-off or vessel-scale effects. Evolution A wires the production term to the platform's own `hydrogen_economy_engine.calculate_lcoh` (already live behind `POST /api/v1/hydrogen/lcoh` and country-cost refdata) and builds a proper chain model: LCOH → carrier conversion energy → voyage (boil-off per day for LH₂, 0.3–3%/day per the table's own note) → reconversion energy balance for NH₃ cracking and LOHC dehydrogenation heat.
+
+**How.** (1) New endpoint `POST /hydrogen/delivered-cost` in `api/v1/routes/hydrogen.py` composing `calculate_lcoh` (per production country from `ref/country-costs`) with a per-carrier conversion/reconversion energy model — the §5 quoted ranges (NH₃ cracking $0.5–1.0/GJ, LOHC dehydrogenation $1–2/GJ) become the calibration checks. (2) Voyage-duration-dependent boil-off for LH₂ makes cost genuinely nonlinear in distance. (3) The frontend's `deliveredCostData` swaps its synthetic term for the engine call. Mind the blast radius: `hydrogen_economy_engine` is shared by 5 modules, so LCOH changes must be additive.
+
+**Prerequisites.** The `sr()` production placeholder removed; carrier conversion-energy constants sourced and documented. **Acceptance:** NH₃-at-10,000km delivered cost decomposes into cited components within IEA benchmarking ranges; the same carrier from two production countries differs by their `ref/country-costs` electricity spread.
+
+### 9.2 Evolution B — Carrier-selection analyst over the hydrogen route family (LLM tier 2)
+
+**What.** A tool-calling analyst for export developers: "cheapest carrier for Australia→Japan at 8,000 km for ammonia end-use?", "at what distance does LH₂ lose to NH₃?", "does this chain clear the EU H₂ Bank ceiling?" The module already sits on 7 live routes (`/lcoh`, `/cost-trajectory`, `/demand-sector`, `/eu-h2-bank`, three `ref/` GETs) that the comparison page barely exercises — the lineage harness shows the POSTs skipped — so tier 2 unlocks existing backend capability rather than requiring new engines.
+
+**How.** Tool schemas filtered to the hydrogen route family via the Atlas endpoint map; system prompt grounded in this page's §7.2 carrier table and §5 cost ranges so qualitative trade-offs (NH₃ toxicity, LOHC heat integration, e-fuel CO₂ dependency) come from the curated `notes`/`SCENARIOS` rationale text, not model priors. Distance sweeps ("find the LH₂/NH₃ crossover") execute as repeated tool calls with the crossover computed from returned points. The no-fabrication validator checks each $/GJ figure; scenario-winner questions must cite the hand-scored `SCENARIOS` rationale as expert judgement, not computation.
+
+**Prerequisites.** Copilot/tool-calling infrastructure (Phase 2); Evolution A for delivered-cost questions (until then the analyst must caveat that production cost is a placeholder). **Acceptance:** every numeric traces to a tool call or the `CARRIERS` table; crossover answers reproducible from the logged sweep points.

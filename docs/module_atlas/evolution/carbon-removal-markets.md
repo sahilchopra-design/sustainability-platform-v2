@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Sourced CDR cost/scale data and permanence-adjusted valuation (analytics ladder: rung 1 → 2)
+
+**What.** This CDR-market page has a real project-economics calculator (`annEbitda = revenue + subsidy − opex`, with energy cost from `energyMwhT × energyCostMwhUsd`, capacity-scaled) and cost-curve/scale-trajectory/price-sensitivity views over the `CDR_TECHNOLOGIES` table (8 pathways with costNow/2030/2050, TRL, permanence, resource intensity). But those cost/scale figures and the `FRONTIER_BUYERS` / `CDR_STANDARDS` tables are curated constants, and the registered backend is the generic `carbon.py` suite — not the richer `carbon_removal_engine` its sibling `carbon-removal` uses. Evolution A grounds the market data and adds the permanence-adjusted pricing the overview promises.
+
+**How.** (1) CDR cost curves and capacity from real sources (CDR.fyi, Frontier AMC public commitments, IEA) with vintages, replacing the curated `CDR_TECHNOLOGIES` figures — the DAC $300-1000/t and biochar $50-200/t ranges the overview cites should be sourced, not hard-coded. (2) Wire to the real `carbon_removal_engine` (its sibling's backend) for technology assessment and economics rather than the generic carbon suite — the two CDR modules should share that engine. (3) Implement permanence-adjusted carbon value: `permanence-adjusted price = raw price × permanence tier factor` (a 1000-year DACCS removal vs a 100-year biochar credit), the overview's stated methodology. (4) Rung 2: procurement supply/demand dynamics and forward-price scenarios parameterised over the real Frontier-buyer commitments. Coordinate module boundary with `carbon-removal` (overlapping CDR scope — one does markets, one does project assessment).
+
+**Prerequisites.** CDR market-data sourcing; adoption of the `carbon_removal_engine` over the generic carbon routes; a permanence-tier factor table. **Acceptance:** cost/scale data carry sources and vintages; economics come from the CDR engine; permanence-adjusted prices reflect durability tiers; Frontier-buyer data is real.
+
+### 9.2 Evolution B — CDR-market and procurement-strategy copilot (LLM tier 2)
+
+**What.** Corporate net-zero buyers and CDR investors ask "which pathway offers the best permanence-adjusted price at scale?", "model DAC economics at $200/t with 30% subsidy", "what's the 2030 supply gap vs Frontier demand?" — the copilot runs the Evolution-A economics and market tools, reporting permanence-adjusted value, EBITDA/NPV, and supply/demand scenarios, every figure tool-traced.
+
+**How.** Tool schemas over the Evolution-A CDR-engine and market routes (shared with `carbon-removal`); grounding corpus is this Atlas record plus the CDR references. The copilot's honesty duty, as across all CDR modules, is permanence: it reports permanence-adjusted (not raw) value and states the durability tier, since a headline $/t comparison across pathways is misleading without permanence normalisation — the module's own thesis. Cost/scale projections state their source and vintage. This module feeds the Tier-3 desk orchestrator's CDR-market view alongside `carbon-removal`'s project-assessment tools.
+
+**Prerequisites (hard).** Evolution A's sourced data and CDR-engine wiring — a copilot comparing pathways on curated raw prices without permanence adjustment would mislead procurement. **Acceptance:** every cost, EBITDA, and price figure traces to a tool response; pathway comparisons use permanence-adjusted value with tiers stated; supply/demand scenarios cite the Frontier-buyer data.

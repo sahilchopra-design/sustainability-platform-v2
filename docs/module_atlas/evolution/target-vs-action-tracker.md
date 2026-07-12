@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Fix the target-year parser, then benchmark against live disclosure data (analytics ladder: rung 1 → 3)
+
+**What.** The run-rate extrapolation model is genuine (§7.1) but §7.2 documents a real bug: target years are parsed via `includes('2030'/'2040'/'2050')` with a 2039 fallback, so Orsted's "98% by 2025" gets `yearsLeft=15` instead of 1 and a nonsensical unclamped `projectedFinal=169%`; the trajectory chart's separate binary 2030/2050 check mis-dates Orsted, Unilever (2039), and Amazon (2040), making the KPI panel and chart disagree for the same company. Evolution A fixes the parser, then replaces the 13 hand-curated rows with sourced target/progress data and an SBTi-pathway benchmark.
+
+**How.** (1) Parse the year with a regex over the target string (or better, store `targetYear` as a field), clamp `projectedFinal` at 100%, and use one shared target-year value for both KPI and `targetLine` paths. (2) Source targets from SBTi's public target-dataset export and progress from company-reported Scope 1+2 series (CDP/annual reports), replacing the illustrative `achieved`/`years` values — the module already tracks real names (Shell, Orsted, Microsoft...), so the credibility gap is the numbers, not the framing. (3) Benchmark the gap against SBTi sector pathways rather than pure linear run-rate (§7.6 notes the code implements the simpler convention), reporting both. (4) Extend `gapPct` to also compute the guide's ratio-form gap so guide and code agree on definitions.
+
+**Prerequisites.** The §7.2 bug fix is a blocker for everything else — benchmarking a mis-projected trajectory compounds the error. **Acceptance:** Orsted shows `yearsLeft=1` and `projectedFinal≈97%`; KPI panel and trajectory chart use identical target years for all 13 companies; each company row cites its data source.
+
+### 9.2 Evolution B — Engagement-memo copilot for off-track companies (LLM tier 1)
+
+**What.** The module already auto-generates threshold-based engagement items (`gapPct>30 → HIGH`, §7.5). A tier-1 copilot turns those flags into stewardship-ready drafts: "write the engagement case for Shell" produces a memo citing the computed gap, run-rate vs required rate, the green-CapEx figure, and the tech-deployment/lobbying triangulation — the genuinely useful investor-due-diligence framing §7.6 credits the module with.
+
+**How.** No backend exists (tier B, frontend-only), so grounding is this Atlas record plus live page state per the roadmap's tier-1 pattern: the copilot may cite `annualRate`, `projectedFinal`, `gapPct`, `onTrack`, and the ordinal tech/lobby encodings, each attributed to its formula (§7.1 is in the corpus). It must carry the provenance caveat from §7.6 — figures are hand-curated demo values styled on real commitments — in any memo text until Evolution A's sourced data lands, and must present `lobbyAlign` as a qualitative hand-assessment, not a computed score. Cross-module escalation (pulling the company's temperature-alignment or transition-credibility scores) is deferred to a tier-3 desk orchestrator; this copilot stays within the module's own surface.
+
+**Prerequisites.** Evolution A's parser fix — a memo quoting Orsted's 169% projection would be an embarrassing, traceable error. **Acceptance:** every number in a memo reproduces from the page's formulas; memos on any company include the demo-data disclaimer pre-Evolution-A; asking for a company not in the 13-row set yields a refusal, not an invented profile.

@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Ingest the Sabin Center case database and build the real LEI decomposition (analytics ladder: rung 1 → 3)
+
+**What.** The §7 flag identifies the core failure: the guide's `LEI = Σ(Asset Value × Case Probability × Liability Severity)` has **no case-probability or liability-severity decomposition** — `litigationExposure` is just `bookValue × (sr()×0.5+0.02)`, a flat random haircut with no case data, and the guide's cited "312 active cases from the Sabin Center" are never ingested; there is no case list or case-to-asset matching in the file. The 120 assets, 80 creditors, and 20 regulatory triggers are all `sr()`-synthetic. The one well-sourced element is the SCC-based carbon lock-in externality ($51/tCO₂, correctly applied). Evolution A builds the litigation model the module is named for.
+
+**How.** (1) Ingest the Sabin Center Global Climate Litigation Database (publicly accessible) into a `climate_litigation_cases` table — jurisdiction, defendant, case type, status, precedent (Milieudefensie v Shell). (2) Match cases to portfolio assets by defendant entity (via `entity_lei`) and jurisdiction, replacing the random asset generation. (3) Implement the real LEI: per-case success probability (from the database's outcome history or a jurisdiction/case-type prior) × liability severity × exposed asset value — the guide's decomposition. (4) Tie `litigationExposure` to `strandingRisk`, permit status, and jurisdiction (currently uncorrelated — a "Revoked" permit doesn't raise exposure). (5) Base creditor-asset linkage on real financing relationships rather than `assetIdx = floor(sr()×120)`.
+
+**Prerequisites.** Sabin Center data ingestion and entity matching; a case-outcome prior for probability estimation. This is a substantial build — the litigation dimension is entirely absent today. **Acceptance:** the LEI decomposes into case probability × severity × exposure per matched case; every asset links to real cases by defendant/jurisdiction; litigation exposure responds to permit status.
+
+### 9.2 Evolution B — Climate-litigation monitoring copilot (LLM tier 2)
+
+**What.** A copilot for the fossil-exposure risk analyst: "which litigation cases threaten my portfolio's assets?", "what's the precedent from Milieudefensie v Shell for this defendant?", "alert me on material judgements affecting my holdings" — reading the ingested case database, matching to portfolio exposure, and summarising case developments with source citations.
+
+**How.** Tier-2 pattern once the database exists: case-lookup and portfolio-matching become tools; the LLM reads case records and summarises status, precedent, and liability range, citing the Sabin Center record ID. New-judgement monitoring reads case-status changes and flags affected holdings. The no-fabrication validator checks every liability figure against the computed LEI; case summaries quote the database, not model memory of legal cases (which is exactly where hallucinated case law creeps in).
+
+**Prerequisites (hard).** Evolution A — there is no case data today, only random haircuts, so a litigation copilot would fabricate cases and precedents, the highest-risk failure mode for legal-adjacent content. **Acceptance:** every case referenced exists in the ingested database with a retrievable ID; liability figures trace to the LEI decomposition; a portfolio with no matched cases returns "no active litigation exposure identified," not an invented case.

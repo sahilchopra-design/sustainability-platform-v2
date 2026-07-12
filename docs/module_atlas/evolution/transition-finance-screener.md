@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — An auditable screening rule and live instrument-screen calls (analytics ladder: rung 1 → 3)
+
+**What.** The module screens 8 hand-curated real bonds (EIB, Enel SLB, Saudi Aramco...) with no PRNG — the directional data is sound (Apple 88% taxonomy-aligned, Saudi Aramco 8%; SLBs correctly 0% since proceeds are general-purpose). But §7.6 documents the core gap: the `screening` pass/watch/fail verdict is a **hand-set label with no rule linking it to** `taxonomy_aligned`, `dnsh`, or `itr` — it's not auditable or reproducible. Meanwhile the mapped `POST /instrument-screen` engine endpoint (which computes exactly this) is never called and currently traces `failed`. Evolution A makes the verdict a rule and wires the engine.
+
+**How.** (1) Define an explicit, auditable screening rule per §7.6's suggestion — e.g. `fail` if DNSH fails ≥2 objectives OR taxonomy_aligned <20% OR ITR >3.0°C; `watch`/`pass` bands below — so the verdict derives from the fields, reproducibly. (2) Fix and call `POST /instrument-screen` (traces failed today; shared with the `transition-finance`/`transition-finance-engine` siblings — the whole `transition_finance_engine` family's POSTs are broken). (3) Replace the 8 illustrative bonds with a real feed: EU GBS/ICMA-labelled bonds from the Climate Bonds Initiative database; retain DNSH as an evidence-linked assessment (§7.6 notes no evidence trail exists for a "false"). (4) Derive ITR from issuer emissions/target data rather than hand-setting the 1.4–4.2°C figures (§7.7).
+
+**Prerequisites.** The `instrument-screen` POST failure root-caused; a labelled-bond data source; 46-module blast radius via the shared engine (§6). **Acceptance:** every pass/watch/fail verdict reproduces from the stated rule over the bond's own fields; identical inputs to `/instrument-screen` give identical verdicts front and back; DNSH "false" flags carry an evidence reference.
+
+### 9.2 Evolution B — Bond-screening copilot for ESG fixed-income desks (LLM tier 1 → 2)
+
+**What.** A copilot answering "why did TotalEnergies' transition bond screen as Watch not Pass?" (DNSH fails 3/6 objectives per the data), "which instruments command the largest greenium and why?", and "does this SLB's KPI structure meet ICMA SLBP?" — grounded in the accurate ICMA/EU-GBS labelling (§7.7) and, at tier 2, executing `/instrument-screen`.
+
+**How.** Tier 1 on the module's genuinely-real curated data plus this Atlas record: the copilot explains the structural distinction the data correctly encodes (use-of-proceeds bonds can be taxonomy-aligned; SLBs structurally can't, §7.4) and the greenium pattern (low-credibility green bonds command no greenium — Saudi Aramco +0.4bps). It must disclose per §7.6 that the 8 bonds are illustrative constructions with representative terms, not live prospectus data, and — critically pre-Evolution-A — that the screening verdict is currently a hand-set label, not a rule output. Tier 2 arrives with Evolution A's screening endpoint: the copilot runs the auditable rule and cites the specific failing criterion, with the "show work" expander exposing the DNSH objective that triggered a Watch/Fail.
+
+**Prerequisites.** Evolution A's rule and endpoint fix for tier 2; tier-1 explanation ships now with the illustrative-data and hand-set-verdict caveats. **Acceptance:** every screening explanation names the specific criterion; the SLB/UoP taxonomy distinction is never blurred; verdicts are labelled hand-set until Evolution A, then rule-traced.

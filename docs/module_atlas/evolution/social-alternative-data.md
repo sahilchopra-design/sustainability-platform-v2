@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Real NLP inference over the already-live text feeds (analytics ladder: rung 1 → 3)
+
+**What.** The §7 mismatch flag is large but the module has a genuine asset the guide obscures: it already fetches three live, keyless sources — Bluesky post search, GDELT news, and OpenAlex academic papers — and its `LiveBadge` component honestly flags each as LIVE or SEEDED in real time (the only module in its batch to do so). What's fake is the analysis: sentiment is a bag-of-words keyword counter, and the seven "engine" tabs (ABSA, NLI Verification, Hedge Detection, Boilerplate, Alt-Data Alpha, Multi-Lingual, Readability) are `sr()`-synthetic per-company scores despite names implying real inference. The guide's separate promise (Glassdoor/LinkedIn/FFIEC pipeline) is unimplemented. Evolution A replaces the keyword heuristic and the synthetic tabs with real models on the live feeds, per the module's own §8 spec.
+
+**How.** (1) Swap the bag-of-words scorer for a domain-tuned transformer (FinBERT or ESG-RoBERTa — the `LANGUAGES` table already names them) running on live Bluesky/GDELT text, with the LIVE/SEEDED badge preserved. (2) Implement the ABSA tab as real aspect-based extraction and the NLI Verification tab as an actual claim/evidence entailment model (RoBERTa-MNLI fine-tuned on sustainability pairs) for greenwashing-risk scoring. (3) Controversy velocity with the guide's stated 30-day-half-life exponential decay computed over the real GDELT article stream. (4) Persist scored signals so Alt-Data Alpha can be backtested rather than drawn.
+
+**Prerequisites.** Transformer inference needs the dedicated venv (platform memory notes the fastapi/starlette pin conflict); GDELT has no seed fallback so failures must surface, not silently empty. **Acceptance:** the same post yields different sentiment under model vs keyword scoring, with the model path labelled; every "engine" tab shows model output traceable to input text, not an `sr()` draw.
+
+### 9.2 Evolution B — Controversy-early-warning analyst (LLM tier 2)
+
+**What.** The module's genuine value is exactly what an LLM does natively: reading live social/news text and judging ESG controversy signal and disclosure quality. Evolution B is a tool-calling analyst over the live feeds — "any emerging greenwashing controversy on Company X this week?" triggers Bluesky/GDELT queries, the LLM reads returned posts/articles, classifies aspect and severity, runs the NLI greenwashing check, and returns a dated, source-linked early-warning brief. It becomes the inference engine the synthetic tabs only mimic.
+
+**How.** Tool schemas wrap the three live fetch endpoints; the LLM's per-item classifications (sentiment, aspect, greenwashing-entailment) are logged as structured output, feeding the persisted signal store from Evolution A. Every claim in a brief cites a specific post/article with its LIVE/SEEDED provenance; the OpenAlex feed grounds methodology answers ("which ABSA approach does the literature favour for ESG?"). No score without a source item.
+
+**Prerequisites.** Evolution A's persisted signals for trend context; strict provenance so SEEDED-fallback items are never presented as live evidence. **Acceptance:** every controversy claim links to a retrievable Bluesky/GDELT item with its live/seeded flag; a company with no matching recent posts yields "no signal in the live window," not an invented controversy.

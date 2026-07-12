@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Live clock, reconciled scoring, and real filing-package validation (analytics ladder: rung 1 → 2)
+
+**What.** The 15-submission registry is genuine curated content (correct XHTML/ESEF vs iXBRL vs EDGAR-XBRL distinctions per regulator, SEC litigation status correctly flagged), but §7 documents an inverted-formula mismatch — the guide's readiness score `SR = validated/required × (1−error_rate)` vs the code's burden score `overall = complexity×0.25 + deadline×0.3 + (100−dataReady)×0.3 + assurance×0.15`, conceptually opposite metrics that must not be conflated — plus the frozen `today = new Date('2025-05-15')` (all timeline math silently stale) and no actual validation logic behind the `assurance` proxy. Evolution A fixes the clock, defines both metrics honestly, and adds real package validation.
+
+**How.** (1) Live date immediately (same one-line class of fix as `regulatory-deadline-tracker`). (2) Keep both scores, named correctly: "jurisdiction burden" (the existing composite, documented) and "submission readiness" (the guide's formula, now implementable once field-level state exists — `validated_fields/required_fields` over a persisted submission-package checklist per filing). (3) Package validation: for XBRL/ESEF formats, run structural checks (taxonomy version, mandatory tags present, calculation-linkbase consistency) via an open validator library server-side, making `assurance` a real result instead of a format flag. (4) Registry rows gain review dates; SEC-style status changes are edits with history, converging on the shared regulatory fact base with the calendar/horizon modules.
+
+**Prerequisites.** Submission-package schema per framework (start ESEF/CSRD); validator library selection. **Acceptance:** days-to-deadline advances daily; the two scores are labelled and move independently (readiness improves as fields validate; burden falls as deadlines pass); an ESEF package missing a mandatory tag fails validation with the tag named.
+
+### 9.2 Evolution B — Filing-desk copilot for format and portal questions (LLM tier 1 → 2)
+
+**What.** Filing teams' recurring questions are procedural: "what format does SEBI require for BRSR and through which portal?", "our ESEF validation failed on calculation consistency — what does that mean and where do I fix it?", "which of our 15 filings are within 45 days and below 80% readiness?" The copilot answers from the registry, live validation results, and readiness state.
+
+**How.** Tier 1: RAG over the registry rows (format/portal/deadline fields) and the framework filing-manual excerpts; procedural answers cite the registry row and its review date. Tier 2: triage and validation-explainer answers call the Evolution-A endpoints — a validation-failure explanation quotes the validator's actual error (tag, linkbase rule) and maps it to the responsible checklist field, which is exactly the translation-of-machine-output-to-action work LLMs do well when grounded. Guardrails: no assertion of current regulator requirements beyond registry vintage; portal-submission actions remain human-only (the copilot prepares, never files); readiness figures only from the computed score.
+
+**Prerequisites.** Evolution A's validation and readiness machinery; filing manuals chunked. **Acceptance:** validation explanations reference the actual validator error codes; triage lists match endpoint queries; every requirement claim carries the registry's as-of date.

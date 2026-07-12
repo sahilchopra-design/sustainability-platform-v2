@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Discount the ratchet cashflows and history-calibrate SPTs (analytics ladder: rung 2 → 3)
+
+**What.** This is one of the batch's stronger AdvisoryToolkit modules: the guide's formulas are substantially implemented — SPT calibration against a real SBTi sectoral decarbonisation pathway, a two-way coupon ratchet, an ICMA SLBP 5-component scorecard, a genuine Monte Carlo achievement probability, tornado sensitivity, and 8 real disclosed peer deals (ENEL, Tesco, H&M, JBS, UltraTech, Vedanta, JSW Steel, HDFC Bank) with actual reported greenium/step-up bps. Its curated `AdvisoryReference.js` (SBTi SDA rates, ICMA KPI baselines, CBI greenium tables) is realistic and internally consistent. Three §7 gaps hold it at rung 2: the guide's Ratchet-NPV specifies discounting (`/(1+r)^t`) but the code uses **undiscounted** lifetime notional sums; the tornado's `coupon` input is a no-op (never referenced by the output function); and default KPI trends (8–10%/yr) aren't derived from the company's actual history.
+
+**How.** (1) Discount the ratchet cashflows: each annual greenium/step-up/step-down observation at the issuer's cost of debt, delivering the true NPV the guide's formula specifies — the single highest-value fix for treasury use. (2) Fix the tornado no-op: either wire `coupon` into `netBenefit` or remove it from the tested input set. (3) History-calibrate SPTs: derive the KPI trend from the issuer's actual historic trajectory (the sibling `slb-structurer` has a `calibrate-history` ln-OLS approach to share) rather than illustrative 8–10% defaults. (4) Optionally link the curated SBTi/CBI reference tables to live sources, or stamp them as illustrative benchmarks with vintages. (5) Bench-pin the ratchet-NPV.
+
+**Prerequisites.** A cost-of-debt input per issuer; issuer KPI history for calibration. **Acceptance:** ratchet cashflows are discounted to NPV; the tornado's coupon bar shows real range or is removed; SPT calibration reflects the issuer's actual trajectory.
+
+### 9.2 Evolution B — SLL/SLB structuring analyst (LLM tier 1)
+
+**What.** A copilot for the sustainable-finance structurer: "calibrate a carbon-intensity SPT for this steel issuer against SBTi", "what's the net financing benefit under the stress achievement scenario?", "how does this structure score against the ICMA SLBP 5 components?", "show me comparable disclosed deals" — answered from the module's genuine SPT calibration, ratchet economics, 5-component scorecard, and the 8 real peer deals.
+
+**How.** Tier-1 RAG pattern: `POST /api/v1/copilot/sustainability-linked-finance/ask`, corpus = this Atlas record (§7.2 core formulas, the SLBP scorecard, the curated SBTi/CBI reference tables) plus live tool state. SPT-ambition and ratchet answers narrate the computed figures; the 5-component compliance narrative cites each SLBP component; peer-comp answers reference the real disclosed transactions with their actual bps. The copilot flags the undiscounted caveat pre-Evolution-A.
+
+**Prerequisites.** Evolution A's discounting so financing-benefit answers are NPV-correct rather than undiscounted totals. Shippable as explanation-only against current outputs with the undiscounted caveat stated. **Acceptance:** every SPT/greenium/step-up figure traces to the module's computation; the SLBP score cites its 5 components; peer-deal figures match the real disclosed transactions, not invented terms.

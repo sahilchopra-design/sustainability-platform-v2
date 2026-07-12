@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Purge the noise term and build the four-pillar model on real disclosures (analytics ladder: rung 1 → 3)
+
+**What.** §7's mismatch flag: the guide promises a four-pillar weighted `BoardClimateScore` with a `CompetencyDepth` factor and ISSB S2 paragraph-by-paragraph gap analysis, but the code runs a fixed additive rubric over five binary/count attributes **plus a seeded random noise term of up to 15 points** (`sr(i*37)×15`) — meaning a material fraction of every company's governance score is pure fabrication, over 70 fully synthetic companies. Two companion metrics (`carbonNetworkScore`, `thirdPartyAudit`) are also seeded and don't even feed the score. Evolution A removes the fabrication and builds the documented model.
+
+**How.** (1) Delete the `sr(i*37)×15` noise term immediately — it is the platform's exact anti-pattern (random-as-data), inflating scores by up to 15 points with no basis; this is a P1 fix, not a feature. (2) Source the five attributes from real disclosures: board climate committee, CEO climate KPI, climate-in-exec-comp, climate expertise ratio, and board-meeting frequency are all TCFD-Governance-pillar disclosures. (3) Build the promised disclosure pillar and the ISSB S2 governance-paragraph (¶6–9) gap analysis the guide claims — this is the module's differentiator vs `board-climate-competence`, so specialise here. (4) Rung 3: benchmark against the real reference points the module already cites (Spencer Stuart 43% climate-expertise stat, WTW 51% exec-pay stat). As a backend vertical, `POST /api/v1/board-oversight/score`.
+
+**Prerequisites.** A sourced governance dataset (70 companies are synthetic today — replace or clearly badge); coordination with `board-climate-competence` and `board-composition`/`board-diversity` so the board cluster specialises rather than overlapping. **Acceptance:** the score contains no PRNG term (guardrail `check_no_fabricated_random.py` passes); each pillar derives from cited disclosures; the ISSB S2 ¶6–9 gap output exists; benchmark stats reconcile.
+
+### 9.2 Evolution B — TCFD/ISSB S2 governance-disclosure copilot (LLM tier 2)
+
+**What.** The module's stated audience (stewardship teams, companies preparing TCFD/ISSB S2 governance disclosures) needs a copilot that scores a company's board governance and drafts the disclosure scorecard: "assess this board's climate oversight and generate the ISSB S2 governance gap analysis" runs the Evolution-A four-pillar model and the ¶6–9 gap tool, narrating strengths and gaps against each requirement — every score and gap from tool output.
+
+**How.** Tool schemas over the Evolution-A scoring and gap-analysis routes; grounding corpus is this Atlas record plus the TCFD Governance and ISSB S2 references in §5. The refusal path is essential pre-Evolution-A: the current score is 15-points-fabricated, so a copilot must not narrate it as a real assessment — a tier-2 copilot is gated entirely on the noise-term removal. Once real, the copilot drafts governance-disclosure narratives citing the specific ISSB S2 paragraph each finding addresses, composing into the report layer.
+
+**Prerequisites (hard).** Evolution A, especially the noise-term purge — a governance copilot quoting a partly-random score would be indefensible for stewardship or disclosure use. **Acceptance:** every score and gap traces to a tool response; the score has no random component; ISSB S2 gap findings cite the relevant paragraph; the copilot refuses to assess boards absent sourced disclosure inputs.

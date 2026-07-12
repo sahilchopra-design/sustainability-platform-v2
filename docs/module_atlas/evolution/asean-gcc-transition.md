@@ -1,0 +1,17 @@
+## 9 · Future Evolution
+
+### 9.1 Evolution A — Versioned refdata backing with reconciled aggregates and modelled coal glidepaths (analytics ladder: rung 1 → 2)
+
+**What.** This is an honest static reference dashboard (no PRNG, curated real-world figures, guide↔code aligned) with three documented weaknesses: all `REFERENCES` URLs are `'#'` placeholders so no cell's vintage is verifiable; header KPIs are curated headlines that don't reconcile with their own tables ("ASEAN Coal 79 GW" vs a coalGW column summing to ~98 GW); and the coal-retirement glidepaths are illustrative shapes, not model output. Evolution A moves the six seed tables (`ASEAN_COUNTRIES`, `GCC_TARGETS`, `TAXONOMY_COMPARISON`, `COAL_PHASE`, `SUKUK_PIPELINE`, `H2_PROJECTS`) into the platform's refdata layer with real citations and computes what is currently hand-typed.
+
+**How.** (1) Refdata tables keyed by `(entity, metric, vintage, source_url)` served via `/api/v1/refdata`, consumed through the existing `useReferenceData` hook; header KPIs become live SUMs so the 79-vs-98 GW discrepancy is resolved by construction. (2) Coal glidepaths re-derived from a simple unit-level retirement model (plant list × age × JETP funding assumption) so the JETP/base/delay scenarios are parameterised what-ifs (rung 2), not drawn curves — the `jetpMode` toggle already provides the UI seam. (3) A vintage banner per table ("NDC pledges as filed 2024-03") replacing silent staleness.
+
+**Prerequisites.** Source each cell before migration — the named sources (ASEAN Taxonomy Board v2, JETP CIPP, IIFM 2024) must become resolvable URLs; a plant-level coal dataset (Global Energy Monitor coal plant tracker is freely licensed) for the retirement model. **Acceptance:** every rendered figure carries a resolvable source and vintage; header KPIs equal their table sums; changing the JETP funding assumption moves the Indonesia glidepath deterministically.
+
+### 9.2 Evolution B — Cross-taxonomy classification copilot (LLM tier 1)
+
+**What.** The module's analytical core is the `TAXONOMY_COMPARISON` table — 8 sectors mapped EU vs ASEAN traffic-light. A tier-1 copilot makes it conversational: "would a gas-fired plant in Vietnam qualify for ASEAN-taxonomy transition finance, and would the same asset pass the EU Taxonomy?" answered strictly from the table (ASEAN Amber vs EU Transitional) with the §7.4-style divergence explanation (e.g. coal-retrofit-CCS: ASEAN Amber, EU Red), plus JETP and sukuk context from the other tabs.
+
+**How.** Standard Tier-1 pattern: this Atlas record embedded via pgvector (§7.2's table walk-through and §7.6's framework notes are the grounding corpus), Haiku-tier serving, prompt-cached module context. The system prompt encodes two honesty rules specific to this module: (a) classifications are jurisdiction-level sector mappings, not asset-level screening — the copilot must say "the ASEAN taxonomy classifies the *activity* Amber; asset-level technical screening criteria are not modelled here"; (b) figures are snapshots that drift (NDCs, sukuk pipeline), so answers cite the vintage once Evolution A supplies it.
+
+**Prerequisites.** The platform copilot router (`module_copilot.py`); Evolution A's vintages materially improve answer honesty but a first slice can ship on the current Atlas record. **Acceptance:** every traffic-light status quoted matches `TAXONOMY_COMPARISON` exactly; asked for asset-level alignment (DNSH, technical screening thresholds), the copilot refuses and names the limitation rather than improvising criteria.
