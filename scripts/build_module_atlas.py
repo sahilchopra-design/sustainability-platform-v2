@@ -404,7 +404,8 @@ def md_page(mod):
         L.append("| Variable | Expression |")
         L.append("|---|---|")
         for c in mod["computed"][:40]:
-            L.append(f"| `{c['name']}` | `{c['expr'].replace('|','\\|')}` |")
+            expr = c['expr'].replace('|', '\\|')
+            L.append(f"| `{c['name']}` | `{expr}` |")
     if mod["backend_routes"]:
         L.append("\n### 2.2 Backend endpoints")
         L.append("| Method | Path | Handler | Route file |")
