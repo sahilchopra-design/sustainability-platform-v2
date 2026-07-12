@@ -350,7 +350,11 @@ function useModel(inp) {
       else if (macrsSchedule === 'straight-line') dep = macrsBasis / projectLife;
 
       // Taxes (simplified)
-      const taxableIncome = Math.max(0, ebitda - interest - dep - (yr === 1 ? itcAmount : 0));
+      // NOTE: ITC is a dollar-for-dollar credit against tax liability, NOT a deduction
+      // against taxable income. It must only appear once, in the taxes line below.
+      // (The separate IRS-mandated half-basis reduction to `macrsBasis`, computed above,
+      // is the correct/legitimate second-order effect of the ITC — it is not double-counting.)
+      const taxableIncome = Math.max(0, ebitda - interest - dep);
       const ptcBenefit = usePTC && yr <= 10 ? netGen * 1000 * ptcRate / 1e6 : 0;
       const taxes = Math.max(0, taxableIncome * totalTaxRate - ptcBenefit - (yr === 1 ? itcAmount : 0));
       const netIncome = ebitda - interest - dep - taxes;

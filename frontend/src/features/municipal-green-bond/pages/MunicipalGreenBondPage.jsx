@@ -44,7 +44,7 @@ const BONDS = Array.from({ length: 70 }, (_, i) => {
   const year = 2018 + Math.floor(sr(i * 13) * 7);
   const size = Math.round(50 + sr(i * 3) * 1950);
   const tenor = Math.round(5 + sr(i * 17) * 25);
-  const greenium = +(sr(i * 19) * 12).toFixed(1);
+  const greenium = +((sr(i * 19) - 0.5) * 24).toFixed(1);
   const osub = +(1.5 + sr(i * 23) * 8.5).toFixed(1);
   const projects = Math.round(3 + sr(i * 29) * 47);
   const co2 = Math.round(10 + sr(i * 31) * 990);

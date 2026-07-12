@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -6,7 +6,12 @@ import {
   PieChart, Pie, Cell, ReferenceLine,
 } from 'recharts';
 
+// Backend E96 VCM Integrity engine (ICVCM Core Carbon Principles Assessment
+// Framework v2.0 / VCMI Claims Code of Practice v1.1 / Oxford Offsetting
+// Principles / CORSIA / Article 6). See
+// backend/services/vcm_integrity_engine.py + backend/api/v1/routes/vcm_integrity.py
 const API = 'http://localhost:8001';
+const VCM_API = `${API}/api/v1/vcm-integrity`;
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const seededRandom = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
@@ -51,6 +56,12 @@ const Section = ({ title, children }) => (
 );
 const Row = ({ children, gap = 12 }) => (
   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${React.Children.count(children)},1fr)`, gap }}>{children}</div>
+);
+const Chk = ({ label, checked, onChange }) => (
+  <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151', marginBottom: 12, cursor: 'pointer' }}>
+    <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} style={{ width: 15, height: 15 }} />
+    {label}
+  </label>
 );
 const Badge = ({ label, color }) => {
   const colors = { green: { bg: '#d1fae5', text: '#065f46' }, yellow: { bg: '#fef3c7', text: '#92400e' }, red: { bg: '#fee2e2', text: '#991b1b' }, blue: { bg: '#dbeafe', text: '#1e40af' }, gray: { bg: '#f3f4f6', text: '#374151' }, purple: { bg: '#ede9fe', text: '#5b21b6' }, orange: { bg: '#ffedd5', text: '#9a3412' } };
@@ -203,37 +214,216 @@ const getMarketData = (seed0) => {
   return { registryShare, priceByType, totalVolume, vintageRange };
 };
 
+// ── Live backend wiring (E96 VCM Integrity Engine) ──────────────────────────
+// This page's compact project-type keys -> the engine's PERMANENCE_PROFILES /
+// ADDITIONALITY_PROFILES keys (backend/services/vcm_integrity_engine.py).
+const PROJECT_TYPE_TO_ENGINE = {
+  afolu: 'afforestation_reforestation', redd: 'redd_plus', arr: 'afforestation_reforestation',
+  blue_carbon: 'blue_carbon', cookstoves: 'cookstoves', methane_capture: 'methane_avoidance',
+  soil_carbon: 'soil_carbon', biochar: 'biochar', dac: 'direct_air_capture', beccs: 'bioenergy_ccs',
+};
+const PROJECT_TYPE_METHODOLOGY = {
+  afolu: 'VM0042', redd: 'VM0007', arr: 'VM0047', blue_carbon: 'VM0033', cookstoves: 'Gold Standard Cookstoves',
+  methane_capture: 'VM0016', soil_carbon: 'VM0042', biochar: 'VM0044', dac: 'ISO 14064-2 DACCS', beccs: 'VM0046',
+};
+// -> GET /ref/price-benchmarks PRICE_BENCHMARKS keys, for real price defaults/market chart.
+const PROJECT_TYPE_TO_PRICE_BENCH_KEY = {
+  afolu: 'afforestation_reforestation', redd: 'redd_plus_avoidance', arr: 'afforestation_reforestation',
+  blue_carbon: 'blue_carbon_removal', cookstoves: 'cookstoves', methane_capture: 'landfill_methane',
+  soil_carbon: 'soil_carbon', biochar: 'biochar_removal', dac: 'geological_removal_daccs', beccs: 'bioenergy_ccs_removal',
+};
+
+// Map POST /assess response -> the same {criteria, composite, ccpEligible, tier, price} shape
+// the local demo generator produces, so the ICVCM CCP Scoring tab JSX is unchanged.
+// Criterion names come straight from the engine's own `title` field (real
+// ICVCM_CRITERIA definitions in vcm_integrity_engine.py) — never re-labelled
+// client-side, since the C1-C10 titles don't follow a fixed sequential pattern.
+const mapLiveIcvcm = (r, priceUsdT) => {
+  const criteria = Object.values(r.icvcm_criteria_scores).map(c => ({
+    id: c.criterion_id, name: c.title, score: Math.round(c.score * 100),
+  }));
+  return {
+    criteria,
+    composite: Math.round(r.icvcm_ccp_summary.ccp_composite_score * 100),
+    ccpEligible: r.icvcm_ccp_summary.ccp_label_eligible,
+    blockingFailures: r.icvcm_ccp_summary.blocking_failures,
+    tier: r.quality_assessment.quality_tier,
+    price: priceUsdT,
+    priceAssessment: r.price_assessment,
+  };
+};
+
+// Map the engine's real vcmi_claim result (rule-based tier, not a 0-100 score)
+// into a small checklist of the actual signals the engine used.
+const mapLiveVcmi = (r) => {
+  const v = r.vcmi_claim;
+  const tierLabel = { platinum: 'Platinum', gold: 'Gold', silver: 'Silver', no_claim: 'None' }[v.claim_tier] || 'None';
+  const checklist = [
+    { req: 'SBTi near-term target validated', met: !!v.sbti_near_term_validated },
+    { req: 'SBTi long-term (net-zero) target validated', met: !!v.sbti_long_term_validated },
+    { req: 'High Integrity Credits (ICVCM CCP label used)', met: !!v.ccp_label_credits_used },
+    { req: 'Third-party assurance of GHG inventory obtained', met: !!v.assurance_obtained },
+    { req: `Residual emissions within claim-tier gap (${v.residual_emissions_pct}% reported)`, met: v.residual_emissions_pct <= 40 },
+  ];
+  return { achieved: tierLabel, requirements: checklist, description: v.description, reason: v.reason };
+};
+
+const OXFORD_DIMENSION_LABEL = {
+  P1_reduction_priority: 'P1: Reduction Priority', P2_shift_to_removals: 'P2: Shift to Removals',
+  P3_long_lived_storage: 'P3: Long-lived Storage', P4_market_integrity: 'P4: Market Integrity',
+};
+
+const mapLiveOxford = (r, storageType) => {
+  const o = r.oxford_principles;
+  const principles = Object.entries(OXFORD_DIMENSION_LABEL).map(([key, dimension]) => ({
+    dimension, score: Math.round((o[key] || 0) * 100),
+  }));
+  const barData = principles.map(p => ({ name: p.dimension.split(':')[0], score: p.score }));
+  return { principles, barData, storageType, composite: Math.round(o.oxford_composite * 100) };
+};
+
+// Derive the Integrity Risk tab's 6-dimension radar + 5 risk flags from real
+// engine fields (permanence profile, additionality, MRV quality, ICVCM criteria).
+const mapLiveIntegrity = (r) => {
+  const c = r.icvcm_criteria_scores;
+  const risks = [
+    { name: 'Permanence Risk', score: Math.round((1 - r.permanence_profile.permanence_score) * 100) },
+    { name: 'Additionality Score', score: Math.round(r.additionality_score * 100) },
+    { name: 'Leakage Risk', score: Math.round(r.leakage_risk_pct) },
+    { name: 'MRV Quality', score: Math.round(r.mrv_quality_score * 100) },
+    { name: 'Baseline Robustness', score: Math.round((c.C6?.score || 0) * 100) },
+    { name: 'Co-benefit Score', score: Math.round((((c.C8?.score || 0) + (c.C9?.score || 0)) / 2) * 100) },
+  ];
+  const flagLevel = (crit) => !crit ? 'Low' : crit.meets_threshold ? 'Low' : (crit.score < crit.threshold - 0.15 ? 'High' : 'Medium');
+  const flags = [
+    { flag: 'Over-crediting risk', level: flagLevel(c.C4) },
+    { flag: 'Baseline manipulation risk', level: flagLevel(c.C6) },
+    { flag: 'Social safeguard concerns', level: flagLevel(c.C9) },
+    { flag: 'MRV independence gap', level: flagLevel(c.C3) },
+    { flag: 'Reversal buffer adequacy', level: flagLevel(c.C5) },
+  ];
+  return { risks, flags, corsiaEligible: r.corsia_eligibility.eligible, art6Eligible: r.article6_status.eligible };
+};
+
 export default function VCMIntegrityPage() {
   const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [projectType, setProjectType] = useState('redd');
   const [registry, setRegistry] = useState('verra_vcs');
   const [vintage, setVintage] = useState('2023');
 
-  const seed0 = hashStr(projectType + registry + vintage);
-  const icvcm = getICVCMData(projectType, registry, vintage, seed0);
-  const vcmi = getVCMIData(seed0);
-  const oxford = getOxfordData(projectType, seed0);
-  const integrity = getIntegrityData(projectType, registry, seed0);
-  const market = getMarketData(seed0);
+  // Assessment inputs that drive the live ICVCM CCP / VCMI / Oxford scoring —
+  // mirror the fields POST /api/v1/vcm-integrity/assess accepts.
+  const [volumeTco2e, setVolumeTco2e] = useState('50000');
+  const [priceUsdT, setPriceUsdT] = useState('10');
+  const [hasVvb, setHasVvb] = useState(true);
+  const [monitoringFreq, setMonitoringFreq] = useState('1');
+  const [publicDocs, setPublicDocs] = useState(true);
+  const [fpicCompleted, setFpicCompleted] = useState(true);
+  const [sbtiNear, setSbtiNear] = useState(false);
+  const [sbtiLong, setSbtiLong] = useState(false);
+  const [residualPct, setResidualPct] = useState('50');
+  const [reductionPct, setReductionPct] = useState('70');
+  const [removalPct, setRemovalPct] = useState('10');
+  const [geoRemovalPct, setGeoRemovalPct] = useState('2');
+  const [hasAssurance, setHasAssurance] = useState(false);
+  const [correspondingAdj, setCorrespondingAdj] = useState(false);
 
-  const runAssess = async () => {
-    setLoading(true); setError('');
-    try {
-      await axios.post(`${API}/api/v1/vcm-integrity/assess`, {
-        project_type: projectType, registry, vintage_year: parseInt(vintage),
-      });
-    } catch {
-      void 0 /* API fallback to seed data */;
-    } finally { setLoading(false); }
-  };
+  const seed0 = hashStr(projectType + registry + vintage);
+  const demoIcvcm = getICVCMData(projectType, registry, vintage, seed0);
+  const demoVcmi = getVCMIData(seed0);
+  const demoOxford = getOxfordData(projectType, seed0);
+  const demoIntegrity = getIntegrityData(projectType, registry, seed0);
+  const demoMarket = getMarketData(seed0);
+
+  // --- Live backend wiring (E96 VCM Integrity Engine) -----------------------
+  const [liveResult, setLiveResult] = useState(null);
+  const [liveStatus, setLiveStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  // Real price benchmarks (GET /ref/price-benchmarks) — used to seed a
+  // realistic default price and to drive the live Market tab price chart.
+  const [priceBenchmarks, setPriceBenchmarks] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    axios.get(`${VCM_API}/ref/price-benchmarks`, { timeout: 10000 })
+      .then(({ data }) => { if (!cancelled) setPriceBenchmarks(data?.benchmarks_by_project_type || null); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Default the price input to the real benchmark mid-price whenever the
+  // project type changes and the benchmark table is available.
+  useEffect(() => {
+    const key = PROJECT_TYPE_TO_PRICE_BENCH_KEY[projectType];
+    const bench = priceBenchmarks && key ? priceBenchmarks[key] : null;
+    if (bench) setPriceUsdT(String(bench.price_mid_usd_t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectType, priceBenchmarks]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${VCM_API}/assess`, {
+          project_id: `${registry.toUpperCase()}-${projectType.toUpperCase()}-${vintage}`,
+          registry,
+          methodology: PROJECT_TYPE_METHODOLOGY[projectType] || 'VM0007',
+          project_type: PROJECT_TYPE_TO_ENGINE[projectType] || 'redd_plus',
+          vintage_year: parseInt(vintage, 10) || 2023,
+          volume_tco2e: parseFloat(volumeTco2e) || 0,
+          price_usd_t: parseFloat(priceUsdT) || 0,
+          has_vvb_accreditation: hasVvb,
+          monitoring_frequency_years: parseInt(monitoringFreq, 10) || 1,
+          public_documentation: publicDocs,
+          fpic_completed: fpicCompleted,
+          sbti_near_term: sbtiNear,
+          sbti_long_term: sbtiLong,
+          residual_emissions_pct: parseFloat(residualPct) || 0,
+          reduction_pct_of_portfolio: parseFloat(reductionPct) || 0,
+          removal_pct_of_portfolio: parseFloat(removalPct) || 0,
+          geological_removal_pct: parseFloat(geoRemovalPct) || 0,
+          has_assurance: hasAssurance,
+          corresponding_adjustment: correspondingAdj,
+        }, { timeout: 10000 });
+        if (!cancelled) { setLiveResult(data); setLiveStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setLiveResult(null); setLiveStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [projectType, registry, vintage, volumeTco2e, priceUsdT, hasVvb, monitoringFreq, publicDocs, fpicCompleted, sbtiNear, sbtiLong, residualPct, reductionPct, removalPct, geoRemovalPct, hasAssurance, correspondingAdj]);
+
+  const storageType = { afolu: 'biological', redd: 'biological', arr: 'biological', blue_carbon: 'biological', cookstoves: 'chemical', methane_capture: 'geological', soil_carbon: 'biological', biochar: 'geological', dac: 'geological', beccs: 'geological' }[projectType] || 'biological';
+
+  // Live results in the exact shape the existing JSX expects — drop-in
+  // replacement for the demo generators when the API is reachable.
+  const icvcm = liveResult ? mapLiveIcvcm(liveResult, parseFloat(priceUsdT) || 0) : demoIcvcm;
+  const vcmiLive = liveResult ? mapLiveVcmi(liveResult) : null;
+  const vcmi = demoVcmi; // demo gauge/thresholds chart retained only for the offline fallback view
+  const oxford = liveResult ? mapLiveOxford(liveResult, storageType) : demoOxford;
+  const integrity = liveResult ? mapLiveIntegrity(liveResult) : demoIntegrity;
+  const market = useMemo(() => {
+    if (!priceBenchmarks) return demoMarket;
+    const priceByType = Object.entries(PROJECT_TYPE_TO_PRICE_BENCH_KEY)
+      .map(([ptKey, benchKey]) => {
+        const b = priceBenchmarks[benchKey];
+        return b ? { type: PROJECT_TYPES.find(p => p.value === ptKey)?.label.split(' ')[0] || ptKey, price: b.price_mid_usd_t } : null;
+      })
+      .filter(Boolean);
+    return { ...demoMarket, priceByType };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priceBenchmarks]);
 
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>VCM Integrity Assessment</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>ICVCM CCP 2023 · VCMI Claims · Oxford Offsetting Principles · CORSIA Eligibility · Registry Market</p>
+        <div style={{ marginTop: 8 }}>
+          {liveStatus === 'loading' && <Badge label="Connecting to VCM Integrity Engine…" color="gray" />}
+          {liveStatus === 'live' && <Badge label="● Live — scored by /api/v1/vcm-integrity/assess (ICVCM CCP v2.0 · VCMI v1.1 · Oxford Principles)" color="green" />}
+          {liveStatus === 'demo' && <Badge label="○ Demo Data — VCM Integrity API unavailable, showing seeded illustrative figures" color="yellow" />}
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
@@ -242,18 +432,35 @@ export default function VCMIntegrityPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
-
       {/* Inputs always visible */}
       <Section title="Project Parameters">
         <Row>
           <Sel label="Project Type" value={projectType} onChange={setProjectType} options={PROJECT_TYPES} />
           <Sel label="Registry" value={registry} onChange={setRegistry} options={REGISTRIES} />
           <Inp label="Vintage Year" value={vintage} onChange={setVintage} type="number" />
-          <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 12 }}>
-            <Btn onClick={runAssess}>{loading ? 'Assessing…' : 'Run Assessment'}</Btn>
-          </div>
+          <Inp label="Volume (tCO2e)" value={volumeTco2e} onChange={setVolumeTco2e} type="number" />
         </Row>
+        <Row>
+          <Inp label="Price (USD/t)" value={priceUsdT} onChange={setPriceUsdT} type="number" />
+          <Inp label="Monitoring Frequency (yrs)" value={monitoringFreq} onChange={setMonitoringFreq} type="number" />
+          <Inp label="Residual Emissions (% above SBTi pathway)" value={residualPct} onChange={setResidualPct} type="number" />
+          <Inp label="Reduction % of Portfolio" value={reductionPct} onChange={setReductionPct} type="number" />
+        </Row>
+        <Row>
+          <Inp label="Removal % of Portfolio" value={removalPct} onChange={setRemovalPct} type="number" />
+          <Inp label="Geological Removal %" value={geoRemovalPct} onChange={setGeoRemovalPct} type="number" />
+          <div />
+          <div />
+        </Row>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginTop: 4 }}>
+          <Chk label="VVB Accredited" checked={hasVvb} onChange={setHasVvb} />
+          <Chk label="Public Documentation" checked={publicDocs} onChange={setPublicDocs} />
+          <Chk label="FPIC Completed" checked={fpicCompleted} onChange={setFpicCompleted} />
+          <Chk label="Independent Assurance" checked={hasAssurance} onChange={setHasAssurance} />
+          <Chk label="SBTi Near-term Target" checked={sbtiNear} onChange={setSbtiNear} />
+          <Chk label="SBTi Long-term (Net Zero) Target" checked={sbtiLong} onChange={setSbtiLong} />
+          <Chk label="Article 6 Corresponding Adjustment" checked={correspondingAdj} onChange={setCorrespondingAdj} />
+        </div>
       </Section>
 
       {/* TAB 1 — ICVCM CCP Scoring */}
@@ -322,47 +529,83 @@ export default function VCMIntegrityPage() {
       {/* TAB 2 — VCMI Claims */}
       {tab === 1 && (
         <div>
-          <Section title="VCMI Claims Framework Summary">
-            <Row gap={12}>
-              <KpiCard label="Current Score" value={`${vcmi.currentScore}/100`} sub="VCMI composite assessment" accent />
-              <KpiCard label="Achieved Claim Tier" value={<Badge label={vcmi.achieved} color={vcmi.achieved === 'Platinum' ? 'purple' : vcmi.achieved === 'Gold' ? 'yellow' : vcmi.achieved === 'Silver' ? 'gray' : 'red'} />} sub="Silver ≥ 60 · Gold ≥ 75 · Platinum ≥ 90" />
-              <KpiCard label="Next Tier Gap" value={vcmi.achieved === 'Platinum' ? '—' : `${(vcmi.achieved === 'Gold' ? 90 : vcmi.achieved === 'Silver' ? 75 : 60) - vcmi.currentScore} pts`} sub="Points needed to advance tier" />
-              <KpiCard label="Requirements Met" value={`${vcmi.requirements.filter(r => r.met).length} / ${vcmi.requirements.length}`} sub="VCMI Core Carbon Principles checklist" />
-            </Row>
-          </Section>
-          <Section title="Claim Tier Thresholds vs Current Score">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={vcmi.claimData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 100]} />
-                <YAxis type="category" dataKey="tier" width={70} tick={{ fontSize: 13 }} />
-                <Tooltip formatter={(val, name) => [`${val}/100`, name]} />
-                <Legend />
-                <Bar dataKey="threshold" fill="#d1d5db" name="Tier Threshold" radius={[0, 4, 4, 0]} />
-                <Bar dataKey="current" fill="#059669" name="Current Score" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Section>
-          <Section title="VCMI Requirements Checklist">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: '#f9fafb' }}>
-                  {['#', 'Requirement', 'Status'].map(h => (
-                    <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {vcmi.requirements.map((req, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 700, color: '#6b7280' }}>{i + 1}</td>
-                    <td style={{ padding: '8px 12px', color: '#374151' }}>{req.req}</td>
-                    <td style={{ padding: '8px 12px' }}><Badge label={req.met ? '✓ Met' : '✗ Gap'} color={req.met ? 'green' : 'red'} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Section>
+          {vcmiLive ? (
+            <div>
+              <Section title="VCMI Claims Framework Summary (Live — VCMI Claims Code of Practice v1.1)">
+                <Row gap={12}>
+                  <KpiCard label="Achieved Claim Tier" value={<Badge label={vcmiLive.achieved} color={vcmiLive.achieved === 'Platinum' ? 'purple' : vcmiLive.achieved === 'Gold' ? 'yellow' : vcmiLive.achieved === 'Silver' ? 'gray' : 'red'} />} sub={vcmiLive.reason || vcmiLive.description} accent />
+                  <KpiCard label="Requirements Met" value={`${vcmiLive.requirements.filter(r => r.met).length} / ${vcmiLive.requirements.length}`} sub="Real engine-verified signals" />
+                  <KpiCard label="CCP Label Eligible" value={<Badge label={icvcm.ccpEligible ? '✓ Yes' : '✗ No'} color={icvcm.ccpEligible ? 'green' : 'red'} />} sub="Drives 'High Integrity Credits' requirement" />
+                  <KpiCard label="Annual Checklist Required" value={vcmiLive.achieved !== 'None' ? 'Yes' : 'No'} sub="VCMI annual credibility checklist" />
+                </Row>
+              </Section>
+              <Section title="VCMI Claim Requirements (from live assessment inputs)">
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: '#f9fafb' }}>
+                      {['#', 'Requirement', 'Status'].map(h => (
+                        <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {vcmiLive.requirements.map((req, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 12px', fontWeight: 700, color: '#6b7280' }}>{i + 1}</td>
+                        <td style={{ padding: '8px 12px', color: '#374151' }}>{req.req}</td>
+                        <td style={{ padding: '8px 12px' }}><Badge label={req.met ? '✓ Met' : '✗ Gap'} color={req.met ? 'green' : 'red'} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 10 }}>Adjust SBTi / assurance / residual-emissions inputs above to see the claim tier recompute via the real VCMI rule engine.</p>
+              </Section>
+            </div>
+          ) : (
+            <div>
+              <Section title="VCMI Claims Framework Summary (Demo Data — API unavailable)">
+                <Row gap={12}>
+                  <KpiCard label="Current Score" value={`${vcmi.currentScore}/100`} sub="VCMI composite assessment" accent />
+                  <KpiCard label="Achieved Claim Tier" value={<Badge label={vcmi.achieved} color={vcmi.achieved === 'Platinum' ? 'purple' : vcmi.achieved === 'Gold' ? 'yellow' : vcmi.achieved === 'Silver' ? 'gray' : 'red'} />} sub="Silver ≥ 60 · Gold ≥ 75 · Platinum ≥ 90" />
+                  <KpiCard label="Next Tier Gap" value={vcmi.achieved === 'Platinum' ? '—' : `${(vcmi.achieved === 'Gold' ? 90 : vcmi.achieved === 'Silver' ? 75 : 60) - vcmi.currentScore} pts`} sub="Points needed to advance tier" />
+                  <KpiCard label="Requirements Met" value={`${vcmi.requirements.filter(r => r.met).length} / ${vcmi.requirements.length}`} sub="VCMI Core Carbon Principles checklist" />
+                </Row>
+              </Section>
+              <Section title="Claim Tier Thresholds vs Current Score">
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={vcmi.claimData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" domain={[0, 100]} />
+                    <YAxis type="category" dataKey="tier" width={70} tick={{ fontSize: 13 }} />
+                    <Tooltip formatter={(val, name) => [`${val}/100`, name]} />
+                    <Legend />
+                    <Bar dataKey="threshold" fill="#d1d5db" name="Tier Threshold" radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="current" fill="#059669" name="Current Score" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Section>
+              <Section title="VCMI Requirements Checklist">
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ background: '#f9fafb' }}>
+                      {['#', 'Requirement', 'Status'].map(h => (
+                        <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {vcmi.requirements.map((req, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                        <td style={{ padding: '8px 12px', fontWeight: 700, color: '#6b7280' }}>{i + 1}</td>
+                        <td style={{ padding: '8px 12px', color: '#374151' }}>{req.req}</td>
+                        <td style={{ padding: '8px 12px' }}><Badge label={req.met ? '✓ Met' : '✗ Gap'} color={req.met ? 'green' : 'red'} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Section>
+            </div>
+          )}
         </div>
       )}
 

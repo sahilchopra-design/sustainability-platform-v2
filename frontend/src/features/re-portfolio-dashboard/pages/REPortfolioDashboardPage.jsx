@@ -1,13 +1,74 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, Tooltip,
   ResponsiveContainer, CartesianGrid, Legend, ReferenceLine
 } from 'recharts';
 
+// Backend RE Portfolio NAV Roll-Up + CRREM v2 engine (real stranding calculations).
+// See backend/services/re_portfolio_engine.py + backend/api/v1/routes/re_portfolio.py
+const API = 'http://localhost:8001';
+const RE_PORTFOLIO_API = `${API}/api/v1/re-portfolio`;
+
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
+// Frontend "type" -> backend REPortfolioEngine property_type key. Backend accepts
+// office|retail|industrial|multifamily|hotel|data_center|logistics|mixed_use|healthcare
+// (see PropertyInput.property_type in backend/api/v1/routes/re_portfolio.py). CRREM v2
+// pathway coverage in re_portfolio_engine.py (CRREM_PATHWAYS) currently spans only
+// office/retail/industrial/multifamily/hotel — data_center/logistics/mixed_use/healthcare
+// still get real NAV/EPC/MEPS results but no CRREM stranding year (engine returns null
+// rather than fabricating a pathway).
+const PROPTYPE_TO_API = {
+  Office: 'office', Retail: 'retail', Logistics: 'logistics', Residential: 'multifamily',
+  'Data Center': 'data_center', 'Mixed-Use': 'mixed_use', 'Life Sciences': 'office',
+  Hotel: 'hotel', Healthcare: 'healthcare',
+};
+// Frontend uses 'UK'; backend expects ISO 3166-1 alpha-2 ('GB'). All other frontend
+// country codes already match ISO alpha-2.
+const COUNTRY_TO_ISO = { UK: 'GB' };
+const toApiCountry = (c) => COUNTRY_TO_ISO[c] || c;
+const toApiPropertyType = (t) => PROPTYPE_TO_API[t] || 'office';
+
+// Translate one seeded property row into the PropertyInput payload shape the
+// backend engine expects. Currency fields are stored in the frontend as $M;
+// the backend wants absolute values.
+function propertyToApiPayload(p) {
+  const gav = Number(p.gav_usd_mn) || 0;
+  const nav = Number(p.nav_usd_mn) || 0;
+  const debt = Math.max(0, gav - nav);
+  const ltv = gav > 0 ? Math.min(100, (debt / gav) * 100) : 0;
+  return {
+    property_id: p.id,
+    name: p.name,
+    property_type: toApiPropertyType(p.type),
+    country_iso: toApiCountry(p.country),
+    city: p.city,
+    floor_area_m2: p.gfa_m2 || 0,
+    year_built: p.year_built || null,
+    market_value: gav * 1e6,
+    book_value: nav * 1e6,
+    valuation_method: 'income',
+    cap_rate_pct: p.cap_rate || 0,
+    noi: (Number(p.noi_usd_mn) || 0) * 1e6,
+    // Gross rental income isn't tracked as its own field in the seeded dataset;
+    // NOI is used as a conservative proxy since the engine only feeds it into the
+    // total_gross_rental_income summary metric, not the NAV/CRREM/EPC calculations.
+    gross_rental_income: (Number(p.noi_usd_mn) || 0) * 1e6,
+    occupancy_pct: p.occupancy_pct || 0,
+    epc_rating: p.epc_rating || 'C',
+    energy_intensity_kwh_m2: p.energy_intensity_kwh || 0,
+    carbon_intensity_kgco2_m2: p.carbon_intensity_kgco2 || 0,
+    certifications: p.certification ? [p.certification] : [],
+    outstanding_debt: debt * 1e6,
+    loan_to_value_pct: ltv,
+    esg_adjustment_pct: 0,
+    climate_adjustment_pct: 0,
+  };
+}
 
 const RE_KEY = 'ra_re_portfolio_v1';
 const INFRA_KEY = 'ra_infra_portfolio_v1';
@@ -174,8 +235,74 @@ export default function REPortfolioDashboardPage() {
   const greenLeasePct = props.length ? props.reduce((s, p) => s + p.green_lease_pct, 0) / props.length : 0;
   const avgTenantSat = props.length ? props.reduce((s, p) => s + p.tenant_satisfaction, 0) / props.length : 0;
 
+  // --- Live backend wiring (RE Portfolio NAV Roll-Up + CRREM v2 engine) -----
+  // POSTs the current portfolio to /api/v1/re-portfolio/nav for real INREV
+  // NAV + CRREM v2 stranding-year calculations. Falls back to the locally
+  // seeded (sr() PRNG / static stranding_year field) demo figures, clearly
+  // labeled, if the API is unreachable.
+  const [navLive, setNavLive] = useState(null);
+  const [navStatus, setNavStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!props.length) { setNavLive(null); setNavStatus('demo'); return undefined; }
+    setNavStatus('loading');
+    (async () => {
+      try {
+        const { data } = await axios.post(`${RE_PORTFOLIO_API}/nav`, {
+          portfolio_id: 'RE-PORTFOLIO-DASH-001',
+          name: portfolioName,
+          base_currency: currency,
+          valuation_basis: 'market_value',
+          properties: props.map(propertyToApiPayload),
+          crrem_scenario: '1.5C',
+          carbon_price_eur_per_tco2: 75,
+        }, { timeout: 15000 });
+        if (!cancelled && data && Array.isArray(data.crrem_property_results)) {
+          setNavLive(data);
+          setNavStatus('live');
+        } else if (!cancelled) {
+          setNavLive(null);
+          setNavStatus('demo');
+        }
+      } catch (e) {
+        if (!cancelled) { setNavLive(null); setNavStatus('demo'); }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [props, portfolioName, currency]);
+
+  // Live per-property CRREM results keyed by property_id, for merging back
+  // onto the seeded rows (e.g. stranding-year distribution chart below).
+  const crremById = useMemo(() => {
+    if (navStatus !== 'live' || !navLive || !navLive.crrem_property_results) return null;
+    return new Map(navLive.crrem_property_results.map(r => [r.property_id, r]));
+  }, [navLive, navStatus]);
+
+  const isLive = navStatus === 'live' && !!navLive;
+  // Headline KPIs: real engine output when live, seeded demo formulas otherwise.
+  const totalGAVLive = isLive ? navLive.gross_asset_value / 1e6 : totalGAV;
+  const avgCarbonLive = isLive ? navLive.portfolio_carbon_intensity_kgco2_m2 : avgCarbon;
+  const crremPctLive = isLive
+    ? (crremById && crremById.size ? (100 * [...crremById.values()].filter(r => !r.is_already_stranded).length / crremById.size) : 0)
+    : crremPct;
+  const stranded2030Live = isLive
+    ? (navLive.property_count ? (navLive.crrem_stranded_by_2030_count / navLive.property_count * 100) : 0)
+    : stranded2030;
+
   // Chart data
-  const strandingBands = useMemo(() => [{ band: '<2030', min: 0, max: 2030 }, { band: '2030-34', min: 2030, max: 2035 }, { band: '2035-39', min: 2035, max: 2040 }, { band: '2040-44', min: 2040, max: 2045 }, { band: '2045-49', min: 2045, max: 2050 }, { band: '2050+', min: 2050, max: 9999 }].map(b => ({ band: b.band, count: props.filter(p => p.stranding_year >= b.min && p.stranding_year < b.max).length })), [props]);
+  // Stranding-year distribution: uses real per-property CRREM v2 stranding
+  // years from the live engine when available, falling back to the seeded
+  // demo stranding_year field otherwise.
+  const strandingBands = useMemo(() => {
+    const bands = [{ band: '<2030', min: 0, max: 2030 }, { band: '2030-34', min: 2030, max: 2035 }, { band: '2035-39', min: 2035, max: 2040 }, { band: '2040-44', min: 2040, max: 2045 }, { band: '2045-49', min: 2045, max: 2050 }, { band: '2050+', min: 2050, max: 9999 }];
+    const yearOf = p => {
+      const live = crremById ? crremById.get(p.id) : null;
+      if (live) return live.is_already_stranded ? 2026 : (live.stranding_year_1_5c ?? 9999);
+      return p.stranding_year;
+    };
+    return bands.map(b => ({ band: b.band, count: props.filter(p => { const y = yearOf(p); return y >= b.min && y < b.max; }).length }));
+  }, [props, crremById]);
   const certDistrib = useMemo(() => { const m = {}; props.forEach(p => { const c = p.certification || 'Uncertified'; m[c] = (m[c] || 0) + p.gfa_m2; }); return Object.entries(m).map(([name, value]) => ({ name: name.length > 20 ? name.slice(0, 18) + '..' : name, value })); }, [props]);
   const physRiskData = useMemo(() => { const keys = ['flood_risk','heat_risk','wind_risk','wildfire_risk','sea_level_risk','drought_risk']; return HAZARD_LABELS.map((label, i) => ({ hazard: label, score: props.length ? Math.round(props.reduce((s, p) => s + p[keys[i]], 0) / props.length) : 0 })); }, [props]);
   const gresbRadar = useMemo(() => { const peer = 72; return GRESB_ASPECTS.map((a, i) => ({ aspect: a, portfolio: Math.round(avgGresb * (0.85 + (sr(i * 13) * 2 - 1) * 0.15)), peer: Math.round(peer * (0.9 + (sr(i * 509) * 2 - 1) * 0.1)) })); }, [avgGresb]);
@@ -195,10 +322,10 @@ export default function REPortfolioDashboardPage() {
 
   // Quick actions
   const quickActions = [
-    { label: 'CRREM Pathways', path: '/crrem-pathways', metric: `${crremPct.toFixed(0)}% aligned`, desc: 'Carbon reduction pathway', color: T.sage },
+    { label: 'CRREM Pathways', path: '/crrem-pathways', metric: `${crremPctLive.toFixed(0)}% aligned`, desc: 'Carbon reduction pathway', color: T.sage },
     { label: 'Physical Risk', path: '/physical-risk', metric: `Avg ${avgPhysRisk.toFixed(0)}/100`, desc: 'Climate hazard exposure', color: T.amber },
     { label: 'Green Certs', path: '/green-certifications', metric: `${certCoverage.toFixed(0)}% covered`, desc: 'LEED, BREEAM, NABERS', color: T.green },
-    { label: 'Stranded Assets', path: '/stranded-assets', metric: `${stranded2030.toFixed(0)}% by 2030`, desc: 'Transition risk', color: T.red },
+    { label: 'Stranded Assets', path: '/stranded-assets', metric: `${stranded2030Live.toFixed(0)}% by 2030`, desc: 'Transition risk', color: T.red },
     { label: 'Infra ESG DD', path: '/infra-esg-dd', metric: `${infraAssets.length} assets`, desc: 'IFC PS, EP IV', color: T.navy },
   ];
 
@@ -257,6 +384,9 @@ export default function REPortfolioDashboardPage() {
           <div style={{ fontSize: 12, color: T.textSec, marginTop: 4 }}>{portfolioName} | {period} | {currency}</div>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {navStatus === 'live' && <Badge color={T.green}>&#9679; Live &mdash; CRREM v2 stranding via /api/v1/re-portfolio</Badge>}
+          {navStatus === 'demo' && <Badge color={T.amber}>&#9675; Demo Data &mdash; RE Portfolio API unavailable</Badge>}
+          {navStatus === 'loading' && <Badge color={T.textMut}>&hellip; connecting</Badge>}
           <Badge color={T.navy}>Hub</Badge>
           <Badge color={T.gold}>{props.length} Properties</Badge>
           <Badge color={T.sage}>{infraAssets.length} Infra</Badge>
@@ -275,17 +405,17 @@ export default function REPortfolioDashboardPage() {
           {/* KPIs */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 10, marginBottom: 10 }}>
             <KPI label="Total GFA" value={`${(totalGFA / 1e6).toFixed(2)}M`} sub="m2 gross floor" />
-            <KPI label="Total GAV" value={`$${fmtB(totalGAV)}`} sub={`${currency} portfolio`} color={T.gold} />
+            <KPI label="Total GAV" value={`$${fmtB(totalGAVLive)}`} sub={`${currency} portfolio${isLive ? ' (live)' : ' (demo)'}`} color={T.gold} />
             <KPI label="Properties" value={props.length} sub={`${numCountries} countries`} />
             <KPI label="Avg Energy" value={fmt(avgEnergy, 0)} sub="kWh/m2/yr" color={avgEnergy < 180 ? T.sage : T.amber} />
-            <KPI label="Avg Carbon" value={fmt(avgCarbon, 0)} sub="kgCO2/m2/yr" color={avgCarbon < 55 ? T.sage : T.amber} />
-            <KPI label="CRREM Aligned" value={pct(crremPct, 0)} sub="1.5C pathway" color={crremPct >= 50 ? T.green : T.red} />
+            <KPI label="Avg Carbon" value={fmt(avgCarbonLive, 0)} sub={`kgCO2/m2/yr${isLive ? ' (CRREM live)' : ' (demo)'}`} color={avgCarbonLive < 55 ? T.sage : T.amber} />
+            <KPI label="CRREM Aligned" value={pct(crremPctLive, 0)} sub={`1.5C pathway${isLive ? ' (live)' : ' (demo)'}`} color={crremPctLive >= 50 ? T.green : T.red} />
             <KPI label="GRESB Score" value={fmt(avgGresb, 0)} sub="/100 avg" color={T.navyL} />
             <KPI label="Cert Coverage" value={pct(certCoverage, 0)} sub="of GFA certified" color={T.sage} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: 10, marginBottom: 24 }}>
             <KPI label="Physical Risk" value={fmt(avgPhysRisk, 0)} sub="/100 avg" color={avgPhysRisk < 35 ? T.green : T.amber} />
-            <KPI label="Stranded <2030" value={pct(stranded2030, 0)} sub="at risk" color={stranded2030 > 15 ? T.red : T.green} />
+            <KPI label="Stranded <2030" value={pct(stranded2030Live, 0)} sub={`at risk${isLive ? ' (live)' : ' (demo)'}`} color={stranded2030Live > 15 ? T.red : T.green} />
             <KPI label="Infra Invest" value={`$${fmtB(infraInvest)}`} sub={`${infraAssets.length} assets`} color={T.gold} />
             <KPI label="Infra Avoided" value={`${(infraAvoided / 1e6).toFixed(1)}M`} sub="tCO2e/yr" color={T.sage} />
             <KPI label="Renewable %" value={pct(avgRenewable, 0)} sub="avg share" color={avgRenewable >= 40 ? T.green : T.amber} />

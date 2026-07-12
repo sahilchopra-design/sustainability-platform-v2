@@ -38,7 +38,7 @@ function arrheniusDegradation(T_celsius, baseRate, yearsOp) {
 function revenueStack(params) {
   const { capacityMW, capMarket, fcr, afrr, arbitrage, cfArb, cfFcr, cfAfrr } = params;
   return {
-    capacityMarket: capacityMW * capMarket * 1000 * cfFcr / 100 / 1e6,
+    capacityMarket: capacityMW * capMarket * cfFcr / 100 / 1e6,
     fcr:            capacityMW * fcr * cfFcr / 100 / 1e6,
     afrr:           capacityMW * afrr * cfAfrr / 100 / 1e6,
     arbitrage:      capacityMW * arbitrage * cfArb / 100 / 1e6,

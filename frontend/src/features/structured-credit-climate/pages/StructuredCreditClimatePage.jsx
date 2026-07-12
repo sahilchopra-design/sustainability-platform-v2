@@ -114,11 +114,17 @@ export default function StructuredCreditClimatePage() {
     const poolLoss = filteredLoans.reduce((s, l) => s + l.balance * l.haircut / 100, 0);
     const poolLossPct = poolLoss / totalBalance * 100;
     let remainingLoss = poolLossPct;
-    return TRANCHES.map(t => {
+    // TRANCHES is defined top-down (Senior -> Mezz -> Junior -> Equity), but subordination
+    // means losses must allocate bottom-up: Equity (first-loss) absorbs first, then Junior,
+    // then Mezz, and Senior only once all subordinate tranches are wiped out. Process the
+    // reversed (bottom-up) array so each tranche's absorbed/lossPct reflects true waterfall
+    // order; the result is already in the desired Equity-first display order, so no trailing
+    // .reverse() is needed.
+    return [...TRANCHES].reverse().map(t => {
       const absorbed = Math.min(remainingLoss, t.pct);
       remainingLoss = Math.max(0, remainingLoss - t.pct);
       return { ...t, absorbed: +absorbed.toFixed(2), lossPct: t.pct > 0 ? +(absorbed / t.pct * 100).toFixed(1) : 0 };
-    }).reverse();
+    });
   }, [filteredLoans]);
 
   const stressScenarios = ['SSP1-2.6', 'SSP2-4.5', 'SSP5-8.5'].map(s => {

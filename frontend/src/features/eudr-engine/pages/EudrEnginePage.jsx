@@ -1,8 +1,25 @@
-import React,{useState,useMemo} from 'react';
+import React,{useState,useMemo,useEffect,useCallback} from 'react';
+import axios from 'axios';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,AreaChart,Area,Legend} from 'recharts';
 
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',purple:'#7c3aed',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+
+// Backend EP-AY1 EUDR Due Diligence engine (Regulation (EU) 2023/1115 — real
+// Article 9 traceability check + Article 29 country benchmarking + Articles
+// 4-12 due diligence scoring). See backend/services/eudr_engine.py +
+// backend/api/v1/routes/eudr.py
+const EUDR_API='http://localhost:8001/api/v1/eudr';
+
+// Maps this page's display country names to the ISO2 codes used by the
+// backend's COUNTRY_RISK_TIERS table (Art 29 benchmarking).
+const COUNTRY_TO_ISO2={
+  Brazil:'BR',Indonesia:'ID',Malaysia:'MY','Democratic Republic of Congo':'CD','Ivory Coast':'CI',Bolivia:'BO',Paraguay:'PY',Cameroon:'CM',
+  Colombia:'CO',Peru:'PE',Ghana:'GH',Nigeria:'NG','Papua New Guinea':'PG',Vietnam:'VN',Laos:'LA',Mexico:'MX',
+  Germany:'DE',France:'FR',Netherlands:'NL','United States':'US',Australia:'AU',Canada:'CA','New Zealand':'NZ',Japan:'JP',
+};
+// Maps this page's display commodity names to the backend's snake_case keys.
+const COMMODITY_TO_KEY={Cattle:'cattle',Cocoa:'cocoa',Coffee:'coffee','Oil Palm':'oil_palm',Rubber:'rubber',Soya:'soya',Wood:'wood'};
 
 const COMMODITIES=['Cattle','Cocoa','Coffee','Oil Palm','Rubber','Soya','Wood'];
 const COMMODITY_COLORS=['#dc2626','#d97706','#16a34a','#0891b2','#7c3aed','#c5a96a','#5a8a6a'];
@@ -76,6 +93,39 @@ function DueDiligenceAssessment(){
   const [filterTier,setFilterTier]=useState('All');
   const [filterCommodity,setFilterCommodity]=useState('All');
   const [selected,setSelected]=useState(null);
+
+  // Live backend wiring — when a supplier row is selected, run it through the
+  // real Articles 4-12 due diligence engine using the supplier's seeded
+  // attributes as the operator input. Falls back to the local seeded score
+  // (already on `selected`) if the API is unreachable.
+  const [liveDD,setLiveDD]=useState(null);
+  const [liveStatus,setLiveStatus]=useState(null); // null | 'loading' | 'live' | 'demo'
+  useEffect(()=>{
+    if(!selected){ setLiveDD(null); setLiveStatus(null); return; }
+    let cancelled=false;
+    setLiveStatus('loading');
+    (async()=>{
+      try{
+        const iso2=COUNTRY_TO_ISO2[selected.country]||selected.country;
+        const commodityKey=COMMODITY_TO_KEY[selected.commodity]||selected.commodity.toLowerCase();
+        const { data } = await axios.post(`${EUDR_API}/due-diligence`,{
+          operator_id:`SUP-${selected.id}`, operator_name:selected.name, operator_type:'operator',
+          commodities:[commodityKey], countries_of_origin:[iso2],
+          certifications: selected.certified ? ['FSC'] : [],
+          geolocation_provided: selected.geoVerified, geolocation_type: selected.geoVerified?'polygon':'',
+          plot_area_ha: selected.geoVerified?12.5:null,
+          supplier_name: selected.name, supplier_address: selected.country,
+          production_date: selected.lastDDS, quantity_kg: selected.volume*1000,
+          local_law_evidence: selected.geoVerified, deforestation_free_evidence: selected.geoVerified&&selected.certified,
+          independent_audit: selected.certified, satellite_monitoring: selected.geoVerified, third_party_verification: selected.certified,
+        },{timeout:10000});
+        if(!cancelled){ setLiveDD(data); setLiveStatus('live'); }
+      }catch(e){
+        if(!cancelled){ setLiveDD(null); setLiveStatus('demo'); }
+      }
+    })();
+    return ()=>{ cancelled=true; };
+  },[selected]);
 
   const filtered=useMemo(()=>SUPPLIERS.filter(s=>{
     if(filterTier!=='All'&&s.tier!==filterTier)return false;
@@ -175,7 +225,12 @@ function DueDiligenceAssessment(){
         </div>
         {selected&&(
           <div style={{marginTop:20,padding:20,background:T.surfaceH,borderRadius:10,border:`1px solid ${T.border}`}}>
-            <div style={{fontWeight:700,color:T.navy,marginBottom:12}}>{selected.name} — Article Coverage Detail</div>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <div style={{fontWeight:700,color:T.navy}}>{selected.name} — Article Coverage Detail</div>
+              {liveStatus==='live'&&<span style={pill(T.green,'● Live — /api/v1/eudr/due-diligence',true)}>● Live — /api/v1/eudr/due-diligence</span>}
+              {liveStatus==='demo'&&<span style={pill(T.amber,'○ Demo Data — API unavailable',true)}>○ Demo Data — API unavailable</span>}
+              {liveStatus==='loading'&&<span style={pill(T.textMut,'…',true)}>…</span>}
+            </div>
             <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
               {ARTICLES.map((art,ai)=>(
                 <span key={ai} style={pill(selected.articles.includes(art)?T.green:T.red,art.split(':')[0],true)}>
@@ -196,6 +251,37 @@ function DueDiligenceAssessment(){
                 </div>
               ))}
             </div>
+            {liveDD&&(
+              <div style={{marginTop:16,padding:16,background:T.surface,borderRadius:8,border:`1px solid ${T.border}`}}>
+                <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:10}}>Real Engine Assessment (Articles 4-12)</div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:12}}>
+                  {[
+                    {label:'Overall Score',value:liveDD.overall_compliance_score+'%',color:scoreColor(liveDD.overall_compliance_score)},
+                    {label:'Compliance Status',value:liveDD.compliance_status.replace('_',' '),color:liveDD.compliance_status==='compliant'?T.green:liveDD.compliance_status==='at_risk'?T.amber:T.red},
+                    {label:'DD Level',value:liveDD.due_diligence_level},
+                    {label:'Days to Deadline',value:liveDD.days_until_deadline},
+                  ].map((f,i)=>(
+                    <div key={i} style={{background:T.surfaceH,borderRadius:8,padding:'10px 14px'}}>
+                      <div style={{fontSize:10,color:T.textMut,fontWeight:600,marginBottom:4}}>{f.label}</div>
+                      <div style={{fontSize:15,fontWeight:700,color:f.color||T.navy,fontFamily:T.mono,textTransform:'capitalize'}}>{f.value}</div>
+                    </div>
+                  ))}
+                </div>
+                {liveDD.gaps.length>0&&(
+                  <div>
+                    <div style={{fontSize:11,fontWeight:700,color:T.textSec,marginBottom:6}}>Gaps Identified ({liveDD.gaps.length})</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                      {liveDD.gaps.map((g,i)=>(
+                        <div key={i} style={{fontSize:12,color:T.text,display:'flex',gap:8,alignItems:'center'}}>
+                          <span style={pill(g.severity==='critical'?T.red:T.amber,g.severity,true)}>{g.severity}</span>
+                          <span>{g.gap} ({g.article})</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -206,6 +292,19 @@ function DueDiligenceAssessment(){
 /* ===== TAB 2: COMMODITY SCREENER ===== */
 function CommodityScreener(){
   const [selCom,setSelCom]=useState('Cocoa');
+
+  // Live backend wiring — GET /ref/commodities is a public reference endpoint
+  // (Annex I) that never requires auth, used to verify each HS code's scope
+  // and deforestation cutoff date against the real engine's commodity table.
+  const [liveCommodities,setLiveCommodities]=useState(null);
+  const [liveStatus,setLiveStatus]=useState('loading'); // 'loading' | 'live' | 'demo'
+  useEffect(()=>{
+    let cancelled=false;
+    axios.get(`${EUDR_API}/ref/commodities`,{timeout:10000})
+      .then(({data})=>{ if(!cancelled&&data?.eudr_commodities){ setLiveCommodities(data.eudr_commodities); setLiveStatus('live'); } else if(!cancelled) setLiveStatus('demo'); })
+      .catch(()=>{ if(!cancelled) setLiveStatus('demo'); });
+    return ()=>{ cancelled=true; };
+  },[]);
 
   const comData=COMMODITIES.map((com,ci)=>{
     const sups=SUPPLIERS.filter(s=>s.commodity===com);
@@ -267,16 +366,25 @@ function CommodityScreener(){
 
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
             <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
-              <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:4}}>HS / CN Code Coverage — Annex I</div>
-              <div style={{fontSize:12,color:T.textSec,marginBottom:14}}>Regulation (EU) 2023/1115 Annex I scope verification</div>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+                <div style={{fontSize:13,fontWeight:700,color:T.navy}}>HS / CN Code Coverage — Annex I</div>
+                {liveStatus==='live'&&<span style={pill(T.green,'● Live',true)}>● Live</span>}
+                {liveStatus==='demo'&&<span style={pill(T.amber,'○ Demo',true)}>○ Demo</span>}
+              </div>
+              <div style={{fontSize:12,color:T.textSec,marginBottom:14}}>Regulation (EU) 2023/1115 Annex I scope verification{liveStatus==='live'?' — verified via /api/v1/eudr/ref/commodities':''}</div>
               <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                {(HS_CODES[selCom]||[]).map((code,i)=>(
-                  <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',background:T.surfaceH,borderRadius:8}}>
-                    <span style={{fontFamily:T.mono,fontSize:12,fontWeight:700,color:T.navy,minWidth:52}}>{code.split(' ')[0]}</span>
-                    <span style={{fontSize:12,color:T.textSec}}>{code.split('—')[1]?.trim()}</span>
-                    <span style={{marginLeft:'auto',...pill(T.green,'In Scope',true)}}>In Scope</span>
-                  </div>
-                ))}
+                {(HS_CODES[selCom]||[]).map((code,i)=>{
+                  const prefix=code.split(' ')[0];
+                  const liveEntry=liveCommodities?.[COMMODITY_TO_KEY[selCom]];
+                  const inScope=liveEntry?liveEntry.hs_chapters.includes(prefix):true;
+                  return(
+                    <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',background:T.surfaceH,borderRadius:8}}>
+                      <span style={{fontFamily:T.mono,fontSize:12,fontWeight:700,color:T.navy,minWidth:52}}>{prefix}</span>
+                      <span style={{fontSize:12,color:T.textSec}}>{code.split('—')[1]?.trim()}</span>
+                      <span style={{marginLeft:'auto',...pill(inScope?T.green:T.textMut,inScope?'In Scope':'Not in Annex I',true)}}>{inScope?'In Scope':'Not in Annex I'}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
@@ -292,7 +400,7 @@ function CommodityScreener(){
               </div>
               <div style={{marginTop:16,padding:'12px 14px',background:T.navy+'0a',borderRadius:8,borderLeft:`3px solid ${T.gold}`}}>
                 <div style={{fontSize:11,fontWeight:700,color:T.navy,marginBottom:3}}>Deforestation Cut-off Date</div>
-                <div style={{fontSize:13,fontFamily:T.mono,color:T.navy,fontWeight:700}}>31 December 2020</div>
+                <div style={{fontSize:13,fontFamily:T.mono,color:T.navy,fontWeight:700}}>{liveCommodities?.[COMMODITY_TO_KEY[selCom]]?.deforestation_cutoff ? new Date(liveCommodities[COMMODITY_TO_KEY[selCom]].deforestation_cutoff+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '31 December 2020'}</div>
                 <div style={{fontSize:11,color:T.textSec}}>Production on land deforested after this date is non-compliant</div>
               </div>
             </div>
@@ -318,11 +426,33 @@ function CommodityScreener(){
 
 /* ===== TAB 3: COUNTRY BENCHMARKING ===== */
 function CountryBenchmarking(){
+  // Live backend wiring — GET /ref/country-benchmarks is a public reference
+  // endpoint (Article 29) that never requires auth, so it's used to override
+  // each country's risk tier with the real Commission benchmark. gdpForest/
+  // deforestRate/govScore have no backend equivalent and stay illustrative.
+  const [liveBenchmarks,setLiveBenchmarks]=useState(null);
+  const [liveStatus,setLiveStatus]=useState('loading'); // 'loading' | 'live' | 'demo'
+  useEffect(()=>{
+    let cancelled=false;
+    axios.get(`${EUDR_API}/ref/country-benchmarks`,{timeout:10000})
+      .then(({data})=>{ if(!cancelled&&data?.country_benchmarks){ setLiveBenchmarks(data.country_benchmarks); setLiveStatus('live'); } else if(!cancelled) setLiveStatus('demo'); })
+      .catch(()=>{ if(!cancelled) setLiveStatus('demo'); });
+    return ()=>{ cancelled=true; };
+  },[]);
+
+  const tierLabel=t=>t==='high'?'High Risk':t==='low'?'Low Risk':'Standard Risk';
+
   const countries=[
     ...COUNTRIES_HIGH.map((c,i)=>({name:c,tier:'High Risk',tierId:1,gdpForest:Math.floor(sr(i*31+7)*15+5),deforestRate:+(sr(i*37+11)*3+0.5).toFixed(2),govScore:Math.floor(sr(i*41+3)*30+20),complianceDeadline:'30 Jun 2026 (SME) / 30 Dec 2025 (Large)',simplifiedDD:false})),
     ...COUNTRIES_STD.map((c,i)=>({name:c,tier:'Standard Risk',tierId:2,gdpForest:Math.floor(sr(i*43+17)*10+3),deforestRate:+(sr(i*47+13)*1.5+0.2).toFixed(2),govScore:Math.floor(sr(i*53+7)*25+40),complianceDeadline:'30 Jun 2026 (SME) / 30 Dec 2025 (Large)',simplifiedDD:false})),
     ...COUNTRIES_LOW.map((c,i)=>({name:c,tier:'Low Risk',tierId:3,gdpForest:Math.floor(sr(i*59+19)*5+1),deforestRate:+(sr(i*61+5)*0.3+0.01).toFixed(2),govScore:Math.floor(sr(i*67+11)*20+70),complianceDeadline:'30 Jun 2026 (SME) / 30 Dec 2025 (Large)',simplifiedDD:true})),
-  ];
+  ].map(c=>{
+    const iso2=COUNTRY_TO_ISO2[c.name];
+    const live=liveBenchmarks&&iso2?liveBenchmarks[iso2]:null;
+    if(!live) return c;
+    const tier=tierLabel(live.tier);
+    return {...c,tier,tierId:tier==='High Risk'?1:tier==='Low Risk'?3:2,simplifiedDD:live.tier==='low',_live:true};
+  });
 
   const radarData=TIERS.map((tier,ti)=>{
     const grp=countries.filter(c=>c.tier===tier);
@@ -333,6 +463,11 @@ function CountryBenchmarking(){
 
   return(
     <div>
+      <div style={{marginBottom:16}}>
+        {liveStatus==='live'&&<span style={pill(T.green,'● Live — /api/v1/eudr/ref/country-benchmarks (Art 29)',false)}>● Live — tiers from /api/v1/eudr/ref/country-benchmarks (Art 29)</span>}
+        {liveStatus==='demo'&&<span style={pill(T.amber,'○ Demo Data',false)}>○ Demo Data — country-benchmarks API unavailable, showing seeded illustrative tiers</span>}
+        {liveStatus==='loading'&&<span style={pill(T.textMut,'…',false)}>… contacting EUDR country benchmarking engine</span>}
+      </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:24}}>
         {TIERS.map((tier,ti)=>(
           <div key={tier} style={{background:T.surface,border:`2px solid ${tierColor(tier)}30`,borderRadius:12,padding:20}}>
@@ -342,7 +477,7 @@ function CountryBenchmarking(){
               <span style={{marginLeft:'auto',fontFamily:T.mono,fontSize:13,color:T.textMut}}>Art 29 Tier {ti+1}</span>
             </div>
             <div style={{fontSize:26,fontWeight:700,color:tierColor(tier),fontFamily:T.mono,marginBottom:6}}>
-              {tier==='High Risk'?COUNTRIES_HIGH.length:tier==='Low Risk'?COUNTRIES_LOW.length:COUNTRIES_STD.length} countries
+              {countries.filter(c=>c.tier===tier).length} countries
             </div>
             <div style={{fontSize:12,color:T.textSec}}>
               {tier==='High Risk'?'Full due diligence + geolocation required':tier==='Low Risk'?'Simplified DD — Art 12 eligible':'Standard due diligence obligations'}
@@ -420,6 +555,33 @@ function CountryBenchmarking(){
 function TraceabilityStatements(){
   const [genDDS,setGenDDS]=useState(false);
   const [selSupplier,setSelSupplier]=useState(SUPPLIERS[0]);
+  const [liveDDS,setLiveDDS]=useState(null);
+  const [ddsStatus,setDdsStatus]=useState(null); // null | 'loading' | 'live' | 'demo'
+
+  const generateDDS=useCallback(async()=>{
+    setGenDDS(true);
+    setDdsStatus('loading');
+    try{
+      const iso2=COUNTRY_TO_ISO2[selSupplier.country]||selSupplier.country;
+      const commodityKey=COMMODITY_TO_KEY[selSupplier.commodity]||selSupplier.commodity.toLowerCase();
+      const { data } = await axios.post(`${EUDR_API}/due-diligence-statement`,{
+        operator_id:`SUP-${selSupplier.id}`, operator_name:selSupplier.name, operator_type:'operator',
+        commodities:[commodityKey], countries_of_origin:[iso2],
+        certifications: selSupplier.certified ? ['FSC'] : [],
+        geolocation_provided: selSupplier.geoVerified, geolocation_type: selSupplier.geoVerified?'polygon':'',
+        plot_area_ha: selSupplier.geoVerified?12.5:null,
+        supplier_name: selSupplier.name, supplier_address: selSupplier.country,
+        production_date: selSupplier.lastDDS, quantity_kg: selSupplier.volume*1000,
+        local_law_evidence: selSupplier.geoVerified, deforestation_free_evidence: selSupplier.geoVerified&&selSupplier.certified,
+        independent_audit: selSupplier.certified, satellite_monitoring: selSupplier.geoVerified, third_party_verification: selSupplier.certified,
+      },{timeout:10000});
+      setLiveDDS(data);
+      setDdsStatus('live');
+    }catch(e){
+      setLiveDDS(null);
+      setDdsStatus('demo');
+    }
+  },[selSupplier]);
 
   const geoPlots=Array.from({length:12},(_,i)=>({
     id:`GEO-${1000+i}`,
@@ -490,15 +652,29 @@ function TraceabilityStatements(){
           <select value={selSupplier.id} onChange={e=>setSelSupplier(SUPPLIERS.find(s=>s.id===+e.target.value))} style={{padding:'8px 14px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:13,fontFamily:T.font,width:260}}>
             {SUPPLIERS.slice(0,20).map(s=><option key={s.id} value={s.id}>{s.name} — {s.commodity}</option>)}
           </select>
-          <button onClick={()=>setGenDDS(true)} style={{padding:'9px 22px',borderRadius:8,background:T.navy,color:'#fff',border:'none',cursor:'pointer',fontSize:13,fontWeight:700}}>Generate DDS</button>
-          {genDDS&&<span style={pill(T.green,'DDS Generated',false)}>DDS Generated</span>}
+          <button onClick={generateDDS} style={{padding:'9px 22px',borderRadius:8,background:T.navy,color:'#fff',border:'none',cursor:'pointer',fontSize:13,fontWeight:700}}>{ddsStatus==='loading'?'Generating…':'Generate DDS'}</button>
+          {ddsStatus==='live'&&<span style={pill(T.green,'● Live — /api/v1/eudr/due-diligence-statement',false)}>● Live — /api/v1/eudr/due-diligence-statement</span>}
+          {ddsStatus==='demo'&&<span style={pill(T.amber,'○ Demo Data — API unavailable',false)}>○ Demo Data — API unavailable</span>}
         </div>
 
         {genDDS&&selSupplier&&(
           <div style={{background:T.surfaceH,borderRadius:10,padding:20,border:`1px solid ${T.border}`,fontFamily:T.mono,fontSize:12}}>
             <div style={{fontWeight:700,color:T.navy,marginBottom:12,fontSize:14,fontFamily:T.font}}>DUE DILIGENCE STATEMENT — Art 4(2) EUDR</div>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-              {[
+              {liveDDS?[
+                {label:'Statement Reference',value:liveDDS.reference_number},
+                {label:'Operator',value:liveDDS.operator_name},
+                {label:'Commodity',value:liveDDS.commodities.join(', ')},
+                {label:'Country of Production',value:liveDDS.countries_of_origin.join(', ')},
+                {label:'Due Diligence Level',value:liveDDS.due_diligence_level},
+                {label:'Compliance Status',value:liveDDS.compliance_status.replace('_',' ')},
+                {label:'Regulation Reference',value:'Reg. (EU) 2023/1115'},
+                {label:'Submission Date',value:liveDDS.date_issued},
+                {label:'Statement Ready',value:liveDDS.statement_ready?'Yes':'No — gaps remain'},
+                {label:'Overall Score',value:liveDDS.overall_score+'%'},
+                {label:'Gaps Remaining',value:liveDDS.gaps_remaining},
+                {label:'Days to Deadline',value:liveDDS.days_until_deadline},
+              ]:[
                 {label:'Statement Reference',value:`DDS-${new Date().getFullYear()}-${String(selSupplier.id+1000).padStart(5,'0')}`},
                 {label:'Operator',value:'[Company Name] — Registered EU Operator'},
                 {label:'Commodity',value:selSupplier.commodity},
@@ -514,12 +690,12 @@ function TraceabilityStatements(){
               ].map((f,i)=>(
                 <div key={i} style={{padding:'8px 12px',background:T.surface,borderRadius:6,border:`1px solid ${T.borderL}`}}>
                   <div style={{fontSize:9,fontWeight:700,color:T.textMut,marginBottom:2,letterSpacing:0.5,textTransform:'uppercase',fontFamily:T.font}}>{f.label}</div>
-                  <div style={{color:T.text}}>{f.value}</div>
+                  <div style={{color:T.text,textTransform:typeof f.value==='string'&&f.label==='Compliance Status'?'capitalize':'none'}}>{f.value}</div>
                 </div>
               ))}
             </div>
             <div style={{marginTop:16,padding:'10px 14px',background:T.navy,borderRadius:8,color:'#fff',fontSize:11,fontFamily:T.font}}>
-              This statement is generated in accordance with Art 4(2) of Regulation (EU) 2023/1115. The operator confirms that the relevant commodity/product is deforestation-free and has been produced in accordance with applicable legislation. Reference: Commission Implementing Regulation (EU) 2025/1093.
+              {liveDDS ? liveDDS.declaration : 'This statement is generated in accordance with Art 4(2) of Regulation (EU) 2023/1115. The operator confirms that the relevant commodity/product is deforestation-free and has been produced in accordance with applicable legislation. Reference: Commission Implementing Regulation (EU) 2025/1093.'}
             </div>
           </div>
         )}

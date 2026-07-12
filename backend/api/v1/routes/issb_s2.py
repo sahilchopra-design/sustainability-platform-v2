@@ -40,18 +40,40 @@ class ISSBS2AssessRequest(BaseModel):
     internal_carbon_price: Optional[float] = None
     climate_capex_pct: float = Field(0.0, ge=0, le=100)
     revenue_usd_mn: float = Field(1000.0, gt=0)
+    # Qualitative disclosure-item evidence (see IFRS_S2_PILLARS in the engine
+    # for the authoritative key catalog). Previously accepted by
+    # ISSBS2Engine.assess() but never exposed on this request model or
+    # forwarded by the route below, so governance/strategy/risk_management
+    # pillar scores were silently pinned to 0 for every caller.
+    governance_disclosures: Optional[list[str]] = None
+    strategy_disclosures: Optional[list[str]] = None
+    risk_mgmt_disclosures: Optional[list[str]] = None
+    metrics_targets_disclosures: Optional[list[str]] = None
+    physical_risk_score: Optional[float] = Field(None, ge=0, le=10)
+    transition_risk_score: Optional[float] = Field(None, ge=0, le=10)
+    sasb_metric_values: Optional[dict] = None
 
 
 class ScenarioAnalysisRequest(BaseModel):
     entity_id: str
     entity_type: str = "corporate"
     scenarios: Optional[list[str]] = None
+    # Balance-sheet exposures the engine needs to turn a scenario pathway into
+    # entity-level impacts (see ISSBS2Engine.run_scenario_analysis docstring).
+    # Previously accepted by the engine but not exposed here, so every
+    # scenario-analysis call silently returned impacts of None.
+    entity_financials: Optional[dict] = None
 
 
 class RiskIdentificationRequest(BaseModel):
     entity_id: str
     sector: str = "financials"
     include_opportunities: bool = True
+    # entity-specific likelihood/impact scores keyed by risk_key, and
+    # opportunity USD-mn potential keyed by opportunity name. Previously
+    # accepted by the engine but not exposed here.
+    risk_scores: Optional[dict] = None
+    opportunity_values: Optional[dict] = None
 
 
 # ---------------------------------------------------------------------------
@@ -75,6 +97,13 @@ def assess_issb_s2(req: ISSBS2AssessRequest):
             internal_carbon_price=req.internal_carbon_price,
             climate_capex_pct=req.climate_capex_pct,
             revenue_usd_mn=req.revenue_usd_mn,
+            governance_disclosures=req.governance_disclosures,
+            strategy_disclosures=req.strategy_disclosures,
+            risk_mgmt_disclosures=req.risk_mgmt_disclosures,
+            metrics_targets_disclosures=req.metrics_targets_disclosures,
+            physical_risk_score=req.physical_risk_score,
+            transition_risk_score=req.transition_risk_score,
+            sasb_metric_values=req.sasb_metric_values,
         )
         return {"status": "ok", "result": dataclasses.asdict(result)}
     except Exception as exc:
@@ -90,6 +119,7 @@ def scenario_analysis(req: ScenarioAnalysisRequest):
             entity_id=req.entity_id,
             entity_type=req.entity_type,
             scenarios=req.scenarios,
+            entity_financials=req.entity_financials,
         )
         return {"status": "ok", "result": result}
     except Exception as exc:
@@ -105,6 +135,8 @@ def risk_identification(req: RiskIdentificationRequest):
             entity_id=req.entity_id,
             sector=req.sector,
             include_opportunities=req.include_opportunities,
+            risk_scores=req.risk_scores,
+            opportunity_values=req.opportunity_values,
         )
         return {"status": "ok", "result": result}
     except Exception as exc:

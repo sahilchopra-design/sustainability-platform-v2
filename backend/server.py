@@ -147,6 +147,9 @@ from api.v1.routes.sfdr_annex import router as sfdr_annex_router      # E9
 from api.v1.routes.assurance_readiness import router as assurance_readiness_router  # E10
 from api.v1.routes.uk_sdr import router as uk_sdr_router                            # E11
 from api.v1.routes.spatial import router as spatial_router                          # P1-8 PostGIS
+from api.v1.routes.usgs_earthquake import router as usgs_earthquake_router          # USGS/ANSS ComCat seismic-hazard grid (ref_earthquake_zones)
+from api.v1.routes.wildfire_risk_status import router as wildfire_risk_status_router  # GWIS/EFFIS + NASA FIRMS wildfire hazard grid (ref_wildfire_zones)
+from api.v1.routes.ibtracs_cyclone import router as ibtracs_cyclone_router          # NOAA IBTrACS tropical-cyclone hazard grid (ref_cyclone_zones)
 from api.v1.routes.gri_standards import router as gri_standards_router
 from api.v1.routes.sasb_industry import router as sasb_industry_router
 from api.v1.routes.model_validation import router as model_validation_router
@@ -269,6 +272,7 @@ from api.v1.routes.sscf import router as sscf_router                            
 from api.v1.routes.double_materiality import router as double_materiality_router                # E102 CSRD Double Materiality — ESRS 1 DMA / IRO identification / materiality matrix / ESRS omissions
 from api.v1.routes.temperature_alignment import router as temperature_alignment_router          # E103 Temperature Alignment — PCAF + SBTi FI / PACTA / WACI / ITR / sector pathways
 from api.v1.routes.physical_risk_pricing import router as physical_risk_pricing_router          # E104 Physical Risk Pricing — NatCat EAL/PML/VaR / NGFS amplifiers / Swiss Re protection gap / 30 countries
+from api.v1.routes.global_physical_risk import router as global_physical_risk_router            # Global Physical Risk Engine — composite digital-twin overlay across 5 PostGIS hazard grids
 from api.v1.routes.esg_data_quality_assurance import router as esg_data_quality_assurance_router  # E105 ESG Data Quality & Assurance — BCBS239 / PCAF DQS / ISSA5000 / ISAE3000/3410 / AI imputation
 from api.v1.routes.climate_derivatives import router as climate_derivatives_router              # E106 Climate-Linked Structured Products — Weather BSM / EUA Options / Cat Bonds / ISDA SLD / EMIR
 from api.v1.routes.sovereign_swf import router as sovereign_swf_router                         # E107 Sovereign & SWF Engine — IWG-SWF 24 GAPP / GPFG Exclusions / PACTA Sovereign / Divestment Pathways
@@ -290,10 +294,47 @@ from api.v1.routes.nature_capital_accounting import router as nature_capital_acc
 from api.v1.routes.regulatory_horizon import router as regulatory_horizon_router                # E117 Regulatory Horizon Scanning — 60 regulations / 2025-2030 pipeline / entity applicability
 from api.v1.routes.climate_tech import router as climate_tech_router                            # E118 Climate Tech Investment — CTVC 11 sectors / IEA NZE / BloombergNEF / MAC curves / VC data
 from api.v1.routes.comprehensive_reporting import router as comprehensive_reporting_router      # E119 Comprehensive Report Aggregator — CSRD/SFDR/TCFD/TNFD/ISSB / XBRL / ESAP / cross-framework
+from api.v1.routes.gbif_screening import router as gbif_screening_router                        # Site Biodiversity Screener — GBIF occurrence API (free/keyless, CC0/CC-BY)
+from api.v1.routes.climate_trace import router as climate_trace_router                          # Facility Emissions Attribution — Climate TRACE v6 API (free/keyless, CC-BY)
+from api.v1.routes.openfema_claims import router as openfema_claims_router                      # Flood Loss Calibrator — OpenFEMA NFIP Redacted Claims v2 (free/keyless, public domain)
+from api.v1.routes.ngfs_scenarios_extract import router as ngfs_scenarios_extract_router        # Supervisory Scenario Runner — NGFS Phase 5 seeded extract (IIASA Scenario Explorer, CC BY 4.0)
+from api.v1.routes.eia_energy import router as eia_energy_router                                # US Grid & Energy Prices — EIA Open Data v2 (key-gated → Live/Demo fallback)
+from api.v1.routes.entsoe_grid import router as entsoe_grid_router                              # European Grid Intelligence — ENTSO-E Transparency Platform (key-gated → Live/Demo fallback)
+from api.v1.routes.grid_carbon import router as grid_carbon_router                              # Grid Carbon Intelligence — UK NESO Carbon Intensity API proxy (free/keyless, CC-BY 4.0) + global US/EU extension
+from api.v1.routes.overture_buildings import router as overture_buildings_router                # Overture Maps building footprints — live keyless S3 Parquet query (per-building exposure)
+from api.v1.routes.nasa_power import router as nasa_power_router                                # NASA POWER — global solar/wind/temperature resource data (free/keyless)
+from api.v1.routes.vcm_registry import router as vcm_registry_router                            # VCM Cross-Registry Tracker — hand-authored real aggregate extract (OffsetsDB API is key-gated)
+from api.v1.routes.gleif_graph import router as gleif_graph_router                              # Counterparty Ownership Graph — GLEIF LEI API proxy (free/keyless, CC0 1.0)
+from api.v1.routes.sanctions_screening import router as sanctions_screening_router              # Sanctions & UFLPA Screening Desk — trade.gov CSL bulk (keyless) + seeded UFLPA extract
+from api.v1.routes.fred_spreads import router as fred_spreads_router                            # Credit Spread Climate Monitor — FRED ICE BofA OAS series (key-gated → Live/Demo fallback)
+from api.v1.routes.open_meteo import router as open_meteo_router                                # Open-Meteo Weather & Climate — current weather / historical extremes / CMIP6 climate projection (free-tier keyless real data; OPEN_METEO_API_KEY unlocks commercial tiers)
+from api.v1.routes.openfigi import router as openfigi_router                                    # Instrument Identifier Mapper — OpenFIGI ISIN/CUSIP/ticker -> FIGI (free/keyless, chains to GLEIF LEI)
+from api.v1.routes.un_comtrade import router as un_comtrade_router                              # UN Comtrade Trade-Flow Proxy — free/keyless preview tier (1 period/req, rate-limited)
+from api.v1.routes.energy_bond_ladder import router as energy_bond_ladder_router                # NX2-10 Maturity Wall Monitor — hand-authored real-issuer energy/utility bond extract (labeled)
+from api.v1.routes.slb_structuring import router as slb_structuring_router                      # NX2-05 SLB Structurer — SPT ambition vs sector pathways + step-up valuation (closed-form)
+from api.v1.routes.ppa_structuring import router as ppa_structuring_router                      # NX2-01 PPA Structuring Desk — term-sheet valuation, capture/cannibalization + firming math (deterministic, documented)
+from api.v1.routes.bess_stacking import router as bess_stacking_router                          # NX2-07 BESS Revenue Stacker — deterministic greedy daily dispatch (arbitrage + FR + capacity), no PRNG
+from api.v1.routes.pf_debt_sizing import router as pf_debt_sizing_router                        # NX2-02 PF Debt Sizer — DSCR-sculpted sizing solver (deterministic; hand-authored benchmark refs)
+from api.v1.routes.pf_rating import router as pf_rating_router                                  # NX2-09 PF Credit Rating Engine — scorecard + PD map (indicative, Moody's/S&P PF study aggregates)
+from api.v1.routes.ppa_xva import router as ppa_xva_router                                      # NX2-12 PPA XVA Engine — CVA/DVA via deterministic binomial lattice + rating-based PD curves (labeled)
+from api.v1.routes.tax_equity import router as tax_equity_router                                # NX2-13 Tax Equity & Transferability — IRA partnership-flip solver + §6418 transfer comparison (real IRA params)
+from api.v1.routes.financial_model_engine import router as financial_model_router               # NX2-16 Financial Modeling Studio — full PF model: waterfall, 3-statement, QMC (Halton, no PRNG), solvers
+from api.v1.routes.green_bond_analytics import router as green_bond_analytics_router            # NX2-04 Green Bond Analytics — par-curve bootstrap, G/I/Z/ASW spreads, comp OLS RV, dual-tranche (deterministic solvers)
+from api.v1.routes.transition_credit_analytics import router as transition_credit_analytics_router  # NX2-15b Transition Credit Analytics — PD term structure/IFRS9 ECL, climate-stressed migration matrix, PCAF, pricing lab, portfolio+disclosure (deterministic, hand-authored tables)
+from api.v1.routes.compliance_carbon import router as compliance_carbon_router                  # NX2-17 Compliance & National Carbon Mechanisms — scheme atlas + Article 6 desk + ITMO pricing + multi-scheme compliance cost + cross-border arbitrage (hand-authored regulatory extract, deterministic)
+from api.v1.routes.infra_portfolio_analytics import router as infra_portfolio_analytics_router  # NX2-03 Infra Debt Portfolio Analytics — cash-flow ladder, Vasicek/ASRF credit VaR (Acklam inverse-normal), concentration HHI, NGFS scenario overlay, PCAF-proxy financed emissions (deterministic)
+from api.v1.routes.uk_land_registry import router as uk_land_registry_router                    # HM Land Registry Price Paid Data — live/keyless linked-data API proxy (OGL v3, commercial-OK)
+from api.v1.routes.uk_epc import router as uk_epc_router                                        # UK EPC Register — live proxy (GOV.UK One Login bearer token) with labeled demo-seed fallback
+from api.v1.routes.green_premium_hedonic import router as green_premium_hedonic_router          # Green-Premium Hedonic Regression — Land Registry x EPC join, real OLS (Real Estate Carbon Analytics)
+from api.v1.routes.ucdp_conflict import router as ucdp_conflict_router                          # UCDP Conflict Nowcast — GED events (token-gated → seeded real sample fallback), sovereign-corporate-bridge extension
+from api.v1.routes.climate_policy_radar import router as climate_policy_radar_router            # Climate Policy Stringency — seeded real extract (no live CPR API found) + documented scorer, sovereign-corporate-bridge extension
 
 # RBAC Admin
 from api.v1.routes.rbac_admin import router as rbac_admin_router
 from api.admin_rbac import router as admin_rbac_router
+
+# Module Nav — command palette / sector sidebar / pinned+recent / connections panel
+from api.v1.routes.module_nav import router as module_nav_router
 
 # Market Data Stack (added 2026-03-23)
 # yfinance India service + Finnhub ESG are service-layer only (no dedicated router needed)
@@ -505,6 +546,9 @@ app.include_router(sfdr_annex_router)               # SFDR Annex Disclosures —
 app.include_router(assurance_readiness_router)      # Assurance Readiness Dashboard — 26 criteria, 8 domains, ISAE/ISSA/CSRD Art 26a, blocking gap detection (E10)
 app.include_router(uk_sdr_router)                   # UK SDR Engine — FCA PS 23/16, 4 labels, AGR, naming rules, ICIS proxy, SFDR/ISSB cross-mapping (E11)
 app.include_router(spatial_router)                  # Spatial Query Engine — PostGIS P1-8: protected areas, flood zones, wildfire, SLR, EUDR plot overlap
+app.include_router(usgs_earthquake_router)          # USGS/ANSS ComCat seismic-hazard grid — /status + /point (ref_earthquake_zones)
+app.include_router(wildfire_risk_status_router)     # GWIS/EFFIS + NASA FIRMS wildfire hazard grid — /status + /point (ref_wildfire_zones)
+app.include_router(ibtracs_cyclone_router)          # NOAA IBTrACS tropical-cyclone hazard grid — /status + /point (ref_cyclone_zones)
 app.include_router(gri_standards_router)            # GRI Standards 2021 — content index, emissions (305), material topics, SDG/ESRS linkage
 app.include_router(sasb_industry_router)            # SASB Industry Standards — IFRS S1 para 55, SICS sectors, materiality, peer comparison
 app.include_router(model_validation_router)         # Model Validation Framework — BCBS 239, EBA GL/2023/04, backtesting, champion-challenger
@@ -625,6 +669,7 @@ app.include_router(sscf_router)                       # E101 Sustainable Supply 
 app.include_router(double_materiality_router)         # E102 CSRD Double Materiality Assessment
 app.include_router(temperature_alignment_router)      # E103 Financed Emissions Temperature Alignment
 app.include_router(physical_risk_pricing_router)      # E104 Physical Climate Risk Pricing — NatCat EAL/PML/VaR / NGFS amplifiers / 30 countries
+app.include_router(global_physical_risk_router)       # Global Physical Risk Engine — composite digital-twin overlay (point/portfolio/region/coverage)
 app.include_router(esg_data_quality_assurance_router) # E105 ESG Data Quality & Assurance — BCBS239 / PCAF DQS / ISSA5000 / ISAE3000/3410
 app.include_router(climate_derivatives_router)        # E106 Climate-Linked Structured Products — Weather / EUA Options / Cat Bonds / ISDA SLD
 app.include_router(sovereign_swf_router)              # E107 Sovereign & SWF Engine — IWG-SWF / GPFG / PACTA / Divestment
@@ -646,10 +691,47 @@ app.include_router(nature_capital_accounting_router)  # E116 Nature Capital Acco
 app.include_router(regulatory_horizon_router)         # E117 Regulatory Horizon Scanning
 app.include_router(climate_tech_router)               # E118 Climate Tech Investment
 app.include_router(comprehensive_reporting_router)    # E119 Comprehensive Report Aggregator
+app.include_router(gbif_screening_router)             # Site Biodiversity Screener — GBIF occurrence API (free/keyless)
+app.include_router(climate_trace_router)              # Facility Emissions Attribution — Climate TRACE v6 (free/keyless)
+app.include_router(openfema_claims_router)            # Flood Loss Calibrator — OpenFEMA NFIP claims (free/keyless)
+app.include_router(ngfs_scenarios_extract_router)      # Supervisory Scenario Runner — NGFS Phase 5 seeded extract (IIASA, CC BY 4.0)
+app.include_router(eia_energy_router)                 # US Grid & Energy Prices — EIA Open Data v2 (key-gated → Live/Demo)
+app.include_router(entsoe_grid_router)                # European Grid Intelligence — ENTSO-E Transparency Platform (key-gated → Live/Demo)
+app.include_router(grid_carbon_router)                # Grid Carbon Intelligence — UK NESO Carbon Intensity proxy (free/keyless, CC-BY) + global US/EU extension
+app.include_router(overture_buildings_router)         # Overture Maps building footprints — live keyless S3 Parquet query (per-building exposure)
+app.include_router(nasa_power_router)                 # NASA POWER — global solar/wind/temperature resource data (free/keyless)
+app.include_router(vcm_registry_router)               # VCM Cross-Registry Tracker — real aggregate extract (OffsetsDB key-gated)
+app.include_router(gleif_graph_router)                # Counterparty Ownership Graph — GLEIF LEI API proxy (free/keyless, CC0)
+app.include_router(sanctions_screening_router)        # Sanctions & UFLPA Screening Desk — trade.gov CSL (keyless bulk) + UFLPA extract
+app.include_router(fred_spreads_router)               # Credit Spread Climate Monitor — FRED ICE BofA OAS (key-gated → Live/Demo)
+app.include_router(open_meteo_router)                 # Open-Meteo Weather & Climate — current-weather / historical-extremes / climate-projection (key-gated commercial tier → real free-tier fallback)
+app.include_router(openfigi_router)                   # Instrument Identifier Mapper — OpenFIGI ISIN/CUSIP/ticker -> FIGI (free/keyless, chains to GLEIF LEI)
+app.include_router(un_comtrade_router)                # UN Comtrade Trade-Flow Proxy — free/keyless preview tier
+app.include_router(energy_bond_ladder_router)         # NX2-10 Maturity Wall Monitor — energy/utility bond extract (labeled seeded extract)
+app.include_router(slb_structuring_router)            # NX2-05 SLB Structurer — SPT ambition + coupon step-up valuation
+app.include_router(ppa_structuring_router)            # NX2-01 PPA Structuring Desk — term-sheet valuation + capture/firming math
+app.include_router(bess_stacking_router)              # NX2-07 BESS Revenue Stacker — greedy daily dispatch revenue stack
+app.include_router(pf_debt_sizing_router)             # NX2-02 PF Debt Sizer — DSCR-sculpted sizing solver (deterministic)
+app.include_router(pf_rating_router)                  # NX2-09 PF Credit Rating Engine — scorecard + indicative PD map
+app.include_router(ppa_xva_router)                    # NX2-12 PPA XVA Engine — CVA/DVA, deterministic binomial lattice + PD curves
+app.include_router(tax_equity_router)                 # NX2-13 Tax Equity & Transferability — flip solver + §6418 comparison
+app.include_router(financial_model_router)            # NX2-16 Financial Modeling Studio — full PF model engine (all math server-side)
+app.include_router(green_bond_analytics_router)       # NX2-04 Green Bond Analytics — curve/RV/dual-tranche math for the pricing desk
+app.include_router(transition_credit_analytics_router)  # NX2-15b Transition Credit Analytics — lifetime ECL, climate matrix, PCAF, pricing lab, portfolio/disclosure
+app.include_router(compliance_carbon_router)           # NX2-17 Compliance & National Carbon Mechanisms — schemes/article6/itmo-price/compliance-cost/cross-border
+app.include_router(infra_portfolio_analytics_router)    # NX2-03 Infra Debt Portfolio Analytics — cash flows, Vasicek credit VaR, concentration, NGFS overlay, financed emissions
+app.include_router(uk_land_registry_router)             # HM Land Registry Price Paid Data — live/keyless linked-data API proxy
+app.include_router(ucdp_conflict_router)                # UCDP Conflict Nowcast — GED events (token-gated → seeded real sample)
+app.include_router(climate_policy_radar_router)         # Climate Policy Stringency — seeded real extract + documented scorer
+app.include_router(uk_epc_router)                       # UK EPC Register — live proxy (bearer token) with labeled demo-seed fallback
+app.include_router(green_premium_hedonic_router)        # Green-Premium Hedonic Regression — Land Registry x EPC join, real OLS
 
 # RBAC Admin
 app.include_router(rbac_admin_router)
 app.include_router(admin_rbac_router)
+
+# Module Nav — command palette / sector sidebar / pinned+recent / connections panel
+app.include_router(module_nav_router)
 
 # ── Auto-router discovery ─────────────────────────────────────────────────────
 # Additively include any router under api/v1/routes that the manual block above

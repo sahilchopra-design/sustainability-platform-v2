@@ -178,9 +178,16 @@ class NLPPulseEngine:
         """Process batch of signals and compute aggregate pulse."""
         cfg = req.config or DEFAULT_CONFIG
         results = []
-        now = req.signals[-1].timestamp if req.signals else datetime.utcnow()
+        sorted_signals = sorted(req.signals, key=lambda s: s.timestamp)
+        # "now" must be the chronologically-latest signal, not the last element of
+        # the caller-supplied (possibly unsorted) list — otherwise a signal newer
+        # than "now" produces a negative elapsed time, and since decay is applied
+        # as exp(-lambda * elapsed_days), a negative elapsed with a fast-decaying
+        # event type (e.g. breaking_news, half-life 12h) blows up exponentially
+        # (observed: -1.5e+23 from a 2-signal batch passed in reverse-chron order).
+        now = sorted_signals[-1].timestamp if sorted_signals else datetime.utcnow()
 
-        for sig in sorted(req.signals, key=lambda s: s.timestamp):
+        for sig in sorted_signals:
             single = ProcessSignalRequest(signal=sig, config=cfg)
             processed = NLPPulseEngine.process_signal(single)
 

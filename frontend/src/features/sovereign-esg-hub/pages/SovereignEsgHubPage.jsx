@@ -1,9 +1,24 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   ComposedChart, Line, ResponsiveContainer, Cell, ScatterChart, Scatter, ZAxis,
 } from "recharts";
+
+/* ══════════════════════════════════════════════════════════════
+   METHODOLOGY NOTE
+   The COUNTRIES[] scores below (esgScore, ndcRating, physicalRisk,
+   debtRisk, etc.) are simplified, portfolio-level proxy scores
+   maintained independently in this hub for fast cross-country
+   screening at a glance. They are NOT computed from ND-GAIN, CAT
+   Ratings, CPI, HDI, or Gini the way the Sovereign ESG Scorer
+   (/sovereign-esg) is, so the same country can show a different
+   ESG number on the two pages. Anywhere a headline ESG score is
+   shown, we surface a banner/caption pointing to the fully-sourced
+   scorer rather than presenting this hub's numbers as an
+   independent authoritative rating. See MethodologyBanner below.
+   ══════════════════════════════════════════════════════════════ */
 
 // ─── Theme ────────────────────────────────────────────────────────────────────
 const T = {
@@ -184,8 +199,32 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
+const MethodologyBanner = ({ navigate, compact }) => (
+  <div style={{
+    background: "#faf6ec", border: "1px solid #e6d9ad", borderRadius: 6,
+    padding: compact ? "8px 14px" : "10px 16px", marginBottom: compact ? 12 : 18,
+    display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
+  }}>
+    <span style={{ fontSize: 14 }}>ℹ️</span>
+    <span style={{ fontSize: 11.5, color: "#5c5237", lineHeight: 1.5, flex: "1 1 420px" }}>
+      Scores on this page (ESG Score, NDC Rating, Physical Risk, Debt Risk) are <strong>simplified proxy
+      scores</strong> for fast portfolio-level screening across {COUNTRIES.length} sovereigns — they are not
+      computed from ND-GAIN, CAT Ratings, CPI, HDI or Gini. For a country's fully-sourced, methodology-documented
+      ESG assessment, use the Sovereign ESG Scorer. Numbers for the same country may legitimately differ between
+      the two pages.
+    </span>
+    <button onClick={() => navigate("/sovereign-esg")} style={{
+      fontFamily: T.mono, fontSize: 10.5, fontWeight: 700, color: T.hub, background: T.gold,
+      border: "none", borderRadius: 5, padding: "6px 12px", cursor: "pointer", whiteSpace: "nowrap",
+    }}>
+      Open Sovereign ESG Scorer →
+    </button>
+  </div>
+);
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function SovereignEsgHubPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab]         = useState(0);
   const [sortField, setSortField]         = useState("esgScore");
   const [sortDir, setSortDir]             = useState("desc");
@@ -273,6 +312,8 @@ export default function SovereignEsgHubPage() {
       </div>
 
       <div style={S.body}>
+
+        <MethodologyBanner navigate={navigate} />
 
         {/* ══ TAB 0: HUB OVERVIEW ══ */}
         {activeTab === 0 && (
@@ -385,6 +426,9 @@ export default function SovereignEsgHubPage() {
             </div>
             <div style={S.card}>
               <SectionHeader title="Sovereign ESG Global Data Table — Click Header to Sort" />
+              <div style={{ fontSize:10.5, color:T.muted, marginTop:-8, marginBottom:10 }}>
+                "ESG Score" is this hub's simplified proxy rating, not the sourced Sovereign ESG Scorer methodology — see the banner above.
+              </div>
               <div style={{ overflowX:"auto" }}>
                 <table style={{ width:"100%", borderCollapse:"collapse" }}>
                   <thead>

@@ -8,3 +8,8 @@ __pycache__/
 *.pyc
 *.pyo
 scripts/.cache/
+
+# --- excluded 2026-07-07: oversized + secret-bearing, never commit ---
+AA_Impact_Normalized_Datapoint_Repository_v2380.xlsx
+docs/SECURITY_ROTATION.md
+backend/server_output.log

@@ -9,42 +9,61 @@ const RESOLUTIONS = [
   { id:2, company:'Chevron', topic:'Lobbying Disclosure', year:2024, support:52, filer:'As You Sow', mgmtResponse:'Oppose', impact:'Full adoption' },
   { id:3, company:'Shell', topic:'Climate Risk Report', year:2023, support:20, filer:'Follow This', mgmtResponse:'Oppose', impact:'None' },
   { id:4, company:'BP', topic:'Emissions Targets', year:2024, support:17, filer:'Follow This', mgmtResponse:'Oppose', impact:'None' },
-  { id:5, company:'JPMorgan', topic:'Fossil Fuel Financing', year:2024, support:38, filer:'ShareAction', mgmtResponse:'Oppose', impact:'Policy update' },
+  { id:5, company:'JPMorgan Chase', topic:'Fossil Fuel Financing', year:2024, support:38, filer:'ShareAction', mgmtResponse:'Oppose', impact:'Policy update' },
   { id:6, company:'HSBC', topic:'Deforestation', year:2023, support:28, filer:'ShareAction', mgmtResponse:'Neutral', impact:'Partial adoption' },
-  { id:7, company:'Amazon', topic:'Climate Risk Report', year:2024, support:42, filer:'As You Sow', mgmtResponse:'Oppose', impact:'Enhanced reporting' },
-  { id:8, company:'Costco', topic:'Emissions Targets', year:2024, support:68, filer:'Green Century', mgmtResponse:'Oppose', impact:'Target adopted' },
+  { id:7, company:'Amazon.com', topic:'Climate Risk Report', year:2024, support:42, filer:'As You Sow', mgmtResponse:'Oppose', impact:'Enhanced reporting' },
+  { id:8, company:'Costco Wholesale', topic:'Emissions Targets', year:2024, support:68, filer:'Green Century', mgmtResponse:'Oppose', impact:'Full adoption' },
+  { id:9, company:'Meta Platforms', topic:'Board Diversity', year:2023, support:24, filer:'Trillium Asset Management', mgmtResponse:'Oppose', impact:'None' },
+  { id:10, company:'Alphabet', topic:'Political Spending Disclosure', year:2022, support:31, filer:'NYC Comptroller', mgmtResponse:'Oppose', impact:'Partial adoption' },
+  { id:11, company:'Starbucks', topic:'Human Rights Due Diligence', year:2022, support:45, filer:'SOC Investment Group', mgmtResponse:'Neutral', impact:'Policy update' },
+  { id:12, company:"McDonald's", topic:'Plastic Packaging', year:2023, support:19, filer:'As You Sow', mgmtResponse:'Oppose', impact:'None' },
+  { id:13, company:'Tyson Foods', topic:'Methane Reduction', year:2023, support:33, filer:'Ceres', mgmtResponse:'Oppose', impact:'Partial adoption' },
+  { id:14, company:'Berkshire Hathaway', topic:'Climate Risk Report', year:2021, support:15, filer:'Mercy Investment', mgmtResponse:'Oppose', impact:'None' },
+  { id:15, company:'Walt Disney', topic:'Say-on-Pay', year:2024, support:71, filer:'Domini Impact Investments', mgmtResponse:'Oppose', impact:'Full adoption' },
+  { id:16, company:'Wells Fargo', topic:'Fossil Fuel Financing', year:2022, support:26, filer:'Sierra Club Foundation', mgmtResponse:'Oppose', impact:'None' },
+  { id:17, company:'Bank of America', topic:'Lobbying Disclosure', year:2023, support:48, filer:'As You Sow', mgmtResponse:'Neutral', impact:'Enhanced reporting' },
+  { id:18, company:'ConocoPhillips', topic:'Emissions Targets', year:2024, support:22, filer:'Follow This', mgmtResponse:'Oppose', impact:'None' },
+  { id:19, company:'Valero Energy', topic:'Climate Risk Report', year:2022, support:29, filer:'As You Sow', mgmtResponse:'Support', impact:'Policy update' },
+  { id:20, company:'Kroger', topic:'Deforestation', year:2024, support:55, filer:'Green Century', mgmtResponse:'Already Implemented', impact:'Full adoption' },
 ];
 
-const TREND_DATA = [
-  { year:2020, total:32, avgSupport:24, majority:2 },
-  { year:2021, total:42, avgSupport:30, majority:5 },
-  { year:2022, total:55, avgSupport:36, majority:8 },
-  { year:2023, total:62, avgSupport:32, majority:7 },
-  { year:2024, total:58, avgSupport:35, majority:8 },
-  { year:2025, total:50, avgSupport:36, majority:8 },
-];
+// ── Aggregates below are ALL derived dynamically from RESOLUTIONS above ──
+// (no disconnected/static numbers — every table & chart recomputes from the real array)
+const TREND_DATA = [...new Set(RESOLUTIONS.map(r => r.year))].sort((a,b) => a-b).map(year => {
+  const items = RESOLUTIONS.filter(r => r.year === year);
+  return {
+    year,
+    total: items.length,
+    avgSupport: Math.round(items.reduce((s,r) => s+r.support, 0) / items.length),
+    majority: items.filter(r => r.support >= 50).length,
+  };
+});
 
-const TOPICS = [
-  { topic:'Emissions Targets', count:28, avgSupport:32 },
-  { topic:'Lobbying Disclosure', count:18, avgSupport:42 },
-  { topic:'Climate Risk Reporting', count:15, avgSupport:38 },
-  { topic:'Just Transition', count:8, avgSupport:22 },
-  { topic:'Deforestation', count:12, avgSupport:28 },
-  { topic:'Methane Reduction', count:9, avgSupport:45 },
-  { topic:'Fossil Fuel Financing', count:10, avgSupport:35 },
-];
+const TOPICS = [...new Set(RESOLUTIONS.map(r => r.topic))].map(topic => {
+  const items = RESOLUTIONS.filter(r => r.topic === topic);
+  return { topic, count: items.length, avgSupport: Math.round(items.reduce((s,r) => s+r.support, 0) / items.length) };
+}).sort((a,b) => b.count - a.count);
 
-const FILERS = [
-  { name:'Follow This', resolutions:22, avgSupport:28, wins:2 },
-  { name:'As You Sow', resolutions:18, avgSupport:38, wins:4 },
-  { name:'ShareAction', resolutions:15, avgSupport:35, wins:3 },
-  { name:'Green Century', resolutions:8, avgSupport:42, wins:2 },
-  { name:'Mercy Investment', resolutions:6, avgSupport:30, wins:1 },
-  { name:'Ceres', resolutions:5, avgSupport:32, wins:1 },
-];
+const FILERS = [...new Set(RESOLUTIONS.map(r => r.filer))].map(name => {
+  const items = RESOLUTIONS.filter(r => r.filer === name);
+  return {
+    name,
+    resolutions: items.length,
+    avgSupport: Math.round(items.reduce((s,r) => s+r.support, 0) / items.length),
+    wins: items.filter(r => r.support >= 50).length,
+  };
+}).sort((a,b) => b.resolutions - a.resolutions);
 
-const MGMT_RESP = [{ name:'Oppose', value:72 },{ name:'Neutral', value:15 },{ name:'Support', value:8 },{ name:'Already Implemented', value:5 }];
-const RESP_COLORS = [T.red, T.amber, T.green, T.blue];
+const MGMT_COLOR_MAP = { Oppose:T.red, Neutral:T.amber, Support:T.green, 'Already Implemented':T.blue };
+const MGMT_RESP = ['Oppose','Neutral','Support','Already Implemented']
+  .map(name => ({ name, value: RESOLUTIONS.filter(r => r.mgmtResponse === name).length }))
+  .filter(m => m.value > 0);
+const RESP_COLORS = MGMT_RESP.map(m => MGMT_COLOR_MAP[m.name]);
+
+const IMPACT_COLOR_MAP = { 'Full adoption':T.green, 'Partial adoption':T.blue, 'Enhanced reporting':T.teal, 'Policy update':T.amber, 'None':T.textMut };
+const IMPACT_DATA = ['Full adoption','Partial adoption','Enhanced reporting','Policy update','None']
+  .map(name => ({ name, value: RESOLUTIONS.filter(r => r.impact === name).length }))
+  .filter(i => i.value > 0);
 
 export default function ShareholderResolutionAnalyzerPage() {
   const [tab, setTab] = useState(0);
@@ -53,6 +72,13 @@ export default function ShareholderResolutionAnalyzerPage() {
 
   const topics = [...new Set(RESOLUTIONS.map(r => r.topic))];
   const filtered = useMemo(() => topicFilter === 'All' ? RESOLUTIONS : RESOLUTIONS.filter(r => r.topic === topicFilter), [topicFilter]);
+
+  const years = RESOLUTIONS.map(r => r.year);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+  const majorityCount = RESOLUTIONS.filter(r => r.support >= 50).length;
+  const avgSupportAll = Math.round(RESOLUTIONS.reduce((s,r) => s+r.support, 0) / RESOLUTIONS.length);
+  const topTopic = TOPICS[0];
 
   const card = (title, value, sub, color) => (
     <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8, padding:16, flex:1, minWidth:150 }}>
@@ -72,7 +98,7 @@ export default function ShareholderResolutionAnalyzerPage() {
               <span style={{ fontFamily:T.mono, fontSize:11, color:T.textMut }}>SHAREHOLDER RESOLUTION ANALYZER</span>
             </div>
             <h1 style={{ fontSize:22, fontWeight:700, color:T.navy, margin:'6px 0 2px' }}>Shareholder Resolution Analysis Engine</h1>
-            <p style={{ color:T.textSec, fontSize:13, margin:0 }}>100 climate/ESG resolutions from 2020-2025 with topic classification</p>
+            <p style={{ color:T.textSec, fontSize:13, margin:0 }}>{RESOLUTIONS.length} climate/ESG resolutions from {minYear}-{maxYear} with topic classification</p>
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button onClick={() => setWatchlist(!watchlist)} style={{ padding:'6px 14px', borderRadius:6, border:`1px solid ${watchlist?T.gold:T.border}`, background:watchlist?T.gold+'18':T.surface, color:T.navy, fontFamily:T.font, fontSize:12, cursor:'pointer' }}>{watchlist?'★ Watchlisted':'☆ Watchlist'}</button>
@@ -90,10 +116,10 @@ export default function ShareholderResolutionAnalyzerPage() {
       {tab === 0 && (
         <div>
           <div style={{ display:'flex', gap:16, marginBottom:20, flexWrap:'wrap' }}>
-            {card('Total Resolutions', '100', '2020-2025', T.navy)}
-            {card('Majority Support', '8', 'Above 50%', T.green)}
-            {card('Avg Support', '35%', 'All resolutions', T.amber)}
-            {card('Top Topic', 'Emissions', '28 resolutions', T.gold)}
+            {card('Total Resolutions', String(RESOLUTIONS.length), `${minYear}-${maxYear}`, T.navy)}
+            {card('Majority Support', String(majorityCount), 'Above 50%', T.green)}
+            {card('Avg Support', avgSupportAll+'%', 'All resolutions', T.amber)}
+            {card('Top Topic', topTopic.topic, `${topTopic.count} resolutions`, T.gold)}
           </div>
           <div style={{ marginBottom:12 }}>
             <select value={topicFilter} onChange={e => setTopicFilter(e.target.value)} style={{ padding:'6px 12px', borderRadius:6, border:`1px solid ${T.border}`, fontFamily:T.font, fontSize:13 }}>
@@ -182,7 +208,7 @@ export default function ShareholderResolutionAnalyzerPage() {
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={FILERS} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                <XAxis type="number" domain={[0, 60]} tick={{ fontSize:11, fontFamily:T.mono }} />
+                <XAxis type="number" domain={[0, 100]} tick={{ fontSize:11, fontFamily:T.mono }} />
                 <YAxis type="category" dataKey="name" width={120} tick={{ fontSize:10, fontFamily:T.mono }} />
                 <Tooltip />
                 <Bar dataKey="avgSupport" fill={T.gold} name="Avg Support %" />
@@ -197,8 +223,8 @@ export default function ShareholderResolutionAnalyzerPage() {
           <h3 style={{ fontSize:14, fontWeight:600, color:T.navy, marginBottom:12 }}>Impact Classification of Resolutions</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
-              <Pie data={[{ name:'Full Adoption', value:12 },{ name:'Partial Adoption', value:18 },{ name:'Enhanced Reporting', value:15 },{ name:'Policy Update', value:10 },{ name:'None', value:45 }]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-                {[T.green, T.blue, T.teal, T.amber, T.textMut].map((c, i) => <Cell key={i} fill={c} />)}
+              <Pie data={IMPACT_DATA} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
+                {IMPACT_DATA.map((d, i) => <Cell key={i} fill={IMPACT_COLOR_MAP[d.name]} />)}
               </Pie><Tooltip /><Legend />
             </PieChart>
           </ResponsiveContainer>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -7,6 +7,10 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+// Real backend engine: EU RFNBO Delegated Regs 2023/1184-85 + ISO 14040/14044
+// GHG intensity + IEA Global Hydrogen Review LCOH methodology.
+// backend/services/green_hydrogen_engine.py via backend/api/v1/routes/green_hydrogen.py
+const GH_API = `${API}/api/v1/green-hydrogen`;
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 
 const seededRandom = (seed) => {
@@ -26,9 +30,6 @@ const KpiCard = ({ label, value, sub, accent }) => (
     <div style={{ fontSize: 22, fontWeight: 700, color: '#1b3a5c' }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{sub}</div>}
   </div>
-);
-const Btn = ({ children, onClick }) => (
-  <button onClick={onClick} style={{ padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#059669', color: 'white', fontWeight: 600, fontSize: 14 }}>{children}</button>
 );
 const Sel = ({ label, value, onChange, options }) => (
   <div style={{ marginBottom: 12 }}>
@@ -52,6 +53,11 @@ const Badge = ({ label, color }) => {
   const colors = { green: { bg: '#d1fae5', text: '#065f46' }, yellow: { bg: '#fef3c7', text: '#92400e' }, red: { bg: '#fee2e2', text: '#991b1b' }, blue: { bg: '#dbeafe', text: '#1e40af' }, gray: { bg: '#f3f4f6', text: '#374151' }, purple: { bg: '#ede9fe', text: '#5b21b6' }, orange: { bg: '#ffedd5', text: '#9a3412' } };
   const c = colors[color] || colors.gray;
   return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
+};
+const LiveBadge = ({ status }) => {
+  if (status === 'loading') return <Badge label="Connecting to Green Hydrogen Engine…" color="gray" />;
+  if (status === 'live') return <Badge label="● Live — RFNBO 2023/1184-85 · ISO 14040/14044 · IEA LCOH engine" color="green" />;
+  return <Badge label="○ Demo Data — API unavailable, showing seeded illustrative figures" color="orange" />;
 };
 
 const TABS = ['RFNBO Compliance', 'GHG Intensity', 'LCOH Economics', 'REPowerEU Targets', 'H2 CfD & Certification'];
@@ -84,8 +90,25 @@ const ELEC_SOURCE_OPTIONS = [
   { value: 'nuclear', label: 'Nuclear (baseload)' },
 ];
 
-// Country grid emission factors (gCO2eq/kWh)
+// Country grid emission factors (gCO2eq/kWh) — used for the local demo fallback only
 const GRID_EF = { DE: 385, FR: 85, ES: 210, UK: 230, PL: 780, NO: 28, NL: 320, DK: 170, IT: 330, PT: 185 };
+
+// --- Backend engine payload mappings -----------------------------------------
+// Country code (this page's UI) -> full country name (backend COUNTRY_GRID_FACTORS keys)
+const COUNTRY_CODE_TO_NAME = {
+  DE: 'Germany', FR: 'France', ES: 'Spain', UK: 'United Kingdom', PL: 'Poland',
+  NO: 'Norway', NL: 'Netherlands', DK: 'Denmark', IT: 'Italy', PT: 'Portugal',
+};
+// Electrolyser id (this page's UI, lowercase) -> backend ELECTROLYSER_BENCHMARKS key
+const ELECTROLYSER_TO_ENGINE = { pem: 'PEM', alk: 'ALK', soec: 'SOEC', aem: 'AEM' };
+// Electricity source (this page's UI) -> backend electricity_source string + PPA/additionality flags
+const ELEC_SOURCE_TO_ENGINE = {
+  grid:         { electricity_source: 'grid',         has_ppa: false, ppa_dedicated_new_asset: false },
+  ppa_wind:     { electricity_source: 'wind_onshore',  has_ppa: true,  ppa_dedicated_new_asset: true },
+  ppa_solar:    { electricity_source: 'solar_pv',      has_ppa: true,  ppa_dedicated_new_asset: true },
+  dedicated_re: { electricity_source: 'wind_onshore',  has_ppa: false, ppa_dedicated_new_asset: false },
+  nuclear:      { electricity_source: 'nuclear',       has_ppa: false, ppa_dedicated_new_asset: false },
+};
 
 const getRFNBOData = (electrolyser, country, elecSource, seed0) => {
   const r = (n) => seededRandom(seed0 + n);
@@ -203,37 +226,174 @@ const getCfDData = (electrolyser, country, elecSource, seed0) => {
   return { strikePrice, supportDuration, cfdEligible, certifications, benchmark };
 };
 
+// --- Adapters: map the live /api/v1/green-hydrogen/assess response into the ---
+// --- same local shapes the tabs already render (rfnbo/ghg/lcoh/cfd above). ---
+const adaptRfnbo = (data) => {
+  const c1 = data.rfnbo_assessment.criteria.C1_ghg_intensity;
+  const c2 = data.rfnbo_assessment.criteria.C2_additionality;
+  const c3 = data.rfnbo_assessment.criteria.C3_temporal_correlation;
+  const c4 = data.rfnbo_assessment.criteria.C4_geographical_correlation;
+  const criteria = [
+    { name: 'GHG Intensity', requirement: '≤ 3.38 kgCO₂/kgH₂', value: `${c1.ghg_detail.total_ghg_intensity_kg_co2_kgh2} kg`, pass: c1.compliant },
+    { name: 'Additionality', requirement: 'New RE (≤36mo) / high-RE grid (>90%) / dedicated PPA', value: (c2.route || 'unknown').replace(/_/g, ' '), pass: c2.compliant },
+    { name: 'Temporal Correlation', requirement: c3.required_granularity === 'hourly' ? 'Hourly matching (2030+)' : 'Monthly matching (pre-2030)', value: c3.provided_granularity, pass: c3.compliant },
+    { name: 'Geographical Correlation', requirement: 'Same bidding zone', value: `${c4.electrolyser_bidding_zone} / ${c4.re_bidding_zone}`, pass: c4.compliant },
+  ];
+  return {
+    criteria,
+    rfnboEligible: data.rfnbo_assessment.rfnbo_eligible,
+    ghgIntensity: c1.ghg_detail.total_ghg_intensity_kg_co2_kgh2,
+    RFNBO_THRESHOLD: c1.ghg_detail.rfnbo_threshold_kg_co2_kgh2,
+    ef: c1.ghg_detail.electricity_ef_kg_co2_kwh * 1000, // kgCO2/kWh -> gCO2/kWh for display parity with demo data
+    kwhPerKgH2: c1.ghg_detail.kwh_per_kgh2,
+  };
+};
+
+const adaptGhg = (data) => {
+  const d = data.rfnbo_assessment.criteria.C1_ghg_intensity.ghg_detail;
+  const components = [
+    { name: 'Electricity', value: d.electrolysis_kg_co2_kgh2 },
+    { name: 'Water Treatment', value: d.water_treatment_kg_co2_kgh2 },
+    { name: 'Compression', value: d.compression_kg_co2_kgh2 },
+    { name: 'Balance of Plant', value: 0 },
+  ];
+  // Country comparison uses the same live kwh/kgH2 conversion factor applied to
+  // each country's real grid emission factor (deterministic, not seeded/random).
+  const countryComparison = COUNTRY_OPTIONS.map((c) => ({
+    country: c.value,
+    gridEf: GRID_EF[c.value] || 300,
+    ghg: parseFloat(((GRID_EF[c.value] || 300) * d.kwh_per_kgh2 / 1000).toFixed(2)),
+  }));
+  return { components, countryComparison };
+};
+
+const adaptLcoh = (data) => {
+  const l = data.lcoh_assessment;
+  const lcohComponents = [
+    { name: 'CAPEX', value: l.lcoh_usd_kgh2.capex_component },
+    { name: 'OPEX', value: l.lcoh_usd_kgh2.opex_component },
+    { name: 'Electricity', value: l.lcoh_usd_kgh2.electricity_component },
+    { name: 'Stack Replacement', value: l.lcoh_usd_kgh2.stack_replacement_component },
+  ];
+  const lcoh = l.lcoh_usd_kgh2.total_lcoh;
+  // IEA decline trajectory: same illustrative multipliers as the demo model,
+  // now anchored to the live-computed baseline instead of a seeded figure.
+  const ieaTrajectory = [
+    { year: 2024, cost: parseFloat(lcoh.toFixed(2)) },
+    { year: 2026, cost: parseFloat((lcoh * 0.88).toFixed(2)) },
+    { year: 2028, cost: parseFloat((lcoh * 0.76).toFixed(2)) },
+    { year: 2030, cost: parseFloat((lcoh * 0.65).toFixed(2)) },
+    { year: 2035, cost: parseFloat((lcoh * 0.50).toFixed(2)) },
+    { year: 2040, cost: parseFloat((lcoh * 0.38).toFixed(2)) },
+    { year: 2050, cost: parseFloat((lcoh * 0.28).toFixed(2)) },
+  ];
+  return {
+    capex: Math.round(l.inputs.capex_usd_kw),
+    capacityFactor: l.inputs.capacity_factor,
+    stackLifetime: data.electrolyser_profile?.stack_lifetime_hrs || 0,
+    lcoh: parseFloat(lcoh.toFixed(2)),
+    lcohComponents,
+    ieaTrajectory,
+  };
+};
+
+const adaptCfd = (data) => {
+  const h2cfd = data.h2cfd;
+  const cert = data.certification;
+  const profile = data.electrolyser_profile || {};
+  const certifications = (cert.recognised_eu_certs || []).map((name) => ({
+    name,
+    body: name,
+    status: (cert.certifications_held || []).includes(name)
+      ? 'Certified'
+      : (cert.certifications_missing || []).includes(name) ? 'Not Applied' : 'Pending',
+  }));
+  // Deterministic benchmark radar derived from the real electrolyser benchmark
+  // profile (IEA/IRENA), replacing the previous PRNG-seeded scores.
+  const benchmark = [
+    { dimension: 'Efficiency (LHV)', score: Math.round(profile.efficiency_lhv_pct || 0) },
+    { dimension: 'Stack Durability', score: Math.round(Math.min(100, (profile.stack_lifetime_hrs || 0) / 1000)) },
+    { dimension: 'Ramp Rate', score: Math.round(Math.min(100, (profile.ramp_rate_pct_per_sec || 0) * 10)) },
+    { dimension: 'Tech Readiness (TRL)', score: Math.round((profile.tech_readiness_level || 0) * 11.1) },
+    { dimension: 'Cost ($/kW)', score: Math.round(Math.max(0, 100 - (profile.capex_low_usd_kw || 0) / 20)) },
+    { dimension: 'Water Efficiency', score: Math.round(Math.max(0, 100 - (profile.water_consumption_litre_kgH2 || 0) * 5)) },
+  ];
+  return {
+    cfdEligible: h2cfd.eligible,
+    strikePrice: h2cfd.indicative_support_eur_kgh2,
+    strikePriceLabel: 'Indicative H2 CfD Support (EUR/kgH₂)',
+    supportDuration: h2cfd.support_duration_yr,
+    certifications,
+    benchmark,
+    recommendation: cert.recommendation,
+  };
+};
+
 export default function GreenHydrogenPage() {
   const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [electrolyser, setElectrolyser] = useState('pem');
   const [country, setCountry] = useState('DE');
   const [elecSource, setElecSource] = useState('ppa_wind');
+  const [capacityMw, setCapacityMw] = useState(100);
 
+  // --- Local demo data (seeded, deterministic per input combo) — used as the
+  // explicit "Demo Data" fallback when the live backend engine is unreachable.
   const seed0 = hashStr(electrolyser + country + elecSource);
-  const rfnbo = getRFNBOData(electrolyser, country, elecSource, seed0);
-  const ghg = getGHGData(electrolyser, country, elecSource, seed0);
-  const lcoh = getLCOHData(electrolyser, country, elecSource, seed0);
+  const rfnboDemo = getRFNBOData(electrolyser, country, elecSource, seed0);
+  const ghgDemo = getGHGData(electrolyser, country, elecSource, seed0);
+  const lcohDemo = getLCOHData(electrolyser, country, elecSource, seed0);
   const repowereu = getREPowerEUData(country, seed0);
-  const cfd = getCfDData(electrolyser, country, elecSource, seed0);
+  const cfdDemo = getCfDData(electrolyser, country, elecSource, seed0);
 
-  const runAssess = async () => {
-    setLoading(true); setError('');
-    try {
-      await axios.post(`${API}/api/v1/green-hydrogen/assess`, {
-        electrolyser_type: electrolyser, country, electricity_source: elecSource,
-      });
-    } catch {
-      void 0 /* API fallback to seed data */;
-    } finally { setLoading(false); }
-  };
+  // --- Live backend wiring — full facility assessment ----------------------
+  // POST /api/v1/green-hydrogen/assess (backend/services/green_hydrogen_engine.py):
+  // real EU RFNBO 2023/1184-85 4-criteria compliance, ISO 14040/14044 GHG
+  // intensity, IEA Global Hydrogen Review LCOH, H2 CfD eligibility, and
+  // certification gap analysis — all from a single call. Falls back to the
+  // locally-seeded figures above, clearly labeled, if the API is unreachable.
+  const [liveData, setLiveData] = useState(null);
+  const [liveStatus, setLiveStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    setLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const srcParams = ELEC_SOURCE_TO_ENGINE[elecSource] || ELEC_SOURCE_TO_ENGINE.grid;
+        const { data } = await axios.post(`${GH_API}/assess`, {
+          facility_name: `${electrolyser.toUpperCase()} Facility — ${COUNTRY_CODE_TO_NAME[country] || country}`,
+          country: COUNTRY_CODE_TO_NAME[country] || country,
+          production_capacity_mw: capacityMw,
+          electrolyser_type: ELECTROLYSER_TO_ENGINE[electrolyser] || 'PEM',
+          electricity_source: srcParams.electricity_source,
+          has_ppa: srcParams.has_ppa,
+          ppa_dedicated_new_asset: srcParams.ppa_dedicated_new_asset,
+        }, { timeout: 15000 });
+        if (!cancelled && data && data.rfnbo_assessment && data.lcoh_assessment) {
+          setLiveData(data);
+          setLiveStatus('live');
+        } else if (!cancelled) {
+          setLiveStatus('demo');
+        }
+      } catch (e) {
+        if (!cancelled) { setLiveData(null); setLiveStatus('demo'); }
+      }
+    }, 350);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [electrolyser, country, elecSource, capacityMw]);
+
+  const isLive = liveStatus === 'live' && !!liveData;
+  const rfnbo = useMemo(() => (isLive ? adaptRfnbo(liveData) : rfnboDemo), [isLive, liveData, rfnboDemo]);
+  const ghg = useMemo(() => (isLive ? adaptGhg(liveData) : ghgDemo), [isLive, liveData, ghgDemo]);
+  const lcoh = useMemo(() => (isLive ? adaptLcoh(liveData) : lcohDemo), [isLive, liveData, lcohDemo]);
+  const cfd = useMemo(() => (isLive ? adaptCfd(liveData) : cfdDemo), [isLive, liveData, cfdDemo]);
 
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1b3a5c', margin: 0 }}>Green Hydrogen Assessment</h1>
         <p style={{ color: '#6b7280', marginTop: 4, fontSize: 14 }}>RFNBO Delegated Act · GHG Intensity · LCOH Economics · REPowerEU 2030 · H2 CfD & Certification</p>
+        <div style={{ marginTop: 8 }}><LiveBadge status={liveStatus} /></div>
       </div>
 
       <div style={{ display: 'flex', gap: 4, marginBottom: 24, borderBottom: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
@@ -242,15 +402,16 @@ export default function GreenHydrogenPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
-
       <Section title="Project Parameters">
         <Row>
           <Sel label="Electrolyser Type" value={electrolyser} onChange={setElectrolyser} options={ELECTROLYSER_OPTIONS} />
           <Sel label="Country" value={country} onChange={setCountry} options={COUNTRY_OPTIONS} />
           <Sel label="Electricity Source" value={elecSource} onChange={setElecSource} options={ELEC_SOURCE_OPTIONS} />
-          <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 12 }}>
-            <Btn onClick={runAssess}>{loading ? 'Assessing…' : 'Run Assessment'}</Btn>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>Capacity (MW)</div>
+            <input type="number" min={1} max={2000} step={10} value={capacityMw}
+              onChange={e => setCapacityMw(Math.max(1, Number(e.target.value) || 1))}
+              style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 14, background: 'white', boxSizing: 'border-box' }} />
           </div>
         </Row>
       </Section>
@@ -445,10 +606,10 @@ export default function GreenHydrogenPage() {
         <div>
           <Section title="H2 CfD Summary">
             <Row gap={12}>
-              <KpiCard label="H2 CfD Eligible" value={<Badge label={cfd.cfdEligible ? '✓ CfD Eligible' : '✗ Not Eligible'} color={cfd.cfdEligible ? 'green' : 'red'} />} sub="UK IETF / EU H2 Bank support" accent />
-              <KpiCard label="Strike Price" value={`$${cfd.strikePrice}/kgH₂`} sub="Contract-for-Difference reference" />
+              <KpiCard label="H2 CfD Eligible" value={<Badge label={cfd.cfdEligible ? '✓ CfD Eligible' : '✗ Not Eligible'} color={cfd.cfdEligible ? 'green' : 'red'} />} sub="EU H2 Bank / German H2Global" accent />
+              <KpiCard label={isLive ? cfd.strikePriceLabel : 'Strike Price'} value={cfd.strikePrice != null ? `${isLive ? '€' : '$'}${cfd.strikePrice}/kgH₂` : '—'} sub={isLive ? 'max(LCOH − NG parity, cap)' : 'Contract-for-Difference reference'} />
               <KpiCard label="Support Duration" value={`${cfd.supportDuration} years`} sub="CfD contract term" />
-              <KpiCard label="Certifications" value={`${cfd.certifications.filter(c => c.status === 'Certified').length} / 4`} sub="Active certification bodies" />
+              <KpiCard label="Certifications" value={`${cfd.certifications.filter(c => c.status === 'Certified').length} / ${cfd.certifications.length || 4}`} sub="Active certification bodies" />
             </Row>
           </Section>
           <Section title="Certification Status">

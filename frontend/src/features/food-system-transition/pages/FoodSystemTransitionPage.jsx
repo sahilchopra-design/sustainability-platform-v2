@@ -1,8 +1,17 @@
 import React, { useState, useMemo } from 'react';
+import axios from 'axios';
 import { BarChart, Bar, LineChart, Line, AreaChart, Area, ScatterChart, Scatter,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+
+// Backend E54 Food System & Land Use Finance engine (SBTi FLAG / FAO crop
+// yield / TNFD Food LEAP / EUDR / PCAF agricultural emissions / LDN). See
+// backend/services/food_system_engine.py + backend/api/v1/routes/food_system.py.
+// The engine returns honest nulls when optional caller inputs are omitted
+// (e.g. no achieved_reduction_pct -> progress fields are null, not fabricated).
+const API = 'http://localhost:8001';
+const FOOD_SYSTEM_API = `${API}/api/v1/food-system`;
 
 const FOOD_CATEGORIES = [
   { id: 'beef', name: 'Beef & Lamb', ghg: 60.0, water: 15400, land: 164, scope3Pct: 88, protein: 26, price: 12.5 },
@@ -71,7 +80,23 @@ const KpiCard = ({ label, value, sub, color }) => (
   </div>
 );
 
-const TABS = ['Overview', 'GHG Intensity', 'Value Chain', 'Scope 3', 'Finance', 'Scenarios', 'Opportunities'];
+const TABS = ['Overview', 'GHG Intensity', 'Value Chain', 'Scope 3', 'Finance', 'Scenarios', 'Opportunities', 'Live Calculator'];
+
+const FLAG_SECTOR_OPTIONS = ['cattle', 'poultry_pigs', 'crops', 'forests_trees', 'other'];
+const LAND_USE_OPTIONS = ['forest', 'cropland', 'pasture', 'wetland', 'grassland', 'shrubland'];
+const LDN_STATUS_OPTIONS = ['', 'Improving', 'Stable', 'Degrading'];
+
+const StatusBadge = ({ status, label }) => {
+  const map = {
+    loading: { bg: '#1e293b', fg: '#94a3b8', text: `Connecting to ${label} engine…` },
+    live: { bg: '#052e1c', fg: '#22c55e', text: `● Live — computed by /api/v1/food-system engine` },
+    demo: { bg: '#3a2a0a', fg: '#f59e0b', text: `○ Demo — Food System API unavailable, no result computed` },
+    error: { bg: '#3a0a0a', fg: '#ef4444', text: `⚠ Live call failed` },
+    idle: { bg: '#1e293b', fg: '#9ca3af', text: `Not run yet` },
+  };
+  const s = map[status] || map.idle;
+  return <span style={{ background: s.bg, color: s.fg, padding: '3px 10px', borderRadius: 12, fontSize: 11, fontWeight: 700 }}>{s.text}</span>;
+};
 const card = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 12, padding: 24, marginBottom: 20 };
 const h2 = { fontSize: 15, fontWeight: 600, color: T.text, marginBottom: 16, marginTop: 0 };
 const grid = (cols) => ({ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 16, marginBottom: 24 });
@@ -83,6 +108,98 @@ export default function FoodSystemTransitionPage() {
   const [tab, setTab] = useState('Overview');
   const [selectedCategory, setSelectedCategory] = useState('beef');
   const [scenario, setScenario] = useState('Net Zero Food');
+
+  // --- Live Calculator: SBTi FLAG assessment -------------------------------
+  const [flagEntityId, setFlagEntityId] = useState('ACME-FOOD-01');
+  const [flagSector, setFlagSector] = useState('cattle');
+  const [flagBaseYear, setFlagBaseYear] = useState(2020);
+  const [flagTargetYear, setFlagTargetYear] = useState(2030);
+  const [flagEmissions, setFlagEmissions] = useState(100000);
+  const [flagIncludeProgress, setFlagIncludeProgress] = useState(false);
+  const [flagAchievedPct, setFlagAchievedPct] = useState(12);
+  const [flagResult, setFlagResult] = useState(null);
+  const [flagStatus, setFlagStatus] = useState('idle');
+
+  const runSbtiFlag = async () => {
+    setFlagStatus('loading');
+    try {
+      const { data } = await axios.post(`${FOOD_SYSTEM_API}/sbti-flag`, {
+        entity_id: flagEntityId,
+        sector: flagSector,
+        base_year: flagBaseYear,
+        target_year: flagTargetYear,
+        current_emissions_tco2e: flagEmissions,
+        ...(flagIncludeProgress ? { achieved_reduction_pct: flagAchievedPct } : {}),
+      }, { timeout: 10000 });
+      setFlagResult(data);
+      setFlagStatus('live');
+    } catch (e) {
+      setFlagResult(null);
+      setFlagStatus(e?.response ? 'error' : 'demo');
+    }
+  };
+
+  // --- Live Calculator: Agricultural emissions (PCAF) ----------------------
+  const [agEntityId, setAgEntityId] = useState('FARM-01');
+  const [agAreaHa, setAgAreaHa] = useState(300);
+  const [agLivestock, setAgLivestock] = useState(150);
+  const [agCropType, setAgCropType] = useState('mixed');
+  const [agIncludeDqs, setAgIncludeDqs] = useState(false);
+  const [agPcafDqs, setAgPcafDqs] = useState(3);
+  const [agResult, setAgResult] = useState(null);
+  const [agStatus, setAgStatus] = useState('idle');
+
+  const runAgEmissions = async () => {
+    setAgStatus('loading');
+    try {
+      const { data } = await axios.post(`${FOOD_SYSTEM_API}/agricultural-emissions`, {
+        entity_id: agEntityId,
+        farm_area_ha: agAreaHa,
+        livestock_count: agLivestock,
+        crop_type: agCropType,
+        ...(agIncludeDqs ? { pcaf_dqs: agPcafDqs } : {}),
+      }, { timeout: 10000 });
+      setAgResult(data);
+      setAgStatus('live');
+    } catch (e) {
+      setAgResult(null);
+      setAgStatus(e?.response ? 'error' : 'demo');
+    }
+  };
+
+  // --- Live Calculator: Land Degradation Neutrality ------------------------
+  const [ldnEntityId, setLdnEntityId] = useState('LAND-01');
+  const [ldnAreaHa, setLdnAreaHa] = useState(500);
+  const [ldnLandUse, setLdnLandUse] = useState('forest');
+  const [ldnCountry, setLdnCountry] = useState('BR');
+  const [ldnIncludeObserved, setLdnIncludeObserved] = useState(false);
+  const [ldnStatusInput, setLdnStatusInput] = useState('Degrading');
+  const [ldnDegradedHa, setLdnDegradedHa] = useState(120);
+  const [ldnBiodiversity, setLdnBiodiversity] = useState(0.6);
+  const [ldnResult, setLdnResult] = useState(null);
+  const [ldnStatus, setLdnStatus] = useState('idle');
+
+  const runLandDegradation = async () => {
+    setLdnStatus('loading');
+    try {
+      const { data } = await axios.post(`${FOOD_SYSTEM_API}/land-degradation`, {
+        entity_id: ldnEntityId,
+        land_area_ha: ldnAreaHa,
+        land_use: ldnLandUse,
+        country_code: ldnCountry,
+        ...(ldnIncludeObserved ? {
+          ldn_status: ldnStatusInput || undefined,
+          degraded_area_ha: ldnDegradedHa,
+          biodiversity_index: ldnBiodiversity,
+        } : {}),
+      }, { timeout: 10000 });
+      setLdnResult(data);
+      setLdnStatus('live');
+    } catch (e) {
+      setLdnResult(null);
+      setLdnStatus(e?.response ? 'error' : 'demo');
+    }
+  };
 
   const cat = FOOD_CATEGORIES.find(c => c.id === selectedCategory);
 
@@ -426,6 +543,183 @@ export default function FoodSystemTransitionPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </>
+      )}
+
+      {tab === 'Live Calculator' && (
+        <>
+          <div style={{ ...card, marginBottom: 16 }}>
+            <div style={{ fontSize: 12, color: T.textSec }}>
+              These panels call the real Food System &amp; Land Use Finance engine (E54) at <code>{FOOD_SYSTEM_API}</code> —
+              SBTi FLAG, PCAF agricultural emissions, and UN SDG 15.3 land degradation assessments. When an optional
+              input is omitted, the engine returns an honest <b>null</b> / <b>insufficient_data</b> rather than a
+              fabricated figure; the calculator surfaces that as "Insufficient data" below.
+            </div>
+          </div>
+
+          {/* SBTi FLAG */}
+          <div style={card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ ...h2, marginBottom: 0 }}>SBTi FLAG Target Assessment</h2>
+              <StatusBadge status={flagStatus} label="SBTi FLAG" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginBottom: 12 }}>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Entity ID</label>
+                <input value={flagEntityId} onChange={e => setFlagEntityId(e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Sector</label>
+                <select value={flagSector} onChange={e => setFlagSector(e.target.value)} style={{ ...select, width: '100%' }}>
+                  {FLAG_SECTOR_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Base Year</label>
+                <input type="number" value={flagBaseYear} onChange={e => setFlagBaseYear(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Target Year</label>
+                <input type="number" value={flagTargetYear} onChange={e => setFlagTargetYear(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Current Emissions (tCO2e)</label>
+                <input type="number" value={flagEmissions} onChange={e => setFlagEmissions(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: T.textSec, marginBottom: 10 }}>
+              <input type="checkbox" checked={flagIncludeProgress} onChange={e => setFlagIncludeProgress(e.target.checked)} />
+              Supply achieved reduction progress (%) — omit to see honest "insufficient_data" on progress fields
+            </label>
+            {flagIncludeProgress && (
+              <div style={{ marginBottom: 12, maxWidth: 220 }}>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Achieved Reduction (%)</label>
+                <input type="number" value={flagAchievedPct} onChange={e => setFlagAchievedPct(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+            )}
+            <button onClick={runSbtiFlag} disabled={flagStatus === 'loading'} style={{ background: T.navy, color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', fontSize: 12, fontWeight: 600, cursor: 'pointer', marginBottom: 14 }}>
+              {flagStatus === 'loading' ? 'Running…' : 'Run SBTi FLAG Assessment'}
+            </button>
+            {flagStatus === 'demo' && <div style={{ fontSize: 12, color: T.amber }}>Food System API unreachable — check the backend is running on :8001.</div>}
+            {flagStatus === 'error' && <div style={{ fontSize: 12, color: T.red }}>Request failed.</div>}
+            {flagResult && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                <KpiCard label="Required Reduction" value={`${flagResult.required_reduction_pct}%`} sub={`by ${flagResult.target_year}`} color={T.amber} />
+                <KpiCard label="Mitigation Required" value={`${flagResult.land_mitigation_tco2_pa.toLocaleString()} tCO2e/yr`} color={T.red} />
+                <KpiCard label="Achieved Progress" value={flagResult.achieved_reduction_pct != null ? `${flagResult.achieved_reduction_pct}%` : 'Insufficient data'} color={flagResult.achieved_reduction_pct != null ? T.green : T.textMut} />
+                <KpiCard label="Gap to Target" value={flagResult.gap_tco2_pa != null ? `${flagResult.gap_tco2_pa.toLocaleString()} tCO2e/yr` : 'Insufficient data'} sub={flagResult.target_met != null ? (flagResult.target_met ? 'Target met' : 'Gap remains') : flagResult.progress_note} color={flagResult.gap_tco2_pa != null ? T.navy : T.textMut} />
+              </div>
+            )}
+          </div>
+
+          {/* Agricultural Emissions */}
+          <div style={card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ ...h2, marginBottom: 0 }}>Farm-Level GHG Accounting (PCAF)</h2>
+              <StatusBadge status={agStatus} label="Agricultural Emissions" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 12 }}>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Entity ID</label>
+                <input value={agEntityId} onChange={e => setAgEntityId(e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Farm Area (ha)</label>
+                <input type="number" value={agAreaHa} onChange={e => setAgAreaHa(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Livestock Count</label>
+                <input type="number" value={agLivestock} onChange={e => setAgLivestock(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Crop Type</label>
+                <input value={agCropType} onChange={e => setAgCropType(e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: T.textSec, marginBottom: 10 }}>
+              <input type="checkbox" checked={agIncludeDqs} onChange={e => setAgIncludeDqs(e.target.checked)} />
+              Assign PCAF data-quality score (1=verified, 5=estimated) — omit to see honest null
+            </label>
+            {agIncludeDqs && (
+              <div style={{ marginBottom: 12, maxWidth: 160 }}>
+                <input type="number" min={1} max={5} value={agPcafDqs} onChange={e => setAgPcafDqs(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+            )}
+            <button onClick={runAgEmissions} disabled={agStatus === 'loading'} style={{ background: T.navy, color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', fontSize: 12, fontWeight: 600, cursor: 'pointer', marginBottom: 14 }}>
+              {agStatus === 'loading' ? 'Running…' : 'Compute Farm Emissions'}
+            </button>
+            {agStatus === 'demo' && <div style={{ fontSize: 12, color: T.amber }}>Food System API unreachable — check the backend is running on :8001.</div>}
+            {agResult && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                <KpiCard label="Scope 1" value={`${agResult.scope1_tco2e.toLocaleString()} tCO2e`} color={T.red} />
+                <KpiCard label="Scope 2" value={`${agResult.scope2_tco2e.toLocaleString()} tCO2e`} color={T.amber} />
+                <KpiCard label="Scope 3 Cat 1" value={`${agResult.scope3_cat1_tco2e.toLocaleString()} tCO2e`} color={T.navy} />
+                <KpiCard label="PCAF Data Quality" value={agResult.pcaf_dqs != null ? `Score ${agResult.pcaf_dqs}` : 'Insufficient data'} color={agResult.pcaf_dqs != null ? T.green : T.textMut} />
+              </div>
+            )}
+          </div>
+
+          {/* Land Degradation */}
+          <div style={card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ ...h2, marginBottom: 0 }}>Land Degradation Neutrality (SDG 15.3)</h2>
+              <StatusBadge status={ldnStatus} label="Land Degradation" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 12 }}>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Entity ID</label>
+                <input value={ldnEntityId} onChange={e => setLdnEntityId(e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Land Area (ha)</label>
+                <input type="number" value={ldnAreaHa} onChange={e => setLdnAreaHa(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Land Use</label>
+                <select value={ldnLandUse} onChange={e => setLdnLandUse(e.target.value)} style={{ ...select, width: '100%' }}>
+                  {LAND_USE_OPTIONS.map(l => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Country Code</label>
+                <input value={ldnCountry} onChange={e => setLdnCountry(e.target.value.toUpperCase())} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: T.textSec, marginBottom: 10 }}>
+              <input type="checkbox" checked={ldnIncludeObserved} onChange={e => setLdnIncludeObserved(e.target.checked)} />
+              Supply observed LDN status / degraded area / biodiversity index — omit to see honest nulls
+            </label>
+            {ldnIncludeObserved && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 12 }}>
+                <div>
+                  <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>LDN Status</label>
+                  <select value={ldnStatusInput} onChange={e => setLdnStatusInput(e.target.value)} style={{ ...select, width: '100%' }}>
+                    {LDN_STATUS_OPTIONS.map(s => <option key={s} value={s}>{s || '(none)'}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Degraded Area (ha)</label>
+                  <input type="number" value={ldnDegradedHa} onChange={e => setLdnDegradedHa(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, color: T.textMut, display: 'block', marginBottom: 3 }}>Biodiversity Index (0-1)</label>
+                  <input type="number" min={0} max={1} step={0.05} value={ldnBiodiversity} onChange={e => setLdnBiodiversity(+e.target.value)} style={{ ...select, width: '100%', boxSizing: 'border-box' }} />
+                </div>
+              </div>
+            )}
+            <button onClick={runLandDegradation} disabled={ldnStatus === 'loading'} style={{ background: T.navy, color: '#fff', border: 'none', borderRadius: 6, padding: '8px 18px', fontSize: 12, fontWeight: 600, cursor: 'pointer', marginBottom: 14 }}>
+              {ldnStatus === 'loading' ? 'Running…' : 'Assess Land Degradation'}
+            </button>
+            {ldnStatus === 'demo' && <div style={{ fontSize: 12, color: T.amber }}>Food System API unreachable — check the backend is running on :8001.</div>}
+            {ldnResult && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                <KpiCard label="Carbon Stock" value={ldnResult.carbon_stock_tco2e != null ? `${ldnResult.carbon_stock_tco2e.toLocaleString()} tCO2e` : 'Insufficient data'} sub={ldnResult.carbon_stock_basis} color={ldnResult.carbon_stock_tco2e != null ? T.green : T.textMut} />
+                <KpiCard label="LDN Trend" value={ldnResult.carbon_stock_change_pct != null ? `${ldnResult.carbon_stock_change_pct}%/yr` : 'Insufficient data'} sub={ldnResult.ldn_status} color={ldnResult.carbon_stock_change_pct != null ? T.amber : T.textMut} />
+                <KpiCard label="Restoration Potential" value={ldnResult.restoration_potential_ha != null ? `${ldnResult.restoration_potential_ha} ha` : 'Insufficient data'} color={ldnResult.restoration_potential_ha != null ? T.navy : T.textMut} />
+                <KpiCard label="Restoration Cost" value={ldnResult.restoration_cost_usd != null ? `$${ldnResult.restoration_cost_usd.toLocaleString()}` : 'Insufficient data'} color={ldnResult.restoration_cost_usd != null ? T.sage : T.textMut} />
+              </div>
+            )}
           </div>
         </>
       )}

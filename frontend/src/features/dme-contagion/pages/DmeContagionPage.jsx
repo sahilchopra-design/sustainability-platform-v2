@@ -4,11 +4,19 @@
  * sectoral exposure matrix, critical path, shock scenarios, early warning,
  * regulatory capital buffer.
  */
-import React,{useState,useMemo,useCallback} from 'react';
+import React,{useState,useMemo,useCallback,useEffect} from 'react';
+import axios from 'axios';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,
         PieChart,Pie,Cell,AreaChart,Area,ScatterChart,Scatter,ZAxis,Legend,
         RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,
         LineChart,Line,ComposedChart,ReferenceLine} from 'recharts';
+
+// Backend DME Contagion engine — real multi-layer Hawkes-process systemic
+// risk model (Entity/Structural/Capital-Flight layers, spectral-radius
+// stability check, cascade simulation). See
+// backend/services/dme_contagion_engine.py + backend/api/v1/routes/dme_contagion.py
+const API = 'http://localhost:8001';
+const DME_CONTAGION_API = `${API}/api/v1/dme-contagion`;
 
 /* ── Theme ─────────────────────────────────────────────────────────────────── */
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',
@@ -88,6 +96,19 @@ const ENTITIES=ENTITY_NAMES.map((name,i)=>{
 const ADJ_LABELS=ENTITY_NAMES.slice(0,10).map(n=>n.split(' ')[0]);
 const ADJ_MATRIX=Array.from({length:10},(_,i)=>
   Array.from({length:10},(_,j)=>i===j?0:+(sr(i*11+j*7)*8).toFixed(1)));
+
+/* ── Full 40×40 transmission-weight matrix — input to the backend Hawkes
+   engine (stability-check / simulate). Same generator as ADJ_MATRIX above but
+   scaled to a normalised transmission weight (÷350) so the resulting
+   branching-ratio matrix (W/β) has a sub-1 spectral radius for realistic
+   β_decay values — verified numerically against the live engine before
+   wiring (dense 40-node network at full $B scale is always spectral-radius
+   unstable, which is a property of this illustrative dense network, not the
+   engine). This is the *input* fed to the real engine; every stability /
+   cascade number shown from it is computed server-side, not fabricated. ── */
+const ENTITY_IDS=ENTITY_NAMES;
+const TRANSMISSION_MATRIX=Array.from({length:ENTITY_NAMES.length},(_,i)=>
+  Array.from({length:ENTITY_NAMES.length},(_,j)=>i===j?0:+(sr(i*11+j*7)*8/350).toFixed(4)));
 
 /* ── SIR Cascade (20 steps, hub shock) ────────────────────────────────────── */
 const SIR_STEPS=20;
@@ -173,6 +194,16 @@ const tierColor=(t)=>({
 
 const warnColor=(w)=>({ALERT:T.red,WATCH:T.amber,NORMAL:T.green}[w]||T.textSec);
 
+/* ── Live/Demo status badge (see AIGovernancePage for the established
+   convention: 'loading' while the request is in flight, 'live' once the
+   real backend engine has responded, 'demo' if the API is unreachable and
+   the seeded fallback figures are shown instead). ── */
+const LiveBadge=({status,label})=>{
+  if(status==='loading')return <span style={{background:'#1e293b',color:'#94a3b8',padding:'2px 9px',borderRadius:12,fontSize:11,fontWeight:700}}>Connecting to {label}…</span>;
+  if(status==='live')return <span style={{background:'#dcfce7',color:'#166534',padding:'2px 9px',borderRadius:12,fontSize:11,fontWeight:700}}>● Live — computed by {label}</span>;
+  return <span style={{background:'#fef3c7',color:'#92400e',padding:'2px 9px',borderRadius:12,fontSize:11,fontWeight:700}}>○ Demo Data — {label} unavailable, showing seeded illustrative figures</span>;
+};
+
 /* ── Main Component ─────────────────────────────────────────────────────────── */
 export default function DmeContagionPage(){
   const[tab,setTab]=useState(0);
@@ -181,6 +212,104 @@ export default function DmeContagionPage(){
   const[sortCol,setSortCol]=useState('systemicScore');
   const[sortDir,setSortDir]=useState('desc');
   const[shockSel,setShockSel]=useState(0);
+
+  /* ── Live backend wiring (DME Contagion Hawkes engine) ──────────────────── */
+
+  // Stability check — spectral radius of the branching-ratio matrix (Network
+  // Topology tab). POST /api/v1/dme-contagion/stability-check.
+  const[stabilityLive,setStabilityLive]=useState(null);
+  const[stabilityStatus,setStabilityStatus]=useState('loading');
+  useEffect(()=>{
+    let cancelled=false;
+    (async()=>{
+      try{
+        const{data}=await axios.post(`${DME_CONTAGION_API}/stability-check`,{
+          adjacency_matrix:TRANSMISSION_MATRIX, beta_decay:0.5,
+        },{timeout:12000});
+        if(!cancelled){setStabilityLive(data);setStabilityStatus('live');}
+      }catch(e){ if(!cancelled){setStabilityLive(null);setStabilityStatus('demo');} }
+    })();
+    return()=>{cancelled=true;};
+  },[]);
+
+  // Full cascade simulation per shock scenario (Shock Propagation tab).
+  // POST /api/v1/dme-contagion/simulate. beta_decay/seed_severity vary by
+  // scenario so a "market-wide" shock genuinely propagates further / can go
+  // unstable, rather than a canned percentage.
+  const SHOCK_SIM_PARAMS=useMemo(()=>[
+    {betaDecay:0.7, severity:0.60, eventType:'SECTOR_SHOCK'},      // Sector-Level Shock
+    {betaDecay:0.5, severity:0.75, eventType:'ENTITY_DEFAULT'},    // Entity-Level Shock
+    {betaDecay:0.35,severity:0.90, eventType:'MARKET_WIDE_SHOCK'}, // Market-Wide Shock
+    {betaDecay:0.6, severity:0.65, eventType:'CLIMATE_REPRICING'}, // Climate Event Shock
+  ],[]);
+  const[simLive,setSimLive]=useState(null);
+  const[simStatus,setSimStatus]=useState('loading');
+  useEffect(()=>{
+    let cancelled=false;
+    setSimStatus('loading');
+    const p=SHOCK_SIM_PARAMS[shockSel];
+    const t=setTimeout(async()=>{
+      try{
+        const{data}=await axios.post(`${DME_CONTAGION_API}/simulate`,{
+          seed_entity_id:SIR_DATA.hubName, seed_severity:p.severity, seed_event_type:p.eventType,
+          adjacency_matrix:TRANSMISSION_MATRIX, entity_ids:ENTITY_IDS,
+          beta_decay:p.betaDecay, mu_baseline:0.05, cascade_steps:15,
+          scenario:SHOCK_SCENARIOS[shockSel].name,
+        },{timeout:15000});
+        if(!cancelled){setSimLive(data);setSimStatus('live');}
+      }catch(e){ if(!cancelled){setSimLive(null);setSimStatus('demo');} }
+    },250);
+    return()=>{cancelled=true;clearTimeout(t);};
+  },[shockSel,SHOCK_SIM_PARAMS]);
+
+  // 3-layer Hawkes intensity aggregation (Contagion Cascade tab). Chains
+  // POST /l1-intensity, /l2-intensity, /l3-intensity then /aggregate — inputs
+  // derived deterministically from the entity network / historical event
+  // register (no PRNG-as-data): L1 events = the hub entity's 3
+  // highest-transmission-weight neighbours; L2 events = the 5 most recent
+  // historical contagion events; L3 events = cross-sector exposure into the
+  // highest-SRI sector.
+  const[aggregateLive,setAggregateLive]=useState(null);
+  const[aggregateStatus,setAggregateStatus]=useState('loading');
+  useEffect(()=>{
+    let cancelled=false;
+    (async()=>{
+      try{
+        const now=new Date().toISOString();
+        const hubIdx=SIR_DATA.hubIdx;
+        const hubRow=TRANSMISSION_MATRIX[hubIdx];
+        const l1Events=ENTITIES.map((e,i)=>({i,w:hubRow[i]}))
+          .filter(x=>x.i!==hubIdx).sort((a,b)=>b.w-a.w).slice(0,3)
+          .map((x,idx)=>[new Date(Date.now()-(idx+1)*3*86400000).toISOString(), x.w, ENTITIES[x.i].stressedPD]);
+        const EVT_MAP={Financial:'CREDIT_EVENT','Supply Chain':'SUPPLY_DISRUPTION',Regulatory:'REGULATORY_SHOCK',Environmental:'PHYSICAL_ACUTE'};
+        const l2Events=[...HIST_EVENTS].sort((a,b)=>b.year-a.year).slice(0,5)
+          .map(e=>[new Date(`${e.year}-06-15`).toISOString(), EVT_MAP[e.channel]||'OTHER', +(e.severity/10).toFixed(3)]);
+        const sectorSRI=SECTORS_LIST.map(sec=>{
+          const es=ENTITIES.filter(e=>e.sector===sec);
+          return{sector:sec, avg:es.reduce((s,e)=>s+e.systemicScore,0)/Math.max(1,es.length)};
+        });
+        const targetSector=[...sectorSRI].sort((a,b)=>b.avg-a.avg)[0].sector;
+        const tIdx=SECTORS_LIST.indexOf(targetSector);
+        const eventsBySector=Object.fromEntries(SECTORS_LIST.map((s,i)=>{
+          if(i===tIdx)return[s,[]];
+          const mag=SEC_MATRIX[i][targetSector]/50;
+          return[s,[[new Date(Date.now()-21*86400000).toISOString(), +mag.toFixed(3)]]];
+        }));
+        const[l1,l2,l3]=await Promise.all([
+          axios.post(`${DME_CONTAGION_API}/l1-intensity`,{target_entity_id:ENTITIES[hubIdx].name,mu_baseline:0.05,beta_decay:0.5,events:l1Events,current_time:now},{timeout:12000}),
+          axios.post(`${DME_CONTAGION_API}/l2-intensity`,{mu_current:0.02,events:l2Events,current_time:now},{timeout:12000}),
+          axios.post(`${DME_CONTAGION_API}/l3-intensity`,{target_sector:targetSector,events_by_sector:eventsBySector,current_time:now,mu_baseline:0.03,beta_decay:0.3},{timeout:12000}),
+        ]);
+        const contagionRatio=Math.min(1, ENTITIES.reduce((s,e)=>s+e.systemicScore,0)/ENTITIES.length/100);
+        const{data:agg}=await axios.post(`${DME_CONTAGION_API}/aggregate`,{
+          lambda_L1_daily:l1.data.intensity, lambda_L2_monthly:l2.data.intensity, lambda_L3_weekly:l3.data.intensity,
+          lambda_baseline:0.05, contagion_ratio:contagionRatio, source_pillar:'X', target_pillar:'E',
+        },{timeout:12000});
+        if(!cancelled){setAggregateLive({l1:l1.data,l2:l2.data,l3:l3.data,agg,targetSector});setAggregateStatus('live');}
+      }catch(e){ if(!cancelled){setAggregateLive(null);setAggregateStatus('demo');} }
+    })();
+    return()=>{cancelled=true;};
+  },[]);
 
   /* ── filtered entity list ── */
   const filtered=useMemo(()=>{
@@ -341,11 +470,15 @@ export default function DmeContagionPage(){
   /* ── render Tab 1: Network Topology ── */
   const renderTopology=()=>(
     <div>
+      <div style={{marginBottom:12}}><LiveBadge status={stabilityStatus} label="DME Contagion Engine — /stability-check (spectral-radius Hawkes stability)"/></div>
       <div style={{display:'flex',gap:12,marginBottom:20,flexWrap:'wrap'}}>
         {kpiBox('Network Density',+(ENTITIES.reduce((s,e)=>s+e.outDegree,0)/(40*39)).toFixed(3),'Links / max possible links')}
         {kpiBox('Avg Clustering',+(ENTITIES.reduce((s,e)=>s+e.clusterCoeff,0)/40).toFixed(3),'Mean clustering coefficient')}
         {kpiBox('Avg Path Length',+(2.1+sr(1)*1.2).toFixed(2),'Simulated mean geodesic')}
         {kpiBox('Max Degree',Math.max(...ENTITIES.map(e=>e.inDegree+e.outDegree)),'In+Out combined')}
+        {stabilityLive
+          ?kpiBox('Hawkes Spectral Radius',stabilityLive.spectral_radius,stabilityLive.is_stable?'Stable (< 1.0) — Live engine':'UNSTABLE (≥ 1.0) — Live engine',stabilityLive.is_stable?T.green:T.red)
+          :kpiBox('Hawkes Spectral Radius','—','Awaiting live engine / demo unavailable',T.textMut)}
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
         <div style={cS}>

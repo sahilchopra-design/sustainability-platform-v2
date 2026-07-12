@@ -1,56 +1,99 @@
-import React,{useState,useMemo} from 'react';
+import React,{useState,useMemo,useEffect} from 'react';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,PieChart,Pie,Cell,Legend} from 'recharts';
 
+const API='http://localhost:8001';
+
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',purple:'#7c3aed',teal:'#0e7490',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 
-// ESRS XBRL taxonomy concepts (subset)
-const XBRL_CONCEPTS=[
-  {id:'E1-6_scope1',concept:'esrs:GrossScope1GHGEmissions',esrs:'E1',dr:'E1-6',para:'44(a)',label:'Gross Scope 1 GHG emissions',unit:'tCO2e',type:'decimal',period:'duration',value:12450,status:'tagged'},
-  {id:'E1-6_scope2_loc',concept:'esrs:GrossScope2GHGEmissionsLocationBased',esrs:'E1',dr:'E1-6',para:'44(b)',label:'Scope 2 GHG (location-based)',unit:'tCO2e',type:'decimal',period:'duration',value:8320,status:'tagged'},
-  {id:'E1-6_scope2_mkt',concept:'esrs:GrossScope2GHGEmissionsMarketBased',esrs:'E1',dr:'E1-6',para:'44(c)',label:'Scope 2 GHG (market-based)',unit:'tCO2e',type:'decimal',period:'duration',value:6180,status:'tagged'},
-  {id:'E1-6_scope3',concept:'esrs:TotalScope3GHGEmissions',esrs:'E1',dr:'E1-6',para:'51',label:'Total Scope 3 GHG emissions',unit:'tCO2e',type:'decimal',period:'duration',value:84200,status:'tagged'},
-  {id:'E1-6_total',concept:'esrs:TotalGHGEmissions',esrs:'E1',dr:'E1-6',para:'44',label:'Total GHG emissions (S1+S2+S3)',unit:'tCO2e',type:'decimal',period:'duration',value:104970,status:'tagged'},
-  {id:'E1-5_nren_energy',concept:'esrs:NonRenewableEnergyConsumption',esrs:'E1',dr:'E1-5',para:'37(a)',label:'Non-renewable energy consumption',unit:'MWh',type:'decimal',period:'duration',value:45200,status:'tagged'},
-  {id:'E1-5_ren_energy',concept:'esrs:RenewableEnergyConsumption',esrs:'E1',dr:'E1-5',para:'37(b)',label:'Renewable energy consumption',unit:'MWh',type:'decimal',period:'duration',value:18900,status:'tagged'},
-  {id:'E1-4_nz_target',concept:'esrs:NetZeroTargetYear',esrs:'E1',dr:'E1-4',para:'34(a)',label:'Net-zero target year',unit:'yr',type:'integer',period:'instant',value:2050,status:'tagged'},
-  {id:'E1-4_interim_target',concept:'esrs:InterimGHGReductionTarget',esrs:'E1',dr:'E1-4',para:'34(c)',label:'Interim GHG reduction target (%)',unit:'%',type:'decimal',period:'instant',value:50,status:'review'},
-  {id:'E3-1_water_consump',concept:'esrs:TotalWaterConsumption',esrs:'E3',dr:'E3-1',para:'28(a)',label:'Total water consumption',unit:'m³',type:'decimal',period:'duration',value:125000,status:'review'},
-  {id:'G1-4_bribery',concept:'esrs:NumberOfConvictionsForBribery',esrs:'G1',dr:'G1-4',para:'26(a)',label:'Convictions for bribery/corruption',unit:'#',type:'integer',period:'duration',value:0,status:'tagged'},
-  {id:'G1-6_payment',concept:'esrs:AveragePaymentPeriod',esrs:'G1',dr:'G1-6',para:'36',label:'Average payment period (days)',unit:'days',type:'decimal',period:'duration',value:42,status:'tagged'},
-  {id:'S1-7_emp_total',concept:'esrs:TotalEmployees',esrs:'S1',dr:'S1-7',para:'50(a)',label:'Total number of employees',unit:'#',type:'integer',period:'instant',value:8420,status:'tagged'},
-  {id:'S1-7_female_pct',concept:'esrs:PercentageOfFemaleEmployees',esrs:'S1',dr:'S1-7',para:'50(d)',label:'% female employees',unit:'%',type:'decimal',period:'instant',value:42.3,status:'tagged'},
-  {id:'S1-16_pay_gap',concept:'esrs:UnadjustedGenderPayGap',esrs:'S1',dr:'S1-16',para:'97(a)',label:'Unadjusted gender pay gap (%)',unit:'%',type:'decimal',period:'duration',value:12.1,status:'gap'},
-  {id:'E2-4_hazardous',concept:'esrs:TotalHazardousWaste',esrs:'E2',dr:'E2-4',para:'28(c)',label:'Total hazardous waste (tonnes)',unit:'t',type:'decimal',period:'duration',value:38.5,status:'gap'},
-  {id:'E1-3_capex_aligned',concept:'esrs:CapExInClimateRelatedActions',esrs:'E1',dr:'E1-3',para:'29(b)',label:'CapEx in climate-related actions (€)',unit:'EUR',type:'monetary',period:'duration',value:12500000,status:'review'},
-  {id:'E4-5_biodiversity',concept:'esrs:OperationsSitesInBiodiversitySensitiveAreas',esrs:'E4',dr:'E4-5',para:'50(a)',label:'Sites in biodiversity-sensitive areas',unit:'#',type:'integer',period:'instant',value:3,status:'gap'},
-];
-
-const VALIDATION_RULES=[
-  {rule:'ESEF-001',desc:'All monetary values must use iso4217:EUR unit',severity:'Error',affected:XBRL_CONCEPTS.filter(c=>c.unit==='EUR').length,passing:true},
-  {rule:'ESEF-002',desc:'Decimal values must use xbrli:pure unit for tCO2e/MWh/m³',severity:'Error',affected:XBRL_CONCEPTS.filter(c=>['tCO2e','MWh','m³'].includes(c.unit)).length,passing:true},
-  {rule:'ESEF-003',desc:'All mandatory ESRS DPs must be tagged or omitted with justification',severity:'Error',affected:12,passing:false},
-  {rule:'ESEF-004',desc:'Period context must match financial reporting period',severity:'Error',affected:XBRL_CONCEPTS.length,passing:true},
-  {rule:'ESEF-005',desc:'Entity identifier must use LEI scheme',severity:'Error',affected:1,passing:true},
-  {rule:'ESEF-006',desc:'iXBRL transformation rules for inline tagging',severity:'Warning',affected:XBRL_CONCEPTS.length,passing:true},
-  {rule:'ESMA-001',desc:'Taxonomy version must be EFRAG ESRS 2024 or later',severity:'Error',affected:1,passing:true},
-  {rule:'ESMA-002',desc:'Scope 1+2+3 total must equal sum of components (E1-6)',severity:'Error',affected:1,passing:true},
-  {rule:'ESMA-003',desc:'Net-zero target year must be ≥ current reporting year',severity:'Warning',affected:1,passing:true},
-  {rule:'ESMA-004',desc:'Female employees % must be between 0-100',severity:'Error',affected:1,passing:true},
-  {rule:'ESMA-005',desc:'All S1-7 employee headcount must be non-negative integers',severity:'Error',affected:1,passing:true},
-  {rule:'ESMA-006',desc:'Missing mandatory data points without omission justification',severity:'Error',affected:3,passing:false},
-  {rule:'WARN-001',desc:'Comparative prior period values recommended for all KPIs',severity:'Warning',affected:8,passing:false},
-  {rule:'WARN-002',desc:'ESRS E4 biodiversity indicators — consider sector-specific tagging',severity:'Warning',affected:2,passing:false},
-];
+// Sensible starter values for a first-run demo export. These are only the
+// *default form values* — the real facts, iXBRL/XBRL output and ESEF
+// validation results always come from the live backend engine
+// (services/xbrl_export_engine.py), never fabricated client-side.
+const DEFAULT_VALUES={
+  'E1-6_scope1_gross':12450,'E1-6_scope2_location':8320,'E1-6_scope2_market':6180,
+  'E1-6_scope3_total':84200,'E1-6_total_ghg':104970,'E1-6_ghg_intensity_revenue':1.25,
+  'E1-5_energy_consumption_total':64100,'E1-5_renewable_share':29.5,
+  'E1-9_internal_carbon_price':85,'E1-9_transition_risk_amount':4200000,'E1-9_physical_risk_amount':1800000,
+  'E2-4_pollutants_air':12.4,'E3-4_water_consumption':125000,'E4-5_land_use_change':3.2,
+  'E5-5_waste_generated':980,'S2_scope1_ghg':12450,'S2_scope2_ghg':8320,
+};
 
 const pill=(color,text,sm)=>({display:'inline-block',padding:sm?'1px 7px':'2px 10px',borderRadius:10,fontSize:sm?10:11,fontWeight:600,background:color+'18',color,border:`1px solid ${color}30`});
-const statusColor=(s)=>s==='tagged'?T.green:s==='review'?T.amber:T.red;
-const statusLabel=(s)=>s==='tagged'?'Tagged':s==='review'?'Under Review':'Gap';
 const sevColor=(s)=>s==='Error'?T.red:T.amber;
+
+async function postJSON(path,body){
+  const r=await fetch(`${API}${path}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!r.ok){
+    let detail=`HTTP ${r.status}`;
+    try{const j=await r.json();if(j.detail)detail=typeof j.detail==='string'?j.detail:JSON.stringify(j.detail);}catch(_e){/* ignore */}
+    throw new Error(detail);
+  }
+  return r.json();
+}
 
 export default function XbrlExportWizardPage(){
   const [tab,setTab]=useState(0);
   const TABS=['Data Mapping','Taxonomy Browser','Validation Report','Export Preview'];
+
+  // Real reference data, loaded once from the backend engine.
+  const [taxonomy,setTaxonomy]=useState({});          // ESRS_XBRL_TAXONOMY
+  const [validationRules,setValidationRules]=useState([]); // ESEF_VALIDATION_RULES
+  const [refLoading,setRefLoading]=useState(true);
+  const [refError,setRefError]=useState(null);
+
+  // Filing entity + data-point form state.
+  const [entityName,setEntityName]=useState('Demo Industrials SE');
+  const [entityLei,setEntityLei]=useState('529900T8BM49AURSDO55');
+  const [periodStart,setPeriodStart]=useState('2024-01-01');
+  const [periodEnd,setPeriodEnd]=useState('2024-12-31');
+  const [currency,setCurrency]=useState('EUR');
+  const [decimals,setDecimals]=useState(0);
+  const [values,setValues]=useState(DEFAULT_VALUES);
+
+  // Real export result from POST /api/v1/xbrl/export.
+  const [exportResult,setExportResult]=useState(null);
+  const [exportLoading,setExportLoading]=useState(false);
+  const [exportError,setExportError]=useState(null);
+
+  useEffect(()=>{
+    let cancelled=false;
+    (async()=>{
+      try{
+        const [tax,rules]=await Promise.all([
+          fetch(`${API}/api/v1/xbrl/ref/taxonomy`).then(r=>r.ok?r.json():{}),
+          fetch(`${API}/api/v1/xbrl/ref/validation-rules`).then(r=>r.ok?r.json():[]),
+        ]);
+        if(!cancelled){setTaxonomy(tax);setValidationRules(rules);}
+      }catch(e){
+        if(!cancelled)setRefError(`Could not reach XBRL export API at ${API}. Is the backend running (backend/server.py, port 8001)?`);
+      }finally{
+        if(!cancelled)setRefLoading(false);
+      }
+    })();
+    return ()=>{cancelled=true;};
+  },[]);
+
+  const dpIds=useMemo(()=>Object.keys(taxonomy),[taxonomy]);
+
+  const runExport=async()=>{
+    setExportLoading(true);setExportError(null);
+    try{
+      const data_points=Object.entries(values)
+        .filter(([dpId,v])=>dpIds.includes(dpId)&&v!==''&&v!==null&&!Number.isNaN(Number(v)))
+        .map(([dp_id,v])=>({dp_id,value:Number(v)}));
+      const result=await postJSON('/api/v1/xbrl/export',{
+        entity_name:entityName,entity_lei:entityLei,
+        period_start:periodStart,period_end:periodEnd,
+        data_points,currency,decimals:Number(decimals),
+      });
+      setExportResult(result);
+      setTab(2); // jump to Validation Report so the real ESMA rejection-reason results are visible
+    }catch(e){
+      setExportError(e.message||'Export failed');
+    }finally{
+      setExportLoading(false);
+    }
+  };
 
   return(
     <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text}}>
@@ -59,10 +102,14 @@ export default function XbrlExportWizardPage(){
           <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:6}}>
             <span style={{fontFamily:T.mono,fontSize:11,color:T.gold,fontWeight:700,background:T.navy,padding:'3px 10px',borderRadius:4}}>EP-AZ3</span>
             <span style={{fontFamily:T.mono,fontSize:11,color:T.textMut}}>CSRD iXBRL · EFRAG ESRS XBRL TAXONOMY 2024 · ESEF REG 2019/815 · ESMA FILING RULES</span>
+            <span style={pill(T.green,'LIVE ENGINE',true)}>LIVE ENGINE</span>
           </div>
           <h1 style={{fontSize:26,fontWeight:700,color:T.navy,margin:0}}>XBRL Export Wizard</h1>
-          <p style={{color:T.textSec,fontSize:14,margin:'4px 0 0'}}>iXBRL tagging, EFRAG ESRS taxonomy mapping, ESEF validation & regulatory filing export</p>
+          <p style={{color:T.textSec,fontSize:14,margin:'4px 0 0'}}>iXBRL tagging, EFRAG ESRS taxonomy mapping, ESEF validation & regulatory filing export — wired to services/xbrl_export_engine.py (XBRLExportEngine)</p>
         </div>
+        {refError&&(
+          <div style={{background:T.red+'0a',border:`1px solid ${T.red}30`,borderRadius:10,padding:'12px 16px',marginBottom:16,color:T.red,fontSize:13}}>{refError}</div>
+        )}
         <div style={{display:'flex',gap:4,marginBottom:24,background:T.surface,borderRadius:10,padding:4,border:`1px solid ${T.border}`}}>
           {TABS.map((t,i)=>(
             <button key={i} onClick={()=>setTab(i)} style={{flex:1,padding:'10px 16px',borderRadius:8,border:'none',cursor:'pointer',fontSize:13,fontWeight:tab===i?700:500,background:tab===i?T.navy:'transparent',color:tab===i?'#fff':T.textSec,transition:'all 0.2s'}}>
@@ -70,42 +117,82 @@ export default function XbrlExportWizardPage(){
             </button>
           ))}
         </div>
-        {tab===0&&<DataMapping/>}
-        {tab===1&&<TaxonomyBrowser/>}
-        {tab===2&&<ValidationReport/>}
-        {tab===3&&<ExportPreview/>}
+        {tab===0&&<DataMapping
+          taxonomy={taxonomy} dpIds={dpIds} refLoading={refLoading}
+          entityName={entityName} setEntityName={setEntityName}
+          entityLei={entityLei} setEntityLei={setEntityLei}
+          periodStart={periodStart} setPeriodStart={setPeriodStart}
+          periodEnd={periodEnd} setPeriodEnd={setPeriodEnd}
+          currency={currency} setCurrency={setCurrency}
+          decimals={decimals} setDecimals={setDecimals}
+          values={values} setValues={setValues}
+          runExport={runExport} exportLoading={exportLoading} exportError={exportError}
+        />}
+        {tab===1&&<TaxonomyBrowser taxonomy={taxonomy} refLoading={refLoading}/>}
+        {tab===2&&<ValidationReport exportResult={exportResult} validationRules={validationRules}/>}
+        {tab===3&&<ExportPreview exportResult={exportResult} entityName={entityName} entityLei={entityLei}/>}
       </div>
     </div>
   );
 }
 
-/* ===== TAB 1: DATA MAPPING ===== */
-function DataMapping(){
+/* ===== TAB 1: DATA MAPPING (real taxonomy + live export call) ===== */
+function DataMapping({taxonomy,dpIds,refLoading,entityName,setEntityName,entityLei,setEntityLei,periodStart,setPeriodStart,periodEnd,setPeriodEnd,currency,setCurrency,decimals,setDecimals,values,setValues,runExport,exportLoading,exportError}){
   const [search,setSearch]=useState('');
   const [filterESRS,setFilterESRS]=useState('All');
-  const [filterStatus,setFilterStatus]=useState('All');
 
-  const filtered=useMemo(()=>XBRL_CONCEPTS.filter(c=>{
-    if(filterESRS!=='All'&&c.esrs!==filterESRS)return false;
-    if(filterStatus!=='All'&&c.status!==filterStatus)return false;
-    if(search&&!c.label.toLowerCase().includes(search.toLowerCase())&&!c.concept.toLowerCase().includes(search.toLowerCase()))return false;
+  const rows=useMemo(()=>dpIds.map(id=>({id,...taxonomy[id]})),[dpIds,taxonomy]);
+  const esrsGroups=useMemo(()=>Array.from(new Set(rows.map(r=>r.esrs))).sort(),[rows]);
+
+  const filtered=useMemo(()=>rows.filter(r=>{
+    if(filterESRS!=='All'&&r.esrs!==filterESRS)return false;
+    if(search&&!r.label.toLowerCase().includes(search.toLowerCase())&&!r.concept.toLowerCase().includes(search.toLowerCase()))return false;
     return true;
-  }),[search,filterESRS,filterStatus]);
+  }),[rows,search,filterESRS]);
 
-  const tagged=XBRL_CONCEPTS.filter(c=>c.status==='tagged').length;
-  const review=XBRL_CONCEPTS.filter(c=>c.status==='review').length;
-  const gap=XBRL_CONCEPTS.filter(c=>c.status==='gap').length;
+  const tagged=rows.filter(r=>values[r.id]!==undefined&&values[r.id]!==''&&values[r.id]!==null).length;
+  const gap=rows.length-tagged;
 
-  const byEsrs=['E1','E2','E3','E4','G1','S1'].map(e=>({esrs:e,count:XBRL_CONCEPTS.filter(c=>c.esrs===e).length,tagged:XBRL_CONCEPTS.filter(c=>c.esrs===e&&c.status==='tagged').length}));
+  const byEsrs=esrsGroups.map(e=>({esrs:e,count:rows.filter(r=>r.esrs===e).length,tagged:rows.filter(r=>r.esrs===e&&values[r.id]!==undefined&&values[r.id]!=='').length}));
+
+  const setVal=(id,v)=>setValues(prev=>({...prev,[id]:v}));
 
   return(
     <div>
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20,marginBottom:20}}>
+        <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Filing Entity</div>
+        <div style={{display:'grid',gridTemplateColumns:'2fr 2fr 1fr 1fr 1fr 1fr',gap:12,alignItems:'end'}}>
+          <label style={{fontSize:11,color:T.textSec}}>Entity Name
+            <input value={entityName} onChange={e=>setEntityName(e.target.value)} style={{display:'block',width:'100%',marginTop:4,padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font,boxSizing:'border-box'}}/>
+          </label>
+          <label style={{fontSize:11,color:T.textSec}}>Entity LEI (20 chars)
+            <input value={entityLei} onChange={e=>setEntityLei(e.target.value)} maxLength={20} style={{display:'block',width:'100%',marginTop:4,padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.mono,boxSizing:'border-box'}}/>
+          </label>
+          <label style={{fontSize:11,color:T.textSec}}>Period Start
+            <input type="date" value={periodStart} onChange={e=>setPeriodStart(e.target.value)} style={{display:'block',width:'100%',marginTop:4,padding:'6px 8px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.mono,boxSizing:'border-box'}}/>
+          </label>
+          <label style={{fontSize:11,color:T.textSec}}>Period End
+            <input type="date" value={periodEnd} onChange={e=>setPeriodEnd(e.target.value)} style={{display:'block',width:'100%',marginTop:4,padding:'6px 8px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.mono,boxSizing:'border-box'}}/>
+          </label>
+          <label style={{fontSize:11,color:T.textSec}}>Currency
+            <input value={currency} onChange={e=>setCurrency(e.target.value)} style={{display:'block',width:'100%',marginTop:4,padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.mono,boxSizing:'border-box'}}/>
+          </label>
+          <label style={{fontSize:11,color:T.textSec}}>Decimals
+            <input type="number" value={decimals} onChange={e=>setDecimals(e.target.value)} style={{display:'block',width:'100%',marginTop:4,padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.mono,boxSizing:'border-box'}}/>
+          </label>
+        </div>
+        {exportError&&<div style={{marginTop:12,padding:'10px 14px',borderRadius:8,background:T.red+'0a',border:`1px solid ${T.red}30`,color:T.red,fontSize:12}}>{exportError}</div>}
+        <button onClick={runExport} disabled={exportLoading||refLoading} style={{marginTop:14,padding:'10px 24px',borderRadius:8,background:exportLoading?T.textMut:T.navy,color:'#fff',border:'none',cursor:exportLoading?'default':'pointer',fontSize:13,fontWeight:700}}>
+          {exportLoading?'Generating iXBRL / XBRL…':'Generate XBRL Export'}
+        </button>
+      </div>
+
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:24}}>
         {[
-          {label:'Total Data Points',value:XBRL_CONCEPTS.length,sub:'Mapped to EFRAG taxonomy'},
-          {label:'Tagged',value:tagged,sub:'iXBRL tag applied',color:T.green},
-          {label:'Under Review',value:review,sub:'Value pending confirmation',color:T.amber},
-          {label:'Gaps',value:gap,sub:'No data available',color:T.red},
+          {label:'Total Data Points',value:rows.length,sub:'From live EFRAG ESRS taxonomy'},
+          {label:'Values Entered',value:tagged,sub:'Will be tagged on export',color:T.green},
+          {label:'Not Entered',value:gap,sub:'Omitted from this export',color:T.amber},
+          {label:'ESRS Standards Covered',value:esrsGroups.length,sub:esrsGroups.join(', ')||'—'},
         ].map((kpi,i)=>(
           <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:'16px 20px'}}>
             <div style={{fontSize:11,fontWeight:600,color:T.textMut,textTransform:'uppercase',letterSpacing:0.5,marginBottom:6}}>{kpi.label}</div>
@@ -121,37 +208,37 @@ function DataMapping(){
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search concept or label…" style={{padding:'7px 12px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,width:220,fontFamily:T.font}}/>
             <select value={filterESRS} onChange={e=>setFilterESRS(e.target.value)} style={{padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font}}>
               <option value="All">All ESRS</option>
-              {['E1','E2','E3','E4','G1','S1'].map(e=><option key={e}>{e}</option>)}
+              {esrsGroups.map(e=><option key={e}>{e}</option>)}
             </select>
-            <select value={filterStatus} onChange={e=>setFilterStatus(e.target.value)} style={{padding:'7px 10px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font}}>
-              <option value="All">All Statuses</option>
-              {['tagged','review','gap'].map(s=><option key={s}>{s}</option>)}
-            </select>
-            <span style={{marginLeft:'auto',fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length}/{XBRL_CONCEPTS.length}</span>
+            <span style={{marginLeft:'auto',fontSize:11,color:T.textMut,fontFamily:T.mono}}>{filtered.length}/{rows.length}</span>
           </div>
+          {refLoading?(
+            <div style={{padding:'24px 10px',textAlign:'center',color:T.textMut,fontSize:13}}>Loading live taxonomy from backend…</div>
+          ):(
           <table style={{width:'100%',borderCollapse:'collapse',fontSize:11}}>
             <thead>
               <tr style={{borderBottom:`2px solid ${T.border}`}}>
-                {['ESRS','DR Ref','XBRL Concept','Label','Unit','Type','Value','Status'].map(h=>(
+                {['ESRS','DR Ref','XBRL Concept','Label','Unit','Value'].map(h=>(
                   <th key={h} style={{padding:'7px 10px',textAlign:'left',fontSize:10,fontWeight:700,color:T.textMut,textTransform:'uppercase',letterSpacing:0.4}}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c,i)=>(
+              {filtered.map((c)=>(
                 <tr key={c.id} style={{borderBottom:`1px solid ${T.borderL}`}}>
                   <td style={{padding:'8px 10px',fontFamily:T.mono,fontWeight:700,color:T.navy,fontSize:11}}>{c.esrs}</td>
                   <td style={{padding:'8px 10px',fontFamily:T.mono,fontSize:10,color:T.gold}}>{c.dr}</td>
                   <td style={{padding:'8px 10px',fontFamily:T.mono,fontSize:10,color:T.textSec,maxWidth:200,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.concept}</td>
                   <td style={{padding:'8px 10px',fontSize:12,color:T.text}}>{c.label}</td>
                   <td style={{padding:'8px 10px',fontFamily:T.mono,fontSize:10,color:T.textMut}}>{c.unit}</td>
-                  <td style={{padding:'8px 10px',fontFamily:T.mono,fontSize:10,color:T.textMut}}>{c.type}</td>
-                  <td style={{padding:'8px 10px',fontFamily:T.mono,fontWeight:700,color:T.navy,fontSize:12}}>{typeof c.value==='number'?c.value.toLocaleString():c.value}</td>
-                  <td style={{padding:'8px 10px'}}><span style={pill(statusColor(c.status),statusLabel(c.status),true)}>{statusLabel(c.status)}</span></td>
+                  <td style={{padding:'8px 10px'}}>
+                    <input value={values[c.id]??''} onChange={e=>setVal(c.id,e.target.value)} placeholder="—" style={{width:100,padding:'5px 8px',borderRadius:6,border:`1px solid ${T.border}`,fontSize:11,fontFamily:T.mono}}/>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          )}
         </div>
 
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
@@ -163,18 +250,18 @@ function DataMapping(){
               <YAxis type="category" dataKey="esrs" width={30} style={{fontSize:11}}/>
               <Tooltip/>
               <Legend/>
-              <Bar dataKey="tagged" name="Tagged" fill={T.green} radius={[0,4,4,0]}/>
+              <Bar dataKey="tagged" name="Entered" fill={T.green} radius={[0,4,4,0]}/>
               <Bar dataKey="count" name="Total" fill={T.borderL} radius={[0,4,4,0]}/>
             </BarChart>
           </ResponsiveContainer>
           <div style={{marginTop:16}}>
             <div style={{fontSize:11,fontWeight:700,color:T.textMut,marginBottom:8}}>TAGGING PROGRESS</div>
             <div style={{height:8,background:T.borderL,borderRadius:4,overflow:'hidden',marginBottom:6}}>
-              <div style={{width:(tagged/XBRL_CONCEPTS.length*100)+'%',height:'100%',background:T.green,borderRadius:4}}/>
+              <div style={{width:(rows.length?tagged/rows.length*100:0)+'%',height:'100%',background:T.green,borderRadius:4}}/>
             </div>
             <div style={{display:'flex',justifyContent:'space-between',fontSize:11,fontFamily:T.mono}}>
-              <span style={{color:T.green}}>{tagged} tagged</span>
-              <span style={{color:T.navy,fontWeight:700}}>{Math.round(tagged/XBRL_CONCEPTS.length*100)}%</span>
+              <span style={{color:T.green}}>{tagged} entered</span>
+              <span style={{color:T.navy,fontWeight:700}}>{rows.length?Math.round(tagged/rows.length*100):0}%</span>
             </div>
           </div>
         </div>
@@ -183,29 +270,30 @@ function DataMapping(){
   );
 }
 
-/* ===== TAB 2: TAXONOMY BROWSER ===== */
-function TaxonomyBrowser(){
-  const [selEsrs,setSelEsrs]=useState('E1');
+/* ===== TAB 2: TAXONOMY BROWSER (real ESRS_XBRL_TAXONOMY) ===== */
+function TaxonomyBrowser({taxonomy,refLoading}){
+  const rows=useMemo(()=>Object.entries(taxonomy).map(([id,v])=>({id,...v})),[taxonomy]);
+  const allEsrs=useMemo(()=>Array.from(new Set(rows.map(r=>r.esrs))).sort(),[rows]);
+  const [selEsrs,setSelEsrs]=useState(null);
+  const activeEsrs=selEsrs||allEsrs[0];
 
   const namespaces=[
-    {prefix:'esrs',uri:'https://xbrl.efrag.org/taxonomy/esrs/2024',desc:'EFRAG ESRS XBRL Taxonomy 2024'},
+    {prefix:'esrs',uri:'http://xbrl.efrag.org/taxonomy/esrs/2024',desc:'EFRAG ESRS XBRL Taxonomy 2024'},
+    {prefix:'ifrs-s2',uri:'http://xbrl.ifrs.org/taxonomy/ifrs-s2/2024',desc:'ISSB IFRS S2 Climate Taxonomy 2024'},
     {prefix:'xbrli',uri:'http://www.xbrl.org/2003/instance',desc:'XBRL Instance Document'},
     {prefix:'iso4217',uri:'http://www.xbrl.org/2003/iso4217',desc:'ISO 4217 Currency Codes'},
-    {prefix:'link',uri:'http://www.xbrl.org/2003/linkbase',desc:'XBRL Linkbase'},
     {prefix:'xlink',uri:'http://www.w3.org/1999/xlink',desc:'XLink Specification'},
-    {prefix:'esef',uri:'http://www.esma.europa.eu/xbrl/esef/role',desc:'ESMA ESEF Filing Roles'},
-    {prefix:'ifrs-full',uri:'https://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full',desc:'IFRS Full Taxonomy'},
   ];
 
-  const esrsConcepts=XBRL_CONCEPTS.filter(c=>c.esrs===selEsrs);
-  const allEsrs=['E1','E2','E3','E4','G1','S1'];
+  const esrsConcepts=rows.filter(c=>c.esrs===activeEsrs);
 
-  const dataTypes=[
-    {type:'decimalItemType',desc:'Numeric decimal — GHG tCO2e, energy MWh, percentages',count:XBRL_CONCEPTS.filter(c=>c.type==='decimal').length},
-    {type:'integerItemType',desc:'Non-negative integer — headcounts, incident counts',count:XBRL_CONCEPTS.filter(c=>c.type==='integer').length},
-    {type:'monetaryItemType',desc:'Currency amount — CapEx, OpEx in EUR',count:XBRL_CONCEPTS.filter(c=>c.type==='monetary').length},
-    {type:'stringItemType',desc:'Text — policies, descriptions (not machine-readable)',count:0},
-  ];
+  const dataTypes=useMemo(()=>{
+    const counts={};
+    rows.forEach(r=>{counts[r.data_type]=(counts[r.data_type]||0)+1;});
+    return Object.entries(counts).map(([type,count])=>({type,count}));
+  },[rows]);
+
+  if(refLoading)return <div style={{padding:'24px 10px',textAlign:'center',color:T.textMut,fontSize:13}}>Loading live taxonomy from backend…</div>;
 
   return(
     <div>
@@ -214,18 +302,17 @@ function TaxonomyBrowser(){
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20,marginBottom:16}}>
             <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:10}}>ESRS STANDARD</div>
             {allEsrs.map(e=>(
-              <div key={e} onClick={()=>setSelEsrs(e)} style={{padding:'9px 12px',borderRadius:8,cursor:'pointer',background:selEsrs===e?T.navy:'transparent',marginBottom:3,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <span style={{fontFamily:T.mono,fontWeight:700,color:selEsrs===e?T.gold:T.navy,fontSize:13}}>{e}</span>
-                <span style={{fontSize:11,color:selEsrs===e?'#fff':T.textMut}}>{XBRL_CONCEPTS.filter(c=>c.esrs===e).length} concepts</span>
+              <div key={e} onClick={()=>setSelEsrs(e)} style={{padding:'9px 12px',borderRadius:8,cursor:'pointer',background:activeEsrs===e?T.navy:'transparent',marginBottom:3,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <span style={{fontFamily:T.mono,fontWeight:700,color:activeEsrs===e?T.gold:T.navy,fontSize:13}}>{e}</span>
+                <span style={{fontSize:11,color:activeEsrs===e?'#fff':T.textMut}}>{rows.filter(c=>c.esrs===e).length} concepts</span>
               </div>
             ))}
           </div>
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
-            <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:12}}>XBRL DATA TYPES</div>
+            <div style={{fontSize:12,fontWeight:700,color:T.textMut,marginBottom:12}}>XBRL DATA TYPES (live count)</div>
             {dataTypes.map((dt,i)=>(
               <div key={i} style={{marginBottom:12,padding:'10px 12px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.borderL}`}}>
                 <div style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:T.navy,marginBottom:4}}>{dt.type}</div>
-                <div style={{fontSize:11,color:T.textSec}}>{dt.desc}</div>
                 <div style={{fontSize:10,fontFamily:T.mono,color:T.textMut,marginTop:3}}>{dt.count} concepts</div>
               </div>
             ))}
@@ -234,28 +321,27 @@ function TaxonomyBrowser(){
 
         <div>
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20,marginBottom:16}}>
-            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:4}}>EFRAG ESRS XBRL Taxonomy — {selEsrs} Concepts</div>
-            <div style={{fontSize:12,color:T.textSec,marginBottom:16}}>EFRAG ESRS XBRL Taxonomy 2024 · Namespace: https://xbrl.efrag.org/taxonomy/esrs/2024</div>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:4}}>EFRAG ESRS XBRL Taxonomy — {activeEsrs} Concepts</div>
+            <div style={{fontSize:12,color:T.textSec,marginBottom:16}}>Live from GET /api/v1/xbrl/ref/taxonomy · Namespace: http://xbrl.efrag.org/taxonomy/esrs/2024</div>
             <div style={{display:'flex',flexDirection:'column',gap:8}}>
-              {esrsConcepts.map((c,i)=>(
+              {esrsConcepts.map((c)=>(
                 <div key={c.id} style={{background:T.surfaceH,borderRadius:10,padding:'12px 16px',border:`1px solid ${T.borderL}`,fontFamily:T.mono}}>
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:6}}>
                     <div>
-                      <span style={{fontSize:10,color:T.teal,marginRight:8}}>esrs:</span>
-                      <span style={{fontSize:12,fontWeight:700,color:T.navy}}>{c.concept.replace('esrs:','')}</span>
+                      <span style={{fontSize:10,color:T.teal,marginRight:8}}>{c.concept.split(':')[0]}:</span>
+                      <span style={{fontSize:12,fontWeight:700,color:T.navy}}>{c.concept.split(':').slice(1).join(':')}</span>
                     </div>
                     <div style={{display:'flex',gap:6}}>
-                      <span style={pill(T.purple,c.type,true)}>{c.type}</span>
-                      <span style={pill(c.period==='duration'?T.teal:T.gold,c.period,true)}>{c.period}</span>
+                      <span style={pill(T.purple,c.data_type,true)}>{c.data_type}</span>
+                      <span style={pill(c.period_type==='duration'?T.teal:T.gold,c.period_type,true)}>{c.period_type}</span>
                     </div>
                   </div>
                   <div style={{fontFamily:T.font,fontSize:12,color:T.textSec,marginBottom:6}}>{c.label}</div>
-                  <div style={{display:'flex',gap:16,fontSize:10,color:T.textMut}}>
+                  <div style={{display:'flex',gap:16,fontSize:10,color:T.textMut,flexWrap:'wrap'}}>
                     <span>DR: <strong style={{color:T.gold}}>{c.dr}</strong></span>
-                    <span>Para: <strong style={{color:T.navy}}>§{c.para}</strong></span>
+                    <span>Para: <strong style={{color:T.navy}}>§{c.paragraph}</strong></span>
                     <span>Unit: <strong style={{color:T.navy}}>{c.unit}</strong></span>
-                    <span>Value: <strong style={{color:T.navy,fontSize:11}}>{typeof c.value==='number'?c.value.toLocaleString():c.value}</strong></span>
-                    <span style={{marginLeft:'auto'}}><span style={pill(statusColor(c.status),statusLabel(c.status),true)}>{statusLabel(c.status)}</span></span>
+                    <span>XBRL Unit: <strong style={{color:T.navy}}>{c.xbrl_unit}</strong></span>
                   </div>
                 </div>
               ))}
@@ -283,31 +369,49 @@ function TaxonomyBrowser(){
   );
 }
 
-/* ===== TAB 3: VALIDATION REPORT ===== */
-function ValidationReport(){
+/* ===== TAB 3: VALIDATION REPORT (real ESEF rules + real per-export validation_results) ===== */
+function ValidationReport({exportResult,validationRules}){
   const [filterSev,setFilterSev]=useState('All');
 
-  const errors=VALIDATION_RULES.filter(r=>!r.passing&&r.severity==='Error').length;
-  const warnings=VALIDATION_RULES.filter(r=>!r.passing&&r.severity==='Warning').length;
-  const passing=VALIDATION_RULES.filter(r=>r.passing).length;
-  const readyToFile=errors===0;
+  if(!exportResult){
+    return(
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:40,textAlign:'center'}}>
+        <div style={{fontSize:14,color:T.textSec,marginBottom:16}}>No export has been generated yet. Go to <strong>Data Mapping</strong> and click <strong>Generate XBRL Export</strong> to run the real ESEF validation engine.</div>
+        {validationRules.length>0&&(
+          <div style={{textAlign:'left',marginTop:20}}>
+            <div style={{fontSize:12,fontWeight:700,color:T.navy,marginBottom:10}}>ESEF Rule Catalog (live from GET /ref/validation-rules)</div>
+            {validationRules.map(r=>(
+              <div key={r.id} style={{padding:'8px 12px',background:T.surfaceH,borderRadius:8,marginBottom:6,fontSize:12}}>
+                <span style={{fontFamily:T.mono,fontWeight:700,color:T.navy,marginRight:8}}>{r.id}</span>{r.desc}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
-  const filtered=filterSev==='All'?VALIDATION_RULES:filterSev==='Error'?VALIDATION_RULES.filter(r=>r.severity==='Error'):VALIDATION_RULES.filter(r=>r.severity==='Warning');
+  const results=exportResult.validation_results||[];
+  const errors=exportResult.errors_count;
+  const warnings=exportResult.warnings_count;
+  const passing=results.filter(r=>r.passed).length;
+  const readyToFile=exportResult.validation_passed;
+
+  const filtered=filterSev==='All'?results:filterSev==='Failing'?results.filter(r=>!r.passed):results.filter(r=>r.passed);
 
   const pieData=[
     {name:'Passing',value:passing,color:T.green},
-    {name:'Errors',value:errors,color:T.red},
-    {name:'Warnings',value:warnings,color:T.amber},
+    {name:'Failing',value:results.length-passing,color:T.red},
   ];
 
   return(
     <div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16,marginBottom:24}}>
         {[
-          {label:'Total Rules Checked',value:VALIDATION_RULES.length,sub:'ESEF + ESMA + EFRAG'},
+          {label:'Total Checks Run',value:results.length,sub:`ESEF rules × ${exportResult.fact_count} facts`},
           {label:'Errors',value:errors,sub:'Must fix before filing',color:T.red},
           {label:'Warnings',value:warnings,sub:'Review recommended',color:T.amber},
-          {label:'Filing Ready',value:readyToFile?'YES':'NO',sub:readyToFile?'All errors resolved':'Fix errors first',color:readyToFile?T.green:T.red},
+          {label:'Filing Ready',value:readyToFile?'YES':'NO',sub:readyToFile?'All ESEF checks passed':'Fix errors first',color:readyToFile?T.green:T.red},
         ].map((kpi,i)=>(
           <div key={i} style={{background:T.surface,border:`2px solid ${(kpi.color||T.border)}30`,borderRadius:12,padding:'16px 20px'}}>
             <div style={{fontSize:11,fontWeight:600,color:T.textMut,textTransform:'uppercase',letterSpacing:0.5,marginBottom:6}}>{kpi.label}</div>
@@ -321,8 +425,8 @@ function ValidationReport(){
         <div style={{background:T.red+'0a',border:`1px solid ${T.red}30`,borderRadius:10,padding:'14px 20px',marginBottom:20,display:'flex',gap:12,alignItems:'center'}}>
           <span style={{fontSize:20}}>⚠️</span>
           <div>
-            <div style={{fontWeight:700,color:T.red,fontSize:14}}>Filing Blocked — {errors} Critical Error{errors>1?'s':''}</div>
-            <div style={{fontSize:12,color:T.textSec,marginTop:2}}>Resolve all ESEF/ESMA errors before submitting to ESAP or national filing portal. Missing mandatory DPs require either data or documented omission justification (ESRS 1 §31-35).</div>
+            <div style={{fontWeight:700,color:T.red,fontSize:14}}>Filing Blocked — {errors} Failing Check{errors!==1?'s':''}</div>
+            <div style={{fontSize:12,color:T.textSec,marginTop:2}}>Real ESMA/ESEF rejection reasons from XBRLExportEngine._validate(). Resolve all failing checks before submitting to ESAP or a national filing portal.</div>
           </div>
         </div>
       )}
@@ -330,24 +434,23 @@ function ValidationReport(){
       <div style={{display:'grid',gridTemplateColumns:'1fr 280px',gap:20}}>
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
           <div style={{display:'flex',gap:8,marginBottom:16,alignItems:'center'}}>
-            <div style={{fontSize:13,fontWeight:700,color:T.navy}}>Validation Results</div>
-            {['All','Error','Warning'].map(s=>(
+            <div style={{fontSize:13,fontWeight:700,color:T.navy}}>Validation Results (live from this export)</div>
+            {['All','Passing','Failing'].map(s=>(
               <button key={s} onClick={()=>setFilterSev(s)} style={{padding:'5px 12px',borderRadius:6,border:'none',cursor:'pointer',fontSize:11,fontWeight:filterSev===s?700:400,background:filterSev===s?T.navy:'transparent',color:filterSev===s?'#fff':T.textSec}}>
                 {s}
               </button>
             ))}
           </div>
-          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          <div style={{display:'flex',flexDirection:'column',gap:8,maxHeight:460,overflowY:'auto'}}>
             {filtered.map((rule,i)=>(
-              <div key={rule.rule} style={{padding:'12px 16px',background:rule.passing?T.green+'08':rule.severity==='Error'?T.red+'08':T.amber+'08',borderRadius:10,border:`1px solid ${rule.passing?T.green:sevColor(rule.severity)}20`,display:'flex',gap:12,alignItems:'flex-start'}}>
-                <span style={{fontSize:16,color:rule.passing?T.green:sevColor(rule.severity),flexShrink:0,marginTop:1}}>{rule.passing?'✓':'✗'}</span>
+              <div key={i} style={{padding:'12px 16px',background:rule.passed?T.green+'08':T.red+'08',borderRadius:10,border:`1px solid ${rule.passed?T.green:T.red}20`,display:'flex',gap:12,alignItems:'flex-start'}}>
+                <span style={{fontSize:16,color:rule.passed?T.green:T.red,flexShrink:0,marginTop:1}}>{rule.passed?'✓':'✗'}</span>
                 <div style={{flex:1}}>
                   <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:4}}>
-                    <span style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:T.navy}}>{rule.rule}</span>
-                    <span style={pill(sevColor(rule.severity),rule.severity,true)}>{rule.severity}</span>
-                    <span style={{fontSize:11,color:T.textMut,marginLeft:'auto'}}>{rule.affected} item{rule.affected!==1?'s':''} affected</span>
+                    <span style={{fontFamily:T.mono,fontSize:11,fontWeight:700,color:T.navy}}>{rule.rule_id}</span>
                   </div>
-                  <div style={{fontSize:12,color:T.text}}>{rule.desc}</div>
+                  <div style={{fontSize:12,color:T.text}}>{rule.description}</div>
+                  <div style={{fontSize:11,color:T.textMut,marginTop:2,fontFamily:T.mono}}>{rule.details}</div>
                 </div>
               </div>
             ))}
@@ -367,20 +470,11 @@ function ValidationReport(){
             </ResponsiveContainer>
           </div>
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
-            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Filing Checklist</div>
-            {[
-              {item:'iXBRL tagging complete',done:true},
-              {item:'EFRAG taxonomy 2024 referenced',done:true},
-              {item:'Entity LEI registered (GLEIF)',done:true},
-              {item:'Period contexts validated',done:true},
-              {item:'Mandatory DPs covered or justified',done:false},
-              {item:'Comparative prior period data',done:false},
-              {item:'External assurance obtained',done:false},
-              {item:'ESAP account registered',done:true},
-            ].map((c,i)=>(
-              <div key={i} style={{display:'flex',gap:10,alignItems:'center',padding:'7px 10px',background:i%2===0?T.surfaceH:'transparent',borderRadius:6,marginBottom:2}}>
-                <span style={{fontSize:14,color:c.done?T.green:T.red}}>{c.done?'✓':'○'}</span>
-                <span style={{fontSize:12,color:c.done?T.text:T.textSec}}>{c.item}</span>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Coverage by ESRS (this export)</div>
+            {Object.entries(exportResult.coverage_by_esrs||{}).map(([esrs,count])=>(
+              <div key={esrs} style={{display:'flex',justifyContent:'space-between',padding:'6px 10px',fontSize:12}}>
+                <span style={{fontFamily:T.mono,fontWeight:700,color:T.navy}}>{esrs}</span>
+                <span style={{color:T.textSec}}>{count} fact{count!==1?'s':''}</span>
               </div>
             ))}
           </div>
@@ -390,127 +484,35 @@ function ValidationReport(){
   );
 }
 
-/* ===== TAB 4: EXPORT PREVIEW ===== */
-function ExportPreview(){
+/* ===== TAB 4: EXPORT PREVIEW (real ixbrl_html / xbrl_xml from the engine) ===== */
+function ExportPreview({exportResult,entityName,entityLei}){
   const [exportFormat,setExportFormat]=useState('ixbrl');
   const [copied,setCopied]=useState(false);
 
-  const entity={name:'Apex Sustainability Corp SE',lei:'LEI-9FGHIJ0KLMNO1234PQ56',period:'2024-01-01/2024-12-31',currency:'EUR'};
+  if(!exportResult){
+    return(
+      <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:40,textAlign:'center'}}>
+        <div style={{fontSize:14,color:T.textSec}}>No export has been generated yet. Go to <strong>Data Mapping</strong> and click <strong>Generate XBRL Export</strong> to produce real iXBRL HTML and XBRL XML from XBRLExportEngine.</div>
+      </div>
+    );
+  }
 
-  const ixbrlSnippet=`<?xml version="1.0" encoding="UTF-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
-  xmlns:esrs="https://xbrl.efrag.org/taxonomy/esrs/2024"
-  xmlns:xbrli="http://www.xbrl.org/2003/instance"
-  xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
-<head>
-  <ix:header>
-    <ix:hidden>
-      <ix:nonNumeric contextRef="ctx_2024" name="esrs:EntityName">
-        ${entity.name}
-      </ix:nonNumeric>
-    </ix:hidden>
-    <ix:references>
-      <link:schemaRef
-        xlink:href="https://xbrl.efrag.org/taxonomy/esrs/2024/esrs-all.xsd"
-        xlink:type="simple"/>
-    </ix:references>
-    <ix:resources>
-      <xbrli:context id="ctx_2024">
-        <xbrli:entity>
-          <xbrli:identifier scheme="http://standards.iso.org/iso/17442">
-            ${entity.lei}
-          </xbrli:identifier>
-        </xbrli:entity>
-        <xbrli:period>
-          <xbrli:startDate>2024-01-01</xbrli:startDate>
-          <xbrli:endDate>2024-12-31</xbrli:endDate>
-        </xbrli:period>
-      </xbrli:context>
-      <xbrli:unit id="tCO2e">
-        <xbrli:measure>xbrli:pure</xbrli:measure>
-      </xbrli:unit>
-    </ix:resources>
-  </ix:header>
-</head>
-<body>
-  <!-- E1-6 GHG Emissions -->
-  <p>Gross Scope 1 GHG Emissions:
-    <ix:nonFraction name="esrs:GrossScope1GHGEmissions"
-      contextRef="ctx_2024" unitRef="tCO2e"
-      decimals="0" format="ixt:num-dot-decimal">
-      12,450
-    </ix:nonFraction> tCO2e
-  </p>
-  <p>Total GHG Emissions:
-    <ix:nonFraction name="esrs:TotalGHGEmissions"
-      contextRef="ctx_2024" unitRef="tCO2e"
-      decimals="0" format="ixt:num-dot-decimal">
-      104,970
-    </ix:nonFraction> tCO2e
-  </p>
-  <!-- S1-7 Employees -->
-  <p>Total Employees:
-    <ix:nonFraction name="esrs:TotalEmployees"
-      contextRef="ctx_2024_instant" unitRef="pure"
-      decimals="0" format="ixt:num-dot-decimal">
-      8,420
-    </ix:nonFraction>
-  </p>
-</body>
-</html>`;
+  const snippet=exportFormat==='ixbrl'?exportResult.ixbrl_html:exportResult.xbrl_xml;
 
-  const xbrlInstanceSnippet=`<?xml version="1.0" encoding="UTF-8"?>
-<xbrli:xbrl
-  xmlns:xbrli="http://www.xbrl.org/2003/instance"
-  xmlns:esrs="https://xbrl.efrag.org/taxonomy/esrs/2024"
-  xmlns:link="http://www.xbrl.org/2003/linkbase"
-  xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+  const handleCopy=()=>{
+    if(navigator.clipboard)navigator.clipboard.writeText(snippet).catch(()=>{});
+    setCopied(true);setTimeout(()=>setCopied(false),2000);
+  };
 
-  <link:schemaRef
-    xlink:href="https://xbrl.efrag.org/taxonomy/esrs/2024/esrs-all.xsd"
-    xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink"/>
-
-  <xbrli:context id="ctx_duration_2024">
-    <xbrli:entity>
-      <xbrli:identifier scheme="http://standards.iso.org/iso/17442">
-        ${entity.lei}
-      </xbrli:identifier>
-    </xbrli:entity>
-    <xbrli:period>
-      <xbrli:startDate>2024-01-01</xbrli:startDate>
-      <xbrli:endDate>2024-12-31</xbrli:endDate>
-    </xbrli:period>
-  </xbrli:context>
-
-  <xbrli:unit id="tCO2e">
-    <xbrli:measure>xbrli:pure</xbrli:measure>
-  </xbrli:unit>
-
-  <!-- E1-6 GHG Emissions -->
-  <esrs:GrossScope1GHGEmissions
-    contextRef="ctx_duration_2024" unitRef="tCO2e" decimals="0">
-    12450
-  </esrs:GrossScope1GHGEmissions>
-
-  <esrs:TotalGHGEmissions
-    contextRef="ctx_duration_2024" unitRef="tCO2e" decimals="0">
-    104970
-  </esrs:TotalGHGEmissions>
-
-</xbrli:xbrl>`;
-
-  const snippet=exportFormat==='ixbrl'?ixbrlSnippet:xbrlInstanceSnippet;
-
-  const handleCopy=()=>{setCopied(true);setTimeout(()=>setCopied(false),2000);};
-
-  const exportFiles=[
-    {name:`${entity.lei}_ESRS_2024.html`,type:'iXBRL HTML',size:'284 KB',status:'Ready'},
-    {name:`${entity.lei}_ESRS_2024.xbrl`,type:'XBRL Instance',size:'48 KB',status:'Ready'},
-    {name:`${entity.lei}_ESRS_2024_viewer.html`,type:'Human-readable',size:'1.2 MB',status:'Ready'},
-    {name:`validation_report_2024.json`,type:'Validation Log',size:'12 KB',status:'Warning'},
-    {name:`taxonomy_extension_2024.xsd`,type:'Extension Schema',size:'8 KB',status:'Ready'},
-  ];
+  const handleDownload=()=>{
+    const blob=new Blob([snippet],{type:exportFormat==='ixbrl'?'text/html':'application/xml'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=exportFormat==='ixbrl'?`${entityLei}_ESRS_${exportResult.reporting_period.slice(0,4)}.html`:`${entityLei}_ESRS_${exportResult.reporting_period.slice(0,4)}.xbrl`;
+    document.body.appendChild(a);a.click();a.remove();
+    URL.revokeObjectURL(url);
+  };
 
   return(
     <div>
@@ -519,8 +521,8 @@ function ExportPreview(){
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20,marginBottom:16}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
               <div>
-                <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:2}}>Export Preview</div>
-                <div style={{fontSize:12,color:T.textSec}}>Entity: {entity.name} · LEI: {entity.lei.slice(0,20)}</div>
+                <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:2}}>Export Preview — real generated output</div>
+                <div style={{fontSize:12,color:T.textSec}}>Entity: {exportResult.entity_name} · LEI: {exportResult.entity_lei} · Period: {exportResult.reporting_period}</div>
               </div>
               <div style={{display:'flex',gap:8,alignItems:'center'}}>
                 <select value={exportFormat} onChange={e=>setExportFormat(e.target.value)} style={{padding:'7px 12px',borderRadius:8,border:`1px solid ${T.border}`,fontSize:12,fontFamily:T.font}}>
@@ -549,31 +551,27 @@ function ExportPreview(){
 
         <div>
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20,marginBottom:16}}>
-            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Export Package</div>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:16}}>Export Summary</div>
             <div style={{display:'flex',flexDirection:'column',gap:8}}>
-              {exportFiles.map((f,i)=>(
-                <div key={i} style={{padding:'10px 14px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.borderL}`}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:3}}>
-                    <span style={{fontSize:12,fontWeight:600,color:T.navy,fontFamily:T.mono,fontSize:11}}>{f.name}</span>
-                    <span style={pill(f.status==='Ready'?T.green:T.amber,f.status,true)}>{f.status}</span>
-                  </div>
-                  <div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:T.textMut}}>
-                    <span>{f.type}</span>
-                    <span style={{fontFamily:T.mono}}>{f.size}</span>
-                  </div>
-                </div>
-              ))}
+              <div style={{padding:'10px 14px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.borderL}`,fontSize:12}}>
+                <div style={{display:'flex',justifyContent:'space-between'}}><span>Facts tagged</span><strong style={{fontFamily:T.mono}}>{exportResult.fact_count}</strong></div>
+              </div>
+              <div style={{padding:'10px 14px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.borderL}`,fontSize:12}}>
+                <div style={{display:'flex',justifyContent:'space-between'}}><span>Taxonomy version</span><strong style={{fontFamily:T.mono}}>{exportResult.taxonomy_version}</strong></div>
+              </div>
+              <div style={{padding:'10px 14px',background:T.surfaceH,borderRadius:8,border:`1px solid ${T.borderL}`,fontSize:12}}>
+                <div style={{display:'flex',justifyContent:'space-between'}}><span>Validation</span><span style={pill(exportResult.validation_passed?T.green:T.red,exportResult.validation_passed?'PASSED':'FAILED',true)}>{exportResult.validation_passed?'PASSED':'FAILED'}</span></div>
+              </div>
             </div>
-            <button style={{width:'100%',marginTop:16,padding:'12px',borderRadius:8,background:T.navy,color:'#fff',border:'none',cursor:'pointer',fontSize:13,fontWeight:700}}>
-              Download Export Package (.zip)
+            <button onClick={handleDownload} style={{width:'100%',marginTop:16,padding:'12px',borderRadius:8,background:T.navy,color:'#fff',border:'none',cursor:'pointer',fontSize:13,fontWeight:700}}>
+              Download {exportFormat==='ixbrl'?'iXBRL HTML':'XBRL Instance'}
             </button>
           </div>
 
           <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:12,padding:20}}>
-            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Filing Destinations</div>
+            <div style={{fontSize:13,fontWeight:700,color:T.navy,marginBottom:12}}>Filing Destinations (reference)</div>
             {[
-              {platform:'ESAP (EU)',url:'esap.europa.eu',status:'Configured',color:T.green},
-              {platform:'UK FCA XBRL Portal',url:'fca.org.uk/xbrl',status:'Not Configured',color:T.textMut},
+              {platform:'ESAP (EU)',url:'esap.europa.eu',status:'Manual Submission',color:T.amber},
               {platform:'ESMA ESEF Viewer',url:'esef.esma.europa.eu',status:'Preview Only',color:T.amber},
               {platform:'National Register',url:'Jurisdiction Specific',status:'Manual',color:T.amber},
             ].map((dest,i)=>(

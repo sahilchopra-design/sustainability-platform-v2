@@ -16,7 +16,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
 revision = '135_add_rbac_system'
-down_revision = '134_add_actuarial_climate_tables'
+down_revision = '134'
 branch_labels = None
 depends_on = None
 

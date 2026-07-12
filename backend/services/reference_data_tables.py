@@ -218,6 +218,19 @@ SOLVENCY2_PERIL_CORRELATIONS: dict[tuple, float] = {
     ("earthquake", "hail"): 0.00,
 }
 
+# Solvency II peril names (EIOPA Delegated Reg 2015/35, Annex II-X) do not match the
+# IPCC AR6 WG2 hazard-type vocabulary used by IPCC_AR6_DAMAGE_FUNCTIONS (e.g. EIOPA's
+# "windstorm"/"flood"/"hail" vs IPCC's "tropical_cyclone"/"river_flood"/"convective_storm").
+# Without this normalization, IPCC_AR6_DAMAGE_FUNCTIONS.get(peril) misses on every default
+# S2 peril and climate scaling silently degrades to a 1.0 (no-op) multiplier.
+# "earthquake" is intentionally NOT mapped — seismic risk has no IPCC climate driver, so a
+# neutral (1.0) multiplier is the scientifically correct behaviour for that peril.
+SOLVENCY2_TO_IPCC_PERIL_MAP: dict[str, str] = {
+    "windstorm": "tropical_cyclone",
+    "flood": "river_flood",
+    "hail": "convective_storm",
+}
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 #  4. BASEL III NSFR / LCR FACTORS
@@ -527,8 +540,14 @@ def get_mortality_rate(country_iso3: str, sex: str, age_band: str) -> float | No
 
 
 def get_damage_function(hazard_type: str) -> dict | None:
-    """Look up IPCC AR6 damage function for a hazard type."""
-    return IPCC_AR6_DAMAGE_FUNCTIONS.get(hazard_type)
+    """Look up IPCC AR6 damage function for a hazard type.
+
+    Accepts either a native IPCC hazard key (e.g. "river_flood") or a Solvency II
+    peril name (e.g. "flood"/"windstorm"/"hail"); Solvency II names are normalized
+    via SOLVENCY2_TO_IPCC_PERIL_MAP so climate scaling doesn't silently no-op.
+    """
+    key = SOLVENCY2_TO_IPCC_PERIL_MAP.get(hazard_type, hazard_type)
+    return IPCC_AR6_DAMAGE_FUNCTIONS.get(key)
 
 
 def get_nat_cat_factor(country_iso2: str, peril: str) -> dict | None:

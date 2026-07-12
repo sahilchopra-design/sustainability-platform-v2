@@ -8,6 +8,134 @@ import {
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
+// --- Real k-means (Lloyd's algorithm, k-means++ init) + real silhouette scoring ---
+// Replaces the previous fabricated `cluster = Math.floor(i/4)` assignment and the random,
+// hard-coded-bonus-at-k=5 "silhouette" values with an actual clustering + validity computation
+// run on the entities' standardized ESG/climate taxonomy scores.
+const makeSeededRng = (seed) => { let s = seed; return () => { s += 1; return sr(s); }; };
+const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
+const meanArr = (arr) => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+const sqDist = (a, b) => a.reduce((s, v, i) => s + (v - b[i]) * (v - b[i]), 0);
+const euclidean = (a, b) => Math.sqrt(sqDist(a, b));
+
+const standardize = (matrix) => {
+  const d = matrix[0].length, n = matrix.length;
+  const means = new Array(d).fill(0), stds = new Array(d).fill(0);
+  matrix.forEach(row => row.forEach((v, c) => { means[c] += v / n; }));
+  matrix.forEach(row => row.forEach((v, c) => { stds[c] += (v - means[c]) ** 2 / n; }));
+  stds.forEach((v, c) => { stds[c] = Math.sqrt(v) || 1; });
+  return matrix.map(row => row.map((v, c) => (v - means[c]) / stds[c]));
+};
+
+const kmeansPlusPlusInit = (data, k, rng) => {
+  const centroids = [];
+  centroids.push([...data[Math.floor(rng() * data.length)]]);
+  while (centroids.length < k) {
+    const dists = data.map(p => Math.min(...centroids.map(c => sqDist(p, c))));
+    const total = dists.reduce((a, b) => a + b, 0);
+    if (total <= 0) { centroids.push([...data[Math.floor(rng() * data.length)]]); continue; }
+    let r = rng() * total, chosen = data.length - 1;
+    for (let i = 0; i < data.length; i++) { r -= dists[i]; if (r <= 0) { chosen = i; break; } }
+    centroids.push([...data[chosen]]);
+  }
+  return centroids;
+};
+
+// Standard Lloyd's algorithm: assign each point to its nearest centroid (Euclidean distance on the
+// feature vector), recompute centroids as the mean of assigned points, iterate to convergence.
+const kmeans = (data, k, rng, maxIter = 200) => {
+  let centroids = kmeansPlusPlusInit(data, k, rng);
+  let labels = new Array(data.length).fill(-1);
+  for (let iter = 0; iter < maxIter; iter++) {
+    const newLabels = data.map(p => {
+      let best = 0, bestD = Infinity;
+      centroids.forEach((c, ci) => { const dd = sqDist(p, c); if (dd < bestD) { bestD = dd; best = ci; } });
+      return best;
+    });
+    const changed = newLabels.some((l, i) => l !== labels[i]);
+    labels = newLabels;
+    const counts = new Array(k).fill(0);
+    const sums = Array.from({ length: k }, () => new Array(data[0].length).fill(0));
+    data.forEach((p, i) => { counts[labels[i]]++; p.forEach((v, d) => { sums[labels[i]][d] += v; }); });
+    const newCentroids = sums.map((s, c) => counts[c] ? s.map(v => v / counts[c]) : centroids[c]);
+    const shift = newCentroids.reduce((a, c, ci) => a + euclidean(c, centroids[ci]), 0);
+    centroids = newCentroids;
+    if (!changed || shift < 1e-7) break;
+  }
+  const inertia = data.reduce((a, p, i) => a + sqDist(p, centroids[labels[i]]), 0);
+  return { labels, centroids, inertia };
+};
+
+// Multiple random restarts (different k-means++ seed each time), keep the lowest-inertia run --
+// standard practice to avoid poor local optima from a single initialization.
+const kmeansBest = (data, k, restarts, seedBase) => {
+  let best = null;
+  for (let r = 0; r < restarts; r++) {
+    const result = kmeans(data, k, makeSeededRng(seedBase + r * 733));
+    if (!best || result.inertia < best.inertia) best = result;
+  }
+  return best;
+};
+
+// Real silhouette coefficient: for each point i, a(i) = mean intra-cluster distance,
+// b(i) = mean distance to the nearest *other* cluster, s(i) = (b-a)/max(a,b), averaged over all points.
+const silhouetteScore = (data, labels, k) => {
+  const n = data.length;
+  if (k < 2 || k >= n) return 0;
+  const clusters = [...new Set(labels)];
+  const values = data.map((p, i) => {
+    const ci = labels[i];
+    const same = data.filter((_, j) => j !== i && labels[j] === ci);
+    const a = same.length ? meanArr(same.map(q => euclidean(p, q))) : 0;
+    let b = Infinity;
+    clusters.filter(c => c !== ci).forEach(c => {
+      const pts = data.filter((_, j) => labels[j] === c);
+      if (pts.length) b = Math.min(b, meanArr(pts.map(q => euclidean(p, q))));
+    });
+    if (!isFinite(b)) b = a;
+    const denom = Math.max(a, b);
+    return denom > 0 ? (b - a) / denom : 0;
+  });
+  return meanArr(values);
+};
+
+// 2-component PCA via power iteration + deflation on the covariance matrix -- used only to project
+// the 4D standardized feature space down to (PC1,PC2) for the scatter plot; clustering itself runs
+// on the full standardized feature vectors, not the 2D projection.
+const covariance = (X) => {
+  const n = X.length, d = X[0].length;
+  return Array.from({ length: d }, (_, a) => Array.from({ length: d }, (_, b) => {
+    let s = 0; for (let i = 0; i < n; i++) s += X[i][a] * X[i][b];
+    return s / (n - 1);
+  }));
+};
+const matVec = (M, v) => M.map(row => dot(row, v));
+const normalizeVec = (v) => { const norm = Math.sqrt(dot(v, v)) || 1; return v.map(x => x / norm); };
+const powerIteration = (M, iters = 300) => {
+  let v = normalizeVec(M.map((_, i) => 1 / (i + 1)));
+  for (let it = 0; it < iters; it++) v = normalizeVec(matVec(M, v));
+  const Mv = matVec(M, v);
+  return { vector: v, value: dot(v, Mv) };
+};
+const topTwoComponents = (X) => {
+  const C = covariance(X);
+  const { vector: v1, value: l1 } = powerIteration(C);
+  const C2 = C.map((row, a) => row.map((val, b) => val - l1 * v1[a] * v1[b]));
+  const { vector: v2 } = powerIteration(C2);
+  return { v1, v2 };
+};
+
+// Relabel raw k-means cluster indices (arbitrary order) so cluster 0 = highest composite score
+// ("Leaders") through cluster k-1 = lowest ("At Risk"), matching the CLUSTER_NAMES ordering.
+const relabelBySeverity = (data, labels, k) => {
+  const sums = new Array(k).fill(0), counts = new Array(k).fill(0);
+  data.forEach((p, i) => { sums[labels[i]] += p.reduce((a, v) => a + v, 0); counts[labels[i]]++; });
+  const order = sums.map((s, c) => ({ c, avg: counts[c] ? s / counts[c] : -Infinity })).sort((a, b) => b.avg - a.avg).map(o => o.c);
+  const remap = new Array(k);
+  order.forEach((origC, newIdx) => { remap[origC] = newIdx; });
+  return labels.map(l => remap[l]);
+};
+
 const T = {
   bg:'#f4f6f9', surface:'#ffffff', border:'#e3e8ef', navy:'#1b3a5c',
   navyL:'#2c5a8c', gold:'#c5a96a', textSec:'#5c6b7e', textMut:'#9aa3ae',
@@ -17,30 +145,49 @@ const T = {
   mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-const CLUSTER_COLORS = [T.green, T.blue, T.amber, T.purple, T.red];
+const CLUSTER_COLORS = [T.green, T.blue, T.amber, T.purple, T.red, T.teal, T.orange, T.navyL];
 const CLUSTER_NAMES = ['Leaders','Transitioning','Average','Lagging','At Risk'];
+const clusterName = (c) => CLUSTER_NAMES[c] || `Cluster ${c + 1}`;
+const clusterColor = (c) => CLUSTER_COLORS[c % CLUSTER_COLORS.length];
 
-const ENTITIES = Array.from({length:20}, (_,i) => {
-  const cluster = Math.floor(i/4);
-  const base = [80,65,52,38,25][cluster];
+const BASE_ENTITIES = Array.from({length:20}, (_,i) => {
+  // `tier` seeds a realistic 5-tier ESG score distribution (synthetic input data only) -- it is
+  // NOT the cluster assignment. Cluster membership is computed by real k-means below, on these scores.
+  const tier = Math.floor(i/4);
+  const base = [80,65,52,38,25][tier];
   return {
     id:`E${i+1}`,
     name:['JPMorgan','Microsoft','Allianz','NextEra','HSBC','Unilever','Enel','Siemens','Shell','BNP','Nestle','BlackRock','TotalEnergies','BP','Tesla','ArcelorMittal','Glencore','ExxonMobil','Peabody','Vedanta'][i],
     sector:['Banking','Tech','Insurance','Renewables','Banking','Consumer','Utilities','Industrials','Oil & Gas','Banking','Consumer','Asset Mgmt','Oil & Gas','Oil & Gas','Auto','Steel','Mining','Oil & Gas','Coal','Mining'][i],
-    cluster,
-    pc1: Math.round((base-50+(sr(i * 21) * 2 - 1)*15)*10)/10,
-    pc2: Math.round(((sr(i * 517) * 2 - 1)*20+cluster*5-10)*10)/10,
+    tier,
     scores: { env:Math.round(base+(sr(i * 10) * 2 - 1)*10), soc:Math.round(base+(sr(i * 510) * 2 - 1)*8), gov:Math.round(base+5+(sr(i * 7) * 2 - 1)*7), climate:Math.round(base-3+(sr(i * 512) * 2 - 1)*12) },
-    q1Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 31) * 2 - 1)>0.4 ? ((sr(i * 57) * 2 - 1)>0?1:-1) : 0))),
-    q2Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 29 + 10) * 2 - 1)>0.6 ? ((sr(i * 43) * 2 - 1)>0?1:-1) : 0))),
-    q3Cluster: Math.min(4, Math.max(0, cluster + ((sr(i * 21 + 20) * 2 - 1)>0.7 ? -1 : 0))),
-    q4Cluster: cluster,
+    q1Cluster: Math.min(4, Math.max(0, tier + ((sr(i * 31) * 2 - 1)>0.4 ? ((sr(i * 57) * 2 - 1)>0?1:-1) : 0))),
+    q2Cluster: Math.min(4, Math.max(0, tier + ((sr(i * 29 + 10) * 2 - 1)>0.6 ? ((sr(i * 43) * 2 - 1)>0?1:-1) : 0))),
+    q3Cluster: Math.min(4, Math.max(0, tier + ((sr(i * 21 + 20) * 2 - 1)>0.7 ? -1 : 0))),
+    q4Cluster: tier,
   };
 });
 
-const SILHOUETTE_DATA = Array.from({length:9}, (_,i) => ({
-  k: i+2, silhouette: Math.round((0.3+(sr(i * 8) * 2 - 1)*0.15+0.05*(i===3?0.1:0))*100)/100
+// Feature matrix for clustering/PCA: standardized (z-score) E/S/G/Climate taxonomy scores.
+const RAW_FEATURES = BASE_ENTITIES.map(e => [e.scores.env, e.scores.soc, e.scores.gov, e.scores.climate]);
+const FEATURES = standardize(RAW_FEATURES);
+const { v1: PCA_V1, v2: PCA_V2 } = topTwoComponents(FEATURES);
+const PCA_SCALE = 15;
+const ENTITIES = BASE_ENTITIES.map((e, i) => ({
+  ...e,
+  pc1: Math.round(dot(FEATURES[i], PCA_V1) * PCA_SCALE * 10) / 10,
+  pc2: Math.round(dot(FEATURES[i], PCA_V2) * PCA_SCALE * 10) / 10,
 }));
+
+// Real silhouette-vs-k curve: run k-means (best of several restarts) for each k and score it --
+// these values genuinely vary with k because they come from an actual clustering + silhouette
+// computation on FEATURES, not a random number with a hard-coded bonus at k=5.
+const SILHOUETTE_DATA = Array.from({length:9}, (_,i) => {
+  const k = i + 2;
+  const { labels } = kmeansBest(FEATURES, k, 10, 5000 + k * 613);
+  return { k, silhouette: Math.round(silhouetteScore(FEATURES, labels, k) * 100) / 100 };
+});
+const OPTIMAL_K = SILHOUETTE_DATA.reduce((best, d) => d.silhouette > best.silhouette ? d : best, SILHOUETTE_DATA[0]).k;
 
 const TABS = ['Cluster Visualization','Silhouette Analysis','Cluster Profiles','Migration Tracker','Custom Groups','Engagement by Cluster'];
 
@@ -53,11 +200,20 @@ export default function PeerClusteringSegmentationPage() {
   const [kVal, setKVal] = useState(5);
   const [bookmarks, setBookmarks] = useState([]);
 
+  // Run real k-means (best of 10 restarts) on the standardized feature matrix each time k changes,
+  // then relabel clusters by severity so colors/names stay meaningful (Leaders -> At Risk).
+  const clusterAssignment = useMemo(() => {
+    const { labels } = kmeansBest(FEATURES, kVal, 10, 4242 + kVal * 911);
+    return relabelBySeverity(FEATURES, labels, kVal);
+  }, [kVal]);
+  const clusteredEntities = useMemo(() => ENTITIES.map((e, i) => ({ ...e, cluster: clusterAssignment[i] })), [clusterAssignment]);
+  const currentSilhouette = useMemo(() => Math.round(silhouetteScore(FEATURES, clusterAssignment, kVal) * 100) / 100, [clusterAssignment, kVal]);
+
   const clusterProfiles = useMemo(() => Array.from({length:kVal}, (_,c) => {
-    const members = ENTITIES.filter(e => e.cluster === c);
+    const members = clusteredEntities.filter(e => e.cluster === c);
     if(!members.length) return null;
     return {
-      cluster: c, name: CLUSTER_NAMES[c] || `Cluster ${c+1}`, color: CLUSTER_COLORS[c],
+      cluster: c, name: clusterName(c), color: clusterColor(c),
       count: members.length, sectors: [...new Set(members.map(e=>e.sector))],
       avgScores: {
         env: Math.round(members.reduce((a,e)=>a+e.scores.env,0)/members.length),
@@ -66,7 +222,7 @@ export default function PeerClusteringSegmentationPage() {
         climate: Math.round(members.reduce((a,e)=>a+e.scores.climate,0)/members.length),
       }
     };
-  }).filter(Boolean), [kVal]);
+  }).filter(Boolean), [kVal, clusteredEntities]);
 
   const radarData = useMemo(() => ['env','soc','gov','climate'].map(key => {
     const row = { topic: key.charAt(0).toUpperCase()+key.slice(1) };
@@ -102,12 +258,12 @@ export default function PeerClusteringSegmentationPage() {
             return <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:10,fontSize:12,fontFamily:T.font}}>
               <div style={{fontWeight:600,color:T.navy}}>{d.name}</div>
               <div style={{color:T.textSec}}>{d.sector}</div>
-              <div style={{color:CLUSTER_COLORS[d.cluster],fontWeight:600}}>Cluster: {CLUSTER_NAMES[d.cluster]}</div>
+              <div style={{color:clusterColor(d.cluster),fontWeight:600}}>Cluster: {clusterName(d.cluster)}</div>
             </div>;
           }} />
-          <Legend payload={CLUSTER_NAMES.slice(0,kVal).map((n,i)=>({value:n,color:CLUSTER_COLORS[i],type:'circle'}))} />
-          {CLUSTER_NAMES.slice(0,kVal).map((name,c) => (
-            <Scatter key={c} name={name} data={ENTITIES.filter(e=>e.cluster===c)} fill={CLUSTER_COLORS[c]} />
+          <Legend payload={Array.from({length:kVal},(_,c)=>({value:clusterName(c),color:clusterColor(c),type:'circle'}))} />
+          {Array.from({length:kVal},(_,c) => (
+            <Scatter key={c} name={clusterName(c)} data={clusteredEntities.filter(e=>e.cluster===c)} fill={clusterColor(c)} />
           ))}
         </ScatterChart>
       </ResponsiveContainer>
@@ -124,12 +280,12 @@ export default function PeerClusteringSegmentationPage() {
           <YAxis domain={[0,0.6]} tick={{fontSize:11,fill:T.textSec}} />
           <Tooltip contentStyle={{borderRadius:8,border:`1px solid ${T.border}`,fontFamily:T.font,fontSize:12}} />
           <Bar dataKey="silhouette" name="Silhouette Score" radius={[4,4,0,0]}>
-            {SILHOUETTE_DATA.map((d,i) => <Cell key={i} fill={d.k===5?T.green:T.blue} />)}
+            {SILHOUETTE_DATA.map((d,i) => <Cell key={i} fill={d.k===OPTIMAL_K?T.green:T.blue} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
       <div style={{padding:10,background:`${T.green}08`,borderRadius:6,marginTop:12,fontSize:11,color:T.textSec}}>
-        Optimal k=5 (silhouette={SILHOUETTE_DATA.find(d=>d.k===5)?.silhouette}). Higher silhouette indicates better-defined clusters. k=5 provides the best balance between granularity and cluster cohesion.
+        Optimal k={OPTIMAL_K} (silhouette={SILHOUETTE_DATA.find(d=>d.k===OPTIMAL_K)?.silhouette}, computed via real k-means + silhouette scoring across k=2-10). Higher silhouette indicates better-defined clusters. Current selection k={kVal} scores silhouette={currentSilhouette}.
       </div>
     </Card>
   );
@@ -196,8 +352,8 @@ export default function PeerClusteringSegmentationPage() {
       <div style={{fontSize:14,fontWeight:600,color:T.navy,marginBottom:12}}>Custom Group Builder</div>
       <div style={{fontSize:12,color:T.textSec,marginBottom:16}}>Create custom peer groups by selecting entities across clusters for targeted comparison.</div>
       <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-        {ENTITIES.map(e => (
-          <button key={e.id} onClick={()=>setBookmarks(b=>b.includes(e.id)?b.filter(x=>x!==e.id):[...b,e.id])} style={{padding:'5px 12px',borderRadius:6,border:`1px solid ${bookmarks.includes(e.id)?CLUSTER_COLORS[e.cluster]:T.border}`,background:bookmarks.includes(e.id)?`${CLUSTER_COLORS[e.cluster]}15`:'transparent',fontSize:11,cursor:'pointer',color:bookmarks.includes(e.id)?CLUSTER_COLORS[e.cluster]:T.textSec}}>
+        {clusteredEntities.map(e => (
+          <button key={e.id} onClick={()=>setBookmarks(b=>b.includes(e.id)?b.filter(x=>x!==e.id):[...b,e.id])} style={{padding:'5px 12px',borderRadius:6,border:`1px solid ${bookmarks.includes(e.id)?clusterColor(e.cluster):T.border}`,background:bookmarks.includes(e.id)?`${clusterColor(e.cluster)}15`:'transparent',fontSize:11,cursor:'pointer',color:bookmarks.includes(e.id)?clusterColor(e.cluster):T.textSec}}>
             {e.name}
           </button>
         ))}
@@ -205,7 +361,7 @@ export default function PeerClusteringSegmentationPage() {
       {bookmarks.length > 0 && (
         <div style={{marginTop:16,padding:12,border:`1px solid ${T.gold}30`,borderRadius:8,background:`${T.gold}08`}}>
           <div style={{fontSize:12,fontWeight:600,color:T.gold}}>Custom Group ({bookmarks.length} entities)</div>
-          <div style={{fontSize:11,color:T.textSec,marginTop:4}}>{bookmarks.map(id=>ENTITIES.find(e=>e.id===id)?.name).filter(Boolean).join(', ')}</div>
+          <div style={{fontSize:11,color:T.textSec,marginTop:4}}>{bookmarks.map(id=>clusteredEntities.find(e=>e.id===id)?.name).filter(Boolean).join(', ')}</div>
         </div>
       )}
     </Card>
@@ -214,7 +370,7 @@ export default function PeerClusteringSegmentationPage() {
   const renderEngagement = () => (
     <div>
       {clusterProfiles.slice().reverse().map(cp => {
-        const members = ENTITIES.filter(e=>e.cluster===cp.cluster);
+        const members = clusteredEntities.filter(e=>e.cluster===cp.cluster);
         return (
           <Card key={cp.cluster} style={{marginBottom:12,borderLeft:`3px solid ${cp.color}`}}>
             <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
@@ -260,7 +416,7 @@ export default function PeerClusteringSegmentationPage() {
         {panels[tab]()}
         <div style={{marginTop:20,padding:14,background:`${T.gold}08`,border:`1px solid ${T.gold}30`,borderRadius:8}}>
           <div style={{fontSize:12,fontWeight:600,color:T.gold,marginBottom:4}}>Clustering Methodology</div>
-          <div style={{fontSize:11,color:T.textSec}}>K-means clustering on standardized taxonomy features (z-score normalization). PCA reduces 948-dimensional feature space to 2D for visualization. Silhouette analysis determines optimal k. Cluster migration tracked quarterly with transition matrix analysis. Engagement priority ranked by cluster risk level and potential improvement magnitude.</div>
+          <div style={{fontSize:11,color:T.textSec}}>Real k-means clustering (Lloyd's algorithm, k-means++ initialization, best of 10 restarts by inertia) on standardized (z-score) E/S/G/Climate taxonomy features. PCA (power-iteration eigendecomposition) reduces the 4D feature space to 2D for visualization only -- clustering itself runs on the full standardized feature vectors. Silhouette analysis (a(i)/b(i) formulation, averaged across all entities) determines optimal k. Cluster migration tracked quarterly with transition matrix analysis. Engagement priority ranked by cluster risk level and potential improvement magnitude.</div>
         </div>
       </div>
     </div>

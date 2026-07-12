@@ -13,15 +13,48 @@ const SECTORS=['Technology','Financials','Healthcare','Industrials','Consumer','
 const REGIONS=['North America','Europe','Asia-Pacific','Emerging Markets'];
 const NAMES=['Apple','Microsoft','Amazon','Alphabet','Meta','Tesla','JPMorgan','Goldman Sachs','UnitedHealth','J&J','Pfizer','Lilly','Caterpillar','Honeywell','P&G','Coca-Cola','PepsiCo','ExxonMobil','Chevron','Shell','BP','BHP','Rio Tinto','Duke Energy','NextEra','Prologis','AT&T','Samsung','TSMC','Toyota','Nestle','LVMH','Roche','Novartis','AstraZeneca','Siemens','SAP','ASML','Unilever','L\'Oreal','TotalEnergies','Sanofi','Allianz','HSBC','Barclays','Deutsche Bank','BNP Paribas','Credit Suisse','UBS','Zurich Insurance','AXA','Prudential','Mitsubishi','Sony','Nintendo','Tencent','Alibaba','ICBC','Ping An','Reliance'];
 
-const COMPANIES=Array.from({length:60},(_,i)=>({id:i+1,name:NAMES[i],sector:SECTORS[Math.floor(sr(i*3)*SECTORS.length)],region:REGIONS[Math.floor(sr(i*7)*REGIONS.length)],
-  boardSize:Math.floor(sr(i*11)*8+7),indepPct:+(sr(i*13)*40+50).toFixed(1),womenPct:+(sr(i*17)*30+10).toFixed(1),
-  avgTenure:+(sr(i*19)*8+2).toFixed(1),avgAge:Math.floor(sr(i*23)*15+50),payRatio:Math.floor(sr(i*29)*300+50),
-  govScore:+(sr(i*31)*30+60).toFixed(1),sepChair:sr(i*37)>0.4,esgPay:sr(i*41)>0.3,
-  clawback:sr(i*43)>0.25,proxyAccess:sr(i*47)>0.4,sayOnPay:+(sr(i*53)*30+60).toFixed(1),
-  overboarded:Math.floor(sr(i*59)*3),antiTakeover:Math.floor(sr(i*61)*3),
-  shareholderProps:Math.floor(sr(i*67)*5),controversies:Math.floor(sr(i*71)*5),
-  riskScore:+(sr(i*73)*40+20).toFixed(1),votingPower:+(sr(i*79)*20+70).toFixed(1),
-}));
+const clamp=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+
+// Composite Governance Score = weighted average of the *displayed* sub-factor scores below.
+// Weighting rationale mirrors standard institutional governance-scoring practice
+// (MSCI ESG Governance Pillar / ISS Governance QualityScore), which weights the four
+// canonical pillars -- Board, Shareholder Rights, Pay, Audit & Risk Oversight -- with
+// Board structure carrying the single largest weight, and treats Diversity as a
+// supporting board-quality indicator:
+//   Board Independence     25%  (indepPct)               -- largest single driver, MSCI/ISS board pillar
+//   Shareholder Rights      15%  (sepChair, proxyAccess, antiTakeover defenses)
+//   Pay Alignment           15%  (payRatio, ESG-linked pay, clawback provisions)
+//   Say-on-Pay Support      15%  (sayOnPay)                -- realized shareholder vote outcome
+//   Risk & Accountability   15%  (controversies, overboarding, riskScore)
+//   Board Diversity         15%  (womenPct)
+// Weights sum to 1.00. Every input below is an already-displayed field on this page --
+// the composite is a genuine function of them, not an independently generated number.
+const GOV_WEIGHTS={independence:0.25,shareholderRights:0.15,payAlignment:0.15,sayOnPay:0.15,riskAccountability:0.15,diversity:0.15};
+const computeGovScore=(c)=>{
+  const independence=clamp(c.indepPct,0,100);
+  const diversity=clamp(c.womenPct*2,0,100);
+  const sayOnPay=clamp(c.sayOnPay,0,100);
+  const payAlignment=clamp(100-c.payRatio/5+(c.esgPay?10:0)+(c.clawback?10:0),0,100);
+  const shareholderRights=clamp(50+(c.sepChair?15:0)+(c.proxyAccess?15:0)-c.antiTakeover*10,0,100);
+  const riskAccountability=clamp(100-c.riskScore-c.controversies*5-c.overboarded*5,0,100);
+  const subscores={independence,diversity,sayOnPay,payAlignment,shareholderRights,riskAccountability};
+  const composite=Object.keys(GOV_WEIGHTS).reduce((sum,k)=>sum+subscores[k]*GOV_WEIGHTS[k],0);
+  return{composite:+composite.toFixed(1),subscores};
+};
+
+const COMPANIES=Array.from({length:60},(_,i)=>{
+  const raw={id:i+1,name:NAMES[i],sector:SECTORS[Math.floor(sr(i*3)*SECTORS.length)],region:REGIONS[Math.floor(sr(i*7)*REGIONS.length)],
+    boardSize:Math.floor(sr(i*11)*8+7),indepPct:+(sr(i*13)*40+50).toFixed(1),womenPct:+(sr(i*17)*30+10).toFixed(1),
+    avgTenure:+(sr(i*19)*8+2).toFixed(1),avgAge:Math.floor(sr(i*23)*15+50),payRatio:Math.floor(sr(i*29)*300+50),
+    sepChair:sr(i*37)>0.4,esgPay:sr(i*41)>0.3,
+    clawback:sr(i*43)>0.25,proxyAccess:sr(i*47)>0.4,sayOnPay:+(sr(i*53)*30+60).toFixed(1),
+    overboarded:Math.floor(sr(i*59)*3),antiTakeover:Math.floor(sr(i*61)*3),
+    shareholderProps:Math.floor(sr(i*67)*5),controversies:Math.floor(sr(i*71)*5),
+    riskScore:+(sr(i*73)*40+20).toFixed(1),votingPower:+(sr(i*79)*20+70).toFixed(1),
+  };
+  const{composite,subscores}=computeGovScore(raw);
+  return{...raw,govScore:composite,govSubscores:subscores};
+});
 
 const ANNUAL=Array.from({length:8},(_,i)=>({year:2018+i,avgBoard:+(sr(i*83)*2+9).toFixed(1),avgWomen:+(sr(i*89)*5+25).toFixed(1),avgIndep:+(sr(i*97)*5+60).toFixed(1),esgLinked:+(sr(i*101)*10+15).toFixed(1),sepChair:+(sr(i*103)*5+35).toFixed(1),avgPay:Math.floor(sr(i*107)*50+150)}));
 
@@ -136,7 +169,7 @@ export default function GovernanceHubPage(){
       </div>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Tenure Distribution</div>
-          <ResponsiveContainer width="100%" height={260}><AreaChart data={filtered.sort((a,b)=>parseFloat(a.avgTenure)-parseFloat(b.avgTenure)).map(c=>({name:c.name.slice(0,6),tenure:parseFloat(c.avgTenure)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textMut}} interval={4}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="tenure" stroke={T.sage} fill={T.sage} fillOpacity={0.2} name="Avg Tenure (yrs)"/></AreaChart></ResponsiveContainer></div>
+          <ResponsiveContainer width="100%" height={260}><AreaChart data={[...filtered].sort((a,b)=>parseFloat(a.avgTenure)-parseFloat(b.avgTenure)).map(c=>({name:c.name.slice(0,6),tenure:parseFloat(c.avgTenure)}))}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:7,fill:T.textMut}} interval={4}/><YAxis tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/><Area type="monotone" dataKey="tenure" stroke={T.sage} fill={T.sage} fillOpacity={0.2} name="Avg Tenure (yrs)"/></AreaChart></ResponsiveContainer></div>
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}><div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Independence vs Women %</div>
           <ResponsiveContainer width="100%" height={260}><ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Independence %" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Women %" tick={{fontSize:10,fill:T.textMut}}/><Tooltip {...tip}/>
             <Scatter data={filtered.map(c=>({name:c.name,x:parseFloat(c.indepPct),y:parseFloat(c.womenPct)}))} fill={T.gold} fillOpacity={0.6}/>

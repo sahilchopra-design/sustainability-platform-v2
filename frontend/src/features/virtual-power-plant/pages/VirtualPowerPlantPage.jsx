@@ -75,10 +75,10 @@ function calcDispatchRevenue({ assets, fcrPct, afrrPct, arbitragePct, mfrrPct })
   let total = 0;
   for (const a of assets) {
     const mw = a.cap_mw;
-    const fcr   = a.market.includes("FCR")   ? (MARKETS.FCR.price_mw_month   * mw * fcrPct   / 100) / 12 : 0;
-    const afrr  = a.market.includes("aFRR")  ? (MARKETS.aFRR.price_mw_month  * mw * afrrPct  / 100) / 12 : 0;
-    const mfrr  = a.market.includes("mFRR")  ? (MARKETS.mFRR.price_mw_month  * mw * mfrrPct  / 100) / 12 : 0;
-    const arb   = a.market.includes("Arbitrage") ? mw * arbitragePct * 180 / 12 : 0;
+    const fcr   = a.market.includes("FCR")   ? (MARKETS.FCR.price_mw_month   * mw * fcrPct   / 100) * 12 : 0;
+    const afrr  = a.market.includes("aFRR")  ? (MARKETS.aFRR.price_mw_month  * mw * afrrPct  / 100) * 12 : 0;
+    const mfrr  = a.market.includes("mFRR")  ? (MARKETS.mFRR.price_mw_month  * mw * mfrrPct  / 100) * 12 : 0;
+    const arb   = a.market.includes("Arbitrage") ? mw * arbitragePct * 180 * 12 : 0;
     total += fcr + afrr + mfrr + arb;
   }
   return total;

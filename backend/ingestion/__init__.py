@@ -27,6 +27,7 @@ def register_all_ingesters():
     from ingestion.irena_crrem_grid_ingester import IrenaCrremGridIngester
     from ingestion.violation_tracker_ingester import ViolationTrackerIngester
     from ingestion.gdelt_ingester import GdeltIngester
+    from ingestion.wildfire_grid_ingester import WildfireGridIngester
 
     ingestion_manager.register(GleifIngester)
     ingestion_manager.register(SanctionsIngester)
@@ -41,3 +42,4 @@ def register_all_ingesters():
     ingestion_manager.register(IrenaCrremGridIngester)
     ingestion_manager.register(ViolationTrackerIngester)
     ingestion_manager.register(GdeltIngester)
+    ingestion_manager.register(WildfireGridIngester)

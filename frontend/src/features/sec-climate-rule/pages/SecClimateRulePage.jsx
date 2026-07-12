@@ -22,14 +22,39 @@ const KpiCard = ({ label, value, sub, color = T.navy }) => (
 );
 const cS = { background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16 };
 
+/* ⚠️  The SEC Enhancement and Standardization of Climate-Related Disclosures rule
+   (Release No. 33-11275 / 34-99678) was RESCINDED by SEC vote on 27 March 2025.
+   It has no legal force. This page is maintained as a historical/advisory reference
+   only — see sec-climate-disclosure for the canonical rescinded-status framing. */
+const RescissionBanner = () => (
+  <div style={{
+    background: '#451a03', border: `2px solid ${T.amber}`, borderRadius: 10,
+    padding: '14px 20px', marginBottom: 20, display: 'flex', gap: 14, alignItems: 'flex-start'
+  }}>
+    <span style={{ fontSize: 22, lineHeight: 1 }}>⚠️</span>
+    <div>
+      <div style={{ fontWeight: 700, fontSize: 13, color: T.goldL, fontFamily: T.mono }}>
+        RULE RESCINDED — 27 MARCH 2025
+      </div>
+      <div style={{ fontSize: 12, color: T.textSec, marginTop: 4, lineHeight: 1.6 }}>
+        The SEC Enhancement and Standardization of Climate-Related Disclosures rule
+        (Release No. 33-11275 / 34-99678) was <strong style={{ color: T.text }}>rescinded by Commission vote on 27 March 2025</strong> and
+        has no legal force. All phases, deadlines, and compliance figures below are shown for
+        <strong style={{ color: T.text }}> historical / advisory reference only</strong> — no company is currently required to comply.
+        Cross-references to TCFD and ISSB IFRS S2 remain independently valid voluntary frameworks.
+      </div>
+    </div>
+  </div>
+);
+
 const FILER_TYPES = ['Large Accelerated Filer', 'Accelerated Filer', 'Non-Accelerated Filer', 'Smaller Reporting Co'];
 const SECTORS = ['Technology', 'Energy', 'Financials', 'Healthcare', 'Consumer', 'Industrials', 'Materials', 'Utilities', 'Real Estate'];
 
 const COMPLIANCE_PHASES = [
-  { phase: 'Phase 1 — Large Accelerated', deadline: 'FY2025 (filed 2026)', scope: 'Scope 1+2 GHG + Material Climate Risks + Financial Impact Quantification', filerType: 'Large Accelerated Filer', assurance: 'Limited Assurance (PCAOB)', status: 'Active' },
-  { phase: 'Phase 2 — Accelerated Filers', deadline: 'FY2026 (filed 2027)', scope: 'Scope 1+2 GHG + Material Climate Risks (no financial impact required)', filerType: 'Accelerated Filer', assurance: 'Limited Assurance (phased)', status: 'Upcoming' },
-  { phase: 'Phase 3 — Non-Accelerated', deadline: 'FY2027 (filed 2028)', scope: 'Material Climate Risk Disclosures only (no GHG quantification)', filerType: 'Non-Accelerated Filer', assurance: 'None Required', status: 'Upcoming' },
-  { phase: 'Scope 3 — Stayed Pending Review', deadline: 'TBD (8th Circuit challenge)', scope: 'Scope 3 value chain emissions — stayed by SEC March 2024', filerType: 'Large Accelerated (if reinstated)', assurance: 'Stayed', status: 'Stayed' },
+  { phase: 'Phase 1 — Large Accelerated', deadline: 'FY2025 (rescinded — never took effect)', scope: 'Scope 1+2 GHG + Material Climate Risks + Financial Impact Quantification', filerType: 'Large Accelerated Filer', assurance: 'Limited Assurance (PCAOB) — rescinded', status: 'Rescinded' },
+  { phase: 'Phase 2 — Accelerated Filers', deadline: 'FY2026 (rescinded — never took effect)', scope: 'Scope 1+2 GHG + Material Climate Risks (no financial impact required)', filerType: 'Accelerated Filer', assurance: 'Limited Assurance (phased) — rescinded', status: 'Rescinded' },
+  { phase: 'Phase 3 — Non-Accelerated', deadline: 'FY2027 (rescinded — never took effect)', scope: 'Material Climate Risk Disclosures only (no GHG quantification)', filerType: 'Non-Accelerated Filer', assurance: 'None Required', status: 'Rescinded' },
+  { phase: 'Scope 3 — Stayed, then Rescinded', deadline: 'N/A — rule rescinded 27 Mar 2025', scope: 'Scope 3 value chain emissions — stayed by SEC March 2024, rule rescinded before any reinstatement', filerType: 'Large Accelerated (would have applied if reinstated)', assurance: 'N/A', status: 'Rescinded' },
 ];
 
 const DISCLOSURE_REQUIREMENTS = [
@@ -95,7 +120,7 @@ const TREND = ['Q3-22', 'Q4-22', 'Q1-23', 'Q2-23', 'Q3-23', 'Q4-23', 'Q1-24', 'Q
 }));
 
 const INTL_COMPARISON = [
-  { framework: 'SEC Climate Rule (US)', jurisdiction: 'USA', scope1: true, scope2: true, scope3: false, financialRisk: true, scenario: false, biodiversity: false, social: false, assurance: 'Limited', effective: 2026, coverage: 'Public companies (SEC registrants)' },
+  { framework: 'SEC Climate Rule (US) — Rescinded', jurisdiction: 'USA', scope1: true, scope2: true, scope3: false, financialRisk: true, scenario: false, biodiversity: false, social: false, assurance: 'N/A (rescinded)', effective: 2026, coverage: 'Rescinded 27-Mar-2025 — no longer applicable to SEC registrants' },
   { framework: 'CSRD + ESRS (EU)', jurisdiction: 'EU', scope1: true, scope2: true, scope3: true, financialRisk: true, scenario: true, biodiversity: true, social: true, assurance: 'Limited → Reasonable', effective: 2024, coverage: '50,000+ EU companies incl. large non-EU' },
   { framework: 'ISSB IFRS S1+S2', jurisdiction: 'Global', scope1: true, scope2: true, scope3: true, financialRisk: true, scenario: true, biodiversity: false, social: false, assurance: 'Voluntary (jurisdiction specific)', effective: 2024, coverage: 'Jurisdictions adopting ISSB standards' },
   { framework: 'TCFD Recommendations', jurisdiction: 'Global', scope1: true, scope2: true, scope3: false, financialRisk: true, scenario: true, biodiversity: false, social: false, assurance: 'None (voluntary)', effective: 2017, coverage: 'Voluntary; now embedded in ISSB/CSRD' },
@@ -104,7 +129,7 @@ const INTL_COMPARISON = [
 ];
 
 const ASSURANCE_FRAMEWORK = [
-  { standard: 'PCAOB AS 2101', type: 'US Audit', applicability: 'Large Accelerated Filers (SEC mandated)', phase: 'Phase 1 (FY2026)', level: 'Limited', strengths: 'Established US audit standard; strong enforcement', challenges: 'GHG-specific guidance limited; new territory for PCAOB' },
+  { standard: 'PCAOB AS 2101', type: 'US Audit', applicability: 'Large Accelerated Filers (rescinded — no longer SEC mandated)', phase: 'Phase 1 (FY2026) — rescinded, never in force', level: 'Limited', strengths: 'Established US audit standard; strong enforcement', challenges: 'GHG-specific guidance limited; new territory for PCAOB' },
   { standard: 'IAASB ISAE 3410', type: 'International', applicability: 'EU/UK/Global voluntary or mandated', phase: 'Now', level: 'Limited → Reasonable', strengths: 'Global adoption; clear GHG assurance guidance', challenges: 'Varying quality of assurance providers across jurisdictions' },
   { standard: 'ISAE 3000 (Revised)', type: 'International', applicability: 'General assurance on non-financial info', phase: 'Now', level: 'Limited → Reasonable', strengths: 'Flexible; broad applicability; widely used in ESG reports', challenges: 'Less GHG-specific than ISAE 3410' },
   { standard: 'AA1000 AS (v3)', type: 'Sustainability', applicability: 'Voluntary ESG reports + CSRD readiness', phase: 'Now', level: 'Moderate to High', strengths: 'Stakeholder inclusiveness principles; AA1000AP aligned', challenges: 'Not yet PCAOB-equivalent; mainly non-GHG focus' },
@@ -206,9 +231,14 @@ export default function SecClimateRulePage() {
   return (
     <div style={{ padding: '24px 32px', fontFamily: T.font, background: T.bg, minHeight: '100vh' }}>
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0 }}>SEC Climate Rule Compliance</h1>
-        <p style={{ fontSize: 12, color: T.textSec, margin: '4px 0 0' }}>80 S&P 500 filers · SEC climate disclosure · CSRD/ISSB/TCFD comparison · assurance · enforcement tracker — EP-DI3</p>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: T.text, margin: 0 }}>SEC Climate Rule — Rescinded (Historical Reference)</h1>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', background: T.red, padding: '3px 10px', borderRadius: 6, fontFamily: T.mono }}>RESCINDED 27-MAR-2025</span>
+        </div>
+        <p style={{ fontSize: 12, color: T.textSec, margin: '4px 0 0' }}>Release No. 33-11275 / 34-99678 — rescinded by SEC vote 27 March 2025; no longer in force. 80 S&P 500 filers · historical compliance snapshot · CSRD/ISSB/TCFD comparison · assurance · enforcement tracker — EP-DI3</p>
       </div>
+
+      <RescissionBanner />
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {TABS.map(t => <button key={t} onClick={() => setTab(t)} style={tabBtn(t)}>{t}</button>)}
@@ -267,17 +297,17 @@ export default function SecClimateRulePage() {
             </ResponsiveContainer>
           </div>
           <div style={{ ...cS, gridColumn: '1 / -1' }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 12 }}>Key Rule Facts</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 12 }}>Key Rule Facts (Historical — Rule Rescinded)</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
               {[
-                { label: 'Rule Effective', value: 'March 2024', sub: 'Final rule adopted by SEC', color: T.navy },
-                { label: 'Scope 3 Status', value: 'Stayed', sub: '8th Circuit challenge — paused Mar 2024', color: T.amber },
-                { label: 'Phase 1 Deadline', value: 'FY2025', sub: 'Large Accelerated first disclosure', color: T.teal },
-                { label: 'Assurance Standard', value: 'PCAOB', sub: 'Limited → Reasonable phased', color: T.sage },
-                { label: 'GHG Protocol', value: 'Required', sub: 'Must use GHG Protocol for Scope 1+2', color: T.green },
-                { label: 'Financial Threshold', value: '1% Pretax', sub: 'Trigger for financial impact quantification', color: T.gold },
-                { label: 'Weather Costs', value: '>$100K', sub: 'Separate footnote in financials required', color: T.red },
-                { label: 'Voluntary Disclosures', value: 'If Adopted', sub: 'ICP / Transition Plan / Scenario Analysis', color: T.textSec },
+                { label: 'Rule Status', value: 'RESCINDED', sub: 'Commission vote, 27 March 2025', color: T.red },
+                { label: 'Scope 3 Status', value: 'Rescinded', sub: 'Stayed pending 8th Cir. review, then rescinded', color: T.amber },
+                { label: 'Phase 1 Deadline', value: 'FY2025 (rescinded)', sub: 'Large Accelerated first disclosure — never took effect', color: T.teal },
+                { label: 'Assurance Standard', value: 'PCAOB (rescinded)', sub: 'Limited → Reasonable phased — no longer mandated', color: T.sage },
+                { label: 'GHG Protocol', value: 'Voluntary', sub: 'No longer a legal requirement for Scope 1+2', color: T.green },
+                { label: 'Financial Threshold', value: '1% Pretax (historical)', sub: 'Was the proposed trigger for financial impact quantification', color: T.gold },
+                { label: 'Weather Costs', value: '>$100K (historical)', sub: 'Was a proposed separate footnote requirement', color: T.red },
+                { label: 'Current Status', value: 'Voluntary Only', sub: 'TCFD / ISSB S2 remain valid voluntary frameworks', color: T.textSec },
               ].map(k => (
                 <div key={k.label} style={{ background: T.surfaceH, borderRadius: 8, padding: '12px 14px' }}>
                   <div style={{ fontSize: 10, color: T.textSec }}>{k.label}</div>
@@ -291,7 +321,9 @@ export default function SecClimateRulePage() {
       )}
 
       {tab === 'Compliance Tracker' && (
-        <div style={{ overflowX: 'auto', ...cS, padding: 0 }}>
+        <div>
+          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>Rule rescinded 27 March 2025 — scores below reflect voluntary alignment with the now-defunct rule's disclosure structure, not a legal compliance obligation.</div>
+          <div style={{ overflowX: 'auto', ...cS, padding: 0 }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>{['Company', 'Sector', 'Filer Type', 'Score', 'GHG', 'Risk', 'Fin.Impact', 'Trans.Plan', 'Scenario', 'SBTi', 'ICP', 'Assurance', 'Gaps', 'Status'].map(h => <th key={h} style={thS}>{h}</th>)}</tr>
@@ -317,26 +349,28 @@ export default function SecClimateRulePage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
       {tab === 'Disclosure Requirements' && (
         <div>
+          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>Rule rescinded 27 March 2025 — the table below reflects what the rule would have required had it taken effect; none of it is currently a legal obligation.</div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-            <KpiCard label="Mandatory Items" value={DISCLOSURE_REQUIREMENTS.filter(r => r.required).length} sub={`of ${DISCLOSURE_REQUIREMENTS.length} total`} color={T.red} />
+            <KpiCard label="Was Mandatory" value={DISCLOSURE_REQUIREMENTS.filter(r => r.required).length} sub={`of ${DISCLOSURE_REQUIREMENTS.length} total (historical)`} color={T.red} />
             <KpiCard label="GHG-Related" value={DISCLOSURE_REQUIREMENTS.filter(r => r.category === 'GHG Quantification').length} color={T.teal} />
             <KpiCard label="Financial Disclosure" value={DISCLOSURE_REQUIREMENTS.filter(r => r.category === 'Financial Disclosure').length} color={T.gold} />
             <KpiCard label="High Difficulty" value={DISCLOSURE_REQUIREMENTS.filter(r => r.difficulty === 'High' || r.difficulty === 'Very High').length} color={T.amber} />
           </div>
           <div style={{ overflowX: 'auto', ...cS, padding: 0 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead><tr>{['Requirement', 'Category', 'Required', 'Difficulty', 'Notes'].map(h => <th key={h} style={thS}>{h}</th>)}</tr></thead>
+              <thead><tr>{['Requirement', 'Category', 'Required (Historical)', 'Difficulty', 'Notes'].map(h => <th key={h} style={thS}>{h}</th>)}</tr></thead>
               <tbody>
                 {DISCLOSURE_REQUIREMENTS.map((r, i) => (
                   <tr key={r.req} style={{ background: i % 2 === 0 ? T.surface : 'transparent' }}>
                     <td style={{ ...tdS, fontWeight: 600, fontSize: 12 }}>{r.req}</td>
                     <td style={{ ...tdS, color: T.teal, fontSize: 11 }}>{r.category}</td>
-                    <td style={{ ...tdS, textAlign: 'center', color: r.required ? T.green : T.textMut }}>{r.required ? '✓ Mandatory' : '○ Voluntary'}</td>
+                    <td style={{ ...tdS, textAlign: 'center', color: r.required ? T.amber : T.textMut }}>{r.required ? '✓ Was Mandatory' : '○ Was Voluntary'}</td>
                     <td style={tdS}><span style={{ color: diffColor(r.difficulty), fontSize: 11, fontWeight: 600 }}>{r.difficulty}</span></td>
                     <td style={{ ...tdS, fontSize: 11, color: T.textSec }}>{r.notes}</td>
                   </tr>
@@ -424,15 +458,16 @@ export default function SecClimateRulePage() {
 
       {tab === 'Phase Timeline' && (
         <div>
+          <div style={{ fontSize: 12, color: T.textSec, marginBottom: 14 }}>Historical phase-in schedule as originally adopted — the rule was rescinded 27 March 2025 before any phase took legal effect.</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
             {COMPLIANCE_PHASES.map((p, i) => (
-              <div key={p.phase} style={{ ...cS, borderLeft: `4px solid ${p.status === 'Active' ? T.green : p.status === 'Stayed' ? T.amber : T.navy}` }}>
+              <div key={p.phase} style={{ ...cS, borderLeft: `4px solid ${T.red}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: T.text }}>{p.phase}</div>
                     <div style={{ fontSize: 12, color: T.textSec, marginTop: 2 }}>Deadline: {p.deadline}</div>
                   </div>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: p.status === 'Active' ? T.green : p.status === 'Stayed' ? T.amber : T.textSec, background: `${p.status === 'Active' ? T.green : T.amber}20`, padding: '4px 10px', borderRadius: 6 }}>{p.status}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: T.red, background: `${T.red}20`, padding: '4px 10px', borderRadius: 6 }}>{p.status}</span>
                 </div>
                 <div style={{ fontSize: 13, color: T.textSec }}><strong style={{ color: T.text }}>Scope:</strong> {p.scope}</div>
                 <div style={{ fontSize: 13, color: T.textSec, marginTop: 4 }}><strong style={{ color: T.text }}>Filer Type:</strong> {p.filerType}</div>
@@ -568,14 +603,14 @@ export default function SecClimateRulePage() {
               </ResponsiveContainer>
             </div>
             <div style={cS}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 12 }}>Key Differences: SEC vs CSRD</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: T.text, marginBottom: 12 }}>Key Differences: SEC (Rescinded) vs CSRD</div>
               {[
-                { dim: 'Scope 3', sec: 'Stayed (not required)', csrd: 'Mandatory for large cos' },
-                { dim: 'Biodiversity', sec: 'Not required', csrd: 'ESRS E4 — biodiversity impacts' },
-                { dim: 'Social', sec: 'Not required', csrd: 'ESRS S1-S4 — full workforce + community' },
-                { dim: 'Assurance', sec: 'Limited (PCAOB)', csrd: 'Limited → Reasonable (IAASB)' },
-                { dim: 'Double Materiality', sec: 'Financial materiality only', csrd: 'Financial + Impact materiality' },
-                { dim: 'Coverage', sec: 'SEC registrants only', csrd: '50,000+ EU + non-EU cos' },
+                { dim: 'Scope 3', sec: 'Stayed, then rescinded (never required)', csrd: 'Mandatory for large cos' },
+                { dim: 'Biodiversity', sec: 'Not required (rule rescinded)', csrd: 'ESRS E4 — biodiversity impacts' },
+                { dim: 'Social', sec: 'Not required (rule rescinded)', csrd: 'ESRS S1-S4 — full workforce + community' },
+                { dim: 'Assurance', sec: 'Limited (PCAOB) — rescinded, never mandated', csrd: 'Limited → Reasonable (IAASB)' },
+                { dim: 'Double Materiality', sec: 'Financial materiality only (historical)', csrd: 'Financial + Impact materiality' },
+                { dim: 'Coverage', sec: 'None — rule rescinded 27-Mar-2025', csrd: '50,000+ EU + non-EU cos' },
               ].map((d, i) => (
                 <div key={i} style={{ padding: '8px 0', borderBottom: `1px solid ${T.border}` }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: T.gold, marginBottom: 4 }}>{d.dim}</div>
@@ -593,7 +628,8 @@ export default function SecClimateRulePage() {
       {tab === 'Cost Calculator' && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
           <div style={cS}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 16 }}>Compliance Cost Estimator</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: T.text, marginBottom: 4 }}>Historical Compliance Cost Estimator</div>
+            <div style={{ fontSize: 11, color: T.textSec, marginBottom: 16 }}>Rule rescinded 27 March 2025 — figures below estimate what compliance would have cost had the rule remained in force. Reference only; no company currently incurs this obligation.</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <div style={{ fontSize: 11, color: T.textSec, marginBottom: 6 }}>Filer Type</div>

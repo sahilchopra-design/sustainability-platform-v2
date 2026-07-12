@@ -20,6 +20,7 @@ from services.reference_data_tables import (
     IPCC_AR6_DAMAGE_FUNCTIONS,
     SOLVENCY2_NAT_CAT_FACTORS,
     SOLVENCY2_PERIL_CORRELATIONS,
+    SOLVENCY2_TO_IPCC_PERIL_MAP,
     BASEL3_HQLA_CLASSIFICATION,
     BASEL3_LCR_OUTFLOW_RATES,
     BASEL3_NSFR_ASF_FACTORS,
@@ -168,6 +169,25 @@ class TestSolvency2NatCatFactors:
     def test_get_nat_cat_factor_invalid_country(self):
         factor = get_nat_cat_factor("ZZ", "windstorm")
         assert factor is None
+
+    def test_default_s2_perils_map_onto_ipcc_hazards(self):
+        """Every default Solvency II peril (except non-climate 'earthquake') must
+        normalize onto a real IPCC AR6 hazard key, otherwise get_damage_function()
+        silently misses and climate scaling degrades to a 1.0 no-op multiplier."""
+        default_perils = set(SOLVENCY2_NAT_CAT_FACTORS["DE"].keys())
+        for peril in default_perils - {"earthquake"}:
+            ipcc_key = SOLVENCY2_TO_IPCC_PERIL_MAP.get(peril, peril)
+            assert ipcc_key in IPCC_AR6_DAMAGE_FUNCTIONS, (
+                f"Solvency II peril '{peril}' does not map to a known IPCC hazard "
+                f"(resolved key: '{ipcc_key}')"
+            )
+
+    def test_get_damage_function_normalizes_solvency2_peril_names(self):
+        # "windstorm" is a Solvency II peril name, not a native IPCC hazard key —
+        # get_damage_function must normalize it via SOLVENCY2_TO_IPCC_PERIL_MAP.
+        df = get_damage_function("windstorm")
+        assert df is not None
+        assert df == IPCC_AR6_DAMAGE_FUNCTIONS["tropical_cyclone"]
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -528,6 +548,33 @@ class TestNatCatExposure:
             perils=["windstorm"],
         )
         assert result.solvency2_nat_cat_scr_eur > 0
+
+    def test_climate_uplift_nonzero_for_default_s2_peril(self):
+        """Regression test: Solvency II peril names ('windstorm'/'flood'/'hail')
+        previously didn't match the IPCC AR6 hazard-key vocabulary, so
+        self._damage_functions.get(peril, {}) always missed and freq/sev
+        multipliers silently fell back to 1.0 regardless of warming_c — i.e.
+        climate scaling was a no-op for every default Solvency II peril.
+        With peril-name normalization in place, EAL must scale up with warming."""
+        base = self.engine.assess_natcat_exposure(
+            country="DE",
+            exposure_eur=1_000_000_000,
+            perils=["windstorm"],
+            warming_c=0.0,
+        )
+        warmed = self.engine.assess_natcat_exposure(
+            country="DE",
+            exposure_eur=1_000_000_000,
+            perils=["windstorm"],
+            warming_c=2.0,
+        )
+        eal_base = base.expected_annual_loss_eur
+        eal_warmed = warmed.expected_annual_loss_eur
+        assert eal_base > 0
+        assert eal_warmed > eal_base, (
+            f"Climate warming (0C -> 2C) did not increase EAL for default S2 peril "
+            f"'windstorm' ({eal_base} -> {eal_warmed}); climate scaling is a no-op"
+        )
 
 
 # ═══════════════════════════════════════════════════════════════════════════

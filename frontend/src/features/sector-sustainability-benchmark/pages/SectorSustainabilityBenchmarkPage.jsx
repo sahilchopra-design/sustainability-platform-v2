@@ -79,12 +79,30 @@ const COMPANIES = SECTORS.flatMap((sector, si) =>
 // ── ESG DIMENSIONS FOR RADAR ──────────────────────────────────────────────────
 const ESG_DIMS = ['GHG Intensity','Renewable Energy','Water Mgmt','Circular Economy','Biodiversity','Social (DEI)','Governance','Disclosure'];
 
-const sectorRadarData = useMemo => SECTORS.map((s,si) => {
-  const seed = si * 200 + 3000;
-  const obj = { name: s.name };
-  ESG_DIMS.forEach((d,di) => { obj[d] = Math.round(30 + sr(seed + di * 7) * 65); });
-  return obj;
-});
+// ── IQR (INTERQUARTILE RANGE) PEER BENCHMARKING ───────────────────────────────
+// Matches the module guide's calculation engine:
+//   benchmark_score = (company_kpi − peer_P25) / (peer_P75 − peer_P25) × 100
+// i.e. each company's KPI is expressed as its position relative to the [P25, P75]
+// band of its GICS peer group (0 = P25, 100 = P75; can fall outside 0-100 for
+// values beyond the interquartile range).
+const quantile = (sortedArr, q) => {
+  if (!sortedArr.length) return 0;
+  const pos = (sortedArr.length - 1) * q;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  return sortedArr[base + 1] !== undefined
+    ? sortedArr[base] + rest * (sortedArr[base + 1] - sortedArr[base])
+    : sortedArr[base];
+};
+
+const IQR_METRICS = [
+  { key: 'esgScore', label: 'ESG Score' },
+  { key: 'renewablePct', label: 'Renewable %' },
+  { key: 'ghgIntensity', label: 'GHG Intensity' },
+  { key: 'waterIntensity', label: 'Water Intensity' },
+  { key: 'sustainableRevPct', label: 'Sustainable Rev %' },
+  { key: 'genderDiversityPct', label: 'Gender Diversity %' },
+];
 
 // ── REGIONS ───────────────────────────────────────────────────────────────────
 const REGIONS = ['EU Leaders','North America','Asia-Pacific','India','LatAm & Africa'];
@@ -139,6 +157,48 @@ export default function SectorSustainabilityBenchmarkPage() {
       return obj;
     });
   }, []);
+
+  // All-sector ESG dimension scores (was previously a broken, unused module-level
+  // declaration `const sectorRadarData = useMemo => SECTORS.map(...)` -- an arrow
+  // function whose parameter happened to be named `useMemo`, shadowing the imported
+  // hook inside that arrow's own scope, and which was never called as a hook and
+  // never invoked at all, so it silently produced a dead function instead of data).
+  // Rewritten as a real useMemo() call (hooks only run inside the component) and
+  // wired into the Sector Overview composite badge below.
+  const sectorRadarData = useMemo(() => SECTORS.map((s, si) => {
+    const seed = si * 200 + 3000;
+    const obj = { name: s.name };
+    ESG_DIMS.forEach((d, di) => { obj[d] = Math.round(30 + sr(seed + di * 7) * 65); });
+    return obj;
+  }), []);
+
+  const sectorCompositeScore = useCallback((sectorName) => {
+    const row = sectorRadarData.find(r => r.name === sectorName);
+    if (!row) return 0;
+    return Math.round(ESG_DIMS.reduce((sum, d) => sum + row[d], 0) / ESG_DIMS.length);
+  }, [sectorRadarData]);
+
+  // IQR peer benchmark for the currently selected sector (Sector Deep-Dive tab):
+  // for each numeric KPI, compute P25/P75 across that sector's companies, then
+  // express each company's value as its position relative to [P25, P75].
+  const iqrBenchmarkData = useMemo(() => {
+    const s = SECTORS[selectedSector];
+    const sectorComps = COMPANIES.filter(c => c.sector === s.name);
+    return IQR_METRICS.map(({ key, label }) => {
+      const sorted = sectorComps.map(c => c[key]).slice().sort((a, b) => a - b);
+      const p25 = quantile(sorted, 0.25);
+      const p75 = quantile(sorted, 0.75);
+      const iqr = p75 - p25;
+      return {
+        key, metric: label, p25: +p25.toFixed(2), p75: +p75.toFixed(2),
+        companies: sectorComps.map(c => ({
+          name: c.name,
+          value: c[key],
+          score: iqr !== 0 ? +(((c[key] - p25) / iqr) * 100).toFixed(1) : 50,
+        })),
+      };
+    });
+  }, [selectedSector]);
 
   const metricOptions = [
     { key:'esgScore', label:'ESG Score' },
@@ -230,6 +290,9 @@ export default function SectorSustainabilityBenchmarkPage() {
                     <h4 style={{ color: T.navy, fontSize: 14, margin: 0 }}>{s.name}</h4>
                     <span style={{ fontFamily: T.mono, fontSize: 11, color: COLORS[i % COLORS.length] }}>{s.companies.length} companies</span>
                   </div>
+                  <div style={{ fontSize: 10, color: T.sub, fontFamily: T.mono, marginBottom: 8 }}>
+                    ESG Composite (8-dim avg): <b style={{ color: T.indigo }}>{sectorCompositeScore(s.name)}/100</b>
+                  </div>
                   <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
                     {s.esrsPriority.map(e => (
                       <span key={e} style={{ padding: '1px 6px', borderRadius: 3, fontSize: 9, background: '#eef2ff', color: T.indigo, fontFamily: T.mono }}>{e}</span>
@@ -280,12 +343,49 @@ export default function SectorSustainabilityBenchmarkPage() {
                       </ResponsiveContainer>
                     </div>
                   </div>
-                  <div style={{ background: T.card, borderRadius: 10, padding: 16, border: `1px solid ${T.border}` }}>
+                  <div style={{ background: T.card, borderRadius: 10, padding: 16, border: `1px solid ${T.border}`, marginBottom: 16 }}>
                     <h4 style={{ color: T.navy, fontSize: 14, marginTop: 0 }}>Material ESG Topics</h4>
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       {s.materialTopics.map((t,i) => (
                         <span key={i} style={{ padding: '4px 12px', borderRadius: 6, fontSize: 12, background: COLORS[i % COLORS.length]+'18', color: COLORS[i % COLORS.length], fontWeight: 600 }}>{t}</span>
                       ))}
+                    </div>
+                  </div>
+                  <div style={{ background: T.card, borderRadius: 10, padding: 16, border: `1px solid ${T.border}` }}>
+                    <h4 style={{ color: T.navy, fontSize: 14, marginTop: 0 }}>IQR-Normalised Peer Benchmark</h4>
+                    <div style={{ fontSize: 11, color: T.sub, fontFamily: T.mono, marginBottom: 10 }}>
+                      benchmark_score = (company_kpi − peer_P25) / (peer_P75 − peer_P25) × 100 — 0 = sector P25, 100 = sector P75
+                    </div>
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                        <thead>
+                          <tr style={{ borderBottom: `1px solid ${T.border}` }}>
+                            <th style={{ padding: '6px 8px', textAlign: 'left', color: T.sub, fontFamily: T.mono }}>Company</th>
+                            {iqrBenchmarkData.map(m => (
+                              <th key={m.key} style={{ padding: '6px 8px', textAlign: 'left', color: T.sub, fontFamily: T.mono, fontSize: 10 }}>
+                                {m.metric}<br/><span style={{ fontWeight: 400 }}>P25 {m.p25} · P75 {m.p75}</span>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sectorComps.map((c, ci) => (
+                            <tr key={ci} style={{ borderBottom: `1px solid ${T.border}`, background: ci % 2 === 0 ? T.card : T.surface }}>
+                              <td style={{ padding: '6px 8px', fontWeight: 600 }}>{c.name}</td>
+                              {iqrBenchmarkData.map(m => {
+                                const comp = m.companies.find(cc => cc.name === c.name);
+                                const score = comp ? comp.score : 0;
+                                const color = score >= 75 ? T.green : score <= 25 ? T.red : T.amber;
+                                return (
+                                  <td key={m.key} style={{ padding: '6px 8px', fontFamily: T.mono }}>
+                                    {comp?.value} <span style={{ color, fontWeight: 700 }}>({score})</span>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>

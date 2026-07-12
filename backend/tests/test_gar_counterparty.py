@@ -494,6 +494,117 @@ class TestGARHouseholdAutoAssess:
         assert result.aligned_assets == 80_000
 
 
+class TestGARDataQuality:
+    """assessed_pct must reflect real per-period data coverage: it must be
+    able to both rise (more exposures get classified) and fall (more
+    exposures lack the data needed to classify them), not be permanently
+    pinned at 100%."""
+
+    def test_fully_classified_portfolio_is_100pct_assessed(self, gar_calc):
+        exposures = [
+            _make_exposure(exposure_id=f"E{i}", classification="NOT_ELIGIBLE")
+            for i in range(5)
+        ]
+        result = gar_calc.calculate(exposures)
+        assert result.not_assessed_count == 0
+        assert result.assessed_pct == pytest.approx(1.0)
+
+    def test_unclassifiable_exposure_is_not_assessed_not_not_eligible(self, gar_calc):
+        """No classification, no NACE code, non-household asset type ->
+        genuinely undetermined. Must be counted as NOT_ASSESSED, and must
+        NOT silently inflate not_eligible_assets."""
+        exposures = [
+            _make_exposure(classification="", nace_code="", asset_type="NFC_LOAN"),
+        ]
+        result = gar_calc.calculate(exposures)
+        assert result.not_assessed_count == 1
+        assert result.not_eligible_assets == 0
+        assert result.assessed_pct == pytest.approx(0.0)
+
+    def test_assessed_pct_decreases_as_data_gaps_are_introduced(self, gar_calc):
+        """Same-size portfolio, only the data-quality mix changes -- proves
+        assessed_pct can move DOWN, not just up/stay at its ceiling."""
+        fully_classified = [
+            _make_exposure(exposure_id=f"F{i}", classification="NOT_ELIGIBLE")
+            for i in range(4)
+        ]
+        result_before = gar_calc.calculate(fully_classified)
+        assert result_before.assessed_pct == pytest.approx(1.0)
+
+        # Swap two exposures to have no classification/NACE data at all.
+        partially_unassessed = [
+            _make_exposure(exposure_id="F0", classification="NOT_ELIGIBLE"),
+            _make_exposure(exposure_id="F1", classification="NOT_ELIGIBLE"),
+            _make_exposure(exposure_id="F2", classification="", nace_code=""),
+            _make_exposure(exposure_id="F3", classification="", nace_code=""),
+        ]
+        result_after = gar_calc.calculate(partially_unassessed)
+        assert result_after.not_assessed_count == 2
+        assert result_after.assessed_pct == pytest.approx(0.5)
+        assert result_after.assessed_pct < result_before.assessed_pct
+
+    def test_assessed_pct_increases_when_data_gaps_are_resolved(self, gar_calc):
+        """Inverse of the above: filling in missing data raises assessed_pct
+        back up, confirming the metric is bidirectional, not monotonic."""
+        gappy = [
+            _make_exposure(exposure_id="G0", classification="", nace_code=""),
+            _make_exposure(exposure_id="G1", classification="", nace_code=""),
+        ]
+        result_before = gar_calc.calculate(gappy)
+        assert result_before.assessed_pct == pytest.approx(0.0)
+
+        resolved = [
+            _make_exposure(exposure_id="G0", classification="NOT_ELIGIBLE"),
+            _make_exposure(exposure_id="G1", classification="TAXONOMY_ALIGNED",
+                            primary_objective="CLIMATE_MITIGATION"),
+        ]
+        result_after = gar_calc.calculate(resolved)
+        assert result_after.not_assessed_count == 0
+        assert result_after.assessed_pct == pytest.approx(1.0)
+        assert result_after.assessed_pct > result_before.assessed_pct
+
+    def test_household_mortgage_without_epc_is_not_assessed(self, gar_calc):
+        """Missing EPC data on a mortgage is a data gap, not a confirmed
+        ineligibility -- previously both cases collapsed into NOT_ELIGIBLE."""
+        exposures = [
+            _make_exposure(
+                asset_type="HOUSEHOLD_MORTGAGE",
+                gross_carrying_amount=250_000,
+                classification="",
+                epc_rating="",
+            ),
+        ]
+        result = gar_calc.calculate(exposures)
+        assert result.not_assessed_count == 1
+        assert result.not_eligible_assets == 0
+
+    def test_nace_code_present_but_unmapped_is_assessed_not_eligible(self, gar_calc):
+        """A supplied-but-unmapped NACE code IS a determination (assessed,
+        not eligible) -- distinct from no NACE code at all (not assessed)."""
+        exposures = [
+            _make_exposure(classification="", nace_code="Z99.99"),
+        ]
+        result = gar_calc.calculate(exposures)
+        assert result.not_assessed_count == 0
+        assert result.not_eligible_assets == 1_000_000
+
+    def test_excluded_exposures_do_not_dilute_assessed_pct(self, gar_calc):
+        """Sovereign/central-bank/etc. exposures never enter the
+        classification loop -- they must not count in the assessed_pct
+        denominator (previously len(exposures) included them)."""
+        exposures = [
+            _make_exposure(exposure_id="SOV1", asset_type="SOVEREIGN",
+                            gross_carrying_amount=500_000_000),
+            _make_exposure(exposure_id="NFC1", asset_type="NFC_LOAN",
+                            classification="", nace_code=""),
+        ]
+        result = gar_calc.calculate(exposures)
+        # 1 covered exposure, 1 not assessed -> 0% assessed, regardless of
+        # the large excluded sovereign exposure sitting alongside it.
+        assert result.not_assessed_count == 1
+        assert result.assessed_pct == pytest.approx(0.0)
+
+
 class TestGARFlowGAR:
     """Flow GAR for new originations."""
 
@@ -762,6 +873,65 @@ class TestCounterpartyRating:
     def test_rating_scale_has_eight_bands(self):
         scale = CounterpartyClimateScorer.get_rating_scale()
         assert len(scale) == 8
+
+    # -- Fractional boundary-gap regression tests --------------------------
+    # Bug: RATING_MAP bands were matched via `min <= score <= max` against
+    # *integer* min/max (e.g. 80-89, 90-100), but composite_score is a
+    # float rounded to 1 decimal. Any fractional score strictly between an
+    # upper band's max and the next band's min (e.g. 89.5) matched no band
+    # at all and silently fell through to the "D-" fallback -- rating a
+    # near-A+ counterparty as the worst possible grade. These tests pin
+    # every inter-band fractional value to the correct (higher) band.
+
+    def test_fractional_score_just_below_a_plus_threshold_is_a(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(89.9)[0] == "A"
+        assert scorer._score_to_rating(89.5)[0] == "A"
+        assert scorer._score_to_rating(89.1)[0] == "A"
+
+    def test_fractional_score_just_below_a_threshold_is_b_plus(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(79.9)[0] == "B+"
+        assert scorer._score_to_rating(79.5)[0] == "B+"
+
+    def test_fractional_score_just_below_b_plus_threshold_is_b(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(69.9)[0] == "B"
+
+    def test_fractional_score_just_below_b_threshold_is_c_plus(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(59.9)[0] == "C+"
+
+    def test_fractional_score_just_below_c_plus_threshold_is_c(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(49.9)[0] == "C"
+
+    def test_fractional_score_just_below_c_threshold_is_d_plus(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(39.9)[0] == "D+"
+
+    def test_fractional_score_just_below_d_plus_threshold_is_d_minus(self):
+        scorer = CounterpartyClimateScorer()
+        assert scorer._score_to_rating(29.9)[0] == "D-"
+
+    def test_every_tenth_between_0_and_100_maps_to_a_valid_band(self):
+        """Sweep at 0.1 resolution (the actual precision of composite_score)
+        across the full range -- no value may be unrated."""
+        valid_ratings = {b["rating"] for b in RATING_MAP}
+        score = 0.0
+        while score <= 100.0:
+            rating, label = CounterpartyClimateScorer._score_to_rating(score)
+            assert rating in valid_ratings, f"Score {score} mapped to unknown rating {rating}"
+            assert label, f"Score {score} returned an empty label"
+            score = round(score + 0.1, 1)
+
+    def test_exact_band_floor_and_ceiling_both_resolve(self):
+        """Exact integer boundaries must resolve to the band whose floor
+        they equal (not the band below it)."""
+        scorer = CounterpartyClimateScorer()
+        for band in RATING_MAP:
+            floor_rating, _ = scorer._score_to_rating(float(band["min"]))
+            assert floor_rating == band["rating"]
 
 
 class TestCounterpartyBatch:

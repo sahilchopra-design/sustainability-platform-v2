@@ -1,23 +1,43 @@
 """
-FastAPI Auth Middleware — enforces session-based authentication on all
-mutating API requests (POST / PUT / PATCH / DELETE).
+FastAPI Auth Middleware — enforces (a) session-based authentication on all
+mutating API requests, and (b) per-module RBAC access on requests that carry
+a resolvable session, regardless of HTTP method.
 
 Environment control:
-  REQUIRE_AUTH=true   — enforce session auth (use in production)
-  REQUIRE_AUTH=false  — bypass auth (default; safe for dev/demo)
+  REQUIRE_AUTH=true   — require a valid session for mutating requests (prod)
+  REQUIRE_AUTH=false  — bypass the *session-required* gate (default; dev/demo)
 
-Skip list (no auth required even when REQUIRE_AUTH=true):
+  NOTE: the module-level RBAC check below is independent of REQUIRE_AUTH. It
+  only ever runs when a request carries a token that resolves to a real user,
+  so it never blocks a genuinely anonymous request — but when a restricted
+  user's own session cookie/token IS present, their module permissions are
+  enforced even while REQUIRE_AUTH=false and even on GET requests. This closes
+  the gap where module RBAC was previously a client-side-only nav filter.
+
+Skip list (never gated, any method, with or without a session):
   - Non-API paths (no /api/ prefix)
   - Health check: /api/health
-  - Auth routes: /api/auth/*
-  - GET/HEAD/OPTIONS on any path (read-only)
-  - GET requests to reference-data endpoints: /api/v1/*/ref/*
+  - Auth routes: /api/auth/* (login/register/logout/me/invite)
+  - The shared public reference-data layer: /api/v1/refdata/*
+  - Per-module public reference sub-resources: /api/v1/<module>/ref/*
+  - /docs, /redoc, /openapi.json
 
-For all other /api/v1/* requests when REQUIRE_AUTH=true the middleware:
-  1. Extracts a bearer token from the Authorization header or session_token cookie
-  2. Validates it against user_sessions_pg (checks expiry + active status)
-  3. Attaches request.state.user (UserPG row) on success
-  4. Returns a 401 JSON response on failure
+For every other /api/* request that resolves to an authenticated user:
+  1. Extract + validate the session token (cookie or Bearer header).
+  2. Compute the user's effective RBAC state via api.rbac_utils.get_effective_rbac
+     (the SAME function GET /api/auth/me uses — one source of truth).
+  3. If unrestricted (super_admin, or no rbac_user_profiles row at all —
+     legacy/pre-RBAC users), no module gate is applied.
+  4. Otherwise, resolve the request path to a frontend module_path via
+     middleware.module_access_map.resolve_module_paths(). If the path maps to
+     a known module and none of its module_path aliases are in the user's
+     allowed set, return 403. If the path can't be confidently attributed to
+     a specific module (most of the ~800 modules are pure client-side compute
+     with no backend calls at all, or it's a shared/utility endpoint), the
+     request is left ungated rather than guessed at.
+
+Then, for mutating verbs (POST/PUT/PATCH/DELETE) when REQUIRE_AUTH=true, a
+valid session is still required exactly as before.
 
 Org isolation (multi-tenant):
   When a valid user is resolved and the user has an org_id set, the
@@ -54,6 +74,7 @@ _PUBLIC_PATH_PREFIXES: tuple[str, ...] = (
     "/api/auth/",
     "/api/auth",       # exact match (login / register live here)
     "/api/auth/invite/",  # invite token validation + acceptance (public)
+    "/api/v1/refdata",    # shared public reference-data layer (Tier-1 free datasets)
     "/docs",
     "/redoc",
     "/openapi.json",
@@ -62,14 +83,15 @@ _PUBLIC_PATH_PREFIXES: tuple[str, ...] = (
 # Methods that are always allowed without auth (read-only)
 _SAFE_METHODS: frozenset[str] = frozenset({"GET", "HEAD", "OPTIONS"})
 
-# Compiled pattern: GET /api/v1/<anything>/ref/<anything>
+# Compiled pattern: /api/v1/<module>/ref/<anything> — per-module public reference data
 _REF_DATA_PATTERN = re.compile(r"^/api/v1/.+/ref(/.*)?$")
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
     Starlette middleware that enforces bearer-token / cookie session auth
-    on all mutating /api/* requests.
+    on all mutating /api/* requests, and per-module RBAC on any request that
+    resolves to an authenticated, RBAC-restricted user.
     """
 
     async def dispatch(self, request: Request, call_next):
@@ -84,35 +106,38 @@ class AuthMiddleware(BaseHTTPMiddleware):
         if any(path.startswith(p) for p in _PUBLIC_PATH_PREFIXES):
             return await call_next(request)
 
-        # ── 3. Safe (read-only) methods are always allowed ───────────────
+        # ── 3. Skip per-module public reference sub-resources ────────────
+        if _REF_DATA_PATTERN.match(path):
+            return await call_next(request)
+
+        # ── 4. Resolve the session (if any) — regardless of method. This is
+        #      what lets module RBAC apply to GET requests, which previously
+        #      bypassed auth entirely. An absent/invalid token resolves to
+        #      user=None and behaves exactly as before for anonymous callers.
+        token = _extract_token(request)
+        user = _validate_session(token) if token else None
+
+        request.state.user = user
+        request.state.org_id = getattr(user, "org_id", None) if user else None
+
+        # ── 5. Per-module RBAC enforcement ────────────────────────────────
+        if user is not None:
+            denial = _check_module_access(user, path)
+            if denial is not None:
+                return denial
+
+        # ── 6. Safe (read-only) methods are always allowed ────────────────
         if method in _SAFE_METHODS:
             return await call_next(request)
 
-        # ── 4. GET reference-data endpoints (extra safety net) ───────────
-        #    Already covered by step 3, but kept for clarity / future-proofing.
-        if method == "GET" and _REF_DATA_PATTERN.match(path):
-            return await call_next(request)
-
-        # ── 5. Auth gate — bypass in dev/demo mode ───────────────────────
+        # ── 7. Auth gate — bypass in dev/demo mode ────────────────────────
         if not REQUIRE_AUTH:
-            # Still populate request.state.user as None so downstream code
-            # can check it without AttributeError.
-            request.state.user = None
-            request.state.org_id = None
             return await call_next(request)
 
-        # ── 6. Mutating request on /api/* → require valid session ────────
-        token = _extract_token(request)
-        if not token:
-            return _unauthorized("Missing authentication token")
-
-        user = _validate_session(token)
+        # ── 8. Mutating request on /api/* → require valid session ────────
         if user is None:
-            return _unauthorized("Invalid or expired session")
+            return _unauthorized("Missing or invalid authentication token")
 
-        # Attach user + org to request state so downstream handlers can access it
-        request.state.user = user
-        request.state.org_id = getattr(user, "org_id", None)
         return await call_next(request)
 
 
@@ -170,10 +195,54 @@ def _validate_session(token: str):
         db.close()
 
 
+def _check_module_access(user, path: str) -> JSONResponse | None:
+    """
+    Return a 403 JSONResponse if `user` is RBAC-restricted and `path` maps to
+    a module they are not entitled to. Returns None (allow) when the user is
+    unrestricted, or when `path` can't be confidently attributed to a
+    specific module (see middleware/module_access_map.py for why that's the
+    safe default rather than a guess).
+    """
+    from db.postgres import SessionLocal
+    from api.rbac_utils import get_effective_rbac_cached, known_module_path_universe
+    from middleware.module_access_map import resolve_module_paths
+
+    db = SessionLocal()
+    try:
+        eff = get_effective_rbac_cached(db, user)
+        if eff.allowed_module_paths is None:
+            return None  # unrestricted (super_admin or no RBAC profile)
+
+        candidates = resolve_module_paths(path, known_module_path_universe(db))
+        if not candidates:
+            return None  # not attributable to a specific gated module
+
+        allowed = set(eff.allowed_module_paths)
+        if any(c in allowed for c in candidates):
+            return None
+
+        return _forbidden(
+            f"Access denied — your account is not entitled to module {candidates[0]!r}"
+        )
+    except Exception:
+        logger.exception("Auth middleware: module-access check error")
+        return None  # degrade gracefully — never hard-fail the request on our own bug
+    finally:
+        db.close()
+
+
 def _unauthorized(detail: str) -> JSONResponse:
     """Return a 401 JSON error response."""
     return JSONResponse(
         status_code=401,
+        content={"detail": detail},
+    )
+
+
+def _forbidden(detail: str) -> JSONResponse:
+    """Return a 403 JSON error response (authenticated, but not entitled)."""
+    return JSONResponse(
+        status_code=403,
         content={"detail": detail},
     )
 

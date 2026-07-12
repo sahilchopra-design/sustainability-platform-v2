@@ -1,10 +1,54 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell,
   PieChart, Pie, Legend, LineChart, Line,
 } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+
+// Backend Scheduled Reports engine — real DB-backed CRUD (Postgres/Supabase).
+// See backend/services/scheduled_reports_service.py + backend/api/v1/routes/scheduled_reports.py
+const API = 'http://localhost:8001';
+const SCHED_API = `${API}/api/v1/scheduled-reports`;
+
+// The backend's ReportType/ReportFrequency enums are narrower than this page's
+// illustrative report-type/frequency catalogue, so we map between them when
+// creating live schedules and when displaying ones read back from the API.
+const BACKEND_REPORT_TYPE_MAP = { // frontend value -> backend ReportType value
+  sfdr_pai: 'sustainability', client_quarterly: 'portfolio_analytics', tcfd: 'sustainability',
+  pcaf: 'carbon_credits', csrd_e1: 'sustainability', csrd_full: 'sustainability',
+  eu_taxonomy: 'sustainability', brsr: 'sustainability', tnfd: 'nature_risk', gri: 'sustainability',
+  issb: 'sustainability', custom: 'sustainability',
+};
+const BACKEND_FREQUENCY_MAP = { // frontend value -> backend ReportFrequency value (no semi-annual/annual on backend)
+  Weekly: 'weekly', Monthly: 'monthly', Quarterly: 'quarterly', 'Semi-Annual': 'quarterly', Annual: 'quarterly',
+};
+const REPORT_TYPE_LABEL = { // backend ReportType value -> display label
+  portfolio_analytics: 'Portfolio Analytics', carbon_credits: 'Carbon Credits', stranded_assets: 'Stranded Assets',
+  nature_risk: 'Nature Risk', sustainability: 'Sustainability', valuation: 'Valuation', scenario_analysis: 'Scenario Analysis',
+};
+const FREQUENCY_LABEL = { daily: 'Daily', weekly: 'Weekly', monthly: 'Monthly', quarterly: 'Quarterly' };
+
+// Map a live backend ScheduledReportResponse onto this page's local schedule shape.
+const mapLiveToLocal = (item) => ({
+  id: item.id,
+  client_id: (item.parameters && item.parameters.client_id) || 'N/A',
+  report_type: REPORT_TYPE_LABEL[item.report_type] || item.report_type,
+  template: (item.parameters && item.parameters.template) || 'regulatory',
+  frequency: FREQUENCY_LABEL[item.frequency] || item.frequency,
+  next_run: item.next_run,
+  last_run: item.last_run,
+  status: item.is_active ? 'scheduled' : 'paused',
+  auto_send: !!(item.parameters && item.parameters.auto_send),
+  recipients: item.recipients || [],
+  format: (item.format || 'pdf').toUpperCase(),
+  sections: (item.parameters && item.parameters.sections) || 0,
+  data_check: true,
+  sla_buffer: (item.parameters && item.parameters.sla_buffer) || 5,
+  created: item.created_at ? item.created_at.slice(0, 10) : '',
+  _live: true,
+});
 
 /* ══════════════════════════════════════════════════════════════
    THEME
@@ -188,10 +232,40 @@ export default function ScheduledReportsPage() {
   const [editSchedule, setEditSchedule] = useState(null);
   const [slaDaysSlider, setSlaDaysSlider] = useState(90);
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
+  const [apiStatus, setApiStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
 
   useEffect(() => { saveLS(LS_SCHEDULES, schedules); }, [schedules]);
   useEffect(() => { saveLS(LS_EXEC_LOG, execLog); }, [execLog]);
   useEffect(() => { saveLS(LS_NOTIFICATIONS, notifications); }, [notifications]);
+
+  // --- Live backend wiring (Scheduled Reports Engine) ---------------------
+  // Loads the real persisted schedules from GET /api/v1/scheduled-reports on
+  // mount. Falls back to the locally-seeded demo schedules, clearly labeled,
+  // if the API is unreachable.
+  const refreshLive = useCallback(async () => {
+    const { data } = await axios.get(SCHED_API, { timeout: 10000 });
+    if (data && Array.isArray(data.items)) {
+      setSchedules(data.items.map(mapLiveToLocal));
+      setApiStatus('live');
+      return true;
+    }
+    return false;
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const ok = await refreshLive();
+        if (cancelled) return;
+        if (!ok) setApiStatus('demo');
+      } catch (e) {
+        if (!cancelled) setApiStatus('demo');
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* ── Derived ── */
   const now = new Date();
@@ -257,22 +331,59 @@ export default function ScheduledReportsPage() {
     setSchedules(prev => prev.map(s => s.id === schedId ? { ...s, last_run: new Date().toISOString(), status: 'scheduled' } : s));
   }, []);
 
-  const togglePause = useCallback((schedId) => {
+  const togglePause = useCallback(async (schedId) => {
+    const sched = schedules.find(s => s.id === schedId);
+    if (sched && sched._live) {
+      try {
+        await axios.post(`${SCHED_API}/${schedId}/toggle`);
+        await refreshLive();
+        return;
+      } catch (e) { /* API unavailable — fall through to local demo toggle */ }
+    }
     setSchedules(prev => prev.map(s => s.id === schedId ? { ...s, status: s.status === 'paused' ? 'scheduled' : 'paused' } : s));
-  }, []);
+  }, [schedules, refreshLive]);
 
-  const deleteSchedule = useCallback((schedId) => {
+  const deleteSchedule = useCallback(async (schedId) => {
+    const sched = schedules.find(s => s.id === schedId);
+    if (sched && sched._live) {
+      try {
+        await axios.delete(`${SCHED_API}/${schedId}`);
+        await refreshLive();
+        return;
+      } catch (e) { /* API unavailable — fall through to local demo delete */ }
+    }
     setSchedules(prev => prev.filter(s => s.id !== schedId));
-  }, []);
+  }, [schedules, refreshLive]);
 
-  const saveSchedule = useCallback((sch) => {
-    setSchedules(prev => {
-      const idx = prev.findIndex(s => s.id === sch.id);
-      if (idx >= 0) { const next = [...prev]; next[idx] = sch; return next; }
-      return [...prev, sch];
-    });
+  const saveSchedule = useCallback(async (sch) => {
+    try {
+      const payload = {
+        name: `${clientName(sch.client_id)} — ${(REPORT_TYPES.find(r => r.value === sch.report_type) || {}).label || sch.report_type}`,
+        report_type: BACKEND_REPORT_TYPE_MAP[sch.report_type] || 'sustainability',
+        frequency: BACKEND_FREQUENCY_MAP[sch.frequency] || 'monthly',
+        recipients: (sch.recipients && sch.recipients.length) ? sch.recipients : ['reports@example.com'],
+        format: (sch.format || 'PDF').toLowerCase(),
+        parameters: {
+          client_id: sch.client_id, template: sch.template, sections: sch.sections,
+          sla_buffer: sch.sla_buffer, auto_send: sch.auto_send,
+        },
+      };
+      if (sch._live && sch.id) {
+        await axios.patch(`${SCHED_API}/${sch.id}`, payload);
+      } else {
+        await axios.post(SCHED_API, payload);
+      }
+      await refreshLive();
+    } catch (e) {
+      // API unavailable — fall back to local-only demo persistence
+      setSchedules(prev => {
+        const idx = prev.findIndex(s => s.id === sch.id);
+        if (idx >= 0) { const next = [...prev]; next[idx] = sch; return next; }
+        return [...prev, sch];
+      });
+    }
     setShowCreateForm(false); setEditSchedule(null);
-  }, []);
+  }, [refreshLive]);
 
   const batchRunDue = useCallback(() => { dueThisWeek.forEach(s => runNow(s.id)); }, [dueThisWeek, runNow]);
   const batchPauseAll = useCallback(() => { setSchedules(prev => prev.map(s => ({ ...s, status:'paused' }))); }, []);
@@ -311,11 +422,14 @@ export default function ScheduledReportsPage() {
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
         <div>
           <h1 style={{ fontSize:26, fontWeight:700, color:T.navy, margin:0 }}>Scheduled Report Automation</h1>
-          <div style={{ display:'flex', gap:6, marginTop:6 }}>
+          <div style={{ display:'flex', gap:6, marginTop:6, flexWrap:'wrap' }}>
             <Badge label="Auto-Generate" bg={T.sage} />
             <Badge label="SLA" bg={T.gold} color={T.navy} />
             <Badge label="Multi-Client" bg={T.navy} />
             <Badge label="Calendar" bg={T.navyL} />
+            {apiStatus === 'loading' && <Badge label="Connecting to Scheduled Reports API…" bg={T.textMut} />}
+            {apiStatus === 'live' && <Badge label="● Live — schedules persisted via /api/v1/scheduled-reports (Postgres)" bg="#dcfce7" color="#166534" />}
+            {apiStatus === 'demo' && <Badge label="○ Demo Data — Scheduled Reports API unavailable, showing seeded schedules" bg="#fef3c7" color="#92400e" />}
           </div>
         </div>
         <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>

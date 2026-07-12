@@ -42,6 +42,10 @@ const PAI_CATEGORIES = [
     { id:15, name:'GHG Intensity of Sovereign', unit:'tCO2e/EUR M GDP', metric:'GHG intensity of investee countries', rts:'Table 1 #15', pillar:'E', pcaf:'PCAF Sovereign' },
     { id:16, name:'Countries with Social Violations', unit:'count', metric:'Investee countries subject to social violations', rts:'Table 1 #16', pillar:'S', pcaf:'N/A' },
   ]},
+  { key:'realestate', label:'Real Estate', color:T.blue, indicators:[
+    { id:17, name:'Fossil Fuel Exposure (Real Estate)', unit:'%', metric:'Exposure to fossil fuels through real estate assets', rts:'Table 1 #17', pillar:'E', pcaf:'PCAF Real Estate' },
+    { id:18, name:'Energy-Inefficient Real Estate', unit:'%', metric:'Exposure to energy-inefficient real estate assets (EPC D or below)', rts:'Table 1 #18', pillar:'E', pcaf:'PCAF Real Estate' },
+  ]},
 ];
 
 const ALL_INDICATORS = PAI_CATEGORIES.flatMap(c => c.indicators.map(i => ({ ...i, category: c.key, catColor: c.color })));
@@ -282,7 +286,7 @@ const TabCalculator = () => {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-      <Alert type="info">Configure your portfolio holdings below. Each PAI indicator is calculated based on weighted entity-level data mapped to the 14 mandatory SFDR indicators (SFDR RTS Annex I, Table 1).</Alert>
+      <Alert type="info">Configure your portfolio holdings below. Each PAI indicator is calculated based on weighted entity-level data mapped to the 18 mandatory SFDR indicators (SFDR RTS Annex I, Table 1).</Alert>
 
       {/* ── Holdings Table ─────────────────────────────────── */}
       <Card>
@@ -684,7 +688,7 @@ const TabComparison = () => {
 const TabReference = () => {
   const [sub, setSub] = useState('mandatory');
   const subs = [
-    { key:'mandatory', label:'14 Mandatory PAI' },
+    { key:'mandatory', label:'18 Mandatory PAI' },
     { key:'additional', label:'Additional Indicators' },
     { key:'classification', label:'Art 6/8/9 Classification' },
     { key:'disclosure', label:'RTS Disclosure Format' },
@@ -711,12 +715,12 @@ const TabReference = () => {
   const ART_CLASSIFICATIONS = [
     { article:'Article 6', scope:'All financial products', paiReq:'No mandatory PAI disclosure, but must explain how sustainability risks are integrated', examples:'Standard mutual funds, ETFs without ESG mandate', color:T.sub },
     { article:'Article 8', scope:'Products promoting E/S characteristics', paiReq:'Must disclose how PAI indicators are considered; must publish pre-contractual SFDR Annex II', examples:'ESG-screened funds, best-in-class ESG funds, thematic ESG', color:T.blue },
-    { article:'Article 9', scope:'Products with sustainable investment objective', paiReq:'Full PAI disclosure mandatory; must demonstrate all 14 mandatory indicators + selected additional; must show DNSH for each investment', examples:'Impact funds, green bond funds, climate-transition aligned', color:T.green },
+    { article:'Article 9', scope:'Products with sustainable investment objective', paiReq:'Full PAI disclosure mandatory; must demonstrate all 18 mandatory indicators + selected additional; must show DNSH for each investment', examples:'Impact funds, green bond funds, climate-transition aligned', color:T.green },
   ];
 
   const DISCLOSURE_SECTIONS = [
     { section:'Section I', title:'Description of PAI Policies', content:'Description of the policies for identifying and prioritising principal adverse sustainability impacts. Due diligence policies. Adherence to responsible business conduct codes and standards.' },
-    { section:'Section II', title:'Description of PAI Indicators', content:'All 14 mandatory indicators from Table 1 with quantified values. At least one additional E indicator from Table 2 and one additional S indicator from Table 3. Comparison with previous period. Explanation of methodologies.' },
+    { section:'Section II', title:'Description of PAI Indicators', content:'All 18 mandatory indicators from Table 1 (14 corporate + 2 sovereign + 2 real estate) with quantified values. At least one additional E indicator from Table 2 and one additional S indicator from Table 3. Comparison with previous period. Explanation of methodologies.' },
     { section:'Section III', title:'Actions Taken & Planned', content:'Description of actions taken to address PAI in the reference period. Description of engagement policies. Actions planned or targets set for the next reference period.' },
     { section:'Section IV', title:'Adherence to International Standards', content:'Description of adherence to OECD Guidelines for Multinational Enterprises, UN Guiding Principles on Business and Human Rights, and Labour Organisation conventions.' },
   ];
@@ -753,7 +757,7 @@ const TabReference = () => {
       {/* ── Mandatory PAI ──────────────────────────────── */}
       {sub === 'mandatory' && (
         <Card>
-          <div style={{ fontSize:15, fontWeight:700, color:T.navy, marginBottom:12 }}>14 Mandatory PAI Indicators (SFDR RTS Table 1)</div>
+          <div style={{ fontSize:15, fontWeight:700, color:T.navy, marginBottom:12 }}>18 Mandatory PAI Indicators (SFDR RTS Table 1)</div>
           <Table columns={[
             { key:'id', label:'#', align:'center', nowrap:true },
             { key:'name', label:'Indicator Name' },
@@ -770,7 +774,7 @@ const TabReference = () => {
       {sub === 'additional' && (
         <Card>
           <div style={{ fontSize:15, fontWeight:700, color:T.navy, marginBottom:4 }}>Additional PAI Indicators</div>
-          <div style={{ fontSize:12, color:T.sub, marginBottom:12 }}>At least one from Table 2 (Climate) and one from Table 3 (Social) must be disclosed alongside the 14 mandatory indicators.</div>
+          <div style={{ fontSize:12, color:T.sub, marginBottom:12 }}>At least one from Table 2 (Climate) and one from Table 3 (Social) must be disclosed alongside the 18 mandatory indicators.</div>
           <Table columns={[
             { key:'id', label:'ID', nowrap:true },
             { key:'name', label:'Indicator' },
@@ -861,7 +865,7 @@ export default function SfdrPaiPage() {
           </div>
           <h1 style={{ color:'#fff', fontSize:26, fontWeight:700, margin:0 }}>SFDR PAI Module</h1>
           <p style={{ color:'rgba(255,255,255,.65)', fontSize:13, margin:'6px 0 0', maxWidth:720 }}>
-            Calculate, assess, and disclose the 14 mandatory Principal Adverse Impact indicators per EU Regulation 2019/2088 (SFDR) and Delegated Regulation 2022/1288 (RTS).
+            Calculate, assess, and disclose the 18 mandatory Principal Adverse Impact indicators per EU Regulation 2019/2088 (SFDR) and Delegated Regulation 2022/1288 (RTS).
           </p>
         </div>
       </div>

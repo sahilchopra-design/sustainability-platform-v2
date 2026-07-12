@@ -12,23 +12,12 @@ import bcrypt as _bcrypt
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
-from sqlalchemy import text as sa_text
-
 from db.base import get_db
 from db.models.portfolio_pg import UserPG, UserSessionPG
-from db.models.rbac import RbacUserProfilePG, RbacModuleAccessPG, RbacRolePresetPG
 
-# ── Module Maturity → Role Access Tier ──────────────────────────────────────
-# Only modules at or above the user's minimum tier are included in allowed paths.
-# super_admin: all modules (no filter);  team_member: review+ (tier≥1)
-# partner/demo: beta+ (tier≥2);  viewer: production only (tier≥3)
-ROLE_MIN_TIER = {
-    "super_admin": 0,
-    "team_member": 1,
-    "partner": 2,
-    "demo": 2,
-    "viewer": 3,
-}
+# NOTE: RBAC effective-access computation (preset + grants - denies, maturity
+# tier filter) lives in api/rbac_utils.get_effective_rbac() — the single
+# source of truth shared with middleware/auth_middleware.py. See get_me() below.
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -207,73 +196,17 @@ def get_me(request: Request, db: Session = Depends(get_db)):
             pass
 
     # ── RBAC enrichment ───────────────────────────────────────────────────────
-    rbac_role = None
-    access_expires_at = None
-    is_read_only = False
-    allowed_module_paths = None  # None = all (super_admin)
-    display_org = None
-    days_remaining = None
-
-    try:
-        profile = db.query(RbacUserProfilePG).filter(
-            RbacUserProfilePG.user_id == user.user_id
-        ).first()
-
-        if profile:
-            rbac_role = profile.rbac_role
-            is_read_only = profile.is_read_only or False
-            display_org = profile.display_org
-            access_expires_at = profile.access_expires_at
-
-            if profile.access_expires_at:
-                exp = profile.access_expires_at
-                if exp.tzinfo is None:
-                    exp = exp.replace(tzinfo=timezone.utc)
-                delta = exp - datetime.now(timezone.utc)
-                days_remaining = max(0, delta.days)
-
-            if rbac_role == "super_admin":
-                allowed_module_paths = None  # unrestricted
-            else:
-                # Build effective path list: preset + grants - denies
-                base_paths: list = []
-                if profile.preset_id:
-                    preset = db.get(RbacRolePresetPG, profile.preset_id)
-                    if preset and preset.module_paths:
-                        base_paths = list(preset.module_paths)
-
-                overrides = db.query(RbacModuleAccessPG).filter(
-                    RbacModuleAccessPG.user_id == user.user_id
-                ).all()
-                now = datetime.now(timezone.utc)
-                grants = {
-                    o.module_path for o in overrides
-                    if o.access_type == "grant" and (o.expires_at is None or o.expires_at > now)
-                }
-                denies = {
-                    o.module_path for o in overrides
-                    if o.access_type == "deny" and (o.expires_at is None or o.expires_at > now)
-                }
-                allowed_module_paths = sorted((set(base_paths) | grants) - denies)
-
-                # ── Maturity-tier filter ───────────────────────────────
-                # Filter out modules whose maturity tier is below the
-                # user's role minimum (e.g., partners only see beta+).
-                min_tier = ROLE_MIN_TIER.get(rbac_role, 3)
-                if min_tier > 0 and allowed_module_paths:
-                    try:
-                        rows = db.execute(
-                            sa_text("SELECT module_path, review_tier FROM module_review_status")
-                        ).fetchall()
-                        status_map = {r[0]: r[1] for r in rows}
-                        allowed_module_paths = sorted(
-                            p for p in allowed_module_paths
-                            if status_map.get(p, 0) >= min_tier
-                        )
-                    except Exception:
-                        pass  # table may not exist yet — degrade gracefully
-    except Exception:
-        pass  # RBAC tables may not yet be migrated — degrade gracefully
+    # Delegates to the shared helper in api/rbac_utils.py so this endpoint and
+    # the AuthMiddleware's server-side module-access enforcement can never
+    # diverge — there is exactly one implementation of the RBAC computation.
+    from api.rbac_utils import get_effective_rbac
+    eff = get_effective_rbac(db, user)
+    rbac_role = eff.rbac_role
+    access_expires_at = eff.access_expires_at
+    is_read_only = eff.is_read_only
+    allowed_module_paths = eff.allowed_module_paths
+    display_org = eff.display_org
+    days_remaining = eff.days_remaining
 
     return {
         "user_id": user.user_id,

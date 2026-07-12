@@ -667,13 +667,15 @@ REGULATORY_CLASSIFICATION: dict[str, Any] = {
 # ---------------------------------------------------------------------------
 
 def _norm_cdf(x: float) -> float:
-    """Cumulative standard normal distribution (Abramowitz & Stegun approximation)."""
-    neg = x < 0
-    x = abs(x)
-    k = 1.0 / (1.0 + 0.3275911 * x)
-    y = 1.0 - (((((1.061405429 * k - 1.453152027) * k) + 1.421413741)
-                 * k - 0.284496736) * k + 0.254829592) * k * math.exp(-x * x / 2.0)
-    return 1.0 - y if neg else y
+    """Cumulative standard normal distribution: N(x) = ½·(1 + erf(x/√2)).
+
+    Fixed 2026-07-04: the previous version applied the Abramowitz & Stegun 7.1.26
+    erf polynomial (constants 0.3275911, 0.254829592, …) directly as if it were
+    the normal CDF (and with exp(-x²/2) instead of exp(-x²)), giving N(0) ≈ 1e-9
+    instead of 0.5 — which made price_eua_option return negative call premiums.
+    math.erf is exact to double precision, so no approximation is needed here.
+    """
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
 
 
 def _norm_pdf(x: float) -> float:

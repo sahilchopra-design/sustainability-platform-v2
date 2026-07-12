@@ -2,12 +2,20 @@
 // Route: /esg-ratings-comparator
 // Framework: Multi-provider ESG methodology (MSCI IVA, S&P CSA, Sustainalytics ESG Risk, ISS QualityScore, CDP, Bloomberg)
 // Reference: EU ESG Ratings Regulation (EU) 2024/3005
-import React,{useState,useMemo,useCallback} from 'react';
+import React,{useState,useMemo,useCallback,useEffect} from 'react';
+import axios from 'axios';
 import {BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,Cell,ScatterChart,Scatter,Legend,LineChart,Line,PieChart,Pie,AreaChart,Area,ZAxis} from 'recharts';
 import {SECTOR_BENCHMARKS} from '../../../data/referenceData';
 import {SECURITY_UNIVERSE} from '../../../data/securityUniverse';
 import {getEsgRatings,hasRealEsgData,realEsgCoverage,getCoverageStats,PROVIDER_META} from '../../../data/eohdEsgService';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
+
+// Backend E57 ESG Ratings Reform & Divergence engine (Berg, Kolbel & Rigobon
+// 2022 "Aggregate Confusion" divergence decomposition: scope 56% / weight 23%
+// / measurement 21%). See backend/services/esg_ratings_engine.py +
+// backend/api/v1/routes/esg_ratings.py
+const API='http://localhost:8001';
+const RATINGS_API=`${API}/api/v1/esg-ratings`;
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    THEME + HELPERS
@@ -252,6 +260,42 @@ export default function EsgRatingsComparatorPage(){
 
   const doSort=useCallback((col)=>{setSortCol(col);setSortDir(d=>sortCol===col?(d==='asc'?'desc':'asc'):'desc');setPage(1);},[sortCol]);
 
+  // --- Live backend wiring (E57 ESG Ratings Reform & Divergence engine) ---
+  // Fetches the real Berg-et-al divergence decomposition for the company
+  // currently expanded in the drawer via POST /api/v1/esg-ratings/divergence-report.
+  // Falls back to the locally-computed (seeded) divergence figure, clearly
+  // labeled, if the API is unreachable.
+  const [divergenceLive,setDivergenceLive]=useState(null);
+  const [divergenceStatus,setDivergenceStatus]=useState('idle'); // 'idle' | 'loading' | 'live' | 'demo'
+  useEffect(()=>{
+    if(drawer==null){setDivergenceLive(null);setDivergenceStatus('idle');return;}
+    const co=COMPANIES.find(c=>c.id===drawer);
+    if(!co)return;
+    let cancelled=false;
+    setDivergenceStatus('loading');
+    const t=setTimeout(async()=>{
+      try{
+        const {data}=await axios.post(`${RATINGS_API}/divergence-report`,{
+          entity_id:`CO-${co.id}`,
+          entity_name:co.name,
+          sector:co.sector,
+          ratings:{
+            MSCI:{score:co.msciNum},
+            Sustainalytics:{score:co.sustNorm},
+            ISS:{score:co.issNorm},
+            CDP:{score:co.cdpNum},
+            'S&P Global':{score:co.sp},
+            Bloomberg:{score:co.bbg},
+          },
+        },{timeout:10000});
+        if(!cancelled){setDivergenceLive(data);setDivergenceStatus('live');}
+      }catch(e){
+        if(!cancelled){setDivergenceLive(null);setDivergenceStatus('demo');}
+      }
+    },250);
+    return()=>{cancelled=true;clearTimeout(t);};
+  },[drawer]);
+
   const ss={
     wrap:{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text},
     header:{fontSize:22,fontWeight:700,color:T.navy,marginBottom:4},
@@ -357,6 +401,28 @@ export default function EsgRatingsComparatorPage(){
                       <Legend/>
                     </LineChart>
                   </ResponsiveContainer>
+                </div>
+                {/* Live Berg-et-al divergence decomposition — backend/services/esg_ratings_engine.py */}
+                <div style={{marginTop:12,padding:'10px 14px',background:T.surface,border:`1px solid ${T.border}`,borderRadius:8}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+                    <span style={{fontSize:11,fontWeight:700,color:T.navy}}>Berg, Kolbel &amp; Rigobon Divergence Decomposition</span>
+                    {divergenceStatus==='loading'&&<span style={{fontSize:10,fontFamily:T.mono,color:T.textMut}}>Connecting…</span>}
+                    {divergenceStatus==='live'&&<span style={{fontSize:10,fontFamily:T.mono,color:T.green}}>● Live — /api/v1/esg-ratings/divergence-report</span>}
+                    {divergenceStatus==='demo'&&<span style={{fontSize:10,fontFamily:T.mono,color:T.amber}}>○ Demo Data — ESG Ratings API unavailable, using locally-computed spread</span>}
+                  </div>
+                  {divergenceStatus==='live'&&divergenceLive?(
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12}}>
+                      <div><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>COMPOSITE / CONSENSUS</div><div style={{fontSize:15,fontWeight:700,color:T.navy}}>{divergenceLive.composite_score} <span style={{fontSize:11,color:T.textSec}}>({divergenceLive.consensus_rating})</span></div></div>
+                      <div><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>DIVERGENCE (stdev)</div><div style={{fontSize:15,fontWeight:700,color:divergenceLive.divergence_score>10?T.red:T.amber}}>{divergenceLive.divergence_score}pt</div></div>
+                      <div><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>TOP DRIVER</div><div style={{fontSize:12,fontWeight:600,color:T.text}}>{({scope_56pct:'Scope (56%)',weight_23pct:'Weight (23%)',measurement_21pct:'Measurement (21%)'})[divergenceLive.top_divergence_driver]||'—'}</div></div>
+                      <div><div style={{fontSize:9,color:T.textMut,fontFamily:T.mono}}>BIAS-ADJUSTED SCORE</div><div style={{fontSize:15,fontWeight:700,color:T.navy}}>{divergenceLive.bias_adjusted_score}</div></div>
+                    </div>
+                  ):(
+                    <div style={{fontSize:11,color:T.textMut}}>Locally-computed spread shown in the panels above (max−min = {r.divergence}pt). Live decomposition unavailable.</div>
+                  )}
+                  {divergenceStatus==='live'&&divergenceLive?.esra_implications?.length>0&&(
+                    <div style={{marginTop:8,fontSize:10,color:T.textSec}}>{divergenceLive.esra_implications[0]}</div>
+                  )}
                 </div>
                 <div style={{fontSize:11,color:T.textSec,marginTop:8}}>Controversies: {r.controversyCount} ({r.controversySeverity}) | Country: {r.country} | Ticker: {r.ticker} | Data: <span style={{color:r.dataSource==='EODHD'?T.green:T.amber,fontFamily:T.mono,fontWeight:600}}>{r.dataSource}</span> (DQS-{r.dataDqs})</div>
               </td></tr>}

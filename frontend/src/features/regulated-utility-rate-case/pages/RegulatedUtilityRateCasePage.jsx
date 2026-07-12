@@ -119,7 +119,19 @@ export default function RegulatedUtilityRateCasePage() {
 
   const wacc = (equityRatio/100 * roeAssumption + (1-equityRatio/100) * debtCost * (1-0.21)).toFixed(2);
   const allowedReturn = (util.rate_base * +wacc / 100 / 1000).toFixed(2);
-  const lagCost = Math.round(util.rate_base * (util.allowed_roe - util.earned_roe) / 100 / 1000 * util.lag_days / 365 * 1000);
+  // Reg_Lag_Cost = Rate_Base x (ROE_allowed - ROE_earned) x Lag_Days/365 (per the module guide's
+  // own stated formula, EP-EL3 calculationEngine). rate_base is already in $M so no further
+  // unit conversion is needed (the previous /1000 * 1000 pair was a no-op left over from an
+  // earlier edit and has been removed).
+  // Verified against the guide's own cited PG&E case study inputs ($52Bn rate base, 510-day lag,
+  // 10.0% allowed vs 9.4% earned ROE): 52000 * 0.006 * (510/365) = $436M, not the "$328M" figure
+  // previously quoted in the guide text. $328M does not fall out of this formula for any
+  // reasonable single-parameter adjustment (equity-ratio weighting, capping lag at 365 days, etc.
+  // all overshoot or undershoot it) -- it appears to be a documentation slip that duplicated the
+  // "median regulatory lag: 328 days" statistic listed immediately below the case study in the
+  // same guide entry. The guide text has been corrected to $436M (see moduleGuides.js) to stay
+  // internally consistent with its own formula and inputs; the calculation below is unchanged.
+  const lagCost = Math.round(util.rate_base * (util.allowed_roe - util.earned_roe) / 100 * util.lag_days / 365);
 
   const avgROE = (UTILITIES.reduce((s,u) => s+u.allowed_roe, 0)/UTILITIES.length).toFixed(2);
   const avgLag = Math.round(UTILITIES.reduce((s,u) => s+u.lag_days, 0)/UTILITIES.length);

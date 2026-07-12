@@ -981,11 +981,18 @@ def get_pcaf_summary(data_year: Optional[int] = None, db: Session = Depends(get_
     """
     Compute PCAF financed emissions from the loan portfolio rows and
     counterparty emissions tables.  Returns sector breakdown, DQS distribution,
-    total financed emissions, and WACI.
+    total financed emissions, and portfolio lending intensity.
 
     PCAF Attribution Factor (AF) = outstanding_amount / total_outstanding_by_cp
-    Financed Emissions = AF × (scope1 + scope2_market) per counterparty
-    WACI = Σ(outstanding_amount × emissions_intensity) / total_portfolio
+    Financed Emissions = AF × (scope1 + scope2_market) per counterparty,
+    aggregated across ALL loan rows belonging to that counterparty (not just
+    the first row seen) so multi-loan counterparties are not understated.
+
+    Lending Intensity = Σ(portfolio_weight × emissions_per_$M_outstanding).
+    NOTE: this is loan-book carbon intensity, NOT true WACI. Per PCAF/TCFD,
+    WACI is revenue-weighted (emissions / counterparty revenue); the loan
+    portfolio schema has no revenue field, so true WACI cannot be computed
+    here and this metric must not be labelled WACI.
     """
     year_filter = "AND r.data_year = :yr" if data_year else ""
 
@@ -1044,9 +1051,9 @@ def get_pcaf_summary(data_year: Optional[int] = None, db: Session = Depends(get_
     total_financed_tco2e = 0.0
     dqs_buckets: Dict[int, float] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     sector_breakdown: Dict[str, Dict] = {}
-    waci_numerator = 0.0
+    lending_intensity_numerator = 0.0
 
-    seen_counterparties = set()  # avoid double-counting multi-row counterparties
+    seen_counterparties = set()  # tracks distinct counterparties (for unique_counterparties count only)
 
     for r in rows:
         cid, cp_name, sector, outstanding, row_dqs, row_emissions, stage = (
@@ -1074,26 +1081,30 @@ def get_pcaf_summary(data_year: Optional[int] = None, db: Session = Depends(get_
 
         financed_tco2e = af * total_scope12
 
-        if cid not in seen_counterparties:
-            total_financed_tco2e += financed_tco2e
-            dqs_buckets[effective_dqs] = dqs_buckets.get(effective_dqs, 0) + financed_tco2e
-            seen_counterparties.add(cid)
+        # Aggregate financed emissions across ALL loan rows for this counterparty
+        # (AF partitions company emissions across its loans, so summing every
+        # row's AF-weighted share — not just the first row seen — is required
+        # to avoid understating multi-loan counterparties).
+        seen_counterparties.add(cid)
+        total_financed_tco2e += financed_tco2e
+        dqs_buckets[effective_dqs] = dqs_buckets.get(effective_dqs, 0) + financed_tco2e
 
         # Sector aggregation
         if sector not in sector_breakdown:
             sector_breakdown[sector] = {"outstanding_usd": 0.0, "financed_tco2e": 0.0, "loan_count": 0}
         sector_breakdown[sector]["outstanding_usd"] += outstanding
         sector_breakdown[sector]["loan_count"] += 1
-        if cid not in seen_counterparties or True:
-            sector_breakdown[sector]["financed_tco2e"] += financed_tco2e
+        sector_breakdown[sector]["financed_tco2e"] += financed_tco2e
 
-        # WACI = emissions_intensity × weight_in_portfolio
-        if outstanding > 0 and total_scope12 > 0 and outstanding > 0:
+        # Lending intensity = emissions_intensity × weight_in_portfolio.
+        # This is loan-book carbon intensity (tCO2e / $M outstanding), NOT a
+        # revenue-weighted WACI — no counterparty revenue field is available.
+        if outstanding > 0 and total_scope12 > 0:
             # intensity = tCO2e / USD million outstanding
             intensity = (total_scope12 / (outstanding / 1_000_000)) if outstanding else 0
-            waci_numerator += (outstanding / total_outstanding) * intensity if total_outstanding > 0 else 0
+            lending_intensity_numerator += (outstanding / total_outstanding) * intensity if total_outstanding > 0 else 0
 
-    waci = round(waci_numerator, 2) if total_outstanding > 0 else None
+    lending_intensity = round(lending_intensity_numerator, 2) if total_outstanding > 0 else None
 
     # DQS distribution percentages
     total_fe = total_financed_tco2e or 1  # avoid div-by-zero
@@ -1109,7 +1120,7 @@ def get_pcaf_summary(data_year: Optional[int] = None, db: Session = Depends(get_
             "unique_counterparties": len(seen_counterparties),
             "total_outstanding_usd": round(total_outstanding, 2),
             "total_financed_emissions_tco2e": round(total_financed_tco2e, 2),
-            "waci_tco2e_per_musd": waci,
+            "lending_intensity_tco2e_per_musd": lending_intensity,
             "weighted_avg_dqs": round(weighted_dqs, 2) if weighted_dqs else None,
             "data_year": data_year,
         },

@@ -22,10 +22,13 @@ function calcDegradation(yearsArr, tempC, efcPerYear, chemistry) {
   const A = chemistry === 'LFP' ? 0.022 : chemistry === 'NMC' ? 0.026 : 0.030;
   const Ea = chemistry === 'LFP' ? 0.52 : chemistry === 'NMC' ? 0.48 : 0.44;
   const kCyc = chemistry === 'LFP' ? 1.8e-5 : chemistry === 'NMC' ? 2.5e-5 : 3.0e-5;
-  const R = 8.314e-5;
+  const kB = 8.617e-5; // Boltzmann constant (eV/K)
+  const T0 = 298.15;   // reference temperature, 25°C, in K
   const TK = tempC + 273.15;
+  // Arrhenius acceleration factor relative to 25°C reference (accel=1 at T0; >1 above, <1 below)
+  const accel = Math.exp((Ea / kB) * (1 / T0 - 1 / TK));
   return yearsArr.map(yr => {
-    const calFade = A * Math.exp(-Ea / (R * TK)) * Math.sqrt(yr);
+    const calFade = A * accel * Math.sqrt(yr);
     const cycFade = efcPerYear * yr * kCyc;
     const combined = Math.sqrt(calFade * calFade + cycFade * cycFade);
     return { year: yr, calFade: +calFade.toFixed(4), cycFade: +cycFade.toFixed(4), combined: +Math.min(0.95, combined).toFixed(4), capacity: +(1 - Math.min(0.95, combined)).toFixed(3) };
@@ -41,7 +44,7 @@ function calcLCOS(capexPerKWh, powerMW, capMWh, opexPct, discountR, lifeYrs, efc
     const deg = degradation[y - 1]?.capacity || 1;
     const opex = capex * opexPct;
     npvOpex += opex / dr;
-    const eMWh = efcPerYear * capMWh * deg * 365;
+    const eMWh = efcPerYear * capMWh * deg; // efcPerYear is already annualized (EFC/yr); do not re-multiply by 365
     npvEnergy += eMWh / dr;
     if (y === Math.round(lifeYrs * 0.55)) npvReplace += (capex * 0.25) / dr;
   }
@@ -333,13 +336,13 @@ export default function BESSGridAnalyticsPage() {
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 12 }}>Revenue vs LCOS Breakeven</div>
               <ResponsiveContainer width="100%" height={180}>
-                <BarChart data={[{ label: 'Revenue/MWh', value: totalRevK * 1000 / (efcPerYear * capMWh * 365) }, { label: 'LCOS/MWh', value: Number(lcos) }]}>
+                <BarChart data={[{ label: 'Revenue/MWh', value: totalRevK * 1000 / (efcPerYear * capMWh) }, { label: 'LCOS/MWh', value: Number(lcos) }]}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                   <XAxis dataKey="label" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip formatter={v => [`$${typeof v === 'number' ? v.toFixed(1) : v}/MWh`, '']} />
                   <Bar dataKey="value">
-                    <Cell fill={totalRevK * 1000 / (efcPerYear * capMWh * 365) >= Number(lcos) ? T.green : T.red} />
+                    <Cell fill={totalRevK * 1000 / (efcPerYear * capMWh) >= Number(lcos) ? T.green : T.red} />
                     <Cell fill={T.red} />
                   </Bar>
                 </BarChart>
@@ -491,9 +494,9 @@ export default function BESSGridAnalyticsPage() {
       case 6: return (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 16 }}>
-            <KpiCard label="Revenue/MWh discharged" value={`$${(totalRevK * 1000 / Math.max(1, efcPerYear * capMWh * 365)).toFixed(1)}`} color={T.accent} />
+            <KpiCard label="Revenue/MWh discharged" value={`$${(totalRevK * 1000 / Math.max(1, efcPerYear * capMWh)).toFixed(1)}`} color={T.accent} />
             <KpiCard label="LCOS" value={`$${lcos}/MWh`} color={Number(lcos) < 150 ? T.green : T.red} />
-            <KpiCard label="Margin" value={`$${(totalRevK * 1000 / Math.max(1, efcPerYear * capMWh * 365) - Number(lcos)).toFixed(1)}/MWh`} color={totalRevK * 1000 / Math.max(1, efcPerYear * capMWh * 365) > Number(lcos) ? T.green : T.red} />
+            <KpiCard label="Margin" value={`$${(totalRevK * 1000 / Math.max(1, efcPerYear * capMWh) - Number(lcos)).toFixed(1)}/MWh`} color={totalRevK * 1000 / Math.max(1, efcPerYear * capMWh) > Number(lcos) ? T.green : T.red} />
           </div>
           <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 8, padding: 16, marginBottom: 16 }}>
             <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 12 }}>Revenue vs LCOS by Market</div>
@@ -502,7 +505,7 @@ export default function BESSGridAnalyticsPage() {
                 const p = marketPrices(m);
                 const disp = greedyDispatch(p, capMWh * (dod / 100), powerMW, rte / 100);
                 const annRev = disp.arbitrageDaily * 365 + freqRegRevK * 1000 + capMarketRevK * 1000;
-                const revPerMWh = annRev / Math.max(1, efcPerYear * capMWh * 365);
+                const revPerMWh = annRev / Math.max(1, efcPerYear * capMWh);
                 return { market: m, revPerMWh: +revPerMWh.toFixed(1), lcos: Number(lcos) };
               })}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -758,7 +761,7 @@ export default function BESSGridAnalyticsPage() {
                 const capMWhDur = powerMW * dur;
                 const lcosDur = calcLCOS(capexPerKWh, powerMW, capMWhDur, opexPct, discountR / 100, lifeYrs, efcPerYear, degradation);
                 const revK = annualArb * (dur / 4) * (dur <= 8 ? 1 : 0.9);
-                return { duration: `${dur}-hr`, lcos: Number(lcosDur), revPerMWh: +(revK * 1000 / Math.max(1, efcPerYear * capMWhDur * 365)).toFixed(1) };
+                return { duration: `${dur}-hr`, lcos: Number(lcosDur), revPerMWh: +(revK * 1000 / Math.max(1, efcPerYear * capMWhDur)).toFixed(1) };
               })}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
                 <XAxis dataKey="duration" tick={{ fontSize: 10 }} />

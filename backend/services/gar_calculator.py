@@ -59,6 +59,7 @@ class AlignmentClassification(Enum):
     TAXONOMY_ALIGNED = "TAXONOMY_ALIGNED"
     TAXONOMY_ELIGIBLE = "TAXONOMY_ELIGIBLE"
     NOT_ELIGIBLE = "NOT_ELIGIBLE"
+    NOT_ASSESSED = "NOT_ASSESSED"   # data quality gap — insufficient info to classify
 
 
 class KPIType(Enum):
@@ -312,6 +313,7 @@ class GARCalculator:
         eligible_assets = 0.0
         not_eligible_assets = 0.0
         not_assessed_count = 0
+        covered_exposure_count = 0
 
         # Objective tracking
         obj_aligned: Dict[str, float] = {o.value: 0.0 for o in TaxonomyObjective}
@@ -339,6 +341,7 @@ class GARCalculator:
 
             # Covered asset (in denominator)
             covered_assets += amount
+            covered_exposure_count += 1
             at = exp.asset_type
             type_totals[at] = type_totals.get(at, 0.0) + amount
             type_counts[at] = type_counts.get(at, 0) + 1
@@ -355,6 +358,15 @@ class GARCalculator:
                 aligned_amt = 0.0
                 eligible_amt = amount
                 eligible_assets += eligible_amt
+            elif classification == AlignmentClassification.NOT_ASSESSED.value:
+                # Data quality gap: no explicit classification, no NACE
+                # mapping, no household auto-assess signal available.
+                # Neither aligned/eligible nor "confirmed not eligible" --
+                # counted separately so assessed_pct reflects real,
+                # per-period data coverage (can rise AND fall).
+                aligned_amt = 0.0
+                eligible_amt = 0.0
+                not_assessed_count += 1
             else:
                 aligned_amt = 0.0
                 eligible_amt = 0.0
@@ -386,9 +398,15 @@ class GARCalculator:
         # --- 2. Calculate ratios ---
         gar_ratio = aligned_assets / covered_assets if covered_assets > 0 else 0.0
         gar_eligible_ratio = eligible_assets / covered_assets if covered_assets > 0 else 0.0
+        # Denominator is covered exposures (excludes SOVEREIGN/CENTRAL_BANK/
+        # INTERBANK/HEDGING_DERIVATIVE, which never enter the classification
+        # loop and so can never be "not assessed"). Using len(exposures)
+        # here would dilute assessed_pct with exposures that were never
+        # eligible to be assessed in the first place, and would drift
+        # incorrectly as the excluded/covered mix changes period to period.
         assessed_pct = (
-            1.0 - (not_assessed_count / len(exposures))
-            if len(exposures) > 0
+            1.0 - (not_assessed_count / covered_exposure_count)
+            if covered_exposure_count > 0
             else 0.0
         )
 
@@ -490,39 +508,67 @@ class GARCalculator:
         """
         Resolve the taxonomy classification for an exposure.
 
-        If a classification is explicitly provided and is not NOT_ELIGIBLE,
-        use it.  Otherwise, auto-assess household exposures (mortgages,
-        auto loans, renovation loans) using EPC / EV / renovation flags.
+        If a classification is explicitly provided, use it (including an
+        explicit NOT_ASSESSED). Otherwise, auto-assess household exposures
+        (mortgages, auto loans, renovation loans) using EPC / EV /
+        renovation flags. When none of those signals are available --
+        no classification, no NACE mapping, no household auto-assess data
+        -- the exposure is genuinely undetermined and is reported as
+        NOT_ASSESSED (a data-quality gap) rather than silently defaulted to
+        NOT_ELIGIBLE. Previously every unclassifiable exposure fell through
+        to NOT_ELIGIBLE, which meant `not_assessed_count` could never be
+        incremented and assessed_pct was permanently pinned at 100%
+        regardless of real data coverage.
 
         Returns:
             AlignmentClassification value string.
         """
-        # Explicitly classified
+        # Explicitly classified (including an explicit "not assessed")
         if exp.classification in (
             AlignmentClassification.TAXONOMY_ALIGNED.value,
             AlignmentClassification.TAXONOMY_ELIGIBLE.value,
             AlignmentClassification.NOT_ELIGIBLE.value,
+            AlignmentClassification.NOT_ASSESSED.value,
         ):
             return exp.classification
 
-        # Auto-assess household mortgages by EPC
-        if exp.asset_type == "HOUSEHOLD_MORTGAGE" and exp.epc_rating:
-            epc = exp.epc_rating.upper()
-            return EPC_ALIGNMENT_MAP.get(epc, "NOT_ELIGIBLE")
+        # Household mortgages: EPC rating is the only signal we auto-assess
+        # from. No EPC rating on file -> genuinely not assessed, not
+        # "not eligible".
+        if exp.asset_type == "HOUSEHOLD_MORTGAGE":
+            if exp.epc_rating:
+                epc = exp.epc_rating.upper()
+                return EPC_ALIGNMENT_MAP.get(epc, AlignmentClassification.NOT_ELIGIBLE.value)
+            return AlignmentClassification.NOT_ASSESSED.value
 
-        # Auto-assess EV loans
-        if exp.asset_type == "HOUSEHOLD_AUTO" and exp.is_ev_loan:
-            return AlignmentClassification.TAXONOMY_ALIGNED.value
+        # Auto-assess EV loans (is_ev_loan is a definitive yes/no signal,
+        # so absence of the flag means "not an EV loan", i.e. assessed and
+        # not eligible -- not a data gap).
+        if exp.asset_type == "HOUSEHOLD_AUTO":
+            return (
+                AlignmentClassification.TAXONOMY_ALIGNED.value
+                if exp.is_ev_loan
+                else AlignmentClassification.NOT_ELIGIBLE.value
+            )
 
-        # Auto-assess renovation loans
-        if exp.asset_type == "HOUSEHOLD_RENOVATION" and exp.is_renovation_loan:
-            return AlignmentClassification.TAXONOMY_ALIGNED.value
+        # Auto-assess renovation loans (same reasoning as EV loans above).
+        if exp.asset_type == "HOUSEHOLD_RENOVATION":
+            return (
+                AlignmentClassification.TAXONOMY_ALIGNED.value
+                if exp.is_renovation_loan
+                else AlignmentClassification.NOT_ELIGIBLE.value
+            )
 
         # NACE-based eligibility check
-        if exp.nace_code and exp.nace_code in NACE_TAXONOMY_MAP:
-            return AlignmentClassification.TAXONOMY_ELIGIBLE.value
+        if exp.nace_code:
+            if exp.nace_code in NACE_TAXONOMY_MAP:
+                return AlignmentClassification.TAXONOMY_ELIGIBLE.value
+            return AlignmentClassification.NOT_ELIGIBLE.value
 
-        return AlignmentClassification.NOT_ELIGIBLE.value
+        # No explicit classification, no NACE code, no household
+        # auto-assess signal -- there is nothing to base a determination
+        # on. This is a data-quality gap, not a confirmed ineligibility.
+        return AlignmentClassification.NOT_ASSESSED.value
 
     # -----------------------------------------------------------------------
     # STATIC UTILITY METHODS

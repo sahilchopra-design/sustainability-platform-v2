@@ -453,6 +453,8 @@ class AssuranceInput:
     has_prior_period_comparison: bool = False
     has_transition_plan_with_targets: bool = False
     has_third_party_data_documented: bool = False
+    has_sustainability_statement_complete: bool = False   # D8-1: no material omissions in disclosure package
+    has_disclosure_prior_period_comparatives: bool = False  # D8-4: entity-wide comparative info/restatements (distinct from D2-4 GHG-specific comparison)
 
 
 @dataclass
@@ -553,10 +555,10 @@ class AssuranceReadinessEngine:
         "has_management_signoff": "D6-3",
         "has_reporting_boundary_defined": "D7-1",
         "has_value_chain_scope": "D7-2",
-        "has_material_esrs_dps": "D8-1",    # proxy: material DPs = completeness
+        "has_sustainability_statement_complete": "D8-1",
         "has_transition_plan_with_targets": "D8-2",
         "has_assurance_provider": "D8-3",
-        "has_prior_period_comparison": "D8-4",
+        "has_disclosure_prior_period_comparatives": "D8-4",
     }
 
     def assess(

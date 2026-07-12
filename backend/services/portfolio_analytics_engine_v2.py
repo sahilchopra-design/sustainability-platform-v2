@@ -725,7 +725,7 @@ def _get_exposure_assessments(portfolio_id: str) -> List[Dict]:
         return []
     rows = _exec(
         "SELECT id, portfolio_id, asset_id, asset_name, sector, region, "
-        "physical_var_pct, transition_var_pct, total_var_pct, exposure_value "
+        "physical_var_pct, transition_var_pct, climate_var_pct, exposure_value "
         "FROM exposure_assessments WHERE portfolio_id=:pid "
         "ORDER BY physical_var_pct DESC",
         {"pid": portfolio_id},
@@ -1276,7 +1276,7 @@ class PortfolioAnalyticsEngine:
 
         # Try to get realised volatility from DB
         vol_rows = _exec(
-            "SELECT STDDEV(total_var_pct) FROM exposure_assessments "
+            "SELECT STDDEV(climate_var_pct) FROM exposure_assessments "
             "WHERE portfolio_id IS NOT NULL LIMIT 1"
         )
         realised_vol = None

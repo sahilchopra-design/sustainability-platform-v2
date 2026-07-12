@@ -82,6 +82,10 @@ EU_METHANE_COMPLIANCE_TIMELINE = {
 
 PENALTY_PER_T_EUR = 250.0  # €250/t methane for excess emissions (EU Methane Reg)
 
+# EPA GHG Reporting Program (40 CFR Part 98) mandatory-reporting threshold — the
+# recognized materiality bar for a "significant" stationary GHG emission source.
+GHG_SIGNIFICANT_SOURCE_THRESHOLD_T_CO2E_PA = 25_000.0
+
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -125,8 +129,16 @@ def calculate_methane_gwp_impact(
 
     short_term_ratio = _round(total_gwp20 / total_gwp100, 3) if total_gwp100 > 0 else 1.0
 
-    # Significance flag: GWP-20 tCO2e > 10% of typical Scope 1 (proxy: own GWP-100 * 0.1)
-    significance_flag = total_gwp20 > total_gwp100 * 0.10
+    # Significance flag: is this a material GHG emission source in absolute terms?
+    # Materiality is judged against the EPA GHGRP (40 CFR Part 98) mandatory-reporting
+    # threshold of 25,000 tCO2e/yr for a significant stationary emission source, applied
+    # on a GWP-20 basis (kt CO2e -> tCO2e) since GWP-20 is the conservative near-term
+    # methane climate-forcing measure.
+    # NOTE: the previous flag ("total_gwp20 > total_gwp100 * 0.10") was tautological —
+    # since GWP-20/GWP-100 for any CH4/N2O blend is always >= 1.0 (CH4: 82.5/29.8≈2.77,
+    # N2O: 273/273=1.0), it evaluated to True for any positive emissions, regardless of
+    # actual magnitude.
+    significance_flag = (total_gwp20 * 1000) >= GHG_SIGNIFICANT_SOURCE_THRESHOLD_T_CO2E_PA
 
     return {
         "ch4_kt_pa": _round(ch4_kt_pa, 3),

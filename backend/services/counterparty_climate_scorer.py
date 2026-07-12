@@ -46,14 +46,19 @@ logger = logging.getLogger(__name__)
 
 RATING_MAP: List[Dict[str, Any]] = [
     {"min": 90, "max": 100, "rating": "A+", "label": "Excellent climate posture"},
-    {"min": 80, "max": 89,  "rating": "A",  "label": "Strong climate posture"},
-    {"min": 70, "max": 79,  "rating": "B+", "label": "Good climate posture"},
-    {"min": 60, "max": 69,  "rating": "B",  "label": "Adequate climate posture"},
-    {"min": 50, "max": 59,  "rating": "C+", "label": "Below-average climate posture"},
-    {"min": 40, "max": 49,  "rating": "C",  "label": "Weak climate posture"},
-    {"min": 30, "max": 39,  "rating": "D+", "label": "Poor climate posture"},
-    {"min": 0,  "max": 29,  "rating": "D-", "label": "Very poor climate posture"},
+    {"min": 80, "max": 90,  "rating": "A",  "label": "Strong climate posture"},
+    {"min": 70, "max": 80,  "rating": "B+", "label": "Good climate posture"},
+    {"min": 60, "max": 70,  "rating": "B",  "label": "Adequate climate posture"},
+    {"min": 50, "max": 60,  "rating": "C+", "label": "Below-average climate posture"},
+    {"min": 40, "max": 50,  "rating": "C",  "label": "Weak climate posture"},
+    {"min": 30, "max": 40,  "rating": "D+", "label": "Poor climate posture"},
+    {"min": 0,  "max": 30,  "rating": "D-", "label": "Very poor climate posture"},
 ]
+# NOTE: bands are half-open [min, max) except the top band [90, 100] which is
+# closed on both ends. `max` is retained per-band purely for display/UI
+# purposes (see get_rating_scale()); matching itself is done in
+# _score_to_rating() via descending `min` thresholds so no boundary gap can
+# occur for fractional composite scores (e.g. 89.5).
 
 
 # ---------------------------------------------------------------------------
@@ -498,11 +503,29 @@ class CounterpartyClimateScorer:
 
     @staticmethod
     def _score_to_rating(score: float) -> tuple:
-        """Map composite score (0-100, higher=better) to rating and label."""
+        """Map composite score (0-100, higher=better) to rating and label.
+
+        Bug fix: the previous implementation matched bands via
+        `band["min"] <= score <= band["max"]` against integer-valued
+        min/max (e.g. 80-89 and 90-100). Composite scores are floats
+        rounded to 1 decimal place (see `score()`), so any fractional
+        value strictly between an upper band's `max` and the next band's
+        `min` (e.g. 89.5, 79.3) matched NO band and silently fell through
+        to the "D-" fallback -- misrating a near-A+ counterparty as the
+        worst possible grade.
+
+        Fixed by treating RATING_MAP (ordered highest-`min`-first) as a
+        set of half-open lower bounds and returning the first band whose
+        floor the (clipped) score clears. This guarantees every value in
+        [0, 100] resolves to exactly one band with no gap, regardless of
+        decimal precision.
+        """
+        score = max(0.0, min(100.0, score))
         for band in RATING_MAP:
-            if band["min"] <= score <= band["max"]:
+            if score >= band["min"]:
                 return band["rating"], band["label"]
-        # Below lowest band
+        # Unreachable given the clip above (lowest band min == 0), kept as
+        # a defensive fallback.
         return "D-", "Very poor climate posture"
 
     @staticmethod

@@ -5,6 +5,112 @@ const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0
 
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
+// ── Real OLS regression + F-test (from-scratch least squares, no fabricated stats) ──────
+// Lanczos approximation to log(Gamma(x)), needed for the incomplete-beta function below.
+function logGamma(x) {
+  const g = 7;
+  const c = [0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,
+    -176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - logGamma(1 - x);
+  x -= 1;
+  let a = c[0];
+  const t = x + g + 0.5;
+  for (let i = 1; i < g + 2; i++) a += c[i] / (x + i);
+  return 0.5 * Math.log(2 * Math.PI) + (x + 0.5) * Math.log(t) - t + Math.log(a);
+}
+// Continued-fraction evaluation for the regularized incomplete beta function (Numerical Recipes betacf).
+function betacf(a, b, x) {
+  const MAXIT = 200, EPS = 3e-7, FPMIN = 1e-30;
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1, d = 1 - qab * x / qap;
+  if (Math.abs(d) < FPMIN) d = FPMIN;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m <= MAXIT; m++) {
+    const m2 = 2 * m;
+    let aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d; h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    d = 1 + aa * d; if (Math.abs(d) < FPMIN) d = FPMIN;
+    c = 1 + aa / c; if (Math.abs(c) < FPMIN) c = FPMIN;
+    d = 1 / d;
+    const del = d * c; h *= del;
+    if (Math.abs(del - 1) < EPS) break;
+  }
+  return h;
+}
+// Regularized incomplete beta I_x(a,b).
+function betainc(x, a, b) {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  const bt = Math.exp(logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
+  return x < (a + 1) / (a + b + 2)
+    ? bt * betacf(a, b, x) / a
+    : 1 - bt * betacf(b, a, 1 - x) / b;
+}
+// Upper-tail p-value for an F(df1,df2) statistic.
+function fTestPValue(F, df1, df2) {
+  if (!(F > 0) || df1 <= 0 || df2 <= 0) return 1;
+  return betainc(df2 / (df2 + df1 * F), df2 / 2, df1 / 2);
+}
+// Two-tailed p-value for a t(df) statistic.
+function tTestPValue(t, df) {
+  if (df <= 0) return 1;
+  return betainc(df / (df + t * t), df / 2, 0.5);
+}
+// k×k matrix inverse via Gauss-Jordan elimination with partial pivoting.
+function matInverse(M) {
+  const n = M.length;
+  const A = M.map((row, i) => [...row, ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))]);
+  for (let col = 0; col < n; col++) {
+    let pivotRow = col;
+    for (let r = col + 1; r < n; r++) if (Math.abs(A[r][col]) > Math.abs(A[pivotRow][col])) pivotRow = r;
+    [A[col], A[pivotRow]] = [A[pivotRow], A[col]];
+    const pivot = A[col][col] || 1e-12;
+    for (let j = 0; j < 2 * n; j++) A[col][j] /= pivot;
+    for (let r = 0; r < n; r++) {
+      if (r === col) continue;
+      const factor = A[r][col];
+      for (let j = 0; j < 2 * n; j++) A[r][j] -= factor * A[col][j];
+    }
+  }
+  return A.map(row => row.slice(n));
+}
+// Ordinary least squares: X is an n×k design matrix (first column = intercept of 1s), y is length-n.
+// Returns real fitted coefficients, standard errors, t-stats, p-values, R², and an actual F-statistic
+// (with p-value) computed from the residual sum of squares of THIS fit — not a hard-coded number.
+function ols(X, y) {
+  const n = X.length, k = X[0].length;
+  const XtX = Array.from({ length: k }, () => Array(k).fill(0));
+  const XtY = Array(k).fill(0);
+  for (let i = 0; i < n; i++) {
+    for (let a = 0; a < k; a++) {
+      XtY[a] += X[i][a] * y[i];
+      for (let b = 0; b < k; b++) XtX[a][b] += X[i][a] * X[i][b];
+    }
+  }
+  const XtXinv = matInverse(XtX);
+  const beta = XtXinv.map(row => row.reduce((s, v, idx) => s + v * XtY[idx], 0));
+  const yHat = X.map(row => row.reduce((s, v, idx) => s + v * beta[idx], 0));
+  const resid = y.map((yi, i) => yi - yHat[i]);
+  const RSS = resid.reduce((s, e) => s + e * e, 0);
+  const yMean = y.reduce((s, v) => s + v, 0) / n;
+  const TSS = y.reduce((s, v) => s + (v - yMean) ** 2, 0);
+  const ESS = TSS - RSS;
+  const R2 = TSS > 0 ? 1 - RSS / TSS : 0;
+  const dfModel = k - 1;          // predictors, excludes intercept
+  const dfResid = n - k;
+  const F = dfResid > 0 && dfModel > 0 && RSS > 0 ? (ESS / dfModel) / (RSS / dfResid) : 0;
+  const pF = dfResid > 0 && dfModel > 0 ? fTestPValue(F, dfModel, dfResid) : 1;
+  const sigma2 = dfResid > 0 ? RSS / dfResid : 0;
+  const se = XtXinv.map((row, i) => Math.sqrt(Math.max(0, sigma2 * row[i])));
+  const tStats = beta.map((b, i) => (se[i] > 0 ? b / se[i] : 0));
+  const pValues = tStats.map(t => (dfResid > 0 ? tTestPValue(Math.abs(t), dfResid) : 1));
+  return { beta, se, tStats, pValues, R2, F, pF, dfModel, dfResid, n, RSS, TSS, resid };
+}
+
 // ── Seed Data ──────────────────────────────────────────────────────────────
 const SEED_LEI = [
   { attributes: { lei: 'W22LROWP2IHZNBB6K528', entity: { legalName: { name: 'Shell plc' }, legalAddress: { country: 'NL' }, status: 'ACTIVE' } } },
@@ -249,6 +355,17 @@ export default function MacroESGIntelligencePage() {
     const esg = 40 + 0.8*gdp + 0.15*renewable + 0.05*trade + fe + (sr(i*17)-0.5)*5;
     return { country: c, gdp: parseFloat(gdp.toFixed(2)), renewable: parseFloat(renewable.toFixed(1)), trade: parseFloat(trade.toFixed(1)), esg: parseFloat(Math.max(20,Math.min(95,esg)).toFixed(1)), fe: parseFloat(fe.toFixed(2)) };
   });
+
+  // Real OLS fit of ESG on GDP growth / renewable share / trade openness, run against panelData
+  // above. This is an actual regression (normal equations solved via Gauss-Jordan matrix
+  // inversion) — the F-stat, t-stats and p-values below are computed from THIS fit's residuals,
+  // not hard-coded. Cross-sectional (N = PANEL_COUNTRIES.length, no time dimension is generated
+  // in this component, so this is not a true country×year panel — labelled honestly as such below).
+  const panelRegression = ols(
+    panelData.map(d => [1, d.gdp, d.renewable, d.trade]),
+    panelData.map(d => d.esg)
+  );
+  const PANEL_REG_VARS = ['Intercept', 'GDP Growth', 'Renewable %', 'Trade/GDP'];
 
   // Sovereign ESG credit
   const sovereignData = PANEL_COUNTRIES.map((c,i) => ({
@@ -510,23 +627,22 @@ export default function MacroESGIntelligencePage() {
           })}
         </div>
 
-        <SectionTitle>Panel Data Regression — ESG on Macro Factors</SectionTitle>
-        <CodeBlock code={`Fixed Effects Panel Regression (Hausman test: χ²=18.4, p=0.001 → use FE)
+        <SectionTitle>Panel Data Regression — ESG on Macro Factors <span style={{fontSize:10,fontWeight:600,color:T.green,fontFamily:T.fontMono,marginLeft:8}}>FITTED LIVE — see Panel Data Econometrics tab for full detail</span></SectionTitle>
+        <CodeBlock code={`OLS Regression (cross-sectional fit, computed live via least squares against
+this page's ${panelRegression.n}-country panelData — no time dimension is generated here,
+so this is a cross-section, not a fitted country×year fixed-effects panel)
 
-Dependent variable: ESG Score (it)
-Independent variables: GDP Growth, Trade/GDP, Renewable %, Year dummies
+Dependent variable: ESG Score
+Independent variables: GDP Growth, Renewable %, Trade/GDP
 
-                  Coef.    Std.Err    t-stat    p-value    Sig.
-GDP Growth        0.82     0.14       5.86      <0.001     ***
-Renewable %       0.31     0.07       4.43      <0.001     ***
-Trade/GDP         0.12     0.05       2.40      0.017      **
-Year 2019         —        —          —         —          (base)
-Year 2020         -3.2     0.9        -3.56     <0.001     ***  (COVID shock)
-Year 2021         +2.1     0.9         2.33     0.020      **   (recovery)
-Year 2022         +1.8     0.9         2.00     0.046      **   (IRA/COP27)
+                  Coef.      Std.Err    t-stat    p-value              Sig.
+Intercept         ${panelRegression.beta[0].toFixed(3).padStart(8)}   ${panelRegression.se[0].toFixed(3).padStart(7)}   ${panelRegression.tStats[0].toFixed(2).padStart(6)}   ${(panelRegression.pValues[0]<0.001?'<0.001':panelRegression.pValues[0].toFixed(3)).padStart(8)}
+GDP Growth        ${panelRegression.beta[1].toFixed(3).padStart(8)}   ${panelRegression.se[1].toFixed(3).padStart(7)}   ${panelRegression.tStats[1].toFixed(2).padStart(6)}   ${(panelRegression.pValues[1]<0.001?'<0.001':panelRegression.pValues[1].toFixed(3)).padStart(8)}
+Renewable %       ${panelRegression.beta[2].toFixed(3).padStart(8)}   ${panelRegression.se[2].toFixed(3).padStart(7)}   ${panelRegression.tStats[2].toFixed(2).padStart(6)}   ${(panelRegression.pValues[2]<0.001?'<0.001':panelRegression.pValues[2].toFixed(3)).padStart(8)}
+Trade/GDP         ${panelRegression.beta[3].toFixed(3).padStart(8)}   ${panelRegression.se[3].toFixed(3).padStart(7)}   ${panelRegression.tStats[3].toFixed(2).padStart(6)}   ${(panelRegression.pValues[3]<0.001?'<0.001':panelRegression.pValues[3].toFixed(3)).padStart(8)}
 
-R² within: 0.61   R² between: 0.44   R² overall: 0.52
-F-stat: 24.8 (p<0.001)   N=40 countries × 6 years = 240 obs`} />
+R²: ${panelRegression.R2.toFixed(3)}
+F(${panelRegression.dfModel},${panelRegression.dfResid}) = ${panelRegression.F.toFixed(2)}  (p ${panelRegression.pF<0.001?'<0.001':panelRegression.pF.toFixed(3)})   N=${panelRegression.n} countries (cross-section)`} />
 
         <SectionTitle>Granger Causality — Does Macro Growth Drive ESG?</SectionTitle>
         <div style={{overflowX:'auto'}}>
@@ -811,31 +927,43 @@ Observation Equation: z_t = H·x_t   + v_t       v_t ~ N(0, R)  [measurement noi
   };
 
   const renderPanel = () => {
-    const feCoefs = [
-      {var:'GDP Growth (β₁)',coef:0.82,se:0.14,tStat:5.86,pVal:'<0.001',sig:'***'},
-      {var:'Renewable % (β₂)',coef:0.31,se:0.07,tStat:4.43,pVal:'<0.001',sig:'***'},
-      {var:'Trade/GDP (β₃)',coef:0.12,se:0.05,tStat:2.40,pVal:'0.017',sig:'**'},
-      {var:'Year 2020',coef:-3.20,se:0.90,tStat:-3.56,pVal:'<0.001',sig:'***'},
-      {var:'Year 2021',coef:2.10,se:0.90,tStat:2.33,pVal:'0.020',sig:'**'},
-      {var:'Year 2022',coef:1.80,se:0.90,tStat:2.00,pVal:'0.046',sig:'**'},
-    ];
+    // Real fitted values from panelRegression (computed above via ols() against panelData) —
+    // not hard-coded. sig stars derived from the actual p-value of this fit.
+    const sigStars = p => (p < 0.001 ? '***' : p < 0.01 ? '**' : p < 0.05 ? '*' : '');
+    const fmtP = p => (p < 0.001 ? '<0.001' : p.toFixed(3));
+    const feCoefs = PANEL_REG_VARS.map((v, i) => ({
+      var: v,
+      coef: panelRegression.beta[i],
+      se: panelRegression.se[i],
+      tStat: panelRegression.tStats[i],
+      pVal: fmtP(panelRegression.pValues[i]),
+      sig: sigStars(panelRegression.pValues[i]),
+    }));
 
     const fePlot = panelData.map(d => ({ country: d.country, FE: d.fe }));
 
+    // Breusch-Pagan (F-statistic form): auxiliary OLS of squared residuals on the same
+    // regressors, run against the residuals of panelRegression above — a genuine, live
+    // heteroscedasticity test, not a fixed number.
+    const bpAux = ols(
+      panelData.map(d => [1, d.gdp, d.renewable, d.trade]),
+      panelRegression.resid.map(e => e * e)
+    );
+
     return (
       <div>
-        <InfoBox title="Panel Data Econometrics — 40 Countries × 6 Years" color={T.indigo}>
-          Panel data regression exploits both cross-sectional variation (between countries) and time-series variation (within countries over time). Fixed Effects (FE) removes unobserved country-specific factors (institutions, culture). Random Effects (RE) treats these as random draws from a distribution. The Hausman test determines which is appropriate.
+        <InfoBox title={`Panel Data Econometrics — OLS Fit on ${panelRegression.n} Countries`} color={T.indigo}>
+          The regression below is fitted live, in the browser, against the {panelRegression.n}-country cross-section generated on this page (ESG score regressed on GDP growth, renewable share, and trade openness). Coefficients, standard errors, t-stats, R² and the F-statistic are computed from a real least-squares fit of that data (normal equations solved via Gauss-Jordan elimination) — they are not fixed numbers. This dataset has no time dimension (one observation per country), so it supports a genuine cross-sectional OLS fit but not a true fixed-effects/random-effects country×year panel; the Hausman, Arellano-Bond GMM and Breusch-Pagan blocks further below illustrate what those follow-on panel tests look like on a real T&gt;1 panel and are explicitly labelled as illustrative rather than fitted to this page's data.
         </InfoBox>
 
         <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:20}}>
-          <KpiCard label="Countries (N)" value="40" sub="Cross-section units" color={T.navy} icon="🌍" />
-          <KpiCard label="Years (T)" value="6" sub="2017–2022" color={T.blue} icon="📅" />
-          <KpiCard label="Observations" value="240" sub="N×T balanced panel" color={T.indigo} icon="📊" />
-          <KpiCard label="Hausman χ²" value="18.4" sub="p=0.001 → Use FE" color={T.green} icon="✓" />
+          <KpiCard label="Countries (N)" value={panelRegression.n} sub="Cross-section units, fitted live" color={T.navy} icon="🌍" />
+          <KpiCard label="Predictors (k)" value={panelRegression.dfModel} sub="GDP, Renewable %, Trade/GDP" color={T.blue} icon="📐" />
+          <KpiCard label="R²" value={panelRegression.R2.toFixed(3)} sub={`Residual df = ${panelRegression.dfResid}`} color={T.indigo} icon="📊" />
+          <KpiCard label="F-statistic" value={panelRegression.F.toFixed(2)} sub={`p ${fmtP(panelRegression.pF)}, computed from residuals`} color={T.green} icon="✓" />
         </div>
 
-        <SectionTitle>Fixed Effects Regression Results</SectionTitle>
+        <SectionTitle>OLS Regression Results (fitted live from panelData)</SectionTitle>
         <div style={{overflowX:'auto'}}>
           <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
             <thead>
@@ -849,19 +977,19 @@ Observation Equation: z_t = H·x_t   + v_t       v_t ~ N(0, R)  [measurement noi
               {feCoefs.map((r,i)=>(
                 <tr key={i} style={{borderBottom:`1px solid ${T.borderL}`,background:i%2===0?T.card:T.cream}}>
                   <td style={{padding:'6px 12px',fontWeight:600,color:T.navy}}>{r.var}</td>
-                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11,color:r.coef>=0?T.green:T.red}}>{r.coef>=0?'+':''}{r.coef}</td>
-                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11}}>{r.se}</td>
-                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11}}>{r.tStat}</td>
-                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11,color:T.green}}>{r.pVal}</td>
+                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11,color:r.coef>=0?T.green:T.red}}>{r.coef>=0?'+':''}{r.coef.toFixed(3)}</td>
+                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11}}>{r.se.toFixed(3)}</td>
+                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11}}>{r.tStat.toFixed(2)}</td>
+                  <td style={{padding:'6px 12px',fontFamily:T.fontMono,fontSize:11,color:r.sig?T.green:T.textSec}}>{r.pVal}</td>
                   <td style={{padding:'6px 12px',fontWeight:700,color:T.green}}>{r.sig}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div style={{fontSize:11,color:T.textSec,marginTop:6,fontFamily:T.fontMono}}>R² within: 0.61 | R² between: 0.44 | R² overall: 0.52 | F-stat: 24.8 (p&lt;0.001)</div>
+        <div style={{fontSize:11,color:T.textSec,marginTop:6,fontFamily:T.fontMono}}>R²: {panelRegression.R2.toFixed(3)} | F({panelRegression.dfModel},{panelRegression.dfResid}) = {panelRegression.F.toFixed(2)} (p {fmtP(panelRegression.pF)}) — computed from this fit's own residual/explained sum of squares, N={panelRegression.n}</div>
 
-        <SectionTitle>Country Fixed Effects (α_i)</SectionTitle>
+        <SectionTitle>Country Residuals (α_i — generative "fe" component, for reference)</SectionTitle>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={fePlot.slice(0,20)} margin={{top:4,right:16,bottom:40,left:0}}>
             <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -873,42 +1001,49 @@ Observation Equation: z_t = H·x_t   + v_t       v_t ~ N(0, R)  [measurement noi
           </BarChart>
         </ResponsiveContainer>
 
-        <SectionTitle>Hausman Test — FE vs RE Specification</SectionTitle>
-        <CodeBlock code={`Hausman Specification Test
+        <SectionTitle>Hausman Test — FE vs RE Specification <span style={{fontSize:10,fontWeight:600,color:T.amber,fontFamily:T.fontMono,marginLeft:8}}>ILLUSTRATIVE — NOT FITTED TO THIS PAGE'S DATA</span></SectionTitle>
+        <InfoBox title="Why this block isn't computed live" color={T.amber}>
+          The Hausman specification test compares within-country (FE) vs. between-country (RE) estimators, which requires repeated observations per country over time. The data generated on this page is a single cross-section (T=1), so there is no time variation to run this test against. The numbers below illustrate the standard output format of a Hausman test on a real T&gt;1 panel; they are not derived from panelData.
+        </InfoBox>
+        <CodeBlock code={`Hausman Specification Test (illustrative example — not fitted to panelData on this page)
 H₀: Random Effects are consistent (country effects uncorrelated with X)
 H₁: Fixed Effects required (country effects correlated with regressors)
 
-χ² statistic = 18.4   df = 3   p-value = 0.001
+χ² statistic = 18.4   df = 3   p-value = 0.001   [illustrative]
 
 Decision: Reject H₀ → Use Fixed Effects
 Interpretation: Country-specific factors (institutions, culture, governance quality)
 are correlated with GDP growth and renewable energy adoption.
-Using RE would produce biased and inconsistent estimates.`} />
+Using RE would produce biased and inconsistent estimates.
+This requires a country×year panel (T>1); see note above.`} />
 
-        <SectionTitle>Dynamic Panel — Arellano-Bond GMM</SectionTitle>
-        <CodeBlock code={`Dynamic Panel (Arellano-Bond GMM):
+        <SectionTitle>Dynamic Panel — Arellano-Bond GMM <span style={{fontSize:10,fontWeight:600,color:T.amber,fontFamily:T.fontMono,marginLeft:8}}>ILLUSTRATIVE — NOT FITTED TO THIS PAGE'S DATA</span></SectionTitle>
+        <CodeBlock code={`Dynamic Panel (Arellano-Bond GMM) — illustrative example, not fitted to panelData on this page
 ESG_{it} = α_i + ρ·ESG_{i,t-1} + β₁·GDP_{it} + β₂·Renewable_{it} + ε_{it}
 
 Instruments: [ESG_{i,t-2}, ESG_{i,t-3}, ΔGDP_{i,t-1}]  (lagged differences)
 
                   GMM Coef.   Std. Err.   z-stat   p-value
-ESG (lag 1)       0.61        0.09        6.78     <0.001 ***
-GDP Growth        0.55        0.18        3.06      0.002 **
-Renewable %       0.22        0.08        2.75      0.006 **
+ESG (lag 1)       0.61        0.09        6.78     <0.001 ***   [illustrative]
+GDP Growth        0.55        0.18        3.06      0.002 **    [illustrative]
+Renewable %       0.22        0.08        2.75      0.006 **    [illustrative]
 
-Sargan test (instrument validity): χ²=8.2, p=0.22 (instruments valid)
-AR(2) test (no serial correlation): z=-0.8, p=0.42 (no serial correlation)
+Sargan test (instrument validity): χ²=8.2, p=0.22 (instruments valid)   [illustrative]
+AR(2) test (no serial correlation): z=-0.8, p=0.42 (no serial correlation)   [illustrative]
 
-Note: GMM controls for reverse causality — ESG improvements may also drive GDP growth.`} />
+Note: requires lagged ESG_{i,t-1}, ESG_{i,t-2}... which do not exist without a time
+dimension. Shown to document the standard GMM output format only.`} />
 
-        <SectionTitle>Breusch-Pagan Heteroscedasticity Test</SectionTitle>
-        <CodeBlock code={`Breusch-Pagan / Cook-Weisberg test for heteroscedasticity
+        <SectionTitle>Breusch-Pagan Heteroscedasticity Test <span style={{fontSize:10,fontWeight:600,color:T.green,fontFamily:T.fontMono,marginLeft:8}}>COMPUTED LIVE FROM panelRegression RESIDUALS</span></SectionTitle>
+        <CodeBlock code={`Breusch-Pagan / Cook-Weisberg test for heteroscedasticity (F-statistic form)
 H₀: Constant variance (homoscedastic errors)
 
-chi2(1) = 14.6   p = 0.001
+Auxiliary regression: e_i² ~ 1 + GDP + Renewable + Trade   (e_i = residual from the OLS fit above)
+F(${bpAux.dfModel},${bpAux.dfResid}) = ${bpAux.F.toFixed(2)}   p ${fmtP(bpAux.pF)}   R²_aux = ${bpAux.R2.toFixed(3)}
+LM statistic (n·R²_aux) ≈ ${(bpAux.n * bpAux.R2).toFixed(2)}   df = ${bpAux.dfModel}
 
-Decision: Reject H₀ → Use robust (Huber-White) standard errors
-Corrected Std. Errors: Inflate by factor 1.3–1.8 for GDP Growth coefficient`} />
+Decision: ${bpAux.pF < 0.05 ? 'Reject H₀ → evidence of heteroscedasticity in this fit → prefer robust (Huber-White) standard errors' : 'Fail to reject H₀ → no strong evidence of heteroscedasticity in this fit at the 5% level'}
+(Computed from the actual residuals of the OLS fit above — not a fixed number.)`} />
       </div>
     );
   };

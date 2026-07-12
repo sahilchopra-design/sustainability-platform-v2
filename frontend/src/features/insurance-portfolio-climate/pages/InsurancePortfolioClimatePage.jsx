@@ -1,8 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ComposedChart, ReferenceLine
 } from 'recharts';
+
+// Backend insurance climate risk engine (Solvency II Art.44a / EIOPA ORSA 2022 /
+// Swiss Re sigma Physical Risk Model). See backend/services/insurance_climate_risk.py
+// + backend/api/v1/routes/insurance.py
+const API = 'http://localhost:8001';
+const INSURANCE_API = `${API}/api/v1/insurance`;
 
 const T = {
   bg: '#f4f6f9', surface: '#ffffff', border: '#e3e8ef', navy: '#1b3a5c',
@@ -94,6 +101,73 @@ export default function InsurancePortfolioClimatePage() {
     severity: +(100 * Math.pow(1.09, i)).toFixed(0),
     combined: +(100 * Math.pow(1.06, i) * Math.pow(1.09, i) / 100).toFixed(0),
   }));
+
+  // ── Live backend wiring — Solvency II CAT / SCR / TP / reserve adequacy ──
+  // Calls POST /api/v1/insurance/calculate (services/insurance_climate_risk.py).
+  // Inputs default from the book's own seeded aggregates (GWP, current
+  // reserves, base SCR) but are user-editable so the live engine output
+  // reflects a genuine "what-if" run rather than re-displaying seeded data.
+  // Falls back to the seeded Tab 2 / Tab 4 figures above, clearly badged,
+  // if the API is unreachable.
+  const propertyLine = UW_LINES.find(l => l.line === 'Property') || UW_LINES[0];
+  const [calcInputs, setCalcInputs] = useState(() => ({
+    peril: 'flood',
+    gwpM: totalPremium,
+    tpM: Math.round(UW_LINES.reduce((s, l) => s + l.premium * l.claimsRatio / 100, 0)),
+    scrM: baseSCR,
+    ownFundsM: Math.round(baseSCR * 1.5),
+    gross100M: Math.round(propertyLine.premium * 0.25),
+    gross250M: Math.round(propertyLine.premium * 0.45),
+    aalM: Math.round(propertyLine.premium * 0.08),
+    pmlM: Math.round(propertyLine.premium * 0.65),
+    retentionPct: 30,
+    coalExclusion: false,
+    oilSandsExclusion: false,
+    arcticExclusion: false,
+  }));
+  const setCalcField = useCallback((field, value) => setCalcInputs(p => ({ ...p, [field]: value })), []);
+
+  const PERILS = ['tropical_cyclone', 'flood', 'wildfire', 'drought', 'winter_storm', 'hail', 'earthquake'];
+  const scenarioFromWarming = warmingLevel <= 1.5 ? '1.5C' : warmingLevel <= 2.5 ? '2C' : '3C';
+
+  const [liveResult, setLiveResult] = useState(null);
+  const [liveStatus, setLiveStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    setLiveStatus('loading');
+    const handle = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${INSURANCE_API}/calculate`, {
+          entity_name: 'Insurance Portfolio Climate Book (aggregate)',
+          insurer_type: 'primary',
+          cat_peril: calcInputs.peril,
+          gross_written_premium_eur: calcInputs.gwpM * 1e6,
+          technical_provisions_eur: calcInputs.tpM * 1e6,
+          scr_eur: calcInputs.scrM * 1e6,
+          own_funds_eur: calcInputs.ownFundsM * 1e6,
+          gross_loss_1in100_baseline_eur: calcInputs.gross100M * 1e6,
+          gross_loss_1in250_baseline_eur: calcInputs.gross250M * 1e6,
+          average_annual_loss_baseline_eur: calcInputs.aalM * 1e6,
+          probable_max_loss_baseline_eur: calcInputs.pmlM * 1e6,
+          reinsurance_retention_pct: calcInputs.retentionPct / 100,
+          coal_exclusion: calcInputs.coalExclusion,
+          oil_sands_exclusion: calcInputs.oilSandsExclusion,
+          arctic_drilling_exclusion: calcInputs.arcticExclusion,
+          scenario: scenarioFromWarming,
+          horizon_year: 2050,
+          save_to_db: false,
+        }, { timeout: 10000 });
+        if (!cancelled && data) { setLiveResult(data); setLiveStatus('live'); }
+        else if (!cancelled) setLiveStatus('demo');
+      } catch (e) {
+        if (!cancelled) { setLiveResult(null); setLiveStatus('demo'); }
+      }
+    }, 350); // debounce rapid input edits
+    return () => { cancelled = true; clearTimeout(handle); };
+  }, [calcInputs, scenarioFromWarming]);
+
+  const fmtM = (eur) => `$${(eur / 1e6).toFixed(1)}M`;
 
   return (
     <div style={{ fontFamily: T.font, background: T.bg, minHeight: '100vh' }}>
@@ -334,10 +408,87 @@ export default function InsurancePortfolioClimatePage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
               {kpi('Base SCR', `$${baseSCR}M`, 'standard formula')}
               {kpi('Climate Add-On', `$${climateAddon}M`, `${(climateAddon / baseSCR * 100).toFixed(1)}% increase`, T.red)}
               {kpi('Total SCR', `$${totalSCR}M`, 'climate-adjusted')}
+            </div>
+            <div style={{ fontSize: 11, color: T.textMut, marginBottom: 20 }}>Module breakdown above is illustrative seed data. Use the live calculator below for a real Solvency II Art. 44a engine run.</div>
+
+            <div style={card}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, margin: 0 }}>Live Regulatory Calculator — CAT Risk / SCR / TP / Reserve Adequacy / Protection Gap</h3>
+                {liveStatus === 'live' && <span style={{ fontSize: 10, fontWeight: 700, color: '#166534', background: '#dcfce7', padding: '2px 8px', borderRadius: 10 }}>● Live</span>}
+                {liveStatus === 'demo' && <span style={{ fontSize: 10, fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '2px 8px', borderRadius: 10 }}>○ Demo Data</span>}
+                {liveStatus === 'loading' && <span style={{ fontSize: 10, fontWeight: 700, color: T.textMut, background: T.bg, padding: '2px 8px', borderRadius: 10 }}>… calculating</span>}
+              </div>
+              <div style={{ fontSize: 11, color: T.textSec, marginBottom: 16, fontFamily: T.mono }}>
+                {liveStatus === 'live'
+                  ? `Computed by POST /api/v1/insurance/calculate (Solvency II Delegated Reg. 2015/35 Annex XIII / EIOPA ORSA 2022 / Swiss Re sigma) — scenario ${scenarioFromWarming}`
+                  : 'Insurance climate risk API unavailable — showing zero/seeded placeholder output. Adjust inputs and confirm the backend is running on :8001.'}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
+                <label style={{ fontSize: 11, color: T.textSec }}>Peril
+                  <select value={calcInputs.peril} onChange={e => setCalcField('peril', e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
+                    {PERILS.map(p => <option key={p} value={p}>{p.replace(/_/g, ' ')}</option>)}
+                  </select>
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Gross Written Premium ($M)
+                  <input type="number" value={calcInputs.gwpM} onChange={e => setCalcField('gwpM', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Technical Provisions ($M)
+                  <input type="number" value={calcInputs.tpM} onChange={e => setCalcField('tpM', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Base SCR ($M)
+                  <input type="number" value={calcInputs.scrM} onChange={e => setCalcField('scrM', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Own Funds ($M)
+                  <input type="number" value={calcInputs.ownFundsM} onChange={e => setCalcField('ownFundsM', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Gross Loss 1-in-100 ($M, baseline)
+                  <input type="number" value={calcInputs.gross100M} onChange={e => setCalcField('gross100M', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Gross Loss 1-in-250 ($M, baseline)
+                  <input type="number" value={calcInputs.gross250M} onChange={e => setCalcField('gross250M', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+                <label style={{ fontSize: 11, color: T.textSec }}>Reinsurance Retention (%)
+                  <input type="number" value={calcInputs.retentionPct} onChange={e => setCalcField('retentionPct', +e.target.value)} style={{ display: 'block', width: '100%', marginTop: 4, padding: '6px 8px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.mono }} />
+                </label>
+              </div>
+              <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+                {[['coalExclusion', 'Coal Exclusion'], ['oilSandsExclusion', 'Oil Sands Exclusion'], ['arcticExclusion', 'Arctic Drilling Exclusion']].map(([field, label]) => (
+                  <label key={field} style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <input type="checkbox" checked={calcInputs[field]} onChange={e => setCalcField(field, e.target.checked)} /> {label}
+                  </label>
+                ))}
+              </div>
+
+              {liveResult ? (
+                <>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+                    {kpi('Climate-Adj. Gross Loss (1-in-100)', fmtM(liveResult.gross_loss_1in100_eur), `${liveResult.cat_loss_change_pct >= 0 ? '+' : ''}${liveResult.cat_loss_change_pct.toFixed(1)}% vs baseline`, T.red)}
+                    {kpi('Net Loss (1-in-100, post-RI)', fmtM(liveResult.net_loss_1in100_eur), `${calcInputs.retentionPct}% retention`)}
+                    {kpi('Climate-Adjusted TP', fmtM(liveResult.climate_adjusted_tp_eur), `+${liveResult.tp_uplift_pct.toFixed(1)}% uplift`)}
+                    {kpi('SCR Climate Add-On', fmtM(liveResult.scr_climate_addon_eur), fmtM(liveResult.total_scr_eur) + ' total SCR', T.red)}
+                  </div>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+                    {kpi('Solvency Ratio (post add-on)', `${(liveResult.solvency_ratio_post_addon * 100).toFixed(1)}%`, `pre-addon ${(liveResult.solvency_ratio_pre_addon * 100).toFixed(1)}%`, liveResult.solvency_ratio_post_addon < 1 ? T.red : liveResult.solvency_ratio_post_addon < 1.2 ? T.amber : T.green)}
+                    {kpi('Reserve Adequacy', liveResult.reserve_adequacy, liveResult.reserve_deficiency_eur > 0 ? `shortfall ${fmtM(liveResult.reserve_deficiency_eur)}` : 'no shortfall', liveResult.reserve_adequacy === 'adequate' ? T.green : liveResult.reserve_adequacy === 'marginal' ? T.amber : T.red)}
+                    {kpi('Protection Gap', `${liveResult.protection_gap_pct.toFixed(1)}%`, fmtM(liveResult.protection_gap_eur) + ' uninsured')}
+                    {kpi('ESG Underwriting Score', `${liveResult.esg_underwriting_score.toFixed(0)}/100`, liveResult.reinsurance_adequate ? 'Reinsurance adequate' : `RI gap ${fmtM(liveResult.reinsurance_gap_eur)}`, liveResult.reinsurance_adequate ? T.green : T.red)}
+                  </div>
+                  {liveResult.warnings && liveResult.warnings.length > 0 && (
+                    <div style={{ marginTop: 8, padding: '10px 12px', background: '#fef3c7', borderRadius: 8, fontSize: 11, color: '#92400e' }}>
+                      {liveResult.warnings.map((w, i) => <div key={i}>⚠ {w}</div>)}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ fontSize: 12, color: T.textMut, padding: '10px 0' }}>
+                  {liveStatus === 'loading' ? 'Calculating…' : 'No live result — API unavailable.'}
+                </div>
+              )}
             </div>
           </div>
         )}

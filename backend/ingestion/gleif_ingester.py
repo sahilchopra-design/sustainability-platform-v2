@@ -31,6 +31,67 @@ from ingestion.base_ingester import BaseIngester, IngestionResult
 GLEIF_SOURCE_ID = "1a28c01e-c6bc-4d4c-b96a-bb7db4faad8e"
 GLEIF_API_BASE = "https://api.gleif.org/api/v1"
 
+# Canonical entity_lei upsert SQL -- single source of truth. Shared with the
+# just-in-time single-record upsert path (services/gleif_upsert.py, used by
+# api/v1/routes/gleif_graph.py's resolve-by-isin/resolve-by-bic endpoints and
+# services/entity_resolution_service.py's live-GLEIF fallback) so the weekly
+# bulk ingester and JIT upserts can never drift apart on column list or
+# conflict-resolution semantics.
+#
+# NOTE (fixed 2026-07-05): the three jsonb columns use CAST(:x AS JSONB), NOT
+# the ":x::jsonb" shorthand the SQL had previously. Verified live: SQLAlchemy's
+# text() bind-parameter parser does not reliably recognize a bind param
+# immediately followed by "::" -- it silently drops "other_names",
+# "registered_address" and "headquarters_address" from the compiled parameter
+# set entirely (they never even reach psycopg2 as %(name)s placeholders), so
+# every real insert raised `psycopg2.errors.SyntaxError: syntax error at or
+# near ":"` and was swallowed by load()'s per-row try/except. This is the
+# root cause of entity_lei having 0 rows in this environment despite the
+# weekly ingester having run: every single row failed on this exact
+# statement. CAST(...AS JSONB) has no such ambiguity.
+ENTITY_LEI_UPSERT_SQL = text("""
+    INSERT INTO entity_lei (
+        lei, legal_name, legal_name_language, other_names, status,
+        entity_category, legal_form_code, legal_form_name, jurisdiction,
+        registered_address, headquarters_address,
+        registration_authority_id, registration_authority_entity_id,
+        entity_creation_date, entity_expiration_date,
+        managing_lou, initial_registration_date, last_update_date,
+        next_renewal_date, registration_status,
+        direct_parent_lei, ultimate_parent_lei,
+        direct_parent_relationship, ultimate_parent_relationship,
+        source_id, ingested_at, updated_at
+    ) VALUES (
+        :lei, :legal_name, :legal_name_language, CAST(:other_names AS JSONB), :status,
+        :entity_category, :legal_form_code, :legal_form_name, :jurisdiction,
+        CAST(:registered_address AS JSONB), CAST(:headquarters_address AS JSONB),
+        :registration_authority_id, :registration_authority_entity_id,
+        :entity_creation_date, :entity_expiration_date,
+        :managing_lou, :initial_registration_date, :last_update_date,
+        :next_renewal_date, :registration_status,
+        :direct_parent_lei, :ultimate_parent_lei,
+        :direct_parent_relationship, :ultimate_parent_relationship,
+        :source_id, NOW(), NOW()
+    )
+    ON CONFLICT (lei) DO UPDATE SET
+        legal_name = EXCLUDED.legal_name,
+        legal_name_language = EXCLUDED.legal_name_language,
+        other_names = EXCLUDED.other_names,
+        status = EXCLUDED.status,
+        entity_category = EXCLUDED.entity_category,
+        legal_form_code = EXCLUDED.legal_form_code,
+        legal_form_name = EXCLUDED.legal_form_name,
+        jurisdiction = EXCLUDED.jurisdiction,
+        registered_address = EXCLUDED.registered_address,
+        headquarters_address = EXCLUDED.headquarters_address,
+        registration_status = EXCLUDED.registration_status,
+        last_update_date = EXCLUDED.last_update_date,
+        next_renewal_date = EXCLUDED.next_renewal_date,
+        direct_parent_lei = EXCLUDED.direct_parent_lei,
+        ultimate_parent_lei = EXCLUDED.ultimate_parent_lei,
+        updated_at = NOW()
+""")
+
 
 class GleifIngester(BaseIngester):
     """
@@ -52,17 +113,140 @@ class GleifIngester(BaseIngester):
     timeout_seconds = 600   # 10 min for full run
     batch_size = 200
 
-    def __init__(self, max_pages: int = 50, country_filter: Optional[str] = None):
+    def __init__(
+        self,
+        max_pages: int = 50,
+        country_filter: Optional[str] = None,
+        seed_names: Optional[List[str]] = None,
+        seed_isins: Optional[List[str]] = None,
+    ):
         super().__init__()
         self.max_pages = max_pages
         self.country_filter = country_filter
+        # Targeted pre-population: when either is non-empty, fetch() aims the
+        # ingester at these specific entities instead of blind-crawling by
+        # country. Intended source: distinct company names / ISINs already
+        # referenced by this platform's fi_entities / company_profiles /
+        # pcaf_investees tables (see seed_names_from_platform_tables() below),
+        # so an admin action or scheduled job can pre-populate entity_lei for
+        # entities the platform's own portfolios actually reference, rather
+        # than waiting on the capped weekly blind crawl to happen to cover them.
+        self.seed_names = list(seed_names) if seed_names else []
+        self.seed_isins = list(seed_isins) if seed_isins else []
 
     # ── Stage 1: Fetch ────────────────────────────────────────────────────
 
     def fetch(self, db: Session) -> Any:
         """
+        Dispatch to a targeted fetch (seed_names/seed_isins given) or the
+        default blind paginated country-filtered crawl (backward compatible:
+        this is the existing behaviour when no seeds are provided).
+        """
+        if self.seed_names or self.seed_isins:
+            return self._fetch_targeted()
+        return self._fetch_blind_crawl()
+
+    def _fetch_targeted(self) -> List[dict]:
+        """
+        Targeted fetch aimed at specific entities instead of a blind crawl:
+          - seed_isins: exact match via GLEIF filter[isin] (security -> issuer LEI)
+          - seed_names: GLEIF /fuzzycompletions?field=entity.legalName for the
+            name, then the top-ranked completion's LEI is resolved to its full
+            lei-records resource via /lei-records/{lei}.
+        Results are de-duplicated by LEI. Uses the same polite per-request
+        pacing assumption as the blind crawl (~60 req/min, undocumented GLEIF
+        limit -- see module docstring); each seed costs 1-2 requests, so this
+        stays far cheaper than a full paginated crawl for a handful of names.
+        """
+        all_records: Dict[str, dict] = {}
+
+        for isin in self.seed_isins:
+            self.log(f"Targeted fetch by ISIN: {isin}")
+            try:
+                resp = requests.get(
+                    f"{GLEIF_API_BASE}/lei-records",
+                    params={"filter[isin]": isin, "page[size]": 5},
+                    timeout=30,
+                    headers={"Accept": "application/vnd.api+json"},
+                )
+                resp.raise_for_status()
+                for rec in resp.json().get("data", []):
+                    all_records[rec["id"]] = rec
+            except requests.RequestException as exc:
+                self.log(f"Targeted ISIN fetch failed for {isin}: {exc}", "warning")
+
+        for name in self.seed_names:
+            self.log(f"Targeted fetch by name: {name}")
+            try:
+                resp = requests.get(
+                    f"{GLEIF_API_BASE}/fuzzycompletions",
+                    params={"field": "entity.legalName", "q": name},
+                    timeout=30,
+                    headers={"Accept": "application/vnd.api+json"},
+                )
+                resp.raise_for_status()
+                completions = resp.json().get("data", [])
+                top = completions[0] if completions else None
+                lei = (
+                    ((top or {}).get("relationships", {}) or {})
+                    .get("lei-records", {})
+                    .get("data", {})
+                    .get("id")
+                )
+                if not lei:
+                    self.log(f"No LEI completion found for name: {name}", "warning")
+                    continue
+                rec_resp = requests.get(
+                    f"{GLEIF_API_BASE}/lei-records/{lei}",
+                    timeout=30,
+                    headers={"Accept": "application/vnd.api+json"},
+                )
+                rec_resp.raise_for_status()
+                rec = rec_resp.json().get("data")
+                if rec:
+                    all_records[rec["id"]] = rec
+            except requests.RequestException as exc:
+                self.log(f"Targeted name fetch failed for '{name}': {exc}", "warning")
+
+        records = list(all_records.values())
+        self.log(
+            f"Targeted fetch complete: {len(records)} unique LEI records "
+            f"from {len(self.seed_isins)} ISINs + {len(self.seed_names)} names"
+        )
+        return records
+
+    @staticmethod
+    def seed_names_from_platform_tables(db: Session, limit: int = 200) -> List[str]:
+        """
+        Convenience helper for callers building a targeted GleifIngester run:
+        pull distinct entity/counterparty names already referenced by this
+        platform's own data (fi_entities, company_profiles, pcaf_investees)
+        that don't yet have an LEI on file, so a scheduled job or admin action
+        can aim ingestion at entities the platform actually cares about
+        instead of the blind country crawl. Not wired to any schedule by
+        default -- callers opt in explicitly.
+        """
+        rows = db.execute(text("""
+            SELECT DISTINCT name FROM (
+                SELECT legal_name AS name FROM fi_entities WHERE lei IS NULL AND legal_name IS NOT NULL
+                UNION
+                SELECT legal_name AS name FROM company_profiles WHERE entity_lei IS NULL AND legal_name IS NOT NULL
+                UNION
+                SELECT investee_name AS name FROM pcaf_investees WHERE lei IS NULL AND investee_name IS NOT NULL
+            ) AS candidates
+            WHERE name IS NOT NULL AND length(trim(name)) > 1
+            LIMIT :limit
+        """), {"limit": limit}).fetchall()
+        return [r[0] for r in rows if r[0]]
+
+    def _fetch_blind_crawl(self) -> Any:
+        """
         Paginate through GLEIF API and collect raw LEI records.
         Returns a list of GLEIF API record objects.
+
+        This is the original fetch() behaviour, preserved verbatim and kept
+        as the default when no seed_names/seed_isins are given (backward
+        compatible with the weekly scheduled blind crawl).
         """
         all_records = []
         page = 1
@@ -175,8 +359,18 @@ class GleifIngester(BaseIngester):
                 "jurisdiction": entity.get("jurisdiction"),
                 "registered_address": self._parse_address(legal_addr) if legal_addr else None,
                 "headquarters_address": self._parse_address(hq_addr) if hq_addr else None,
-                "registration_authority_id": entity.get("registeredAs", {}).get("id") if entity.get("registeredAs") else None,
-                "registration_authority_entity_id": entity.get("registeredAs", {}).get("other") if entity.get("registeredAs") else None,
+                # NOTE (fixed 2026-07-05, verified live against GLEIF): GLEIF's
+                # entity.registeredAt is the {id, other} dict identifying the
+                # REGISTRATION AUTHORITY (e.g. {"id": "RA000598", "other": None});
+                # entity.registeredAs is a plain STRING -- the entity's own
+                # registration/company number at that authority (e.g. "806592").
+                # The previous mapping read the RA id off "registeredAs" and
+                # called .get() on that string, which raised AttributeError on
+                # every real record where registeredAs was populated (silently
+                # swallowed by load()'s per-row try/except, so entity_lei rows
+                # for such entities were dropped without surfacing an error).
+                "registration_authority_id": (entity.get("registeredAt") or {}).get("id") if isinstance(entity.get("registeredAt"), dict) else None,
+                "registration_authority_entity_id": entity.get("registeredAs") if isinstance(entity.get("registeredAs"), str) else None,
                 "entity_creation_date": entity.get("creationDate"),
                 "entity_expiration_date": entity.get("expirationDate"),
                 # Registration
@@ -210,49 +404,6 @@ class GleifIngester(BaseIngester):
 
             for row in batch:
                 try:
-                    sql = text("""
-                        INSERT INTO entity_lei (
-                            lei, legal_name, legal_name_language, other_names, status,
-                            entity_category, legal_form_code, legal_form_name, jurisdiction,
-                            registered_address, headquarters_address,
-                            registration_authority_id, registration_authority_entity_id,
-                            entity_creation_date, entity_expiration_date,
-                            managing_lou, initial_registration_date, last_update_date,
-                            next_renewal_date, registration_status,
-                            direct_parent_lei, ultimate_parent_lei,
-                            direct_parent_relationship, ultimate_parent_relationship,
-                            source_id, ingested_at, updated_at
-                        ) VALUES (
-                            :lei, :legal_name, :legal_name_language, :other_names::jsonb, :status,
-                            :entity_category, :legal_form_code, :legal_form_name, :jurisdiction,
-                            :registered_address::jsonb, :headquarters_address::jsonb,
-                            :registration_authority_id, :registration_authority_entity_id,
-                            :entity_creation_date, :entity_expiration_date,
-                            :managing_lou, :initial_registration_date, :last_update_date,
-                            :next_renewal_date, :registration_status,
-                            :direct_parent_lei, :ultimate_parent_lei,
-                            :direct_parent_relationship, :ultimate_parent_relationship,
-                            :source_id, NOW(), NOW()
-                        )
-                        ON CONFLICT (lei) DO UPDATE SET
-                            legal_name = EXCLUDED.legal_name,
-                            legal_name_language = EXCLUDED.legal_name_language,
-                            other_names = EXCLUDED.other_names,
-                            status = EXCLUDED.status,
-                            entity_category = EXCLUDED.entity_category,
-                            legal_form_code = EXCLUDED.legal_form_code,
-                            legal_form_name = EXCLUDED.legal_form_name,
-                            jurisdiction = EXCLUDED.jurisdiction,
-                            registered_address = EXCLUDED.registered_address,
-                            headquarters_address = EXCLUDED.headquarters_address,
-                            registration_status = EXCLUDED.registration_status,
-                            last_update_date = EXCLUDED.last_update_date,
-                            next_renewal_date = EXCLUDED.next_renewal_date,
-                            direct_parent_lei = EXCLUDED.direct_parent_lei,
-                            ultimate_parent_lei = EXCLUDED.ultimate_parent_lei,
-                            updated_at = NOW()
-                    """)
-
                     # Convert dicts to JSON strings for JSONB casting
                     import json
                     params = dict(row)
@@ -260,7 +411,7 @@ class GleifIngester(BaseIngester):
                         if params[jsonb_col] is not None:
                             params[jsonb_col] = json.dumps(params[jsonb_col])
 
-                    db.execute(sql, params)
+                    db.execute(ENTITY_LEI_UPSERT_SQL, params)
                     inserted += 1
 
                 except Exception as exc:

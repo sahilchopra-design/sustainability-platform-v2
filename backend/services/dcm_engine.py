@@ -639,9 +639,14 @@ def AMS_III_E_AvoidedMethane(inputs: Dict[str, Any]) -> Dict[str, Any]:
     f_degrading_in_period = inputs.get("f_degrading_in_period", 0.60)
     ox_factor = inputs.get("oxidation_factor", 0.10)
 
-    # IPCC first-order decay model
+    # IPCC first-order decay model (CDM Tool 04 baseline formula):
+    # BE_CH4,SWDS,y = waste * DOC * DOCf * F * MCF * (16/12) * (1 - OX)
+    # `ch4_fraction_landfill` (F, the volumetric CH4 fraction of landfill gas)
+    # must appear once as a multiplicative factor. Previously it was
+    # multiplied in and then divided back out (`* F / F`), silently
+    # cancelling to a no-op regardless of F's value.
     ch4_tonne = waste_diverted_t * doc_fraction * doc_f * f_degrading_in_period * (16/12)
-    ch4_generated = ch4_tonne * mcf * ch4_fraction_landfill / ch4_fraction_landfill
+    ch4_generated = ch4_tonne * mcf * ch4_fraction_landfill
     ch4_emitted_baseline = ch4_generated * (1 - ox_factor)
     baseline = ch4_emitted_baseline * GWP["CH4"]
 
@@ -964,7 +969,7 @@ def VM0036_BiocharSoilCarbon(inputs: Dict[str, Any]) -> Dict[str, Any]:
                    monitoring="Biochar production logs; field application records; periodic soil sampling")
 
 
-def VM0037_MesosphericCooling(inputs: Dict[str, Any]) -> Dict[str, Any]:
+def VM0037_ForestRestoration(inputs: Dict[str, Any]) -> Dict[str, Any]:
     """VM0037 v1: Methodology for Implementation and Monitoring of Forest Restoration"""
     restored_area_ha = inputs.get("area_ha", 15_000)
     species = inputs.get("species_type", "native_mixed")
@@ -1398,7 +1403,7 @@ ALL_METHODOLOGIES: Dict[str, Dict[str, Any]] = {
     "VM0020":  {"fn": VM0020_Wetland_Restoration,       "name": "Wetland Restoration",             "sector": "Land Use",    "standard": "VCS", "project_type": "Rewetting"},
     "VM0026":  {"fn": VM0026_Avoided_Land_Use,          "name": "Tropical Forest REDD+",           "sector": "Forestry",    "standard": "VCS", "project_type": "Avoided Deforestation"},
     "VM0036":  {"fn": VM0036_BiocharSoilCarbon,         "name": "Biochar Soil Carbon",             "sector": "Agriculture", "standard": "VCS", "project_type": "Biochar Application"},
-    "VM0037":  {"fn": VM0037_MesosphericCooling,        "name": "Forest Restoration",              "sector": "Forestry",    "standard": "VCS", "project_type": "ARR"},
+    "VM0037":  {"fn": VM0037_ForestRestoration,          "name": "Forest Restoration",              "sector": "Forestry",    "standard": "VCS", "project_type": "ARR"},
     "VM0041":  {"fn": VM0041_BlueCarbon,                "name": "Blue Carbon Restoration",         "sector": "Blue Carbon", "standard": "VCS", "project_type": "Coastal Restoration"},
     "VM0045":  {"fn": VM0045_Regenerative_Agriculture,  "name": "Regenerative Agriculture",        "sector": "Agriculture", "standard": "VCS", "project_type": "Regen Ag"},
     "VM0049":  {"fn": VM0049_ARR_Tropics,               "name": "Tropical ARR",                    "sector": "Forestry",    "standard": "VCS", "project_type": "Afforestation/Reforestation"},

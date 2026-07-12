@@ -1,5 +1,12 @@
-import React,{useState,useMemo} from 'react';
+import React,{useState,useMemo,useEffect} from 'react';
+import axios from 'axios';
 import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis} from 'recharts';
+
+// Backend E92 Water Risk & Stewardship engine (WRI AQUEDUCT 4.0 / CDP Water
+// A-List / TNFD E3 / AWS Standard v2 / CEO Water Mandate).
+// See backend/services/water_stewardship_engine.py + backend/api/v1/routes/water_stewardship.py
+const API = 'http://localhost:8001';
+const WATER_API = `${API}/api/v1/water-risk`;
 
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -45,6 +52,48 @@ const ANNUAL=Array.from({length:10},(_,i)=>({
   investment:+(sr(i*149)*20+5).toFixed(1),disclosure:+(sr(i*151)*15+30).toFixed(1),
 }));
 
+// ── Live backend wiring (E92 Water Risk & Stewardship Engine) ──────────────
+// Maps this page's synthetic basin names to the engine's real WRI AQUEDUCT 4.0
+// basin benchmark keys (GET /ref/aqueduct-benchmarks) so live assessments use
+// real basin-level water-stress/groundwater/flood inputs where available.
+const BASIN_BENCHMARK_KEY={
+  'Ganges':'Ganges-Brahmaputra','Yangtze':'Yangtze','Nile':'Nile','Amazon':'Amazon','Colorado':'Colorado',
+  'Murray-Darling':'Murray-Darling','Rhine':'Rhine','Danube':'Danube','Mekong':'Mekong','Indus':'Indus',
+  'Yellow River':'Yellow River','Tigris-Euphrates':'Tigris-Euphrates','Zambezi':'Zambezi',
+  // 'Niger' and 'Orange' have no AQUEDUCT_BASIN_BENCHMARKS entry in the engine —
+  // those companies/basins fall back to the engine's own deterministic
+  // entity-seeded proxy for the aqueduct indicators (never fabricated client-side).
+};
+
+// Engine's 4-tier aqueduct_risk_tier / water_risk_tier -> this page's risk label set.
+const RISK_TIER_LABEL={low:'Low',medium:'Medium',high:'High',critical:'Extremely High'};
+
+// Translate one seeded COMPANIES row into the POST /api/v1/water-risk/assess
+// (WaterRiskAssessRequest) payload shape. Basin benchmark values (when available)
+// are passed explicitly so the AQUEDUCT composite reflects the real basin, not
+// just an entity-id hash proxy.
+const buildAssessPayload=(c,benchmarks)=>{
+  const bKey=BASIN_BENCHMARK_KEY[c.primaryBasin];
+  const bench=(bKey&&benchmarks)?benchmarks[bKey]:null;
+  return{
+    entity_id:`WR-${c.id}`,
+    entity_name:c.name,
+    sector:c.sector.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''),
+    basin_name:c.primaryBasin,
+    water_withdrawal_ml_yr:c.waterWithdrawal,
+    water_consumption_ml_yr:c.waterConsumption,
+    water_discharge_ml_yr:c.waterDischarge,
+    recycled_water_pct:c.recyclingRate,
+    total_assets_m:+(c.revenue*1.8).toFixed(1),
+    water_dependent_revenue_pct:c.waterIntensity>25?55:30,
+    ...(bench?{
+      baseline_water_stress:bench.baseline_water_stress,
+      groundwater_depletion:bench.groundwater_depletion,
+      riverine_flood_risk:bench.riverine_flood_risk,
+    }:{}),
+  };
+};
+
 export default function WaterRiskPage(){
   const [tab,setTab]=useState(0);
   const [search,setSearch]=useState('');
@@ -59,24 +108,101 @@ export default function WaterRiskPage(){
   const [bDir,setBDir]=useState('desc');
   const [bExpanded,setBExpanded]=useState(null);
 
+  // --- Live backend wiring (E92 Water Risk & Stewardship Engine) -----------
+  // benchmarks: real WRI AQUEDUCT 4.0 basin benchmark table (GET /ref/aqueduct-benchmarks).
+  // portfolioLive: per-company POST /assess results, keyed by company id.
+  // portfolioStatus: 'loading' | 'live' | 'demo' (demo = API unreachable, seeded fallback shown).
+  const [benchmarks,setBenchmarks]=useState(null);
+  const [portfolioLive,setPortfolioLive]=useState(null);
+  const [portfolioStatus,setPortfolioStatus]=useState('loading');
+
+  useEffect(()=>{
+    let cancelled=false;
+    (async()=>{
+      let benchMap=null;
+      try{
+        const{data}=await axios.get(`${WATER_API}/ref/aqueduct-benchmarks`,{timeout:10000});
+        benchMap=data?.basin_benchmarks||null;
+      }catch(e){/* fall through to entity-seeded proxy */}
+      if(cancelled)return;
+      setBenchmarks(benchMap);
+      setPortfolioStatus('loading');
+      try{
+        const results=await Promise.all(COMPANIES.map(c=>
+          axios.post(`${WATER_API}/assess`,buildAssessPayload(c,benchMap),{timeout:15000})
+            .then(r=>[c.id,r.data]).catch(()=>[c.id,null])
+        ));
+        if(cancelled)return;
+        const map={};let liveCount=0;
+        results.forEach(([id,data])=>{if(data){map[id]=data;liveCount++;}});
+        setPortfolioLive(map);
+        setPortfolioStatus(liveCount>0?'live':'demo');
+      }catch(e){
+        if(!cancelled)setPortfolioStatus('demo');
+      }
+    })();
+    return()=>{cancelled=true;};
+  },[]);
+
+  // Merge live per-company AQUEDUCT/CDP/financial-exposure results back onto the
+  // seeded company inventory. Companies the API hasn't returned (e.g. call
+  // failed) keep their seeded demo values — never blanked out.
+  const enrichedCompanies=useMemo(()=>COMPANIES.map(c=>{
+    const live=portfolioLive&&portfolioLive[c.id];
+    if(!live)return c;
+    const aq=live.aqueduct||{};
+    const cdp=live.cdp_water_security||{};
+    const fin=live.financial_exposure||{};
+    const cwm=live.ceo_water_mandate||{};
+    const revRiskPct=c.revenue>0&&Number.isFinite(fin.total_water_financial_risk_m)
+      ?Math.min(60,+(fin.total_water_financial_risk_m/c.revenue*100).toFixed(1))
+      :c.waterRevRisk;
+    return{
+      ...c,
+      waterStressScore:typeof aq.overall_score==='number'?aq.overall_score:c.waterStressScore,
+      physicalRisk:RISK_TIER_LABEL[aq.risk_tier]||c.physicalRisk,
+      regulatoryRisk:RISK_TIER_LABEL[live.overall?.water_risk_tier]||c.regulatoryRisk,
+      cdpScore:cdp.grade||c.cdpScore,
+      waterRevRisk:revRiskPct,
+      waterPolicy:typeof cwm.committed==='boolean'?cwm.committed:c.waterPolicy,
+      disclosure:typeof cdp.a_list_eligible==='boolean'?cdp.a_list_eligible:c.disclosure,
+      _live:true,
+    };
+  }),[portfolioLive]);
+
+  // Enrich the 15 basins with real WRI AQUEDUCT 4.0 benchmark figures where the
+  // engine has a matching basin entry (12 of 15); others keep seeded figures.
+  const enrichedBasins=useMemo(()=>BASIN_DATA.map(b=>{
+    const key=BASIN_BENCHMARK_KEY[b.name]||b.name;
+    const bench=benchmarks?benchmarks[key]:null;
+    if(!bench)return b;
+    return{
+      ...b,
+      stressLevel:typeof bench.aqueduct_overall_score==='number'?bench.aqueduct_overall_score:b.stressLevel,
+      floodRisk:typeof bench.riverine_flood_risk==='number'?bench.riverine_flood_risk:b.floodRisk,
+      groundwaterDepletion:typeof bench.groundwater_depletion==='number'?bench.groundwater_depletion:b.groundwaterDepletion,
+      _live:true,
+    };
+  }),[benchmarks]);
+
   const filtered=useMemo(()=>{
-    let d=[...COMPANIES];
+    let d=[...enrichedCompanies];
     if(search)d=d.filter(c=>c.name.toLowerCase().includes(search.toLowerCase())||c.sector.toLowerCase().includes(search.toLowerCase()));
     if(filterSect!=='All')d=d.filter(c=>c.sector===filterSect);
     if(filterRisk!=='All')d=d.filter(c=>c.physicalRisk===filterRisk);
     d.sort((a,b)=>sortDir==='asc'?((a[sortCol]>b[sortCol])?1:-1):((a[sortCol]<b[sortCol])?1:-1));
     return d;
-  },[search,sortCol,sortDir,filterSect,filterRisk]);
+  },[enrichedCompanies,search,sortCol,sortDir,filterSect,filterRisk]);
 
   const paged=filtered.slice(page*PAGE,page*PAGE+PAGE);
   const totalPages=Math.ceil(filtered.length/PAGE);
 
   const bFiltered=useMemo(()=>{
-    let d=[...BASIN_DATA];
+    let d=[...enrichedBasins];
     if(bSearch)d=d.filter(b=>b.name.toLowerCase().includes(bSearch.toLowerCase()));
     d.sort((a,b)=>bDir==='asc'?((a[bSort]>b[bSort])?1:-1):((a[bSort]<b[bSort])?1:-1));
     return d;
-  },[bSearch,bSort,bDir]);
+  },[enrichedBasins,bSearch,bSort,bDir]);
 
   const doSort=(col)=>{if(sortCol===col)setSortDir(d=>d==='asc'?'desc':'asc');else{setSortCol(col);setSortDir('desc');}setPage(0);};
   const doBSort=(col)=>{if(bSort===col)setBDir(d=>d==='asc'?'desc':'asc');else{setBSort(col);setBDir('desc');}};
@@ -223,7 +349,7 @@ export default function WaterRiskPage(){
     <div>
       <div style={{display:'flex',gap:12,marginBottom:16,alignItems:'center'}}>
         <input value={bSearch} onChange={e=>setBSearch(e.target.value)} placeholder="Search basins..." style={{flex:1,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:8,fontSize:13,background:T.surface}}/>
-        <button onClick={()=>exportCSV(BASIN_DATA,'water_basins.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
+        <button onClick={()=>exportCSV(enrichedBasins,'water_basins.csv')} style={{padding:'8px 16px',border:'none',borderRadius:8,background:T.gold,color:'#fff',fontWeight:600,fontSize:13,cursor:'pointer'}}>Export CSV</button>
       </div>
       <div style={{overflowX:'auto',marginBottom:20}}>
         <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
@@ -268,14 +394,14 @@ export default function WaterRiskPage(){
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
           <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Basin Stress Levels</div>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={[...BASIN_DATA].sort((a,b)=>parseFloat(b.stressLevel)-parseFloat(a.stressLevel))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="stressLevel" fill={T.red} radius={[0,6,6,0]} name="Stress Level"/></BarChart>
+            <BarChart data={[...enrichedBasins].sort((a,b)=>parseFloat(b.stressLevel)-parseFloat(a.stressLevel))} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:10,fill:T.textMut}} domain={[0,100]}/><YAxis dataKey="name" type="category" width={110} tick={{fontSize:9,fill:T.textMut}}/><Tooltip {...tip}/><Bar dataKey="stressLevel" fill={T.red} radius={[0,6,6,0]} name="Stress Level"/></BarChart>
           </ResponsiveContainer>
         </div>
         <div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:10,padding:20}}>
           <div style={{fontSize:14,fontWeight:700,color:T.navy,marginBottom:12}}>Flood vs Drought Risk</div>
           <ResponsiveContainer width="100%" height={300}>
             <ScatterChart><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="x" name="Flood Risk" tick={{fontSize:10,fill:T.textMut}}/><YAxis dataKey="y" name="Drought Risk" tick={{fontSize:10,fill:T.textMut}}/><ZAxis dataKey="z" range={[60,400]}/><Tooltip {...tip}/>
-              <Scatter data={BASIN_DATA.map(b=>({name:b.name,x:parseFloat(b.floodRisk),y:parseFloat(b.droughtRisk),z:b.population}))} fill={T.navy} fillOpacity={0.6}/>
+              <Scatter data={enrichedBasins.map(b=>({name:b.name,x:parseFloat(b.floodRisk),y:parseFloat(b.droughtRisk),z:b.population}))} fill={T.navy} fillOpacity={0.6}/>
             </ScatterChart>
           </ResponsiveContainer>
         </div>
@@ -336,6 +462,11 @@ export default function WaterRiskPage(){
         <div style={{fontSize:11,fontFamily:T.mono,color:T.textMut,textTransform:'uppercase',letterSpacing:1}}>Environmental / Water</div>
         <h1 style={{fontSize:28,fontWeight:800,color:T.navy,margin:'4px 0 0'}}>Water Risk Assessment</h1>
         <div style={{width:40,height:3,background:T.gold,borderRadius:2,marginTop:6}}/>
+        <div style={{marginTop:10}}>
+          {portfolioStatus==='loading'&&<span style={{padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:700,background:'#f1f5f9',color:'#64748b'}}>Connecting to Water Risk &amp; Stewardship Engine…</span>}
+          {portfolioStatus==='live'&&<span style={{padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:700,background:'#d1fae5',color:'#065f46'}}>● Live — scores computed by /api/v1/water-risk/assess (WRI AQUEDUCT 4.0 · CDP Water A-List · TNFD E3 · AWS Standard v2)</span>}
+          {portfolioStatus==='demo'&&<span style={{padding:'3px 10px',borderRadius:12,fontSize:11,fontWeight:700,background:'#fef3c7',color:'#92400e'}}>○ Demo Data — Water Risk API unavailable, showing seeded illustrative figures</span>}
+        </div>
       </div>
       <div style={{display:'flex',gap:0,marginBottom:24,borderBottom:`2px solid ${T.border}`}}>
         {TABS.map((t,i)=><button key={t} onClick={()=>setTab(i)} style={{padding:'10px 20px',border:'none',borderBottom:tab===i?`3px solid ${T.gold}`:'3px solid transparent',background:'transparent',color:tab===i?T.navy:T.textMut,fontWeight:tab===i?700:500,fontSize:13,cursor:'pointer',fontFamily:T.font}}>{t}</button>)}

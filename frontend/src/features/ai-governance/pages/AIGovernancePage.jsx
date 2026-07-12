@@ -1,9 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   Cell, Legend, PieChart, Pie, LineChart, Line, ScatterChart, Scatter,
 } from 'recharts';
+
+// Backend E77 AI Governance engine (EU AI Act 2024/1689 / NIST AI RMF 1.0 / OECD AI
+// Principles / disparate-impact bias metrics / energy-emissions accounting).
+// See backend/services/ai_governance_engine.py + backend/api/v1/routes/ai_governance.py
+const API = 'http://localhost:8001';
+const AI_GOV_API = `${API}/api/v1/ai-governance`;
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f4f6f9',
@@ -133,6 +140,93 @@ const TIER_BG = { Unacceptable: '#fee2e2', High: '#ffedd5', Limited: '#fef9c3', 
 const SEV_COLOR = { Critical: T.red, High: T.orange, Medium: T.amber, Low: T.green };
 const PIE_COLORS = [T.indigo, T.teal, T.amber, T.red, T.green, T.purple, T.orange, T.blue];
 
+// ---------------------------------------------------------------------------
+// Live-API mapping helpers — translate the locally-seeded system inventory
+// into the request shape the backend AIGovernanceEngine (AISystemInput /
+// BiasAssessmentInput) expects, and map its responses back onto display fields.
+// ---------------------------------------------------------------------------
+
+// Local SYSTEM_TYPES -> EU AI Act 2024/1689 Annex III high-risk category keys
+// (keys must match EU_AI_ACT_HIGH_RISK_CATEGORIES in ai_governance_engine.py)
+const TYPE_TO_AI_ACT_CATEGORY = {
+  'Recruitment / HR': 'employment_hr',
+  'Credit Scoring': 'essential_services',
+  'Healthcare Diagnostics': 'medical_devices',
+  'Autonomous Systems': 'critical_infrastructure',
+  'Recommendation Engine': null,
+  'Fraud Detection': 'essential_services',
+  'Natural Language Processing': null,
+  'Computer Vision': 'biometric_identification',
+  'Predictive Analytics': null,
+  'Risk Assessment': 'essential_services',
+};
+
+// Approx. grid carbon intensity by deployment region (gCO2e/kWh) — used as
+// deployment_grid_carbon_gco2_kwh input to the energy-footprint calculation.
+const REGION_GRID_CARBON = { EU: 311, US: 379, UK: 233, SG: 408, AU: 656, CA: 130, Other: 475 };
+
+// Backend risk-tier enum -> frontend RISK_TIERS label
+const API_TIER_TO_LABEL = {
+  unacceptable: 'Unacceptable', high_risk: 'High', limited_risk: 'Limited', minimal_risk: 'Minimal',
+};
+
+// Backend bias severity -> a 0-100 "bias score" so live results can drive the
+// same higher-is-worse bar charts the seeded data uses.
+const BIAS_SEVERITY_TO_SCORE = { critical: 92, high: 72, medium: 50, low: 20 };
+
+const paramScaleOf = (bn) => (bn < 1 ? 'sub_1b' : bn < 10 ? '1b_10b' : bn < 100 ? '10b_100b' : 'over_100b');
+
+const ALL_CARD_FIELDS = ['model_details', 'intended_use', 'factors', 'metrics', 'evaluation_data', 'training_data', 'quantitative_analysis', 'ethical_considerations', 'caveats_recommendations', 'out_of_scope_uses', 'technical_specifications', 'environmental_impact'];
+const modelCardFieldsOf = (docStatus) => {
+  if (docStatus === 'Complete') return Object.fromEntries(ALL_CARD_FIELDS.map(k => [k, true]));
+  if (docStatus === 'Missing') return Object.fromEntries(ALL_CARD_FIELDS.map(k => [k, false]));
+  // Partial — first half present
+  return Object.fromEntries(ALL_CARD_FIELDS.map((k, i) => [k, i % 2 === 0]));
+};
+
+// NIST AI RMF 1.0 sub-category ids (must match NIST_RMF_CATEGORIES in
+// ai_governance_engine.py — 6 Govern + 5 Map + 4 Measure + 4 Manage = 19) and
+// OECD AI Principles sub-indicator ids (5 principles x 2-3 sub-indicators = 12).
+// Without an explicit nist_rmf_scores/oecd_scores payload the engine treats
+// every category as "not assessed" (score 0) — so we derive a full score set
+// from the seeded documentation/oversight signals rather than leaving these
+// unset, otherwise every system's live NIST/OECD score would flatten to 0.
+const NIST_ALL_CATEGORY_IDS = ['GV-1', 'GV-2', 'GV-3', 'GV-4', 'GV-5', 'GV-6', 'MP-1', 'MP-2', 'MP-3', 'MP-4', 'MP-5', 'MS-1', 'MS-2', 'MS-3', 'MS-4', 'MG-1', 'MG-2', 'MG-3', 'MG-4'];
+const OECD_ALL_SUBINDICATOR_IDS = ['ig_1', 'ig_2', 'hc_1', 'hc_2', 'hc_3', 'tp_1', 'tp_2', 'tp_3', 'rb_1', 'rb_2', 'ac_1', 'ac_2'];
+
+const docBaseScore = (docStatus) => (docStatus === 'Complete' ? 1 : docStatus === 'Partial' ? 0.5 : 0);
+
+const nistScoresOf = (s) => {
+  const base = docBaseScore(s.documentation);
+  const boosted = s.humanOversight ? Math.min(1, base + 0.5) : base;
+  // Alternate base/oversight-boosted score across categories so the profile
+  // isn't perfectly flat, while staying fully deterministic (no PRNG).
+  return Object.fromEntries(NIST_ALL_CATEGORY_IDS.map((id, i) => [id, i % 3 === 0 ? boosted : base]));
+};
+
+const oecdScoresOf = (s) => {
+  const base = docBaseScore(s.documentation);
+  return Object.fromEntries(OECD_ALL_SUBINDICATOR_IDS.map(id => [id, base]));
+};
+
+// Translate one seeded AI_SYSTEMS row into the AISystemInput payload shape.
+const sysToApiPayload = (s) => ({
+  system_id: `SYS-${s.id}`,
+  system_name: s.name,
+  ai_act_category: TYPE_TO_AI_ACT_CATEGORY[s.type] || null,
+  is_gpai: s.type === 'Natural Language Processing' && s.modelParamsBn > 50,
+  is_in_scope_eu_ai_act: true,
+  parameter_scale: paramScaleOf(s.modelParamsBn),
+  daily_queries: Math.round(1000 + (s.id % 20) * 4500),
+  deployment_region: s.region,
+  deployment_grid_carbon_gco2_kwh: REGION_GRID_CARBON[s.region] || 311,
+  training_complete: true,
+  model_card_fields: modelCardFieldsOf(s.documentation),
+  nist_rmf_scores: nistScoresOf(s),
+  oecd_scores: oecdScoresOf(s),
+  sector: s.type,
+});
+
 const KpiCard = ({ label, value, sub, accent }) => (
   <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '18px 22px', borderLeft: accent ? `4px solid ${accent}` : undefined }}>
     <div style={{ fontSize: 11, color: T.textSec, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
@@ -188,47 +282,236 @@ export default function AIGovernancePage() {
   const [incStatus, setIncStatus] = useState('All');
   const [incRegion, setIncRegion] = useState('All');
 
+  // --- Live backend wiring (E77 AI Governance Engine) ---------------------
+  // Portfolio-wide assessment: computes real EU AI Act / NIST RMF / bias /
+  // energy scores for every seeded system via POST /api/v1/ai-governance/portfolio.
+  // Falls back to the locally-seeded (sr() PRNG) figures, clearly labeled, if
+  // the API is unreachable.
+  const [portfolioLive, setPortfolioLive] = useState(null);
+  const [portfolioStatus, setPortfolioStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await axios.post(`${AI_GOV_API}/portfolio`, {
+          portfolio_id: 'AI-GOV-PORTFOLIO-001',
+          organisation_name: 'Registered AI System Inventory',
+          reporting_period: '2026',
+          systems: AI_SYSTEMS.map(sysToApiPayload),
+        }, { timeout: 15000 });
+        if (!cancelled && data && data.system_results) {
+          setPortfolioLive(data);
+          setPortfolioStatus('live');
+        } else if (!cancelled) {
+          setPortfolioStatus('demo');
+        }
+      } catch (e) {
+        if (!cancelled) setPortfolioStatus('demo');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Merge live per-system results (real EU AI Act / NIST / bias / carbon
+  // figures) back onto the seeded inventory, matched by system_id. Systems
+  // the API hasn't returned (e.g. call failed) keep their seeded demo values.
+  const enrichedSystems = useMemo(() => {
+    if (!portfolioLive || !portfolioLive.system_results) return AI_SYSTEMS;
+    const byId = new Map(portfolioLive.system_results.map(r => [r.system_id, r]));
+    return AI_SYSTEMS.map(s => {
+      const live = byId.get(`SYS-${s.id}`);
+      if (!live) return s;
+      return {
+        ...s,
+        riskTier: API_TIER_TO_LABEL[live.eu_ai_act_risk_tier] || s.riskTier,
+        euAiActScore: live.eu_ai_act_score,
+        nistScore: live.nist_rmf_score,
+        compliancePct: live.esg_composite_score,
+        co2eTyr: Math.round(live.annual_scope2_tco2e),
+        biasScore: BIAS_SEVERITY_TO_SCORE[live.bias_severity] ?? s.biasScore,
+        documentation: live.model_card_completeness_pct >= 80 ? 'Complete' : live.model_card_completeness_pct >= 40 ? 'Partial' : 'Missing',
+        _live: true,
+      };
+    });
+  }, [portfolioLive]);
+
+  // Once live data lands, re-sync any already-selected system objects so
+  // detail panels reflect the real computed values instead of the seed.
+  useEffect(() => {
+    if (!portfolioLive) return;
+    setSelectedSys(prev => enrichedSystems.find(s => s.id === prev?.id) || prev);
+    setEuSelectedSys(prev => enrichedSystems.find(s => s.id === prev?.id) || prev);
+    setNistSys(prev => enrichedSystems.find(s => s.id === prev?.id) || prev);
+    setBiasSys(prev => enrichedSystems.find(s => s.id === prev?.id) || prev);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioLive]);
+
+  // --- EU AI Act tab: live single-system classification -------------------
+  const [euLive, setEuLive] = useState(null);
+  const [euLiveStatus, setEuLiveStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setEuLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const payload = sysToApiPayload(euSelectedSys);
+        const { data } = await axios.post(`${AI_GOV_API}/eu-ai-act`, {
+          system_id: payload.system_id, system_name: payload.system_name,
+          ai_act_category: payload.ai_act_category, is_gpai: payload.is_gpai,
+          is_in_scope_eu_ai_act: payload.is_in_scope_eu_ai_act, model_card_fields: payload.model_card_fields,
+        }, { timeout: 10000 });
+        if (!cancelled) { setEuLive(data); setEuLiveStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setEuLive(null); setEuLiveStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [euSelectedSys]);
+
+  // --- NIST tab: live composite scoring from the 4 function sliders -------
+  // Pull the authoritative NIST AI RMF 1.0 sub-category list from the engine
+  // itself (GET /ref/nist-rmf-functions) so the slider->score mapping below
+  // covers all 19 real sub-categories, not just the frontend's local sample.
+  const [nistRefFunctions, setNistRefFunctions] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    axios.get(`${AI_GOV_API}/ref/nist-rmf-functions`, { timeout: 10000 })
+      .then(({ data }) => { if (!cancelled && data?.functions) setNistRefFunctions(data.functions); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const [nistLive, setNistLive] = useState(null);
+  const [nistLiveStatus, setNistLiveStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setNistLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        // Convert each 0-100 function slider into per-sub-category scores
+        // (0 / 0.5 / 1) the engine expects, applied uniformly within a function.
+        const nearestHalf = v => (v >= 83 ? 1 : v >= 50 ? 0.5 : 0);
+        const FN_KEY = { Govern: 'GOVERN', Map: 'MAP', Measure: 'MEASURE', Manage: 'MANAGE' };
+        const scores = {};
+        if (nistRefFunctions) {
+          Object.entries(FN_KEY).forEach(([label, key]) => {
+            const catIds = Object.keys(nistRefFunctions[key]?.categories || {});
+            const v = nearestHalf(nistSliders[label]);
+            catIds.forEach(id => { scores[id] = v; });
+          });
+        } else {
+          // Reference list not loaded yet — fall back to the local sample of
+          // sub-categories so the calculator still works (partial coverage).
+          NIST_SUBCATEGORIES.forEach(({ fn, sub }) => { scores[sub] = nearestHalf(nistSliders[fn]); });
+        }
+        const { data } = await axios.post(`${AI_GOV_API}/nist-rmf`, {
+          system_id: `SYS-${nistSys.id}`, system_name: nistSys.name, nist_rmf_scores: scores,
+        }, { timeout: 10000 });
+        if (!cancelled) { setNistLive(data); setNistLiveStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setNistLive(null); setNistLiveStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [nistSliders, nistSys, nistRefFunctions]);
+
+  // --- Bias tab: live disparate-impact / 4-5ths-rule assessment -----------
+  const [biasLive, setBiasLive] = useState(null);
+  const [biasLiveStatus, setBiasLiveStatus] = useState('loading');
+  const BIAS_API_CHARACTERISTICS = ['gender', 'race_ethnicity', 'age', 'disability', 'religion', 'sexual_orientation', 'nationality'];
+  useEffect(() => {
+    let cancelled = false;
+    setBiasLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const metric_values = Object.fromEntries(BIAS_API_CHARACTERISTICS.map(c => [c, {
+          disparate_impact_ratio: biasDir,
+          statistical_parity_difference: biasSpd,
+          equalized_odds_parity: biasEog,
+        }]));
+        const { data } = await axios.post(`${AI_GOV_API}/bias-assessment`, {
+          system_id: `SYS-${biasSys.id}`,
+          protected_characteristics: BIAS_API_CHARACTERISTICS,
+          metric_values,
+        }, { timeout: 10000 });
+        if (!cancelled) { setBiasLive(data); setBiasLiveStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setBiasLive(null); setBiasLiveStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [biasDir, biasSpd, biasEog, biasSys]);
+
+  // --- Energy tab: live training + inference Scope 2 calculation ----------
+  const [energyLive, setEnergyLive] = useState(null);
+  const [energyLiveStatus, setEnergyLiveStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setEnergyLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const payload = sysToApiPayload(selectedSys);
+        const { data } = await axios.post(`${AI_GOV_API}/energy-footprint`, {
+          system_id: payload.system_id, system_name: payload.system_name,
+          parameter_scale: payload.parameter_scale, daily_queries: payload.daily_queries,
+          deployment_grid_carbon_gco2_kwh: payload.deployment_grid_carbon_gco2_kwh,
+          training_complete: true, deployment_region: payload.deployment_region,
+        }, { timeout: 10000 });
+        if (!cancelled) { setEnergyLive(data); setEnergyLiveStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setEnergyLive(null); setEnergyLiveStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [selectedSys]);
+
   // --- Computed data ---
-  const filteredSystems = useMemo(() => AI_SYSTEMS.filter(s => {
+  const filteredSystems = useMemo(() => enrichedSystems.filter(s => {
     if (filterType !== 'All' && s.type !== filterType) return false;
     if (filterRegion !== 'All' && s.region !== filterRegion) return false;
     if (filterTier !== 'All' && s.riskTier !== filterTier) return false;
     if (filterVendor !== 'All' && s.vendor !== filterVendor) return false;
     if (search && !s.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
-  }), [filterType, filterRegion, filterTier, filterVendor, search]);
+  }), [enrichedSystems, filterType, filterRegion, filterTier, filterVendor, search]);
 
-  const highRiskCount = AI_SYSTEMS.filter(s => s.riskTier === 'High' || s.riskTier === 'Unacceptable').length;
-  const avgCompliance = AI_SYSTEMS.length ? Math.round(AI_SYSTEMS.reduce((a, s) => a + s.compliancePct, 0) / AI_SYSTEMS.length) : 0;
-  const totalEnergy = AI_SYSTEMS.reduce((a, s) => a + s.energyMwhYr, 0);
-  const totalCo2e = AI_SYSTEMS.reduce((a, s) => a + s.co2eTyr, 0);
+  const highRiskCount = enrichedSystems.filter(s => s.riskTier === 'High' || s.riskTier === 'Unacceptable').length;
+  const avgCompliance = enrichedSystems.length ? Math.round(enrichedSystems.reduce((a, s) => a + s.compliancePct, 0) / enrichedSystems.length) : 0;
+  const totalEnergy = enrichedSystems.reduce((a, s) => a + s.energyMwhYr, 0);
+  const totalCo2e = enrichedSystems.reduce((a, s) => a + s.co2eTyr, 0);
 
   // EU compliance by type
   const euByType = useMemo(() => SYSTEM_TYPES.map(type => {
-    const grp = AI_SYSTEMS.filter(s => s.type === type);
+    const grp = enrichedSystems.filter(s => s.type === type);
     return { type: type.split(' / ')[0].substring(0, 12), avg: grp.length ? Math.round(grp.reduce((a, s) => a + s.euAiActScore, 0) / grp.length) : 0 };
-  }), []);
+  }), [enrichedSystems]);
 
   // Tier distribution
   const tierDist = useMemo(() => RISK_TIERS.map(t => ({
-    name: t, value: AI_SYSTEMS.filter(s => s.riskTier === t).length,
-  })), []);
+    name: t, value: enrichedSystems.filter(s => s.riskTier === t).length,
+  })), [enrichedSystems]);
 
-  // Article compliance for selected system
+  // Article compliance for selected system — driven by the live EU AI Act
+  // score from POST /api/v1/ai-governance/eu-ai-act when available, else the
+  // seeded score (demo fallback, e.g. offline API).
   const euArticleStatus = useMemo(() => EU_AI_ARTICLES.map((art, i) => {
-    const score = euSelectedSys.euAiActScore;
+    const score = euLive ? euLive.compliance_score : euSelectedSys.euAiActScore;
     const threshold = 30 + i * 4;
     const status = score > threshold + 20 ? 'Met' : score > threshold ? 'Partial' : 'Not Met';
     return { ...art, status };
-  }), [euSelectedSys]);
+  }), [euSelectedSys, euLive]);
 
   const fineExposure = useMemo(() => {
-    const metCount = euArticleStatus.filter(a => a.status === 'Met').length;
-    const notMetCount = euArticleStatus.filter(a => a.status === 'Not Met').length;
+    // Prefer the engine's real Art 9-49 requirements accounting when live;
+    // fall back to the local 15-article threshold table.
+    const metCount = euLive ? euLive.requirements_met : euArticleStatus.filter(a => a.status === 'Met').length;
+    const totalReq = euLive ? euLive.requirements_total : EU_AI_ARTICLES.length;
+    const notMetCount = euLive ? Math.max(0, euLive.requirements_total - euLive.requirements_met) : euArticleStatus.filter(a => a.status === 'Not Met').length;
     const maxFineM = Math.max(30, revenueM * 0.06);
-    const exposure = Math.round(maxFineM * (notMetCount / EU_AI_ARTICLES.length));
+    const exposure = Math.round(maxFineM * (totalReq > 0 ? notMetCount / totalReq : 0));
     return { metCount, notMetCount, exposure, maxFineM: maxFineM.toFixed(1) };
-  }, [euArticleStatus, revenueM]);
+  }, [euArticleStatus, revenueM, euLive]);
 
   // NIST scores for selected system
   const nistRadarData = useMemo(() => [
@@ -238,17 +521,22 @@ export default function AIGovernancePage() {
     { subject: 'Manage', score: Math.round(20 + sr(nistSys.id * 7 + 3) * 70), target: 80 },
   ], [nistSys]);
 
-  const nistTop20 = useMemo(() => [...AI_SYSTEMS].sort((a, b) => b.nistScore - a.nistScore).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), score: s.nistScore })), []);
+  const nistTop20 = useMemo(() => [...enrichedSystems].sort((a, b) => b.nistScore - a.nistScore).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), score: s.nistScore })), [enrichedSystems]);
 
   const nistGapData = useMemo(() => {
     const fns = ['Govern', 'Map', 'Measure', 'Manage'];
     return fns.map((fn, fi) => {
-      const avg = Math.round(AI_SYSTEMS.reduce((a, s) => a + Math.round(20 + sr(s.id * 7 + fi) * 70), 0) / Math.max(1, AI_SYSTEMS.length));
+      const avg = Math.round(enrichedSystems.reduce((a, s) => a + Math.round(20 + sr(s.id * 7 + fi) * 70), 0) / Math.max(1, enrichedSystems.length));
       return { fn, avg, target: 80, gap: Math.max(0, 80 - avg) };
     });
-  }, []);
+  }, [enrichedSystems]);
 
-  const customNistScore = useMemo(() => Math.round((nistSliders.Govern + nistSliders.Map + nistSliders.Measure + nistSliders.Manage) / 4), [nistSliders]);
+  // Live weighted NIST AI RMF 1.0 composite (POST /api/v1/ai-governance/nist-rmf)
+  // when reachable; otherwise a simple unweighted average of the 4 sliders (demo fallback).
+  const customNistScore = useMemo(() => (
+    nistLive ? Math.round(nistLive.overall_score)
+      : Math.round((nistSliders.Govern + nistSliders.Map + nistSliders.Measure + nistSliders.Manage) / 4)
+  ), [nistSliders, nistLive]);
 
   // Bias data
   const biasBarData = useMemo(() => PROTECTED_CHARACTERISTICS.map((c, i) => ({
@@ -258,39 +546,45 @@ export default function AIGovernancePage() {
   })), [biasSys]);
 
   const biasByType = useMemo(() => SYSTEM_TYPES.map(type => {
-    const grp = AI_SYSTEMS.filter(s => s.type === type);
+    const grp = enrichedSystems.filter(s => s.type === type);
     return { type: type.split(' / ')[0].substring(0, 10), avg: grp.length ? Math.round(grp.reduce((a, s) => a + s.biasScore, 0) / grp.length) : 0 };
-  }), []);
+  }), [enrichedSystems]);
 
-  const biasTop20 = useMemo(() => [...AI_SYSTEMS].sort((a, b) => b.biasScore - a.biasScore).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), score: s.biasScore })), []);
+  const biasTop20 = useMemo(() => [...enrichedSystems].sort((a, b) => b.biasScore - a.biasScore).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), score: s.biasScore })), [enrichedSystems]);
 
+  // Live severity from POST /api/v1/ai-governance/bias-assessment (4/5ths-rule
+  // DIR + statistical parity + equalized-odds engine); local heuristic is the
+  // demo fallback if the API call fails.
+  const SEVERITY_API_TO_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low' };
   const biasSeverity = useMemo(() => {
+    if (biasLive) return SEVERITY_API_TO_LABEL[biasLive.overall_bias_severity] || 'Low';
     if (biasDir < 0.7 || Math.abs(biasSpd) > 0.1 || biasEog > 0.15) return 'Critical';
     if (biasDir < 0.8 || Math.abs(biasSpd) > 0.05 || biasEog > 0.1) return 'High';
     if (biasDir < 0.9 || Math.abs(biasSpd) > 0.02 || biasEog > 0.05) return 'Medium';
     return 'Low';
-  }, [biasDir, biasSpd, biasEog]);
+  }, [biasDir, biasSpd, biasEog, biasLive]);
 
   const biasRemediation = useMemo(() => {
+    if (biasLive && biasLive.recommendations) return biasLive.recommendations;
     const sev = biasSeverity;
     if (sev === 'Critical') return ['Suspend automated decisions immediately', 'Conduct full dataset audit', 'Retrain model with balanced data', 'Engage independent bias auditor'];
     if (sev === 'High') return ['Implement human review layer', 'Recalibrate decision thresholds', 'Expand protected class training data', 'File regulatory disclosure'];
     if (sev === 'Medium') return ['Increase monitoring frequency', 'Review feature selection', 'Test with fairness constraints'];
     return ['Continue monitoring', 'Document current metrics', 'Schedule quarterly review'];
-  }, [biasSeverity]);
+  }, [biasSeverity, biasLive]);
 
   // Energy data
   const energyByScale = useMemo(() => {
     const bands = [['<7B', 0, 7], ['7–30B', 7, 30], ['30–100B', 30, 100], ['>100B', 100, Infinity]];
     return bands.map(([label, lo, hi]) => {
-      const grp = AI_SYSTEMS.filter(s => s.modelParamsBn >= lo && s.modelParamsBn < hi);
+      const grp = enrichedSystems.filter(s => s.modelParamsBn >= lo && s.modelParamsBn < hi);
       return { label, total: grp.reduce((a, s) => a + s.energyMwhYr, 0) };
     });
-  }, []);
+  }, [enrichedSystems]);
 
   const co2ByVendor = useMemo(() => VENDORS.map(v => ({
-    name: v, value: AI_SYSTEMS.filter(s => s.vendor === v).reduce((a, s) => a + s.co2eTyr, 0),
-  })).filter(v => v.value > 0), []);
+    name: v, value: enrichedSystems.filter(s => s.vendor === v).reduce((a, s) => a + s.co2eTyr, 0),
+  })).filter(v => v.value > 0), [enrichedSystems]);
 
   const energyProjection = useMemo(() => {
     const base = totalEnergy;
@@ -302,32 +596,32 @@ export default function AIGovernancePage() {
   }, [energyGrowth, totalEnergy, totalCo2e]);
 
   const energyByType = useMemo(() => SYSTEM_TYPES.map(type => {
-    const grp = AI_SYSTEMS.filter(s => s.type === type);
+    const grp = enrichedSystems.filter(s => s.type === type);
     const totalMwh = grp.reduce((a, s) => a + s.energyMwhYr, 0);
     const totalQ = grp.reduce((a, s) => a + Math.round(1000 + sr(s.id * 3) * 50000), 0);
     return { type: type.split(' / ')[0].substring(0, 12), intensity: totalQ > 0 ? parseFloat((totalMwh / totalQ * 1000).toFixed(3)) : 0 };
-  }), []);
+  }), [enrichedSystems]);
 
   // Model risk
   const docByType = useMemo(() => SYSTEM_TYPES.map(type => {
-    const grp = AI_SYSTEMS.filter(s => s.type === type);
+    const grp = enrichedSystems.filter(s => s.type === type);
     const complete = grp.filter(s => s.documentation === 'Complete').length;
     return { type: type.split(' / ')[0].substring(0, 12), pct: grp.length ? Math.round(complete / grp.length * 100) : 0 };
-  }), []);
+  }), [enrichedSystems]);
 
   const oversightByTier = useMemo(() => RISK_TIERS.map(tier => {
-    const grp = AI_SYSTEMS.filter(s => s.riskTier === tier);
+    const grp = enrichedSystems.filter(s => s.riskTier === tier);
     const withOversight = grp.filter(s => s.humanOversight).length;
     return { tier, pct: grp.length ? Math.round(withOversight / grp.length * 100) : 0 };
-  }), []);
+  }), [enrichedSystems]);
 
   const trlDist = useMemo(() => Array.from({ length: 9 }, (_, i) => ({
-    trl: `TRL ${i + 1}`, count: AI_SYSTEMS.filter(s => s.trlAi === i + 1).length,
-  })), []);
+    trl: `TRL ${i + 1}`, count: enrichedSystems.filter(s => s.trlAi === i + 1).length,
+  })), [enrichedSystems]);
 
-  const incidentTop20 = useMemo(() => [...AI_SYSTEMS].sort((a, b) => b.incidentCount - a.incidentCount).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), count: s.incidentCount })), []);
+  const incidentTop20 = useMemo(() => [...enrichedSystems].sort((a, b) => b.incidentCount - a.incidentCount).slice(0, 20).map(s => ({ name: s.name.substring(0, 10), count: s.incidentCount })), [enrichedSystems]);
 
-  const riskMatrix = useMemo(() => AI_SYSTEMS.slice(0, 80).map(s => ({ x: s.compliancePct, y: s.incidentCount, name: s.name })), []);
+  const riskMatrix = useMemo(() => enrichedSystems.slice(0, 80).map(s => ({ x: s.compliancePct, y: s.incidentCount, name: s.name })), [enrichedSystems]);
 
   // Incidents
   const filteredIncidents = useMemo(() => AI_INCIDENTS.filter(inc => {
@@ -373,13 +667,13 @@ export default function AIGovernancePage() {
 
   const dashRadar = [
     { subject: 'EU AI Act', score: avgCompliance },
-    { subject: 'NIST RMF', score: Math.round(AI_SYSTEMS.reduce((a, s) => a + s.nistScore, 0) / Math.max(1, AI_SYSTEMS.length)) },
-    { subject: 'Bias Control', score: 100 - Math.round(AI_SYSTEMS.reduce((a, s) => a + s.biasScore, 0) / Math.max(1, AI_SYSTEMS.length)) },
+    { subject: 'NIST RMF', score: Math.round(enrichedSystems.reduce((a, s) => a + s.nistScore, 0) / Math.max(1, enrichedSystems.length)) },
+    { subject: 'Bias Control', score: 100 - Math.round(enrichedSystems.reduce((a, s) => a + s.biasScore, 0) / Math.max(1, enrichedSystems.length)) },
     { subject: 'Energy Eff.', score: Math.round(60 + sr(500) * 25) },
-    { subject: 'Documentation', score: Math.round(AI_SYSTEMS.filter(s => s.documentation === 'Complete').length / Math.max(1, AI_SYSTEMS.length) * 100) },
+    { subject: 'Documentation', score: Math.round(enrichedSystems.filter(s => s.documentation === 'Complete').length / Math.max(1, enrichedSystems.length) * 100) },
   ];
 
-  const criticalSystems = AI_SYSTEMS.filter(s => s.riskTier === 'Unacceptable' || (s.riskTier === 'High' && s.compliancePct < 40)).length;
+  const criticalSystems = enrichedSystems.filter(s => s.riskTier === 'Unacceptable' || (s.riskTier === 'High' && s.compliancePct < 40)).length;
 
   const selPx = { fontSize: 13, padding: '7px 10px', border: `1px solid ${T.border}`, borderRadius: 6, background: T.card, color: T.textPri };
   const inpPx = { fontSize: 13, padding: '7px 10px', border: `1px solid ${T.border}`, borderRadius: 6, background: T.card, color: T.textPri, width: '100%', boxSizing: 'border-box' };
@@ -393,9 +687,14 @@ export default function AIGovernancePage() {
             <div style={{ color: T.gold, fontSize: 11, fontFamily: T.fontMono, letterSpacing: '0.12em', marginBottom: 4 }}>MODULE E77 · AI GOVERNANCE</div>
             <h1 style={{ color: '#ffffff', fontSize: 22, fontWeight: 700, margin: 0 }}>AI Governance & Regulatory Compliance</h1>
             <div style={{ color: '#94a3b8', fontSize: 13, marginTop: 4 }}>EU AI Act · NIST AI RMF 1.0 · Bias Assessment · Energy & Carbon · 200 Systems Registry</div>
+            <div style={{ marginTop: 8 }}>
+              {portfolioStatus === 'loading' && <Badge val="Connecting to AI Governance Engine…" color="#94a3b8" bg="#1e293b" />}
+              {portfolioStatus === 'live' && <Badge val="● Live — scores computed by /api/v1/ai-governance engine (EU AI Act 2024/1689 · NIST AI RMF 1.0)" color="#166534" bg="#dcfce7" />}
+              {portfolioStatus === 'demo' && <Badge val="○ Demo Data — AI Governance API unavailable, showing seeded illustrative figures" color="#92400e" bg="#fef3c7" />}
+            </div>
           </div>
           <div style={{ textAlign: 'right', fontFamily: T.fontMono, fontSize: 11, color: '#94a3b8' }}>
-            <div>{AI_SYSTEMS.length} Systems Registered</div>
+            <div>{enrichedSystems.length} Systems Registered</div>
             <div>{AI_INCIDENTS.length} Incidents Tracked</div>
             <div>Avg Compliance: {avgCompliance}%</div>
           </div>
@@ -521,10 +820,10 @@ export default function AIGovernancePage() {
         {tab === 1 && (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-              <KpiCard label="High-Risk Systems" value={AI_SYSTEMS.filter(s => s.riskTier === 'High').length} accent={T.orange} />
-              <KpiCard label="Unacceptable Risk" value={AI_SYSTEMS.filter(s => s.riskTier === 'Unacceptable').length} accent={T.red} />
+              <KpiCard label="High-Risk Systems" value={enrichedSystems.filter(s => s.riskTier === 'High').length} accent={T.orange} />
+              <KpiCard label="Unacceptable Risk" value={enrichedSystems.filter(s => s.riskTier === 'Unacceptable').length} accent={T.red} />
               <KpiCard label="Avg EU Compliance" value={`${avgCompliance}%`} accent={T.indigo} />
-              <KpiCard label="Systems Fully Compliant" value={AI_SYSTEMS.filter(s => s.compliancePct >= 80).length} accent={T.green} />
+              <KpiCard label="Systems Fully Compliant" value={enrichedSystems.filter(s => s.compliancePct >= 80).length} accent={T.green} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -558,8 +857,8 @@ export default function AIGovernancePage() {
             <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
                 <SectionH title="Article-by-Article Status & Fine Exposure" />
-                <select style={{ ...selPx, marginLeft: 'auto' }} value={euSelectedSys.id} onChange={e => setEuSelectedSys(AI_SYSTEMS.find(s => s.id === parseInt(e.target.value)))}>
-                  {AI_SYSTEMS.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                <select style={{ ...selPx, marginLeft: 'auto' }} value={euSelectedSys.id} onChange={e => setEuSelectedSys(enrichedSystems.find(s => s.id === parseInt(e.target.value)))}>
+                  {enrichedSystems.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
 
@@ -588,13 +887,18 @@ export default function AIGovernancePage() {
                 </div>
 
                 <div style={{ background: T.sub, borderRadius: 8, padding: 16 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Fine Exposure Calculator</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: T.navy }}>Fine Exposure Calculator</div>
+                    {euLiveStatus === 'live' && <Badge val="Live" color="#166534" bg="#dcfce7" />}
+                    {euLiveStatus === 'demo' && <Badge val="Demo" color="#92400e" bg="#fef3c7" />}
+                    {euLiveStatus === 'loading' && <Badge val="…" color={T.textSec} bg={T.sub} />}
+                  </div>
                   <div style={{ fontSize: 12, color: T.textSec, marginBottom: 8 }}>Annual Revenue (€M)</div>
                   <input type="number" value={revenueM} onChange={e => setRevenueM(Math.max(1, parseFloat(e.target.value) || 1))} style={{ ...inpPx, marginBottom: 14 }} />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {[
-                      ['Articles Met', fineExposure.metCount, T.green],
-                      ['Articles Not Met', fineExposure.notMetCount, T.red],
+                      ['Requirements Met', fineExposure.metCount, T.green],
+                      ['Requirements Not Met', fineExposure.notMetCount, T.red],
                       ['Max Fine (€M)', fineExposure.maxFineM, T.orange],
                       ['Estimated Exposure (€M)', fineExposure.exposure, T.red],
                     ].map(([label, val, color]) => (
@@ -604,6 +908,15 @@ export default function AIGovernancePage() {
                       </div>
                     ))}
                   </div>
+                  {euLive && (
+                    <div style={{ marginTop: 12, background: '#eef2ff', borderRadius: 6, padding: 10 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: T.indigo, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Live Classification — {euLive.risk_tier.replace('_', ' ')}</div>
+                      <div style={{ fontSize: 12, color: T.textPri, marginTop: 4 }}>{euLive.tier_description}</div>
+                      {euLive.is_gpai && euLive.gpai_obligations?.length > 0 && (
+                        <div style={{ fontSize: 11, color: T.textSec, marginTop: 4 }}>GPAI obligations: {euLive.gpai_obligations.join(', ')}</div>
+                      )}
+                    </div>
+                  )}
                   <div style={{ marginTop: 12, fontSize: 11, color: T.textSec }}>EU AI Act Art 99: fines up to €30M or 6% global revenue (whichever higher) for Art 5 violations; €20M or 4% for high-risk breaches.</div>
                 </div>
               </div>
@@ -616,7 +929,7 @@ export default function AIGovernancePage() {
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
               {['Govern', 'Map', 'Measure', 'Manage'].map((fn, fi) => {
-                const avg = Math.round(AI_SYSTEMS.reduce((a, s) => a + Math.round(20 + sr(s.id * 7 + fi) * 70), 0) / Math.max(1, AI_SYSTEMS.length));
+                const avg = Math.round(enrichedSystems.reduce((a, s) => a + Math.round(20 + sr(s.id * 7 + fi) * 70), 0) / Math.max(1, enrichedSystems.length));
                 return <KpiCard key={fn} label={`NIST ${fn} (avg)`} value={`${avg}/100`} sub={avg >= 80 ? 'On target' : `Gap: ${80 - avg}pts`} accent={avg >= 80 ? T.green : T.amber} />;
               })}
             </div>
@@ -625,8 +938,8 @@ export default function AIGovernancePage() {
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <SectionH title="NIST Radar — Selected System" />
-                  <select style={selPx} value={nistSys.id} onChange={e => setNistSys(AI_SYSTEMS.find(s => s.id === parseInt(e.target.value)))}>
-                    {AI_SYSTEMS.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  <select style={selPx} value={nistSys.id} onChange={e => setNistSys(enrichedSystems.find(s => s.id === parseInt(e.target.value)))}>
+                    {enrichedSystems.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
                 <ResponsiveContainer width="100%" height={260}>
@@ -673,7 +986,12 @@ export default function AIGovernancePage() {
               </div>
 
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-                <SectionH title="Custom NIST Score Calculator" sub="Adjust sliders to compute blended score" />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <SectionH title="Custom NIST Score Calculator" sub="Adjust sliders to compute blended score" />
+                  {nistLiveStatus === 'live' && <Badge val="Live" color="#166534" bg="#dcfce7" />}
+                  {nistLiveStatus === 'demo' && <Badge val="Demo" color="#92400e" bg="#fef3c7" />}
+                  {nistLiveStatus === 'loading' && <Badge val="…" color={T.textSec} bg={T.sub} />}
+                </div>
                 {['Govern', 'Map', 'Measure', 'Manage'].map(fn => (
                   <div key={fn} style={{ marginBottom: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
@@ -684,9 +1002,12 @@ export default function AIGovernancePage() {
                   </div>
                 ))}
                 <div style={{ background: T.sub, borderRadius: 8, padding: 12, textAlign: 'center', marginTop: 8 }}>
-                  <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Composite NIST Score</div>
+                  <div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Composite NIST Score {nistLive ? `(${nistLive.rmf_tier})` : ''}</div>
                   <div style={{ fontSize: 36, fontWeight: 700, color: customNistScore >= 80 ? T.green : customNistScore >= 60 ? T.amber : T.red, fontFamily: T.fontMono }}>{customNistScore}</div>
                   <div style={{ fontSize: 12, color: T.textSec }}>{customNistScore >= 80 ? 'Target Met' : `${80 - customNistScore}pts below target`}</div>
+                  {nistLive && nistLive.improvement_gaps?.length > 0 && (
+                    <div style={{ fontSize: 11, color: T.textSec, marginTop: 8, textAlign: 'left' }}>Gaps: {nistLive.improvement_gaps.join('; ')}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -697,18 +1018,18 @@ export default function AIGovernancePage() {
         {tab === 3 && (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-              <KpiCard label="Avg Bias Score" value={Math.round(AI_SYSTEMS.reduce((a, s) => a + s.biasScore, 0) / Math.max(1, AI_SYSTEMS.length))} sub="Lower = less bias" accent={T.red} />
-              <KpiCard label="Systems with Bias >60" value={AI_SYSTEMS.filter(s => s.biasScore > 60).length} accent={T.orange} />
+              <KpiCard label="Avg Bias Score" value={Math.round(enrichedSystems.reduce((a, s) => a + s.biasScore, 0) / Math.max(1, enrichedSystems.length))} sub="Lower = less bias" accent={T.red} />
+              <KpiCard label="Systems with Bias >60" value={enrichedSystems.filter(s => s.biasScore > 60).length} accent={T.orange} />
               <KpiCard label="Protected Characteristics" value={PROTECTED_CHARACTERISTICS.length} sub="Assessed" accent={T.indigo} />
-              <KpiCard label="Auto-Decision Systems" value={AI_SYSTEMS.filter(s => s.autoDecision).length} sub="Requires bias monitoring" accent={T.amber} />
+              <KpiCard label="Auto-Decision Systems" value={enrichedSystems.filter(s => s.autoDecision).length} sub="Requires bias monitoring" accent={T.amber} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <SectionH title="Disparate Impact by Protected Characteristic" />
-                  <select style={selPx} value={biasSys.id} onChange={e => setBiasSys(AI_SYSTEMS.find(s => s.id === parseInt(e.target.value)))}>
-                    {AI_SYSTEMS.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  <select style={selPx} value={biasSys.id} onChange={e => setBiasSys(enrichedSystems.find(s => s.id === parseInt(e.target.value)))}>
+                    {enrichedSystems.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                   </select>
                 </div>
                 <ResponsiveContainer width="100%" height={260}>
@@ -756,7 +1077,12 @@ export default function AIGovernancePage() {
               </div>
 
               <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20 }}>
-                <SectionH title="Interactive Bias Calculator" sub="Enter metrics → get severity + actions" />
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <SectionH title="Interactive Bias Calculator" sub="Enter metrics → get severity + actions (4/5ths Rule)" />
+                  {biasLiveStatus === 'live' && <Badge val="Live" color="#166534" bg="#dcfce7" />}
+                  {biasLiveStatus === 'demo' && <Badge val="Demo" color="#92400e" bg="#fef3c7" />}
+                  {biasLiveStatus === 'loading' && <Badge val="…" color={T.textSec} bg={T.sub} />}
+                </div>
                 {[
                   ['Disparate Impact Ratio', biasDir, setBiasDir, 0, 1.5, 0.01],
                   ['Stat. Parity Difference', biasSpd, setBiasSpd, -0.5, 0.5, 0.01],
@@ -788,8 +1114,32 @@ export default function AIGovernancePage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
               <KpiCard label="Total Energy (MWh/yr)" value={totalEnergy.toLocaleString()} accent={T.teal} />
               <KpiCard label="Total CO₂e (t/yr)" value={totalCo2e.toLocaleString()} accent={T.amber} />
-              <KpiCard label="Avg Energy / System" value={`${Math.round(totalEnergy / Math.max(1, AI_SYSTEMS.length)).toLocaleString()} MWh`} accent={T.indigo} />
-              <KpiCard label="Avg CO₂e / System" value={`${Math.round(totalCo2e / Math.max(1, AI_SYSTEMS.length)).toLocaleString()} t`} accent={T.orange} />
+              <KpiCard label="Avg Energy / System" value={`${Math.round(totalEnergy / Math.max(1, enrichedSystems.length)).toLocaleString()} MWh`} accent={T.indigo} />
+              <KpiCard label="Avg CO₂e / System" value={`${Math.round(totalCo2e / Math.max(1, enrichedSystems.length)).toLocaleString()} t`} accent={T.orange} />
+            </div>
+
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <SectionH title="Live Single-System Energy Assessment" sub="Training + inference Scope 2 emissions — POST /api/v1/ai-governance/energy-footprint" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {energyLiveStatus === 'live' && <Badge val="Live" color="#166534" bg="#dcfce7" />}
+                  {energyLiveStatus === 'demo' && <Badge val="Demo" color="#92400e" bg="#fef3c7" />}
+                  {energyLiveStatus === 'loading' && <Badge val="…" color={T.textSec} bg={T.sub} />}
+                  <select style={selPx} value={selectedSys.id} onChange={e => setSelectedSys(enrichedSystems.find(s => s.id === parseInt(e.target.value)))}>
+                    {enrichedSystems.slice(0, 50).map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+              </div>
+              {energyLive ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+                  <div><div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase' }}>Training Energy</div><div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.fontMono, color: T.navy }}>{energyLive.training_energy_mwh.toLocaleString()} MWh</div></div>
+                  <div><div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase' }}>Inference (annual)</div><div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.fontMono, color: T.navy }}>{energyLive.inference_annual_energy_mwh.toLocaleString()} MWh</div></div>
+                  <div><div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase' }}>Annual Scope 2</div><div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.fontMono, color: T.amber }}>{energyLive.annual_scope2_tco2e.toFixed(3)} tCO₂e</div></div>
+                  <div><div style={{ fontSize: 11, color: T.textSec, textTransform: 'uppercase' }}>EU-Avg Benchmark</div><div style={{ fontSize: 18, fontWeight: 700, fontFamily: T.fontMono, color: T.textSec }}>{energyLive.benchmark_scope2_tco2e_eu_avg.toFixed(3)} tCO₂e</div></div>
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: T.textSec }}>{energyLiveStatus === 'loading' ? 'Calculating…' : 'API unavailable — showing seeded portfolio figures below.'}</div>
+              )}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -860,10 +1210,10 @@ export default function AIGovernancePage() {
         {tab === 5 && (
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
-              <KpiCard label="Documentation Complete" value={`${AI_SYSTEMS.filter(s => s.documentation === 'Complete').length}`} sub={`${Math.round(AI_SYSTEMS.filter(s => s.documentation === 'Complete').length / Math.max(1, AI_SYSTEMS.length) * 100)}% of systems`} accent={T.green} />
-              <KpiCard label="Documentation Missing" value={AI_SYSTEMS.filter(s => s.documentation === 'Missing').length} accent={T.red} />
-              <KpiCard label="Human Oversight Enabled" value={`${Math.round(AI_SYSTEMS.filter(s => s.humanOversight).length / Math.max(1, AI_SYSTEMS.length) * 100)}%`} accent={T.indigo} />
-              <KpiCard label="Avg Incidents / System" value={(AI_SYSTEMS.reduce((a, s) => a + s.incidentCount, 0) / Math.max(1, AI_SYSTEMS.length)).toFixed(1)} accent={T.orange} />
+              <KpiCard label="Documentation Complete" value={`${enrichedSystems.filter(s => s.documentation === 'Complete').length}`} sub={`${Math.round(enrichedSystems.filter(s => s.documentation === 'Complete').length / Math.max(1, enrichedSystems.length) * 100)}% of systems`} accent={T.green} />
+              <KpiCard label="Documentation Missing" value={enrichedSystems.filter(s => s.documentation === 'Missing').length} accent={T.red} />
+              <KpiCard label="Human Oversight Enabled" value={`${Math.round(enrichedSystems.filter(s => s.humanOversight).length / Math.max(1, enrichedSystems.length) * 100)}%`} accent={T.indigo} />
+              <KpiCard label="Avg Incidents / System" value={(enrichedSystems.reduce((a, s) => a + s.incidentCount, 0) / Math.max(1, enrichedSystems.length)).toFixed(1)} accent={T.orange} />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -1105,9 +1455,9 @@ export default function AIGovernancePage() {
               <SectionH title="Regulatory Gap Priority Matrix" sub="Key compliance gaps requiring action" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
                 {[
-                  { priority: 'P0 Critical', color: T.red, bg: '#fee2e2', items: [`${AI_SYSTEMS.filter(s => s.riskTier === 'Unacceptable').length} Unacceptable-tier systems deployed`, `${AI_SYSTEMS.filter(s => s.documentation === 'Missing' && s.riskTier === 'High').length} High-risk systems with missing documentation`, `${AI_INCIDENTS.filter(i => i.severity === 'Critical' && i.status === 'Open').length} Critical incidents unresolved`] },
-                  { priority: 'P1 High', color: T.orange, bg: '#ffedd5', items: [`${AI_SYSTEMS.filter(s => !s.humanOversight && s.riskTier === 'High').length} High-risk systems lacking human oversight`, `${AI_SYSTEMS.filter(s => s.euAiActScore < 40).length} Systems with EU AI Act score < 40`, `${AI_SYSTEMS.filter(s => s.biasScore > 70).length} Systems with bias score > 70`] },
-                  { priority: 'P2 Medium', color: T.amber, bg: '#fef9c3', items: [`${AI_SYSTEMS.filter(s => s.documentation === 'Partial').length} Systems with partial documentation`, `${AI_SYSTEMS.filter(s => s.nistScore < 50).length} Systems with NIST score < 50`, `${AI_INCIDENTS.filter(i => i.daysOpen > 90 && !i.remediated).length} Incidents open > 90 days without remediation`] },
+                  { priority: 'P0 Critical', color: T.red, bg: '#fee2e2', items: [`${enrichedSystems.filter(s => s.riskTier === 'Unacceptable').length} Unacceptable-tier systems deployed`, `${enrichedSystems.filter(s => s.documentation === 'Missing' && s.riskTier === 'High').length} High-risk systems with missing documentation`, `${AI_INCIDENTS.filter(i => i.severity === 'Critical' && i.status === 'Open').length} Critical incidents unresolved`] },
+                  { priority: 'P1 High', color: T.orange, bg: '#ffedd5', items: [`${enrichedSystems.filter(s => !s.humanOversight && s.riskTier === 'High').length} High-risk systems lacking human oversight`, `${enrichedSystems.filter(s => s.euAiActScore < 40).length} Systems with EU AI Act score < 40`, `${enrichedSystems.filter(s => s.biasScore > 70).length} Systems with bias score > 70`] },
+                  { priority: 'P2 Medium', color: T.amber, bg: '#fef9c3', items: [`${enrichedSystems.filter(s => s.documentation === 'Partial').length} Systems with partial documentation`, `${enrichedSystems.filter(s => s.nistScore < 50).length} Systems with NIST score < 50`, `${AI_INCIDENTS.filter(i => i.daysOpen > 90 && !i.remediated).length} Incidents open > 90 days without remediation`] },
                 ].map(({ priority, color, bg, items }) => (
                   <div key={priority} style={{ background: bg, borderRadius: 8, padding: 16, border: `1px solid ${color}30` }}>
                     <div style={{ fontWeight: 700, color, fontSize: 14, marginBottom: 10 }}>{priority}</div>
@@ -1122,14 +1472,14 @@ export default function AIGovernancePage() {
             {/* Summary stats grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
               {[
-                ['Unacceptable Risk', AI_SYSTEMS.filter(s => s.riskTier === 'Unacceptable').length, T.red],
-                ['High Risk', AI_SYSTEMS.filter(s => s.riskTier === 'High').length, T.orange],
-                ['Limited Risk', AI_SYSTEMS.filter(s => s.riskTier === 'Limited').length, T.amber],
-                ['Minimal Risk', AI_SYSTEMS.filter(s => s.riskTier === 'Minimal').length, T.green],
-                ['Auto-Decision Systems', AI_SYSTEMS.filter(s => s.autoDecision).length, T.indigo],
-                ['Biometric Data Systems', AI_SYSTEMS.filter(s => s.biometricData).length, T.purple],
-                ['Fully Compliant (≥80%)', AI_SYSTEMS.filter(s => s.compliancePct >= 80).length, T.green],
-                ['Non-Compliant (<40%)', AI_SYSTEMS.filter(s => s.compliancePct < 40).length, T.red],
+                ['Unacceptable Risk', enrichedSystems.filter(s => s.riskTier === 'Unacceptable').length, T.red],
+                ['High Risk', enrichedSystems.filter(s => s.riskTier === 'High').length, T.orange],
+                ['Limited Risk', enrichedSystems.filter(s => s.riskTier === 'Limited').length, T.amber],
+                ['Minimal Risk', enrichedSystems.filter(s => s.riskTier === 'Minimal').length, T.green],
+                ['Auto-Decision Systems', enrichedSystems.filter(s => s.autoDecision).length, T.indigo],
+                ['Biometric Data Systems', enrichedSystems.filter(s => s.biometricData).length, T.purple],
+                ['Fully Compliant (≥80%)', enrichedSystems.filter(s => s.compliancePct >= 80).length, T.green],
+                ['Non-Compliant (<40%)', enrichedSystems.filter(s => s.compliancePct < 40).length, T.red],
               ].map(([label, value, accent]) => (
                 <KpiCard key={label} label={label} value={value} accent={accent} />
               ))}

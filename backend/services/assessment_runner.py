@@ -38,8 +38,7 @@ from .assessment_methodology_manager import (
 )
 from .climate_integrated_risk import (
     IntegrationConfig,
-    IntegratedRiskCalculator,
-    ScenarioWeightingMode,
+    ClimateIntegratedRisk as IntegratedRiskCalculator,
 )
 from .climate_physical_risk_engine import PhysicalRiskConfig, PhysicalRiskEngine
 from .climate_risk_aggregator import AggregationConfig, ClimateRiskAggregator

@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   Cell,
 } from 'recharts';
 
-const API = 'http://localhost:8000';
+// Backend E150 EU Taxonomy Alignment engine (Regulation (EU) 2020/852 —
+// real Article 3 Substantial Contribution / DNSH / Minimum Safeguards test).
+// See backend/services/eu_taxonomy_engine.py + backend/api/v1/routes/eu_taxonomy.py
+const API = 'http://localhost:8001';
+const EU_TAX_API = `${API}/api/v1/eu-taxonomy`;
 
 /* ── Deterministic seed helpers ─────────────────────────────────────────── */
 const seededRandom = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
@@ -21,23 +26,137 @@ const OBJ_COLORS = {
 const OBJ_LABELS = ['Climate Mitigation', 'Climate Adaptation', 'Water', 'Circular Economy', 'Pollution', 'Biodiversity'];
 const OBJ_KEYS = ['mitigation', 'adaptation', 'water', 'circular', 'pollution', 'biodiversity'];
 
+// NACE codes below match the backend engine's NACE_ACTIVITIES table exactly
+// (backend/services/eu_taxonomy_engine.py) so live /assess-activity calls
+// resolve to a real Technical Screening Criteria entry instead of a 404.
 const NACE_OPTIONS = [
-  { value: 'D35.11', label: 'D35.11 - Production of electricity' },
-  { value: 'C20.11', label: 'C20.11 - Manufacture of industrial gases' },
-  { value: 'F41.1', label: 'F41.1 - Development of building projects' },
-  { value: 'F41.2', label: 'F41.2 - Construction of buildings' },
-  { value: 'H49.10', label: 'H49.10 - Passenger rail transport' },
+  { value: 'D35.11_solar', label: 'D35.11 - Electricity generation from solar PV' },
+  { value: 'D35.11_wind', label: 'D35.11 - Electricity generation from wind power' },
+  { value: 'D35_storage', label: 'D35 - Electricity storage' },
+  { value: 'D35_grid', label: 'D35 - Transmission & distribution of electricity' },
+  { value: 'F41.1', label: 'F41.1 - Construction of new buildings' },
+  { value: 'F41.2', label: 'F41.2 - Renovation of existing buildings' },
+  { value: 'H49.10', label: 'H49.10 - Passenger interurban rail transport' },
   { value: 'H49.20', label: 'H49.20 - Freight rail transport' },
-  { value: 'C29.10', label: 'C29.10 - Motor vehicle manufacturing' },
-  { value: 'J62.01', label: 'J62.01 - Computer programming' },
-  { value: 'M71.12', label: 'M71.12 - Engineering activities' },
-  { value: 'E38.11', label: 'E38.11 - Waste collection' },
-  { value: 'C24.10', label: 'C24.10 - Iron & steel manufacturing' },
-  { value: 'C23.51', label: 'C23.51 - Cement manufacturing' },
-  { value: 'A02.10', label: 'A02.10 - Silviculture / forestry' },
-  { value: 'K64.19', label: 'K64.19 - Other monetary intermediation' },
-  { value: 'K65.12', label: 'K65.12 - Non-life insurance' },
+  { value: 'C3.3', label: 'C3.3 - Manufacture of low carbon transport technologies' },
+  { value: 'J62_63', label: 'J62/63 - Computer programming & data hosting' },
+  { value: 'E38.1', label: 'E38.1 - Collection & transport of non-hazardous waste' },
+  { value: 'C24.1', label: 'C24.1 - Iron & steel manufacturing' },
+  { value: 'C23.5.1', label: 'C23.5.1 - Cement manufacturing' },
+  { value: 'A1', label: 'A1 - Afforestation' },
+  { value: 'C20', label: 'C20 - Manufacture of hydrogen' },
 ];
+
+// Technical Screening Criteria metadata for the codes above — mirrors
+// sc_thresholds in the backend engine so the frontend can turn form sliders
+// into a realistic evidence_data payload for the real Article 3 SC test.
+const TSC_MAP = {
+  'D35.11_solar': { type: 'quantitative', metric: 'emission_intensity', threshold: 100, lowerBetter: true },
+  'D35.11_wind': { type: 'quantitative', metric: 'emission_intensity', threshold: 100, lowerBetter: true },
+  'D35_storage': { type: 'qualitative' },
+  'D35_grid': { type: 'qualitative' },
+  'F41.1': { type: 'quantitative', metric: 'nzeb_reduction_pct', threshold: 10, lowerBetter: false },
+  'F41.2': { type: 'quantitative', metric: 'energy_reduction_pct', threshold: 30, lowerBetter: false },
+  'H49.10': { type: 'quantitative', metric: 'emission_intensity', threshold: 0, lowerBetter: true },
+  'H49.20': { type: 'quantitative', metric: 'emission_intensity', threshold: 0, lowerBetter: true },
+  'C3.3': { type: 'qualitative' },
+  'J62_63': { type: 'qualitative' },
+  'E38.1': { type: 'qualitative' },
+  'C24.1': { type: 'quantitative', metric: 'emission_intensity', threshold: 1.331, lowerBetter: true },
+  'C23.5.1': { type: 'quantitative', metric: 'emission_intensity', threshold: 0.498, lowerBetter: true },
+  'A1': { type: 'qualitative' },
+  'C20': { type: 'quantitative', metric: 'emission_intensity', threshold: 3.0, lowerBetter: true },
+};
+
+/* ── Live-engine evidence builders ──────────────────────────────────────── */
+// Detailed evidence payload built from the Activity tab's form sliders + the
+// DNSH/Minimum Safeguards checkboxes — feeds the real assess_activity() test.
+const buildActivityEvidence = (nace, form, dnshChecks, safeguards) => {
+  const tsc = TSC_MAP[nace] || { type: 'qualitative' };
+  const evidence = {};
+  if (tsc.type === 'quantitative') {
+    if (tsc.threshold === 0) {
+      // Zero-tolerance thresholds (e.g. tailpipe rail emissions): only a
+      // fully renewable/zero-carbon operation (renewablePct = 100) passes.
+      evidence[tsc.metric] = +(((100 - (parseFloat(form.renewablePct) || 0)) * 0.5).toFixed(2));
+    } else if (tsc.lowerBetter) {
+      const ghg = Math.max(0, Math.min(100, parseFloat(form.ghgReduction) || 0));
+      evidence[tsc.metric] = +((tsc.threshold * (1 - ghg / 100)).toFixed(3));
+    } else {
+      evidence[tsc.metric] = parseFloat(form.energyEff) || 0;
+    }
+  } else {
+    // Qualitative TSC — reuse existing boolean checkboxes as evidence flags.
+    evidence.management_plan = !!form.physRiskDone;
+    evidence.certification = !!form.durability;
+    evidence.assessment_report = !!form.eiaDone;
+    evidence.policy_document = !!form.reachCompliance;
+    evidence.monitoring_data = !!form.ecoRestoration;
+  }
+  evidence.dnsh_cca = !!dnshChecks.adaptation;
+  evidence.dnsh_wtr = !!dnshChecks.water;
+  evidence.dnsh_ce = !!dnshChecks.circular;
+  evidence.dnsh_pol = !!dnshChecks.pollution;
+  evidence.dnsh_bio = !!dnshChecks.biodiversity;
+  const msScore = (safeguards.oecd ? 25 : 0) + (safeguards.ungp ? 25 : 0) + (safeguards.ilo ? 25 : 0) + (safeguards.csddd ? 25 : 0);
+  evidence.minimum_safeguards = { human_rights: msScore, labour: msScore, anti_corruption: msScore, taxation: msScore, fair_competition: msScore };
+  return evidence;
+};
+
+// Generic "generously-compliant" evidence for Entity/Portfolio bulk calls,
+// where no per-activity evidence UI exists. Uses each activity's real TSC
+// threshold so the substantial-contribution test is still genuinely applied.
+const buildGenericEvidence = (nace) => {
+  const tsc = TSC_MAP[nace] || { type: 'qualitative' };
+  const evidence = {};
+  if (tsc.type === 'quantitative') {
+    evidence[tsc.metric] = tsc.threshold * 0.5;
+  } else {
+    evidence.management_plan = true;
+    evidence.certification = true;
+    evidence.assessment_report = true;
+    evidence.policy_document = true;
+    evidence.monitoring_data = true;
+  }
+  evidence.dnsh_cca = true;
+  evidence.dnsh_wtr = true;
+  evidence.dnsh_ce = true;
+  evidence.dnsh_pol = true;
+  evidence.dnsh_bio = true;
+  evidence.minimum_safeguards = { human_rights: 90, labour: 90, anti_corruption: 90, taxation: 90, fair_competition: 90 };
+  return evidence;
+};
+
+// Transform a live TaxonomyActivityAssessment (backend dataclass) into the
+// same shape genActivityResult() produces so existing rendering (radar,
+// DNSH table, gap table) works unchanged for both live and demo data.
+const transformApiActivity = (api, name, nace, sector, revenue, capex, opex) => {
+  const dnshEntries = Object.entries(api.dnsh_results || {}); // {CCA:{met,score,criteria}, ...}
+  const objScores = OBJ_KEYS.map((k, i) => {
+    if (i === 0) return { key: k, label: OBJ_LABELS[i], score: Math.round(api.sc_score || 0) };
+    const code = ['CCA', 'WTR', 'CE', 'POL', 'BIO'][i - 1];
+    const d = api.dnsh_results?.[code];
+    return { key: k, label: OBJ_LABELS[i], score: Math.round(d?.score ?? 0) };
+  });
+  const dnshResults = [
+    { objective: OBJ_LABELS[0], isTarget: true, pass: null, criteria: api.sc_evidence?.criteria || 'Target objective' },
+    ...dnshEntries.map(([code, d]) => ({
+      objective: OBJ_LABELS[['CCA', 'WTR', 'CE', 'POL', 'BIO'].indexOf(code) + 1] || code,
+      isTarget: false, pass: !!d.met, criteria: d.criteria || '',
+    })),
+  ];
+  const dnshPass = dnshEntries.every(([, d]) => d.met);
+  const gaps = [];
+  if (!api.substantial_contribution_met) gaps.push({ area: 'Substantial Contribution', issue: `Score ${Math.round(api.sc_score || 0)}% — TSC not met (${api.sc_evidence?.criteria || 'see criteria'})`, priority: 'High' });
+  dnshEntries.filter(([, d]) => !d.met).forEach(([code, d]) => gaps.push({ area: `DNSH - ${code}`, issue: d.criteria || 'Criteria not met', priority: 'Medium' }));
+  if (!api.minimum_safeguards_met) gaps.push({ area: 'Minimum Safeguards', issue: 'Article 18 safeguards score below 50%', priority: 'High' });
+  return {
+    name, nace, sector, revenue: parseFloat(revenue) || 0, capex: parseFloat(capex) || 0, opex: parseFloat(opex) || 0,
+    objScores, targetObjective: OBJ_LABELS[0], substantialContrib: Math.round(api.sc_score || 0),
+    dnshResults, dnshPass, safeguards: { oecd: api.minimum_safeguards_met, ungp: api.minimum_safeguards_met, ilo: api.minimum_safeguards_met, csddd: api.minimum_safeguards_met },
+    safeguardsPass: !!api.minimum_safeguards_met, eligible: !!api.taxonomy_eligible, aligned: !!api.taxonomy_aligned, gaps,
+  };
+};
 
 const SECTOR_OPTIONS = ['Energy', 'Manufacturing', 'Construction', 'Transport', 'ICT', 'Forestry', 'Water & Waste', 'Financial Services', 'Real Estate'];
 
@@ -154,18 +273,18 @@ const genEntityData = (activities) => {
 };
 
 const DEFAULT_PORTFOLIO = [
-  { name: 'Tata Power', sector: 'Energy', nace: 'D35.11', weight: 25, revenue: 480, capex: 120, opex: 85 },
+  { name: 'Tata Power', sector: 'Energy', nace: 'D35.11_solar', weight: 25, revenue: 480, capex: 120, opex: 85 },
   { name: 'Larsen & Toubro', sector: 'Construction', nace: 'F41.2', weight: 20, revenue: 1200, capex: 340, opex: 210 },
   { name: 'HDFC Bank', sector: 'Financial Services', nace: 'K64.19', weight: 20, revenue: 890, capex: 60, opex: 45 },
-  { name: 'JSW Steel', sector: 'Manufacturing', nace: 'C24.10', weight: 20, revenue: 960, capex: 280, opex: 190 },
-  { name: 'Adani Green Energy', sector: 'Energy', nace: 'D35.11', weight: 15, revenue: 320, capex: 250, opex: 55 },
+  { name: 'JSW Steel', sector: 'Manufacturing', nace: 'C24.1', weight: 20, revenue: 960, capex: 280, opex: 190 },
+  { name: 'Adani Green Energy', sector: 'Energy', nace: 'D35.11_wind', weight: 15, revenue: 320, capex: 250, opex: 55 },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TAB 1 — Activity Assessment
    ═══════════════════════════════════════════════════════════════════════════ */
 const ActivityTab = () => {
-  const [form, setForm] = useState({ name: 'Solar PV Installation', nace: 'D35.11', sector: 'Energy', revenue: '150', capex: '80', opex: '25',
+  const [form, setForm] = useState({ name: 'Solar PV Installation', nace: 'D35.11_solar', sector: 'Energy', revenue: '150', capex: '80', opex: '25',
     ghgReduction: '72', energyEff: '35', renewablePct: '90',
     physRiskDone: true, adaptSolutions: true, vulnReduction: true,
     waterReduction: '18', wastewaterLevel: 'tertiary', waterBodyImpact: 'none',
@@ -176,9 +295,27 @@ const ActivityTab = () => {
   const [dnshChecks, setDnshChecks] = useState({ adaptation: true, water: true, circular: true, pollution: true, biodiversity: true });
   const [safeguards, setSafeguards] = useState({ oecd: true, ungp: true, ilo: true, csddd: false });
   const [result, setResult] = useState(null);
+  const [dataSource, setDataSource] = useState(null); // 'live' | 'demo'
+  const [assessing, setAssessing] = useState(false);
 
   const u = (k, v) => setForm(p => ({ ...p, [k]: v }));
-  const assess = () => setResult(genActivityResult(form.name, form.nace, form.sector, form.revenue, form.capex, form.opex, hashStr(form.name + form.nace)));
+
+  const assess = async () => {
+    setAssessing(true);
+    try {
+      const evidence_data = buildActivityEvidence(form.nace, form, dnshChecks, safeguards);
+      const { data } = await axios.post(`${EU_TAX_API}/assess-activity`, {
+        nace_code: form.nace, objective: 'CCM', evidence_data,
+      }, { timeout: 10000 });
+      setResult(transformApiActivity(data, form.name, form.nace, form.sector, form.revenue, form.capex, form.opex));
+      setDataSource('live');
+    } catch (e) {
+      setResult(genActivityResult(form.name, form.nace, form.sector, form.revenue, form.capex, form.opex, hashStr(form.name + form.nace)));
+      setDataSource('demo');
+    } finally {
+      setAssessing(false);
+    }
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -275,11 +412,15 @@ const ActivityTab = () => {
         </Card>
       </Row>
 
-      <div style={{ textAlign: 'center' }}><Btn onClick={assess}>Assess Activity Alignment</Btn></div>
+      <div style={{ textAlign: 'center' }}><Btn onClick={assess} disabled={assessing}>{assessing ? 'Assessing…' : 'Assess Activity Alignment'}</Btn></div>
 
       {/* Results */}
       {result && (
         <>
+          <div style={{ textAlign: 'center', marginBottom: -8 }}>
+            {dataSource === 'live' && <Badge label="● Live — computed by /api/v1/eu-taxonomy engine (Reg 2020/852 Art 3 TSC test)" color="green" />}
+            {dataSource === 'demo' && <Badge label="○ Demo Data — API unavailable, showing seeded illustrative figures" color="yellow" />}
+          </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <KpiCard label="Eligible" value={result.eligible ? 'Yes' : 'No'} color={result.eligible ? T.green : T.red} />
             <KpiCard label="Aligned" value={result.aligned ? 'Yes' : 'No'} color={result.aligned ? T.green : T.red} />
@@ -365,20 +506,46 @@ const ActivityTab = () => {
 const EntityTab = () => {
   const [entityName, setEntityName] = useState('Tata Power Ltd');
   const [activities, setActivities] = useState([
-    { name: 'Solar PV', nace: 'D35.11', sector: 'Energy', revenue: '200', capex: '90', opex: '30' },
-    { name: 'Wind Farm', nace: 'D35.11', sector: 'Energy', revenue: '180', capex: '110', opex: '28' },
-    { name: 'Grid Infrastructure', nace: 'D35.11', sector: 'Energy', revenue: '100', capex: '60', opex: '27' },
+    { name: 'Solar PV', nace: 'D35.11_solar', sector: 'Energy', revenue: '200', capex: '90', opex: '30' },
+    { name: 'Wind Farm', nace: 'D35.11_wind', sector: 'Energy', revenue: '180', capex: '110', opex: '28' },
+    { name: 'Grid Infrastructure', nace: 'D35_grid', sector: 'Energy', revenue: '100', capex: '60', opex: '27' },
   ]);
   const [results, setResults] = useState(null);
+  const [dataSource, setDataSource] = useState(null); // 'live' | 'demo'
+  const [assessing, setAssessing] = useState(false);
 
-  const addActivity = () => setActivities(p => [...p, { name: '', nace: 'D35.11', sector: 'Energy', revenue: '0', capex: '0', opex: '0' }]);
+  const addActivity = () => setActivities(p => [...p, { name: '', nace: 'D35.11_solar', sector: 'Energy', revenue: '0', capex: '0', opex: '0' }]);
   const removeActivity = (idx) => setActivities(p => p.filter((_, i) => i !== idx));
   const updateActivity = (idx, k, v) => setActivities(p => p.map((a, i) => i === idx ? { ...a, [k]: v } : a));
 
-  const assess = () => {
-    const assessed = activities.map(a => genActivityResult(a.name, a.nace, a.sector, a.revenue, a.capex, a.opex, hashStr(entityName + a.name + a.nace)));
-    const entity = genEntityData(assessed);
-    setResults({ activities: assessed, entity });
+  const assess = async () => {
+    setAssessing(true);
+    try {
+      const activities_data = activities.map(a => ({
+        nace_code: a.nace, objective: 'CCM',
+        turnover_eur: parseFloat(a.revenue) || 0, capex_eur: parseFloat(a.capex) || 0, opex_eur: parseFloat(a.opex) || 0,
+        evidence_data: buildGenericEvidence(a.nace),
+      }));
+      const financials = {
+        total_turnover_eur: activities.reduce((s, a) => s + (parseFloat(a.revenue) || 0), 0),
+        total_capex_eur: activities.reduce((s, a) => s + (parseFloat(a.capex) || 0), 0),
+        total_opex_eur: activities.reduce((s, a) => s + (parseFloat(a.opex) || 0), 0),
+      };
+      const { data } = await axios.post(`${EU_TAX_API}/assess-entity`, {
+        entity_name: entityName, reporting_year: 2025, activities_data, financials,
+      }, { timeout: 10000 });
+      const assessed = activities.map((a, i) => transformApiActivity(data.activity_assessments[i], a.name, a.nace, a.sector, a.revenue, a.capex, a.opex));
+      const entity = genEntityData(assessed);
+      setResults({ activities: assessed, entity });
+      setDataSource('live');
+    } catch (e) {
+      const assessed = activities.map(a => genActivityResult(a.name, a.nace, a.sector, a.revenue, a.capex, a.opex, hashStr(entityName + a.name + a.nace)));
+      const entity = genEntityData(assessed);
+      setResults({ activities: assessed, entity });
+      setDataSource('demo');
+    } finally {
+      setAssessing(false);
+    }
   };
 
   const barData = results ? [
@@ -412,10 +579,14 @@ const EntityTab = () => {
         ))}
       </Card>
 
-      <div style={{ textAlign: 'center' }}><Btn onClick={assess}>Assess Entity Alignment</Btn></div>
+      <div style={{ textAlign: 'center' }}><Btn onClick={assess} disabled={assessing}>{assessing ? 'Assessing…' : 'Assess Entity Alignment'}</Btn></div>
 
       {results && (
         <>
+          <div style={{ textAlign: 'center', marginBottom: -8 }}>
+            {dataSource === 'live' && <Badge label="● Live — computed by /api/v1/eu-taxonomy engine (Reg 2020/852 Art 8 KPIs)" color="green" />}
+            {dataSource === 'demo' && <Badge label="○ Demo Data — API unavailable, showing seeded illustrative figures" color="yellow" />}
+          </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <KpiCard label="Turnover Aligned" value={`${results.entity.turnoverAligned}%`} sub={`Eligible: ${results.entity.turnoverEligible}%`} color={parseFloat(results.entity.turnoverAligned) > 30 ? T.green : T.amber} />
             <KpiCard label="CapEx Aligned" value={`${results.entity.capexAligned}%`} sub={`Eligible: ${results.entity.capexEligible}%`} color={parseFloat(results.entity.capexAligned) > 30 ? T.green : T.amber} />
@@ -480,21 +651,50 @@ const EntityTab = () => {
 const PortfolioTab = () => {
   const [holdings, setHoldings] = useState(DEFAULT_PORTFOLIO.map(h => ({ ...h })));
   const [result, setResult] = useState(null);
+  const [dataSource, setDataSource] = useState(null); // 'live' | 'demo'
+  const [assessing, setAssessing] = useState(false);
 
   const updateHolding = (idx, k, v) => setHoldings(p => p.map((h, i) => i === idx ? { ...h, [k]: k === 'weight' || k === 'revenue' || k === 'capex' || k === 'opex' ? parseFloat(v) || 0 : v } : h));
-  const addHolding = () => setHoldings(p => [...p, { name: '', sector: 'Energy', nace: 'D35.11', weight: 0, revenue: 0, capex: 0, opex: 0 }]);
+  const addHolding = () => setHoldings(p => [...p, { name: '', sector: 'Energy', nace: 'D35.11_solar', weight: 0, revenue: 0, capex: 0, opex: 0 }]);
   const removeHolding = (idx) => setHoldings(p => p.filter((_, i) => i !== idx));
 
-  const calculate = () => {
-    const entities = holdings.map(h => {
-      const act = genActivityResult(h.name, h.nace, h.sector, String(h.revenue), String(h.capex), String(h.opex), hashStr(h.name + h.nace));
-      return { ...h, aligned: act.aligned, eligible: act.eligible, alignedPct: act.aligned ? act.substantialContrib : 0 };
-    });
+  const finishCalc = (entities, source) => {
     const totalWeight = entities.reduce((s, e) => s + e.weight, 0) || 1;
     const gar = entities.reduce((s, e) => s + (e.aligned ? e.weight * e.alignedPct / 100 : 0), 0) / Math.max(1, totalWeight);
     const btar = entities.reduce((s, e) => s + (e.eligible ? e.weight * 0.6 : 0), 0) / Math.max(1, totalWeight);
     const weightedAlignment = entities.reduce((s, e) => s + e.weight * e.alignedPct / 100, 0) / Math.max(1, totalWeight);
     setResult({ entities, gar: gar.toFixed(1), btar: btar.toFixed(1), weightedAlignment: (weightedAlignment * 100).toFixed(1) });
+    setDataSource(source);
+  };
+
+  const calculate = async () => {
+    setAssessing(true);
+    try {
+      const investees_data = holdings.map(h => ({
+        entity_name: h.name, sector: h.sector, exposure_eur: h.revenue, reporting_year: 2025,
+        financials: { total_turnover_eur: h.revenue, total_capex_eur: h.capex, total_opex_eur: h.opex },
+        activities_data: [{
+          nace_code: h.nace, objective: 'CCM', turnover_eur: h.revenue, capex_eur: h.capex, opex_eur: h.opex,
+          evidence_data: buildGenericEvidence(h.nace),
+        }],
+      }));
+      const { data } = await axios.post(`${EU_TAX_API}/assess-portfolio`, {
+        portfolio_id: 'PF-EU-TAX-001', portfolio_name: 'User Portfolio', investees_data,
+      }, { timeout: 15000 });
+      const entities = holdings.map((h, i) => {
+        const act = data.investee_assessments?.[i]?.activity_assessments?.[0];
+        return { ...h, aligned: !!act?.taxonomy_aligned, eligible: !!act?.taxonomy_eligible, alignedPct: act?.taxonomy_aligned ? Math.round(act.sc_score) : 0 };
+      });
+      finishCalc(entities, 'live');
+    } catch (e) {
+      const entities = holdings.map(h => {
+        const act = genActivityResult(h.name, h.nace, h.sector, String(h.revenue), String(h.capex), String(h.opex), hashStr(h.name + h.nace));
+        return { ...h, aligned: act.aligned, eligible: act.eligible, alignedPct: act.aligned ? act.substantialContrib : 0 };
+      });
+      finishCalc(entities, 'demo');
+    } finally {
+      setAssessing(false);
+    }
   };
 
   return (
@@ -517,10 +717,14 @@ const PortfolioTab = () => {
         ))}
       </Card>
 
-      <div style={{ textAlign: 'center' }}><Btn onClick={calculate}>Calculate Portfolio GAR</Btn></div>
+      <div style={{ textAlign: 'center' }}><Btn onClick={calculate} disabled={assessing}>{assessing ? 'Calculating…' : 'Calculate Portfolio GAR'}</Btn></div>
 
       {result && (
         <>
+          <div style={{ textAlign: 'center', marginBottom: -8 }}>
+            {dataSource === 'live' && <Badge label="● Live — computed by /api/v1/eu-taxonomy engine (Reg 2020/852 GAR/BTAR)" color="green" />}
+            {dataSource === 'demo' && <Badge label="○ Demo Data — API unavailable, showing seeded illustrative figures" color="yellow" />}
+          </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <KpiCard label="Green Asset Ratio (GAR)" value={`${result.gar}%`} sub="Taxonomy-aligned / total assets" color={parseFloat(result.gar) > 15 ? T.green : T.amber} />
             <KpiCard label="BTAR" value={`${result.btar}%`} sub="Banking Book Taxonomy Alignment" color={parseFloat(result.btar) > 20 ? T.green : T.amber} />

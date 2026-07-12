@@ -16,10 +16,15 @@ import { DataCaptureProvider } from './contexts/DataCaptureContext';
 import { ReferenceDataProvider } from './contexts/ReferenceDataContext';
 import DataDepthOverlay from './components/DataDepthOverlay';
 import DataDepthToggle from './components/DataDepthToggle';
+import SectorSidebar from './components/nav/SectorSidebar';
+import CommandPalette, { CommandPaletteTrigger } from './components/nav/CommandPalette';
+import ConnectedModulesPanel from './components/nav/ConnectedModulesPanel';
+import { NAV_GROUPS, ALL_ITEMS, PASTEL } from './navGroups';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AUTO_ROUTES, AUTO_NAV, AUTO_PATHS } from './moduleRegistry.auto';
 import DemoBanner from './components/auth/DemoBanner';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'));
 const InviteAcceptPage = React.lazy(() => import('./features/auth/pages/InviteAcceptPage'));
 const AccessExpiredPage = React.lazy(() => import('./features/auth/pages/AccessExpiredPage'));
@@ -855,6 +860,11 @@ const BiocharBeccsFinancePage             = React.lazy(() => import("./features/
 const OceanCdrFinancePage                 = React.lazy(() => import("./features/ocean-cdr-finance/pages/OceanCdrFinancePage"));
 const CdrCreditMarketsPage                = React.lazy(() => import("./features/cdr-credit-markets/pages/CdrCreditMarketsPage"));
 const CdrPortfolioNetzeroPage             = React.lazy(() => import("./features/cdr-portfolio-netzero/pages/CdrPortfolioNetzeroPage"));
+// CCUS Market & Storage Infrastructure Suite
+const CcusMarketIntelligencePage          = React.lazy(() => import("./features/ccus-market-intelligence/pages/CcusMarketIntelligencePage"));
+const CcusProjectFinancePage              = React.lazy(() => import("./features/ccus-project-finance/pages/CcusProjectFinancePage"));
+const CarbonStorageGeologyPage            = React.lazy(() => import("./features/carbon-storage-geology/pages/CarbonStorageGeologyPage"));
+const DirectAirCapturePage                = React.lazy(() => import("./features/direct-air-capture/pages/DirectAirCapturePage"));
 // Sprint EI — Climate Real Estate & Green Buildings Finance
 const GreenBuildingCertificationFinancePage = React.lazy(() => import("./features/green-building-certification-finance/pages/GreenBuildingCertificationFinancePage"));
 const CommercialReClimateRiskPage           = React.lazy(() => import("./features/commercial-re-climate-risk/pages/CommercialReClimateRiskPage"));
@@ -997,6 +1007,41 @@ const BigClimateDatabasePage = React.lazy(() => import("./features/big-climate-d
 const DataCaptureHubPage = React.lazy(() => import("./features/data-capture-hub/pages/DataCaptureHubPage"));
 const ClientPitchPage = React.lazy(() => import("./features/client-pitch/pages/ClientPitchPage"));
 const ReferenceDataExplorerPage = React.lazy(() => import("./features/reference-data-explorer/pages/ReferenceDataExplorerPage"));
+// Next-Gen Use Cases (docs/NEXT_USE_CASES.md) — engine composition + free/keyless live data
+const ClimateUnderwritingWorkbenchPage   = React.lazy(() => import("./features/climate-underwriting-workbench/pages/ClimateUnderwritingWorkbenchPage"));
+const SovereignCorporateBridgePage       = React.lazy(() => import("./features/sovereign-corporate-bridge/pages/SovereignCorporateBridgePage"));
+const EuComplianceCockpitPage            = React.lazy(() => import("./features/eu-compliance-cockpit/pages/EuComplianceCockpitPage"));
+const AssetExposureExplorerPage          = React.lazy(() => import("./features/asset-exposure-explorer/pages/AssetExposureExplorerPage"));
+const FloodLossCalibratorPage            = React.lazy(() => import("./features/flood-loss-calibrator/pages/FloodLossCalibratorPage"));
+const SiteBiodiversityScreenerPage       = React.lazy(() => import("./features/site-biodiversity-screener/pages/SiteBiodiversityScreenerPage"));
+const FacilityEmissionsAttributionPage   = React.lazy(() => import("./features/facility-emissions-attribution/pages/FacilityEmissionsAttributionPage"));
+const VcmCrossRegistryTrackerPage        = React.lazy(() => import("./features/vcm-cross-registry-tracker/pages/VcmCrossRegistryTrackerPage"));
+const GridCarbonIntelligencePage         = React.lazy(() => import("./features/grid-carbon-intelligence/pages/GridCarbonIntelligencePage"));
+const SupervisoryScenarioRunnerPage      = React.lazy(() => import("./features/supervisory-scenario-runner/pages/SupervisoryScenarioRunnerPage"));
+const CounterpartyOwnershipGraphPage     = React.lazy(() => import("./features/counterparty-ownership-graph/pages/CounterpartyOwnershipGraphPage"));
+const SanctionsScreeningDeskPage         = React.lazy(() => import("./features/sanctions-screening-desk/pages/SanctionsScreeningDeskPage"));
+const CreditSpreadClimateMonitorPage     = React.lazy(() => import("./features/credit-spread-climate-monitor/pages/CreditSpreadClimateMonitorPage"));
+const ClimateLitigationTrackerPage       = React.lazy(() => import("./features/climate-litigation-tracker/pages/ClimateLitigationTrackerPage"));
+const CbamTradeExposureMapperPage        = React.lazy(() => import("./features/cbam-trade-exposure-mapper/pages/CbamTradeExposureMapperPage"));
+// Batch 2 — Energy & Capital Markets Desk (docs/NEXT_USE_CASES_2.md, NX2-01..16)
+const PpaStructuringDeskPage             = React.lazy(() => import("./features/ppa-structuring-desk/pages/PpaStructuringDeskPage"));
+const ProjectFinanceDebtSizerPage        = React.lazy(() => import("./features/project-finance-debt-sizer/pages/ProjectFinanceDebtSizerPage"));
+const InfraDebtPortfolioManagerPage      = React.lazy(() => import("./features/infra-debt-portfolio-manager/pages/InfraDebtPortfolioManagerPage"));
+const GreenBondPricingDeskPage           = React.lazy(() => import("./features/green-bond-pricing-desk/pages/GreenBondPricingDeskPage"));
+const SlbStructurerPage                  = React.lazy(() => import("./features/slb-structurer/pages/SlbStructurerPage"));
+const CarbonOfftakeStructurerPage        = React.lazy(() => import("./features/carbon-offtake-structurer/pages/CarbonOfftakeStructurerPage"));
+const BatteryRevenueStackerPage          = React.lazy(() => import("./features/battery-revenue-stacker/pages/BatteryRevenueStackerPage"));
+const HybridProjectWorkbenchPage         = React.lazy(() => import("./features/hybrid-project-workbench/pages/HybridProjectWorkbenchPage"));
+const PfCreditRatingEnginePage           = React.lazy(() => import("./features/pf-credit-rating-engine/pages/PfCreditRatingEnginePage"));
+const MaturityWallMonitorPage            = React.lazy(() => import("./features/maturity-wall-monitor/pages/MaturityWallMonitorPage"));
+const CarbonDerivativesDeskPage          = React.lazy(() => import("./features/carbon-derivatives-desk/pages/CarbonDerivativesDeskPage"));
+const PpaXvaEnginePage                   = React.lazy(() => import("./features/ppa-xva-engine/pages/PpaXvaEnginePage"));
+const TaxEquityTransferabilityPage       = React.lazy(() => import("./features/tax-equity-transferability/pages/TaxEquityTransferabilityPage"));
+const YieldcoDropdownAnalyzerPage        = React.lazy(() => import("./features/yieldco-dropdown-analyzer/pages/YieldcoDropdownAnalyzerPage"));
+const EnergyTransitionCreditPortalPage   = React.lazy(() => import("./features/energy-transition-credit-portal/pages/EnergyTransitionCreditPortalPage"));
+const FinancialModelingStudioPage        = React.lazy(() => import("./features/financial-modeling-studio/pages/FinancialModelingStudioPage"));
+const ComplianceCarbonDeskPage           = React.lazy(() => import("./features/compliance-carbon-desk/pages/ComplianceCarbonDeskPage"));
+const GlobalPhysicalRiskAtlasPage        = React.lazy(() => import("./features/global-physical-risk-atlas/pages/GlobalPhysicalRiskAtlasPage"));
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
@@ -1100,1119 +1145,6 @@ const T = {
   font:     "'DM Sans', 'SF Pro Display', system-ui, -apple-system, sans-serif",
   mono:     "'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace",
 };
-// Cohesive cool→warm institutional categorical ramp (charts / domain colors)
-const PASTEL = ['#3d6ea8','#4d8a93','#4f8a68','#7d9a4e','#a8843c','#c5a96a','#7b6ca8'];
-
-/* ═══════════════════════════════════════════════════════════════════
-   NAVIGATION DATA — 38 domains, 180+ modules
-   ═══════════════════════════════════════════════════════════════════ */
-const NAV_GROUPS = [
-  { label: 'Climate Risk & Stress Testing', icon: '\u26A0\uFE0F', color: PASTEL[0], items: [
-    { path: '/stress-test-orchestrator', label: 'Stress Test Orchestrator', badge: 'ECB/EBA/BoE', code: 'E100' },
-    { path: '/physical-risk-pricing', label: 'Physical Risk Pricing', badge: 'NatCat/NGFS', code: 'E104' },
-    { path: '/temperature-alignment', label: 'Temperature Alignment', badge: 'PCAF-SBTi', code: 'E103' },
-    { path: '/climate-derivatives', label: 'Climate Derivatives', badge: 'EMIR/MiFID', code: 'E106' },
-    { path: '/climate-insurance', label: 'Climate Insurance', badge: 'IAIS', code: 'E79' },
-    { path: '/climate-litigation', label: 'Climate Litigation Risk', badge: 'CPLI', code: 'E91' },
-    { path: '/em-climate-risk', label: 'EM Climate Risk', badge: 'IFC PS6', code: 'E87' },
-    { path: '/technology-risk', label: 'Technology Risk Panel', badge: 'Cyber · AI/Model · OT · DORA · NIS2 · EU AI Act · 45 Entities', code: 'EP-BB2' },
-  ]},
-  { label: 'Carbon & Emissions', icon: '\uD83C\uDF2B\uFE0F', color: PASTEL[1], items: [
-    { path: '/integrated-carbon-emissions', label: 'Integrated Carbon Hub', badge: 'Hub · All Scopes · 150 Holdings · 8 Tabs · Board Report', code: 'ICE-001' },
-    { path: '/carbon-accounting-ai', label: 'Carbon Accounting AI', badge: 'GHG Protocol', code: 'E78' },
-    { path: '/carbon-removal', label: 'Carbon Removal & CDR', badge: 'Oxford', code: 'E90' },
-    { path: '/internal-carbon-price', label: 'Internal Carbon Price', badge: 'SBTi ICP', code: 'E84' },
-    { path: '/vcm-integrity', label: 'VCM Integrity', badge: 'ICVCM CCP', code: 'E96' },
-    { path: '/crypto-climate', label: 'Crypto Climate Risk', badge: 'MiCA', code: 'E76' },
-  ]},
-  { label: 'Sustainable Finance', icon: '\uD83C\uDF31', color: PASTEL[2], items: [
-    { path: '/green-securitisation', label: 'Green Securitisation', badge: 'EU GBS', code: 'E81' },
-    { path: '/green-hydrogen', label: 'Green Hydrogen & RFNBO', badge: 'Del. Act', code: 'E98' },
-    { path: '/social-bond', label: 'Social Bond & Impact', badge: 'ICMA SBP', code: 'E85' },
-    { path: '/sscf', label: 'Sustainable SCF', badge: 'LMA SSCF', code: 'E101' },
-    { path: '/sll-slb-v2', label: 'SLL / SLB v2', badge: 'LMA/ICMA', code: 'E115' },
-    { path: '/transition-finance', label: 'Transition Finance', badge: 'GFANZ/TPT', code: 'E99' },
-    { path: '/adaptation-finance', label: 'Adaptation Finance', badge: 'GARI', code: 'E83' },
-    { path: '/just-transition', label: 'Just Transition Finance', badge: 'ILO JTF', code: 'E89' },
-  ]},
-  { label: 'Biodiversity & Nature', icon: '\uD83C\uDF3F', color: PASTEL[3], items: [
-    { path: '/biodiversity-credits', label: 'Biodiversity Credits', badge: 'DEFRA BNG', code: 'E88' },
-    { path: '/corporate-nature-strategy', label: 'Corporate Nature Strategy', badge: 'SBTN', code: 'E80' },
-    { path: '/nbs-finance', label: 'NbS Finance', badge: 'IUCN NbS', code: 'E94' },
-    { path: '/nature-capital-accounting', label: 'Nature Capital Accounting', badge: 'SEEA/TNFD', code: 'E116' },
-    { path: '/water-risk', label: 'Water Risk & Stewardship', badge: 'AQUEDUCT', code: 'E92' },
-    { path: '/critical-minerals', label: 'Critical Minerals', badge: 'IEA CRM', code: 'E93' },
-  ]},
-  { label: 'Regulatory & Compliance', icon: '\u2696\uFE0F', color: PASTEL[4], items: [
-    { path: '/regulatory-capital', label: 'Regulatory Capital', badge: 'CRR2/Basel IV', code: 'E108' },
-    { path: '/double-materiality', label: 'Double Materiality', badge: 'CSRD ESRS 1', code: 'E102' },
-    { path: '/sfdr-art9', label: 'SFDR Article 9', badge: 'RTS 2022', code: 'E95' },
-    { path: '/regulatory-horizon', label: 'Regulatory Horizon', badge: 'CSRD/DORA', code: 'E117' },
-    { path: '/climate-policy', label: 'Climate Policy Tracker', badge: 'NDC/Fit55/IRA', code: 'E109' },
-    { path: '/social-taxonomy', label: 'Social Taxonomy & HRDD', badge: 'EU SocTax', code: 'E97' },
-    { path: '/export-credit-esg', label: 'Export Credit ESG', badge: 'OECD/EP4', code: 'E110' },
-    { path: '/equator-principles', label: 'Equator Principles', badge: 'EP IV', code: 'E147' },
-    { path: '/esms', label: 'ESMS Assessment', badge: 'IFC PS1', code: 'E148' },
-    { path: '/issb-tcfd', label: 'ISSB S2 / TCFD', badge: 'IFRS S2', code: 'E149' },
-    { path: '/eu-taxonomy', label: 'EU Taxonomy', badge: '6 Obj', code: 'E150' },
-  ]},
-  { label: 'Reporting & Data Quality', icon: '\uD83D\uDCCA', color: PASTEL[5], items: [
-    { path: '/climate-financial-statements', label: 'Climate Fin. Statements', badge: 'IFRS S2', code: 'E86' },
-    { path: '/comprehensive-reporting', label: 'Comprehensive Reporting', badge: 'Multi-FW', code: 'E119' },
-    { path: '/esg-data-quality', label: 'ESG Data Quality', badge: 'BCBS 239', code: 'E105' },
-    { path: '/pcaf-india-brsr', label: 'PCAF India BRSR', badge: 'PCAF v2', code: 'E138' },
-    { path: '/esg-controversy', label: 'ESG Controversy', badge: 'UNGC/RepRisk', code: 'E111' },
-    { path: '/crrem', label: 'CRREM Pathway', badge: 'CRREM/GRESB', code: 'E112' },
-    { path: '/loss-damage', label: 'Loss & Damage Finance', badge: 'COP28 L&D', code: 'E113' },
-    { path: '/sentiment-analysis', label: 'ESG Sentiment Analysis', badge: 'NLP', code: 'E120' },
-  ]},
-  { label: 'Governance & Supply Chain', icon: '\u2699\uFE0F', color: PASTEL[6], items: [
-    { path: '/ai-governance', label: 'AI Governance & ESG', badge: 'NIST', code: 'E77' },
-    { path: '/digital-product-passport', label: 'Digital Product Passport', badge: 'ESPR', code: 'E82' },
-    { path: '/forced-labour', label: 'Forced Labour & MSA', badge: 'ILO/UFLPA', code: 'E114' },
-    { path: '/sovereign-swf', label: 'Sovereign & SWF ESG', badge: 'IWG-SWF', code: 'E107' },
-    { path: '/climate-tech', label: 'Climate Technology', badge: 'IEA NZE', code: 'E118' },
-  ]},
-  { label: 'Taxonomy & Classification', icon: '📋', color: '#6d28d9', items: [
-    { path: '/taxonomy-hub',              label: 'Taxonomy Hub',               badge: 'Hub · EU Tax · SFDR · ISSB · GRI', code: 'EP-Q6' },
-    { path: '/eu-taxonomy-engine',        label: 'EU Taxonomy Engine',         badge: '6 Objectives · 18 Activities · TSC', code: 'EP-Q1' },
-    { path: '/sfdr-classification',       label: 'SFDR Classification',        badge: 'Art 6/8/8+/9 · 14 PAI',           code: 'EP-Q2' },
-    { path: '/issb-materiality',          label: 'ISSB Materiality',           badge: 'SASB · 26 Topics · IFRS S2',       code: 'EP-Q3' },
-    { path: '/gri-alignment',             label: 'GRI Alignment',              badge: '26 Standards · 85 Disclosures',    code: 'EP-Q4' },
-    { path: '/framework-interop',         label: 'Framework Interoperability', badge: '8 Frameworks · 20 Topics',         code: 'EP-Q5' },
-    { path: '/taxonomy-ml-classifier',    label: 'Taxonomy ML Classifier',     badge: 'XGBoost · NLP · Probabilistic TSC/DNSH', code: 'EP-Q7' },
-    { path: '/capital-markets-taxonomy',  label: 'Capital Markets Taxonomy',   badge: 'GSS Bonds · Greenium · CTB/PAB · GAR', code: 'EP-Q8' },
-    { path: '/fi-taxonomy-pcaf-bridge',   label: 'FI & PCAF Bridge',           badge: 'Banking GAR · Solvency II · Loan Alignment', code: 'EP-Q9' },
-    { path: '/carbon-institutions-taxonomy', label: 'Carbon Institutions Taxonomy', badge: 'CDP · SBTi · VCM · ICROA · Article 6', code: 'EP-Q10' },
-    { path: '/energy-sector-taxonomy',    label: 'Energy Sector Taxonomy',     badge: 'IEA NZE · IRENA · NGFS · Pathways',        code: 'EP-Q11' },
-    { path: '/global-taxonomy-interop-v2', label: 'Global Taxonomy Interop v2', badge: 'UK SDR · ASEAN · China · Japan · LATAM', code: 'EP-Q12' },
-  ]},
-  { label: 'Client & Reporting', icon: '📄', color: '#b45309', items: [
-    { path: '/reporting-hub',              label: 'Reporting Hub',              badge: 'Hub · 12 Types · 8 Clients · 15 Filings', code: 'EP-R6' },
-    { path: '/report-generator',           label: 'Report Generator',           badge: '12 Types · HTML/MD/JSON',              code: 'EP-R1' },
-    { path: '/template-manager',           label: 'Template Manager',           badge: '5 Default · Custom · Branding',        code: 'EP-R2' },
-    { path: '/client-portal',              label: 'Client Portal',              badge: '8 Clients · SLA · Delivery',           code: 'EP-R3' },
-    { path: '/scheduled-reports',          label: 'Scheduled Reports',          badge: 'Auto-Generate · Calendar · SLA',       code: 'EP-R4' },
-    { path: '/regulatory-submission',      label: 'Regulatory Submissions',     badge: '15 Filings · 10 Regulators',           code: 'EP-R5' },
-  ]},
-  { label: 'DME Risk Intelligence', icon: '🏛️', color: '#0c4a6e', items: [
-    { path: '/dme-dashboard',     label: 'DME Dashboard',            badge: 'Executive · 8 Modules · Real-Time',   code: 'EP-U8' },
-    { path: '/dme-risk-engine',   label: 'DME Risk Engine',          badge: '4-Branch PD · VaR · WACC · IFRS 9',  code: 'EP-U1' },
-    { path: '/dme-entity',        label: 'DME Entity Deep-Dive',     badge: 'Full Risk Profile · Scenarios',       code: 'EP-U2' },
-    { path: '/dme-scenarios',     label: 'DME NGFS Scenarios',       badge: '6 NGFS · PD/VaR/WACC per Scenario',  code: 'EP-U3' },
-    { path: '/dme-alerts',        label: 'DME Alert Center',         badge: '4 Tiers · 5 Pillars · Z-Score',      code: 'EP-U4' },
-    { path: '/dme-contagion',     label: 'DME Contagion Network',    badge: 'Interconnection · Propagation',       code: 'EP-U5' },
-    { path: '/dme-portfolio',     label: 'DME Portfolio Analytics',  badge: 'DMI · Regime · PCAF · Attribution',   code: 'EP-U6' },
-    { path: '/dme-competitive',   label: 'DME Competitive Intel',    badge: 'Peer Benchmarking · 5 Dimensions',    code: 'EP-U7' },
-    { path: '/dme-nlp-engine',    label: 'DME NLP Intelligence',     badge: 'Topic Extraction · Sentiment · Greenwash · NER', code: 'EP-U9' },
-    { path: '/dme-ml-materiality', label: 'DME ML Materiality',      badge: 'LDA · Clustering · Anomaly · Classification',    code: 'EP-U10' },
-  ]},
-  { label: 'Impact & SDG Finance', icon: '💰', color: '#047857', items: [
-    { path: '/impact-hub',                label: 'Impact Hub',               badge: 'Hub · IWA · IRIS+ · SDG · Blended',     code: 'EP-X6' },
-    { path: '/impact-weighted-accounts',  label: 'Impact-Weighted Accounts', badge: 'Harvard IWA · SCC $51/t · 14 Dimensions', code: 'EP-X1' },
-    { path: '/iris-metrics',              label: 'IRIS+ Metrics',            badge: 'GIIN · 40 Metrics · 5 Dimensions',       code: 'EP-X2' },
-    { path: '/sdg-bond-impact',           label: 'SDG Bond Impact',          badge: '7 Categories · 25 Metrics · ICMA',       code: 'EP-X3' },
-    { path: '/blended-finance',           label: 'Blended Finance',          badge: '6 Instruments · Capital Stack · Leverage', code: 'EP-X4' },
-    { path: '/undp-blended-finance',      label: 'UNDP Blended Finance Framework', badge: '6 Pillars · Leverage Calc · IRIS+ · Market Intel · Pipeline', code: 'EP-X4B' },
-    { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
-  ]},
-  { label: 'Advanced Predictive Analytics', icon: '📈', color: '#6d28d9', items: [
-    { path: '/esg-time-series-forecaster',  label: 'ESG Time Series Forecaster',   badge: 'ARIMA · Holt-Winters · Ensemble · SBTi Divergence · CI Bands',   code: 'EP-BZ1' },
-    { path: '/sentiment-alpha-engine',      label: 'Sentiment Alpha Engine',       badge: '6 Signals · FF5 Attribution · IC Decay · L/S Portfolio · Backtest', code: 'EP-BZ2' },
-    { path: '/ai-compliance-agent',         label: 'AI Compliance Agent',          badge: '8 Frameworks · Agentic Scan · CSRD/ISSB/TCFD/SFDR · Evidence Map', code: 'EP-BZ3' },
-  ]},
-  { label: 'AI & NLP Analytics', icon: '🤖', color: '#0891b2', items: [
-    { path: '/macro-esg-intelligence', label: 'Macro ESG Intelligence', badge: 'GLEIF LEI · IMF · Eurostat · World Bank · Kalman Filter · Panel Data · Hausman Test · 4 Live APIs', code: 'EP-MEI1' },
-    { path: '/quantitative-nlp-research', label: 'Quantitative NLP Research', badge: 'arXiv · OpenAlex · 10 Models · Fama-MacBeth · Copula · Factor Attribution', code: 'EP-QNR1' },
-    { path: '/climate-emissions-intelligence', label: 'Climate Emissions Intelligence', badge: 'OWID CO2 · Kaya Identity · LMDI · GARCH · Net Zero · 40 Countries · 3 Live APIs', code: 'EP-CEI1' },
-    { path: '/ai-hub',                     label: 'AI Analytics Hub',              badge: 'Mission Control · 9 Modules · Agentic Workflows · Signal Bus',   code: 'EP-W6' },
-    { path: '/esg-report-parser',          label: 'ESG Report Parser',             badge: 'LLM Pipeline · ESRS/ISSB/TCFD · JSON Output · Multi-Doc Compare', code: 'EP-W1' },
-    { path: '/predictive-esg',             label: 'Predictive ESG Model',          badge: 'XGBoost · LightGBM · Ensemble · SHAP · 15 Features · CI Bands',   code: 'EP-W2' },
-    { path: '/llm-esg-extractor',          label: 'LLM ESG Field Extractor',       badge: 'Claude · GPT-4o · 42 ESRS Fields · Confidence Scoring · KPI',     code: 'EP-BY1' },
-    { path: '/greenwashing-detection',     label: 'Greenwashing Detection Engine', badge: '7-Signal Model · EU Green Claims · ESMA · FCA SDR · Severity',    code: 'EP-BY2' },
-    { path: '/esg-narrative-intelligence', label: 'ESG Narrative Intelligence',    badge: '5-Year Arc · Topic Drift · Commitment Tracker · Controversy',     code: 'EP-BY3' },
-    { path: '/anomaly-detection',          label: 'Anomaly Detection',             badge: 'Z-Score · IQR · Isolation · 10 Fields',                           code: 'EP-W3' },
-    { path: '/ai-engagement',              label: 'AI Engagement Advisor',         badge: '20 Rules · Priority · Templates',                                  code: 'EP-W4' },
-    { path: '/document-similarity',        label: 'Document Similarity',           badge: 'Cosine · K-Means · Boilerplate',                                   code: 'EP-W5' },
-    { path: '/ai-data-live-platform',      label: 'AI Data Live Platform',         badge: 'GDELT · SEC EDGAR · OpenAlex · World Bank · 4 Live APIs · Real-Time', code: 'EP-LIV1' },
-    { path: '/social-alternative-data', label: 'Social & Alternative Data', badge: 'Bluesky API · GDELT · ABSA · NLI · Hedge Detection · Boilerplate · Alt-Data Alpha · 3 Live APIs', code: 'EP-SAD1' },
-  ]},
-  { label: 'Solar & Renewable Energy', icon: '☀️', color: '#D97706', items: [
-    { path: '/solar-project-finance',          label: 'Solar Project Finance Engine',       badge: 'IRR · DSCR · ITC/PTC IRA · P50/P90 · DCF · LP/GP Waterfall · 12 Tabs', code: 'RE-PF1' },
-    { path: '/renewable-portfolio-intelligence', label: 'Renewable Portfolio Intelligence', badge: '50 Assets · 6 Technologies · VaR · Efficient Frontier · Peer Benchmark', code: 'RE-PORT1' },
-    { path: '/solar-resource-performance',     label: 'Solar Resource & Performance',       badge: 'NASA POWER Live · Loss Waterfall · Degradation · Weather Normalization', code: 'RE-RES1' },
-    { path: '/ppa-revenue-analytics',          label: 'PPA & Revenue Analytics',            badge: 'PPA Pricing · Merchant VaR · VPPA · Curtailment · Counterparty ECL', code: 'RE-PPA1' },
-    { path: '/bess-grid-analytics',            label: 'BESS & Grid Services Analytics',     badge: 'LCOS · Revenue Stacking · Arrhenius Degradation · Dispatch · FERC 841', code: 'RE-BESS1' },
-    { path: '/renewable-ml-forecasting',       label: 'ML Forecasting & Risk Engine',       badge: 'Monte Carlo · Bayesian · HMM ENSO · OLS Factor · Portfolio VaR · Stress', code: 'RE-ML1' },
-  ]},
-  { label: 'Offshore Wind & Marine Energy', icon: '🌊', color: '#0369a1', items: [
-    { path: '/offshore-wind-resource',       label: 'Offshore Wind Resource & Wake Analytics',  badge: 'Weibull · Jensen Wake · AEP · P50/P90 · IEC 61400-3 · 18 Tabs', code: 'EP-DR1' },
-    { path: '/floating-offshore-wind',       label: 'Floating Offshore Wind LCOE & Technology', badge: 'Spar · Semi-sub · TLP · Mooring · EPCI · LCOE Learning · 18 Tabs', code: 'EP-DR2' },
-    { path: '/offshore-wind-finance',        label: 'Offshore Wind Project Finance & CfD',      badge: 'CfD · DSCR · Newton-Raphson IRR · Monte Carlo · LP/GP Waterfall · 18 Tabs', code: 'EP-DR3' },
-    { path: '/offshore-grid-infrastructure', label: 'Offshore Grid & Cable Infrastructure',     badge: 'AC vs HVDC · Jensen Wake · Cable Loss · Grid Code · Black Start · 18 Tabs', code: 'EP-DR4' },
-    { path: '/offshore-wind-om',             label: 'Offshore Wind O&M & Asset Management',    badge: 'MTBF · Vessel Dispatch · Predictive Maint · Availability · Blade Erosion · 18 Tabs', code: 'EP-DR5' },
-    { path: '/wind-repowering-intelligence', label: 'Wind Repowering & Life Extension',        badge: 'Incremental IRR · AEP Uplift · Grid Re-use · Brownfield NPV · 18 Tabs', code: 'EP-DR6' },
-  ]},
-  { label: '🔬 Green Hydrogen & Power-to-X Finance', icon: '⚗️', color: '#065f46', items: [
-    { path: '/green-hydrogen-lcoh',           label: 'Green Hydrogen LCOH & Electrolyzer Economics', badge: 'PEM · AEL · SOEC · AEM · Learning Curves · Sensitivity · EU Taxonomy · 10 Tabs', code: 'EP-DS1' },
-    { path: '/hydrogen-storage-transport',    label: 'Hydrogen Storage & Transport Economics',       badge: 'CGH₂ · LH₂ · LOHC · NH₃ · Pipeline · Shipping · Import Terminals · 10 Tabs', code: 'EP-DS2' },
-    { path: '/power-to-x-finance',            label: 'Power-to-X & e-Fuel Production Finance',       badge: 'e-Methanol · e-Ammonia · e-SAF · FT Diesel · SNG · CO₂ Sourcing · 10 Tabs', code: 'EP-DS3' },
-    { path: '/hydrogen-project-finance',      label: 'Hydrogen Project Finance & Investment',        badge: 'DSCR · IRR · NPV · Monte Carlo · EU H₂ Bank · IRA §45V · LP/GP Waterfall · 10 Tabs', code: 'EP-DS4' },
-    { path: '/blue-hydrogen-ccs',             label: 'Blue Hydrogen & CCS Economics Engine',         badge: 'SMR · ATR · POX · Methane Slip · CCS Storage · Carbon Price · GHG Lifecycle · 10 Tabs', code: 'EP-DS5' },
-    { path: '/hydrogen-market-intelligence',  label: 'Hydrogen Market Intelligence & Trade Flows',   badge: 'Global Demand · Supply · Trade Corridors · H₂ Valleys · Geopolitical Risk · 10 Tabs', code: 'EP-DS6' },
-  ]},
-  { label: '⚡ Battery Storage & Grid Flexibility Finance', icon: '🔋', color: '#0d4f5c', items: [
-    { path: '/bess-project-finance',       label: 'BESS Project Finance & Investment Analytics',    badge: 'LCOS · Arrhenius Degradation · Revenue Stack · IRR · Monte Carlo · Wright\'s Law · 10 Tabs', code: 'EP-DT1' },
-    { path: '/battery-tech-supply-chain',  label: 'Battery Technology & Supply Chain Finance',      badge: 'Cell Cost · Critical Minerals · Gigafactory · Recycling · Geopolitical Risk · 10 Tabs', code: 'EP-DT2' },
-    { path: '/virtual-power-plant',        label: 'Virtual Power Plant & Aggregated Dispatch',      badge: 'VPP · FCR · aFRR · DSO Flex · Revenue Stack · Optimal Dispatch · 10 Tabs', code: 'EP-DT3' },
-    { path: '/grid-flexibility-markets',   label: 'Grid Flexibility Markets & Ancillary Services',  badge: 'FCR · aFRR · mFRR · PICASSO · MARI · Capacity Market · Revenue Opt. · 10 Tabs', code: 'EP-DT4' },
-    { path: '/ev-v2g-grid-integration',    label: 'EV Fleet & V2G Grid Integration Finance',        badge: 'V2G Revenue · ISO 15118 · Fleet Finance · Degradation · Smart Charging · 10 Tabs', code: 'EP-DT5' },
-    { path: '/ldes-investment',            label: 'Long-Duration Energy Storage (LDES) Investment', badge: 'Iron-Air · Flow Battery · LAES · Gravity · Green H₂ · LCOS Engine · 10 Tabs', code: 'EP-DT6' },
-  ]},
-  { label: '☢️ Nuclear & Advanced Fission Finance', icon: '⚛️', color: '#1a3a2a', items: [
-    { path: '/nuclear-lcoe-economics',     label: 'Nuclear LCOE Economics & Cost Modelling',        badge: 'IDC Factor · PWR/BWR/EPR/VVER/CANDU · Carbon Value · IRR · Reactor Compare · 10 Tabs', code: 'EP-DU1' },
-    { path: '/smr-project-finance',        label: 'SMR Project Finance & NOAK Learning',            badge: 'NOAK Learning · NuScale/BWRX/RR-SMR · Monte Carlo · Revenue Stack · 10 Tabs', code: 'EP-DU2' },
-    { path: '/nuclear-fuel-cycle',         label: 'Nuclear Fuel Cycle Finance Intelligence',        badge: 'Uranium Mining · SWU Economics · HALEU · Back-End · Strategic Stockpiles · 10 Tabs', code: 'EP-DU3' },
-    { path: '/advanced-reactor-finance',   label: 'Advanced & Gen IV Reactor Finance',              badge: 'MSR · SFR · HTGR · GFR · LFR · DOE ARDP · TRISO · Process Heat · 10 Tabs', code: 'EP-DU4' },
-    { path: '/nuclear-decommissioning',    label: 'Nuclear Decommissioning Finance Intelligence',   badge: 'D&D Strategies · Cost Model · NDA · DOE EM · Fund Adequacy · SMR Decomm · 10 Tabs', code: 'EP-DU5' },
-    { path: '/nuclear-market-intelligence',label: 'Nuclear Market Intelligence Platform',           badge: 'Global Fleet · New Build · Export Markets · COP28 · SMR Pipeline · Outlook 2050 · 10 Tabs', code: 'EP-DU6' },
-  ]},
-  { label: '🌋 Geothermal Energy Finance', icon: '🌋', color: '#1a2a1a', items: [
-    { path: '/geothermal-lcoe-economics',    label: 'Geothermal LCOE Economics & Resource Analytics',  badge: 'Dry Steam · Flash · Binary ORC · EGS · Heat Flow Atlas · Carbon Value · 10 Tabs', code: 'EP-DV1' },
-    { path: '/geothermal-project-finance',   label: 'Geothermal Project Finance & Drilling Risk',      badge: 'Well Success Prob · Monte Carlo · DSCR · DFI · LP/GP Waterfall · Case Studies · 10 Tabs', code: 'EP-DV2' },
-    { path: '/enhanced-geothermal-systems',  label: 'Enhanced Geothermal Systems (EGS) Finance',      badge: 'EGS Cost Model · Stimulation · Flow Risk · DOE GeoVision · Superhot Rock · 10 Tabs', code: 'EP-DV3' },
-    { path: '/geothermal-direct-use',        label: 'Geothermal Direct Use & Heat Pump Economics',    badge: 'GHP COP · District Heating · Industrial Heat · Cascade · vs Fossil HVAC · 10 Tabs', code: 'EP-DV4' },
-    { path: '/geothermal-power-markets',     label: 'Geothermal Power Markets & Grid Services',       badge: 'Baseload Premium · Ancillary · PPA Structures · Marginal Value · Grid Integration · 10 Tabs', code: 'EP-DV5' },
-    { path: '/geothermal-market-intelligence',label: 'Global Geothermal Market Intelligence',         badge: '16 Countries · Developer Landscape · Pipeline · Investment Flows · Outlook 2050 · 10 Tabs', code: 'EP-DV6' },
-  ]},
-  { label: '🏦 FI Climate Finance Instruments', icon: '🏦', color: '#1e3a5f', items: [
-    { path: '/sustainability-linked-instruments', label: 'Sustainability-Linked Instruments Suite',    badge: 'SLL/SLB Pricing · KPI Ratchet · LMA/ICMA · Greenwashing Risk · FI Revenue Model · 10 Tabs', code: 'EP-DW1' },
-    { path: '/transition-finance-engine',         label: 'Transition Finance Engine',                 badge: 'Paris-Aligned Lending · Credibility Score · Taxonomy · Hard-to-Abate · GFANZ · 10 Tabs',   code: 'EP-DW2' },
-    { path: '/green-securitization',              label: 'Green Securitization Intelligence Suite',   badge: 'Green ABS/RMBS/CMBS · Waterfall · Credit Enhancement · Greenium · FI Economics · 10 Tabs',  code: 'EP-DW3' },
-    { path: '/climate-credit-pricing',            label: 'Climate Credit Pricing Intelligence Suite', badge: 'TCFD Spreads · Physical/Trans Premium · Climate VaR · Regulatory Capital · 10 Tabs',        code: 'EP-DW4' },
-    { path: '/blended-finance-structuring',       label: 'Blended Finance Structuring Suite',         badge: 'First-Loss/Mezz/Senior · DFI Guarantee · Mobilization · OECD Principles · 10 Tabs',         code: 'EP-DW5' },
-    { path: '/fi-net-zero-pathways',              label: 'FI Net-Zero Pathways Intelligence Suite',   badge: 'NZBA/PCAF/GFANZ · Portfolio Temperature · Financed Emissions · Engagement · 10 Tabs',       code: 'EP-DW6' },
-  ]},
-  { label: '🌿 Bioenergy, BECCS & Nature Finance', icon: '🌿', color: '#2d6a4f', items: [
-    { path: '/bioenergy-lcoe-economics',       label: 'Bioenergy LCOE Economics Suite',              badge: 'LCOE Model · Feedstock Cost · Co-firing · Carbon Credits · Policy Support · 10 Tabs',        code: 'EP-DX1' },
-    { path: '/beccs-project-finance',          label: 'BECCS Project Finance Intelligence Suite',    badge: 'Dual Revenue Stack · CCS CapEx · CDR Credits · Drax/Stockholm · IRR Engine · 10 Tabs',      code: 'EP-DX2' },
-    { path: '/forestry-timber-finance',        label: 'Forestry & Timber Finance Intelligence Suite',badge: 'Timber IRR · TIMO Landscape · Forest Carbon · FSC Premium · Risk Framework · 10 Tabs',      code: 'EP-DX3' },
-    { path: '/nature-based-solutions-finance', label: 'Nature-Based Solutions Finance Suite',        badge: 'REDD+/A-R/Blue Carbon · VCU Pricing · Co-Benefit Valuation · Article 6.4 · 10 Tabs',        code: 'EP-DX4' },
-    { path: '/carbon-removal-markets',         label: 'Carbon Removal Markets Intelligence Suite',   badge: 'DAC/BECCS/Biochar/EW · Frontier AMC · LCDR Engine · 45Q · Policy & FI Products · 10 Tabs',  code: 'EP-DX5' },
-    { path: '/biodiversity-natural-capital',   label: 'Biodiversity & Natural Capital Finance Suite',badge: 'TNFD LEAP · NCA Valuation · BNG Credits · GBF Targets · Portfolio Alignment · 10 Tabs',     code: 'EP-DX6' },
-  ]},
-  { label: '🏙️ Municipal & Sub-Sovereign Climate Finance', icon: '🏙️', color: '#1e3a5f', items: [
-    { path: '/municipal-green-bond-analytics', label: 'Municipal Green Bond Analytics Suite',         badge: 'GO vs Revenue · Greenium Engine · Tax Equivalency · AMT · Credit Spreads · 10 Tabs',         code: 'EP-DY1' },
-    { path: '/cdfi-climate-finance',           label: 'CDFI Climate Finance Intelligence Suite',      badge: 'NMTC Analytics · IRA GGRF · CDFI Landscape · Capital Stack · Community Impact · 10 Tabs',   code: 'EP-DY2' },
-    { path: '/mdb-sub-sovereign-lending',      label: 'MDB Sub-Sovereign Lending Engine',             badge: 'WB/IFC/ADB/AIIB · Concessionality · Blended Finance · Guarantees · ESG Conditions · 10 Tabs', code: 'EP-DY3' },
-    { path: '/cpace-climate-finance',          label: 'C-PACE & Property-Assessed Climate Finance',   badge: 'PACE Mechanics · Underwriting Engine · Securitization · Energy Savings · State Programs · 10 Tabs', code: 'EP-DY4' },
-    { path: '/climate-revenue-bond-modeler',   label: 'Climate Revenue Bond Modeler',                 badge: 'Water/Electric/Airport/Transit · DSCR Engine · Rate Covenant · Green Certification · 10 Tabs', code: 'EP-DY5' },
-    { path: '/municipal-climate-resilience-hub', label: 'Municipal Climate Resilience Finance Hub',   badge: 'FEMA BRIC · BCR Engine · 8-City Dashboard · Adaptation Calculator · Bond Structures · 10 Tabs', code: 'EP-DY6' },
-  ]},
-  { label: '🌊 Ocean & Blue Economy Finance', icon: '🌊', color: '#0d4f5c', items: [
-    { path: '/blue-bond-analytics',               label: 'Blue Bond Analytics Suite',                  badge: 'Sovereign · Supranational · ISWG/CBI/ICMA · Greenium Engine · Ocean Impact · 10 Tabs',        code: 'EP-DZ1' },
-    { path: '/shipping-decarbonization-finance',  label: 'Shipping Decarbonization Finance Engine',    badge: 'IMO 2050 · CII/EEXI · Alt-Fuel Economics · Poseidon Principles · FuelEU Levy · 10 Tabs',      code: 'EP-DZ2' },
-    { path: '/marine-blue-carbon-finance',        label: 'Marine & Blue Carbon Finance Intelligence',  badge: 'Mangrove · Seagrass · MPA Finance · Verra VCS · CBCA · Blue Carbon Credits · 10 Tabs',        code: 'EP-DZ3' },
-    { path: '/aquaculture-climate-finance',       label: 'Aquaculture & Ocean Food System Finance',    badge: 'ASC/MSC · Acidification Risk · Temperature Stress · Carbon Intensity · Seafood Finance · 10 Tabs', code: 'EP-DZ4' },
-    { path: '/ocean-carbon-credit-market',        label: 'Ocean Carbon Credit Market Intelligence',    badge: 'Blue Carbon · Verra VCS · OAE · Forward Curve · Buyer Landscape · Quality Framework · 10 Tabs', code: 'EP-DZ5' },
-    { path: '/coastal-resilience-finance',        label: 'Coastal Resilience & Adaptation Finance Hub', badge: 'BCR Engine · 8-City Dashboard · Sea Level Rise · Parametric Insurance · NbS · 10 Tabs',       code: 'EP-DZ6' },
-  ]},
-  { label: '🇮🇳 India Green Economy Carbon Finance', icon: '🇮🇳', color: '#FF9933', items: [
-    { path: '/regional-carbon-market-hub',        label: 'Regional Carbon Market Intelligence Hub',     badge: 'EU ETS · India CCTS · Japan GX-ETS · JCM · CBAM · Article 6 · 10 Tabs',                        code: 'EP-EA1' },
-    { path: '/solar-developer-carbon-finance',    label: 'Solar Developer Carbon Finance (India IPP)',  badge: '6 IPPs · ACM0002 · JCM · REC Market · Green Bond · DSCR Engine · 10 Tabs',                   code: 'EP-EA2' },
-    { path: '/solar-manufacturer-carbon-finance', label: 'Solar Manufacturer Carbon Finance',           badge: 'PLI · EU CBAM · Scope 1-2-3 · EPD Standards · CCTS · RE100 · 6 Manufacturers · 10 Tabs',      code: 'EP-EA3' },
-    { path: '/green-hydrogen-ammonia-carbon',     label: 'Green Hydrogen & Ammonia Carbon Finance',     badge: 'SIGHT · RFNBO · JCM ITMO · GX-ETS · Article 6 · 6 Developers · 10 Tabs',                     code: 'EP-EA4' },
-    { path: '/india-green-infra-finance',         label: 'India Green Infrastructure & Project Finance', badge: 'NaBFID · InvIT · GCF/ADB · BRSR · CCTS · 8 Infra Types · 10 Tabs',                          code: 'EP-EA5' },
-    { path: '/carbon-arbitrage-portfolio',        label: 'Cross-Market Carbon Arbitrage & NZ Portfolio', badge: 'EU ETS · CCTS · JCM · VCS · Article 6 · CORSIA · Portfolio VaR · 10 Tabs',                  code: 'EP-EA6' },
-    { path: '/carbon-integrity-mrv-analytics',    label: 'Carbon Integrity, Digital MRV & Quant Analytics', badge: 'ICVCM CCPs · VCMI 2.0 · Sylvera/BeZero/Calyx · A6.4 · dMRV · Monte Carlo · Forward IV · 12 Tabs', code: 'EP-EA7' },
-  ]},
-  { label: '🎯 Impact Advisory — Balance-Sheet Value from Sustainability', icon: '🎯', color: '#0d4f5c', items: [
-    { path: '/renewable-lca-epd',                 label: 'RE Portfolio LCA & EPD Certification',       badge: 'ISO 14040/44 · ISO 14025 · IEC 63274 · Peer Benchmark · Cradle-to-Gate · 7 Tabs',          code: 'EP-EB1' },
-    { path: '/ccts-offset-registration',          label: 'CCTS Offset Registration & Trading',         badge: '8 BEE Methodologies · Additionality 4-Prong · CCC Price Scenarios · MRV · 7 Tabs',         code: 'EP-EB2' },
-    { path: '/sustainability-linked-finance',     label: 'Sustainability-Linked Finance Framework',    badge: 'GB · SLB · SLL · Transition · Blue · 7 KPIs · 6 SPOs · ICMA/LMA · 7 Tabs',                 code: 'EP-EB3' },
-    { path: '/esg-ratings-uplift',                label: 'ESG Ratings Uplift Programme',               badge: 'MSCI BB→A · Sustainalytics · Passive Inflow Unlock · Remediation Map · 7 Tabs',           code: 'EP-EB4' },
-    { path: '/tcfd-physical-risk-assessment',     label: 'TCFD Physical Climate Risk Assessment',      badge: 'CMIP6 · SSP1-2.6/2-4.5/5-8.5 · 10 Assets · RaR · Adaptation Roadmap · 7 Tabs',             code: 'EP-EB5' },
-    { path: '/tnfd-biodiversity-baseline',        label: 'TNFD Biodiversity Baseline & LEAP',          badge: 'LEAP · TNFD v2.0 · SBTN · IBAT KBA · ENCORE · DNSH · 7 Tabs',                              code: 'EP-EB6' },
-  ]},
-  { label: '☀️ Solar Energy Finance Suite', icon: '☀️', color: '#d97706', items: [
-    { path: '/bifacial-agrivoltaic-finance',    label: 'Bifacial & Agrivoltaic Finance',             badge: 'Bifacial Gain · Agri Co-Benefits · Dual Revenue · KUSUM · IRA · 6 Tabs',                  code: 'EP-EC1' },
-    { path: '/floating-solar-finance',          label: 'Floating Solar (FPV) Finance',               badge: 'FPV · 4.5 GW Global · Cooling Boost · Evaporation Savings · 6 Tabs',                     code: 'EP-EC2' },
-    { path: '/solar-plus-storage-finance',      label: 'Solar + Storage Co-located Finance',         badge: 'BESS · IRA ITC 30-70% · Revenue Stack · Capacity/Ancillary · 6 Tabs',                    code: 'EP-EC3' },
-    { path: '/utility-solar-epc-intelligence',  label: 'Utility-Scale EPC Intelligence',             badge: 'EPC CAPEX $0.55-0.85/W · SAT +6% AEP · Bankability · Warranty · 6 Tabs',                 code: 'EP-EC4' },
-    { path: '/distributed-community-solar',     label: 'Distributed & Community Solar',              badge: 'SREC · Net Metering · Community Solar · LMI 20-30% · 6 Tabs',                            code: 'EP-EC5' },
-    { path: '/solar-repowering-analytics',      label: 'Solar Repowering & Life Extension',          badge: 'Degradation Model · AEP Uplift 15-35% · PPA Restructuring · IRR · 6 Tabs',               code: 'EP-EC6' },
-  ]},
-  { label: '🏭 Solar Panel Manufacturing Intelligence', icon: '🏭', color: '#1e40af', items: [
-    { path: '/polysilicon-wafer-supply-chain',       label: 'Polysilicon & Wafer Supply Chain',           badge: 'China 85% · UFLPA Compliance · HHI · Siemens vs FBR · 20 Suppliers · 6 Tabs',              code: 'EP-ED1' },
-    { path: '/solar-cell-technology-analyzer',       label: 'Solar Cell Technology Analyzer',             badge: 'PERC/TOPCon/HJT/IBC/Perovskite-Si · Efficiency 17-33% · Wright\'s Law · 6 Tabs',         code: 'EP-ED2' },
-    { path: '/solar-module-manufacturing-economics', label: 'Module Manufacturing Economics',             badge: '$0.16/W 2023 · BOM 8 Components · IRA §48C · 15 Manufacturers · 6 Tabs',                  code: 'EP-ED3' },
-    { path: '/solar-manufacturing-carbon-lca',       label: 'Manufacturing Carbon LCA',                   badge: '20-50 gCO2e/kWh · ISO 14040/44 · IEC 63274 · Carbon Payback · 6 Tabs',                    code: 'EP-ED4' },
-    { path: '/solar-trade-policy-intelligence',      label: 'Solar Trade Policy Intelligence',            badge: 'IRA §48C/48E · EU NZIA 40% · AD/CVD Tariffs · CBAM · UFLPA · 6 Tabs',                    code: 'EP-ED5' },
-    { path: '/solar-module-quality-bankability',     label: 'Module Quality & Bankability',               badge: 'P90/P50 Yield · IEC 61215/61730 · PVEL · 25-yr Degradation · 6 Tabs',                    code: 'EP-ED6' },
-  ]},
-  { label: '⚗️ Green Ammonia & Hydrogen Derivatives', icon: '⚗️', color: '#065f46', items: [
-    { path: '/green-ammonia-production-economics', label: 'Green Ammonia Production Economics',        badge: 'LCOA $400-1200/t · Haber-Bosch · 10 MWh/t · CRF Model · 20 Projects · 6 Tabs',            code: 'EP-EE1' },
-    { path: '/green-ammonia-shipping-storage',     label: 'Shipping & Terminal Infrastructure',        badge: 'VLGC $50-120/t · 5 Trade Routes · Cracking 15% Penalty · Safety · 6 Tabs',               code: 'EP-EE2' },
-    { path: '/green-ammonia-offtake-markets',      label: 'Offtake Markets & Demand Intelligence',    badge: '185 Mt Global NH3 · Japan 3 Mt 2030 · Maritime/Power/Fertilizer · 6 Tabs',               code: 'EP-EE3' },
-    { path: '/green-ammonia-country-intelligence', label: 'Country Export Intelligence',              badge: 'Australia 35Mt · Chile 20Mt · Morocco 15Mt · Readiness Index · 6 Tabs',                   code: 'EP-EE4' },
-    { path: '/green-ammonia-policy-credits',       label: 'Policy, Subsidies & Carbon Credits',       badge: 'IRA §45V $3/kg H2 · H2Global €900M · EU CBAM · Japan GIF · 6 Tabs',                      code: 'EP-EE5' },
-    { path: '/hydrogen-derivatives-comparison',    label: 'Hydrogen Carrier Comparison',               badge: 'GH2/LH2/LOHC/NH3/Methanol/e-fuels · Transport $/GJ · Radar · 6 Tabs',                    code: 'EP-EE6' },
-  ]},
-  { label: '✈️ Sustainable Aviation Fuel (SAF) Finance', icon: '✈️', color: '#0369A1', items: [
-    { path: '/saf-lcof-engine',           label: 'SAF LCOF Engine',                   badge: '6 Pathways · HEFA/AtJ/FT/PtL · Wright\'s Law · IRA §40B · 24 Projects · 6 Tabs',           code: 'EP-EF1' },
-    { path: '/saf-project-finance',       label: 'SAF Project Finance',               badge: 'DSCR · IRR · NPV · Blended Finance · 20 Deals · Risk Register · 6 Tabs',                   code: 'EP-EF2' },
-    { path: '/saf-feedstock-supply-chain',label: 'SAF Feedstock Supply Chain',        badge: 'ISCC+/RSB · 6 Feedstocks · 18 Suppliers · Price Forecast · RadarChart · 6 Tabs',           code: 'EP-EF3' },
-    { path: '/saf-policy-mandate',        label: 'SAF Policy & Mandate Intelligence', badge: 'ReFuelEU 2% · UK 10% · IRA §40B · CORSIA · 8 Jurisdictions · Calculator · 6 Tabs',        code: 'EP-EF4' },
-    { path: '/airline-saf-procurement',   label: 'Airline SAF Procurement',           badge: '8 Airlines · 16 Deals · Book-and-Claim · PPA Pricing · Credit Scatter · 6 Tabs',           code: 'EP-EF5' },
-    { path: '/saf-carbon-credits',        label: 'SAF Carbon Credits & CORSIA',       badge: 'CORSIA CEF · ISCC+ · RSB · EU ETS · Revenue Stack · LCA Waterfall · 6 Tabs',               code: 'EP-EF6' },
-  ]},
-  { label: '🏭 Green Steel & Industrial Decarbonization', icon: '🏭', color: '#374151', items: [
-    { path: '/green-steel-lcop-engine',            label: 'Green Steel LCOP Engine',           badge: 'BF-BOF/DRI-EAF-H₂/MOE · 6 Routes · CBAM · H₂ Break-Even · 22 Projects · 6 Tabs',    code: 'EP-EG1' },
-    { path: '/industrial-hydrogen-integration',    label: 'Industrial Hydrogen Integration',   badge: '6 Sectors · Steel/Cement/Chemicals · PEM/AEL/SOEC · Abatement $/tCO₂ · 6 Tabs',    code: 'EP-EG2' },
-    { path: '/cbam-analytics-compliance',          label: 'CBAM Analytics & Compliance',       badge: 'EU CBAM 2024 · 7 Sectors · 20 Countries · Certificate Price · Phase-in · 6 Tabs',   code: 'EP-EG3' },
-    { path: '/green-cement-concrete-finance',      label: 'Green Cement & Concrete Finance',   badge: 'LC³/LEILAC/Oxyfuel/Geopolymer · 7 Tech · Break-Even Carbon · LCA · 6 Tabs',         code: 'EP-EG4' },
-    { path: '/industrial-electrification-finance', label: 'Industrial Electrification Finance',badge: 'Heat Pumps/EAF/Induction · 6 Tech · Payback · ROI · Grid Flexibility · 6 Tabs',     code: 'EP-EG5' },
-    { path: '/hard-to-abate-transition',           label: 'Hard-to-Abate Transition Finance',  badge: '6 Sectors · Green Bond/SLL/Transition Bond · Radar · GFANZ · 16 Deals · 6 Tabs',    code: 'EP-EG6' },
-  ]},
-  { label: '🌿 Carbon Dioxide Removal (CDR) Finance', icon: '🌿', color: '#0D9488', items: [
-    { path: '/direct-air-capture-finance',  label: 'Direct Air Capture Finance',         badge: '5 DAC Tech · Climeworks/CE/Verdox · IRA §45Q $180/t · LCOC · Frontier Buyers · 6 Tabs',   code: 'EP-EH1' },
-    { path: '/enhanced-weathering-finance', label: 'Enhanced Weathering Finance',        badge: 'Basalt/Olivine/Wollastonite/Slag · 20 Projects · MRV · Co-benefits +8–15% Yield · 6 Tabs', code: 'EP-EH2' },
-    { path: '/biochar-beccs-finance',       label: 'Biochar & BECCS Finance',            badge: 'Pyrolysis · IRA §45Q · 22 Projects · IRR · Permanence · Feedstock Economics · 6 Tabs',    code: 'EP-EH3' },
-    { path: '/ocean-cdr-finance',           label: 'Ocean CDR Finance',                  badge: 'OAE/Kelp/ElectroChem · 6 Approaches · MRV Maturity · Frontier Buyers · 6 Tabs',           code: 'EP-EH4' },
-    { path: '/cdr-credit-markets',          label: 'CDR Credit Markets & Permanence',   badge: '7 Credit Types · Permanence Tiers · Buyer Intelligence · OTC Price History · 6 Tabs',      code: 'EP-EH5' },
-    { path: '/cdr-portfolio-netzero',       label: 'CDR Portfolio & Net-Zero Integration', badge: 'Portfolio Builder · Oxford Principles · Cost Curve · Buyer Alignment · 6 Tabs',          code: 'EP-EH6' },
-  ]},
-  { label: '🏢 Climate Real Estate & Green Buildings Finance', icon: '🏢', color: '#16A34A', items: [
-    { path: '/green-building-certification-finance', label: 'Green Building Certification Finance', badge: 'LEED/BREEAM/NABERS/DGNB · 22 Buildings · NPV Calculator · ROI Waterfall · 6 Tabs', code: 'EP-EI1' },
-    { path: '/commercial-re-climate-risk',           label: 'Commercial RE Climate Risk',           badge: 'CRREM · EPC A–G · 4 NGFS · Stranding Year · Retrofit Economics · 6 Tabs',          code: 'EP-EI2' },
-    { path: '/green-mortgage-retrofit-finance',      label: 'Green Mortgage & Retrofit Finance',    badge: '8 Lenders · 6 Retrofit Schemes · ECO4/GBIS/MaPrimeRénov · IRA §25C · 6 Tabs',      code: 'EP-EI3' },
-    { path: '/re-climate-stress-test',               label: 'RE Climate Stress Test',               badge: '4 NGFS Scenarios · 6 Sectors · Stressed NAV · Radar · 20 Assets · 6 Tabs',         code: 'EP-EI4' },
-    { path: '/gresb-real-assets-esg',                label: 'GRESB Real Assets ESG',                badge: '20 Funds · Star Rating · 8-Year Trend · Best Practice · 6 Institutional Investors', code: 'EP-EI5' },
-    { path: '/climate-smart-infrastructure',         label: 'Climate-Smart Infrastructure Finance', badge: 'NbS · IFC PS 1–8 · GCF/Adapt Fund · Long-Horizon IRR · 22 Projects · 6 Tabs',      code: 'EP-EI6' },
-  ]},
-  { label: '♻️ Circular Economy & Waste Finance', icon: '♻️', color: '#D97706', items: [
-    { path: '/circular-economy-investment',   label: 'Circular Economy Investment',      badge: '6 CE Models · EMF Principles · 22 Companies · Market Forecast · 6 Tabs',        code: 'EP-EJ1' },
-    { path: '/plastic-credits-epr-finance',   label: 'Plastic Credits & EPR Finance',    badge: '8 Registries · Verra PWRS · Ocean-Bound · 8 EPR Schemes · Calculator · 6 Tabs',  code: 'EP-EJ2' },
-    { path: '/waste-to-energy-biogas-finance', label: 'Waste-to-Energy & Biogas Finance', badge: '8 Tech · AD/EfW/LFG/Gasification · Gate Fee · 22 Projects · IRR Calculator · 6 Tabs', code: 'EP-EJ3' },
-    { path: '/recycled-content-markets',      label: 'Recycled Content Markets',         badge: '10 Materials · rPET/rAl/rSteel · Price History · 20 Brand Buyers · 6 Tabs',      code: 'EP-EJ4' },
-    { path: '/epr-compliance-intelligence',   label: 'EPR Compliance Intelligence',      badge: '8 Jurisdictions · 26 Cos · Gap Analysis · Regulatory Timeline 2030 · 6 Tabs',    code: 'EP-EJ5' },
-    { path: '/circular-supply-chain-finance', label: 'Circular Supply Chain Finance',    badge: '6 CE Levers · 22 Companies · cSCF Instruments · Value Leakage · 6 Tabs',         code: 'EP-EJ6' },
-  ]},
-  { label: '🔌 Utility Infrastructure Assets Finance', icon: '🔌', color: '#0F4C81', items: [
-    { path: '/power-grid-transmission-finance',        label: 'Power Grid & Transmission Finance',     badge: '12 TSOs · RAB Model · Congestion Analytics · HVDC · Revenue Waterfall · 7 Tabs', code: 'EP-EL1' },
-    { path: '/water-wastewater-utility-finance',       label: 'Water & Wastewater Utility Finance',   badge: '12 Utilities · Ofwat PR24 · Totex Efficiency · ODI · Serviceability · 7 Tabs',   code: 'EP-EL2' },
-    { path: '/regulated-utility-rate-case',            label: 'Regulated Utility Rate Case Analytics', badge: '12 US IOUs · FERC/PUC · ROE History · Revenue Req · Lag Analytics · 7 Tabs',    code: 'EP-EL3' },
-    { path: '/gas-network-decarbonisation',            label: 'Gas Network Decarbonisation Finance',  badge: '8 Networks · H2 Blending · Biomethane · Stranded Asset Risk · RIIO · 7 Tabs',    code: 'EP-EL4' },
-    { path: '/utility-physical-climate-resilience',    label: 'Utility Physical Climate Resilience',  badge: '15 Assets · Multi-Peril · SAIDI · Hardening ROI · Insurance Gap · 7 Tabs',        code: 'EP-EL5' },
-    { path: '/infrastructure-debt-utility-bonds',      label: 'Infrastructure Debt & Utility Bonds',  badge: '24 Bonds · Green/SLB · Credit Curve · Covenant Analytics · Duration · 7 Tabs',    code: 'EP-EL6' },
-  ]},
-  { label: '🌊 Climate Adaptation & Resilience Finance', icon: '🌊', color: '#3B82F6', items: [
-    { path: '/flood-resilience-finance',       label: 'Flood Resilience Finance',          badge: '10 Cities · AAL · BCR Screener · RCP 2.6/4.5/8.5 · CAT Bond · 6 Tabs',         code: 'EP-EK1' },
-    { path: '/heat-adaptation-finance',        label: 'Heat Adaptation Finance',            badge: '8 Cities · UHI · Labour Productivity Loss · Urban Cooling · CBI · 6 Tabs',      code: 'EP-EK2' },
-    { path: '/nbs-adaptation-finance', label: 'NbS Adaptation Finance',     badge: '8 NbS Types · Blue Carbon · TNFD · 22 Projects · BCR · Blended Finance · 6 Tabs', code: 'EP-EK3' },
-    { path: '/resilience-bond-analytics',      label: 'Resilience Bond Analytics',          badge: 'CAT Bonds · 24 Bonds · Parametric vs Indemnity · KPI Coupon · ILS Market · 6 Tabs', code: 'EP-EK4' },
-    { path: '/climate-adaptation-portfolio',   label: 'Climate Adaptation Portfolio',       badge: '28 Assets · Multi-Peril · BCR · Risk-Return Map · Regional Radar · 6 Tabs',     code: 'EP-EK5' },
-    { path: '/just-transition-adaptation',     label: 'Just Transition & Adaptation',       badge: 'JETP · 22 Regions · Social Radar · Jobs Transition · ILO Framework · 6 Tabs',   code: 'EP-EK6' },
-  ]},
-  { label: 'Commodity Lifecycle Intelligence', icon: '🌾', color: '#78350f', items: [
-    { path: '/commodity-hub',              label: 'Commodity Hub',              badge: 'Hub · 50 Commodities · Finance×ESG×Climate', code: 'EP-Y8' },
-    { path: '/commodity-intelligence',     label: 'Commodity Markets',          badge: '50 Commodities · EODHD · Carbon · Energy',   code: 'EP-Y1' },
-    { path: '/commodity-inventory',        label: 'Global Inventory',           badge: 'Country→Source · Supply Chain · 20 Chains',   code: 'EP-Y2' },
-    { path: '/lifecycle-assessment',       label: 'Lifecycle Assessment',       badge: 'ISO 14040 · 6 Stages · 8 Impact Categories', code: 'EP-Y3' },
-    { path: '/financial-flow',             label: 'Financial Flow',             badge: 'Price→Retail→Scrap · True Cost · Externalities', code: 'EP-Y4' },
-    { path: '/esg-value-chain',            label: 'ESG Value Chain',            badge: '25 Chains · 40+ Countries · 15 Certs · ML RF-10', code: 'EP-Y5' },
-    { path: '/climate-nature-repo',        label: 'Climate & Nature Repo',      badge: '25 Commodities · 12 Boundaries · 30 Water Regions · BII', code: 'EP-Y6' },
-    { path: '/multi-factor-integration',   label: 'Multi-Factor Integration',   badge: '25 Commodities · ML Ensemble · PCA · K-Means · Regulatory', code: 'EP-Y7' },
-    { path: '/product-anatomy',            label: 'Product Anatomy',            badge: '30 Products · ESG Score · Sustainable Alts',  code: 'EP-Y9' },
-    { path: '/epd-lca-database',           label: 'EPD & LCA Database',         badge: '6 Sources · 50+ EPDs · ISO 14025',           code: 'EP-Y10' },
-    { path: '/ceda-emission-factors',      label: 'CEDA Emission Factors',      badge: 'CEDA 2025 · 400 Sectors · 149 Countries · Spend-Based Calculator',  code: 'EP-CEDA' },
-    { path: '/big-climate-database',       label: 'Big Climate Database',        badge: 'CONCITO v1.2 · 540 Foods · 5 Countries · LCA · CC-BY',              code: 'EP-BCDB' },
-  ]},
-  { label: 'Client Intelligence', icon: '🎯', color: '#7c3aed', items: [
-    { path: '/pitch', label: 'Client Pitch & Demo', badge: '4 Personas · India Live · 12 Engines · Pricing · Competitive', code: 'PITCH' },
-  ]},
-  { label: 'Data Capture & Pipeline Hub', icon: '🗄️', color: '#7c3aed', items: [
-    { path: '/data-capture-hub',           label: 'Data Capture Hub',            badge: '15 Entities · 87 Modules · 42 Pipelines · Normalized Schema · Docs',  code: 'EP-DCH' },
-    { path: '/reference-data-explorer',  label: 'Reference Data Explorer',     badge: '6 Sources · OWID · CEDA · SBTi · CBAM · LCA · 230+ Countries',       code: 'EP-RDE' },
-  ]},
-  { label: 'Consumer Carbon Intelligence', icon: '🌱', color: '#065f46', items: [
-    { path: '/consumer-carbon-hub',        label: 'Carbon Hub',               badge: 'Hub · Calculator · Wallet · Economy',     code: 'EP-Z6' },
-    { path: '/carbon-calculator',          label: 'Carbon Calculator',        badge: '200+ Products · Compare · Budget',        code: 'EP-Z1' },
-    { path: '/carbon-wallet',              label: 'Carbon Wallet',            badge: 'Track · Budget · Achievements',           code: 'EP-Z2' },
-    { path: '/invoice-parser',             label: 'Invoice Parser',           badge: 'Receipt → Carbon · 50+ Keywords',         code: 'EP-Z3' },
-    { path: '/spending-carbon',            label: 'Spending Analyzer',        badge: 'Patterns · Transitions · Forecast',       code: 'EP-Z4' },
-    { path: '/carbon-economy',             label: 'Carbon Economy',           badge: 'Price Tags · Currency · Country',         code: 'EP-Z5' },
-  ]},
-  { label: 'Corporate Decarbonisation & SBTi', icon: '🌿', color: '#059669', items: [
-    { path: '/decarbonisation-hub',           label: 'Decarbonisation Hub',            badge: 'Hub · SBTi+RE100+EV100 · 1.9°C · $840M NPV · Board Pack',   code: 'EP-AI6' },
-    { path: '/sbti-target-setter',            label: 'SBTi Target Setter',             badge: 'ACA/SDA/TRM · 20 Cos · 1.8°C · 67% Scope 3 Coverage',        code: 'EP-AI1' },
-    { path: '/decarbonisation-roadmap',       label: 'Decarbonisation Roadmap Builder',badge: '25 Measures · $2.4bn CapEx · -46% S1+2 · 2048 Net-Zero',      code: 'EP-AI2' },
-    { path: '/abatement-cost-curve',          label: 'Abatement Cost Curve Builder',   badge: 'MACC · 30 Measures · 38 GtCO2e · $130/t Viable · 8 Sectors', code: 'EP-AI3' },
-    { path: '/energy-transition-analytics',   label: 'Energy Transition Analytics',    badge: 'RE100 · 58% Renewable · 2,840 MW PPA · EV100 · EP100',        code: 'EP-AI4' },
-    { path: '/carbon-reduction-projects',     label: 'Carbon Reduction Projects',      badge: '24 Projects · 847 ktCO2e/yr · $1.84bn · $54/tCO2e Avg',      code: 'EP-AI5' },
-  ]},
-  { label: 'Financed Emissions & Climate Banking', icon: '🏦', color: '#0c4a6e', items: [
-    { path: '/climate-banking-hub',          label: 'Climate Banking Hub',           badge: 'Hub · PCAF · GAR · Stress Test · Board Dashboard · NZBA',      code: 'EP-AJ6' },
-    { path: '/pcaf-financed-emissions',      label: 'PCAF Financed Emissions',       badge: 'PCAF v2 · 5 Asset Classes · DQS · 847 ktCO2e · WACI 312',     code: 'EP-AJ1' },
-    { path: '/climate-stress-test',          label: 'Climate Stress Test',           badge: 'NGFS IV · ECB/BoE · PD Migration · CET1 -2.8% · Delayed',      code: 'EP-AJ2' },
-    { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
-    { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
-    { path: '/climate-credit-risk-analytics',label: 'Climate Credit Risk Analytics', badge: 'IFRS 9 Overlay · Physical+Transition · £438M ECL · EPC D-G',   code: 'EP-AJ5' },
-  ]},
-  { label: 'Platform Administration', icon: '⚙️', color: '#475569', items: [
-    { path: '/module-navigator',          label: '🗺 Module Navigator',        badge: '530+ Modules · Search · Domains · Sprints · Quick-Nav',              code: 'ADM-00' },
-    { path: '/data-source-manager',       label: 'Data Source Manager',       badge: '47 Sources · EODHD+AV · Field Mapper · Engine Lineage · Sync',       code: 'ADM-01' },
-    { path: '/db-explorer',               label: 'DB Explorer & SQL',         badge: '40+ Tables · SQL Editor · Lineage · Migration Tracker',               code: 'ADM-02' },
-    { path: '/user-role-management',      label: 'Users & Roles',             badge: '50 Users · 8 Roles · Permission Matrix · Teams · MFA · SSO',          code: 'ADM-03' },
-    { path: '/audit-trail-viewer',        label: 'Audit Trail',               badge: '500 Events · Calculation Audit · ISAE 3000 · SOC 2 · GDPR',          code: 'ADM-04' },
-    { path: '/api-gateway-monitor',       label: 'API Gateway',               badge: '2302 Endpoints · Traffic · Rate Limits · Swagger · Webhooks',         code: 'ADM-05' },
-    { path: '/data-quality-dashboard',    label: 'Data Quality',              badge: 'Quality Scores · Completeness · Freshness · 50 Validation Rules',     code: 'ADM-06' },
-    { path: '/calculation-engine-monitor',label: 'Engine Monitor',            badge: '30 Engines · Execution History · Shadow Model · Config · Drift',      code: 'ADM-07' },
-    { path: '/platform-settings',         label: 'Platform Settings',         badge: 'Theme · Integrations · Feature Flags · System Health',                code: 'ADM-08' },
-  ]},
-  { label: 'Geopolitical Risk & Climate Security', icon: '🌐', color: '#7f1d1d', items: [
-    { path: '/geopolitical-esg-hub',          label: 'Geopolitical ESG Hub',          badge: 'Hub · Sanctions+Energy+Minerals+Trade+Migration · Scenarios',       code: 'EP-AV6' },
-    { path: '/sanctions-climate-finance',     label: 'Sanctions & Climate Finance',   badge: 'OFAC/EU/UK · 60 Countries · Dual-Use Tech · Compliance',            code: 'EP-AV1' },
-    { path: '/energy-security-transition',    label: 'Energy Security & Transition',  badge: '50 Countries · Import Dependency · Chokepoints · LNG',              code: 'EP-AV2' },
-    { path: '/critical-mineral-geopolitics',  label: 'Critical Mineral Geopolitics',  badge: '15 Minerals · Friendshoring · China Dominance · IRA/CRMA',          code: 'EP-AV3' },
-    { path: '/trade-carbon-policy',           label: 'Trade & Carbon Border Policy',  badge: 'EU CBAM · UK CBAM · Carbon Club · Embedded Emissions',              code: 'EP-AV4' },
-    { path: '/climate-migration-risk',        label: 'Climate Migration Risk',        badge: '50 Countries · 216M by 2050 · Displacement · Stranded RE',          code: 'EP-AV5' },
-  ]},
-  { label: 'Climate & Health Nexus', icon: '🏥', color: '#0d9488', items: [
-    { path: '/climate-health-hub',           label: 'Climate Health Hub',           badge: 'Hub · Heat+Air+Pandemic+Adapt+Worker · CRM · Board',                code: 'EP-AU6' },
-    { path: '/heat-mortality-risk',          label: 'Heat Mortality Risk',          badge: '60 Cities · RCP · Wet-Bulb · Labour · UHI · Cooling',               code: 'EP-AU1' },
-    { path: '/air-quality-finance',          label: 'Air Quality Finance',          badge: '50 Cities · PM2.5 · WHO · 80 Cos · Health Costs · Clean Air',       code: 'EP-AU2' },
-    { path: '/pandemic-climate-nexus',       label: 'Pandemic-Climate Nexus',       badge: '40 Countries · Zoonotic · Vector-Borne · GHS · One Health',         code: 'EP-AU3' },
-    { path: '/health-adaptation-finance',    label: 'Health Adaptation Finance',    badge: '30 Countries · WHO Gap · Early Warning · Health Bonds',              code: 'EP-AU4' },
-    { path: '/worker-heat-stress',           label: 'Worker Heat Stress',           badge: '100 Cos · WBGT · ILO/OSHA · Productivity · Litigation',             code: 'EP-AU5' },
-  ]},
-  { label: 'Food Systems & Agricultural Finance', icon: '🌾', color: '#15803d', items: [
-    { path: '/agri-finance-hub',             label: 'Agri Finance Hub',             badge: 'Hub · Regen+Food+Water+Land+Biodiversity · CRM · Board',            code: 'EP-AT6' },
-    { path: '/regenerative-agriculture',     label: 'Regenerative Agriculture',     badge: '80 Ops · Soil Carbon · No-Till · Cover Crop · Credit Revenue',      code: 'EP-AT1' },
-    { path: '/food-supply-chain-emissions',  label: 'Food Supply Chain Emissions',  badge: '60 Cos · Protein Transition · Food Waste · SBTi FLAG',              code: 'EP-AT2' },
-    { path: '/water-agriculture-risk',       label: 'Water Agriculture Risk',       badge: '50 Regions · Aqueduct · Crop Footprint · Drought Model',            code: 'EP-AT3' },
-    { path: '/land-use-carbon',              label: 'Land Use & Carbon',            badge: '40 Parcels · 8 Land Types · LULUCF · NBS · Carbon Credits',         code: 'EP-AT4' },
-    { path: '/agri-biodiversity',            label: 'Agricultural Biodiversity',    badge: '60 Ops · Pollinators · Soil Microbiome · Biodiversity Credits',     code: 'EP-AT5' },
-  ]},
-  { label: 'Real Estate & Built Environment', icon: '🏢', color: '#7c3aed', items: [
-    { path: '/real-estate-esg-hub',          label: 'Real Estate ESG Hub',          badge: 'Hub · 150 Buildings · GRESB · CRREM · Capex · Board',               code: 'EP-AS6' },
-    { path: '/building-energy-performance',  label: 'Building Energy Performance',  badge: '150 Buildings · EPC A-G · CRREM · Retrofit ROI · MEES',             code: 'EP-AS1' },
-    { path: '/green-building-certification', label: 'Green Building Certification', badge: '100 Buildings · LEED/BREEAM/WELL · Green Premium · Planner',        code: 'EP-AS2' },
-    { path: '/embodied-carbon',              label: 'Embodied Carbon',              badge: '80 Projects · A1-D Lifecycle · 30 Materials · RIBA 2030',           code: 'EP-AS3' },
-    { path: '/climate-resilient-design',     label: 'Climate Resilient Design',     badge: '100 Buildings · 6 Hazards · Adaptation · Insurance Impact',         code: 'EP-AS4' },
-    { path: '/tenant-engagement-esg',        label: 'Tenant Engagement ESG',        badge: '80 Tenants · Green Leases · Scope 3 Downstream · CRM',             code: 'EP-AS5' },
-    { path: '/residential-re-assessment',   label: 'Residential RE Assessment',    badge: '60 Properties · EPC A-G · Flood Zone · Stranded · Mortgage Stress', code: 'EP-BC1' },
-  ]},
-  { label: 'Insurance & Underwriting Climate', icon: '🛡️', color: '#9f1239', items: [
-    { path: '/insurance-climate-hub',        label: 'Insurance Climate Hub',        badge: 'Hub · Cat Model+Underwriting+Parametric+Re · Board',                code: 'EP-AR6' },
-    { path: '/catastrophe-modelling',        label: 'Catastrophe Modelling',        badge: '100 Assets · 8 Perils · AAL/PML · Event Scenarios · Reinsurance',   code: 'EP-AR1' },
-    { path: '/underwriting-esg',             label: 'Underwriting ESG',             badge: '80 Policies · ESG Risk Scoring · Fossil Phase-Out · Solvency II',   code: 'EP-AR2' },
-    { path: '/parametric-insurance',         label: 'Parametric Insurance',         badge: '60 Products · 6 Triggers · Basis Risk · CCRIF/ARC',                 code: 'EP-AR3' },
-    { path: '/reinsurance-climate',          label: 'Reinsurance & Climate',        badge: '40 Treaties · 30 Cat Bonds · ILS · Climate Pricing',                code: 'EP-AR4' },
-    { path: '/insurance-transition',         label: 'Insurance Transition',         badge: '50 Insurers · NZIA · Fossil Exposure · Green Products',             code: 'EP-AR5' },
-  ]},
-  { label: 'Sovereign ESG & Country Risk', icon: '🌍', color: '#1e40af', items: [
-    { path: '/sovereign-esg-hub',              label: 'Sovereign ESG Hub',              badge: 'Hub · 80 Countries · Climate+Debt+CB+Nature+Social · Board',        code: 'EP-AQ6' },
-    { path: '/sovereign-climate-risk',         label: 'Sovereign Climate Risk',         badge: '80 Countries · 8 Hazards · ND-GAIN · Credit Impact · NGFS',         code: 'EP-AQ1' },
-    { path: '/sovereign-debt-sustainability',  label: 'Sovereign Debt Sustainability',  badge: '60 Countries · Climate DSA · 4 Scenarios · Fiscal Costs',           code: 'EP-AQ2' },
-    { path: '/central-bank-climate',           label: 'Central Bank Climate',           badge: '40 CBs · NGFS · Stress Tests · Green QE · Reserves',                code: 'EP-AQ3' },
-    { path: '/sovereign-nature-risk',          label: 'Sovereign Nature Risk',          badge: '60 Countries · 6 Ecosystems · GBF · TNFD · Biodiversity',           code: 'EP-AQ4' },
-    { path: '/sovereign-social-index',         label: 'Sovereign Social Index',         badge: '80 Countries · 8 Dimensions · HDI · SDG · Social Yield',            code: 'EP-AQ5' },
-  ]},
-  { label: 'Supply Chain ESG & Scope 3', icon: '🔗', color: '#4a1d96', items: [
-    { path: '/supply-chain-esg-hub',       label: 'Supply Chain ESG Hub',       badge: 'Hub · Scope3+Suppliers+EUDR+Minerals+Resilience · Board',          code: 'EP-AP6' },
-    { path: '/scope3-upstream-tracker',    label: 'Scope 3 Upstream Tracker',   badge: 'GHG Cat 1-8 · 120 Cos · 200 Suppliers · Spend/Activity/Specific', code: 'EP-AP1' },
-    { path: '/supplier-engagement',        label: 'Supplier Engagement',        badge: 'CRM · 150 Suppliers · 6-Dim ESG · Corrective Actions · CDP',      code: 'EP-AP2' },
-    { path: '/commodity-deforestation',    label: 'Commodity Deforestation',    badge: 'EUDR · 7 Commodities · 100 Cos · 15 Certifications · Satellite',  code: 'EP-AP3' },
-    { path: '/conflict-minerals',          label: 'Conflict Minerals',          badge: 'CRMA · 12 Minerals · OECD DD · 40 Smelters · RMAP · Recycling',   code: 'EP-AP4' },
-    { path: '/supply-chain-resilience',    label: 'Supply Chain Resilience',    badge: '100 Nodes · 8 Hazards · Disruption Model · Adaptation ROI',       code: 'EP-AP5' },
-  ]},
-  { label: 'Avoided Emissions & Climate Solutions', icon: '💚', color: '#065f46', items: [
-    { path: '/avoided-emissions-hub',        label: 'Avoided Emissions Hub',        badge: 'Hub · Scope 4 · Handprint · Enablement · Taxonomy · Board',      code: 'EP-AO6' },
-    { path: '/scope4-avoided-emissions',     label: 'Scope 4 Avoided Emissions',    badge: '120 Cos · 10 Categories · WRI/ICF · Credibility · Calculator',    code: 'EP-AO1' },
-    { path: '/product-carbon-handprint',     label: 'Product Carbon Handprint',     badge: '80 Products · ISO 14067 · 6 Lifecycle Stages · Benchmarks',       code: 'EP-AO2' },
-    { path: '/enablement-methodology',       label: 'Enablement Methodology',       badge: '100 Products · PCAF Part C · Additionality · Portfolio',           code: 'EP-AO3' },
-    { path: '/avoided-emissions-portfolio',  label: 'Avoided Emissions Portfolio',  badge: '150 Holdings · Net Impact · Solution Exposure · Attribution',      code: 'EP-AO4' },
-    { path: '/climate-solution-taxonomy',    label: 'Climate Solution Taxonomy',    badge: '150 Cos · EU/CBI/FTSE · 12 Categories · Screening',               code: 'EP-AO5' },
-  ]},
-  { label: 'Sustainable Transport & Logistics', icon: '🚢', color: '#1e3a5f', items: [
-    { path: '/sustainable-transport-hub',    label: 'Sustainable Transport Hub',    badge: 'Hub · Maritime+Aviation+EV+SAF · 200 Assets · CRM · Board',     code: 'EP-AN6' },
-    { path: '/maritime-imo-compliance',      label: 'Maritime IMO Compliance',      badge: '150 Vessels · CII A-E · EEXI · Poseidon · 10 Fuels · FuelEU',   code: 'EP-AN1' },
-    { path: '/aviation-corsia',              label: 'Aviation CORSIA',             badge: '120 Airlines · CORSIA Phases · Fleet Renewal · EU ETS Aviation',  code: 'EP-AN2' },
-    { path: '/ev-fleet-finance',             label: 'EV Fleet Finance',            badge: '90 Operators · TCO · 40 Charging Sites · Battery Economics',      code: 'EP-AN3' },
-    { path: '/sustainable-aviation-fuel',    label: 'Sustainable Aviation Fuel',   badge: '60 Producers · 8 Pathways · ReFuelEU · 30 Offtakes · CORSIA',    code: 'EP-AN4' },
-    { path: '/transport-decarbonisation',    label: 'Transport Decarbonisation',   badge: '100 Cos · 50 Routes · Modal Shift · GLEC · 8 Levers',            code: 'EP-AN5' },
-  ]},
-  { label: 'Climate Fintech & Digital MRV', icon: '📡', color: '#7c2d12', items: [
-    { path: '/climate-fintech-hub',          label: 'Climate Fintech Hub',          badge: 'Hub · MRV+Satellite+Blockchain+IoT · Tech Landscape · Board',    code: 'EP-AM6' },
-    { path: '/digital-mrv',                  label: 'Digital MRV Platform',         badge: '80 Projects · Satellite+IoT+AI · Verification Certificates',     code: 'EP-AM1' },
-    { path: '/satellite-climate-monitor',    label: 'Satellite Climate Monitor',    badge: '100 Assets · Methane · Deforestation · EUDR · Discrepancy',      code: 'EP-AM2' },
-    { path: '/blockchain-carbon-registry',   label: 'Blockchain Carbon Registry',   badge: '200 Credits · Verra/GS/ACR/CAR · Tokenization · Integrity',      code: 'EP-AM3' },
-    { path: '/climate-data-marketplace',     label: 'Climate Data Marketplace',     badge: '60 Providers · Quality Radar · Coverage Gap · Stack Builder',     code: 'EP-AM4' },
-    { path: '/iot-emissions-tracker',        label: 'IoT Emissions Tracker',        badge: '60 Facilities · 200 Sensors · Anomaly Detection · Compliance',   code: 'EP-AM5' },
-  ]},
-  { label: 'Sovereign & Country Climate Risk', icon: '🌐', color: '#1e3a5f', items: [
-    { path: '/sovereign-esg-scorer',      label: 'Sovereign ESG Scorer',        badge: '60 Countries · E/S/G Pillars · 6 Providers · AAA–CCC Ratings',  code: 'EP-AX1' },
-    { path: '/ndc-alignment-tracker',     label: 'NDC Alignment Tracker',       badge: '80 Countries · Paris 1.5°C/2°C · Sectoral · Financing Gap',     code: 'EP-AX2' },
-    { path: '/sovereign-physical-risk',   label: 'Sovereign Physical Risk',     badge: '70 Countries · Flood/Drought/Heat · GDP@Risk · NGFS Scenarios', code: 'EP-AX3' },
-    { path: '/em-debt-climate-risk',      label: 'EM Debt & Climate Risk',      badge: '50 EMs · Green Bonds · Debt-for-Nature · Credit Spreads',       code: 'EP-AX4' },
-    { path: '/mdb-climate-finance',       label: 'MDB Climate Finance',         badge: '8 MDBs · $120B Flows · Mobilisation · Project Pipeline',        code: 'EP-AX5' },
-  ]},
-  { label: 'Transition Planning & Net Zero', icon: '🧭', color: '#0e7490', items: [
-    { path: '/transition-planning-hub',       label: 'Transition Planning Hub',       badge: 'Hub · TPT+GFANZ+ACT+NZAM · Credibility · Board Pack',          code: 'EP-AL6' },
-    { path: '/transition-plan-builder',       label: 'Transition Plan Builder',       badge: 'TPT Framework · 5 Elements · 10 Sectors · Readiness Score',     code: 'EP-AL1' },
-    { path: '/gfanz-sector-pathways',         label: 'GFANZ Sector Pathways',        badge: 'GFANZ · IEA NZE · 8 Sectors · Milestones · Gap Analysis',       code: 'EP-AL2' },
-    { path: '/act-assessment',                label: 'ACT Assessment & Maturity',    badge: 'ACT/CDP · 6 Dimensions · 15 Sectors · A-E Grades · Credibility',code: 'EP-AL3' },
-    { path: '/net-zero-commitment-tracker',   label: 'Net Zero Commitment Tracker',  badge: 'NZAM 315 · NZAOA 88 · NZBA 144 · $128T · Progress Monitor',    code: 'EP-AL4' },
-    { path: '/transition-credibility',        label: 'Transition Credibility Engine', badge: 'CA100+ · CapEx Alignment · Lobbying · 12 KPIs · Say-Do Gap',   code: 'EP-AL5' },
-  ]},
-  { label: 'ESG Ratings Intelligence', icon: '⭐', color: '#b45309', items: [
-    { path: '/esg-ratings-hub',             label: 'ESG Ratings Hub',              badge: 'Hub · 6 Providers · Consensus · Coverage · Alert Engine',        code: 'EP-AK6' },
-    { path: '/esg-ratings-comparator',      label: 'ESG Ratings Comparator',       badge: 'MSCI/Sust/ISS/CDP/S&P/BBG · Divergence · Correlation',           code: 'EP-AK1' },
-    { path: '/ratings-methodology-decoder', label: 'Ratings Methodology Decoder',  badge: 'Pillar Weights · Materiality Maps · 200+ KPIs · What-If',        code: 'EP-AK2' },
-    { path: '/ratings-migration-momentum',  label: 'Ratings Migration & Momentum', badge: 'Upgrade/Downgrade · Lead-Lag · Alpha Signals · Backtest',         code: 'EP-AK3' },
-    { path: '/controversy-rating-impact',   label: 'Controversy-Rating Impact',    badge: 'RepRisk · Severity-to-Score · Recovery Curves · Prediction',      code: 'EP-AK4' },
-    { path: '/greenwashing-detector',       label: 'Greenwashing & Integrity',     badge: 'Disclosure Gap · Self-Report Bias · Red Flags · EU Reg 2024',     code: 'EP-AK5' },
-  ]},
-  { label: 'Regulatory Reporting & Disclosure', icon: '📋', color: '#7c3aed', items: [
-    { path: '/disclosure-hub',        label: 'Disclosure Hub',               badge: 'Hub · CSRD+SFDR+ISSB+SEC+UK · Audit Trail · Cross-Framework', code: 'EP-AH6' },
-    { path: '/csrd-esrs-automation',  label: 'CSRD / ESRS Automation',       badge: 'ESRS 2025 · iXBRL · 50k Cos · Double Materiality · Gap',      code: 'EP-AH1' },
-    { path: '/sfdr-v2-reporting',     label: 'SFDR v2 Reporting Engine',     badge: 'Art 6/8/9 · 18 PAIs · v2 Reform · RTS · Fund Classifier',     code: 'EP-AH2' },
-    { path: '/issb-disclosure',       label: 'ISSB / IFRS S1-S2 Disclosure', badge: 'IFRS S1/S2 · 20+ Jurisdictions · TCFD Superseded · Metrics',  code: 'EP-AH3' },
-    { path: '/uk-sdr',                label: 'UK SDR Labelling Engine',       badge: 'FCA 4 Labels · Anti-Greenwash · KPIs · SDR Compliance',        code: 'EP-AH4' },
-    { path: '/sec-climate-rule',      label: 'SEC Climate Rule Compliance',  badge: 'Reg S-K/S-X · March 2024 · Scopes · Financial Impact',         code: 'EP-AH5' },
-    { path: '/eudr-engine',                  label: 'EUDR Due Diligence Engine',        badge: 'Reg 2023/1115 · 7 Commodities · 80 Suppliers · DDS · Art 29',  code: 'EP-AY1' },
-    { path: '/csddd-engine',                 label: 'CSDDD Due Diligence Engine',       badge: 'Dir 2024/1760 · Art 6-11 · Value Chain · Art 22 · Art 29',    code: 'EP-AY2' },
-    { path: '/double-materiality-workshop',  label: 'Double Materiality Workshop',      badge: 'ESRS 1 · 10 Topics · IRO Registry · Matrix · EFRAG IG 1',     code: 'EP-AZ1' },
-    { path: '/sfdr-pai-dashboard',           label: 'SFDR PAI Dashboard',               badge: '18 Mandatory PAIs · Art 6/8/9 · Annex I RTS · 8 Funds',       code: 'EP-AZ2' },
-    { path: '/xbrl-export-wizard',           label: 'XBRL Export Wizard',               badge: 'iXBRL · EFRAG ESRS 2024 · ESEF · ESMA Validation · Filing',    code: 'EP-AZ3' },
-    { path: '/xbrl-ingestion',               label: 'XBRL Ingestion & Filing Import',   badge: '30 Filings · EFRAG ESRS 2024 · 12 Validation Rules · Pipeline', code: 'EP-BC2' },
-    { path: '/sovereign-climate-intelligence',label: 'Sovereign Climate Intelligence', badge: 'ND-GAIN · NGFS Scenarios · Spread Impact · 25 Sovereigns',   code: 'EP-BA1' },
-    { path: '/sec-climate-disclosure',        label: 'SEC Climate Disclosure Panel',   badge: 'RESCINDED 27-Mar-25 · Items 1500-1505 · TCFD · ISSB S2',    code: 'EP-BA2' },
-  ]},
-  { label: 'Private Markets ESG', icon: '🏢', color: '#0369a1', items: [
-    { path: '/private-markets-esg-hub', label: 'Private Markets ESG Hub',    badge: 'Hub · PE+Credit+Infra+RE+VC · $8.4T AUM · ESG DD',        code: 'EP-AG6' },
-    { path: '/pe-esg-diligence',      label: 'Private Equity ESG Diligence', badge: 'ILPA ESG · 24 GPs · DD Questionnaire · Red Flag Engine',   code: 'EP-AG1' },
-    { path: '/private-credit-climate',label: 'Private Credit Climate Risk',  badge: 'Direct Lending · $1.7T · EBA DD · CLO Tranche Risk',       code: 'EP-AG2' },
-    { path: '/infrastructure-esg',    label: 'Infrastructure ESG Rating',    badge: 'GRESB Infra · IFC PS 1-8 · Social Licence · $15T Gap',     code: 'EP-AG3' },
-    { path: '/real-assets-climate',   label: 'Real Assets Climate Valuation',badge: 'CRREM+ · Physical Risk NOI · Stranded 2034 · $180bn',      code: 'EP-AG4' },
-    { path: '/vc-impact',             label: 'Venture Capital Impact Tracker',badge: 'Climate Tech · IMP 5D · $500bn VC · 248 MtCO2e/yr',       code: 'EP-AG5' },
-  ]},
-  { label: 'Quant ESG & Portfolio', icon: '📊', color: '#b45309', items: [
-    { path: '/quant-esg-hub',              label: 'Quant ESG Hub',              badge: '5 Strategies · $2.8T AUM · +312bps Alpha · Live Monitor',  code: 'EP-AF6' },
-    { path: '/esg-portfolio-optimizer',    label: 'ESG Portfolio Optimizer',    badge: 'MVO · ESG Constraints · 24 Holdings · Efficient Frontier', code: 'EP-AF1' },
-    { path: '/carbon-aware-allocation',    label: 'Carbon-Aware Allocation',    badge: 'NGFS IV · Carbon Budget · Sector Tilt · Paris Pathway',    code: 'EP-AF2' },
-    { path: '/esg-momentum-scanner',       label: 'ESG Momentum Scanner',       badge: 'Improvers · 847 Signals · Controversy Recovery · Rotation', code: 'EP-AF3' },
-    { path: '/net-zero-portfolio-builder', label: 'Net Zero Portfolio Builder', badge: 'SBTi · PAII · NZBA · 1.8°C Rating · Paris-Aligned',        code: 'EP-AF4' },
-    { path: '/esg-factor-alpha',           label: 'ESG Factor Alpha Engine',    badge: '10 Factors · +187bps Alpha · IC 0.09 · Barra-Style',       code: 'EP-AF5' },
-    { path: '/greenium-signal',            label: 'Greenium Alpha Signal Engine',badge: '5-Model Ensemble · BUY/SELL · 40 Instruments · 52w Backtest', code: 'EP-BD1' },
-  ]},
-  { label: 'Corporate Governance', icon: '🏛️', color: '#6366f1', items: [
-    { path: '/board-composition',          label: 'Board Composition & Effectiveness', badge: '34% Female · 78% Indep · Skills Matrix · Tenure',       code: 'EP-AE1' },
-    { path: '/executive-pay-analytics',    label: 'Executive Pay Analytics',           badge: 'CEO Ratio 324x · ESG Pay 68% · Say-on-Pay · LTIP',     code: 'EP-AE2' },
-    { path: '/shareholder-activism',       label: 'Shareholder Activism & Engagement', badge: '847 Campaigns · Engine No.1 · ESG Resolutions · 43%',   code: 'EP-AE3' },
-    { path: '/anti-corruption',            label: 'Anti-Corruption & Bribery Intel',   badge: 'CPI 43/100 · FCPA $2.8bn · ISO 37001 · Sapin II',       code: 'EP-AE4' },
-    { path: '/proxy-voting-intel',         label: 'Proxy Voting & Stewardship',        badge: '21,000 Meetings · ISS · Glass Lewis · PRI Blueprint',   code: 'EP-AE5' },
-    { path: '/diversity-equity-inclusion', label: 'Diversity, Equity & Inclusion',     badge: '29% Women Leaders · Pay Gap · CEI · Parker Review',     code: 'EP-AE6' },
-  ]},
-  { label: 'Social & Just Transition', icon: '🤝', color: '#f97316', items: [
-    { path: '/just-transition-finance',  label: 'Just Transition Finance',        badge: '$2.4T Need · 45 Funds · 800M Workers · ILO Guidelines',  code: 'EP-AD1' },
-    { path: '/human-rights-risk',        label: 'Human Rights & Supply Chain',    badge: '40.3M Modern Slaves · CSDDD · UNGPs · LkSG',             code: 'EP-AD2' },
-    { path: '/living-wage-tracker',      label: 'Living Wage & Labour Standards', badge: 'Anker Benchmark · 67 Countries · Pay Transparency 2026',  code: 'EP-AD3' },
-    { path: '/modern-slavery-intel',     label: 'Modern Slavery Intelligence',    badge: '$236bn Profit · UFLPA · Walk Free · 11 ILO Indicators',   code: 'EP-AD4' },
-    { path: '/community-impact',         label: 'Community Impact & Social Value',badge: 'SROI 3.2x · FPIC · $780bn Spend · B Impact',              code: 'EP-AD5' },
-    { path: '/workplace-health-safety',  label: 'Workplace Health & Safety',      badge: '2.78M Deaths/yr · TRIR · ISO 45001 · Mental Health',      code: 'EP-AD6' },
-  ]},
-  { label: 'Nature & Physical Risk', icon: '🌿', color: '#16a34a', items: [
-    { path: '/nature-loss-risk',        label: 'Nature & Biodiversity Risk',    badge: '847 Species · $44T GDP · TNFD LEAP · LEAP Framework',   code: 'EP-AC1' },
-    { path: '/water-risk-analytics',    label: 'Water Risk & Scarcity',         badge: '3.6B Stressed · 10 Basins · Aqueduct · CDP Water',      code: 'EP-AC2' },
-    { path: '/land-use-deforestation',  label: 'Land Use & Deforestation',      badge: 'EUDR 2025 · 7 Commodities · 4.7M Ha Lost · REDD+',      code: 'EP-AC3' },
-    { path: '/ocean-marine-risk',       label: 'Ocean & Marine Risk',           badge: '$2.5T Blue Economy · Coral · BBNJ · 8 Chokepoints',     code: 'EP-AC4' },
-    { path: '/circular-economy-tracker',label: 'Circular Economy & Waste',      badge: '9.7% Circularity · UN Plastics Treaty · CSRD KPIs',     code: 'EP-AC5' },
-    { path: '/air-quality-health-risk', label: 'Air Quality & Health Risk',     badge: '7M Deaths/yr · PM2.5 · WHO AQG · $8.1T Cost',           code: 'EP-AC6' },
-  ]},
-  { label: 'Macro & Systemic Risk', icon: '🌐', color: '#7c3aed', items: [
-    { path: '/systemic-esg-risk',            label: 'Systemic ESG Risk',            badge: '10 SIFIs · $47.2T AUM · Network · Fragility Index',  code: 'EP-AB1' },
-    { path: '/climate-policy-intelligence',  label: 'Climate Policy Intelligence',  badge: '73 Carbon Instruments · NDC · Political Risk',        code: 'EP-AB2' },
-    { path: '/green-central-banking',        label: 'Green Central Banking',        badge: 'NGFS Phase IV · €344bn Green QE · Capital Add-ons',   code: 'EP-AB3' },
-    { path: '/esg-factor-attribution',       label: 'ESG Factor Attribution',       badge: '8 Factors · +187bps Alpha · Barra-Style · Crowding',  code: 'EP-AB4' },
-    { path: '/transition-scenario-modeller', label: 'Transition Scenario Modeller', badge: '5 Pathways · Sector CapEx · Stranded Assets · 2050',  code: 'EP-AB5' },
-    { path: '/cross-asset-contagion',        label: 'Cross-Asset Contagion',        badge: '6 Shocks · 340bps Climate VaR · Correlation Matrix',  code: 'EP-AB6' },
-  ]},
-  { label: 'Climate Finance Architecture', icon: '🏦', color: '#0f766e', items: [
-    { path: '/climate-finance-hub',       label: 'Climate Finance Hub',        badge: 'Hub · Instruments · Pipeline · ICMA · EU GBS', code: 'EP-AA1' },
-    { path: '/article6-markets',          label: 'Article 6 Carbon Markets',   badge: 'PA Art 6.2 · ITMO · Art 6.4 · CORSIA',        code: 'EP-AA2' },
-    { path: '/cbam-compliance',           label: 'CBAM Compliance Engine',     badge: 'EU 2023/956 · 6 Sectors · Cert Calculator',    code: 'EP-AA3' },
-    { path: '/climate-finance-tracker',   label: 'Climate Finance Tracker',    badge: '$100bn COP · GCF · Adaptation Gap · NCQG',    code: 'EP-AA4' },
-    { path: '/green-taxonomy-navigator',  label: 'Green Taxonomy Navigator',   badge: '8 Jurisdictions · IPSF · Transition Categories', code: 'EP-AA5' },
-    { path: '/climate-sovereign-bonds',   label: 'Climate Sovereign Bonds',    badge: 'Green Gilts · EU GBS · 47 Issuers · Greenium', code: 'EP-AA6' },
-  ]},
-  { label: 'Governance & Audit', icon: '🛡️', color: '#4a1d6a', items: [
-    { path: '/governance-hub',           label: 'Governance Hub',            badge: 'Hub · 7 Modules · Audit · Models',      code: 'EP-V6' },
-    { path: '/audit-trail',              label: 'Audit Trail',              badge: '8 Categories · Immutable · Regulatory',  code: 'EP-V1' },
-    { path: '/model-governance',         label: 'Model Governance',         badge: '15 Models · SR 11-7 · 3 Tiers',         code: 'EP-V2' },
-    { path: '/approval-workflows',       label: 'Approval Workflows',       badge: '8 Templates · SLA · Multi-Step',         code: 'EP-V3' },
-    { path: '/compliance-evidence',      label: 'Compliance Evidence',      badge: '10 Categories · 20 Regulations',         code: 'EP-V4' },
-    { path: '/change-management',        label: 'Change Management',        badge: '8 Categories · Rollback · Version',      code: 'EP-V5' },
-    { path: '/corporate-governance',     label: 'Corporate Governance',     badge: '40 Indicators · CPI · WGI',              code: 'EP-V7' },
-    { path: '/geopolitical-ai-gov',      label: 'Geopolitical & AI Gov',    badge: '14 Countries · GPR · EU AI Act',         code: 'EP-V8' },
-  ]},
-  { label: 'Dynamic Materiality', icon: '🎯', color: '#9333ea', items: [
-    { path: '/materiality-hub',            label: 'Materiality Hub',            badge: 'Hub · Double · Trends · Scenarios',     code: 'EP-T6' },
-    { path: '/double-materiality',         label: 'Double Materiality',         badge: 'CSRD/ESRS · 10 Topics · Financial+Impact', code: 'EP-T1' },
-    { path: '/stakeholder-impact',         label: 'Stakeholder Impact',         badge: '8 Groups · ESRS-aligned · Quantified', code: 'EP-T2' },
-    { path: '/materiality-trends',         label: 'Materiality Trends',         badge: '17 Drivers · Forecast 2025-2035',      code: 'EP-T3' },
-    { path: '/controversy-materiality',    label: 'Controversy-Materiality',    badge: '30 Events · ESRS Mapped · Validation', code: 'EP-T4' },
-    { path: '/materiality-scenarios',      label: 'Materiality Scenarios',      badge: '4 Scenarios · Reclassification',       code: 'EP-T5' },
-  ]},
-  { label: 'Data Management Engine', icon: '⚙️', color: '#334155', items: [
-    { path: '/dme-hub',                    label: 'DME Hub',                    badge: 'Hub · Validation · ETL · Governance',  code: 'EP-S6' },
-    { path: '/data-validation',            label: 'Data Validation',            badge: '50 Rules · Auto-Fix · 656 Companies',  code: 'EP-S1' },
-    { path: '/data-reconciliation',        label: 'Data Reconciliation',        badge: '6 Sources · Conflict Resolution',      code: 'EP-S2' },
-    { path: '/data-versioning',            label: 'Data Versioning',            badge: 'Snapshots · Diff · Rollback',          code: 'EP-S3' },
-    { path: '/etl-pipeline',              label: 'ETL Pipeline',               badge: '8 Extract · 10 Transform · 5 Load',    code: 'EP-S4' },
-    { path: '/data-governance',            label: 'Data Governance',            badge: '15 Policies · 8 Domains · Ownership',  code: 'EP-S5' },
-  ]},
-  { label: 'Data Infrastructure', icon: '🔧', color: '#475569', items: [
-    { path: '/data-infra-hub',            label: 'Data Infra Hub',             badge: 'Hub · 10 Sources · 13 Exchanges', code: 'EP-P6' },
-    { path: '/api-orchestration',         label: 'API Orchestration',          badge: '10 Sources · 6 Pipelines',       code: 'EP-P1' },
-    { path: '/data-quality-monitor',      label: 'Data Quality Monitor',       badge: '656 Companies · 6 Dimensions',   code: 'EP-P2' },
-    { path: '/live-feed-manager',         label: 'Live Feed Manager',          badge: 'EODHD · Alpha Vantage · BRSR',   code: 'EP-P3' },
-    { path: '/data-lineage',              label: 'Data Lineage',               badge: 'Source → Transform → Output',    code: 'EP-P4' },
-    { path: '/brsr-bridge',               label: 'BRSR Supabase Bridge',       badge: '1,323 Companies · 9 Principles', code: 'EP-P5' },
-  ]},
-  { label: 'Sovereign & Macro ESG', icon: '🌐', color: '#1e3a5f', items: [
-    { path: '/sovereign-hub',             label: 'Sovereign Hub',              badge: 'Hub · 40 Countries · IEA · Paris', code: 'EP-O6' },
-    { path: '/sovereign-esg',             label: 'Sovereign ESG Scorer',       badge: '40 Countries · ND-GAIN · CAT',   code: 'EP-O1' },
-    { path: '/climate-policy',            label: 'Climate Policy Tracker',     badge: 'NDCs · Carbon Pricing · Net Zero', code: 'EP-O2' },
-    { path: '/macro-transition',          label: 'Macro Transition',           badge: 'IEA · 3 Scenarios · Energy Mix',  code: 'EP-O3' },
-    { path: '/just-transition',           label: 'Just Transition',            badge: 'ILO · 5 Dimensions · Workers',    code: 'EP-O4' },
-    { path: '/paris-alignment',           label: 'Paris Alignment',            badge: '1.5°C · Carbon Budget · NDCs',    code: 'EP-O5' },
-  ]},
-  { label: 'Social & Human Capital', icon: '🧑‍🤝‍🧑', color: '#be185d', items: [
-    { path: '/social-hub',                label: 'Social Hub',                 badge: 'Hub · Diversity · HR · SDG',    code: 'EP-N6' },
-    { path: '/board-diversity',           label: 'Board Diversity',            badge: '12 Regulations · Skills Matrix', code: 'EP-N1' },
-    { path: '/living-wage',               label: 'Living Wage Analyzer',       badge: '13 Countries · ILO · GLWC',     code: 'EP-N2' },
-    { path: '/human-rights-dd',           label: 'Human Rights DD',            badge: 'UNGPs · 8 Issues · 15 DD',      code: 'EP-N3' },
-    { path: '/employee-wellbeing',        label: 'Employee Wellbeing',          badge: '10 Metrics · Safety · Engagement', code: 'EP-N4' },
-    { path: '/social-impact',             label: 'Social Impact & SDG',         badge: '17 SDGs · UNGC · Impact',       code: 'EP-N5' },
-  ]},
-  { label: 'Nature & Biodiversity', icon: '🌿', color: '#059669', items: [
-    { path: '/nature-hub',                label: 'Nature Hub',                 badge: 'Hub · TNFD · ENCORE · MSA',     code: 'EP-M6' },
-    { path: '/tnfd-leap',                 label: 'TNFD LEAP Assessment',       badge: '4 Phases · 14 Disclosures',     code: 'EP-M1' },
-    { path: '/biodiversity-footprint',    label: 'Biodiversity Footprint',     badge: 'MSA · Species · CBD/GBF',       code: 'EP-M2' },
-    { path: '/ecosystem-services',        label: 'Ecosystem Services',          badge: 'ENCORE · 21 Services',          code: 'EP-M3' },
-    { path: '/water-stress',              label: 'Water Stress & Risk',         badge: 'WRI Aqueduct · 14 Countries',   code: 'EP-M4' },
-    { path: '/nature-scenarios',          label: 'Nature Scenarios',            badge: '3 Scenarios · Tipping Points',  code: 'EP-M5' },
-  ]},
-  { label: 'Private Markets', icon: '🏦', color: '#4338ca', items: [
-    { path: '/private-markets-hub',       label: 'Private Markets Hub',        badge: 'Hub · PE/VC · Credit · FoF',    code: 'EP-L6' },
-    { path: '/pe-vc-esg',                 label: 'PE/VC ESG Due Diligence',   badge: '20 Deals · 30 DD Items',        code: 'EP-L1' },
-    { path: '/private-credit',            label: 'Private Credit ESG',         badge: '15 Facilities · ESG-Linked',    code: 'EP-L2' },
-    { path: '/fund-of-funds',             label: 'Fund-of-Funds',              badge: '12 Funds · 5 Asset Classes',    code: 'EP-L3' },
-    { path: '/lp-reporting',              label: 'LP Reporting Engine',         badge: 'EDCI · SFDR · PRI · TCFD',     code: 'EP-L4' },
-    { path: '/co-investment',             label: 'Co-Investment ESG',           badge: '10 Opportunities · Scoring',    code: 'EP-L5' },
-    { path: '/pe-deal-pipeline',          label: 'PE Deal Pipeline & Fund Structure', badge: '50 Deals · 5 Funds · J-Curve · DPI/TVPI · Waterfall', code: 'EP-BB1' },
-  ]},
-  { label: 'Supply Chain & Scope 3', icon: '🔗', color: '#7e22ce', items: [
-    { path: '/value-chain-dashboard',     label: 'Value Chain Hub',            badge: 'Hub · Scope 3 · CSDDD · EUDR', code: 'EP-K6' },
-    { path: '/scope3-engine',             label: 'Scope 3 Estimation',         badge: '15 Categories · GHG Protocol',  code: 'EP-K1' },
-    { path: '/supply-chain-map',          label: 'Supply Chain ESG Map',       badge: 'Tier 1/2/3 · 33 Countries',    code: 'EP-K2' },
-    { path: '/csddd-compliance',          label: 'CSDDD Toolkit',              badge: '20 Requirements · 6 Articles',  code: 'EP-K3' },
-    { path: '/deforestation-risk',        label: 'Deforestation Risk',         badge: 'EUDR · 7 Commodities',          code: 'EP-K4' },
-    { path: '/supply-chain-carbon',       label: 'Supply Chain Carbon',        badge: 'Scope 1+2+3 · EEIO Model',     code: 'EP-K5' },
-  ]},
-  { label: 'Quantitative Analytics & ML', icon: '🔬', color: '#0f172a', items: [
-    { path: '/quant-dashboard',           label: 'Quant Analytics Hub',        badge: '5 Models · Composite Risk',     code: 'EP-J6' },
-    { path: '/monte-carlo-var',           label: 'Monte Carlo VaR',           badge: 'Cholesky · N=10K · 95/99%',    code: 'EP-J1' },
-    { path: '/esg-backtesting',           label: 'ESG Factor Backtesting',    badge: '7 Factors · Sharpe · 10yr',    code: 'EP-J2' },
-    { path: '/implied-temp-regression',   label: 'ITR Regression Model',      badge: 'IPCC Budget · OLS · R²',       code: 'EP-J3' },
-    { path: '/copula-tail-risk',          label: 'Copula Tail Risk',          badge: 'Clayton · Gaussian · λ_L',     code: 'EP-J4' },
-    { path: '/stochastic-scenarios',      label: 'Stochastic Scenarios',      badge: '6 Params · N=1K · Clustering', code: 'EP-J5' },
-  ]},
-  { label: 'Real Estate & Infrastructure', icon: '🏢', color: '#8b5cf6', items: [
-    { path: '/re-portfolio-dashboard',  label: 'RE Portfolio Dashboard',       badge: 'Hub · 30 Props · 20 Infra', code: 'EP-I6' },
-    { path: '/crrem',                   label: 'CRREM Pathway Analyzer',      badge: 'CRREM 1.5/WB2/2°C · 8 Types', code: 'EP-I1' },
-    { path: '/green-building-cert',     label: 'Green Building Certs',        badge: 'LEED·BREEAM·NABERS·7 Schemes', code: 'EP-I2' },
-    { path: '/property-physical-risk',  label: 'Property Physical Risk',      badge: '6 Hazards · SSP · Prop-Level', code: 'EP-I3' },
-    { path: '/gresb-scoring',           label: 'GRESB Scoring',              badge: '7 Aspects · 5★ · 19 Peers',   code: 'EP-I4' },
-    { path: '/infra-esg-dd',            label: 'Infrastructure ESG DD',       badge: 'IFC PS · EP IV · 20 Assets',  code: 'EP-I5' },
-  ]},
-  { label: 'Carbon Markets & VCM', icon: '🌿', color: '#065f46', items: [
-    { path: '/vcm-registry-analytics',  label: 'VCM Registry Analytics',          badge: 'Verra · Gold Standard · ACR · Issuance · Retirements · 20 Projects · Quality', code: 'EP-BN1' },
-    { path: '/carbon-forward-curve',    label: 'Carbon Forward Curve & ETS',       badge: 'EU ETS · UK ETS · California · RGGI · China ETS · Forward Curve · Scenarios',   code: 'EP-BN2' },
-    { path: '/credit-integrity-dd',     label: 'Credit Integrity & Due Diligence', badge: 'Additionality · Permanence · ICVCM CCP · Greenwashing · Integrity Pricing',     code: 'EP-BN3' },
-  ]},
-  { label: 'Quantitative Physical Risk', icon: '🌊', color: '#0c4a6e', items: [
-    { path: '/physical-hazard-map',          label: 'Hazard Mapping Dashboard',         badge: 'IPCC AR6 · 8 Perils · SSP1-2.6→SSP5-8.5 · 40 Assets · JRC · FIRMS · WBGT',    code: 'EP-BX1' },
-    { path: '/damage-function-calculator',   label: 'Damage Function Calculator',       badge: 'JRC · HAZUS-MH · FEMA P-58 · WBGT ISO 7933 · AAL · EAL · PML 100yr/250yr',   code: 'EP-BX2' },
-    { path: '/physical-risk-portfolio',      label: 'Physical Risk Portfolio Aggregator', badge: 'ECB CST · BoE CBES · APRA CPG 229 · Insurance Gap · Double-Hit · 30 Assets',  code: 'EP-BX3' },
-  ]},
-  { label: 'Climate Transition Risk Intelligence', icon: '🌡️', color: '#0f4c81', items: [
-    { path: '/transition-risk-dcf',            label: 'Transition Risk DCF Engine',        badge: '5 NGFS Scenarios · Carbon Price Trajectory · WACC Adjustment · Stranded CAPEX · 8 Assets',  code: 'EP-CA1' },
-    { path: '/stranded-asset-analyzer',        label: 'Stranded Asset Analyzer',           badge: 'Write-Down Schedule · Residual Value Curves · Sector Matrix · Remediation · 8 Sectors',    code: 'EP-CA2' },
-    { path: '/tech-displacement-modeler',      label: 'Technology Displacement Modeler',   badge: 'S-Curve · Wright\'s Law LCOE · 6 Technologies · Job Transition · Crossover Years',         code: 'EP-CA3' },
-    { path: '/sector-transition-scorecard',    label: 'Sector Transition Scorecard',       badge: 'PACE Framework · SBTi Pathways · MAC Curves · Abatement Cost · 6 GICS Sectors',           code: 'EP-CB1' },
-    { path: '/just-transition-intelligence',   label: 'Just Transition Intelligence',      badge: 'ILO JTF 5 Pillars · 10 Regions · Financing Gap · Vulnerability · Green Job Pipeline',     code: 'EP-CB2' },
-    { path: '/policy-regulatory-impact',       label: 'Policy & Regulatory Impact',        badge: 'EU ETS · CBAM · UK MEES · IRA · EU Taxonomy · CORSIA · 6 Instruments',                    code: 'EP-CB3' },
-    { path: '/portfolio-transition-alignment', label: 'Portfolio Transition Alignment',    badge: 'ITR · GFANZ · TPT · PACTA · Engagement Register · 2 Portfolios',                           code: 'EP-CC1' },
-    { path: '/financed-emissions-attributor',  label: 'Financed Emissions Attributor',     badge: 'PCAF 5 Asset Classes · Data Quality 1–5 · WACI · Scope 3 Cat 15 · Company Drill-Down',    code: 'EP-CC2' },
-    { path: '/transition-finance-screener',    label: 'Transition Finance Screener',       badge: 'ICMA GBP/SBP/SLB · EU Taxonomy · Greenium · DNSH · KPI Tracking · 8 Instruments',        code: 'EP-CC3' },
-    { path: '/multi-dim-transition-scorer',    label: 'Multi-Dim Transition Scorer',       badge: '6 Pillars · Public + Proprietary Tiers · CDP/SBTi/Bloomberg · Rating A–E · 6 Companies', code: 'EP-CD1' },
-    { path: '/transition-risk-heatmap',        label: 'Transition Risk Heatmap',           badge: '10 Sectors × 5 Geographies · 3 NGFS Scenarios · 50-Cell Matrix · Scenario Sensitivity',   code: 'EP-CD2' },
-    { path: '/carbon-footprint-intelligence',  label: 'Carbon Footprint Intelligence',     badge: 'Scope 1/2/3 · 15 Categories · GHG Protocol · SBTi Trajectory · Intensity Benchmark',     code: 'EP-CD3' },
-    { path: '/climate-var-engine',             label: 'Climate Value-at-Risk Engine',      badge: 'CVaR = Trans+Phys+ρ·Inter · NGFS 5 Scenarios · Delta CoVaR · Stress Matrix · 30yr',       code: 'EP-CE1' },
-    { path: '/transition-risk-dashboard',      label: 'Transition Risk Dashboard',         badge: 'Executive KPIs · Sector Heatmap · Holdings Monitor · Reg Readiness · Engagement',         code: 'EP-CE2' },
-    { path: '/transition-reg-reporting',       label: 'Transition Regulatory Reporting',   badge: 'TCFD · ISSB S2 · CSRD ESRS E1 · Board Narrative · Metrics Register · Export Centre',      code: 'EP-CE3' },
-  ]},
-  { label: 'Climate Adaptation & Resilience', icon: '🌊', color: '#0e7490', items: [
-    { path: '/climate-adaptation-pathways',      label: 'Adaptation Pathways Engine',        badge: '8 Strategies · CBA · Maladaptation Risk · Adaptation Finance Gap · SSP Sensitivity',         code: 'EP-CF1' },
-    { path: '/infrastructure-resilience-scorer', label: 'Infrastructure Resilience Scorer',   badge: '10 Assets · 5-Pillar Resilience · Retrofit Priority · Climate Haircut · Trend',              code: 'EP-CF2' },
-    { path: '/nature-based-adaptation',          label: 'Nature-Based Adaptation Solutions', badge: '6 NbS Projects · Co-Benefit Valuation · Ecosystem Services · SDG Alignment · Investment',    code: 'EP-CF3' },
-  ]},
-  { label: 'Physical-Transition Risk Integration', icon: '🔗', color: '#0c4a6e', items: [
-    { path: '/physical-transition-nexus',       label: 'Physical-Transition Nexus',         badge: 'Integrated CVaR · Double-Hit · Sector Interaction · 20 Scenario Combos · Correlation', code: 'EP-CG1' },
-    { path: '/regional-climate-impact',         label: 'Regional Climate Impact Engine',    badge: '20 Regions × 8 Perils × 4 SSP · GDP Shock · Labor Productivity · Agriculture Yield',  code: 'EP-CG2' },
-    { path: '/supply-chain-contagion',          label: 'Supply Chain Climate Contagion',    badge: '15 Companies · Tier 1/2/3 · 5 Chokepoints · Cascade Simulation · Network Graph',      code: 'EP-CG3' },
-    { path: '/physical-risk-early-warning',     label: 'Physical Risk Early Warning',       badge: '12 Active Alerts · 72hr Forecast · Asset Exposure · Historical Events · Response',     code: 'EP-CG4' },
-    { path: '/compound-event-modeler',          label: 'Compound Event Modeler',            badge: '10 Event Pairs · Joint Probability · Loss Amplification · Copula · Historical',        code: 'EP-CG5' },
-    { path: '/climate-risk-migration',          label: 'Climate Migration Risk',            badge: '15 Corridors · 216M Migrants by 2050 · Urban Stress · RE Demand · Investment',         code: 'EP-CG6' },
-  ]},
-  { label: 'Probabilistic Scenario & Monte Carlo', icon: '🎲', color: '#4338ca', items: [
-    { path: '/monte-carlo-climate',             label: 'Monte Carlo Climate Engine',        badge: '5,000 Paths · VaR 99% · CVaR 99.5% · Fan Chart · Correlation · Sensitivity',           code: 'EP-CH1' },
-    { path: '/scenario-blending-optimizer',     label: 'Scenario Blending Optimizer',       badge: 'BMA Posterior Weights · Custom Blend · Orderly vs Disorderly · Consensus',              code: 'EP-CH2' },
-    { path: '/climate-stress-test-suite',       label: 'Climate Stress Test Suite',         badge: 'ECB CST 2024 · BoE CBES · APRA CPG 229 · Reverse Stress · Submission',                 code: 'EP-CH3' },
-    { path: '/tail-risk-analyzer',              label: 'Tail Risk & Black Swan Analyzer',   badge: 'EVT GEV · 5 Black Swans · Loss Exceedance 1000yr · Systemic Risk · Insurance',         code: 'EP-CH4' },
-    { path: '/scenario-dashboard-builder',      label: 'Scenario Dashboard Builder',        badge: '20 Widgets · 8 Templates · Drag-Drop · Share · Schedule Refresh · Export',              code: 'EP-CH5' },
-    { path: '/regulatory-stress-submission',    label: 'Regulatory Stress Submission',      badge: 'ECB/BoE/APRA Templates · Data Quality · Audit Trail · Approval Workflow',               code: 'EP-CH6' },
-  ]},
-  { label: 'Extended Asset Class Coverage', icon: '🏛️', color: '#7e22ce', items: [
-    { path: '/private-assets-transition',       label: 'Private Assets Transition Risk',    badge: 'PE/VC · 10 Funds · LP Look-Through · GP Engagement · Exit Haircut · DD Checklist',     code: 'EP-CI2' },
-    { path: '/structured-credit-climate',       label: 'Structured Credit Climate',         badge: 'MBS/ABS/CLO · 500 Loans · Collateral Haircut · Tranche Loss · PCAF Class 5/7/8',      code: 'EP-CI3' },
-    { path: '/commodity-derivatives-climate',   label: 'Commodity Derivatives Climate',     badge: 'Oil/Gas Forward Curves · Contango Shift · Black-76 · Crack/Dark/Spark Spreads',        code: 'EP-CI4' },
-    { path: '/insurance-portfolio-climate',     label: 'Insurance Portfolio Climate',       badge: 'Investment + Underwriting · Reserve Adequacy · ORSA · Solvency II SCR · ESG Rating',   code: 'EP-CI5' },
-    { path: '/pcaf-universal-attributor',       label: 'PCAF 8/8 Universal Attributor',     badge: 'All 8 PCAF Classes · DQ Heatmap · Attribution Formulas · WACI · Target Tracking',      code: 'EP-CI6' },
-  ]},
-  { label: 'Emerging Market Transition Intelligence', icon: '🌏', color: '#b45309', items: [
-    { path: '/china-india-transition',          label: 'China & India Transition Engine',   badge: 'China ETS · India BRSR/H₂ · Coal Phase-Down · RE Curves · Carbon Price',               code: 'EP-CJ1' },
-    { path: '/asean-gcc-transition',            label: 'ASEAN & GCC Transition Hub',        badge: 'ASEAN Taxonomy · GCC NZ Targets · JETP · Green Sukuk · H₂ Export',                     code: 'EP-CJ2' },
-    { path: '/em-carbon-credit-hub',            label: 'EM Carbon Credit Hub',              badge: 'Article 6.2 · ITMO Pricing · Corresponding Adjustments · ACMI · EM Challenges',        code: 'EP-CJ3' },
-    { path: '/latam-transition',                label: 'Latin America Transition',          badge: 'Brazil RE/Amazon · Chile Li/H₂ · Colombia JETP · Mexico Reform',                       code: 'EP-CJ4' },
-    { path: '/africa-climate-finance',          label: 'Africa Climate Finance',            badge: '600M Electrification · $250B Need · L&D Fund · Adaptation · Green Minerals',            code: 'EP-CJ5' },
-    { path: '/frontier-market-climate',         label: 'Frontier & SIDS Climate',           badge: '39 SIDS · Sea Level Rise · Parametric Insurance · Debt Swaps · Blue Economy',           code: 'EP-CJ6' },
-  ]},
-  { label: 'Stranded Asset Dynamics v2', icon: '⚠️', color: '#991b1b', items: [
-    { path: '/vintage-cohort-stranded',         label: 'Vintage Cohort Stranded Engine',    badge: '20 Assets by Vintage · Book Value Decay · Age-Depreciation · Regulatory Closure',      code: 'EP-CK1' },
-    { path: '/cascading-default-modeler',       label: 'Cascading Default Modeler',         badge: '6-Step Chain · Sector Dominos · Delta CoVaR · Loan Loss Cascade · Capital Impact',     code: 'EP-CK2' },
-    { path: '/stranded-recovery-pathways',      label: 'Stranded Recovery Pathways',        badge: '10 Repurposing Routes · Conversion CapEx · IRR · Green Industrial Zones · Cases',      code: 'EP-CK3' },
-    { path: '/decommissioning-cost-engine',     label: 'Decommissioning Cost Engine',       badge: '8 Asset Types · Unit Costs · Funding Gap · Bond Adequacy · Regulatory Requirements',   code: 'EP-CK4' },
-    { path: '/stranded-asset-watchlist',        label: 'Stranded Asset Watchlist',          badge: '20 Assets · 6 Alert Types · Trigger Events · Peer Comparison · Engagement Status',     code: 'EP-CK5' },
-    { path: '/covenant-breach-predictor',       label: 'Covenant Breach Predictor',         badge: '15 Borrowers · Leverage/ICR/DSCR · Scenario-Conditional · Early Warning · Remediation', code: 'EP-CK6' },
-  ]},
-  { label: 'Technology & Supply Chain Disruption v2', icon: '⚡', color: '#0891b2', items: [
-    { path: '/critical-mineral-constraint',     label: 'Critical Mineral Constraint Engine', badge: '8 Minerals · Supply-Demand Gap · Price Spike · Substitution · Recycling · Geopolitics', code: 'EP-CL1' },
-    { path: '/grid-stability-transition',       label: 'Grid Stability Transition Risk',    badge: '0-100% RE Slider · Inertia · Storage GWh · Curtailment · Interconnectors · Capacity',  code: 'EP-CL2' },
-    { path: '/hydrogen-economy-modeler',        label: 'Hydrogen Economy Modeler',          badge: 'Green/Blue/Gray · Electrolyzer Learning · Infrastructure · Demand Sectors · Export',    code: 'EP-CL3' },
-    { path: '/nuclear-smr-viability',           label: 'Nuclear SMR Viability',             badge: '5 Designs · LCOE Learning · Deployment Pipeline · Regulatory · Grid Services · Thesis', code: 'EP-CL4' },
-    { path: '/negative-emissions-tech',         label: 'Negative Emissions Tech Landscape', badge: '6 NETs · DAC Trajectory · BECCS · Enhanced Weathering · Ocean CDR · Portfolio Builder', code: 'EP-CL5' },
-    { path: '/tech-disruption-watchlist',       label: 'Tech Disruption Watchlist',         badge: '15 Disruptions · Patents · VC Funding · Cost Crossover · Tipping Points · Exposure',   code: 'EP-CL6' },
-  ]},
-  { label: 'SBTi Credibility & Target Validation', icon: '🎯', color: '#065f46', items: [
-    { path: '/sbti-credibility-scorer',         label: 'SBTi Credibility Scorer',           badge: '30 Companies · 5-Pillar Scoring · Validation Status · Say-Do Gap · Rating A-E',        code: 'EP-CM1' },
-    { path: '/temperature-alignment-waterfall', label: 'Temperature Alignment Waterfall',   badge: 'Portfolio ITR Decomposition · Sector → Company → Scope · What-If Simulator',           code: 'EP-CM2' },
-    { path: '/net-zero-credibility-index',      label: 'Net Zero Credibility Index',        badge: '15-KPI Framework · CapEx · Lobbying · Exec Comp · Offset Ratio · Rating A-E',          code: 'EP-CM3' },
-    { path: '/scope3-materiality-engine',       label: 'Scope 3 Materiality Engine',        badge: '15 Categories × 6 Sectors · DQ Scoring · Supplier Engagement · Improvement Roadmap',   code: 'EP-CM4' },
-    { path: '/target-vs-action-tracker',        label: 'Target vs. Action Tracker',         badge: '12 Companies · Emissions Gap · CapEx Tracking · Tech Deployment · Lobbying Check',     code: 'EP-CM5' },
-    { path: '/peer-transition-benchmarker',     label: 'Peer Transition Benchmarker',       badge: '6 Sectors × 5 Peers · 6-Pillar Radar · Best/Laggard · Convergence · Engagement',      code: 'EP-CM6' },
-  ]},
-  { label: 'Carbon Credit & Offset Economics', icon: '💎', color: '#059669', items: [
-    { path: '/carbon-credit-pricing',           label: 'Carbon Credit Pricing Engine',      badge: '20 Credit Types · Multi-Factor Model · Vintage × Method × Permanence · Calculator',    code: 'EP-CN1' },
-    { path: '/offset-permanence-risk',          label: 'Offset Permanence Risk Modeler',    badge: '12 Types · Reversal Probability · Buffer Stress · Climate-Driven · Insurance',         code: 'EP-CN2' },
-    { path: '/corporate-offset-optimizer',      label: 'Corporate Offset Optimizer',        badge: 'Quality-Cost Frontier · Blend Optimizer · Regulatory Acceptance · Multi-Year',          code: 'EP-CN3' },
-    { path: '/credit-quality-screener',         label: 'Credit Quality Screener',           badge: '100 Credits · ICVCM CCP · Additionality · Leakage · Co-Benefits · Red Flags',          code: 'EP-CN4' },
-    { path: '/offset-portfolio-tracker',        label: 'Offset Portfolio Tracker',          badge: '25 Positions · MTM · Vintage · Retirement Schedule · Performance · Compliance',        code: 'EP-CN5' },
-    { path: '/carbon-market-intelligence',      label: 'Carbon Market Intelligence',        badge: '$950B Compliance · $1.7B VCM · 8 Markets · Policy Tracker · 3 Forecast Models',       code: 'EP-CN6' },
-  ]},
-  { label: 'Advanced Just Transition', icon: '🤝', color: '#b91c1c', items: [
-    { path: '/workforce-transition-tracker',    label: 'Workforce Transition Tracker',      badge: '10 Regions · Reskilling Outcomes · Skills Gap · Training ROI · Case Studies',           code: 'EP-CO1' },
-    { path: '/social-license-risk',             label: 'Social License Risk Engine',        badge: '15 Projects · FPIC · Community Benefits · Timeline Risk · Protest/Litigation',          code: 'EP-CO2' },
-    { path: '/regional-economic-impact',        label: 'Regional Economic Impact Modeler',  badge: '10 Fossil Regions · I/O Multiplier · Fiscal Impact · Migration · Inequality',          code: 'EP-CO3' },
-    { path: '/indigenous-rights-fpic',          label: 'Indigenous Rights & FPIC',          badge: '20 Projects · Consent Status · UNDRIP/ILO 169 · Cultural Heritage · Benefit Sharing',  code: 'EP-CO4' },
-    { path: '/green-jobs-pipeline-tracker',     label: 'Green Jobs Pipeline Tracker',       badge: '8 Sectors · 2025-2040 Pipeline · Skills Taxonomy · Wages · Geographic Distribution',   code: 'EP-CO5' },
-    { path: '/just-transition-finance-hub',     label: 'Just Transition Finance Hub',       badge: 'EU JTF €17.5B · JETP Tracker · Sovereign JT Bonds · MDB Programmes · Impact',         code: 'EP-CO6' },
-  ]},
-  { label: 'ESG Stewardship Analytics', icon: '🗳️', color: '#6d28d9', items: [
-    { path: '/engagement-outcome-tracker',      label: 'Engagement Outcome Tracker',        badge: '30 Engagements · CA100+ · Milestones · Escalation · Collaborative · Impact',           code: 'EP-CP1' },
-    { path: '/proxy-voting-climate',            label: 'Proxy Voting Climate Analyzer',     badge: '50 Resolutions · Say-on-Climate · Management vs Shareholder · Director Score',         code: 'EP-CP2' },
-    { path: '/stewardship-report-generator',    label: 'Stewardship Report Generator',      badge: 'UK Code 2020 · ICGN · PRI · Case Studies · Templates · Export',                        code: 'EP-CP3' },
-    { path: '/shareholder-resolution-analyzer', label: 'Shareholder Resolution Analyzer',   badge: '100 Resolutions · Success Trends · Topics · Filers · Management Response · Impact',    code: 'EP-CP4' },
-    { path: '/board-climate-competence',        label: 'Board Climate Competence',          badge: '25 Companies · Director Profiles · Climate Committee · Training · Diversity · Peers',   code: 'EP-CP5' },
-    { path: '/esg-integration-dashboard',       label: 'ESG Integration Dashboard',         badge: 'Alpha Attribution · Risk Reduction · Client Reporting · PRI Assessment · Maturity',     code: 'EP-CP6' },
-  ]},
-  { label: 'Transition Finance Portfolio Construction', icon: '🏦', color: '#0e7490', items: [
-    { path: '/green-bond-portfolio-optimizer',  label: 'Green Bond Portfolio Optimizer',    badge: '50 Bonds · Mean-Variance · Greenium · Duration Match · Taxonomy Constraint · TE',      code: 'EP-CQ1' },
-    { path: '/transition-bond-credibility',     label: 'Transition Bond Credibility',       badge: '20 SLBs · KPI Strength · Step-Up Probability · UoP Verification · Issuer Cross-Check', code: 'EP-CQ2' },
-    { path: '/blended-finance-structurer',      label: 'Blended Finance Structurer',        badge: '5 Templates · Tranche Design · DFI Catalytic Ratio · Impact-Return Frontier',          code: 'EP-CQ3' },
-    { path: '/climate-bond-index-tracker',      label: 'Climate Bond Index Tracker',        badge: 'CBI Certified Universe · Performance vs Conventional · Sector · Geography · Issuance', code: 'EP-CQ4' },
-    { path: '/green-loan-framework',            label: 'Green Loan Framework',              badge: '20 Loans · GLP/SLLP · Margin Ratchet · ESG KPIs · Covenant Design · Reporting',       code: 'EP-CQ5' },
-    { path: '/impact-bond-analytics',           label: 'Impact Bond Analytics',             badge: '15 Impact Bonds · SROI · Outcome Measurement · Additionality · Investor Return',       code: 'EP-CQ6' },
-  ]},
-  { label: 'Multi-Jurisdiction Regulatory Compliance', icon: '⚖️', color: '#1e3a5f', items: [
-    { path: '/csrd-esrs-full-suite',            label: 'CSRD ESRS E1-E5 Full Suite',       badge: 'E1 Climate · E2 Pollution · E3 Water · E4 Biodiversity · E5 Circular · Double Materiality', code: 'EP-CR1' },
-    { path: '/global-disclosure-tracker',       label: 'Global Disclosure Tracker',         badge: '12 Jurisdictions · Cross-Walk Matrix · Gap Analysis · Timelines · Overlap Efficiency',  code: 'EP-CR2' },
-    { path: '/assurance-readiness-engine',      label: 'Assurance Readiness Engine',        badge: 'ISAE 3000/3410 · Evidence Scoring · Controls · Limited vs Reasonable · Providers',      code: 'EP-CR3' },
-    { path: '/xbrl-climate-taxonomy',           label: 'XBRL Climate Taxonomy Mapper',     badge: 'ISSB S2 Tags · ESRS E1 ESEF · Tag Mapping · Validation · Filing Preview',              code: 'EP-CR4' },
-    { path: '/regulatory-change-radar',         label: 'Regulatory Change Radar',           badge: '50 Changes · Active Consultations · Effective Dates · Impact Assessment · Intelligence', code: 'EP-CR5' },
-    { path: '/compliance-workflow-automation',   label: 'Compliance Workflow Automation',    badge: 'CSRD/TCFD/ISSB/SFDR/TPT Workflows · Tasks · Deadlines · Evidence · Approval Chain',    code: 'EP-CR6' },
-  ]},
-  { label: 'Taxonomy & Assessment Engine', icon: '🧬', color: '#164e63', items: [
-    { path: '/transition-risk-taxonomy-browser', label: 'Taxonomy Browser',              badge: '472 Nodes · 4-Level Tree · Drill-Down · Coverage Matrix · Sector Overlay',              code: 'EP-CS1' },
-    { path: '/assessment-engine-dashboard',      label: 'Assessment Engine Dashboard',    badge: 'Score Aggregation · Sunburst · Heatmap · Radar · Scenario Comparison · Trend',          code: 'EP-CS2' },
-    { path: '/data-source-registry',             label: 'Data Source Registry',           badge: '24 Sources · Quality Monitor · Coverage Gaps · Refresh Status · New Source ID',         code: 'EP-CS3' },
-    { path: '/ml-taxonomy-scoring',              label: 'ML Taxonomy Scoring Engine',     badge: 'XGBoost · 316 Features · SHAP · Conformal Prediction · Training UI · Calibration',     code: 'EP-CS4' },
-    { path: '/taxonomy-risk-report',             label: 'Taxonomy Risk Report',           badge: 'Executive Summary · Entity Reports · Regulatory Mapping · Export · Scheduling',         code: 'EP-CS5' },
-    { path: '/assessment-configuration',         label: 'Assessment Configuration',       badge: 'Weight Editor · Thresholds · Rating Scale · Scenario Config · DQ Rules · Audit',        code: 'EP-CS6' },
-  ]},
-  { label: 'Financial Institution Profiler', icon: '🏦', color: '#1e40af', items: [
-    { path: '/fi-client-portfolio-analyzer',     label: 'FI Client Portfolio Analyzer',   badge: '50 Borrowers · 12 Sectors · Geography · Transition Score · LoB · Watchlist',            code: 'EP-CT1' },
-    { path: '/fi-instrument-exposure',           label: 'FI Instrument Exposure',         badge: '200 Instruments · 8 Types · Maturity · Climate VaR · Green/Brown · Hedging',            code: 'EP-CT2' },
-    { path: '/fi-line-of-business',              label: 'FI Line of Business Risk',       badge: '6 LoBs · Risk Attribution · Revenue vs Risk · Marginal Contribution · Benchmarking',    code: 'EP-CT3' },
-    { path: '/fi-regulatory-capital-overlay',    label: 'FI Regulatory Capital Overlay',  badge: 'RWA · Pillar 2 Climate Add-on · Stress Capital Buffer · ECB/BoE · Basel IV',           code: 'EP-CT4' },
-    { path: '/fi-concentration-monitor',         label: 'FI Concentration Monitor',       badge: 'Sector/Country/Name Limits · HHI · Traffic Light · Breach History',                     code: 'EP-CT5' },
-    { path: '/fi-transition-dashboard',          label: 'FI Transition Dashboard',        badge: 'Executive KPIs · Taxonomy Drill · Client Risk Map · Reg Readiness · Board Report',      code: 'EP-CT6' },
-  ]},
-  { label: 'Energy Company Profiler', icon: '🛢️', color: '#78350f', items: [
-    { path: '/energy-asset-registry',            label: 'Energy Asset Registry',          badge: '30 Assets · Carbon Intensity · Capacity Mix · Age/Retirement · WRI GPPD',              code: 'EP-CU1' },
-    { path: '/energy-segment-analysis',          label: 'Energy Segment Analysis',        badge: 'Upstream · Midstream · Downstream · Revenue/EBITDA/CapEx · Transition Score',           code: 'EP-CU2' },
-    { path: '/energy-supplier-network',          label: 'Energy Supplier Network',        badge: '40 Suppliers · Tier 1/2/3 · Concentration · Critical Dependencies · Engagement',        code: 'EP-CU3' },
-    { path: '/energy-revenue-split',             label: 'Energy Revenue Split',           badge: 'Legacy vs Renewable · Green Revenue Ratio · CapEx Alignment · Peer Comparison',         code: 'EP-CU4' },
-    { path: '/energy-decommissioning-liability', label: 'Decommissioning Liability',      badge: 'Cost Estimation · Funding Gap · Regulatory Requirements · Stranded Link · Write-Down',  code: 'EP-CU5' },
-    { path: '/energy-transition-dashboard',      label: 'Energy Transition Dashboard',    badge: 'Executive KPIs · Asset Score · Decarbonization · Supplier Risk · Peer Ranking',         code: 'EP-CU6' },
-  ]},
-  { label: 'Geopolitical Risk Engine', icon: '🌐', color: '#4c1d95', items: [
-    { path: '/geopolitical-risk-index',          label: 'Geopolitical Risk Index',        badge: '50 Countries · WGI 6 Dimensions · Sanctions · Conflict · Custom Weights',              code: 'EP-CV1' },
-    { path: '/sanctions-trade-monitor',          label: 'Sanctions & Trade Monitor',      badge: 'OFAC · EU · UK OFSI · Trade Policy · Portfolio Exposure · New Designation Alerts',      code: 'EP-CV2' },
-    { path: '/critical-mineral-geo-risk',        label: 'Critical Mineral Geo Risk',      badge: '8 Minerals · Processing Concentration · Friendshoring · Export Controls · Price',       code: 'EP-CV3' },
-    { path: '/conflict-stability-tracker',       label: 'Conflict & Stability Tracker',   badge: 'ACLED Events · Political Stability · Fragile States · Asset Proximity · Early Warning', code: 'EP-CV4' },
-    { path: '/geo-transition-nexus',             label: 'Geo-Transition Nexus',           badge: 'Combined Score · Correlation · Fossil State Risk · Policy Reversal · Portfolio Overlay', code: 'EP-CV5' },
-    { path: '/geopolitical-dashboard',           label: 'Geopolitical Dashboard',         badge: 'Risk Heatmap · Top 10 Exposures · Sanctions Alerts · Mineral Supply · Board Report',    code: 'EP-CV6' },
-  ]},
-  { label: 'Cross-Entity Assessment & Benchmarking', icon: '📊', color: '#0f766e', items: [
-    { path: '/universal-entity-comparator',      label: 'Universal Entity Comparator',    badge: '15 Entities · Side-by-Side · Taxonomy Compare · Spider · Gap Analysis · Historical',   code: 'EP-CW1' },
-    { path: '/sector-peer-benchmarking-engine',  label: 'Sector Peer Benchmarking',       badge: '6 Sectors × 8 Peers · Distribution · Quartile · Best Practice · Convergence',          code: 'EP-CW2' },
-    { path: '/supply-chain-network-viz',         label: 'Supply Chain Network Viz',       badge: '20 Nodes · 25 Links · Risk Propagation · Critical Paths · Scenario Simulator',         code: 'EP-CW3' },
-    { path: '/portfolio-stress-test-drilldown',  label: 'Portfolio Stress Test Drill',    badge: '5 NGFS · Entity Contribution · Taxonomy Drill · Reverse Stress · Historical',          code: 'EP-CW4' },
-    { path: '/assessment-audit-trail-v2',        label: 'Assessment Audit Trail',         badge: 'Change Log · Version History · Score Drift · Data Lineage · ISAE 3000 Compliance',     code: 'EP-CW5' },
-    { path: '/cross-entity-intelligence-dashboard', label: 'Cross-Entity Dashboard',      badge: 'Platform KPIs · Entity Type Comparison · Risk Heat Map · Alert Center · Board Pack',   code: 'EP-CW6' },
-  ]},
-  { label: 'Advanced ML & Predictive Analytics', icon: '🤖', color: '#7c3aed', items: [
-    { path: '/ml-feature-engineering',           label: 'ML Feature Engineering',         badge: '948 Features · Correlation · PCA · Feature Selection · Feature Store · DQ Impact',     code: 'EP-CX1' },
-    { path: '/ensemble-prediction-engine',       label: 'Ensemble Prediction Engine',     badge: 'XGBoost+LightGBM+MLP · Weight Optimization · 12-Month Forward · Backtest · Deploy',   code: 'EP-CX2' },
-    { path: '/anomaly-detection-engine',         label: 'Anomaly Detection Engine',       badge: 'Isolation Forest · Flagged Entities · Investigation Workflow · FPR Tracking',           code: 'EP-CX3' },
-    { path: '/peer-clustering-segmentation',     label: 'Peer Clustering Segmentation',   badge: 'K-Means · Silhouette · Cluster Profiles · Migration Tracker · Engagement Priority',    code: 'EP-CX4' },
-    { path: '/scenario-conditional-prediction',  label: 'Scenario Conditional Prediction', badge: 'Custom Scenarios · Conditional Scores · Sensitivity Surface · Pathway Analysis',      code: 'EP-CX5' },
-    { path: '/ml-governance-dashboard',          label: 'ML Governance Dashboard',        badge: 'Model Inventory · Drift Detection · SHAP · Fed SR 11-7 · EU AI Act Alignment',        code: 'EP-CX6' },
-  ]},
-  { label: 'Climate Risk Capital & Supervisory', icon: '🏦', color: '#991b1b', items: [
-    { path: '/climate-capital-adequacy',       label: 'Climate Capital Adequacy Engine',      badge: '25 institutions · Pillar 2 add-ons · Basel IV haircuts · ECB/PRA/OSFI thresholds',     code: 'EP-DB1' },
-    { path: '/climate-cvar-suite',             label: 'Climate CVaR Quantification Suite',    badge: 'Physical + Transition CVaR · NGFS Phase IV · 5 asset classes · 3 horizons · 99th pct', code: 'EP-DB2' },
-    { path: '/supervisory-stress-orchestrator',label: 'Supervisory Stress Test Orchestrator', badge: 'ECB · PRA · OSFI · FED · 20 institutions · Adverse calibration · Submission tracker',  code: 'EP-DB3' },
-    { path: '/climate-risk-premium',           label: 'Climate Risk Premium Decomposer',      badge: '50 issuers · Spread decomposition · PD/LGD adjustment · Sector attribution · Factors',  code: 'EP-DB4' },
-    { path: '/enterprise-climate-risk',        label: 'Enterprise Climate Risk Aggregator',   badge: '30 exposures · 8 entities · Diversification · HHI · TCFD Board Reporting · NGFS',      code: 'EP-DB5' },
-    { path: '/systemic-climate-risk',          label: 'Systemic Climate Risk Monitor',        badge: '12 sectors · Network contagion · 15 CB indicators · 4 amplifiers · Macro-prudential',  code: 'EP-DB6' },
-  ]},
-  { label: 'Corporate Finance & Capital Markets', icon: '💼', color: '#1e3a5f', items: [
-    { path: '/climate-wacc-engine',       label: 'Climate WACC Engine',         badge: '80 companies · 8 sectors · Climate-adj CAPM · NGFS scenarios · Capital optimizer · Greenium', code: 'EP-DD1' },
-    { path: '/green-debt-structuring',    label: 'Green Debt Structuring',       badge: '70 instruments · 7 types · Greenium pricing · KPI step-up/down · SPO scoring · Impact reporting', code: 'EP-DD2' },
-    { path: '/climate-ma-due-diligence',  label: 'Climate M&A Due Diligence',   badge: '45 targets · 6 sectors · Stranded asset haircut · Carbon NPV · Regulatory exposure · Deal scorecard', code: 'EP-DD3' },
-    { path: '/carbon-adjusted-valuation', label: 'Carbon-Adjusted Valuation',   badge: '60 companies · Full DCF · NGFS paths · SBTi premium · Stranded discount · Sensitivity grid', code: 'EP-DD4' },
-    { path: '/treasury-climate-risk',     label: 'Treasury Climate Risk',        badge: '8 FX · 12 commodities · 30 SC nodes · 25 counterparties · Hedging analytics · NGFS scenarios', code: 'EP-DD5' },
-    { path: '/climate-capital-markets',   label: 'Climate Capital Markets',      badge: '100 instruments · 20 ESG indices · 30 investors · Flow analytics · Alpha signals · Intelligence Hub', code: 'EP-DD6' },
-  ]},
-  { label: 'Green Real Estate & Built Environment', icon: '🏢', color: '#065f46', items: [
-    { path: '/green-building-valuation',          label: 'Green Building Valuation',          badge: '80 properties · EPC A-G · BREEAM/LEED · Green premium · Stranding risk · Retrofit economics', code: 'EP-DE1' },
-    { path: '/real-estate-climate-risk',          label: 'Real Estate Climate Risk',           badge: '100 properties · 8 cities · Physical hazards · Transition risk · Stranding timeline · LTV', code: 'EP-DE2' },
-    { path: '/climate-mortgage-analytics',        label: 'Climate Mortgage Analytics',         badge: '60 lenders · Climate VaR · Stranded collateral · Capital charges · Regulatory status', code: 'EP-DE3' },
-    { path: '/infrastructure-climate-resilience', label: 'Infrastructure Climate Resilience',  badge: '50 assets · 6 sectors · Adaptation costing · Resilience pathway · Insurance gap', code: 'EP-DE4' },
-    { path: '/urban-climate-adaptation',          label: 'Urban Climate Adaptation',           badge: '40 global cities · Heat/flood/drought · Adaptation finance · Green infra · Resilience rankings', code: 'EP-DE5' },
-    { path: '/real-estate-carbon-analytics',      label: 'Real Estate Carbon Analytics',       badge: '70 buildings · Embodied/operational carbon · Lifecycle analysis · Retrofit pathway · Net zero', code: 'EP-DE6' },
-  ]},
-  { label: 'Climate Technology & Innovation Finance', icon: '⚡', color: '#1d4ed8', items: [
-    { label: 'CleanTech Investment Analytics',  path: '/cleantech-investment',        code: 'EP-DF1' },
-    { label: 'Green Hydrogen Economics',        path: '/green-hydrogen-economics-df', code: 'EP-DF2' },
-    { label: 'Carbon Capture Finance',          path: '/carbon-capture-finance',      code: 'EP-DF3' },
-    { label: 'Energy Storage Analytics',        path: '/energy-storage-analytics',    code: 'EP-DF4' },
-    { label: 'EV Transition Finance',           path: '/ev-transition-finance',       code: 'EP-DF5' },
-    { label: 'Climate Patent Intelligence',     path: '/climate-patent-intelligence', code: 'EP-DF6' },
-  ]},
-  { label: 'Food, Agriculture & Land Use', icon: '🌾', color: '#365314', items: [
-    { label: 'Agricultural Climate Risk',           path: '/agricultural-climate-risk',           code: 'EP-DG1' },
-    { label: 'Food System Transition',              path: '/food-system-transition',              code: 'EP-DG2' },
-    { label: 'Land Use Change Finance',             path: '/land-use-change-finance',             code: 'EP-DG3' },
-    { label: 'Sustainable Agriculture Investment',  path: '/sustainable-agriculture-investment',  code: 'EP-DG4' },
-    { label: 'Water-Food-Energy Nexus',             path: '/water-food-energy-nexus',             code: 'EP-DG5' },
-    { label: 'Climate Commodity Analytics',         path: '/climate-commodity-analytics',         code: 'EP-DG6' },
-  ]},
-  { label: 'Emerging Markets & Development Finance', icon: '🌍', color: '#7c2d12', items: [
-    { label: 'EM Sovereign Climate Debt',       path: '/em-sovereign-climate-debt',       code: 'EP-DH1' },
-    { label: 'MDB Climate Finance',             path: '/mdb-climate-finance-dh',          code: 'EP-DH2' },
-    { label: 'JETP Analytics',                  path: '/jetp-analytics',                  code: 'EP-DH3' },
-    { label: 'Climate Blended Finance',         path: '/climate-blended-finance',         code: 'EP-DH4' },
-    { label: 'Loss & Damage Finance',           path: '/loss-and-damage-finance',         code: 'EP-DH5' },
-    { label: 'Sovereign Green Bond Analytics',  path: '/sovereign-green-bond-analytics',  code: 'EP-DH6' },
-  ]},
-  { label: 'Climate Workforce & Just Transition', icon: '👷', color: '#713f12', items: [
-    { label: 'Fossil Fuel Worker Transition',        path: '/fossil-fuel-worker-transition',        code: 'EP-DI1' },
-    { label: 'Green Jobs Growth',                    path: '/green-jobs-growth',                    code: 'EP-DI2' },
-    { label: 'Corporate Just Transition',            path: '/corporate-just-transition',            code: 'EP-DI3' },
-    { label: 'Climate Displacement Risk',            path: '/climate-displacement-risk',            code: 'EP-DI4' },
-    { label: 'Supply Chain Labor & Climate Risk',    path: '/supply-chain-labor-climate',           code: 'EP-DI5' },
-    { label: 'Community Climate Resilience',         path: '/community-climate-resilience',         code: 'EP-DI6' },
-  ]},
-  { label: 'Ocean, Shipping & Blue Economy', icon: '🌊', color: '#0c4a6e', items: [
-    { label: 'Shipping Decarbonisation',    path: '/shipping-decarbonisation',    code: 'EP-DJ1' },
-    { label: 'Blue Carbon Finance',         path: '/blue-carbon-finance',         code: 'EP-DJ2' },
-    { label: 'Coastal Flood Risk Finance',  path: '/coastal-flood-risk-finance',  code: 'EP-DJ3' },
-    { label: 'Ocean Health Finance',        path: '/ocean-health-finance',        code: 'EP-DJ4' },
-    { label: 'Port Climate Risk',           path: '/port-climate-risk',           code: 'EP-DJ5' },
-    { label: 'Fisheries Climate Risk',      path: '/fisheries-climate-risk',      code: 'EP-DJ6' },
-  ]},
-  { label: 'Climate Governance & Board Analytics', icon: '🏛️', color: '#312e81', items: [
-    { label: 'Board Climate Oversight',             path: '/board-climate-oversight',            code: 'EP-DK1' },
-    { label: 'Fiduciary Climate Risk',              path: '/fiduciary-climate-risk',             code: 'EP-DK2' },
-    { label: 'ESG Governance Scorer',               path: '/esg-governance-scorer',              code: 'EP-DK3' },
-    { label: 'Climate Executive Pay',               path: '/climate-executive-pay',              code: 'EP-DK4' },
-    { label: 'Shareholder Climate Engagement',      path: '/shareholder-climate-engagement',     code: 'EP-DK5' },
-    { label: 'Climate Reg & Policy Tracker',        path: '/climate-reg-policy-tracker',         code: 'EP-DK6' },
-  ]},
-  { label: 'Circular Economy & Waste Finance', icon: '♻️', color: '#14532d', items: [
-    { label: 'Circular Economy Finance',     path: '/circular-economy-finance',     code: 'EP-DL1' },
-    { label: 'Waste-to-Energy Finance',      path: '/waste-to-energy-finance',      code: 'EP-DL2' },
-    { label: 'Plastics Pollution Finance',   path: '/plastics-pollution-finance',   code: 'EP-DL3' },
-    { label: 'Resource Efficiency Analytics',path: '/resource-efficiency-analytics',code: 'EP-DL4' },
-    { label: 'Critical Minerals & Climate',  path: '/critical-minerals-climate',    code: 'EP-DL5' },
-    { label: 'Green Chemistry Finance',      path: '/green-chemistry-finance',      code: 'EP-DL6' },
-  ]},
-  { label: 'Urban & City Climate Finance', icon: '🏙️', color: '#1e40af', items: [
-    { label: 'Municipal Green Bond Analytics', path: '/municipal-green-bond',           code: 'EP-DM1' },
-    { label: 'Smart City Climate Finance',     path: '/smart-city-climate-finance',     code: 'EP-DM2' },
-    { label: 'City Climate Risk Rating',       path: '/city-climate-risk-rating',       code: 'EP-DM3' },
-    { label: 'Urban Mobility Transition',      path: '/urban-mobility-transition',      code: 'EP-DM4' },
-    { label: 'Green Building Code Finance',    path: '/green-building-code-finance',    code: 'EP-DM5' },
-    { label: 'City Net Zero Tracker',          path: '/city-net-zero-tracker',          code: 'EP-DM6' },
-  ]},
-  { label: 'Supply Chain Climate Intelligence', icon: '🔗', color: '#7c2d12', items: [
-    { label: 'Supply Chain Emissions Mapper',  path: '/supply-chain-emissions-mapper',  code: 'EP-DN1' },
-    { label: 'Procurement Climate Risk',        path: '/procurement-climate-risk',       code: 'EP-DN2' },
-    { label: 'Supplier ESG Scorecard',          path: '/supplier-esg-scorecard',         code: 'EP-DN3' },
-    { label: 'Scope 3 Category Analytics',      path: '/scope3-category-analytics',      code: 'EP-DN4' },
-    { label: 'Climate Trade Flow Analytics',    path: '/climate-trade-flow-analytics',   code: 'EP-DN5' },
-    { label: 'Green Procurement Intelligence',  path: '/green-procurement-intelligence', code: 'EP-DN6' },
-  ]},
-  { label: 'Renewable Energy Finance', icon: '⚡', color: '#065f46', items: [
-    { label: 'Solar Project Finance',         path: '/solar-project-finance',         code: 'EP-DO1' },
-    { label: 'Wind Energy Finance',           path: '/wind-energy-finance',           code: 'EP-DO2' },
-    { label: 'Renewable Project Pipeline',    path: '/renewable-project-pipeline',    code: 'EP-DO3' },
-    { label: 'Energy Transition Lending',     path: '/energy-transition-lending',     code: 'EP-DO4' },
-    { label: 'PPA Analytics',                 path: '/ppa-analytics',                 code: 'EP-DO5' },
-    { label: 'Renewable Asset Management',    path: '/renewable-asset-management',    code: 'EP-DO6' },
-  ]},
-  { label: 'Carbon Credit Calculation', icon: '🌿', color: '#14532d', items: [
-    { path: '/cdm-methodology-calculator',      label: 'CDM Methodology Calculator',     badge: '40 projects · ACM0002/ACM0014/AMS-I.D/AMS-III.F · ER_y=BE_y-PE_y-LE_y · Grid EF', code: 'EP-DQ1' },
-    { path: '/baseline-additionality-analyzer', label: 'Baseline & Additionality Analyzer', badge: '35 projects · TOOL01/02/07/21 · IRR vs WACC · Common Practice · Audit Trail',  code: 'EP-DQ2' },
-    { path: '/monte-carlo-uncertainty-engine',  label: 'Monte Carlo Uncertainty Engine',  badge: '25 projects · GUM u_c=√Σ · MC 10k iterations · P5/P50/P95 · Discount Table',    code: 'EP-DQ3' },
-    { path: '/carbon-project-lifecycle',        label: 'Carbon Project Lifecycle Manager',badge: '50 projects · Conception→Issuance · PDD Builder · MRV · CDM/GS/VCS',           code: 'EP-DQ4' },
-    { path: '/multi-standard-compliance',       label: 'Multi-Standard Compliance Tracker', badge: '45 projects · CDM/GS/VCS/CAR/ACR · SDG Co-Benefits · Gap Analysis · Buffer Pool', code: 'EP-DQ5' },
-    { path: '/carbon-credit-audit-trail',       label: 'Carbon Credit Audit Trail',       badge: '500 events · 30 projects · ISO 14064-3 · Hash Chain · CAR/FAR · Version Control', code: 'EP-DQ6' },
-  ]},
-  { label: 'Health & Climate Wellbeing', icon: '🏥', color: '#831843', items: [
-    { path: '/heat-stress-finance',             label: 'Heat Stress Finance',            badge: '60 cities · WBGT · Productivity Loss · Labour Risk · Adaptation Cost', code: 'EP-DP1' },
-    { path: '/climate-health-risk-analytics',   label: 'Climate Health Risk Analytics',  badge: '75 countries · Mortality · DALYs · WHO Cost · ND-GAIN Vulnerability',  code: 'EP-DP2' },
-    { path: '/air-quality-investment',          label: 'Air Quality Investment',         badge: '55 regions · PM2.5/NO2 · Health-Adj Returns · Clean Air Finance',        code: 'EP-DP3' },
-    { path: '/pandemic-climate-finance',        label: 'Pandemic Climate Finance',       badge: '50 scenarios · 8 pathogens · Zoonotic Risk · Health System Resilience', code: 'EP-DP4' },
-    { path: '/mental-health-climate-risk',      label: 'Mental Health & Climate Risk',   badge: '65 populations · Eco-Anxiety · PTSD · Insurance Gap · WELLBY',          code: 'EP-DP5' },
-    { path: '/wellbeing-adjusted-returns',      label: 'Wellbeing-Adjusted Returns',     badge: '70 investments · WELLBY Framework · Social ROI · Health Co-Benefits',   code: 'EP-DP6' },
-  ]},
-  { label: 'Insurance Climate Actuarial Suite', icon: '🏥', color: '#065f46', items: [
-    { path: '/climate-mortality-longevity',    label: 'Climate Mortality & Longevity Engine', badge: '20 countries · NGFS life tables · Heat/cold/flood mortality · Reserve impact · Age bands', code: 'EP-DC1' },
-    { path: '/pc-climate-pricing',             label: 'P&C Climate Pricing Engine',           badge: '6 perils · 30 zones · Rate adequacy · Climate loading · Scenario stress · Lloyd\'s',     code: 'EP-DC2' },
-    { path: '/climate-reserve-adequacy',       label: 'Climate Reserve Adequacy Analyzer',    badge: '8 LoB · IBNR · Climate dev factors · Run-off triangle · Solvency II · Tail risk',       code: 'EP-DC3' },
-    { path: '/solvency-capital-climate',       label: 'Solvency Capital Climate Engine',      badge: '15 insurers · SCR NatCat · Solvency II/NAIC · ORSA stress · Capital efficiency',        code: 'EP-DC4' },
-    { path: '/climate-claims-forecasting',     label: 'Climate Claims Forecasting Suite',     badge: '50 region-peril combos · Freq×Severity · NGFS 2025-2050 · Insurance gap · F×S model',  code: 'EP-DC5' },
-  ]},
-  { label: 'Disclosure & Stranded Asset Analytics', icon: '📋', color: '#4f46e5', items: [
-    { path: '/climate-litigation-risk-scorer',      label: 'Climate Litigation Risk Scorer',      badge: '50 companies · GCEL & Sabin Center · 8 claim types · 12 jurisdictions · Portfolio Overlay', code: 'EP-DA1' },
-    { path: '/greenwashing-exposure-monitor',       label: 'Greenwashing Exposure Monitor',       badge: '40 companies · FCA · SEC · ASIC · BaFin · Gap Analysis · Enforcement Tracker',            code: 'EP-DA2' },
-    { path: '/disclosure-adequacy-analyzer',        label: 'Disclosure Adequacy Analyzer',        badge: '45 companies · TCFD 11 recs · IFRS S1/S2 · ESRS E1-E5 · GRI 305 · Peer Ranking',        code: 'EP-DA3' },
-    { path: '/stranded-asset-litigation-tracker',   label: 'Stranded Asset Litigation Tracker',   badge: '35 assets · Write-Down Scenarios · Creditor Exposure · Regulatory Triggers',              code: 'EP-DA4' },
-    { path: '/regulatory-enforcement-monitor',      label: 'Regulatory Enforcement Monitor',       badge: '15 regulators · 60 enforcement actions · Sector Heat · Portfolio Compliance · Fines',    code: 'EP-DA5' },
-    { path: '/climate-legal-intelligence-dashboard',label: 'Climate Legal Intelligence Dashboard', badge: '30 companies · 20 jurisdictions · 15 precedents · Risk Forecast · 3 Scenarios',          code: 'EP-DA6' },
-  ]},
-  { label: 'Real-Time Climate Intelligence', icon: '📡', color: '#0891b2', items: [
-    { path: '/live-carbon-price-monitor',          label: 'Live Carbon Price Monitor',          badge: '8 Markets · 5s Refresh · Forward Curves · Portfolio Exposure · NGFS Overlay',           code: 'EP-CY1' },
-    { path: '/portfolio-climate-pulse',            label: 'Portfolio Climate Pulse',             badge: 'Intraday VaR · Transition Scores · Heatmap · Alert Engine · Holdings Monitor',          code: 'EP-CY2' },
-    { path: '/regulatory-deadline-tracker',        label: 'Regulatory Deadline Tracker',         badge: 'CSRD · ISSB · EU Taxonomy · Gap Analysis · Submission History · Countdown',             code: 'EP-CY3' },
-    { path: '/climate-news-sentiment-feed',        label: 'Climate News Sentiment Feed',         badge: 'NLP Sentiment · Topic Clustering · Portfolio Impact · Source Attribution · Timeline',   code: 'EP-CY4' },
-    { path: '/real-time-emissions-monitor',        label: 'Real-Time Emissions Monitor',         badge: 'Facility CEMS · EWMA Anomaly · Permit Compliance · YTD Tracking · Alert Engine',       code: 'EP-CY5' },
-    { path: '/client-transition-command-center',   label: 'Client Transition Command Center',    badge: 'Risk Quadrants · Engagement Pipeline · Instruments · Regulatory Readiness · Profiles',  code: 'EP-CY6' },
-  ]},
-  { label: 'Climate Portfolio Construction', icon: '📊', color: '#0f4c81', items: [
-    { path: '/climate-portfolio-optimizer',        label: 'Climate Portfolio Optimizer',         badge: 'Markowitz + Carbon Constraints · Efficient Frontier · Sector Allocation · NGFS Scenarios',   code: 'EP-CZ1' },
-    { path: '/net-zero-portfolio-alignment',       label: 'Net Zero Portfolio Alignment',        badge: 'PAII Framework · Decarbonization Pathway · ITR Analysis · Asset Alignment · 1.5°C Budget',   code: 'EP-CZ2' },
-    { path: '/climate-benchmark-constructor',      label: 'Climate Benchmark Constructor',       badge: 'PAB / CTB Builder · EU BMR · Tracking Error · Carbon Pathway · Constituents',                code: 'EP-CZ3' },
-    { path: '/green-bond-portfolio-analytics',     label: 'Green Bond Portfolio Analytics',      badge: 'ICMA GBP · Use of Proceeds · Impact Metrics · Greenium · EU GBS Alignment',                  code: 'EP-CZ4' },
-    { path: '/climate-risk-budget-allocator',      label: 'Climate Risk Budget Allocator',       badge: 'Factor Decomposition · Marginal Contributions · What-If · Budget Utilization',                code: 'EP-CZ5' },
-    { path: '/transition-alpha-signal-generator',  label: 'Transition Alpha Signal Generator',   badge: '6 Climate Factors · Factor Model · Backtesting · Alpha Attribution · Signal Decay',           code: 'EP-CZ6' },
-  ]},
-  { label: 'Carbon Credit Engine', icon: '🌐', color: '#1b3a5c', items: [
-    { path: '/cc-engine-hub',              label: 'Carbon Credit Engine Hub',       badge: '7 Families · 20 Clusters · Pipeline · Methodology Library · Quick Calculator',   code: 'EP-BW1' },
-    { path: '/cc-portfolio-analytics',     label: 'CC Portfolio Analytics',         badge: 'Risk · Attribution · Vintage · Geography · Export · 25 Positions',                code: 'EP-BW2' },
-    { path: '/cc-methodology-comparison',  label: 'Cross-Methodology Comparison',  badge: 'MACC · Permanence · Integrity · Co-Benefits · Scenario Builder · 20 Clusters',   code: 'EP-BW3' },
-  ]},
-  { label: 'Credit Retirement & Certificates', icon: '📜', color: '#0f766e', items: [
-    { path: '/cc-retirement-workflow',  label: 'Retirement Workflow Engine',    badge: 'Multi-Registry · Verra · GS · Puro · Isometric · Step Wizard · Compliance',      code: 'EP-BV1' },
-    { path: '/cc-certificate-mgmt',     label: 'Certificate & Inventory Mgmt', badge: 'Serial Numbers · Batches · Vintage · Transfer · Custody · Audit Trail',           code: 'EP-BV2' },
-    { path: '/cc-registry-hub',         label: 'Registry Integration Hub',     badge: 'Verra · Gold Standard · Puro · Isometric · ACR · API Status · Cross-Registry',    code: 'EP-BV3' },
-  ]},
-  { label: 'Engineered CDR & Removals', icon: '🔬', color: '#6d28d9', items: [
-    { path: '/cc-mineralization',  label: 'Enhanced Weathering & Mineralization', badge: 'ERW · Ca/Mg Carbonation · Puro · Isometric · Cumulative Uptake · XRF',         code: 'EP-BU1' },
-    { path: '/cc-dac',             label: 'Direct Air Capture (DAC)',             badge: 'Net Removal · Premium/Standard/Basic · Energy Source · Permanence Tiers',        code: 'EP-BU2' },
-    { path: '/cc-bicrs-hub',       label: 'BiCRS & Biomass CDR Hub',             badge: 'BiCRS · BECCS · Biomass Sustainability · CDR Portfolio Builder · Hub',           code: 'EP-BU3' },
-  ]},
-  { label: 'Waste & Industrial Credits', icon: '🏭', color: '#57534e', items: [
-    { path: '/cc-landfill-wastewater',  label: 'Landfill Gas & Wastewater',      badge: 'FOD Model · ACM0001 · AMS-III.H · Capture Efficiency · Waste Composition',      code: 'EP-BT1' },
-    { path: '/cc-industrial-gases',     label: 'Industrial Gases & Process',     badge: 'HFC · N₂O · SF₆ · AM0001 · Destruction Efficiency · Kigali Amendment',          code: 'EP-BT2' },
-    { path: '/cc-ccs-biochar-hub',      label: 'CCS/CCUS & Biochar Hub',        badge: 'Net Storage · H:C Ratio · Transport · Permanence · Utilization Pathways',        code: 'EP-BT3' },
-  ]},
-  { label: 'Energy Carbon Credits', icon: '⚡', color: '#b45309', items: [
-    { path: '/cc-grid-renewables',       label: 'Grid Renewable Energy Credits',  badge: 'ACM0002 · OM/BM · Combined Margin · Dispatch · RECs · 12 Projects',            code: 'EP-BS1' },
-    { path: '/cc-clean-cooking',         label: 'Clean Cooking Credits',          badge: 'AMS-II.G · fNRB · Rebound · Gold Standard · SDG Co-Benefits · 8 Projects',     code: 'EP-BS2' },
-    { path: '/cc-energy-efficiency-hub', label: 'Energy Efficiency & Distributed Hub', badge: 'EE · Distributed · HDD/CDD · Building Retrofit · Industrial · Hub',      code: 'EP-BS3' },
-  ]},
-  { label: 'Agriculture Carbon Credits', icon: '🌾', color: '#854d0e', items: [
-    { path: '/cc-soil-carbon',         label: 'Soil Carbon Sequestration',      badge: 'VM0042 · SOC Baseline · Bulk Density · Practice Comparison · 15yr Permanence',      code: 'EP-BR1' },
-    { path: '/cc-livestock-methane',   label: 'Livestock Methane Reduction',    badge: 'Enteric · Manure · Feed Additives · GWP-100/GWP* · VS/B0/MCF · 10 Projects',      code: 'EP-BR2' },
-    { path: '/cc-rice-cultivation',    label: 'Rice Cultivation Methane',       badge: 'AWD · AMS-III.AU · EF Scaling · Multi-Season · Regional Benchmarks',                code: 'EP-BR3' },
-  ]},
-  { label: 'Nature-Based Carbon Credits', icon: '🌳', color: '#166534', items: [
-    { path: '/cc-arr-reforestation',  label: 'ARR & Reforestation Credits',     badge: 'VM0047 · Biomass Growth · Leakage · Buffer Pool · 30yr Crediting · 12 Projects',    code: 'EP-BQ1' },
-    { path: '/cc-ifm-credits',        label: 'Improved Forest Management',      badge: 'VM0010 · RIL · Extended Rotation · Harvest Deferral · Market Leakage · Baseline',    code: 'EP-BQ2' },
-    { path: '/cc-redd-wetlands-hub',   label: 'REDD+ & Wetlands Carbon Hub',   badge: 'REDD+ · Wetlands Multi-Gas · Blue Carbon · VM0007 · VM0033 · Buffer Pool · 20 Proj', code: 'EP-BQ3' },
-  ]},
-  { label: 'Equitable Earth Methodologies', icon: '🌍', color: '#059669', items: [
-    { path: '/equitable-earth-methodologies', label: 'Equitable Earth Methodology Framework', badge: '5-Pillar · 6 Standards · Project Scoring · Calc Engine · Credit Integrity', code: 'EP-BP1' },
-  ]},
-  { label: 'Critical Minerals & Energy Transition', icon: '⛏️', color: '#92400e', items: [
-    { path: '/critical-minerals',   label: 'Critical Minerals Supply Chain',  badge: '8 Minerals · Country Concentration · Demand Outlook · Mine Pipeline · HHI', code: 'EP-BO1' },
-    { path: '/battery-ev-analytics',label: 'Battery & EV Analytics',          badge: 'LFP/NMC/NCA · Cost Curves · EV Adoption · Gigafactories · Chemistry Mix',   code: 'EP-BO2' },
-    { path: '/et-commodity-risk',   label: 'Energy Transition Commodity Risk',badge: 'Portfolio Exposure · NGFS Scenarios · Supply Chain Risk · Revenue at Risk',  code: 'EP-BO3' },
-  ]},
-  { label: 'Insurance & Catastrophe Risk', icon: '🛡️', color: '#b91c1c', items: [
-    { path: '/natcat-loss-engine',         label: 'NatCat Climate Loss Engine',     badge: 'EP Curves · AAL · PML · IPCC AR6 · 8 Perils · 4 Scenarios · Portfolio',   code: 'EP-BM1' },
-    { path: '/cat-bond-ils',               label: 'Cat Bond & ILS Analytics',       badge: 'Bond Universe · Pricer · Trigger Analysis · Spread · Historical Events',   code: 'EP-BM2' },
-    { path: '/insurance-protection-gap',   label: 'Physical Risk Insurance Gap',    badge: 'Protection Gap · 15 Countries · Climate Stress · Public-Private Schemes',  code: 'EP-BM3' },
-  ]},
-  { label: 'ML & Predictive Analytics', icon: '🤖', color: '#4f46e5', items: [
-    { path: '/ml-risk-scorer',          label: 'XGBoost Climate Risk Scorer',    badge: 'XGBoost · Quantile Regression · SHAP · Conformal Prediction · Training UI', code: 'EP-BL1' },
-    { path: '/nlp-disclosure-parser',   label: 'NLP Disclosure & Greenwashing',  badge: 'BERT · Greenwashing Detection · CSRD Extraction · Sentiment · Calibration',  code: 'EP-BL2' },
-    { path: '/predictive-analytics-hub', label: 'Predictive Analytics Hub',      badge: 'iTransformer · Model Registry · Anomaly Detection · Drift Monitor',          code: 'EP-BL3' },
-  ]},
-  { label: 'Asset Valuation & Real Estate', icon: '🏗️', color: '#92400e', items: [
-    { path: '/asset-valuation-engine',    label: 'Climate-Adjusted DCF Engine',   badge: 'DCF · Monte Carlo · Real Options · Black-Scholes · M&A Comps · Interactive', code: 'EP-BK1' },
-    { path: '/infrastructure-valuation',  label: 'Infrastructure Valuation',      badge: 'RAB Model · Greenfield DCF · PPP · Stranded Assets · ESG Greenium',          code: 'EP-BK2' },
-    { path: '/real-estate-valuation',     label: 'Real Estate Valuation & ESG',   badge: 'RICS Red Book · Climate Haircut · GRESB · EPC Premium · Physical Risk',       code: 'EP-BK3' },
-  ]},
-  { label: 'NGFS × IEA Climate Scenarios', icon: '🌡️', color: '#0f766e', items: [
-    { path: '/ngfs-iea-scenario',          label: 'NGFS × IEA Scenario Engine',     badge: 'NGFS Ph5 · IEA WEO 2024 · IPCC AR6 · 14 Scenarios · BMA Ensemble · Carbon Price', code: 'EP-BJ1' },
-    { path: '/climate-credit-integration', label: 'Climate-Credit Risk Integration', badge: '5 NGFS Scenarios · ECL Uplift · IFRS 9 Stage Migration · Hazard Matrix · 12 Module Links', code: 'EP-BJ2' },
-  ]},
-  { label: 'Credit & Platform Intelligence', icon: '📈', color: '#1b3a5c', items: [
-    { path: '/credit-risk-analytics', label: 'Credit Risk Analytics',        badge: '45 Obligors · PD/LGD/EAD/ECL · Migration Matrix · Basel IV RWA', code: 'EP-BI1' },
-    { path: '/platform-analytics',    label: 'Platform Analytics Dashboard', badge: 'DAU · API Perf · Module Adoption · System Health · 90d Trend',    code: 'EP-BI2' },
-  ]},
-  { label: 'Platform Operations', icon: '🗄️', color: '#1b3a5c', items: [
-    { path: '/db-migration-console',  label: 'DB Migration Console',        badge: 'Alembic · 87 Revisions · 060 Applied · 027 Pending · Runbook', code: 'EP-BH1' },
-    { path: '/multi-tenancy-audit',   label: 'Multi-Tenancy & Org Audit',   badge: '10 Orgs · org_id · RLS · RBAC 6 Roles · Isolation Gap Detect',  code: 'EP-BH2' },
-  ]},
-  { label: 'SBTi, Climate TRACE & Sanctions', icon: '🛡️', color: '#991b1b', items: [
-    { path: '/sbti-climate-trace',   label: 'SBTi Registry & Climate TRACE',    badge: '50 Companies · 12 CT Sectors · Pathways 2020–2050 · SDA', code: 'EP-BG1' },
-    { path: '/sanctions-watchlist',  label: 'Sanctions & Watchlist Intelligence', badge: 'OFAC SDN · UN · EU · UK · PEP 1.24M · 18 Portfolio Hits',  code: 'EP-BG2' },
-  ]},
-  { label: 'Data Hub & Ingesters', icon: '🔄', color: '#0891b2', items: [
-    { path: '/data-hub-ingester',   label: 'Data Hub Ingester Monitor',  badge: 'APScheduler · 15 Jobs · GLEIF · OWID · yfinance · BaseIngester', code: 'EP-BF1' },
-    { path: '/owid-evic-analytics', label: 'OWID CO₂ & EVIC Analytics',  badge: 'OWID 207C · EVIC 3.5K · WACI · PCAF · 1990–2023',              code: 'EP-BF2' },
-  ]},
-  { label: 'Dynamic Materiality Engine', icon: '⚙️', color: '#0f766e', items: [
-    { path: '/dme-financial-risk', label: 'DME Financial Risk',           badge: 'VaR · WACC · LCR · ECL · IFRS 9 · 40 Entities',     code: 'EP-BE1' },
-    { path: '/dme-pd-engine',      label: 'DME Probability of Default',   badge: '4-Branch PD · Merton DD · Sector Coefficients · 40E', code: 'EP-BE2' },
-    { path: '/dme-index',          label: 'DME Dynamic Materiality Index', badge: 'DMI=40%+40%+20% · Regime · EMA · Portfolio HHI',     code: 'EP-BE3' },
-  ]},
-  { label: 'Institutional Analytics & AI', icon: '🧠', color: '#7e22ce', items: [
-    { path: '/entity-360',           label: 'Entity 360° Intelligence',  badge: 'Cross-Module · ESG+Climate+Regulatory+Supply Chain · 20 Entities', code: 'EP-AY3' },
-    { path: '/risk-attribution',     label: 'Risk Attribution Engine',   badge: 'Barra · 6 Factors · Alpha',   code: 'EP-H1' },
-    { path: '/fixed-income-esg',     label: 'Fixed Income & Green Bonds', badge: 'ICMA GBP · Greenium · SLB',  code: 'EP-H2' },
-    { path: '/portfolio-optimizer',  label: 'Portfolio Optimizer',       badge: 'Markowitz · ESG Constraints',  code: 'EP-H3' },
-    { path: '/controversy-monitor',  label: 'Controversy Monitor',      badge: 'RepRisk · Severity 1-5',       code: 'EP-H4' },
-    { path: '/ai-sentiment',         label: 'AI Sentiment Intelligence', badge: 'NLP · E/S/G · 30-Day Feed',   code: 'EP-H5' },
-    { path: '/sentiment-pipeline',   label: 'Sentiment Pipeline Engine',  badge: '8-Step · 60 Signals · Credibility Tiers · EWMA · Alerts', code: 'EP-BD2' },
-    { path: '/regulatory-gap',       label: 'Regulatory Gap Analyzer',  badge: '8 Frameworks · 60+ Reqs',      code: 'EP-H6' },
-    { path: '/climate-physical-risk',  label: 'Physical Risk Engine',    badge: 'IPCC AR6 · 6 Hazards · SSP',  code: 'EP-H7' },
-    { path: '/climate-transition-risk',label: 'Transition Risk Engine',  badge: 'NGFS · 4 Channels · Carbon',  code: 'EP-H8' },
-  ]},
-  { label: 'Portfolio Intelligence Suite', icon: '📊', color: '#1e40af', items: [
-    { path: '/portfolio-suite',        label: 'Portfolio Suite Dashboard', badge: 'Hub · All KPIs · Links',     code: 'EP-G1' },
-    { path: '/scenario-stress-test',   label: 'Scenario Stress Tester',   badge: 'NGFS Phase 3 · 4 Scenarios', code: 'EP-G2' },
-    { path: '/carbon-budget',          label: 'Carbon Budget Tracker',    badge: 'SBTi 1.5°C · Glide Path',   code: 'EP-G3' },
-    { path: '/holdings-deep-dive',     label: 'Holdings Deep-Dive',       badge: 'PCAF AF · ESG Intel',        code: 'EP-G4' },
-    { path: '/benchmark-analytics',    label: 'Benchmark Analytics',      badge: 'MSCI ACWI · Active Share',   code: 'EP-G5' },
-    { path: '/advanced-report-studio', label: 'Advanced Report Studio',   badge: 'TCFD·SFDR·CSRD·PDF Export',  code: 'EP-G6' },
-  ]},
-  { label: 'Sprint F — Portfolio Intelligence', icon: '💼', color: '#0d9488', items: [
-    { path: '/portfolio-manager',   label: 'Portfolio Manager',       badge: 'PCAF v3.0 · WACI · Temp', code: 'EP-F1' },
-    { path: '/esg-screener',        label: 'ESG Screening Engine',    badge: 'UNGP · ILO · OECD MNE',  code: 'EP-F2' },
-    { path: '/stewardship-tracker', label: 'Stewardship Tracker',     badge: 'PRI · UK SC 2020',        code: 'EP-F3' },
-    { path: '/client-report',       label: 'Client Report Studio',    badge: 'TCFD · SFDR · UNPRI',     code: 'EP-F4' },
-    { path: '/regulatory-calendar', label: 'Regulatory Calendar',     badge: 'CSRD · ISSB · SEC · SEBI', code: 'EP-F5' },
-  ]},
-  { label: 'Sprint E — Global Market Intelligence', icon: '🌐', color: '#2563eb', items: [
-    { path: '/exchange-intelligence', label: 'Exchange Intelligence',    badge: '13 Exchanges · 500+ Co.', code: 'EP-E1' },
-    { path: '/sector-benchmarking',   label: 'Sector Benchmarking',     badge: 'Cross-Exchange · Paris', code: 'EP-E2' },
-  ]},
-  { label: 'India Regulatory Intelligence', icon: '🇮🇳', color: '#b45309', items: [
-    { path: '/rbi-climate-risk', label: 'RBI Climate Risk Directions 2025', badge: 'RBI · 20 Banks · CRAR · NGFS · BRSR Core · 8 Tabs', code: 'EP-IN1' },
-    { path: '/india-ccts', label: 'India CCTS Readiness', badge: 'CCTS · 740 Entities · 9 Sectors · PAT · CBAM Linkage · 8 Tabs', code: 'EP-IN2' },
-  ]},
-  { label: 'Sustainability Reporting Intelligence', icon: '📊', color: '#059669', items: [
-    { path: '/sustainability-report-builder', label: 'Sustainability Report Builder', badge: '30+ Types · 9 Sections · 5W Framework · 5 Stakeholder Packages', code: 'EP-SRI1' },
-    { path: '/esrs-datapoint-navigator', label: 'ESRS Datapoint Navigator', badge: '430+ Datapoints · 12 Standards · Crosswalk · Omnibus · Assurance', code: 'EP-SRI2' },
-    { path: '/sector-sustainability-benchmark', label: 'Sector Sustainability Benchmark', badge: '14 Sectors · 50+ Companies · Top-Quartile · 5 Regions', code: 'EP-SRI3' },
-    { path: '/report-quality-engine', label: 'Report Quality & Anti-Greenwashing', badge: '100+ QA Items · 7 Greenwashing Types · Enforcement Cases', code: 'EP-SRI4' },
-    { path: '/metrics-data-architecture', label: 'Metrics & Data Architecture', badge: '1000+ Metrics · 4-Level Hierarchy · Interoperability Matrix', code: 'EP-SRI5' },
-    { path: '/narrative-intelligence', label: 'Narrative Intelligence Studio', badge: "Hero's Journey · Tone Spectrum · Stakeholder Narratives", code: 'EP-SRI6' },
-  ]},
-  { label: 'Sprint D — Platform Intelligence', icon: '🚀', color: '#7c3aed', items: [
-    { path: '/company-profiles',      label: 'Company Master Reference', badge: 'BRSR P6 · 30+ Companies', code: 'REF-01' },
-    { path: '/stranded-assets',       label: 'Stranded Asset Analyzer', badge: 'IEA WEO · NZE/APS/STEPS', code: 'EP-D1' },
-    { path: '/ngfs-scenarios',        label: 'NGFS Scenario Browser',   badge: 'NGFS Phase 3 · 8 Scenarios', code: 'EP-D6' },
-    { path: '/portfolio-climate-var', label: 'Portfolio Climate VaR',   badge: 'Delta-Normal · 95% CI',    code: 'EP-D7' },
-    { path: '/pipeline-dashboard',    label: 'Pipeline Monitor',        badge: 'pipeline_run_log · P95',   code: 'EP-D4' },
-    { path: '/csrd-ixbrl',            label: 'CSRD / iXBRL Builder',   badge: 'EFRAG ESRS 2024 · 5 FW',   code: 'EP-D3' },
-  ]},
-];
-// Merge auto-discovered module manifests into the manual nav (additive, dedup by
-// path). Lets a refined module declare its nav entry in its own folder instead of
-// editing this array. Runs once at import.
-(() => {
-  const manualPaths = new Set(NAV_GROUPS.flatMap(g => g.items.map(i => i.path)));
-  for (const ag of AUTO_NAV) {
-    const newItems = ag.items.filter(i => !manualPaths.has(i.path));
-    if (!newItems.length) continue;
-    const existing = NAV_GROUPS.find(g => g.label === ag.label);
-    if (existing) existing.items.push(...newItems);
-    else NAV_GROUPS.push({ label: ag.label, icon: ag.icon, color: ag.color, items: newItems });
-  }
-})();
-const ALL_ITEMS = NAV_GROUPS.flatMap(g => g.items);
 
 /* ═══════════════════════════════════════════════════════════════════
    DASHBOARD
@@ -2601,6 +1533,8 @@ function HeaderBar({ sidebarOpen, setSidebarOpen }) {
           )}
         </div>
 
+        {/* Command Palette Trigger */}
+        <CommandPaletteTrigger />
         {/* Country Dataset Selector */}
         <CountryDatasetSelector />
         {/* Guided Mode Toggle */}
@@ -2695,7 +1629,7 @@ function AppContent() {
       <HeaderBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <DemoBanner />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        <Sidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
+        <SectorSidebar search={search} setSearch={setSearch} sidebarOpen={sidebarOpen} />
         <main key={location.pathname} className="a2-scroll a2-view" style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -2703,958 +1637,998 @@ function AppContent() {
             <Route path="/module-navigator" element={<ModuleNavigatorPage navGroups={NAV_GROUPS} />} />
             <Route path="/invite/:token" element={<InviteAcceptPage />} />
             <Route path="/access-expired" element={<AccessExpiredPage />} />
-            <Route path="/crypto-climate" element={<CryptoClimatePage />} />
-            <Route path="/ai-governance" element={<AIGovernancePage />} />
-            <Route path="/carbon-accounting-ai" element={<CarbonAccountingAIPage />} />
-            <Route path="/climate-insurance" element={<ClimateInsurancePage />} />
-            <Route path="/corporate-nature-strategy" element={<CorporateNatureStrategyPage />} />
-            <Route path="/green-securitisation" element={<GreenSecuritisationPage />} />
-            <Route path="/digital-product-passport" element={<DigitalProductPassportPage />} />
-            <Route path="/adaptation-finance" element={<AdaptationFinancePage />} />
-            <Route path="/internal-carbon-price" element={<InternalCarbonPricePage />} />
-            <Route path="/social-bond" element={<SocialBondPage />} />
-            <Route path="/climate-financial-statements" element={<ClimateFinancialStatementsPage />} />
-            <Route path="/em-climate-risk" element={<EMClimateRiskPage />} />
-            <Route path="/biodiversity-credits" element={<BiodiversityCreditsPage />} />
-            <Route path="/carbon-removal" element={<CarbonRemovalPage />} />
-            <Route path="/climate-litigation" element={<ClimateLitigationPage />} />
-            <Route path="/water-risk" element={<WaterRiskPage />} />
-            <Route path="/critical-minerals" element={<CriticalMineralsPage />} />
-            <Route path="/nbs-finance" element={<NbsFinancePage />} />
-            <Route path="/sfdr-art9" element={<SFDRArt9Page />} />
-            <Route path="/vcm-integrity" element={<VCMIntegrityPage />} />
-            <Route path="/social-taxonomy" element={<SocialTaxonomyPage />} />
-            <Route path="/green-hydrogen" element={<GreenHydrogenPage />} />
-            <Route path="/transition-finance" element={<TransitionFinancePage />} />
-            <Route path="/stress-test-orchestrator" element={<StressTestOrchestratorPage />} />
-            <Route path="/sscf" element={<SSCFPage />} />
-            <Route path="/double-materiality" element={<DoubleMaterialityPage />} />
-            <Route path="/temperature-alignment" element={<TemperatureAlignmentPage />} />
-            <Route path="/physical-risk-pricing" element={<PhysicalRiskPricingPage />} />
-            <Route path="/esg-data-quality" element={<ESGDataQualityPage />} />
-            <Route path="/climate-derivatives" element={<ClimateDerivativesPage />} />
-            <Route path="/sovereign-swf" element={<SovereignSWFPage />} />
-            <Route path="/regulatory-capital" element={<RegulatoryCapitalPage />} />
-            <Route path="/export-credit-esg" element={<ExportCreditESGPage />} />
-            <Route path="/esg-controversy" element={<ESGControversyPage />} />
-            <Route path="/crrem" element={<CRREMPage />} />
-            <Route path="/loss-damage" element={<LossDamagePage />} />
-            <Route path="/forced-labour" element={<ForcedLabourPage />} />
-            <Route path="/sll-slb-v2" element={<SLLSLBv2Page />} />
-            <Route path="/nature-capital-accounting" element={<NatureCapitalAccountingPage />} />
-            <Route path="/regulatory-horizon" element={<RegulatoryHorizonPage />} />
-            <Route path="/climate-tech" element={<ClimateTechPage />} />
-            <Route path="/comprehensive-reporting" element={<ComprehensiveReportingPage />} />
-            <Route path="/sentiment-analysis" element={<SentimentAnalysisPage />} />
-            <Route path="/pcaf-india-brsr" element={<PCafIndiaBrsrPage />} />
-            <Route path="/equator-principles" element={<EquatorPrinciplesPage />} />
-            <Route path="/esms" element={<EsmsPage />} />
-            <Route path="/issb-tcfd" element={<IssbTcfdPage />} />
-            <Route path="/eu-taxonomy" element={<EuTaxonomyPage />} />
+            <Route path="/crypto-climate" element={<ProtectedRoute path="/crypto-climate" element={<CryptoClimatePage />} />} />
+            <Route path="/ai-governance" element={<ProtectedRoute path="/ai-governance" element={<AIGovernancePage />} />} />
+            <Route path="/carbon-accounting-ai" element={<ProtectedRoute path="/carbon-accounting-ai" element={<CarbonAccountingAIPage />} />} />
+            <Route path="/climate-insurance" element={<ProtectedRoute path="/climate-insurance" element={<ClimateInsurancePage />} />} />
+            <Route path="/corporate-nature-strategy" element={<ProtectedRoute path="/corporate-nature-strategy" element={<CorporateNatureStrategyPage />} />} />
+            <Route path="/green-securitisation" element={<ProtectedRoute path="/green-securitisation" element={<GreenSecuritisationPage />} />} />
+            <Route path="/digital-product-passport" element={<ProtectedRoute path="/digital-product-passport" element={<DigitalProductPassportPage />} />} />
+            <Route path="/adaptation-finance" element={<ProtectedRoute path="/adaptation-finance" element={<AdaptationFinancePage />} />} />
+            <Route path="/internal-carbon-price" element={<ProtectedRoute path="/internal-carbon-price" element={<InternalCarbonPricePage />} />} />
+            <Route path="/social-bond" element={<ProtectedRoute path="/social-bond" element={<SocialBondPage />} />} />
+            <Route path="/climate-financial-statements" element={<ProtectedRoute path="/climate-financial-statements" element={<ClimateFinancialStatementsPage />} />} />
+            <Route path="/em-climate-risk" element={<ProtectedRoute path="/em-climate-risk" element={<EMClimateRiskPage />} />} />
+            <Route path="/biodiversity-credits" element={<ProtectedRoute path="/biodiversity-credits" element={<BiodiversityCreditsPage />} />} />
+            <Route path="/carbon-removal" element={<ProtectedRoute path="/carbon-removal" element={<CarbonRemovalPage />} />} />
+            <Route path="/climate-litigation" element={<ProtectedRoute path="/climate-litigation" element={<ClimateLitigationPage />} />} />
+            <Route path="/water-risk" element={<ProtectedRoute path="/water-risk" element={<WaterRiskPage />} />} />
+            <Route path="/critical-minerals" element={<ProtectedRoute path="/critical-minerals" element={<CriticalMineralsPage />} />} />
+            <Route path="/nbs-finance" element={<ProtectedRoute path="/nbs-finance" element={<NbsFinancePage />} />} />
+            <Route path="/sfdr-art9" element={<ProtectedRoute path="/sfdr-art9" element={<SFDRArt9Page />} />} />
+            <Route path="/vcm-integrity" element={<ProtectedRoute path="/vcm-integrity" element={<VCMIntegrityPage />} />} />
+            <Route path="/social-taxonomy" element={<ProtectedRoute path="/social-taxonomy" element={<SocialTaxonomyPage />} />} />
+            <Route path="/green-hydrogen" element={<ProtectedRoute path="/green-hydrogen" element={<GreenHydrogenPage />} />} />
+            <Route path="/transition-finance" element={<ProtectedRoute path="/transition-finance" element={<TransitionFinancePage />} />} />
+            <Route path="/stress-test-orchestrator" element={<ProtectedRoute path="/stress-test-orchestrator" element={<StressTestOrchestratorPage />} />} />
+            <Route path="/sscf" element={<ProtectedRoute path="/sscf" element={<SSCFPage />} />} />
+            <Route path="/double-materiality" element={<ProtectedRoute path="/double-materiality" element={<DoubleMaterialityPage />} />} />
+            <Route path="/temperature-alignment" element={<ProtectedRoute path="/temperature-alignment" element={<TemperatureAlignmentPage />} />} />
+            <Route path="/physical-risk-pricing" element={<ProtectedRoute path="/physical-risk-pricing" element={<PhysicalRiskPricingPage />} />} />
+            <Route path="/esg-data-quality" element={<ProtectedRoute path="/esg-data-quality" element={<ESGDataQualityPage />} />} />
+            <Route path="/climate-derivatives" element={<ProtectedRoute path="/climate-derivatives" element={<ClimateDerivativesPage />} />} />
+            <Route path="/sovereign-swf" element={<ProtectedRoute path="/sovereign-swf" element={<SovereignSWFPage />} />} />
+            <Route path="/regulatory-capital" element={<ProtectedRoute path="/regulatory-capital" element={<RegulatoryCapitalPage />} />} />
+            <Route path="/export-credit-esg" element={<ProtectedRoute path="/export-credit-esg" element={<ExportCreditESGPage />} />} />
+            <Route path="/esg-controversy" element={<ProtectedRoute path="/esg-controversy" element={<ESGControversyPage />} />} />
+            <Route path="/crrem" element={<ProtectedRoute path="/crrem" element={<CRREMPage />} />} />
+            <Route path="/loss-damage" element={<ProtectedRoute path="/loss-damage" element={<LossDamagePage />} />} />
+            <Route path="/forced-labour" element={<ProtectedRoute path="/forced-labour" element={<ForcedLabourPage />} />} />
+            <Route path="/sll-slb-v2" element={<ProtectedRoute path="/sll-slb-v2" element={<SLLSLBv2Page />} />} />
+            <Route path="/nature-capital-accounting" element={<ProtectedRoute path="/nature-capital-accounting" element={<NatureCapitalAccountingPage />} />} />
+            <Route path="/regulatory-horizon" element={<ProtectedRoute path="/regulatory-horizon" element={<RegulatoryHorizonPage />} />} />
+            <Route path="/climate-tech" element={<ProtectedRoute path="/climate-tech" element={<ClimateTechPage />} />} />
+            <Route path="/comprehensive-reporting" element={<ProtectedRoute path="/comprehensive-reporting" element={<ComprehensiveReportingPage />} />} />
+            <Route path="/sentiment-analysis" element={<ProtectedRoute path="/sentiment-analysis" element={<SentimentAnalysisPage />} />} />
+            <Route path="/pcaf-india-brsr" element={<ProtectedRoute path="/pcaf-india-brsr" element={<PCafIndiaBrsrPage />} />} />
+            <Route path="/equator-principles" element={<ProtectedRoute path="/equator-principles" element={<EquatorPrinciplesPage />} />} />
+            <Route path="/esms" element={<ProtectedRoute path="/esms" element={<EsmsPage />} />} />
+            <Route path="/issb-tcfd" element={<ProtectedRoute path="/issb-tcfd" element={<IssbTcfdPage />} />} />
+            <Route path="/eu-taxonomy" element={<ProtectedRoute path="/eu-taxonomy" element={<EuTaxonomyPage />} />} />
             {/* Sprint E — Global Market Intelligence */}
-            <Route path="/exchange-intelligence"  element={<ExchangeIntelligencePage />} />
-            <Route path="/sector-benchmarking"    element={<SectorBenchmarkingPage />} />
+            <Route path="/exchange-intelligence"  element={<ProtectedRoute path="/exchange-intelligence" element={<ExchangeIntelligencePage />} />} />
+            <Route path="/sector-benchmarking"    element={<ProtectedRoute path="/sector-benchmarking" element={<SectorBenchmarkingPage />} />} />
             {/* Sprint F — Portfolio Intelligence & Client Services */}
-            <Route path="/portfolio-manager"      element={<PortfolioManagerPage />} />
-            <Route path="/esg-screener"           element={<EsgScreenerPage />} />
-            <Route path="/stewardship-tracker"    element={<StewardshipTrackerPage />} />
-            <Route path="/client-report"          element={<ClientReportPage />} />
-            <Route path="/regulatory-calendar"    element={<RegulatoryCalendarPage />} />
+            <Route path="/portfolio-manager"      element={<ProtectedRoute path="/portfolio-manager" element={<PortfolioManagerPage />} />} />
+            <Route path="/esg-screener"           element={<ProtectedRoute path="/esg-screener" element={<EsgScreenerPage />} />} />
+            <Route path="/stewardship-tracker"    element={<ProtectedRoute path="/stewardship-tracker" element={<StewardshipTrackerPage />} />} />
+            <Route path="/client-report"          element={<ProtectedRoute path="/client-report" element={<ClientReportPage />} />} />
+            <Route path="/regulatory-calendar"    element={<ProtectedRoute path="/regulatory-calendar" element={<RegulatoryCalendarPage />} />} />
             {/* Sprint G — Portfolio Intelligence Advanced Suite */}
-            <Route path="/portfolio-suite"        element={<PortfolioSuitePage />} />
-            <Route path="/scenario-stress-test"   element={<ScenarioStressTestPage />} />
-            <Route path="/carbon-budget"          element={<CarbonBudgetPage />} />
-            <Route path="/holdings-deep-dive"     element={<HoldingsDeepDivePage />} />
-            <Route path="/benchmark-analytics"    element={<BenchmarkAnalyticsPage />} />
-            <Route path="/advanced-report-studio" element={<AdvancedReportStudioPage />} />
+            <Route path="/portfolio-suite"        element={<ProtectedRoute path="/portfolio-suite" element={<PortfolioSuitePage />} />} />
+            <Route path="/scenario-stress-test"   element={<ProtectedRoute path="/scenario-stress-test" element={<ScenarioStressTestPage />} />} />
+            <Route path="/carbon-budget"          element={<ProtectedRoute path="/carbon-budget" element={<CarbonBudgetPage />} />} />
+            <Route path="/holdings-deep-dive"     element={<ProtectedRoute path="/holdings-deep-dive" element={<HoldingsDeepDivePage />} />} />
+            <Route path="/benchmark-analytics"    element={<ProtectedRoute path="/benchmark-analytics" element={<BenchmarkAnalyticsPage />} />} />
+            <Route path="/advanced-report-studio" element={<ProtectedRoute path="/advanced-report-studio" element={<AdvancedReportStudioPage />} />} />
             {/* Sprint H — Institutional Analytics & AI Intelligence */}
-            <Route path="/risk-attribution"     element={<RiskAttributionPage />} />
-            <Route path="/fixed-income-esg"     element={<FixedIncomeEsgPage />} />
-            <Route path="/portfolio-optimizer"   element={<PortfolioOptimizerPage />} />
-            <Route path="/controversy-monitor"   element={<ControversyMonitorPage />} />
-            <Route path="/ai-sentiment"          element={<AiSentimentPage />} />
-            <Route path="/regulatory-gap"        element={<RegulatoryGapPage />} />
-            <Route path="/climate-physical-risk"  element={<ClimatePhysicalRiskPage />} />
-            <Route path="/climate-transition-risk" element={<ClimateTransitionRiskPage />} />
+            <Route path="/risk-attribution"     element={<ProtectedRoute path="/risk-attribution" element={<RiskAttributionPage />} />} />
+            <Route path="/fixed-income-esg"     element={<ProtectedRoute path="/fixed-income-esg" element={<FixedIncomeEsgPage />} />} />
+            <Route path="/portfolio-optimizer"   element={<ProtectedRoute path="/portfolio-optimizer" element={<PortfolioOptimizerPage />} />} />
+            <Route path="/controversy-monitor"   element={<ProtectedRoute path="/controversy-monitor" element={<ControversyMonitorPage />} />} />
+            <Route path="/ai-sentiment"          element={<ProtectedRoute path="/ai-sentiment" element={<AiSentimentPage />} />} />
+            <Route path="/regulatory-gap"        element={<ProtectedRoute path="/regulatory-gap" element={<RegulatoryGapPage />} />} />
+            <Route path="/climate-physical-risk"  element={<ProtectedRoute path="/climate-physical-risk" element={<ClimatePhysicalRiskPage />} />} />
+            <Route path="/climate-transition-risk" element={<ProtectedRoute path="/climate-transition-risk" element={<ClimateTransitionRiskPage />} />} />
             {/* Sprint I — Real Estate & Infrastructure ESG */}
-            <Route path="/green-building-cert"    element={<GreenBuildingCertPage />} />
-            <Route path="/property-physical-risk" element={<PropertyPhysicalRiskPage />} />
-            <Route path="/gresb-scoring"          element={<GRESBScoringPage />} />
-            <Route path="/infra-esg-dd"           element={<InfraESGDueDiligencePage />} />
-            <Route path="/re-portfolio-dashboard" element={<REPortfolioDashboardPage />} />
+            <Route path="/green-building-cert"    element={<ProtectedRoute path="/green-building-cert" element={<GreenBuildingCertPage />} />} />
+            <Route path="/property-physical-risk" element={<ProtectedRoute path="/property-physical-risk" element={<PropertyPhysicalRiskPage />} />} />
+            <Route path="/gresb-scoring"          element={<ProtectedRoute path="/gresb-scoring" element={<GRESBScoringPage />} />} />
+            <Route path="/infra-esg-dd"           element={<ProtectedRoute path="/infra-esg-dd" element={<InfraESGDueDiligencePage />} />} />
+            <Route path="/re-portfolio-dashboard" element={<ProtectedRoute path="/re-portfolio-dashboard" element={<REPortfolioDashboardPage />} />} />
             {/* Sprint J — Advanced Quantitative Analytics */}
-            <Route path="/monte-carlo-var"           element={<MonteCarloVarPage />} />
-            <Route path="/esg-backtesting"           element={<EsgBacktestingPage />} />
-            <Route path="/implied-temp-regression"   element={<ImpliedTempRegressionPage />} />
-            <Route path="/copula-tail-risk"          element={<CopulaTailRiskPage />} />
-            <Route path="/stochastic-scenarios"      element={<StochasticScenariosPage />} />
-            <Route path="/quant-dashboard"           element={<QuantDashboardPage />} />
+            <Route path="/monte-carlo-var"           element={<ProtectedRoute path="/monte-carlo-var" element={<MonteCarloVarPage />} />} />
+            <Route path="/esg-backtesting"           element={<ProtectedRoute path="/esg-backtesting" element={<EsgBacktestingPage />} />} />
+            <Route path="/implied-temp-regression"   element={<ProtectedRoute path="/implied-temp-regression" element={<ImpliedTempRegressionPage />} />} />
+            <Route path="/copula-tail-risk"          element={<ProtectedRoute path="/copula-tail-risk" element={<CopulaTailRiskPage />} />} />
+            <Route path="/stochastic-scenarios"      element={<ProtectedRoute path="/stochastic-scenarios" element={<StochasticScenariosPage />} />} />
+            <Route path="/quant-dashboard"           element={<ProtectedRoute path="/quant-dashboard" element={<QuantDashboardPage />} />} />
             {/* Sprint K — Supply Chain & Scope 3 */}
-            <Route path="/scope3-engine"             element={<Scope3EnginePage />} />
-            <Route path="/supply-chain-map"          element={<SupplyChainMapPage />} />
-            <Route path="/csddd-compliance"          element={<CSDDDCompliancePage />} />
-            <Route path="/deforestation-risk"        element={<DeforestationRiskPage />} />
-            <Route path="/supply-chain-carbon"       element={<SupplyChainCarbonPage />} />
-            <Route path="/value-chain-dashboard"     element={<ValueChainDashboardPage />} />
+            <Route path="/scope3-engine"             element={<ProtectedRoute path="/scope3-engine" element={<Scope3EnginePage />} />} />
+            <Route path="/supply-chain-map"          element={<ProtectedRoute path="/supply-chain-map" element={<SupplyChainMapPage />} />} />
+            <Route path="/csddd-compliance"          element={<ProtectedRoute path="/csddd-compliance" element={<CSDDDCompliancePage />} />} />
+            <Route path="/deforestation-risk"        element={<ProtectedRoute path="/deforestation-risk" element={<DeforestationRiskPage />} />} />
+            <Route path="/supply-chain-carbon"       element={<ProtectedRoute path="/supply-chain-carbon" element={<SupplyChainCarbonPage />} />} />
+            <Route path="/value-chain-dashboard"     element={<ProtectedRoute path="/value-chain-dashboard" element={<ValueChainDashboardPage />} />} />
             {/* Sprint L — Private Markets */}
-            <Route path="/pe-vc-esg"                 element={<PeVcEsgPage />} />
-            <Route path="/private-credit"            element={<PrivateCreditPage />} />
-            <Route path="/fund-of-funds"             element={<FundOfFundsPage />} />
-            <Route path="/lp-reporting"              element={<LpReportingPage />} />
-            <Route path="/co-investment"             element={<CoInvestmentPage />} />
-            <Route path="/private-markets-hub"       element={<PrivateMarketsHubPage />} />
+            <Route path="/pe-vc-esg"                 element={<ProtectedRoute path="/pe-vc-esg" element={<PeVcEsgPage />} />} />
+            <Route path="/private-credit"            element={<ProtectedRoute path="/private-credit" element={<PrivateCreditPage />} />} />
+            <Route path="/fund-of-funds"             element={<ProtectedRoute path="/fund-of-funds" element={<FundOfFundsPage />} />} />
+            <Route path="/lp-reporting"              element={<ProtectedRoute path="/lp-reporting" element={<LpReportingPage />} />} />
+            <Route path="/co-investment"             element={<ProtectedRoute path="/co-investment" element={<CoInvestmentPage />} />} />
+            <Route path="/private-markets-hub"       element={<ProtectedRoute path="/private-markets-hub" element={<PrivateMarketsHubPage />} />} />
             {/* Sprint M — Nature & Biodiversity */}
-            <Route path="/tnfd-leap"                 element={<TnfdLeapPage />} />
-            <Route path="/biodiversity-footprint"    element={<BiodiversityFootprintPage />} />
-            <Route path="/ecosystem-services"        element={<EcosystemServicesPage />} />
-            <Route path="/water-stress"              element={<WaterStressPage />} />
-            <Route path="/nature-scenarios"          element={<NatureScenariosPage />} />
-            <Route path="/nature-hub"                element={<NatureHubPage />} />
+            <Route path="/tnfd-leap"                 element={<ProtectedRoute path="/tnfd-leap" element={<TnfdLeapPage />} />} />
+            <Route path="/biodiversity-footprint"    element={<ProtectedRoute path="/biodiversity-footprint" element={<BiodiversityFootprintPage />} />} />
+            <Route path="/ecosystem-services"        element={<ProtectedRoute path="/ecosystem-services" element={<EcosystemServicesPage />} />} />
+            <Route path="/water-stress"              element={<ProtectedRoute path="/water-stress" element={<WaterStressPage />} />} />
+            <Route path="/nature-scenarios"          element={<ProtectedRoute path="/nature-scenarios" element={<NatureScenariosPage />} />} />
+            <Route path="/nature-hub"                element={<ProtectedRoute path="/nature-hub" element={<NatureHubPage />} />} />
             {/* Sprint N — Social & Human Capital */}
-            <Route path="/board-diversity"           element={<BoardDiversityPage />} />
-            <Route path="/living-wage"               element={<LivingWagePage />} />
-            <Route path="/human-rights-dd"           element={<HumanRightsDDPage />} />
-            <Route path="/employee-wellbeing"        element={<EmployeeWellbeingPage />} />
-            <Route path="/social-impact"             element={<SocialImpactPage />} />
-            <Route path="/social-hub"                element={<SocialHubPage />} />
+            <Route path="/board-diversity"           element={<ProtectedRoute path="/board-diversity" element={<BoardDiversityPage />} />} />
+            <Route path="/living-wage"               element={<ProtectedRoute path="/living-wage" element={<LivingWagePage />} />} />
+            <Route path="/human-rights-dd"           element={<ProtectedRoute path="/human-rights-dd" element={<HumanRightsDDPage />} />} />
+            <Route path="/employee-wellbeing"        element={<ProtectedRoute path="/employee-wellbeing" element={<EmployeeWellbeingPage />} />} />
+            <Route path="/social-impact"             element={<ProtectedRoute path="/social-impact" element={<SocialImpactPage />} />} />
+            <Route path="/social-hub"                element={<ProtectedRoute path="/social-hub" element={<SocialHubPage />} />} />
             {/* Sprint O — Sovereign & Macro ESG */}
-            <Route path="/sovereign-esg"             element={<SovereignEsgPage />} />
-            <Route path="/climate-policy"            element={<ClimatePolicyPage />} />
-            <Route path="/macro-transition"          element={<MacroTransitionPage />} />
-            <Route path="/just-transition"           element={<JustTransitionPage />} />
-            <Route path="/paris-alignment"           element={<ParisAlignmentPage />} />
-            <Route path="/sovereign-hub"             element={<SovereignHubPage />} />
+            <Route path="/sovereign-esg"             element={<ProtectedRoute path="/sovereign-esg" element={<SovereignEsgPage />} />} />
+            <Route path="/climate-policy"            element={<ProtectedRoute path="/climate-policy" element={<ClimatePolicyPage />} />} />
+            <Route path="/macro-transition"          element={<ProtectedRoute path="/macro-transition" element={<MacroTransitionPage />} />} />
+            <Route path="/just-transition"           element={<ProtectedRoute path="/just-transition" element={<JustTransitionPage />} />} />
+            <Route path="/paris-alignment"           element={<ProtectedRoute path="/paris-alignment" element={<ParisAlignmentPage />} />} />
+            <Route path="/sovereign-hub"             element={<ProtectedRoute path="/sovereign-hub" element={<SovereignHubPage />} />} />
             {/* Sprint P — Data Infrastructure */}
-            <Route path="/api-orchestration"         element={<ApiOrchestrationPage />} />
-            <Route path="/data-quality-monitor"      element={<DataQualityMonitorPage />} />
-            <Route path="/live-feed-manager"         element={<LiveFeedManagerPage />} />
-            <Route path="/data-lineage"              element={<DataLineagePage />} />
-            <Route path="/brsr-bridge"               element={<BrsrBridgePage />} />
-            <Route path="/data-infra-hub"            element={<DataInfraHubPage />} />
+            <Route path="/api-orchestration"         element={<ProtectedRoute path="/api-orchestration" element={<ApiOrchestrationPage />} />} />
+            <Route path="/data-quality-monitor"      element={<ProtectedRoute path="/data-quality-monitor" element={<DataQualityMonitorPage />} />} />
+            <Route path="/live-feed-manager"         element={<ProtectedRoute path="/live-feed-manager" element={<LiveFeedManagerPage />} />} />
+            <Route path="/data-lineage"              element={<ProtectedRoute path="/data-lineage" element={<DataLineagePage />} />} />
+            <Route path="/brsr-bridge"               element={<ProtectedRoute path="/brsr-bridge" element={<BrsrBridgePage />} />} />
+            <Route path="/data-infra-hub"            element={<ProtectedRoute path="/data-infra-hub" element={<DataInfraHubPage />} />} />
             {/* Sprint Q — Taxonomy & Classification */}
-            <Route path="/eu-taxonomy-engine"        element={<EuTaxonomyEnginePage />} />
-            <Route path="/sfdr-classification"       element={<SfdrClassificationPage />} />
-            <Route path="/issb-materiality"          element={<IssbMaterialityPage />} />
-            <Route path="/gri-alignment"             element={<GriAlignmentPage />} />
-            <Route path="/framework-interop"         element={<FrameworkInteropPage />} />
-            <Route path="/taxonomy-hub"              element={<TaxonomyHubPage />} />
+            <Route path="/eu-taxonomy-engine"        element={<ProtectedRoute path="/eu-taxonomy-engine" element={<EuTaxonomyEnginePage />} />} />
+            <Route path="/sfdr-classification"       element={<ProtectedRoute path="/sfdr-classification" element={<SfdrClassificationPage />} />} />
+            <Route path="/issb-materiality"          element={<ProtectedRoute path="/issb-materiality" element={<IssbMaterialityPage />} />} />
+            <Route path="/gri-alignment"             element={<ProtectedRoute path="/gri-alignment" element={<GriAlignmentPage />} />} />
+            <Route path="/framework-interop"         element={<ProtectedRoute path="/framework-interop" element={<FrameworkInteropPage />} />} />
+            <Route path="/taxonomy-hub"              element={<ProtectedRoute path="/taxonomy-hub" element={<TaxonomyHubPage />} />} />
             {/* Sprint Q-Extended — ML Taxonomy · Capital Markets · FI · Carbon · Energy · Global v2 */}
-            <Route path="/taxonomy-ml-classifier"    element={<TaxonomyMlClassifierPage />} />
-            <Route path="/capital-markets-taxonomy"  element={<CapitalMarketsTaxonomyPage />} />
-            <Route path="/fi-taxonomy-pcaf-bridge"   element={<FiTaxonomyPcafBridgePage />} />
-            <Route path="/carbon-institutions-taxonomy" element={<CarbonInstitutionsTaxonomyPage />} />
-            <Route path="/energy-sector-taxonomy"    element={<EnergySectorTaxonomyPage />} />
-            <Route path="/global-taxonomy-interop-v2" element={<GlobalTaxonomyInteropV2Page />} />
+            <Route path="/taxonomy-ml-classifier"    element={<ProtectedRoute path="/taxonomy-ml-classifier" element={<TaxonomyMlClassifierPage />} />} />
+            <Route path="/capital-markets-taxonomy"  element={<ProtectedRoute path="/capital-markets-taxonomy" element={<CapitalMarketsTaxonomyPage />} />} />
+            <Route path="/fi-taxonomy-pcaf-bridge"   element={<ProtectedRoute path="/fi-taxonomy-pcaf-bridge" element={<FiTaxonomyPcafBridgePage />} />} />
+            <Route path="/carbon-institutions-taxonomy" element={<ProtectedRoute path="/carbon-institutions-taxonomy" element={<CarbonInstitutionsTaxonomyPage />} />} />
+            <Route path="/energy-sector-taxonomy"    element={<ProtectedRoute path="/energy-sector-taxonomy" element={<EnergySectorTaxonomyPage />} />} />
+            <Route path="/global-taxonomy-interop-v2" element={<ProtectedRoute path="/global-taxonomy-interop-v2" element={<GlobalTaxonomyInteropV2Page />} />} />
             {/* Sprint R — Client & Reporting Automation */}
-            <Route path="/report-generator"          element={<ReportGeneratorPage />} />
-            <Route path="/template-manager"          element={<TemplateManagerPage />} />
-            <Route path="/client-portal"             element={<ClientPortalPage />} />
-            <Route path="/scheduled-reports"         element={<ScheduledReportsPage />} />
-            <Route path="/regulatory-submission"     element={<RegulatorySubmissionPage />} />
-            <Route path="/reporting-hub"             element={<ReportingHubPage />} />
+            <Route path="/report-generator"          element={<ProtectedRoute path="/report-generator" element={<ReportGeneratorPage />} />} />
+            <Route path="/template-manager"          element={<ProtectedRoute path="/template-manager" element={<TemplateManagerPage />} />} />
+            <Route path="/client-portal"             element={<ProtectedRoute path="/client-portal" element={<ClientPortalPage />} />} />
+            <Route path="/scheduled-reports"         element={<ProtectedRoute path="/scheduled-reports" element={<ScheduledReportsPage />} />} />
+            <Route path="/regulatory-submission"     element={<ProtectedRoute path="/regulatory-submission" element={<RegulatorySubmissionPage />} />} />
+            <Route path="/reporting-hub"             element={<ProtectedRoute path="/reporting-hub" element={<ReportingHubPage />} />} />
             {/* Sprint S — Data Management Engine */}
-            <Route path="/data-validation"           element={<DataValidationPage />} />
-            <Route path="/data-reconciliation"       element={<DataReconciliationPage />} />
-            <Route path="/data-versioning"           element={<DataVersioningPage />} />
-            <Route path="/etl-pipeline"              element={<EtlPipelinePage />} />
-            <Route path="/data-governance"           element={<DataGovernancePage />} />
-            <Route path="/dme-hub"                   element={<DmeHubPage />} />
+            <Route path="/data-validation"           element={<ProtectedRoute path="/data-validation" element={<DataValidationPage />} />} />
+            <Route path="/data-reconciliation"       element={<ProtectedRoute path="/data-reconciliation" element={<DataReconciliationPage />} />} />
+            <Route path="/data-versioning"           element={<ProtectedRoute path="/data-versioning" element={<DataVersioningPage />} />} />
+            <Route path="/etl-pipeline"              element={<ProtectedRoute path="/etl-pipeline" element={<EtlPipelinePage />} />} />
+            <Route path="/data-governance"           element={<ProtectedRoute path="/data-governance" element={<DataGovernancePage />} />} />
+            <Route path="/dme-hub"                   element={<ProtectedRoute path="/dme-hub" element={<DmeHubPage />} />} />
             {/* Sprint U — DME Platform Integration */}
-            <Route path="/dme-dashboard"     element={<DmeDashboardPage />} />
-            <Route path="/dme-risk-engine"   element={<DmeRiskEnginePage />} />
-            <Route path="/dme-entity"        element={<DmeEntityPage />} />
-            <Route path="/dme-scenarios"     element={<DmeScenariosPage />} />
-            <Route path="/dme-alerts"        element={<DmeAlertsPage />} />
-            <Route path="/dme-contagion"     element={<DmeContagionPage />} />
-            <Route path="/dme-portfolio"     element={<DmePortfolioPage />} />
-            <Route path="/dme-competitive"   element={<DmeCompetitivePage />} />
-            <Route path="/dme-nlp-engine"    element={<DmeNlpEnginePage />} />
-            <Route path="/dme-ml-materiality" element={<DmeMlMaterialityPage />} />
+            <Route path="/dme-dashboard"     element={<ProtectedRoute path="/dme-dashboard" element={<DmeDashboardPage />} />} />
+            <Route path="/dme-risk-engine"   element={<ProtectedRoute path="/dme-risk-engine" element={<DmeRiskEnginePage />} />} />
+            <Route path="/dme-entity"        element={<ProtectedRoute path="/dme-entity" element={<DmeEntityPage />} />} />
+            <Route path="/dme-scenarios"     element={<ProtectedRoute path="/dme-scenarios" element={<DmeScenariosPage />} />} />
+            <Route path="/dme-alerts"        element={<ProtectedRoute path="/dme-alerts" element={<DmeAlertsPage />} />} />
+            <Route path="/dme-contagion"     element={<ProtectedRoute path="/dme-contagion" element={<DmeContagionPage />} />} />
+            <Route path="/dme-portfolio"     element={<ProtectedRoute path="/dme-portfolio" element={<DmePortfolioPage />} />} />
+            <Route path="/dme-competitive"   element={<ProtectedRoute path="/dme-competitive" element={<DmeCompetitivePage />} />} />
+            <Route path="/dme-nlp-engine"    element={<ProtectedRoute path="/dme-nlp-engine" element={<DmeNlpEnginePage />} />} />
+            <Route path="/dme-ml-materiality" element={<ProtectedRoute path="/dme-ml-materiality" element={<DmeMlMaterialityPage />} />} />
             {/* Sprint T — Dynamic Materiality Engine */}
             {/* double-materiality route already exists from Sprint 35 (line 801) */}
-            <Route path="/stakeholder-impact"        element={<StakeholderImpactPage />} />
-            <Route path="/materiality-trends"        element={<MaterialityTrendsPage />} />
-            <Route path="/controversy-materiality"   element={<ControversyMaterialityPage />} />
-            <Route path="/materiality-scenarios"     element={<MaterialityScenariosPage />} />
-            <Route path="/materiality-hub"           element={<MaterialityHubPage />} />
+            <Route path="/stakeholder-impact"        element={<ProtectedRoute path="/stakeholder-impact" element={<StakeholderImpactPage />} />} />
+            <Route path="/materiality-trends"        element={<ProtectedRoute path="/materiality-trends" element={<MaterialityTrendsPage />} />} />
+            <Route path="/controversy-materiality"   element={<ProtectedRoute path="/controversy-materiality" element={<ControversyMaterialityPage />} />} />
+            <Route path="/materiality-scenarios"     element={<ProtectedRoute path="/materiality-scenarios" element={<MaterialityScenariosPage />} />} />
+            <Route path="/materiality-hub"           element={<ProtectedRoute path="/materiality-hub" element={<MaterialityHubPage />} />} />
             {/* Sprint X — Impact Measurement & SDG Finance */}
-            <Route path="/impact-weighted-accounts"  element={<ImpactWeightedAccountsPage />} />
-            <Route path="/iris-metrics"              element={<IrisMetricsPage />} />
-            <Route path="/sdg-bond-impact"           element={<SdgBondImpactPage />} />
-            <Route path="/blended-finance"           element={<BlendedFinancePage />} />
-            <Route path="/undp-blended-finance"     element={<UndpBlendedFinancePage />} />
-            <Route path="/impact-verification"       element={<ImpactVerificationPage />} />
-            <Route path="/impact-hub"                element={<ImpactHubPage />} />
+            <Route path="/impact-weighted-accounts"  element={<ProtectedRoute path="/impact-weighted-accounts" element={<ImpactWeightedAccountsPage />} />} />
+            <Route path="/iris-metrics"              element={<ProtectedRoute path="/iris-metrics" element={<IrisMetricsPage />} />} />
+            <Route path="/sdg-bond-impact"           element={<ProtectedRoute path="/sdg-bond-impact" element={<SdgBondImpactPage />} />} />
+            <Route path="/blended-finance"           element={<ProtectedRoute path="/blended-finance" element={<BlendedFinancePage />} />} />
+            <Route path="/undp-blended-finance"     element={<ProtectedRoute path="/undp-blended-finance" element={<UndpBlendedFinancePage />} />} />
+            <Route path="/impact-verification"       element={<ProtectedRoute path="/impact-verification" element={<ImpactVerificationPage />} />} />
+            <Route path="/impact-hub"                element={<ProtectedRoute path="/impact-hub" element={<ImpactHubPage />} />} />
             {/* Sprint Z — Consumer Carbon Intelligence */}
-            <Route path="/integrated-carbon-emissions" element={<IntegratedCarbonEmissionsPage />} />
-            <Route path="/carbon-calculator"          element={<CarbonCalculatorPage />} />
-            <Route path="/carbon-wallet"              element={<CarbonWalletPage />} />
-            <Route path="/invoice-parser"             element={<InvoiceParserPage />} />
-            <Route path="/spending-carbon"            element={<SpendingCarbonPage />} />
-            <Route path="/carbon-economy"             element={<CarbonEconomyPage />} />
-            <Route path="/consumer-carbon-hub"        element={<ConsumerCarbonHubPage />} />
+            <Route path="/integrated-carbon-emissions" element={<ProtectedRoute path="/integrated-carbon-emissions" element={<IntegratedCarbonEmissionsPage />} />} />
+            <Route path="/carbon-calculator"          element={<ProtectedRoute path="/carbon-calculator" element={<CarbonCalculatorPage />} />} />
+            <Route path="/carbon-wallet"              element={<ProtectedRoute path="/carbon-wallet" element={<CarbonWalletPage />} />} />
+            <Route path="/invoice-parser"             element={<ProtectedRoute path="/invoice-parser" element={<InvoiceParserPage />} />} />
+            <Route path="/spending-carbon"            element={<ProtectedRoute path="/spending-carbon" element={<SpendingCarbonPage />} />} />
+            <Route path="/carbon-economy"             element={<ProtectedRoute path="/carbon-economy" element={<CarbonEconomyPage />} />} />
+            <Route path="/consumer-carbon-hub"        element={<ProtectedRoute path="/consumer-carbon-hub" element={<ConsumerCarbonHubPage />} />} />
             {/* Sprint W — AI & NLP Analytics */}
-            <Route path="/quantitative-nlp-research" element={<QuantitativeNLPResearchPage />} />
-            <Route path="/macro-esg-intelligence" element={<MacroESGIntelligencePage />} />
-            <Route path="/climate-emissions-intelligence" element={<ClimateEmissionsIntelligencePage />} />
-            <Route path="/esg-report-parser"       element={<EsgReportParserPage />} />
-            <Route path="/predictive-esg"          element={<PredictiveEsgPage />} />
-            <Route path="/anomaly-detection"       element={<AnomalyDetectionPage />} />
-            <Route path="/ai-engagement"           element={<AiEngagementPage />} />
-            <Route path="/document-similarity"     element={<DocumentSimilarityPage />} />
-            <Route path="/ai-hub"                  element={<AiHubPage />} />
-            <Route path="/ai-data-live-platform"   element={<AIDataLivePlatformPage />} />
+            <Route path="/quantitative-nlp-research" element={<ProtectedRoute path="/quantitative-nlp-research" element={<QuantitativeNLPResearchPage />} />} />
+            <Route path="/macro-esg-intelligence" element={<ProtectedRoute path="/macro-esg-intelligence" element={<MacroESGIntelligencePage />} />} />
+            <Route path="/climate-emissions-intelligence" element={<ProtectedRoute path="/climate-emissions-intelligence" element={<ClimateEmissionsIntelligencePage />} />} />
+            <Route path="/esg-report-parser"       element={<ProtectedRoute path="/esg-report-parser" element={<EsgReportParserPage />} />} />
+            <Route path="/predictive-esg"          element={<ProtectedRoute path="/predictive-esg" element={<PredictiveEsgPage />} />} />
+            <Route path="/anomaly-detection"       element={<ProtectedRoute path="/anomaly-detection" element={<AnomalyDetectionPage />} />} />
+            <Route path="/ai-engagement"           element={<ProtectedRoute path="/ai-engagement" element={<AiEngagementPage />} />} />
+            <Route path="/document-similarity"     element={<ProtectedRoute path="/document-similarity" element={<DocumentSimilarityPage />} />} />
+            <Route path="/ai-hub"                  element={<ProtectedRoute path="/ai-hub" element={<AiHubPage />} />} />
+            <Route path="/ai-data-live-platform"   element={<ProtectedRoute path="/ai-data-live-platform" element={<AIDataLivePlatformPage />} />} />
             {/* Sprint Y — Commodity Lifecycle Intelligence */}
-            <Route path="/commodity-intelligence"     element={<CommodityIntelligencePage />} />
-            <Route path="/commodity-inventory"        element={<CommodityInventoryPage />} />
-            <Route path="/lifecycle-assessment"       element={<LifecycleAssessmentPage />} />
-            <Route path="/financial-flow"             element={<FinancialFlowPage />} />
-            <Route path="/esg-value-chain"            element={<EsgValueChainPage />} />
-            <Route path="/climate-nature-repo"        element={<ClimateNatureRepoPage />} />
-            <Route path="/multi-factor-integration"   element={<MultiFactorIntegrationPage />} />
-            <Route path="/commodity-hub"              element={<CommodityHubPage />} />
-            <Route path="/product-anatomy"            element={<ProductAnatomyPage />} />
-            <Route path="/epd-lca-database"           element={<EpdLcaDatabasePage />} />
-            <Route path="/ceda-emission-factors"      element={<CedaEmissionFactorsPage />} />
-            <Route path="/big-climate-database"       element={<BigClimateDatabasePage />} />
-            <Route path="/data-capture-hub"           element={<DataCaptureHubPage />} />
-            <Route path="/reference-data-explorer"  element={<ReferenceDataExplorerPage />} />
+            <Route path="/commodity-intelligence"     element={<ProtectedRoute path="/commodity-intelligence" element={<CommodityIntelligencePage />} />} />
+            <Route path="/commodity-inventory"        element={<ProtectedRoute path="/commodity-inventory" element={<CommodityInventoryPage />} />} />
+            <Route path="/lifecycle-assessment"       element={<ProtectedRoute path="/lifecycle-assessment" element={<LifecycleAssessmentPage />} />} />
+            <Route path="/financial-flow"             element={<ProtectedRoute path="/financial-flow" element={<FinancialFlowPage />} />} />
+            <Route path="/esg-value-chain"            element={<ProtectedRoute path="/esg-value-chain" element={<EsgValueChainPage />} />} />
+            <Route path="/climate-nature-repo"        element={<ProtectedRoute path="/climate-nature-repo" element={<ClimateNatureRepoPage />} />} />
+            <Route path="/multi-factor-integration"   element={<ProtectedRoute path="/multi-factor-integration" element={<MultiFactorIntegrationPage />} />} />
+            <Route path="/commodity-hub"              element={<ProtectedRoute path="/commodity-hub" element={<CommodityHubPage />} />} />
+            <Route path="/product-anatomy"            element={<ProtectedRoute path="/product-anatomy" element={<ProductAnatomyPage />} />} />
+            <Route path="/epd-lca-database"           element={<ProtectedRoute path="/epd-lca-database" element={<EpdLcaDatabasePage />} />} />
+            <Route path="/ceda-emission-factors"      element={<ProtectedRoute path="/ceda-emission-factors" element={<CedaEmissionFactorsPage />} />} />
+            <Route path="/big-climate-database"       element={<ProtectedRoute path="/big-climate-database" element={<BigClimateDatabasePage />} />} />
+            <Route path="/data-capture-hub"           element={<ProtectedRoute path="/data-capture-hub" element={<DataCaptureHubPage />} />} />
+            <Route path="/reference-data-explorer"  element={<ProtectedRoute path="/reference-data-explorer" element={<ReferenceDataExplorerPage />} />} />
             {/* Sprint AI — Corporate Decarbonisation & SBTi Intelligence */}
-            <Route path="/decarbonisation-hub"         element={<DecarbonisationHubPage />} />
-            <Route path="/sbti-target-setter"          element={<SbtiTargetSetterPage />} />
-            <Route path="/decarbonisation-roadmap"     element={<DecarbonisationRoadmapPage />} />
-            <Route path="/abatement-cost-curve"        element={<AbatementCostCurvePage />} />
-            <Route path="/energy-transition-analytics" element={<EnergyTransitionAnalyticsPage />} />
-            <Route path="/carbon-reduction-projects"   element={<CarbonReductionProjectsPage />} />
+            <Route path="/decarbonisation-hub"         element={<ProtectedRoute path="/decarbonisation-hub" element={<DecarbonisationHubPage />} />} />
+            <Route path="/sbti-target-setter"          element={<ProtectedRoute path="/sbti-target-setter" element={<SbtiTargetSetterPage />} />} />
+            <Route path="/decarbonisation-roadmap"     element={<ProtectedRoute path="/decarbonisation-roadmap" element={<DecarbonisationRoadmapPage />} />} />
+            <Route path="/abatement-cost-curve"        element={<ProtectedRoute path="/abatement-cost-curve" element={<AbatementCostCurvePage />} />} />
+            <Route path="/energy-transition-analytics" element={<ProtectedRoute path="/energy-transition-analytics" element={<EnergyTransitionAnalyticsPage />} />} />
+            <Route path="/carbon-reduction-projects"   element={<ProtectedRoute path="/carbon-reduction-projects" element={<CarbonReductionProjectsPage />} />} />
             {/* Sprint AJ — Financed Emissions & Climate Banking Analytics */}
-            <Route path="/climate-banking-hub"           element={<ClimateBankingHubPage />} />
-            <Route path="/pcaf-financed-emissions"       element={<PcafFinancedEmissionsPage />} />
-            <Route path="/climate-stress-test"           element={<ClimateStressTestPage />} />
-            <Route path="/green-asset-ratio"             element={<GreenAssetRatioPage />} />
-            <Route path="/portfolio-temperature-score"   element={<PortfolioTemperatureScorePage />} />
-            <Route path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />
+            <Route path="/climate-banking-hub"           element={<ProtectedRoute path="/climate-banking-hub" element={<ClimateBankingHubPage />} />} />
+            <Route path="/pcaf-financed-emissions"       element={<ProtectedRoute path="/pcaf-financed-emissions" element={<PcafFinancedEmissionsPage />} />} />
+            <Route path="/climate-stress-test"           element={<ProtectedRoute path="/climate-stress-test" element={<ClimateStressTestPage />} />} />
+            <Route path="/green-asset-ratio"             element={<ProtectedRoute path="/green-asset-ratio" element={<GreenAssetRatioPage />} />} />
+            <Route path="/portfolio-temperature-score"   element={<ProtectedRoute path="/portfolio-temperature-score" element={<PortfolioTemperatureScorePage />} />} />
+            <Route path="/climate-credit-risk-analytics" element={<ProtectedRoute path="/climate-credit-risk-analytics" element={<ClimateCreditRiskPage />} />} />
             {/* Sprint AV — Geopolitical Risk & Climate Security Intelligence */}
             {/* Platform Administration */}
-            <Route path="/data-source-manager"       element={<DataSourceManagerPage />} />
-            <Route path="/db-explorer"               element={<DbExplorerPage />} />
-            <Route path="/user-role-management"      element={<UserRoleManagementPage />} />
-            <Route path="/audit-trail-viewer"        element={<AuditTrailViewerPage />} />
-            <Route path="/api-gateway-monitor"       element={<ApiGatewayMonitorPage />} />
-            <Route path="/data-quality-dashboard"    element={<DataQualityDashboardPage />} />
-            <Route path="/calculation-engine-monitor" element={<CalculationEngineMonitorPage />} />
-            <Route path="/platform-settings"         element={<PlatformSettingsPage />} />
-            <Route path="/geopolitical-esg-hub"          element={<GeopoliticalEsgHubPage />} />
-            <Route path="/sanctions-climate-finance"     element={<SanctionsClimateFinancePage />} />
-            <Route path="/energy-security-transition"    element={<EnergySecurityTransitionPage />} />
-            <Route path="/critical-mineral-geopolitics"  element={<CriticalMineralGeopoliticsPage />} />
-            <Route path="/trade-carbon-policy"           element={<TradeCarbonPolicyPage />} />
-            <Route path="/climate-migration-risk"        element={<ClimateMigrationRiskPage />} />
+            <Route path="/data-source-manager"       element={<ProtectedRoute path="/data-source-manager" element={<DataSourceManagerPage />} />} />
+            <Route path="/db-explorer"               element={<ProtectedRoute path="/db-explorer" element={<DbExplorerPage />} />} />
+            <Route path="/user-role-management"      element={<ProtectedRoute path="/user-role-management" element={<UserRoleManagementPage />} />} />
+            <Route path="/audit-trail-viewer"        element={<ProtectedRoute path="/audit-trail-viewer" element={<AuditTrailViewerPage />} />} />
+            <Route path="/api-gateway-monitor"       element={<ProtectedRoute path="/api-gateway-monitor" element={<ApiGatewayMonitorPage />} />} />
+            <Route path="/data-quality-dashboard"    element={<ProtectedRoute path="/data-quality-dashboard" element={<DataQualityDashboardPage />} />} />
+            <Route path="/calculation-engine-monitor" element={<ProtectedRoute path="/calculation-engine-monitor" element={<CalculationEngineMonitorPage />} />} />
+            <Route path="/platform-settings"         element={<ProtectedRoute path="/platform-settings" element={<PlatformSettingsPage />} />} />
+            <Route path="/geopolitical-esg-hub"          element={<ProtectedRoute path="/geopolitical-esg-hub" element={<GeopoliticalEsgHubPage />} />} />
+            <Route path="/sanctions-climate-finance"     element={<ProtectedRoute path="/sanctions-climate-finance" element={<SanctionsClimateFinancePage />} />} />
+            <Route path="/energy-security-transition"    element={<ProtectedRoute path="/energy-security-transition" element={<EnergySecurityTransitionPage />} />} />
+            <Route path="/critical-mineral-geopolitics"  element={<ProtectedRoute path="/critical-mineral-geopolitics" element={<CriticalMineralGeopoliticsPage />} />} />
+            <Route path="/trade-carbon-policy"           element={<ProtectedRoute path="/trade-carbon-policy" element={<TradeCarbonPolicyPage />} />} />
+            <Route path="/climate-migration-risk"        element={<ProtectedRoute path="/climate-migration-risk" element={<ClimateMigrationRiskPage />} />} />
             {/* Sprint AU — Climate & Health Nexus Finance */}
-            <Route path="/climate-health-hub"           element={<ClimateHealthHubPage />} />
-            <Route path="/heat-mortality-risk"          element={<HeatMortalityRiskPage />} />
-            <Route path="/air-quality-finance"          element={<AirQualityFinancePage />} />
-            <Route path="/pandemic-climate-nexus"       element={<PandemicClimateNexusPage />} />
-            <Route path="/health-adaptation-finance"    element={<HealthAdaptationFinancePage />} />
-            <Route path="/worker-heat-stress"           element={<WorkerHeatStressPage />} />
+            <Route path="/climate-health-hub"           element={<ProtectedRoute path="/climate-health-hub" element={<ClimateHealthHubPage />} />} />
+            <Route path="/heat-mortality-risk"          element={<ProtectedRoute path="/heat-mortality-risk" element={<HeatMortalityRiskPage />} />} />
+            <Route path="/air-quality-finance"          element={<ProtectedRoute path="/air-quality-finance" element={<AirQualityFinancePage />} />} />
+            <Route path="/pandemic-climate-nexus"       element={<ProtectedRoute path="/pandemic-climate-nexus" element={<PandemicClimateNexusPage />} />} />
+            <Route path="/health-adaptation-finance"    element={<ProtectedRoute path="/health-adaptation-finance" element={<HealthAdaptationFinancePage />} />} />
+            <Route path="/worker-heat-stress"           element={<ProtectedRoute path="/worker-heat-stress" element={<WorkerHeatStressPage />} />} />
             {/* Sprint AT — Food Systems & Agricultural Finance */}
-            <Route path="/agri-finance-hub"             element={<AgriFinanceHubPage />} />
-            <Route path="/regenerative-agriculture"     element={<RegenerativeAgriculturePage />} />
-            <Route path="/food-supply-chain-emissions"  element={<FoodSupplyChainEmissionsPage />} />
-            <Route path="/water-agriculture-risk"       element={<WaterAgricultureRiskPage />} />
-            <Route path="/land-use-carbon"              element={<LandUseCarbonPage />} />
-            <Route path="/agri-biodiversity"            element={<AgriBiodiversityPage />} />
+            <Route path="/agri-finance-hub"             element={<ProtectedRoute path="/agri-finance-hub" element={<AgriFinanceHubPage />} />} />
+            <Route path="/regenerative-agriculture"     element={<ProtectedRoute path="/regenerative-agriculture" element={<RegenerativeAgriculturePage />} />} />
+            <Route path="/food-supply-chain-emissions"  element={<ProtectedRoute path="/food-supply-chain-emissions" element={<FoodSupplyChainEmissionsPage />} />} />
+            <Route path="/water-agriculture-risk"       element={<ProtectedRoute path="/water-agriculture-risk" element={<WaterAgricultureRiskPage />} />} />
+            <Route path="/land-use-carbon"              element={<ProtectedRoute path="/land-use-carbon" element={<LandUseCarbonPage />} />} />
+            <Route path="/agri-biodiversity"            element={<ProtectedRoute path="/agri-biodiversity" element={<AgriBiodiversityPage />} />} />
             {/* Sprint AS — Real Estate & Built Environment ESG */}
-            <Route path="/real-estate-esg-hub"          element={<RealEstateEsgHubPage />} />
-            <Route path="/building-energy-performance"  element={<BuildingEnergyPerformancePage />} />
-            <Route path="/green-building-certification" element={<GreenBuildingCertificationPage />} />
-            <Route path="/embodied-carbon"              element={<EmbodiedCarbonPage />} />
-            <Route path="/climate-resilient-design"     element={<ClimateResilientDesignPage />} />
-            <Route path="/tenant-engagement-esg"        element={<TenantEngagementEsgPage />} />
+            <Route path="/real-estate-esg-hub"          element={<ProtectedRoute path="/real-estate-esg-hub" element={<RealEstateEsgHubPage />} />} />
+            <Route path="/building-energy-performance"  element={<ProtectedRoute path="/building-energy-performance" element={<BuildingEnergyPerformancePage />} />} />
+            <Route path="/green-building-certification" element={<ProtectedRoute path="/green-building-certification" element={<GreenBuildingCertificationPage />} />} />
+            <Route path="/embodied-carbon"              element={<ProtectedRoute path="/embodied-carbon" element={<EmbodiedCarbonPage />} />} />
+            <Route path="/climate-resilient-design"     element={<ProtectedRoute path="/climate-resilient-design" element={<ClimateResilientDesignPage />} />} />
+            <Route path="/tenant-engagement-esg"        element={<ProtectedRoute path="/tenant-engagement-esg" element={<TenantEngagementEsgPage />} />} />
             {/* Sprint AR — Insurance & Underwriting Climate Analytics */}
-            <Route path="/insurance-climate-hub"        element={<InsuranceClimateHubPage />} />
-            <Route path="/catastrophe-modelling"        element={<CatastropheModellingPage />} />
-            <Route path="/underwriting-esg"             element={<UnderwritingEsgPage />} />
-            <Route path="/parametric-insurance"         element={<ParametricInsurancePage />} />
-            <Route path="/reinsurance-climate"          element={<ReinsuranceClimatePage />} />
-            <Route path="/insurance-transition"         element={<InsuranceTransitionPage />} />
+            <Route path="/insurance-climate-hub"        element={<ProtectedRoute path="/insurance-climate-hub" element={<InsuranceClimateHubPage />} />} />
+            <Route path="/catastrophe-modelling"        element={<ProtectedRoute path="/catastrophe-modelling" element={<CatastropheModellingPage />} />} />
+            <Route path="/underwriting-esg"             element={<ProtectedRoute path="/underwriting-esg" element={<UnderwritingEsgPage />} />} />
+            <Route path="/parametric-insurance"         element={<ProtectedRoute path="/parametric-insurance" element={<ParametricInsurancePage />} />} />
+            <Route path="/reinsurance-climate"          element={<ProtectedRoute path="/reinsurance-climate" element={<ReinsuranceClimatePage />} />} />
+            <Route path="/insurance-transition"         element={<ProtectedRoute path="/insurance-transition" element={<InsuranceTransitionPage />} />} />
             {/* Sprint AQ — Sovereign ESG & Country-Level Climate Risk Intelligence */}
-            <Route path="/sovereign-esg-hub"             element={<SovereignEsgHubPage />} />
-            <Route path="/sovereign-climate-risk"        element={<SovereignClimateRiskPage />} />
-            <Route path="/sovereign-debt-sustainability" element={<SovereignDebtSustainabilityPage />} />
-            <Route path="/central-bank-climate"          element={<CentralBankClimatePage />} />
-            <Route path="/sovereign-nature-risk"         element={<SovereignNatureRiskPage />} />
-            <Route path="/sovereign-social-index"        element={<SovereignSocialIndexPage />} />
+            <Route path="/sovereign-esg-hub"             element={<ProtectedRoute path="/sovereign-esg-hub" element={<SovereignEsgHubPage />} />} />
+            <Route path="/sovereign-climate-risk"        element={<ProtectedRoute path="/sovereign-climate-risk" element={<SovereignClimateRiskPage />} />} />
+            <Route path="/sovereign-debt-sustainability" element={<ProtectedRoute path="/sovereign-debt-sustainability" element={<SovereignDebtSustainabilityPage />} />} />
+            <Route path="/central-bank-climate"          element={<ProtectedRoute path="/central-bank-climate" element={<CentralBankClimatePage />} />} />
+            <Route path="/sovereign-nature-risk"         element={<ProtectedRoute path="/sovereign-nature-risk" element={<SovereignNatureRiskPage />} />} />
+            <Route path="/sovereign-social-index"        element={<ProtectedRoute path="/sovereign-social-index" element={<SovereignSocialIndexPage />} />} />
             {/* Sprint AP — Supply Chain ESG & Scope 3 Value Chain Intelligence */}
-            <Route path="/supply-chain-esg-hub"       element={<SupplyChainEsgHubPage />} />
-            <Route path="/scope3-upstream-tracker"    element={<Scope3UpstreamTrackerPage />} />
-            <Route path="/supplier-engagement"        element={<SupplierEngagementPage />} />
-            <Route path="/commodity-deforestation"    element={<CommodityDeforestationPage />} />
-            <Route path="/conflict-minerals"          element={<ConflictMineralsPage />} />
-            <Route path="/supply-chain-resilience"    element={<SupplyChainResiliencePage />} />
+            <Route path="/supply-chain-esg-hub"       element={<ProtectedRoute path="/supply-chain-esg-hub" element={<SupplyChainEsgHubPage />} />} />
+            <Route path="/scope3-upstream-tracker"    element={<ProtectedRoute path="/scope3-upstream-tracker" element={<Scope3UpstreamTrackerPage />} />} />
+            <Route path="/supplier-engagement"        element={<ProtectedRoute path="/supplier-engagement" element={<SupplierEngagementPage />} />} />
+            <Route path="/commodity-deforestation"    element={<ProtectedRoute path="/commodity-deforestation" element={<CommodityDeforestationPage />} />} />
+            <Route path="/conflict-minerals"          element={<ProtectedRoute path="/conflict-minerals" element={<ConflictMineralsPage />} />} />
+            <Route path="/supply-chain-resilience"    element={<ProtectedRoute path="/supply-chain-resilience" element={<SupplyChainResiliencePage />} />} />
             {/* Sprint AO — Scope 4 / Avoided Emissions & Climate Solutions */}
-            <Route path="/avoided-emissions-hub"       element={<AvoidedEmissionsHubPage />} />
-            <Route path="/scope4-avoided-emissions"    element={<Scope4AvoidedEmissionsPage />} />
-            <Route path="/product-carbon-handprint"    element={<ProductCarbonHandprintPage />} />
-            <Route path="/enablement-methodology"      element={<EnablementMethodologyPage />} />
-            <Route path="/avoided-emissions-portfolio" element={<AvoidedEmissionsPortfolioPage />} />
-            <Route path="/climate-solution-taxonomy"   element={<ClimateSolutionTaxonomyPage />} />
+            <Route path="/avoided-emissions-hub"       element={<ProtectedRoute path="/avoided-emissions-hub" element={<AvoidedEmissionsHubPage />} />} />
+            <Route path="/scope4-avoided-emissions"    element={<ProtectedRoute path="/scope4-avoided-emissions" element={<Scope4AvoidedEmissionsPage />} />} />
+            <Route path="/product-carbon-handprint"    element={<ProtectedRoute path="/product-carbon-handprint" element={<ProductCarbonHandprintPage />} />} />
+            <Route path="/enablement-methodology"      element={<ProtectedRoute path="/enablement-methodology" element={<EnablementMethodologyPage />} />} />
+            <Route path="/avoided-emissions-portfolio" element={<ProtectedRoute path="/avoided-emissions-portfolio" element={<AvoidedEmissionsPortfolioPage />} />} />
+            <Route path="/climate-solution-taxonomy"   element={<ProtectedRoute path="/climate-solution-taxonomy" element={<ClimateSolutionTaxonomyPage />} />} />
             {/* Sprint AN — Sustainable Transport & Logistics Decarbonisation */}
-            <Route path="/sustainable-transport-hub"  element={<SustainableTransportHubPage />} />
-            <Route path="/maritime-imo-compliance"    element={<MaritimeImoCompliancePage />} />
-            <Route path="/aviation-corsia"            element={<AviationCorsiaPage />} />
-            <Route path="/ev-fleet-finance"           element={<EvFleetFinancePage />} />
-            <Route path="/sustainable-aviation-fuel"  element={<SustainableAviationFuelPage />} />
-            <Route path="/transport-decarbonisation"  element={<TransportDecarbonisationPage />} />
+            <Route path="/sustainable-transport-hub"  element={<ProtectedRoute path="/sustainable-transport-hub" element={<SustainableTransportHubPage />} />} />
+            <Route path="/maritime-imo-compliance"    element={<ProtectedRoute path="/maritime-imo-compliance" element={<MaritimeImoCompliancePage />} />} />
+            <Route path="/aviation-corsia"            element={<ProtectedRoute path="/aviation-corsia" element={<AviationCorsiaPage />} />} />
+            <Route path="/ev-fleet-finance"           element={<ProtectedRoute path="/ev-fleet-finance" element={<EvFleetFinancePage />} />} />
+            <Route path="/sustainable-aviation-fuel"  element={<ProtectedRoute path="/sustainable-aviation-fuel" element={<SustainableAviationFuelPage />} />} />
+            <Route path="/transport-decarbonisation"  element={<ProtectedRoute path="/transport-decarbonisation" element={<TransportDecarbonisationPage />} />} />
             {/* Sprint AM — Climate Fintech & Digital MRV Intelligence */}
-            <Route path="/climate-fintech-hub"        element={<ClimateFintechHubPage />} />
-            <Route path="/digital-mrv"                element={<DigitalMrvPage />} />
-            <Route path="/satellite-climate-monitor"  element={<SatelliteClimateMonitorPage />} />
-            <Route path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />
-            <Route path="/climate-data-marketplace"   element={<ClimateDataMarketplacePage />} />
-            <Route path="/iot-emissions-tracker"      element={<IotEmissionsTrackerPage />} />
+            <Route path="/climate-fintech-hub"        element={<ProtectedRoute path="/climate-fintech-hub" element={<ClimateFintechHubPage />} />} />
+            <Route path="/digital-mrv"                element={<ProtectedRoute path="/digital-mrv" element={<DigitalMrvPage />} />} />
+            <Route path="/satellite-climate-monitor"  element={<ProtectedRoute path="/satellite-climate-monitor" element={<SatelliteClimateMonitorPage />} />} />
+            <Route path="/blockchain-carbon-registry" element={<ProtectedRoute path="/blockchain-carbon-registry" element={<BlockchainCarbonRegistryPage />} />} />
+            <Route path="/climate-data-marketplace"   element={<ProtectedRoute path="/climate-data-marketplace" element={<ClimateDataMarketplacePage />} />} />
+            <Route path="/iot-emissions-tracker"      element={<ProtectedRoute path="/iot-emissions-tracker" element={<IotEmissionsTrackerPage />} />} />
             {/* Sprint BZ — Advanced Predictive & Agentic Analytics */}
-            <Route path="/esg-time-series-forecaster"  element={<ESGTimeSeriesForecasterPage />} />
-            <Route path="/sentiment-alpha-engine"      element={<SentimentAlphaEnginePage />} />
-            <Route path="/ai-compliance-agent"         element={<AIComplianceAgentPage />} />
+            <Route path="/esg-time-series-forecaster"  element={<ProtectedRoute path="/esg-time-series-forecaster" element={<ESGTimeSeriesForecasterPage />} />} />
+            <Route path="/sentiment-alpha-engine"      element={<ProtectedRoute path="/sentiment-alpha-engine" element={<SentimentAlphaEnginePage />} />} />
+            <Route path="/ai-compliance-agent"         element={<ProtectedRoute path="/ai-compliance-agent" element={<AIComplianceAgentPage />} />} />
             {/* Sprint BY — AI Intelligence Layer */}
-            <Route path="/llm-esg-extractor"          element={<LLMESGExtractorPage />} />
-            <Route path="/greenwashing-detection"     element={<GreenwashingDetectionPage />} />
-            <Route path="/esg-narrative-intelligence" element={<ESGNarrativeIntelligencePage />} />
+            <Route path="/llm-esg-extractor"          element={<ProtectedRoute path="/llm-esg-extractor" element={<LLMESGExtractorPage />} />} />
+            <Route path="/greenwashing-detection"     element={<ProtectedRoute path="/greenwashing-detection" element={<GreenwashingDetectionPage />} />} />
+            <Route path="/esg-narrative-intelligence" element={<ProtectedRoute path="/esg-narrative-intelligence" element={<ESGNarrativeIntelligencePage />} />} />
             {/* Sprint BX — Quantitative Physical Risk Engine */}
-            <Route path="/physical-hazard-map"         element={<PhysicalHazardMapPage />} />
-            <Route path="/damage-function-calculator"  element={<DamageFunctionCalculatorPage />} />
-            <Route path="/physical-risk-portfolio"     element={<PhysicalRiskPortfolioPage />} />
+            <Route path="/physical-hazard-map"         element={<ProtectedRoute path="/physical-hazard-map" element={<PhysicalHazardMapPage />} />} />
+            <Route path="/damage-function-calculator"  element={<ProtectedRoute path="/damage-function-calculator" element={<DamageFunctionCalculatorPage />} />} />
+            <Route path="/physical-risk-portfolio"     element={<ProtectedRoute path="/physical-risk-portfolio" element={<PhysicalRiskPortfolioPage />} />} />
             {/* Sprint CA — Transition Risk DCF & Stranded Assets & Tech Displacement */}
-            <Route path="/transition-risk-dcf"           element={<TransitionRiskDcfPage />} />
-            <Route path="/stranded-asset-analyzer"       element={<StrandedAssetAnalyzerPage />} />
-            <Route path="/tech-displacement-modeler"     element={<TechDisplacementModelerPage />} />
+            <Route path="/transition-risk-dcf"           element={<ProtectedRoute path="/transition-risk-dcf" element={<TransitionRiskDcfPage />} />} />
+            <Route path="/stranded-asset-analyzer"       element={<ProtectedRoute path="/stranded-asset-analyzer" element={<StrandedAssetAnalyzerPage />} />} />
+            <Route path="/tech-displacement-modeler"     element={<ProtectedRoute path="/tech-displacement-modeler" element={<TechDisplacementModelerPage />} />} />
             {/* Sprint CB — Sector Scorecard · Just Transition · Policy Impact */}
-            <Route path="/sector-transition-scorecard"   element={<SectorTransitionScorecardPage />} />
-            <Route path="/just-transition-intelligence"  element={<JustTransitionIntelligencePage />} />
-            <Route path="/policy-regulatory-impact"      element={<PolicyRegulatoryImpactPage />} />
+            <Route path="/sector-transition-scorecard"   element={<ProtectedRoute path="/sector-transition-scorecard" element={<SectorTransitionScorecardPage />} />} />
+            <Route path="/just-transition-intelligence"  element={<ProtectedRoute path="/just-transition-intelligence" element={<JustTransitionIntelligencePage />} />} />
+            <Route path="/policy-regulatory-impact"      element={<ProtectedRoute path="/policy-regulatory-impact" element={<PolicyRegulatoryImpactPage />} />} />
             {/* Sprint CC — Portfolio Alignment · Financed Emissions · Transition Finance */}
-            <Route path="/portfolio-transition-alignment" element={<PortfolioTransitionAlignmentPage />} />
-            <Route path="/financed-emissions-attributor"  element={<FinancedEmissionsAttributorPage />} />
-            <Route path="/transition-finance-screener"    element={<TransitionFinanceScreenerPage />} />
+            <Route path="/portfolio-transition-alignment" element={<ProtectedRoute path="/portfolio-transition-alignment" element={<PortfolioTransitionAlignmentPage />} />} />
+            <Route path="/financed-emissions-attributor"  element={<ProtectedRoute path="/financed-emissions-attributor" element={<FinancedEmissionsAttributorPage />} />} />
+            <Route path="/transition-finance-screener"    element={<ProtectedRoute path="/transition-finance-screener" element={<TransitionFinanceScreenerPage />} />} />
             {/* Sprint CD — Multi-Dim Scorer · Heatmap · Carbon Footprint */}
-            <Route path="/multi-dim-transition-scorer"   element={<MultiDimTransitionScorerPage />} />
-            <Route path="/transition-risk-heatmap"       element={<TransitionRiskHeatmapPage />} />
-            <Route path="/carbon-footprint-intelligence" element={<CarbonFootprintIntelligencePage />} />
+            <Route path="/multi-dim-transition-scorer"   element={<ProtectedRoute path="/multi-dim-transition-scorer" element={<MultiDimTransitionScorerPage />} />} />
+            <Route path="/transition-risk-heatmap"       element={<ProtectedRoute path="/transition-risk-heatmap" element={<TransitionRiskHeatmapPage />} />} />
+            <Route path="/carbon-footprint-intelligence" element={<ProtectedRoute path="/carbon-footprint-intelligence" element={<CarbonFootprintIntelligencePage />} />} />
             {/* Sprint CE — Climate VaR · Transition Dashboard · Reg Reporting */}
-            <Route path="/climate-var-engine"            element={<ClimateVarEnginePage />} />
-            <Route path="/transition-risk-dashboard"     element={<TransitionRiskDashboardPage />} />
-            <Route path="/transition-reg-reporting"      element={<TransitionRegReportingPage />} />
+            <Route path="/climate-var-engine"            element={<ProtectedRoute path="/climate-var-engine" element={<ClimateVarEnginePage />} />} />
+            <Route path="/transition-risk-dashboard"     element={<ProtectedRoute path="/transition-risk-dashboard" element={<TransitionRiskDashboardPage />} />} />
+            <Route path="/transition-reg-reporting"      element={<ProtectedRoute path="/transition-reg-reporting" element={<TransitionRegReportingPage />} />} />
             {/* Sprint CF — Climate Adaptation & Resilience Intelligence */}
-            <Route path="/climate-adaptation-pathways"      element={<ClimateAdaptationPathwaysPage />} />
-            <Route path="/infrastructure-resilience-scorer" element={<InfrastructureResilienceScorerPage />} />
-            <Route path="/nature-based-adaptation"          element={<NatureBasedAdaptationPage />} />
+            <Route path="/climate-adaptation-pathways"      element={<ProtectedRoute path="/climate-adaptation-pathways" element={<ClimateAdaptationPathwaysPage />} />} />
+            <Route path="/infrastructure-resilience-scorer" element={<ProtectedRoute path="/infrastructure-resilience-scorer" element={<InfrastructureResilienceScorerPage />} />} />
+            <Route path="/nature-based-adaptation"          element={<ProtectedRoute path="/nature-based-adaptation" element={<NatureBasedAdaptationPage />} />} />
             {/* Sprint CG — Physical-Transition Risk Integration */}
-            <Route path="/physical-transition-nexus"       element={<PhysicalTransitionNexusPage />} />
-            <Route path="/regional-climate-impact"         element={<RegionalClimateImpactPage />} />
-            <Route path="/supply-chain-contagion"          element={<SupplyChainContagionPage />} />
-            <Route path="/physical-risk-early-warning"     element={<PhysicalRiskEarlyWarningPage />} />
-            <Route path="/compound-event-modeler"          element={<CompoundEventModelerPage />} />
-            <Route path="/climate-risk-migration"          element={<ClimateRiskMigrationPage />} />
+            <Route path="/physical-transition-nexus"       element={<ProtectedRoute path="/physical-transition-nexus" element={<PhysicalTransitionNexusPage />} />} />
+            <Route path="/regional-climate-impact"         element={<ProtectedRoute path="/regional-climate-impact" element={<RegionalClimateImpactPage />} />} />
+            <Route path="/supply-chain-contagion"          element={<ProtectedRoute path="/supply-chain-contagion" element={<SupplyChainContagionPage />} />} />
+            <Route path="/physical-risk-early-warning"     element={<ProtectedRoute path="/physical-risk-early-warning" element={<PhysicalRiskEarlyWarningPage />} />} />
+            <Route path="/compound-event-modeler"          element={<ProtectedRoute path="/compound-event-modeler" element={<CompoundEventModelerPage />} />} />
+            <Route path="/climate-risk-migration"          element={<ProtectedRoute path="/climate-risk-migration" element={<ClimateRiskMigrationPage />} />} />
             {/* Sprint CH — Probabilistic Scenario & Monte Carlo */}
-            <Route path="/monte-carlo-climate"             element={<MonteCarloClimatePage />} />
-            <Route path="/scenario-blending-optimizer"     element={<ScenarioBlendingOptimizerPage />} />
-            <Route path="/climate-stress-test-suite"       element={<ClimateStressTestSuitePage />} />
-            <Route path="/tail-risk-analyzer"              element={<TailRiskAnalyzerPage />} />
-            <Route path="/scenario-dashboard-builder"      element={<ScenarioDashboardBuilderPage />} />
-            <Route path="/regulatory-stress-submission"    element={<RegulatoryStressSubmissionPage />} />
+            <Route path="/monte-carlo-climate"             element={<ProtectedRoute path="/monte-carlo-climate" element={<MonteCarloClimatePage />} />} />
+            <Route path="/scenario-blending-optimizer"     element={<ProtectedRoute path="/scenario-blending-optimizer" element={<ScenarioBlendingOptimizerPage />} />} />
+            <Route path="/climate-stress-test-suite"       element={<ProtectedRoute path="/climate-stress-test-suite" element={<ClimateStressTestSuitePage />} />} />
+            <Route path="/tail-risk-analyzer"              element={<ProtectedRoute path="/tail-risk-analyzer" element={<TailRiskAnalyzerPage />} />} />
+            <Route path="/scenario-dashboard-builder"      element={<ProtectedRoute path="/scenario-dashboard-builder" element={<ScenarioDashboardBuilderPage />} />} />
+            <Route path="/regulatory-stress-submission"    element={<ProtectedRoute path="/regulatory-stress-submission" element={<RegulatoryStressSubmissionPage />} />} />
             {/* Sprint CI — Extended Asset Class Coverage (sovereign-climate-risk routed above) */}
-            <Route path="/private-assets-transition"       element={<PrivateAssetsTransitionPage />} />
-            <Route path="/structured-credit-climate"       element={<StructuredCreditClimatePage />} />
-            <Route path="/commodity-derivatives-climate"   element={<CommodityDerivativesClimatePage />} />
-            <Route path="/insurance-portfolio-climate"     element={<InsurancePortfolioClimatePage />} />
-            <Route path="/pcaf-universal-attributor"       element={<PcafUniversalAttributorPage />} />
+            <Route path="/private-assets-transition"       element={<ProtectedRoute path="/private-assets-transition" element={<PrivateAssetsTransitionPage />} />} />
+            <Route path="/structured-credit-climate"       element={<ProtectedRoute path="/structured-credit-climate" element={<StructuredCreditClimatePage />} />} />
+            <Route path="/commodity-derivatives-climate"   element={<ProtectedRoute path="/commodity-derivatives-climate" element={<CommodityDerivativesClimatePage />} />} />
+            <Route path="/insurance-portfolio-climate"     element={<ProtectedRoute path="/insurance-portfolio-climate" element={<InsurancePortfolioClimatePage />} />} />
+            <Route path="/pcaf-universal-attributor"       element={<ProtectedRoute path="/pcaf-universal-attributor" element={<PcafUniversalAttributorPage />} />} />
             {/* Sprint CJ — Emerging Market Transition Intelligence */}
-            <Route path="/china-india-transition"          element={<ChinaIndiaTransitionPage />} />
-            <Route path="/asean-gcc-transition"            element={<AseanGccTransitionPage />} />
-            <Route path="/em-carbon-credit-hub"            element={<EmCarbonCreditHubPage />} />
-            <Route path="/latam-transition"                element={<LatamTransitionPage />} />
-            <Route path="/africa-climate-finance"          element={<AfricaClimateFinancePage />} />
-            <Route path="/frontier-market-climate"         element={<FrontierMarketClimatePage />} />
+            <Route path="/china-india-transition"          element={<ProtectedRoute path="/china-india-transition" element={<ChinaIndiaTransitionPage />} />} />
+            <Route path="/asean-gcc-transition"            element={<ProtectedRoute path="/asean-gcc-transition" element={<AseanGccTransitionPage />} />} />
+            <Route path="/em-carbon-credit-hub"            element={<ProtectedRoute path="/em-carbon-credit-hub" element={<EmCarbonCreditHubPage />} />} />
+            <Route path="/latam-transition"                element={<ProtectedRoute path="/latam-transition" element={<LatamTransitionPage />} />} />
+            <Route path="/africa-climate-finance"          element={<ProtectedRoute path="/africa-climate-finance" element={<AfricaClimateFinancePage />} />} />
+            <Route path="/frontier-market-climate"         element={<ProtectedRoute path="/frontier-market-climate" element={<FrontierMarketClimatePage />} />} />
             {/* Sprint CK — Stranded Asset Dynamics v2 */}
-            <Route path="/vintage-cohort-stranded"         element={<VintageCohortStrandedPage />} />
-            <Route path="/cascading-default-modeler"       element={<CascadingDefaultModelerPage />} />
-            <Route path="/stranded-recovery-pathways"      element={<StrandedRecoveryPathwaysPage />} />
-            <Route path="/decommissioning-cost-engine"     element={<DecommissioningCostEnginePage />} />
-            <Route path="/stranded-asset-watchlist"        element={<StrandedAssetWatchlistPage />} />
-            <Route path="/covenant-breach-predictor"       element={<CovenantBreachPredictorPage />} />
+            <Route path="/vintage-cohort-stranded"         element={<ProtectedRoute path="/vintage-cohort-stranded" element={<VintageCohortStrandedPage />} />} />
+            <Route path="/cascading-default-modeler"       element={<ProtectedRoute path="/cascading-default-modeler" element={<CascadingDefaultModelerPage />} />} />
+            <Route path="/stranded-recovery-pathways"      element={<ProtectedRoute path="/stranded-recovery-pathways" element={<StrandedRecoveryPathwaysPage />} />} />
+            <Route path="/decommissioning-cost-engine"     element={<ProtectedRoute path="/decommissioning-cost-engine" element={<DecommissioningCostEnginePage />} />} />
+            <Route path="/stranded-asset-watchlist"        element={<ProtectedRoute path="/stranded-asset-watchlist" element={<StrandedAssetWatchlistPage />} />} />
+            <Route path="/covenant-breach-predictor"       element={<ProtectedRoute path="/covenant-breach-predictor" element={<CovenantBreachPredictorPage />} />} />
             {/* Sprint CL — Technology & Supply Chain Disruption v2 */}
-            <Route path="/critical-mineral-constraint"     element={<CriticalMineralConstraintPage />} />
-            <Route path="/grid-stability-transition"       element={<GridStabilityTransitionPage />} />
-            <Route path="/hydrogen-economy-modeler"        element={<HydrogenEconomyModelerPage />} />
-            <Route path="/nuclear-smr-viability"           element={<NuclearSmrViabilityPage />} />
-            <Route path="/negative-emissions-tech"         element={<NegativeEmissionsTechPage />} />
-            <Route path="/tech-disruption-watchlist"       element={<TechDisruptionWatchlistPage />} />
+            <Route path="/critical-mineral-constraint"     element={<ProtectedRoute path="/critical-mineral-constraint" element={<CriticalMineralConstraintPage />} />} />
+            <Route path="/grid-stability-transition"       element={<ProtectedRoute path="/grid-stability-transition" element={<GridStabilityTransitionPage />} />} />
+            <Route path="/hydrogen-economy-modeler"        element={<ProtectedRoute path="/hydrogen-economy-modeler" element={<HydrogenEconomyModelerPage />} />} />
+            <Route path="/nuclear-smr-viability"           element={<ProtectedRoute path="/nuclear-smr-viability" element={<NuclearSmrViabilityPage />} />} />
+            <Route path="/negative-emissions-tech"         element={<ProtectedRoute path="/negative-emissions-tech" element={<NegativeEmissionsTechPage />} />} />
+            <Route path="/tech-disruption-watchlist"       element={<ProtectedRoute path="/tech-disruption-watchlist" element={<TechDisruptionWatchlistPage />} />} />
             {/* Sprint CM — SBTi Credibility Suite */}
-            <Route path="/sbti-credibility-scorer"         element={<SbtiCredibilityScorerPage />} />
-            <Route path="/temperature-alignment-waterfall" element={<TemperatureAlignmentWaterfallPage />} />
-            <Route path="/net-zero-credibility-index"      element={<NetZeroCredibilityIndexPage />} />
-            <Route path="/scope3-materiality-engine"       element={<Scope3MaterialityEnginePage />} />
-            <Route path="/target-vs-action-tracker"        element={<TargetVsActionTrackerPage />} />
-            <Route path="/peer-transition-benchmarker"     element={<PeerTransitionBenchmarkerPage />} />
+            <Route path="/sbti-credibility-scorer"         element={<ProtectedRoute path="/sbti-credibility-scorer" element={<SbtiCredibilityScorerPage />} />} />
+            <Route path="/temperature-alignment-waterfall" element={<ProtectedRoute path="/temperature-alignment-waterfall" element={<TemperatureAlignmentWaterfallPage />} />} />
+            <Route path="/net-zero-credibility-index"      element={<ProtectedRoute path="/net-zero-credibility-index" element={<NetZeroCredibilityIndexPage />} />} />
+            <Route path="/scope3-materiality-engine"       element={<ProtectedRoute path="/scope3-materiality-engine" element={<Scope3MaterialityEnginePage />} />} />
+            <Route path="/target-vs-action-tracker"        element={<ProtectedRoute path="/target-vs-action-tracker" element={<TargetVsActionTrackerPage />} />} />
+            <Route path="/peer-transition-benchmarker"     element={<ProtectedRoute path="/peer-transition-benchmarker" element={<PeerTransitionBenchmarkerPage />} />} />
             {/* Sprint CN — Carbon Credit & Offset Economics */}
-            <Route path="/carbon-credit-pricing"           element={<CarbonCreditPricingPage />} />
-            <Route path="/offset-permanence-risk"          element={<OffsetPermanenceRiskPage />} />
-            <Route path="/corporate-offset-optimizer"      element={<CorporateOffsetOptimizerPage />} />
-            <Route path="/credit-quality-screener"         element={<CreditQualityScreenerPage />} />
-            <Route path="/offset-portfolio-tracker"        element={<OffsetPortfolioTrackerPage />} />
-            <Route path="/carbon-market-intelligence"      element={<CarbonMarketIntelligencePage />} />
+            <Route path="/carbon-credit-pricing"           element={<ProtectedRoute path="/carbon-credit-pricing" element={<CarbonCreditPricingPage />} />} />
+            <Route path="/offset-permanence-risk"          element={<ProtectedRoute path="/offset-permanence-risk" element={<OffsetPermanenceRiskPage />} />} />
+            <Route path="/corporate-offset-optimizer"      element={<ProtectedRoute path="/corporate-offset-optimizer" element={<CorporateOffsetOptimizerPage />} />} />
+            <Route path="/credit-quality-screener"         element={<ProtectedRoute path="/credit-quality-screener" element={<CreditQualityScreenerPage />} />} />
+            <Route path="/offset-portfolio-tracker"        element={<ProtectedRoute path="/offset-portfolio-tracker" element={<OffsetPortfolioTrackerPage />} />} />
+            <Route path="/carbon-market-intelligence"      element={<ProtectedRoute path="/carbon-market-intelligence" element={<CarbonMarketIntelligencePage />} />} />
             {/* Sprint CO — Advanced Just Transition */}
-            <Route path="/workforce-transition-tracker"    element={<WorkforceTransitionTrackerPage />} />
-            <Route path="/social-license-risk"             element={<SocialLicenseRiskPage />} />
-            <Route path="/regional-economic-impact"        element={<RegionalEconomicImpactPage />} />
-            <Route path="/indigenous-rights-fpic"          element={<IndigenousRightsFpicPage />} />
-            <Route path="/green-jobs-pipeline-tracker"     element={<GreenJobsPipelineTrackerPage />} />
-            <Route path="/just-transition-finance-hub"     element={<JustTransitionFinanceHubPage />} />
+            <Route path="/workforce-transition-tracker"    element={<ProtectedRoute path="/workforce-transition-tracker" element={<WorkforceTransitionTrackerPage />} />} />
+            <Route path="/social-license-risk"             element={<ProtectedRoute path="/social-license-risk" element={<SocialLicenseRiskPage />} />} />
+            <Route path="/regional-economic-impact"        element={<ProtectedRoute path="/regional-economic-impact" element={<RegionalEconomicImpactPage />} />} />
+            <Route path="/indigenous-rights-fpic"          element={<ProtectedRoute path="/indigenous-rights-fpic" element={<IndigenousRightsFpicPage />} />} />
+            <Route path="/green-jobs-pipeline-tracker"     element={<ProtectedRoute path="/green-jobs-pipeline-tracker" element={<GreenJobsPipelineTrackerPage />} />} />
+            <Route path="/just-transition-finance-hub"     element={<ProtectedRoute path="/just-transition-finance-hub" element={<JustTransitionFinanceHubPage />} />} />
             {/* Sprint CP — ESG Stewardship Analytics */}
-            <Route path="/engagement-outcome-tracker"      element={<EngagementOutcomeTrackerPage />} />
-            <Route path="/proxy-voting-climate"            element={<ProxyVotingClimatePage />} />
-            <Route path="/stewardship-report-generator"    element={<StewardshipReportGeneratorPage />} />
-            <Route path="/shareholder-resolution-analyzer" element={<ShareholderResolutionAnalyzerPage />} />
-            <Route path="/board-climate-competence"        element={<BoardClimateCompetencePage />} />
-            <Route path="/esg-integration-dashboard"       element={<EsgIntegrationDashboardPage />} />
+            <Route path="/engagement-outcome-tracker"      element={<ProtectedRoute path="/engagement-outcome-tracker" element={<EngagementOutcomeTrackerPage />} />} />
+            <Route path="/proxy-voting-climate"            element={<ProtectedRoute path="/proxy-voting-climate" element={<ProxyVotingClimatePage />} />} />
+            <Route path="/stewardship-report-generator"    element={<ProtectedRoute path="/stewardship-report-generator" element={<StewardshipReportGeneratorPage />} />} />
+            <Route path="/shareholder-resolution-analyzer" element={<ProtectedRoute path="/shareholder-resolution-analyzer" element={<ShareholderResolutionAnalyzerPage />} />} />
+            <Route path="/board-climate-competence"        element={<ProtectedRoute path="/board-climate-competence" element={<BoardClimateCompetencePage />} />} />
+            <Route path="/esg-integration-dashboard"       element={<ProtectedRoute path="/esg-integration-dashboard" element={<EsgIntegrationDashboardPage />} />} />
             {/* Sprint CQ — Transition Finance Portfolio Construction */}
-            <Route path="/green-bond-portfolio-optimizer"  element={<GreenBondPortfolioOptimizerPage />} />
-            <Route path="/transition-bond-credibility"     element={<TransitionBondCredibilityPage />} />
-            <Route path="/blended-finance-structurer"      element={<BlendedFinanceStructurerPage />} />
-            <Route path="/climate-bond-index-tracker"      element={<ClimateBondIndexTrackerPage />} />
-            <Route path="/green-loan-framework"            element={<GreenLoanFrameworkPage />} />
-            <Route path="/impact-bond-analytics"           element={<ImpactBondAnalyticsPage />} />
+            <Route path="/green-bond-portfolio-optimizer"  element={<ProtectedRoute path="/green-bond-portfolio-optimizer" element={<GreenBondPortfolioOptimizerPage />} />} />
+            <Route path="/transition-bond-credibility"     element={<ProtectedRoute path="/transition-bond-credibility" element={<TransitionBondCredibilityPage />} />} />
+            <Route path="/blended-finance-structurer"      element={<ProtectedRoute path="/blended-finance-structurer" element={<BlendedFinanceStructurerPage />} />} />
+            <Route path="/climate-bond-index-tracker"      element={<ProtectedRoute path="/climate-bond-index-tracker" element={<ClimateBondIndexTrackerPage />} />} />
+            <Route path="/green-loan-framework"            element={<ProtectedRoute path="/green-loan-framework" element={<GreenLoanFrameworkPage />} />} />
+            <Route path="/impact-bond-analytics"           element={<ProtectedRoute path="/impact-bond-analytics" element={<ImpactBondAnalyticsPage />} />} />
             {/* Sprint CR — Multi-Jurisdiction Regulatory Compliance */}
-            <Route path="/csrd-esrs-full-suite"            element={<CsrdEsrsFullSuitePage />} />
-            <Route path="/global-disclosure-tracker"       element={<GlobalDisclosureTrackerPage />} />
-            <Route path="/assurance-readiness-engine"      element={<AssuranceReadinessEnginePage />} />
-            <Route path="/xbrl-climate-taxonomy"           element={<XbrlClimateTaxonomyPage />} />
-            <Route path="/regulatory-change-radar"         element={<RegulatoryChangeRadarPage />} />
-            <Route path="/compliance-workflow-automation"   element={<ComplianceWorkflowAutomationPage />} />
+            <Route path="/csrd-esrs-full-suite"            element={<ProtectedRoute path="/csrd-esrs-full-suite" element={<CsrdEsrsFullSuitePage />} />} />
+            <Route path="/global-disclosure-tracker"       element={<ProtectedRoute path="/global-disclosure-tracker" element={<GlobalDisclosureTrackerPage />} />} />
+            <Route path="/assurance-readiness-engine"      element={<ProtectedRoute path="/assurance-readiness-engine" element={<AssuranceReadinessEnginePage />} />} />
+            <Route path="/xbrl-climate-taxonomy"           element={<ProtectedRoute path="/xbrl-climate-taxonomy" element={<XbrlClimateTaxonomyPage />} />} />
+            <Route path="/regulatory-change-radar"         element={<ProtectedRoute path="/regulatory-change-radar" element={<RegulatoryChangeRadarPage />} />} />
+            <Route path="/compliance-workflow-automation"   element={<ProtectedRoute path="/compliance-workflow-automation" element={<ComplianceWorkflowAutomationPage />} />} />
             {/* Sprint CS — Taxonomy & Assessment Engine Core */}
-            <Route path="/transition-risk-taxonomy-browser" element={<TransitionRiskTaxonomyBrowserPage />} />
-            <Route path="/assessment-engine-dashboard"      element={<AssessmentEngineDashboardPage />} />
-            <Route path="/data-source-registry"             element={<DataSourceRegistryPage />} />
-            <Route path="/ml-taxonomy-scoring"              element={<MlTaxonomyScoringPage />} />
-            <Route path="/taxonomy-risk-report"             element={<TaxonomyRiskReportPage />} />
-            <Route path="/assessment-configuration"         element={<AssessmentConfigurationPage />} />
+            <Route path="/transition-risk-taxonomy-browser" element={<ProtectedRoute path="/transition-risk-taxonomy-browser" element={<TransitionRiskTaxonomyBrowserPage />} />} />
+            <Route path="/assessment-engine-dashboard"      element={<ProtectedRoute path="/assessment-engine-dashboard" element={<AssessmentEngineDashboardPage />} />} />
+            <Route path="/data-source-registry"             element={<ProtectedRoute path="/data-source-registry" element={<DataSourceRegistryPage />} />} />
+            <Route path="/ml-taxonomy-scoring"              element={<ProtectedRoute path="/ml-taxonomy-scoring" element={<MlTaxonomyScoringPage />} />} />
+            <Route path="/taxonomy-risk-report"             element={<ProtectedRoute path="/taxonomy-risk-report" element={<TaxonomyRiskReportPage />} />} />
+            <Route path="/assessment-configuration"         element={<ProtectedRoute path="/assessment-configuration" element={<AssessmentConfigurationPage />} />} />
             {/* Sprint CT — Financial Institution Profiler */}
-            <Route path="/fi-client-portfolio-analyzer"     element={<FiClientPortfolioAnalyzerPage />} />
-            <Route path="/fi-instrument-exposure"           element={<FiInstrumentExposurePage />} />
-            <Route path="/fi-line-of-business"              element={<FiLineOfBusinessPage />} />
-            <Route path="/fi-regulatory-capital-overlay"    element={<FiRegulatoryCapitalOverlayPage />} />
-            <Route path="/fi-concentration-monitor"         element={<FiConcentrationMonitorPage />} />
-            <Route path="/fi-transition-dashboard"          element={<FiTransitionDashboardPage />} />
+            <Route path="/fi-client-portfolio-analyzer"     element={<ProtectedRoute path="/fi-client-portfolio-analyzer" element={<FiClientPortfolioAnalyzerPage />} />} />
+            <Route path="/fi-instrument-exposure"           element={<ProtectedRoute path="/fi-instrument-exposure" element={<FiInstrumentExposurePage />} />} />
+            <Route path="/fi-line-of-business"              element={<ProtectedRoute path="/fi-line-of-business" element={<FiLineOfBusinessPage />} />} />
+            <Route path="/fi-regulatory-capital-overlay"    element={<ProtectedRoute path="/fi-regulatory-capital-overlay" element={<FiRegulatoryCapitalOverlayPage />} />} />
+            <Route path="/fi-concentration-monitor"         element={<ProtectedRoute path="/fi-concentration-monitor" element={<FiConcentrationMonitorPage />} />} />
+            <Route path="/fi-transition-dashboard"          element={<ProtectedRoute path="/fi-transition-dashboard" element={<FiTransitionDashboardPage />} />} />
             {/* Sprint CU — Energy Company Profiler */}
-            <Route path="/energy-asset-registry"            element={<EnergyAssetRegistryPage />} />
-            <Route path="/energy-segment-analysis"          element={<EnergySegmentAnalysisPage />} />
-            <Route path="/energy-supplier-network"          element={<EnergySupplierNetworkPage />} />
-            <Route path="/energy-revenue-split"             element={<EnergyRevenueSplitPage />} />
-            <Route path="/energy-decommissioning-liability" element={<EnergyDecommissioningLiabilityPage />} />
-            <Route path="/energy-transition-dashboard"      element={<EnergyTransitionDashboardPage />} />
+            <Route path="/energy-asset-registry"            element={<ProtectedRoute path="/energy-asset-registry" element={<EnergyAssetRegistryPage />} />} />
+            <Route path="/energy-segment-analysis"          element={<ProtectedRoute path="/energy-segment-analysis" element={<EnergySegmentAnalysisPage />} />} />
+            <Route path="/energy-supplier-network"          element={<ProtectedRoute path="/energy-supplier-network" element={<EnergySupplierNetworkPage />} />} />
+            <Route path="/energy-revenue-split"             element={<ProtectedRoute path="/energy-revenue-split" element={<EnergyRevenueSplitPage />} />} />
+            <Route path="/energy-decommissioning-liability" element={<ProtectedRoute path="/energy-decommissioning-liability" element={<EnergyDecommissioningLiabilityPage />} />} />
+            <Route path="/energy-transition-dashboard"      element={<ProtectedRoute path="/energy-transition-dashboard" element={<EnergyTransitionDashboardPage />} />} />
             {/* Sprint CV — Geopolitical Risk Engine */}
-            <Route path="/geopolitical-risk-index"          element={<GeopoliticalRiskIndexPage />} />
-            <Route path="/sanctions-trade-monitor"          element={<SanctionsTradeMonitorPage />} />
-            <Route path="/critical-mineral-geo-risk"        element={<CriticalMineralGeoRiskPage />} />
-            <Route path="/conflict-stability-tracker"       element={<ConflictStabilityTrackerPage />} />
-            <Route path="/geo-transition-nexus"             element={<GeoTransitionNexusPage />} />
-            <Route path="/geopolitical-dashboard"           element={<GeopoliticalDashboardPage />} />
+            <Route path="/geopolitical-risk-index"          element={<ProtectedRoute path="/geopolitical-risk-index" element={<GeopoliticalRiskIndexPage />} />} />
+            <Route path="/sanctions-trade-monitor"          element={<ProtectedRoute path="/sanctions-trade-monitor" element={<SanctionsTradeMonitorPage />} />} />
+            <Route path="/critical-mineral-geo-risk"        element={<ProtectedRoute path="/critical-mineral-geo-risk" element={<CriticalMineralGeoRiskPage />} />} />
+            <Route path="/conflict-stability-tracker"       element={<ProtectedRoute path="/conflict-stability-tracker" element={<ConflictStabilityTrackerPage />} />} />
+            <Route path="/geo-transition-nexus"             element={<ProtectedRoute path="/geo-transition-nexus" element={<GeoTransitionNexusPage />} />} />
+            <Route path="/geopolitical-dashboard"           element={<ProtectedRoute path="/geopolitical-dashboard" element={<GeopoliticalDashboardPage />} />} />
             {/* Sprint CW — Cross-Entity Assessment & Benchmarking */}
-            <Route path="/universal-entity-comparator"      element={<UniversalEntityComparatorPage />} />
-            <Route path="/sector-peer-benchmarking-engine"  element={<SectorPeerBenchmarkingEnginePage />} />
-            <Route path="/supply-chain-network-viz"         element={<SupplyChainNetworkVizPage />} />
-            <Route path="/portfolio-stress-test-drilldown"  element={<PortfolioStressTestDrilldownPage />} />
-            <Route path="/assessment-audit-trail-v2"        element={<AssessmentAuditTrailV2Page />} />
-            <Route path="/cross-entity-intelligence-dashboard" element={<CrossEntityIntelligenceDashboardPage />} />
+            <Route path="/universal-entity-comparator"      element={<ProtectedRoute path="/universal-entity-comparator" element={<UniversalEntityComparatorPage />} />} />
+            <Route path="/sector-peer-benchmarking-engine"  element={<ProtectedRoute path="/sector-peer-benchmarking-engine" element={<SectorPeerBenchmarkingEnginePage />} />} />
+            <Route path="/supply-chain-network-viz"         element={<ProtectedRoute path="/supply-chain-network-viz" element={<SupplyChainNetworkVizPage />} />} />
+            <Route path="/portfolio-stress-test-drilldown"  element={<ProtectedRoute path="/portfolio-stress-test-drilldown" element={<PortfolioStressTestDrilldownPage />} />} />
+            <Route path="/assessment-audit-trail-v2"        element={<ProtectedRoute path="/assessment-audit-trail-v2" element={<AssessmentAuditTrailV2Page />} />} />
+            <Route path="/cross-entity-intelligence-dashboard" element={<ProtectedRoute path="/cross-entity-intelligence-dashboard" element={<CrossEntityIntelligenceDashboardPage />} />} />
             {/* Sprint CX — Advanced ML & Predictive Analytics */}
-            <Route path="/ml-feature-engineering"           element={<MlFeatureEngineeringPage />} />
-            <Route path="/ensemble-prediction-engine"       element={<EnsemblePredictionEnginePage />} />
-            <Route path="/anomaly-detection-engine"         element={<AnomalyDetectionEnginePage />} />
-            <Route path="/peer-clustering-segmentation"     element={<PeerClusteringSegmentationPage />} />
-            <Route path="/scenario-conditional-prediction"  element={<ScenarioConditionalPredictionPage />} />
-            <Route path="/ml-governance-dashboard"          element={<MlGovernanceDashboardPage />} />
+            <Route path="/ml-feature-engineering"           element={<ProtectedRoute path="/ml-feature-engineering" element={<MlFeatureEngineeringPage />} />} />
+            <Route path="/ensemble-prediction-engine"       element={<ProtectedRoute path="/ensemble-prediction-engine" element={<EnsemblePredictionEnginePage />} />} />
+            <Route path="/anomaly-detection-engine"         element={<ProtectedRoute path="/anomaly-detection-engine" element={<AnomalyDetectionEnginePage />} />} />
+            <Route path="/peer-clustering-segmentation"     element={<ProtectedRoute path="/peer-clustering-segmentation" element={<PeerClusteringSegmentationPage />} />} />
+            <Route path="/scenario-conditional-prediction"  element={<ProtectedRoute path="/scenario-conditional-prediction" element={<ScenarioConditionalPredictionPage />} />} />
+            <Route path="/ml-governance-dashboard"          element={<ProtectedRoute path="/ml-governance-dashboard" element={<MlGovernanceDashboardPage />} />} />
             {/* Sprint DD — Corporate Finance & Capital Markets */}
-            <Route path="/climate-wacc-engine"       element={<ClimateWaccEnginePage />} />
-            <Route path="/green-debt-structuring"    element={<GreenDebtStructuringPage />} />
-            <Route path="/climate-ma-due-diligence"  element={<ClimateMaDueDiligencePage />} />
-            <Route path="/carbon-adjusted-valuation" element={<CarbonAdjustedValuationPage />} />
-            <Route path="/treasury-climate-risk"     element={<TreasuryClimateRiskPage />} />
-            <Route path="/climate-capital-markets"   element={<ClimateCapitalMarketsPage />} />
+            <Route path="/climate-wacc-engine"       element={<ProtectedRoute path="/climate-wacc-engine" element={<ClimateWaccEnginePage />} />} />
+            <Route path="/green-debt-structuring"    element={<ProtectedRoute path="/green-debt-structuring" element={<GreenDebtStructuringPage />} />} />
+            <Route path="/climate-ma-due-diligence"  element={<ProtectedRoute path="/climate-ma-due-diligence" element={<ClimateMaDueDiligencePage />} />} />
+            <Route path="/carbon-adjusted-valuation" element={<ProtectedRoute path="/carbon-adjusted-valuation" element={<CarbonAdjustedValuationPage />} />} />
+            <Route path="/treasury-climate-risk"     element={<ProtectedRoute path="/treasury-climate-risk" element={<TreasuryClimateRiskPage />} />} />
+            <Route path="/climate-capital-markets"   element={<ProtectedRoute path="/climate-capital-markets" element={<ClimateCapitalMarketsPage />} />} />
             {/* Sprint DE — Green Real Estate & Built Environment */}
-            <Route path="/green-building-valuation"          element={<GreenBuildingValuationPage />} />
-            <Route path="/real-estate-climate-risk"          element={<RealEstateClimateRiskPage />} />
-            <Route path="/climate-mortgage-analytics"        element={<ClimateMortgageAnalyticsPage />} />
-            <Route path="/infrastructure-climate-resilience" element={<InfrastructureClimateResiliencePage />} />
-            <Route path="/urban-climate-adaptation"          element={<UrbanClimateAdaptationPage />} />
+            <Route path="/green-building-valuation"          element={<ProtectedRoute path="/green-building-valuation" element={<GreenBuildingValuationPage />} />} />
+            <Route path="/real-estate-climate-risk"          element={<ProtectedRoute path="/real-estate-climate-risk" element={<RealEstateClimateRiskPage />} />} />
+            <Route path="/climate-mortgage-analytics"        element={<ProtectedRoute path="/climate-mortgage-analytics" element={<ClimateMortgageAnalyticsPage />} />} />
+            <Route path="/infrastructure-climate-resilience" element={<ProtectedRoute path="/infrastructure-climate-resilience" element={<InfrastructureClimateResiliencePage />} />} />
+            <Route path="/urban-climate-adaptation"          element={<ProtectedRoute path="/urban-climate-adaptation" element={<UrbanClimateAdaptationPage />} />} />
             {/* /real-estate-carbon-analytics route now auto-discovered from its module.config.js */}
             {/* Sprint DF — Climate Technology & Innovation Finance */}
-            <Route path="/cleantech-investment"              element={<CleanTechInvestmentPage />} />
-            <Route path="/green-hydrogen-economics-df"       element={<GreenHydrogenEconomicsPage2 />} />
-            <Route path="/carbon-capture-finance"            element={<CarbonCaptureFinancePage />} />
-            <Route path="/energy-storage-analytics"          element={<EnergyStorageAnalyticsPage />} />
-            <Route path="/ev-transition-finance"             element={<EVTransitionFinancePage />} />
-            <Route path="/climate-patent-intelligence"       element={<ClimatePatentIntelligencePage />} />
+            <Route path="/cleantech-investment"              element={<ProtectedRoute path="/cleantech-investment" element={<CleanTechInvestmentPage />} />} />
+            <Route path="/green-hydrogen-economics-df"       element={<ProtectedRoute path="/green-hydrogen-economics-df" element={<GreenHydrogenEconomicsPage2 />} />} />
+            <Route path="/carbon-capture-finance"            element={<ProtectedRoute path="/carbon-capture-finance" element={<CarbonCaptureFinancePage />} />} />
+            <Route path="/energy-storage-analytics"          element={<ProtectedRoute path="/energy-storage-analytics" element={<EnergyStorageAnalyticsPage />} />} />
+            <Route path="/ev-transition-finance"             element={<ProtectedRoute path="/ev-transition-finance" element={<EVTransitionFinancePage />} />} />
+            <Route path="/climate-patent-intelligence"       element={<ProtectedRoute path="/climate-patent-intelligence" element={<ClimatePatentIntelligencePage />} />} />
             {/* Sprint DG — Food, Agriculture & Land Use */}
-            <Route path="/agricultural-climate-risk"          element={<AgriculturalClimateRiskPage />} />
-            <Route path="/food-system-transition"             element={<FoodSystemTransitionPage />} />
-            <Route path="/land-use-change-finance"            element={<LandUseChangeFinancePage />} />
-            <Route path="/sustainable-agriculture-investment" element={<SustainableAgricultureInvestmentPage />} />
-            <Route path="/water-food-energy-nexus"            element={<WaterFoodEnergyNexusPage />} />
-            <Route path="/climate-commodity-analytics"        element={<ClimateCommodityAnalyticsPage />} />
+            <Route path="/agricultural-climate-risk"          element={<ProtectedRoute path="/agricultural-climate-risk" element={<AgriculturalClimateRiskPage />} />} />
+            <Route path="/food-system-transition"             element={<ProtectedRoute path="/food-system-transition" element={<FoodSystemTransitionPage />} />} />
+            <Route path="/land-use-change-finance"            element={<ProtectedRoute path="/land-use-change-finance" element={<LandUseChangeFinancePage />} />} />
+            <Route path="/sustainable-agriculture-investment" element={<ProtectedRoute path="/sustainable-agriculture-investment" element={<SustainableAgricultureInvestmentPage />} />} />
+            <Route path="/water-food-energy-nexus"            element={<ProtectedRoute path="/water-food-energy-nexus" element={<WaterFoodEnergyNexusPage />} />} />
+            <Route path="/climate-commodity-analytics"        element={<ProtectedRoute path="/climate-commodity-analytics" element={<ClimateCommodityAnalyticsPage />} />} />
             {/* Sprint DH — Emerging Markets & Development Finance */}
-            <Route path="/em-sovereign-climate-debt"          element={<EMSovereignClimateDebtPage />} />
-            <Route path="/mdb-climate-finance-dh"             element={<MDBClimateFinanceDHPage />} />
-            <Route path="/jetp-analytics"                     element={<JETPAnalyticsPage />} />
-            <Route path="/climate-blended-finance"            element={<ClimateBlendedFinancePage />} />
-            <Route path="/loss-and-damage-finance"            element={<LossAndDamageFinancePage />} />
-            <Route path="/sovereign-green-bond-analytics"     element={<SovereignGreenBondAnalyticsPage />} />
+            <Route path="/em-sovereign-climate-debt"          element={<ProtectedRoute path="/em-sovereign-climate-debt" element={<EMSovereignClimateDebtPage />} />} />
+            <Route path="/mdb-climate-finance-dh"             element={<ProtectedRoute path="/mdb-climate-finance-dh" element={<MDBClimateFinanceDHPage />} />} />
+            <Route path="/jetp-analytics"                     element={<ProtectedRoute path="/jetp-analytics" element={<JETPAnalyticsPage />} />} />
+            <Route path="/climate-blended-finance"            element={<ProtectedRoute path="/climate-blended-finance" element={<ClimateBlendedFinancePage />} />} />
+            <Route path="/loss-and-damage-finance"            element={<ProtectedRoute path="/loss-and-damage-finance" element={<LossAndDamageFinancePage />} />} />
+            <Route path="/sovereign-green-bond-analytics"     element={<ProtectedRoute path="/sovereign-green-bond-analytics" element={<SovereignGreenBondAnalyticsPage />} />} />
             {/* Sprint DI — Climate Workforce & Just Transition */}
-            <Route path="/fossil-fuel-worker-transition"      element={<FossilFuelWorkerTransitionPage />} />
-            <Route path="/green-jobs-growth"                  element={<GreenJobsGrowthPage />} />
-            <Route path="/corporate-just-transition"          element={<CorporateJustTransitionPage />} />
-            <Route path="/climate-displacement-risk"          element={<ClimateDisplacementRiskPage />} />
-            <Route path="/supply-chain-labor-climate"         element={<SupplyChainLaborClimateRiskPage />} />
-            <Route path="/community-climate-resilience"       element={<CommunityClimateResiliencePage />} />
+            <Route path="/fossil-fuel-worker-transition"      element={<ProtectedRoute path="/fossil-fuel-worker-transition" element={<FossilFuelWorkerTransitionPage />} />} />
+            <Route path="/green-jobs-growth"                  element={<ProtectedRoute path="/green-jobs-growth" element={<GreenJobsGrowthPage />} />} />
+            <Route path="/corporate-just-transition"          element={<ProtectedRoute path="/corporate-just-transition" element={<CorporateJustTransitionPage />} />} />
+            <Route path="/climate-displacement-risk"          element={<ProtectedRoute path="/climate-displacement-risk" element={<ClimateDisplacementRiskPage />} />} />
+            <Route path="/supply-chain-labor-climate"         element={<ProtectedRoute path="/supply-chain-labor-climate" element={<SupplyChainLaborClimateRiskPage />} />} />
+            <Route path="/community-climate-resilience"       element={<ProtectedRoute path="/community-climate-resilience" element={<CommunityClimateResiliencePage />} />} />
             {/* Sprint DJ — Ocean, Shipping & Blue Economy */}
-            <Route path="/shipping-decarbonisation"   element={<ShippingDecarbonisationPage />} />
-            <Route path="/blue-carbon-finance"        element={<BlueCarbonFinancePage />} />
-            <Route path="/coastal-flood-risk-finance" element={<CoastalFloodRiskFinancePage />} />
-            <Route path="/ocean-health-finance"       element={<OceanHealthFinancePage />} />
-            <Route path="/port-climate-risk"          element={<PortClimateRiskPage />} />
-            <Route path="/fisheries-climate-risk"     element={<FisheriesClimateRiskPage />} />
+            <Route path="/shipping-decarbonisation"   element={<ProtectedRoute path="/shipping-decarbonisation" element={<ShippingDecarbonisationPage />} />} />
+            <Route path="/blue-carbon-finance"        element={<ProtectedRoute path="/blue-carbon-finance" element={<BlueCarbonFinancePage />} />} />
+            <Route path="/coastal-flood-risk-finance" element={<ProtectedRoute path="/coastal-flood-risk-finance" element={<CoastalFloodRiskFinancePage />} />} />
+            <Route path="/ocean-health-finance"       element={<ProtectedRoute path="/ocean-health-finance" element={<OceanHealthFinancePage />} />} />
+            <Route path="/port-climate-risk"          element={<ProtectedRoute path="/port-climate-risk" element={<PortClimateRiskPage />} />} />
+            <Route path="/fisheries-climate-risk"     element={<ProtectedRoute path="/fisheries-climate-risk" element={<FisheriesClimateRiskPage />} />} />
             {/* Sprint DM — Urban & City Climate Finance */}
-            <Route path="/municipal-green-bond"           element={<MunicipalGreenBondPage />} />
-            <Route path="/smart-city-climate-finance"     element={<SmartCityClimateFinancePage />} />
-            <Route path="/city-climate-risk-rating"       element={<CityClimateRiskRatingPage />} />
-            <Route path="/urban-mobility-transition"      element={<UrbanMobilityTransitionPage />} />
-            <Route path="/green-building-code-finance"    element={<GreenBuildingCodeFinancePage />} />
-            <Route path="/city-net-zero-tracker"          element={<CityNetZeroTrackerPage />} />
+            <Route path="/municipal-green-bond"           element={<ProtectedRoute path="/municipal-green-bond" element={<MunicipalGreenBondPage />} />} />
+            <Route path="/smart-city-climate-finance"     element={<ProtectedRoute path="/smart-city-climate-finance" element={<SmartCityClimateFinancePage />} />} />
+            <Route path="/city-climate-risk-rating"       element={<ProtectedRoute path="/city-climate-risk-rating" element={<CityClimateRiskRatingPage />} />} />
+            <Route path="/urban-mobility-transition"      element={<ProtectedRoute path="/urban-mobility-transition" element={<UrbanMobilityTransitionPage />} />} />
+            <Route path="/green-building-code-finance"    element={<ProtectedRoute path="/green-building-code-finance" element={<GreenBuildingCodeFinancePage />} />} />
+            <Route path="/city-net-zero-tracker"          element={<ProtectedRoute path="/city-net-zero-tracker" element={<CityNetZeroTrackerPage />} />} />
             {/* Sprint DN — Supply Chain Climate Intelligence */}
-            <Route path="/supply-chain-emissions-mapper"  element={<SupplyChainEmissionsMapperPage />} />
-            <Route path="/procurement-climate-risk"       element={<ProcurementClimateRiskPage />} />
-            <Route path="/supplier-esg-scorecard"         element={<SupplierESGScorecardPage />} />
-            <Route path="/scope3-category-analytics"      element={<Scope3CategoryAnalyticsPage />} />
-            <Route path="/climate-trade-flow-analytics"   element={<ClimateTradeFlowAnalyticsPage />} />
-            <Route path="/green-procurement-intelligence" element={<GreenProcurementIntelligencePage />} />
+            <Route path="/supply-chain-emissions-mapper"  element={<ProtectedRoute path="/supply-chain-emissions-mapper" element={<SupplyChainEmissionsMapperPage />} />} />
+            <Route path="/procurement-climate-risk"       element={<ProtectedRoute path="/procurement-climate-risk" element={<ProcurementClimateRiskPage />} />} />
+            <Route path="/supplier-esg-scorecard"         element={<ProtectedRoute path="/supplier-esg-scorecard" element={<SupplierESGScorecardPage />} />} />
+            <Route path="/scope3-category-analytics"      element={<ProtectedRoute path="/scope3-category-analytics" element={<Scope3CategoryAnalyticsPage />} />} />
+            <Route path="/climate-trade-flow-analytics"   element={<ProtectedRoute path="/climate-trade-flow-analytics" element={<ClimateTradeFlowAnalyticsPage />} />} />
+            <Route path="/green-procurement-intelligence" element={<ProtectedRoute path="/green-procurement-intelligence" element={<GreenProcurementIntelligencePage />} />} />
             {/* Sprint DO — Renewable Energy Project Finance */}
-            <Route path="/solar-project-finance"         element={<SolarProjectFinancePage />} />
-            <Route path="/wind-energy-finance"           element={<WindEnergyFinancePage />} />
-            <Route path="/renewable-project-pipeline"    element={<RenewableProjectPipelinePage />} />
-            <Route path="/energy-transition-lending"     element={<EnergyTransitionLendingPage />} />
-            <Route path="/ppa-analytics"                 element={<PPAAnalyticsPage />} />
-            <Route path="/renewable-asset-management"    element={<RenewableAssetManagementPage />} />
+            <Route path="/solar-project-finance"         element={<ProtectedRoute path="/solar-project-finance" element={<SolarProjectFinancePage />} />} />
+            <Route path="/wind-energy-finance"           element={<ProtectedRoute path="/wind-energy-finance" element={<WindEnergyFinancePage />} />} />
+            <Route path="/renewable-project-pipeline"    element={<ProtectedRoute path="/renewable-project-pipeline" element={<RenewableProjectPipelinePage />} />} />
+            <Route path="/energy-transition-lending"     element={<ProtectedRoute path="/energy-transition-lending" element={<EnergyTransitionLendingPage />} />} />
+            <Route path="/ppa-analytics"                 element={<ProtectedRoute path="/ppa-analytics" element={<PPAAnalyticsPage />} />} />
+            <Route path="/renewable-asset-management"    element={<ProtectedRoute path="/renewable-asset-management" element={<RenewableAssetManagementPage />} />} />
             {/* Sprint DQ — Carbon Credit Calculation Module */}
-            <Route path="/cdm-methodology-calculator"      element={<CDMMethodologyCalculatorPage />} />
-            <Route path="/baseline-additionality-analyzer" element={<BaselineAdditionalityPage />} />
-            <Route path="/monte-carlo-uncertainty-engine"  element={<MonteCarloCarbonUncertaintyPage />} />
-            <Route path="/carbon-project-lifecycle"        element={<CarbonProjectLifecyclePage />} />
-            <Route path="/multi-standard-compliance"       element={<MultiStandardCompliancePage />} />
-            <Route path="/carbon-credit-audit-trail"       element={<CarbonCreditAuditTrailPage />} />
+            <Route path="/cdm-methodology-calculator"      element={<ProtectedRoute path="/cdm-methodology-calculator" element={<CDMMethodologyCalculatorPage />} />} />
+            <Route path="/baseline-additionality-analyzer" element={<ProtectedRoute path="/baseline-additionality-analyzer" element={<BaselineAdditionalityPage />} />} />
+            <Route path="/monte-carlo-uncertainty-engine"  element={<ProtectedRoute path="/monte-carlo-uncertainty-engine" element={<MonteCarloCarbonUncertaintyPage />} />} />
+            <Route path="/carbon-project-lifecycle"        element={<ProtectedRoute path="/carbon-project-lifecycle" element={<CarbonProjectLifecyclePage />} />} />
+            <Route path="/multi-standard-compliance"       element={<ProtectedRoute path="/multi-standard-compliance" element={<MultiStandardCompliancePage />} />} />
+            <Route path="/carbon-credit-audit-trail"       element={<ProtectedRoute path="/carbon-credit-audit-trail" element={<CarbonCreditAuditTrailPage />} />} />
             {/* Sprint DP — Health, Heat & Climate Wellbeing Finance */}
-            <Route path="/heat-stress-finance"             element={<HeatStressFinancePage />} />
-            <Route path="/climate-health-risk-analytics"   element={<ClimateHealthRiskPage />} />
-            <Route path="/air-quality-investment"          element={<AirQualityInvestmentPage />} />
-            <Route path="/pandemic-climate-finance"        element={<PandemicClimateFinancePage />} />
-            <Route path="/mental-health-climate-risk"      element={<MentalHealthClimateRiskPage />} />
-            <Route path="/wellbeing-adjusted-returns"      element={<WellbeingAdjustedReturnsPage />} />
+            <Route path="/heat-stress-finance"             element={<ProtectedRoute path="/heat-stress-finance" element={<HeatStressFinancePage />} />} />
+            <Route path="/climate-health-risk-analytics"   element={<ProtectedRoute path="/climate-health-risk-analytics" element={<ClimateHealthRiskPage />} />} />
+            <Route path="/air-quality-investment"          element={<ProtectedRoute path="/air-quality-investment" element={<AirQualityInvestmentPage />} />} />
+            <Route path="/pandemic-climate-finance"        element={<ProtectedRoute path="/pandemic-climate-finance" element={<PandemicClimateFinancePage />} />} />
+            <Route path="/mental-health-climate-risk"      element={<ProtectedRoute path="/mental-health-climate-risk" element={<MentalHealthClimateRiskPage />} />} />
+            <Route path="/wellbeing-adjusted-returns"      element={<ProtectedRoute path="/wellbeing-adjusted-returns" element={<WellbeingAdjustedReturnsPage />} />} />
             {/* Sprint DK — Climate Governance & Board Analytics */}
-            <Route path="/board-climate-oversight"          element={<BoardClimateOversightPage />} />
-            <Route path="/fiduciary-climate-risk"           element={<FiduciaryClimateRiskPage />} />
-            <Route path="/esg-governance-scorer"            element={<ESGGovernanceScorerPage />} />
-            <Route path="/climate-executive-pay"            element={<ClimateExecutivePayPage />} />
-            <Route path="/shareholder-climate-engagement"   element={<ShareholderEngagementPage />} />
-            <Route path="/climate-reg-policy-tracker"       element={<ClimateRegPolicyTrackerPage />} />
+            <Route path="/board-climate-oversight"          element={<ProtectedRoute path="/board-climate-oversight" element={<BoardClimateOversightPage />} />} />
+            <Route path="/fiduciary-climate-risk"           element={<ProtectedRoute path="/fiduciary-climate-risk" element={<FiduciaryClimateRiskPage />} />} />
+            <Route path="/esg-governance-scorer"            element={<ProtectedRoute path="/esg-governance-scorer" element={<ESGGovernanceScorerPage />} />} />
+            <Route path="/climate-executive-pay"            element={<ProtectedRoute path="/climate-executive-pay" element={<ClimateExecutivePayPage />} />} />
+            <Route path="/shareholder-climate-engagement"   element={<ProtectedRoute path="/shareholder-climate-engagement" element={<ShareholderEngagementPage />} />} />
+            <Route path="/climate-reg-policy-tracker"       element={<ProtectedRoute path="/climate-reg-policy-tracker" element={<ClimateRegPolicyTrackerPage />} />} />
             {/* Sprint DL — Circular Economy & Waste Climate Finance */}
-            <Route path="/circular-economy-finance"      element={<CircularEconomyFinancePage />} />
-            <Route path="/waste-to-energy-finance"       element={<WasteToEnergyFinancePage />} />
-            <Route path="/plastics-pollution-finance"    element={<PlasticsPollutionFinancePage />} />
-            <Route path="/resource-efficiency-analytics" element={<ResourceEfficiencyAnalyticsPage />} />
-            <Route path="/critical-minerals-climate"     element={<CriticalMineralsClimatePage />} />
-            <Route path="/green-chemistry-finance"       element={<GreenChemistryFinancePage />} />
+            <Route path="/circular-economy-finance"      element={<ProtectedRoute path="/circular-economy-finance" element={<CircularEconomyFinancePage />} />} />
+            <Route path="/waste-to-energy-finance"       element={<ProtectedRoute path="/waste-to-energy-finance" element={<WasteToEnergyFinancePage />} />} />
+            <Route path="/plastics-pollution-finance"    element={<ProtectedRoute path="/plastics-pollution-finance" element={<PlasticsPollutionFinancePage />} />} />
+            <Route path="/resource-efficiency-analytics" element={<ProtectedRoute path="/resource-efficiency-analytics" element={<ResourceEfficiencyAnalyticsPage />} />} />
+            <Route path="/critical-minerals-climate"     element={<ProtectedRoute path="/critical-minerals-climate" element={<CriticalMineralsClimatePage />} />} />
+            <Route path="/green-chemistry-finance"       element={<ProtectedRoute path="/green-chemistry-finance" element={<GreenChemistryFinancePage />} />} />
             {/* Sprint DC — Insurance Climate Actuarial Suite */}
-            <Route path="/climate-mortality-longevity"   element={<ClimateMortalityLongevityPage />} />
-            <Route path="/pc-climate-pricing"            element={<PCClimatePricingPage />} />
-            <Route path="/climate-reserve-adequacy"      element={<ClimateReserveAdequacyPage />} />
-            <Route path="/solvency-capital-climate"      element={<SolvencyCapitalClimatePage />} />
-            <Route path="/climate-claims-forecasting"    element={<ClimateClaimsForecastingPage />} />
+            <Route path="/climate-mortality-longevity"   element={<ProtectedRoute path="/climate-mortality-longevity" element={<ClimateMortalityLongevityPage />} />} />
+            <Route path="/pc-climate-pricing"            element={<ProtectedRoute path="/pc-climate-pricing" element={<PCClimatePricingPage />} />} />
+            <Route path="/climate-reserve-adequacy"      element={<ProtectedRoute path="/climate-reserve-adequacy" element={<ClimateReserveAdequacyPage />} />} />
+            <Route path="/solvency-capital-climate"      element={<ProtectedRoute path="/solvency-capital-climate" element={<SolvencyCapitalClimatePage />} />} />
+            <Route path="/climate-claims-forecasting"    element={<ProtectedRoute path="/climate-claims-forecasting" element={<ClimateClaimsForecastingPage />} />} />
             {/* Sprint DB — Climate Risk Capital & Supervisory Analytics */}
-            <Route path="/climate-capital-adequacy"        element={<ClimateCapitalAdequacyPage />} />
-            <Route path="/climate-cvar-suite"              element={<ClimateCVaRSuitePage />} />
-            <Route path="/supervisory-stress-orchestrator" element={<SupervisoryStressOrchestratorPage />} />
-            <Route path="/climate-risk-premium"            element={<ClimateRiskPremiumPage />} />
-            <Route path="/enterprise-climate-risk"         element={<EnterpriseClimateRiskPage />} />
-            <Route path="/systemic-climate-risk"           element={<SystemicClimateRiskPage />} />
+            <Route path="/climate-capital-adequacy"        element={<ProtectedRoute path="/climate-capital-adequacy" element={<ClimateCapitalAdequacyPage />} />} />
+            <Route path="/climate-cvar-suite"              element={<ProtectedRoute path="/climate-cvar-suite" element={<ClimateCVaRSuitePage />} />} />
+            <Route path="/supervisory-stress-orchestrator" element={<ProtectedRoute path="/supervisory-stress-orchestrator" element={<SupervisoryStressOrchestratorPage />} />} />
+            <Route path="/climate-risk-premium"            element={<ProtectedRoute path="/climate-risk-premium" element={<ClimateRiskPremiumPage />} />} />
+            <Route path="/enterprise-climate-risk"         element={<ProtectedRoute path="/enterprise-climate-risk" element={<EnterpriseClimateRiskPage />} />} />
+            <Route path="/systemic-climate-risk"           element={<ProtectedRoute path="/systemic-climate-risk" element={<SystemicClimateRiskPage />} />} />
             {/* Sprint DA — Disclosure & Stranded Asset Analytics */}
-            <Route path="/climate-litigation-risk-scorer"      element={<ClimateLitigationRiskScorerPage />} />
-            <Route path="/greenwashing-exposure-monitor"       element={<GreenwashingExposureMonitorPage />} />
-            <Route path="/disclosure-adequacy-analyzer"        element={<DisclosureAdequacyAnalyzerPage />} />
-            <Route path="/stranded-asset-litigation-tracker"   element={<StrandedAssetLitigationTrackerPage />} />
-            <Route path="/regulatory-enforcement-monitor"      element={<RegulatoryEnforcementMonitorPage />} />
-            <Route path="/climate-legal-intelligence-dashboard" element={<ClimateLegalIntelligenceDashboardPage />} />
+            <Route path="/climate-litigation-risk-scorer"      element={<ProtectedRoute path="/climate-litigation-risk-scorer" element={<ClimateLitigationRiskScorerPage />} />} />
+            <Route path="/greenwashing-exposure-monitor"       element={<ProtectedRoute path="/greenwashing-exposure-monitor" element={<GreenwashingExposureMonitorPage />} />} />
+            <Route path="/disclosure-adequacy-analyzer"        element={<ProtectedRoute path="/disclosure-adequacy-analyzer" element={<DisclosureAdequacyAnalyzerPage />} />} />
+            <Route path="/stranded-asset-litigation-tracker"   element={<ProtectedRoute path="/stranded-asset-litigation-tracker" element={<StrandedAssetLitigationTrackerPage />} />} />
+            <Route path="/regulatory-enforcement-monitor"      element={<ProtectedRoute path="/regulatory-enforcement-monitor" element={<RegulatoryEnforcementMonitorPage />} />} />
+            <Route path="/climate-legal-intelligence-dashboard" element={<ProtectedRoute path="/climate-legal-intelligence-dashboard" element={<ClimateLegalIntelligenceDashboardPage />} />} />
             {/* Sprint CY — Real-Time Climate Intelligence */}
-            <Route path="/live-carbon-price-monitor"          element={<LiveCarbonPriceMonitorPage />} />
-            <Route path="/portfolio-climate-pulse"            element={<PortfolioClimatePulsePage />} />
-            <Route path="/regulatory-deadline-tracker"        element={<RegulatoryDeadlineTrackerPage />} />
-            <Route path="/climate-news-sentiment-feed"        element={<ClimateNewsSentimentFeedPage />} />
-            <Route path="/real-time-emissions-monitor"        element={<RealTimeEmissionsMonitorPage />} />
-            <Route path="/client-transition-command-center"   element={<ClientTransitionCommandCenterPage />} />
+            <Route path="/live-carbon-price-monitor"          element={<ProtectedRoute path="/live-carbon-price-monitor" element={<LiveCarbonPriceMonitorPage />} />} />
+            <Route path="/portfolio-climate-pulse"            element={<ProtectedRoute path="/portfolio-climate-pulse" element={<PortfolioClimatePulsePage />} />} />
+            <Route path="/regulatory-deadline-tracker"        element={<ProtectedRoute path="/regulatory-deadline-tracker" element={<RegulatoryDeadlineTrackerPage />} />} />
+            <Route path="/climate-news-sentiment-feed"        element={<ProtectedRoute path="/climate-news-sentiment-feed" element={<ClimateNewsSentimentFeedPage />} />} />
+            <Route path="/real-time-emissions-monitor"        element={<ProtectedRoute path="/real-time-emissions-monitor" element={<RealTimeEmissionsMonitorPage />} />} />
+            <Route path="/client-transition-command-center"   element={<ProtectedRoute path="/client-transition-command-center" element={<ClientTransitionCommandCenterPage />} />} />
             {/* Sprint CZ — Climate Portfolio Construction & Optimization */}
-            <Route path="/climate-portfolio-optimizer"        element={<ClimatePortfolioOptimizerPage />} />
-            <Route path="/net-zero-portfolio-alignment"       element={<NetZeroPortfolioAlignmentPage />} />
-            <Route path="/climate-benchmark-constructor"      element={<ClimateBenchmarkConstructorPage />} />
-            <Route path="/green-bond-portfolio-analytics"     element={<GreenBondPortfolioAnalyticsPage />} />
-            <Route path="/climate-risk-budget-allocator"      element={<ClimateRiskBudgetAllocatorPage />} />
-            <Route path="/transition-alpha-signal-generator"  element={<TransitionAlphaSignalGeneratorPage />} />
+            <Route path="/climate-portfolio-optimizer"        element={<ProtectedRoute path="/climate-portfolio-optimizer" element={<ClimatePortfolioOptimizerPage />} />} />
+            <Route path="/net-zero-portfolio-alignment"       element={<ProtectedRoute path="/net-zero-portfolio-alignment" element={<NetZeroPortfolioAlignmentPage />} />} />
+            <Route path="/climate-benchmark-constructor"      element={<ProtectedRoute path="/climate-benchmark-constructor" element={<ClimateBenchmarkConstructorPage />} />} />
+            <Route path="/green-bond-portfolio-analytics"     element={<ProtectedRoute path="/green-bond-portfolio-analytics" element={<GreenBondPortfolioAnalyticsPage />} />} />
+            <Route path="/climate-risk-budget-allocator"      element={<ProtectedRoute path="/climate-risk-budget-allocator" element={<ClimateRiskBudgetAllocatorPage />} />} />
+            <Route path="/transition-alpha-signal-generator"  element={<ProtectedRoute path="/transition-alpha-signal-generator" element={<TransitionAlphaSignalGeneratorPage />} />} />
             {/* Sprint BW — Carbon Credit Engine Hub */}
-            <Route path="/cc-engine-hub"              element={<CcEngineHubPage />} />
-            <Route path="/cc-portfolio-analytics"     element={<CcPortfolioAnalyticsPage />} />
-            <Route path="/cc-methodology-comparison"  element={<CcMethodologyComparisonPage />} />
+            <Route path="/cc-engine-hub"              element={<ProtectedRoute path="/cc-engine-hub" element={<CcEngineHubPage />} />} />
+            <Route path="/cc-portfolio-analytics"     element={<ProtectedRoute path="/cc-portfolio-analytics" element={<CcPortfolioAnalyticsPage />} />} />
+            <Route path="/cc-methodology-comparison"  element={<ProtectedRoute path="/cc-methodology-comparison" element={<CcMethodologyComparisonPage />} />} />
             {/* Sprint BV — Credit Retirement & Certificates */}
-            <Route path="/cc-retirement-workflow"  element={<CcRetirementWorkflowPage />} />
-            <Route path="/cc-certificate-mgmt"     element={<CcCertificateMgmtPage />} />
-            <Route path="/cc-registry-hub"         element={<CcRegistryHubPage />} />
+            <Route path="/cc-retirement-workflow"  element={<ProtectedRoute path="/cc-retirement-workflow" element={<CcRetirementWorkflowPage />} />} />
+            <Route path="/cc-certificate-mgmt"     element={<ProtectedRoute path="/cc-certificate-mgmt" element={<CcCertificateMgmtPage />} />} />
+            <Route path="/cc-registry-hub"         element={<ProtectedRoute path="/cc-registry-hub" element={<CcRegistryHubPage />} />} />
             {/* Sprint BU — Engineered CDR & Removals */}
-            <Route path="/cc-mineralization"  element={<CcMineralizationPage />} />
-            <Route path="/cc-dac"             element={<CcDacPage />} />
-            <Route path="/cc-bicrs-hub"       element={<CcBicrsHubPage />} />
+            <Route path="/cc-mineralization"  element={<ProtectedRoute path="/cc-mineralization" element={<CcMineralizationPage />} />} />
+            <Route path="/cc-dac"             element={<ProtectedRoute path="/cc-dac" element={<CcDacPage />} />} />
+            <Route path="/cc-bicrs-hub"       element={<ProtectedRoute path="/cc-bicrs-hub" element={<CcBicrsHubPage />} />} />
             {/* Sprint BT — Waste & Industrial Credits */}
-            <Route path="/cc-landfill-wastewater"  element={<CcLandfillWastewaterPage />} />
-            <Route path="/cc-industrial-gases"     element={<CcIndustrialGasesPage />} />
-            <Route path="/cc-ccs-biochar-hub"      element={<CcCcsBiocharHubPage />} />
+            <Route path="/cc-landfill-wastewater"  element={<ProtectedRoute path="/cc-landfill-wastewater" element={<CcLandfillWastewaterPage />} />} />
+            <Route path="/cc-industrial-gases"     element={<ProtectedRoute path="/cc-industrial-gases" element={<CcIndustrialGasesPage />} />} />
+            <Route path="/cc-ccs-biochar-hub"      element={<ProtectedRoute path="/cc-ccs-biochar-hub" element={<CcCcsBiocharHubPage />} />} />
             {/* Sprint BS — Energy Carbon Credits */}
-            <Route path="/cc-grid-renewables"       element={<CcGridRenewablesPage />} />
-            <Route path="/cc-clean-cooking"         element={<CcCleanCookingPage />} />
-            <Route path="/cc-energy-efficiency-hub" element={<CcEnergyEfficiencyHubPage />} />
+            <Route path="/cc-grid-renewables"       element={<ProtectedRoute path="/cc-grid-renewables" element={<CcGridRenewablesPage />} />} />
+            <Route path="/cc-clean-cooking"         element={<ProtectedRoute path="/cc-clean-cooking" element={<CcCleanCookingPage />} />} />
+            <Route path="/cc-energy-efficiency-hub" element={<ProtectedRoute path="/cc-energy-efficiency-hub" element={<CcEnergyEfficiencyHubPage />} />} />
             {/* Sprint BR — Agriculture Carbon Credits */}
-            <Route path="/cc-soil-carbon"         element={<CcSoilCarbonPage />} />
-            <Route path="/cc-livestock-methane"   element={<CcLivestockMethanePage />} />
-            <Route path="/cc-rice-cultivation"    element={<CcRiceCultivationPage />} />
+            <Route path="/cc-soil-carbon"         element={<ProtectedRoute path="/cc-soil-carbon" element={<CcSoilCarbonPage />} />} />
+            <Route path="/cc-livestock-methane"   element={<ProtectedRoute path="/cc-livestock-methane" element={<CcLivestockMethanePage />} />} />
+            <Route path="/cc-rice-cultivation"    element={<ProtectedRoute path="/cc-rice-cultivation" element={<CcRiceCultivationPage />} />} />
             {/* Sprint BQ — Nature-Based Carbon Credits */}
-            <Route path="/cc-arr-reforestation"   element={<CcArrReforestationPage />} />
-            <Route path="/cc-ifm-credits"         element={<CcIfmCreditsPage />} />
-            <Route path="/cc-redd-wetlands-hub"    element={<CcReddWetlandsHubPage />} />
+            <Route path="/cc-arr-reforestation"   element={<ProtectedRoute path="/cc-arr-reforestation" element={<CcArrReforestationPage />} />} />
+            <Route path="/cc-ifm-credits"         element={<ProtectedRoute path="/cc-ifm-credits" element={<CcIfmCreditsPage />} />} />
+            <Route path="/cc-redd-wetlands-hub"    element={<ProtectedRoute path="/cc-redd-wetlands-hub" element={<CcReddWetlandsHubPage />} />} />
             {/* Sprint BP — Equitable Earth Methodologies */}
-            <Route path="/equitable-earth-methodologies" element={<EquitableEarthMethodologiesPage />} />
+            <Route path="/equitable-earth-methodologies" element={<ProtectedRoute path="/equitable-earth-methodologies" element={<EquitableEarthMethodologiesPage />} />} />
             {/* Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk */}
-            <Route path="/battery-ev-analytics"   element={<BatteryEVAnalyticsPage />} />
-            <Route path="/et-commodity-risk"       element={<ETCommodityRiskPage />} />
+            <Route path="/battery-ev-analytics"   element={<ProtectedRoute path="/battery-ev-analytics" element={<BatteryEVAnalyticsPage />} />} />
+            <Route path="/et-commodity-risk"       element={<ProtectedRoute path="/et-commodity-risk" element={<ETCommodityRiskPage />} />} />
             {/* Sprint BN — VCM Registry Analytics · Carbon Forward Curve · Credit Integrity DD */}
-            <Route path="/vcm-registry-analytics" element={<VcmRegistryAnalyticsPage />} />
-            <Route path="/carbon-forward-curve"   element={<CarbonForwardCurvePage />} />
-            <Route path="/credit-integrity-dd"    element={<CreditIntegrityDDPage />} />
+            <Route path="/vcm-registry-analytics" element={<ProtectedRoute path="/vcm-registry-analytics" element={<VcmRegistryAnalyticsPage />} />} />
+            <Route path="/carbon-forward-curve"   element={<ProtectedRoute path="/carbon-forward-curve" element={<CarbonForwardCurvePage />} />} />
+            <Route path="/credit-integrity-dd"    element={<ProtectedRoute path="/credit-integrity-dd" element={<CreditIntegrityDDPage />} />} />
             {/* Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap */}
-            <Route path="/natcat-loss-engine"        element={<NatCatLossEnginePage />} />
-            <Route path="/cat-bond-ils"              element={<CatBondILSPage />} />
-            <Route path="/insurance-protection-gap"  element={<InsuranceProtectionGapPage />} />
+            <Route path="/natcat-loss-engine"        element={<ProtectedRoute path="/natcat-loss-engine" element={<NatCatLossEnginePage />} />} />
+            <Route path="/cat-bond-ils"              element={<ProtectedRoute path="/cat-bond-ils" element={<CatBondILSPage />} />} />
+            <Route path="/insurance-protection-gap"  element={<ProtectedRoute path="/insurance-protection-gap" element={<InsuranceProtectionGapPage />} />} />
             {/* Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub */}
-            <Route path="/ml-risk-scorer"          element={<MLRiskScorerPage />} />
-            <Route path="/nlp-disclosure-parser"   element={<NLPDisclosureParserPage />} />
-            <Route path="/predictive-analytics-hub" element={<PredictiveAnalyticsHubPage2 />} />
+            <Route path="/ml-risk-scorer"          element={<ProtectedRoute path="/ml-risk-scorer" element={<MLRiskScorerPage />} />} />
+            <Route path="/nlp-disclosure-parser"   element={<ProtectedRoute path="/nlp-disclosure-parser" element={<NLPDisclosureParserPage />} />} />
+            <Route path="/predictive-analytics-hub" element={<ProtectedRoute path="/predictive-analytics-hub" element={<PredictiveAnalyticsHubPage2 />} />} />
             {/* Sprint BK — Asset Valuation Engine · Infrastructure Valuation · Real Estate Valuation */}
-            <Route path="/asset-valuation-engine"   element={<AssetValuationEnginePage />} />
-            <Route path="/infrastructure-valuation" element={<InfrastructureValuationPage />} />
-            <Route path="/real-estate-valuation"    element={<RealEstateValuationPage />} />
+            <Route path="/asset-valuation-engine"   element={<ProtectedRoute path="/asset-valuation-engine" element={<AssetValuationEnginePage />} />} />
+            <Route path="/infrastructure-valuation" element={<ProtectedRoute path="/infrastructure-valuation" element={<InfrastructureValuationPage />} />} />
+            <Route path="/real-estate-valuation"    element={<ProtectedRoute path="/real-estate-valuation" element={<RealEstateValuationPage />} />} />
             {/* Sprint BJ — NGFS×IEA Scenario Engine · Climate-Credit Integration */}
-            <Route path="/ngfs-iea-scenario"          element={<NgfsIeaScenarioPage />} />
-            <Route path="/climate-credit-integration" element={<ClimateCreditIntegrationPage />} />
+            <Route path="/ngfs-iea-scenario"          element={<ProtectedRoute path="/ngfs-iea-scenario" element={<NgfsIeaScenarioPage />} />} />
+            <Route path="/climate-credit-integration" element={<ProtectedRoute path="/climate-credit-integration" element={<ClimateCreditIntegrationPage />} />} />
             {/* Sprint BI — Credit Risk Analytics · Platform Analytics Dashboard */}
-            <Route path="/credit-risk-analytics" element={<CreditRiskAnalyticsPage />} />
-            <Route path="/platform-analytics"    element={<PlatformAnalyticsPage />} />
+            <Route path="/credit-risk-analytics" element={<ProtectedRoute path="/credit-risk-analytics" element={<CreditRiskAnalyticsPage />} />} />
+            <Route path="/platform-analytics"    element={<ProtectedRoute path="/platform-analytics" element={<PlatformAnalyticsPage />} />} />
             {/* Sprint BH — DB Migration Console · Multi-Tenancy & Org Management */}
-            <Route path="/db-migration-console"  element={<DbMigrationConsolePage />} />
-            <Route path="/multi-tenancy-audit"   element={<MultiTenancyAuditPage />} />
+            <Route path="/db-migration-console"  element={<ProtectedRoute path="/db-migration-console" element={<DbMigrationConsolePage />} />} />
+            <Route path="/multi-tenancy-audit"   element={<ProtectedRoute path="/multi-tenancy-audit" element={<MultiTenancyAuditPage />} />} />
             {/* Sprint BG — SBTi Registry & Climate TRACE · Sanctions & Watchlist Intelligence */}
-            <Route path="/sbti-climate-trace"   element={<SbtiClimateTracePage />} />
-            <Route path="/sanctions-watchlist"  element={<SanctionsWatchlistPage />} />
+            <Route path="/sbti-climate-trace"   element={<ProtectedRoute path="/sbti-climate-trace" element={<SbtiClimateTracePage />} />} />
+            <Route path="/sanctions-watchlist"  element={<ProtectedRoute path="/sanctions-watchlist" element={<SanctionsWatchlistPage />} />} />
             {/* Sprint BF — Data Hub Ingester Monitor · OWID CO₂ & EVIC Analytics */}
-            <Route path="/data-hub-ingester"   element={<DataHubIngesterPage />} />
-            <Route path="/owid-evic-analytics" element={<OwIdEvicAnalyticsPage />} />
+            <Route path="/data-hub-ingester"   element={<ProtectedRoute path="/data-hub-ingester" element={<DataHubIngesterPage />} />} />
+            <Route path="/owid-evic-analytics" element={<ProtectedRoute path="/owid-evic-analytics" element={<OwIdEvicAnalyticsPage />} />} />
             {/* Sprint BE — DME Financial Risk · DME PD Engine · DME Dynamic Materiality Index */}
-            <Route path="/dme-financial-risk" element={<DmeFinancialRiskPage />} />
-            <Route path="/dme-pd-engine"      element={<DmePdEnginePage />} />
-            <Route path="/dme-index"          element={<DmeIndexPage />} />
+            <Route path="/dme-financial-risk" element={<ProtectedRoute path="/dme-financial-risk" element={<DmeFinancialRiskPage />} />} />
+            <Route path="/dme-pd-engine"      element={<ProtectedRoute path="/dme-pd-engine" element={<DmePdEnginePage />} />} />
+            <Route path="/dme-index"          element={<ProtectedRoute path="/dme-index" element={<DmeIndexPage />} />} />
             {/* Sprint BD — Greenium Signal Engine · Sentiment Pipeline Engine */}
-            <Route path="/greenium-signal"    element={<GreeniumSignalPage />} />
-            <Route path="/sentiment-pipeline" element={<SentimentPipelinePage />} />
-            <Route path="/social-alternative-data" element={<SocialAlternativeDataPage />} />
+            <Route path="/greenium-signal"    element={<ProtectedRoute path="/greenium-signal" element={<GreeniumSignalPage />} />} />
+            <Route path="/sentiment-pipeline" element={<ProtectedRoute path="/sentiment-pipeline" element={<SentimentPipelinePage />} />} />
+            <Route path="/social-alternative-data" element={<ProtectedRoute path="/social-alternative-data" element={<SocialAlternativeDataPage />} />} />
             {/* Sprint DR — Offshore Wind & Marine Energy Intelligence Suite */}
-            <Route path="/offshore-wind-resource"       element={<OffshoreWindResourcePage />} />
-            <Route path="/floating-offshore-wind"       element={<FloatingOffshoreWindPage />} />
-            <Route path="/offshore-wind-finance"        element={<OffshoreWindFinancePage />} />
-            <Route path="/offshore-grid-infrastructure" element={<OffshoreGridInfrastructurePage />} />
-            <Route path="/offshore-wind-om"             element={<OffshoreWindOmPage />} />
-            <Route path="/wind-repowering-intelligence" element={<WindRepoweringIntelligencePage />} />
+            <Route path="/offshore-wind-resource"       element={<ProtectedRoute path="/offshore-wind-resource" element={<OffshoreWindResourcePage />} />} />
+            <Route path="/floating-offshore-wind"       element={<ProtectedRoute path="/floating-offshore-wind" element={<FloatingOffshoreWindPage />} />} />
+            <Route path="/offshore-wind-finance"        element={<ProtectedRoute path="/offshore-wind-finance" element={<OffshoreWindFinancePage />} />} />
+            <Route path="/offshore-grid-infrastructure" element={<ProtectedRoute path="/offshore-grid-infrastructure" element={<OffshoreGridInfrastructurePage />} />} />
+            <Route path="/offshore-wind-om"             element={<ProtectedRoute path="/offshore-wind-om" element={<OffshoreWindOmPage />} />} />
+            <Route path="/wind-repowering-intelligence" element={<ProtectedRoute path="/wind-repowering-intelligence" element={<WindRepoweringIntelligencePage />} />} />
             {/* Sprint DS — Green Hydrogen & Power-to-X Finance Intelligence Suite */}
-            <Route path="/green-hydrogen-lcoh"          element={<GreenHydrogenLcohPage />} />
-            <Route path="/hydrogen-storage-transport"   element={<HydrogenStorageTransportPage />} />
-            <Route path="/power-to-x-finance"           element={<PowerToXFinancePage />} />
-            <Route path="/hydrogen-project-finance"     element={<HydrogenProjectFinancePage />} />
-            <Route path="/blue-hydrogen-ccs"            element={<BlueHydrogenCcsPage />} />
-            <Route path="/hydrogen-market-intelligence" element={<HydrogenMarketIntelligencePage />} />
+            <Route path="/green-hydrogen-lcoh"          element={<ProtectedRoute path="/green-hydrogen-lcoh" element={<GreenHydrogenLcohPage />} />} />
+            <Route path="/hydrogen-storage-transport"   element={<ProtectedRoute path="/hydrogen-storage-transport" element={<HydrogenStorageTransportPage />} />} />
+            <Route path="/power-to-x-finance"           element={<ProtectedRoute path="/power-to-x-finance" element={<PowerToXFinancePage />} />} />
+            <Route path="/hydrogen-project-finance"     element={<ProtectedRoute path="/hydrogen-project-finance" element={<HydrogenProjectFinancePage />} />} />
+            <Route path="/blue-hydrogen-ccs"            element={<ProtectedRoute path="/blue-hydrogen-ccs" element={<BlueHydrogenCcsPage />} />} />
+            <Route path="/hydrogen-market-intelligence" element={<ProtectedRoute path="/hydrogen-market-intelligence" element={<HydrogenMarketIntelligencePage />} />} />
             {/* Sprint DT — Battery Energy Storage & Grid Flexibility Finance Intelligence Suite */}
-            <Route path="/bess-project-finance"      element={<BessProjectFinancePage />} />
-            <Route path="/battery-tech-supply-chain" element={<BatteryTechSupplyChainPage />} />
-            <Route path="/virtual-power-plant"       element={<VirtualPowerPlantPage />} />
-            <Route path="/grid-flexibility-markets"  element={<GridFlexibilityMarketsPage />} />
-            <Route path="/ev-v2g-grid-integration"   element={<EvV2gGridIntegrationPage />} />
-            <Route path="/ldes-investment"           element={<LdesInvestmentPage />} />
+            <Route path="/bess-project-finance"      element={<ProtectedRoute path="/bess-project-finance" element={<BessProjectFinancePage />} />} />
+            <Route path="/battery-tech-supply-chain" element={<ProtectedRoute path="/battery-tech-supply-chain" element={<BatteryTechSupplyChainPage />} />} />
+            <Route path="/virtual-power-plant"       element={<ProtectedRoute path="/virtual-power-plant" element={<VirtualPowerPlantPage />} />} />
+            <Route path="/grid-flexibility-markets"  element={<ProtectedRoute path="/grid-flexibility-markets" element={<GridFlexibilityMarketsPage />} />} />
+            <Route path="/ev-v2g-grid-integration"   element={<ProtectedRoute path="/ev-v2g-grid-integration" element={<EvV2gGridIntegrationPage />} />} />
+            <Route path="/ldes-investment"           element={<ProtectedRoute path="/ldes-investment" element={<LdesInvestmentPage />} />} />
             {/* Sprint DU — Nuclear & Advanced Fission Finance Intelligence Suite */}
-            <Route path="/nuclear-lcoe-economics"    element={<NuclearLcoeEconomicsPage />} />
-            <Route path="/smr-project-finance"       element={<SmrProjectFinancePage />} />
-            <Route path="/nuclear-fuel-cycle"        element={<NuclearFuelCyclePage />} />
-            <Route path="/advanced-reactor-finance"  element={<AdvancedReactorFinancePage />} />
-            <Route path="/nuclear-decommissioning"   element={<NuclearDecommissioningPage />} />
-            <Route path="/nuclear-market-intelligence" element={<NuclearMarketIntelligencePage />} />
+            <Route path="/nuclear-lcoe-economics"    element={<ProtectedRoute path="/nuclear-lcoe-economics" element={<NuclearLcoeEconomicsPage />} />} />
+            <Route path="/smr-project-finance"       element={<ProtectedRoute path="/smr-project-finance" element={<SmrProjectFinancePage />} />} />
+            <Route path="/nuclear-fuel-cycle"        element={<ProtectedRoute path="/nuclear-fuel-cycle" element={<NuclearFuelCyclePage />} />} />
+            <Route path="/advanced-reactor-finance"  element={<ProtectedRoute path="/advanced-reactor-finance" element={<AdvancedReactorFinancePage />} />} />
+            <Route path="/nuclear-decommissioning"   element={<ProtectedRoute path="/nuclear-decommissioning" element={<NuclearDecommissioningPage />} />} />
+            <Route path="/nuclear-market-intelligence" element={<ProtectedRoute path="/nuclear-market-intelligence" element={<NuclearMarketIntelligencePage />} />} />
             {/* Sprint DV — Geothermal Energy Finance Intelligence Suite */}
-            <Route path="/geothermal-lcoe-economics"     element={<GeothermalLcoeEconomicsPage />} />
-            <Route path="/geothermal-project-finance"    element={<GeothermalProjectFinancePage />} />
-            <Route path="/enhanced-geothermal-systems"   element={<EnhancedGeothermalSystemsPage />} />
-            <Route path="/geothermal-direct-use"         element={<GeothermalDirectUsePage />} />
-            <Route path="/geothermal-power-markets"      element={<GeothermalPowerMarketsPage />} />
-            <Route path="/geothermal-market-intelligence" element={<GeothermalMarketIntelligencePage />} />
+            <Route path="/geothermal-lcoe-economics"     element={<ProtectedRoute path="/geothermal-lcoe-economics" element={<GeothermalLcoeEconomicsPage />} />} />
+            <Route path="/geothermal-project-finance"    element={<ProtectedRoute path="/geothermal-project-finance" element={<GeothermalProjectFinancePage />} />} />
+            <Route path="/enhanced-geothermal-systems"   element={<ProtectedRoute path="/enhanced-geothermal-systems" element={<EnhancedGeothermalSystemsPage />} />} />
+            <Route path="/geothermal-direct-use"         element={<ProtectedRoute path="/geothermal-direct-use" element={<GeothermalDirectUsePage />} />} />
+            <Route path="/geothermal-power-markets"      element={<ProtectedRoute path="/geothermal-power-markets" element={<GeothermalPowerMarketsPage />} />} />
+            <Route path="/geothermal-market-intelligence" element={<ProtectedRoute path="/geothermal-market-intelligence" element={<GeothermalMarketIntelligencePage />} />} />
             {/* Sprint DW — FI Climate Finance Instruments Intelligence Suite */}
-            <Route path="/sustainability-linked-instruments" element={<SustainabilityLinkedInstrumentsPage />} />
-            <Route path="/transition-finance-engine"         element={<TransitionFinanceEnginePage />} />
-            <Route path="/green-securitization"              element={<GreenSecuritizationPage />} />
-            <Route path="/climate-credit-pricing"            element={<ClimateCreditPricingPage />} />
-            <Route path="/blended-finance-structuring"       element={<BlendedFinanceStructuringPage />} />
-            <Route path="/fi-net-zero-pathways"              element={<FiNetZeroPathwaysPage />} />
+            <Route path="/sustainability-linked-instruments" element={<ProtectedRoute path="/sustainability-linked-instruments" element={<SustainabilityLinkedInstrumentsPage />} />} />
+            <Route path="/transition-finance-engine"         element={<ProtectedRoute path="/transition-finance-engine" element={<TransitionFinanceEnginePage />} />} />
+            <Route path="/green-securitization"              element={<ProtectedRoute path="/green-securitization" element={<GreenSecuritizationPage />} />} />
+            <Route path="/climate-credit-pricing"            element={<ProtectedRoute path="/climate-credit-pricing" element={<ClimateCreditPricingPage />} />} />
+            <Route path="/blended-finance-structuring"       element={<ProtectedRoute path="/blended-finance-structuring" element={<BlendedFinanceStructuringPage />} />} />
+            <Route path="/fi-net-zero-pathways"              element={<ProtectedRoute path="/fi-net-zero-pathways" element={<FiNetZeroPathwaysPage />} />} />
             {/* Sprint DX — Bioenergy, BECCS & Nature-Based Carbon Finance Intelligence Suite */}
-            <Route path="/bioenergy-lcoe-economics"       element={<BioenergyLcoeEconomicsPage />} />
-            <Route path="/beccs-project-finance"          element={<BeccsProjectFinancePage />} />
-            <Route path="/forestry-timber-finance"        element={<ForestryTimberFinancePage />} />
-            <Route path="/nature-based-solutions-finance" element={<NatureBasedSolutionsFinancePage />} />
-            <Route path="/carbon-removal-markets"         element={<CarbonRemovalMarketsPage />} />
-            <Route path="/biodiversity-natural-capital"   element={<BiodiversityNaturalCapitalPage />} />
+            <Route path="/bioenergy-lcoe-economics"       element={<ProtectedRoute path="/bioenergy-lcoe-economics" element={<BioenergyLcoeEconomicsPage />} />} />
+            <Route path="/beccs-project-finance"          element={<ProtectedRoute path="/beccs-project-finance" element={<BeccsProjectFinancePage />} />} />
+            <Route path="/forestry-timber-finance"        element={<ProtectedRoute path="/forestry-timber-finance" element={<ForestryTimberFinancePage />} />} />
+            <Route path="/nature-based-solutions-finance" element={<ProtectedRoute path="/nature-based-solutions-finance" element={<NatureBasedSolutionsFinancePage />} />} />
+            <Route path="/carbon-removal-markets"         element={<ProtectedRoute path="/carbon-removal-markets" element={<CarbonRemovalMarketsPage />} />} />
+            <Route path="/biodiversity-natural-capital"   element={<ProtectedRoute path="/biodiversity-natural-capital" element={<BiodiversityNaturalCapitalPage />} />} />
             {/* Sprint DY — Municipal & Sub-Sovereign Climate Finance Intelligence Suite */}
-            <Route path="/municipal-green-bond-analytics"  element={<MunicipalGreenBondAnalyticsPage />} />
-            <Route path="/cdfi-climate-finance"            element={<CdfiClimateFinancePage />} />
-            <Route path="/mdb-sub-sovereign-lending"       element={<MdbSubSovereignLendingPage />} />
-            <Route path="/cpace-climate-finance"           element={<CPaceClimateFinancePage />} />
-            <Route path="/climate-revenue-bond-modeler"    element={<ClimateRevenueBondModelerPage />} />
-            <Route path="/municipal-climate-resilience-hub" element={<MunicipalClimateResilienceHubPage />} />
-            <Route path="/blue-bond-analytics"              element={<BlueBondAnalyticsPage />} />
-            <Route path="/shipping-decarbonization-finance" element={<ShippingDecarbonizationFinancePage />} />
-            <Route path="/marine-blue-carbon-finance"       element={<MarineBlueCarbonFinancePage />} />
-            <Route path="/aquaculture-climate-finance"      element={<AquacultureClimateFinancePage />} />
-            <Route path="/ocean-carbon-credit-market"       element={<OceanCarbonCreditMarketPage />} />
-            <Route path="/coastal-resilience-finance"       element={<CoastalResilienceFinancePage />} />
+            <Route path="/municipal-green-bond-analytics"  element={<ProtectedRoute path="/municipal-green-bond-analytics" element={<MunicipalGreenBondAnalyticsPage />} />} />
+            <Route path="/cdfi-climate-finance"            element={<ProtectedRoute path="/cdfi-climate-finance" element={<CdfiClimateFinancePage />} />} />
+            <Route path="/mdb-sub-sovereign-lending"       element={<ProtectedRoute path="/mdb-sub-sovereign-lending" element={<MdbSubSovereignLendingPage />} />} />
+            <Route path="/cpace-climate-finance"           element={<ProtectedRoute path="/cpace-climate-finance" element={<CPaceClimateFinancePage />} />} />
+            <Route path="/climate-revenue-bond-modeler"    element={<ProtectedRoute path="/climate-revenue-bond-modeler" element={<ClimateRevenueBondModelerPage />} />} />
+            <Route path="/municipal-climate-resilience-hub" element={<ProtectedRoute path="/municipal-climate-resilience-hub" element={<MunicipalClimateResilienceHubPage />} />} />
+            <Route path="/blue-bond-analytics"              element={<ProtectedRoute path="/blue-bond-analytics" element={<BlueBondAnalyticsPage />} />} />
+            <Route path="/shipping-decarbonization-finance" element={<ProtectedRoute path="/shipping-decarbonization-finance" element={<ShippingDecarbonizationFinancePage />} />} />
+            <Route path="/marine-blue-carbon-finance"       element={<ProtectedRoute path="/marine-blue-carbon-finance" element={<MarineBlueCarbonFinancePage />} />} />
+            <Route path="/aquaculture-climate-finance"      element={<ProtectedRoute path="/aquaculture-climate-finance" element={<AquacultureClimateFinancePage />} />} />
+            <Route path="/ocean-carbon-credit-market"       element={<ProtectedRoute path="/ocean-carbon-credit-market" element={<OceanCarbonCreditMarketPage />} />} />
+            <Route path="/coastal-resilience-finance"       element={<ProtectedRoute path="/coastal-resilience-finance" element={<CoastalResilienceFinancePage />} />} />
             {/* Sprint EA — India Green Economy Carbon Finance Suite */}
-            <Route path="/regional-carbon-market-hub"        element={<RegionalCarbonMarketHubPage />} />
-            <Route path="/solar-developer-carbon-finance"    element={<SolarDeveloperCarbonFinancePage />} />
-            <Route path="/solar-manufacturer-carbon-finance" element={<SolarManufacturerCarbonFinancePage />} />
-            <Route path="/green-hydrogen-ammonia-carbon"     element={<GreenHydrogenAmmoniaCarbonPage />} />
-            <Route path="/india-green-infra-finance"         element={<IndiaGreenInfraFinancePage />} />
-            <Route path="/carbon-arbitrage-portfolio"        element={<CarbonArbitragePortfolioPage />} />
-            <Route path="/carbon-integrity-mrv-analytics"    element={<CarbonIntegrityMrvAnalyticsPage />} />
+            <Route path="/regional-carbon-market-hub"        element={<ProtectedRoute path="/regional-carbon-market-hub" element={<RegionalCarbonMarketHubPage />} />} />
+            <Route path="/solar-developer-carbon-finance"    element={<ProtectedRoute path="/solar-developer-carbon-finance" element={<SolarDeveloperCarbonFinancePage />} />} />
+            <Route path="/solar-manufacturer-carbon-finance" element={<ProtectedRoute path="/solar-manufacturer-carbon-finance" element={<SolarManufacturerCarbonFinancePage />} />} />
+            <Route path="/green-hydrogen-ammonia-carbon"     element={<ProtectedRoute path="/green-hydrogen-ammonia-carbon" element={<GreenHydrogenAmmoniaCarbonPage />} />} />
+            <Route path="/india-green-infra-finance"         element={<ProtectedRoute path="/india-green-infra-finance" element={<IndiaGreenInfraFinancePage />} />} />
+            <Route path="/carbon-arbitrage-portfolio"        element={<ProtectedRoute path="/carbon-arbitrage-portfolio" element={<CarbonArbitragePortfolioPage />} />} />
+            <Route path="/carbon-integrity-mrv-analytics"    element={<ProtectedRoute path="/carbon-integrity-mrv-analytics" element={<CarbonIntegrityMrvAnalyticsPage />} />} />
             {/* Sprint EB — Impact Advisory Suite */}
-            <Route path="/renewable-lca-epd"                 element={<RenewableLcaEpdPage />} />
-            <Route path="/ccts-offset-registration"          element={<CctsOffsetRegistrationPage />} />
-            <Route path="/sustainability-linked-finance"     element={<SustainabilityLinkedFinancePage />} />
-            <Route path="/esg-ratings-uplift"                element={<EsgRatingsUpliftPage />} />
-            <Route path="/tcfd-physical-risk-assessment"     element={<TcfdPhysicalRiskAssessmentPage />} />
-            <Route path="/tnfd-biodiversity-baseline"        element={<TnfdBiodiversityBaselinePage />} />
+            <Route path="/renewable-lca-epd"                 element={<ProtectedRoute path="/renewable-lca-epd" element={<RenewableLcaEpdPage />} />} />
+            <Route path="/ccts-offset-registration"          element={<ProtectedRoute path="/ccts-offset-registration" element={<CctsOffsetRegistrationPage />} />} />
+            <Route path="/sustainability-linked-finance"     element={<ProtectedRoute path="/sustainability-linked-finance" element={<SustainabilityLinkedFinancePage />} />} />
+            <Route path="/esg-ratings-uplift"                element={<ProtectedRoute path="/esg-ratings-uplift" element={<EsgRatingsUpliftPage />} />} />
+            <Route path="/tcfd-physical-risk-assessment"     element={<ProtectedRoute path="/tcfd-physical-risk-assessment" element={<TcfdPhysicalRiskAssessmentPage />} />} />
+            <Route path="/tnfd-biodiversity-baseline"        element={<ProtectedRoute path="/tnfd-biodiversity-baseline" element={<TnfdBiodiversityBaselinePage />} />} />
             {/* Sprint EC — Solar Energy Finance Suite */}
-            <Route path="/bifacial-agrivoltaic-finance"      element={<BifacialAgrivoltaicFinancePage />} />
-            <Route path="/floating-solar-finance"            element={<FloatingSolarFinancePage />} />
-            <Route path="/solar-plus-storage-finance"        element={<SolarPlusStorageFinancePage />} />
-            <Route path="/utility-solar-epc-intelligence"    element={<UtilitySolarEpcIntelligencePage />} />
-            <Route path="/distributed-community-solar"       element={<DistributedCommunitySolarPage />} />
-            <Route path="/solar-repowering-analytics"        element={<SolarRepoweringAnalyticsPage />} />
+            <Route path="/bifacial-agrivoltaic-finance"      element={<ProtectedRoute path="/bifacial-agrivoltaic-finance" element={<BifacialAgrivoltaicFinancePage />} />} />
+            <Route path="/floating-solar-finance"            element={<ProtectedRoute path="/floating-solar-finance" element={<FloatingSolarFinancePage />} />} />
+            <Route path="/solar-plus-storage-finance"        element={<ProtectedRoute path="/solar-plus-storage-finance" element={<SolarPlusStorageFinancePage />} />} />
+            <Route path="/utility-solar-epc-intelligence"    element={<ProtectedRoute path="/utility-solar-epc-intelligence" element={<UtilitySolarEpcIntelligencePage />} />} />
+            <Route path="/distributed-community-solar"       element={<ProtectedRoute path="/distributed-community-solar" element={<DistributedCommunitySolarPage />} />} />
+            <Route path="/solar-repowering-analytics"        element={<ProtectedRoute path="/solar-repowering-analytics" element={<SolarRepoweringAnalyticsPage />} />} />
             {/* Sprint ED — Solar Panel Manufacturing Intelligence */}
-            <Route path="/polysilicon-wafer-supply-chain"        element={<PolysiliconWaferSupplyChainPage />} />
-            <Route path="/solar-cell-technology-analyzer"        element={<SolarCellTechnologyAnalyzerPage />} />
-            <Route path="/solar-module-manufacturing-economics"  element={<SolarModuleManufacturingEconomicsPage />} />
-            <Route path="/solar-manufacturing-carbon-lca"        element={<SolarManufacturingCarbonLcaPage />} />
-            <Route path="/solar-trade-policy-intelligence"       element={<SolarTradePolicyIntelligencePage />} />
-            <Route path="/solar-module-quality-bankability"      element={<SolarModuleQualityBankabilityPage />} />
+            <Route path="/polysilicon-wafer-supply-chain"        element={<ProtectedRoute path="/polysilicon-wafer-supply-chain" element={<PolysiliconWaferSupplyChainPage />} />} />
+            <Route path="/solar-cell-technology-analyzer"        element={<ProtectedRoute path="/solar-cell-technology-analyzer" element={<SolarCellTechnologyAnalyzerPage />} />} />
+            <Route path="/solar-module-manufacturing-economics"  element={<ProtectedRoute path="/solar-module-manufacturing-economics" element={<SolarModuleManufacturingEconomicsPage />} />} />
+            <Route path="/solar-manufacturing-carbon-lca"        element={<ProtectedRoute path="/solar-manufacturing-carbon-lca" element={<SolarManufacturingCarbonLcaPage />} />} />
+            <Route path="/solar-trade-policy-intelligence"       element={<ProtectedRoute path="/solar-trade-policy-intelligence" element={<SolarTradePolicyIntelligencePage />} />} />
+            <Route path="/solar-module-quality-bankability"      element={<ProtectedRoute path="/solar-module-quality-bankability" element={<SolarModuleQualityBankabilityPage />} />} />
             {/* Sprint EE — Green Ammonia & Hydrogen Derivatives */}
-            <Route path="/green-ammonia-production-economics"    element={<GreenAmmoniaProductionEconomicsPage />} />
-            <Route path="/green-ammonia-shipping-storage"        element={<GreenAmmoniaShippingStoragePage />} />
-            <Route path="/green-ammonia-offtake-markets"         element={<GreenAmmoniaOfftakeMarketsPage />} />
-            <Route path="/green-ammonia-country-intelligence"    element={<GreenAmmoniaCountryIntelligencePage />} />
-            <Route path="/green-ammonia-policy-credits"          element={<GreenAmmoniaPolicyCreditPage />} />
-            <Route path="/hydrogen-derivatives-comparison"       element={<HydrogenDerivativesComparisonPage />} />
+            <Route path="/green-ammonia-production-economics"    element={<ProtectedRoute path="/green-ammonia-production-economics" element={<GreenAmmoniaProductionEconomicsPage />} />} />
+            <Route path="/green-ammonia-shipping-storage"        element={<ProtectedRoute path="/green-ammonia-shipping-storage" element={<GreenAmmoniaShippingStoragePage />} />} />
+            <Route path="/green-ammonia-offtake-markets"         element={<ProtectedRoute path="/green-ammonia-offtake-markets" element={<GreenAmmoniaOfftakeMarketsPage />} />} />
+            <Route path="/green-ammonia-country-intelligence"    element={<ProtectedRoute path="/green-ammonia-country-intelligence" element={<GreenAmmoniaCountryIntelligencePage />} />} />
+            <Route path="/green-ammonia-policy-credits"          element={<ProtectedRoute path="/green-ammonia-policy-credits" element={<GreenAmmoniaPolicyCreditPage />} />} />
+            <Route path="/hydrogen-derivatives-comparison"       element={<ProtectedRoute path="/hydrogen-derivatives-comparison" element={<HydrogenDerivativesComparisonPage />} />} />
             {/* Sprint EF — SAF Finance */}
-            <Route path="/saf-lcof-engine"                     element={<SafLcofEnginePage />} />
-            <Route path="/saf-project-finance"                 element={<SafProjectFinancePage />} />
-            <Route path="/saf-feedstock-supply-chain"          element={<SafFeedstockSupplyChainPage />} />
-            <Route path="/saf-policy-mandate"                  element={<SafPolicyMandatePage />} />
-            <Route path="/airline-saf-procurement"             element={<AirlineSafProcurementPage />} />
-            <Route path="/saf-carbon-credits"                  element={<SafCarbonCreditsPage />} />
+            <Route path="/saf-lcof-engine"                     element={<ProtectedRoute path="/saf-lcof-engine" element={<SafLcofEnginePage />} />} />
+            <Route path="/saf-project-finance"                 element={<ProtectedRoute path="/saf-project-finance" element={<SafProjectFinancePage />} />} />
+            <Route path="/saf-feedstock-supply-chain"          element={<ProtectedRoute path="/saf-feedstock-supply-chain" element={<SafFeedstockSupplyChainPage />} />} />
+            <Route path="/saf-policy-mandate"                  element={<ProtectedRoute path="/saf-policy-mandate" element={<SafPolicyMandatePage />} />} />
+            <Route path="/airline-saf-procurement"             element={<ProtectedRoute path="/airline-saf-procurement" element={<AirlineSafProcurementPage />} />} />
+            <Route path="/saf-carbon-credits"                  element={<ProtectedRoute path="/saf-carbon-credits" element={<SafCarbonCreditsPage />} />} />
             {/* Sprint EG — Green Steel & Industrial Decarbonization */}
-            <Route path="/green-steel-lcop-engine"             element={<GreenSteelLcopEnginePage />} />
-            <Route path="/industrial-hydrogen-integration"     element={<IndustrialHydrogenIntegrationPage />} />
-            <Route path="/cbam-analytics-compliance"           element={<CbamAnalyticsCompliancePage />} />
-            <Route path="/green-cement-concrete-finance"       element={<GreenCementConcreteFinancePage />} />
-            <Route path="/industrial-electrification-finance"  element={<IndustrialElectrificationFinancePage />} />
-            <Route path="/hard-to-abate-transition"            element={<HardToAbateTransitionPage />} />
+            <Route path="/green-steel-lcop-engine"             element={<ProtectedRoute path="/green-steel-lcop-engine" element={<GreenSteelLcopEnginePage />} />} />
+            <Route path="/industrial-hydrogen-integration"     element={<ProtectedRoute path="/industrial-hydrogen-integration" element={<IndustrialHydrogenIntegrationPage />} />} />
+            <Route path="/cbam-analytics-compliance"           element={<ProtectedRoute path="/cbam-analytics-compliance" element={<CbamAnalyticsCompliancePage />} />} />
+            <Route path="/green-cement-concrete-finance"       element={<ProtectedRoute path="/green-cement-concrete-finance" element={<GreenCementConcreteFinancePage />} />} />
+            <Route path="/industrial-electrification-finance"  element={<ProtectedRoute path="/industrial-electrification-finance" element={<IndustrialElectrificationFinancePage />} />} />
+            <Route path="/hard-to-abate-transition"            element={<ProtectedRoute path="/hard-to-abate-transition" element={<HardToAbateTransitionPage />} />} />
             {/* Sprint EH — Carbon Dioxide Removal Finance */}
-            <Route path="/direct-air-capture-finance"          element={<DirectAirCaptureFinancePage />} />
-            <Route path="/enhanced-weathering-finance"         element={<EnhancedWeatheringFinancePage />} />
-            <Route path="/biochar-beccs-finance"               element={<BiocharBeccsFinancePage />} />
-            <Route path="/ocean-cdr-finance"                   element={<OceanCdrFinancePage />} />
-            <Route path="/cdr-credit-markets"                  element={<CdrCreditMarketsPage />} />
-            <Route path="/cdr-portfolio-netzero"               element={<CdrPortfolioNetzeroPage />} />
+            <Route path="/direct-air-capture-finance"          element={<ProtectedRoute path="/direct-air-capture-finance" element={<DirectAirCaptureFinancePage />} />} />
+            <Route path="/enhanced-weathering-finance"         element={<ProtectedRoute path="/enhanced-weathering-finance" element={<EnhancedWeatheringFinancePage />} />} />
+            <Route path="/biochar-beccs-finance"               element={<ProtectedRoute path="/biochar-beccs-finance" element={<BiocharBeccsFinancePage />} />} />
+            <Route path="/ocean-cdr-finance"                   element={<ProtectedRoute path="/ocean-cdr-finance" element={<OceanCdrFinancePage />} />} />
+            <Route path="/cdr-credit-markets"                  element={<ProtectedRoute path="/cdr-credit-markets" element={<CdrCreditMarketsPage />} />} />
+            <Route path="/cdr-portfolio-netzero"               element={<ProtectedRoute path="/cdr-portfolio-netzero" element={<CdrPortfolioNetzeroPage />} />} />
+            {/* CCUS Market & Storage Infrastructure Suite */}
+            <Route path="/ccus-market-intelligence"            element={<ProtectedRoute path="/ccus-market-intelligence" element={<CcusMarketIntelligencePage />} />} />
+            <Route path="/ccus-project-finance"                element={<ProtectedRoute path="/ccus-project-finance" element={<CcusProjectFinancePage />} />} />
+            <Route path="/carbon-storage-geology"               element={<ProtectedRoute path="/carbon-storage-geology" element={<CarbonStorageGeologyPage />} />} />
+            <Route path="/direct-air-capture"                   element={<ProtectedRoute path="/direct-air-capture" element={<DirectAirCapturePage />} />} />
             {/* Sprint EI — Climate Real Estate & Green Buildings Finance */}
-            <Route path="/green-building-certification-finance" element={<GreenBuildingCertificationFinancePage />} />
-            <Route path="/commercial-re-climate-risk"           element={<CommercialReClimateRiskPage />} />
-            <Route path="/green-mortgage-retrofit-finance"      element={<GreenMortgageRetrofitFinancePage />} />
-            <Route path="/re-climate-stress-test"               element={<ReClimateStressTestPage />} />
-            <Route path="/gresb-real-assets-esg"                element={<GresbRealAssetsEsgPage />} />
-            <Route path="/climate-smart-infrastructure"         element={<ClimateSmartInfrastructurePage />} />
+            <Route path="/green-building-certification-finance" element={<ProtectedRoute path="/green-building-certification-finance" element={<GreenBuildingCertificationFinancePage />} />} />
+            <Route path="/commercial-re-climate-risk"           element={<ProtectedRoute path="/commercial-re-climate-risk" element={<CommercialReClimateRiskPage />} />} />
+            <Route path="/green-mortgage-retrofit-finance"      element={<ProtectedRoute path="/green-mortgage-retrofit-finance" element={<GreenMortgageRetrofitFinancePage />} />} />
+            <Route path="/re-climate-stress-test"               element={<ProtectedRoute path="/re-climate-stress-test" element={<ReClimateStressTestPage />} />} />
+            <Route path="/gresb-real-assets-esg"                element={<ProtectedRoute path="/gresb-real-assets-esg" element={<GresbRealAssetsEsgPage />} />} />
+            <Route path="/climate-smart-infrastructure"         element={<ProtectedRoute path="/climate-smart-infrastructure" element={<ClimateSmartInfrastructurePage />} />} />
             {/* Sprint EJ — Circular Economy & Waste Finance */}
-            <Route path="/circular-economy-investment"    element={<CircularEconomyInvestmentPage />} />
-            <Route path="/plastic-credits-epr-finance"    element={<PlasticCreditsEprFinancePage />} />
-            <Route path="/waste-to-energy-biogas-finance" element={<WasteToEnergyBiogasFinancePage />} />
-            <Route path="/recycled-content-markets"       element={<RecycledContentMarketsPage />} />
-            <Route path="/epr-compliance-intelligence"    element={<EprComplianceIntelligencePage />} />
-            <Route path="/circular-supply-chain-finance"  element={<CircularSupplyChainFinancePage />} />
+            <Route path="/circular-economy-investment"    element={<ProtectedRoute path="/circular-economy-investment" element={<CircularEconomyInvestmentPage />} />} />
+            <Route path="/plastic-credits-epr-finance"    element={<ProtectedRoute path="/plastic-credits-epr-finance" element={<PlasticCreditsEprFinancePage />} />} />
+            <Route path="/waste-to-energy-biogas-finance" element={<ProtectedRoute path="/waste-to-energy-biogas-finance" element={<WasteToEnergyBiogasFinancePage />} />} />
+            <Route path="/recycled-content-markets"       element={<ProtectedRoute path="/recycled-content-markets" element={<RecycledContentMarketsPage />} />} />
+            <Route path="/epr-compliance-intelligence"    element={<ProtectedRoute path="/epr-compliance-intelligence" element={<EprComplianceIntelligencePage />} />} />
+            <Route path="/circular-supply-chain-finance"  element={<ProtectedRoute path="/circular-supply-chain-finance" element={<CircularSupplyChainFinancePage />} />} />
             {/* Sprint EK — Climate Adaptation & Resilience Finance */}
-            <Route path="/flood-resilience-finance"       element={<FloodResilienceFinancePage />} />
-            <Route path="/heat-adaptation-finance"        element={<HeatAdaptationFinancePage />} />
-            <Route path="/nbs-adaptation-finance"         element={<NatureBasedSolutionsFinancePage />} />
-            <Route path="/resilience-bond-analytics"      element={<ResilienceBondAnalyticsPage />} />
-            <Route path="/climate-adaptation-portfolio"   element={<ClimateAdaptationPortfolioPage />} />
-            <Route path="/just-transition-adaptation"     element={<JustTransitionAdaptationPage />} />
+            <Route path="/flood-resilience-finance"       element={<ProtectedRoute path="/flood-resilience-finance" element={<FloodResilienceFinancePage />} />} />
+            <Route path="/heat-adaptation-finance"        element={<ProtectedRoute path="/heat-adaptation-finance" element={<HeatAdaptationFinancePage />} />} />
+            <Route path="/nbs-adaptation-finance"         element={<ProtectedRoute path="/nbs-adaptation-finance" element={<NatureBasedSolutionsFinancePage />} />} />
+            <Route path="/resilience-bond-analytics"      element={<ProtectedRoute path="/resilience-bond-analytics" element={<ResilienceBondAnalyticsPage />} />} />
+            <Route path="/climate-adaptation-portfolio"   element={<ProtectedRoute path="/climate-adaptation-portfolio" element={<ClimateAdaptationPortfolioPage />} />} />
+            <Route path="/just-transition-adaptation"     element={<ProtectedRoute path="/just-transition-adaptation" element={<JustTransitionAdaptationPage />} />} />
             {/* Sprint EL — Utility Infrastructure Assets Finance */}
-            <Route path="/power-grid-transmission-finance"       element={<PowerGridTransmissionFinancePage />} />
-            <Route path="/water-wastewater-utility-finance"      element={<WaterWastewaterUtilityFinancePage />} />
-            <Route path="/regulated-utility-rate-case"           element={<RegulatedUtilityRateCasePage />} />
-            <Route path="/gas-network-decarbonisation"           element={<GasNetworkDecarbonisationPage />} />
-            <Route path="/utility-physical-climate-resilience"   element={<UtilityPhysicalClimateResiliencePage />} />
-            <Route path="/infrastructure-debt-utility-bonds"     element={<InfrastructureDebtUtilityBondsPage />} />
+            <Route path="/power-grid-transmission-finance"       element={<ProtectedRoute path="/power-grid-transmission-finance" element={<PowerGridTransmissionFinancePage />} />} />
+            <Route path="/water-wastewater-utility-finance"      element={<ProtectedRoute path="/water-wastewater-utility-finance" element={<WaterWastewaterUtilityFinancePage />} />} />
+            <Route path="/regulated-utility-rate-case"           element={<ProtectedRoute path="/regulated-utility-rate-case" element={<RegulatedUtilityRateCasePage />} />} />
+            <Route path="/gas-network-decarbonisation"           element={<ProtectedRoute path="/gas-network-decarbonisation" element={<GasNetworkDecarbonisationPage />} />} />
+            <Route path="/utility-physical-climate-resilience"   element={<ProtectedRoute path="/utility-physical-climate-resilience" element={<UtilityPhysicalClimateResiliencePage />} />} />
+            <Route path="/infrastructure-debt-utility-bonds"     element={<ProtectedRoute path="/infrastructure-debt-utility-bonds" element={<InfrastructureDebtUtilityBondsPage />} />} />
             {/* Sprint RE — Solar & Renewable Energy Intelligence Suite */}
-            <Route path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />
-            <Route path="/solar-resource-performance"      element={<SolarResourcePerformancePage />} />
-            <Route path="/ppa-revenue-analytics"           element={<PPARevenueAnalyticsPage />} />
-            <Route path="/bess-grid-analytics"             element={<BESSGridAnalyticsPage />} />
-            <Route path="/renewable-ml-forecasting"        element={<RenewableMLForecastingPage />} />
+            <Route path="/renewable-portfolio-intelligence" element={<ProtectedRoute path="/renewable-portfolio-intelligence" element={<RenewablePortfolioIntelligencePage />} />} />
+            <Route path="/solar-resource-performance"      element={<ProtectedRoute path="/solar-resource-performance" element={<SolarResourcePerformancePage />} />} />
+            <Route path="/ppa-revenue-analytics"           element={<ProtectedRoute path="/ppa-revenue-analytics" element={<PPARevenueAnalyticsPage />} />} />
+            <Route path="/bess-grid-analytics"             element={<ProtectedRoute path="/bess-grid-analytics" element={<BESSGridAnalyticsPage />} />} />
+            <Route path="/renewable-ml-forecasting"        element={<ProtectedRoute path="/renewable-ml-forecasting" element={<RenewableMLForecastingPage />} />} />
             {/* Sprint BC — Residential RE Assessment · XBRL Ingestion */}
-            <Route path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />
-            <Route path="/xbrl-ingestion"            element={<XbrlIngestionPage />} />
+            <Route path="/residential-re-assessment" element={<ProtectedRoute path="/residential-re-assessment" element={<ResidentialReAssessmentPage />} />} />
+            <Route path="/xbrl-ingestion"            element={<ProtectedRoute path="/xbrl-ingestion" element={<XbrlIngestionPage />} />} />
             {/* Sprint BB — PE Deal Pipeline · Technology Risk */}
-            <Route path="/pe-deal-pipeline"  element={<PeDealPipelinePage />} />
-            <Route path="/technology-risk"   element={<TechnologyRiskPage />} />
+            <Route path="/pe-deal-pipeline"  element={<ProtectedRoute path="/pe-deal-pipeline" element={<PeDealPipelinePage />} />} />
+            <Route path="/technology-risk"   element={<ProtectedRoute path="/technology-risk" element={<TechnologyRiskPage />} />} />
             {/* Sprint BA — Sovereign Climate Risk Intelligence · SEC Climate Disclosure */}
-            <Route path="/sovereign-climate-intelligence" element={<SovereignClimateIntelligencePage />} />
-            <Route path="/sec-climate-disclosure"         element={<SecClimateDisclosurePage />} />
+            <Route path="/sovereign-climate-intelligence" element={<ProtectedRoute path="/sovereign-climate-intelligence" element={<SovereignClimateIntelligencePage />} />} />
+            <Route path="/sec-climate-disclosure"         element={<ProtectedRoute path="/sec-climate-disclosure" element={<SecClimateDisclosurePage />} />} />
             {/* Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard */}
-            <Route path="/double-materiality-workshop" element={<DoubleMaterialityWorkshopPage />} />
-            <Route path="/sfdr-pai-dashboard"          element={<SfdrPaiDashboardPage />} />
-            <Route path="/xbrl-export-wizard"          element={<XbrlExportWizardPage />} />
+            <Route path="/double-materiality-workshop" element={<ProtectedRoute path="/double-materiality-workshop" element={<DoubleMaterialityWorkshopPage />} />} />
+            <Route path="/sfdr-pai-dashboard"          element={<ProtectedRoute path="/sfdr-pai-dashboard" element={<SfdrPaiDashboardPage />} />} />
+            <Route path="/xbrl-export-wizard"          element={<ProtectedRoute path="/xbrl-export-wizard" element={<XbrlExportWizardPage />} />} />
             {/* Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence */}
-            <Route path="/eudr-engine"  element={<EudrEnginePage />} />
-            <Route path="/csddd-engine" element={<CsdddEnginePage />} />
-            <Route path="/entity-360"   element={<Entity360Page />} />
+            <Route path="/eudr-engine"  element={<ProtectedRoute path="/eudr-engine" element={<EudrEnginePage />} />} />
+            <Route path="/csddd-engine" element={<ProtectedRoute path="/csddd-engine" element={<CsdddEnginePage />} />} />
+            <Route path="/entity-360"   element={<ProtectedRoute path="/entity-360" element={<Entity360Page />} />} />
             {/* Sprint AX — Sovereign & Country Climate Risk Intelligence (new modules) */}
-            <Route path="/sovereign-esg-scorer"     element={<SovereignEsgScorerPage />} />
-            <Route path="/ndc-alignment-tracker"    element={<NdcAlignmentTrackerPage />} />
-            <Route path="/sovereign-physical-risk"  element={<SovereignPhysicalRiskPage />} />
-            <Route path="/em-debt-climate-risk"     element={<EmDebtClimateRiskPage />} />
-            <Route path="/mdb-climate-finance"      element={<MdbClimateFinancePage />} />
+            <Route path="/sovereign-esg-scorer"     element={<ProtectedRoute path="/sovereign-esg-scorer" element={<SovereignEsgScorerPage />} />} />
+            <Route path="/ndc-alignment-tracker"    element={<ProtectedRoute path="/ndc-alignment-tracker" element={<NdcAlignmentTrackerPage />} />} />
+            <Route path="/sovereign-physical-risk"  element={<ProtectedRoute path="/sovereign-physical-risk" element={<SovereignPhysicalRiskPage />} />} />
+            <Route path="/em-debt-climate-risk"     element={<ProtectedRoute path="/em-debt-climate-risk" element={<EmDebtClimateRiskPage />} />} />
+            <Route path="/mdb-climate-finance"      element={<ProtectedRoute path="/mdb-climate-finance" element={<MdbClimateFinancePage />} />} />
             {/* Sprint AL — Transition Planning & Net Zero Alignment */}
-            <Route path="/transition-planning-hub"     element={<TransitionPlanningHubPage />} />
-            <Route path="/transition-plan-builder"     element={<TransitionPlanBuilderPage />} />
-            <Route path="/gfanz-sector-pathways"       element={<GfanzSectorPathwaysPage />} />
-            <Route path="/act-assessment"              element={<ActAssessmentPage />} />
-            <Route path="/net-zero-commitment-tracker" element={<NetZeroCommitmentTrackerPage />} />
-            <Route path="/transition-credibility"      element={<TransitionCredibilityPage />} />
+            <Route path="/transition-planning-hub"     element={<ProtectedRoute path="/transition-planning-hub" element={<TransitionPlanningHubPage />} />} />
+            <Route path="/transition-plan-builder"     element={<ProtectedRoute path="/transition-plan-builder" element={<TransitionPlanBuilderPage />} />} />
+            <Route path="/gfanz-sector-pathways"       element={<ProtectedRoute path="/gfanz-sector-pathways" element={<GfanzSectorPathwaysPage />} />} />
+            <Route path="/act-assessment"              element={<ProtectedRoute path="/act-assessment" element={<ActAssessmentPage />} />} />
+            <Route path="/net-zero-commitment-tracker" element={<ProtectedRoute path="/net-zero-commitment-tracker" element={<NetZeroCommitmentTrackerPage />} />} />
+            <Route path="/transition-credibility"      element={<ProtectedRoute path="/transition-credibility" element={<TransitionCredibilityPage />} />} />
             {/* Sprint AK — ESG Ratings Intelligence & Provider Analytics */}
-            <Route path="/esg-ratings-hub"             element={<EsgRatingsHubPage />} />
-            <Route path="/esg-ratings-comparator"      element={<EsgRatingsComparatorPage />} />
-            <Route path="/ratings-methodology-decoder" element={<RatingsMethodologyDecoderPage />} />
-            <Route path="/ratings-migration-momentum"  element={<RatingsMigrationMomentumPage />} />
-            <Route path="/controversy-rating-impact"   element={<ControversyRatingImpactPage />} />
-            <Route path="/greenwashing-detector"       element={<GreenwashingDetectorPage />} />
+            <Route path="/esg-ratings-hub"             element={<ProtectedRoute path="/esg-ratings-hub" element={<EsgRatingsHubPage />} />} />
+            <Route path="/esg-ratings-comparator"      element={<ProtectedRoute path="/esg-ratings-comparator" element={<EsgRatingsComparatorPage />} />} />
+            <Route path="/ratings-methodology-decoder" element={<ProtectedRoute path="/ratings-methodology-decoder" element={<RatingsMethodologyDecoderPage />} />} />
+            <Route path="/ratings-migration-momentum"  element={<ProtectedRoute path="/ratings-migration-momentum" element={<RatingsMigrationMomentumPage />} />} />
+            <Route path="/controversy-rating-impact"   element={<ProtectedRoute path="/controversy-rating-impact" element={<ControversyRatingImpactPage />} />} />
+            <Route path="/greenwashing-detector"       element={<ProtectedRoute path="/greenwashing-detector" element={<GreenwashingDetectorPage />} />} />
             {/* Sprint AH — Regulatory Reporting & Disclosure Automation */}
-            <Route path="/disclosure-hub"       element={<DisclosureHubPage />} />
-            <Route path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />
-            <Route path="/sfdr-v2-reporting"    element={<SfdrV2ReportingPage />} />
-            <Route path="/issb-disclosure"      element={<IssbDisclosurePage />} />
-            <Route path="/uk-sdr"               element={<UkSdrPage />} />
-            <Route path="/sec-climate-rule"     element={<SecClimateRulePage />} />
+            <Route path="/disclosure-hub"       element={<ProtectedRoute path="/disclosure-hub" element={<DisclosureHubPage />} />} />
+            <Route path="/csrd-esrs-automation" element={<ProtectedRoute path="/csrd-esrs-automation" element={<CsrdEsrsAutomationPage />} />} />
+            <Route path="/sfdr-v2-reporting"    element={<ProtectedRoute path="/sfdr-v2-reporting" element={<SfdrV2ReportingPage />} />} />
+            <Route path="/issb-disclosure"      element={<ProtectedRoute path="/issb-disclosure" element={<IssbDisclosurePage />} />} />
+            <Route path="/uk-sdr"               element={<ProtectedRoute path="/uk-sdr" element={<UkSdrPage />} />} />
+            <Route path="/sec-climate-rule"     element={<ProtectedRoute path="/sec-climate-rule" element={<SecClimateRulePage />} />} />
             {/* Sprint AG — Private Markets & Alternative Credit ESG */}
-            <Route path="/private-markets-esg-hub" element={<PrivateMarketsEsgHubPage />} />
-            <Route path="/pe-esg-diligence"        element={<PeEsgDiligencePage />} />
-            <Route path="/private-credit-climate" element={<PrivateCreditClimatePage />} />
-            <Route path="/infrastructure-esg"     element={<InfrastructureEsgPage />} />
-            <Route path="/real-assets-climate"    element={<RealAssetsClimatePage />} />
-            <Route path="/vc-impact"              element={<VcImpactPage />} />
+            <Route path="/private-markets-esg-hub" element={<ProtectedRoute path="/private-markets-esg-hub" element={<PrivateMarketsEsgHubPage />} />} />
+            <Route path="/pe-esg-diligence"        element={<ProtectedRoute path="/pe-esg-diligence" element={<PeEsgDiligencePage />} />} />
+            <Route path="/private-credit-climate" element={<ProtectedRoute path="/private-credit-climate" element={<PrivateCreditClimatePage />} />} />
+            <Route path="/infrastructure-esg"     element={<ProtectedRoute path="/infrastructure-esg" element={<InfrastructureEsgPage />} />} />
+            <Route path="/real-assets-climate"    element={<ProtectedRoute path="/real-assets-climate" element={<RealAssetsClimatePage />} />} />
+            <Route path="/vc-impact"              element={<ProtectedRoute path="/vc-impact" element={<VcImpactPage />} />} />
             {/* Sprint AF — Quantitative ESG & Portfolio Intelligence */}
-            <Route path="/esg-portfolio-optimizer"    element={<EsgPortfolioOptimizerPage />} />
-            <Route path="/carbon-aware-allocation"    element={<CarbonAwareAllocationPage />} />
-            <Route path="/esg-momentum-scanner"       element={<EsgMomentumScannerPage />} />
-            <Route path="/net-zero-portfolio-builder" element={<NetZeroPortfolioBuilderPage />} />
-            <Route path="/esg-factor-alpha"           element={<EsgFactorAlphaPage />} />
-            <Route path="/quant-esg-hub"              element={<QuantEsgHubPage />} />
+            <Route path="/esg-portfolio-optimizer"    element={<ProtectedRoute path="/esg-portfolio-optimizer" element={<EsgPortfolioOptimizerPage />} />} />
+            <Route path="/carbon-aware-allocation"    element={<ProtectedRoute path="/carbon-aware-allocation" element={<CarbonAwareAllocationPage />} />} />
+            <Route path="/esg-momentum-scanner"       element={<ProtectedRoute path="/esg-momentum-scanner" element={<EsgMomentumScannerPage />} />} />
+            <Route path="/net-zero-portfolio-builder" element={<ProtectedRoute path="/net-zero-portfolio-builder" element={<NetZeroPortfolioBuilderPage />} />} />
+            <Route path="/esg-factor-alpha"           element={<ProtectedRoute path="/esg-factor-alpha" element={<EsgFactorAlphaPage />} />} />
+            <Route path="/quant-esg-hub"              element={<ProtectedRoute path="/quant-esg-hub" element={<QuantEsgHubPage />} />} />
             {/* Sprint AE — Corporate Governance & Executive Intelligence */}
-            <Route path="/board-composition"          element={<BoardCompositionPage />} />
-            <Route path="/executive-pay-analytics"    element={<ExecutivePayAnalyticsPage />} />
-            <Route path="/shareholder-activism"       element={<ShareholderActivismPage />} />
-            <Route path="/anti-corruption"            element={<AntiCorruptionPage />} />
-            <Route path="/proxy-voting-intel"         element={<ProxyVotingIntelPage />} />
-            <Route path="/diversity-equity-inclusion" element={<DiversityEquityInclusionPage />} />
+            <Route path="/board-composition"          element={<ProtectedRoute path="/board-composition" element={<BoardCompositionPage />} />} />
+            <Route path="/executive-pay-analytics"    element={<ProtectedRoute path="/executive-pay-analytics" element={<ExecutivePayAnalyticsPage />} />} />
+            <Route path="/shareholder-activism"       element={<ProtectedRoute path="/shareholder-activism" element={<ShareholderActivismPage />} />} />
+            <Route path="/anti-corruption"            element={<ProtectedRoute path="/anti-corruption" element={<AntiCorruptionPage />} />} />
+            <Route path="/proxy-voting-intel"         element={<ProtectedRoute path="/proxy-voting-intel" element={<ProxyVotingIntelPage />} />} />
+            <Route path="/diversity-equity-inclusion" element={<ProtectedRoute path="/diversity-equity-inclusion" element={<DiversityEquityInclusionPage />} />} />
             {/* Sprint AD — Social & Just Transition */}
-            <Route path="/just-transition-finance"  element={<JustTransitionFinancePage />} />
-            <Route path="/human-rights-risk"        element={<HumanRightsRiskPage />} />
-            <Route path="/living-wage-tracker"      element={<LivingWageTrackerPage />} />
-            <Route path="/modern-slavery-intel"     element={<ModernSlaveryIntelPage />} />
-            <Route path="/community-impact"         element={<CommunityImpactPage />} />
-            <Route path="/workplace-health-safety"  element={<WorkplaceHealthSafetyPage />} />
+            <Route path="/just-transition-finance"  element={<ProtectedRoute path="/just-transition-finance" element={<JustTransitionFinancePage />} />} />
+            <Route path="/human-rights-risk"        element={<ProtectedRoute path="/human-rights-risk" element={<HumanRightsRiskPage />} />} />
+            <Route path="/living-wage-tracker"      element={<ProtectedRoute path="/living-wage-tracker" element={<LivingWageTrackerPage />} />} />
+            <Route path="/modern-slavery-intel"     element={<ProtectedRoute path="/modern-slavery-intel" element={<ModernSlaveryIntelPage />} />} />
+            <Route path="/community-impact"         element={<ProtectedRoute path="/community-impact" element={<CommunityImpactPage />} />} />
+            <Route path="/workplace-health-safety"  element={<ProtectedRoute path="/workplace-health-safety" element={<WorkplaceHealthSafetyPage />} />} />
             {/* Sprint AC — Nature, Environment & Physical Risk */}
-            <Route path="/nature-loss-risk"         element={<NatureLossRiskPage />} />
-            <Route path="/water-risk-analytics"     element={<WaterRiskAnalyticsPage />} />
-            <Route path="/land-use-deforestation"   element={<LandUseDeforestationPage />} />
-            <Route path="/ocean-marine-risk"        element={<OceanMarineRiskPage />} />
-            <Route path="/circular-economy-tracker" element={<CircularEconomyTrackerPage />} />
-            <Route path="/air-quality-health-risk"  element={<AirQualityHealthRiskPage />} />
+            <Route path="/nature-loss-risk"         element={<ProtectedRoute path="/nature-loss-risk" element={<NatureLossRiskPage />} />} />
+            <Route path="/water-risk-analytics"     element={<ProtectedRoute path="/water-risk-analytics" element={<WaterRiskAnalyticsPage />} />} />
+            <Route path="/land-use-deforestation"   element={<ProtectedRoute path="/land-use-deforestation" element={<LandUseDeforestationPage />} />} />
+            <Route path="/ocean-marine-risk"        element={<ProtectedRoute path="/ocean-marine-risk" element={<OceanMarineRiskPage />} />} />
+            <Route path="/circular-economy-tracker" element={<ProtectedRoute path="/circular-economy-tracker" element={<CircularEconomyTrackerPage />} />} />
+            <Route path="/air-quality-health-risk"  element={<ProtectedRoute path="/air-quality-health-risk" element={<AirQualityHealthRiskPage />} />} />
             {/* Sprint AB — Macro & Systemic Risk Intelligence */}
-            <Route path="/systemic-esg-risk"            element={<SystemicESGRiskPage />} />
-            <Route path="/climate-policy-intelligence"  element={<ClimatePolicyIntelligencePage />} />
-            <Route path="/green-central-banking"        element={<GreenCentralBankingPage />} />
-            <Route path="/esg-factor-attribution"       element={<ESGFactorAttributionPage />} />
-            <Route path="/transition-scenario-modeller" element={<TransitionScenarioModellerPage />} />
-            <Route path="/cross-asset-contagion"        element={<CrossAssetContagionPage />} />
+            <Route path="/systemic-esg-risk"            element={<ProtectedRoute path="/systemic-esg-risk" element={<SystemicESGRiskPage />} />} />
+            <Route path="/climate-policy-intelligence"  element={<ProtectedRoute path="/climate-policy-intelligence" element={<ClimatePolicyIntelligencePage />} />} />
+            <Route path="/green-central-banking"        element={<ProtectedRoute path="/green-central-banking" element={<GreenCentralBankingPage />} />} />
+            <Route path="/esg-factor-attribution"       element={<ProtectedRoute path="/esg-factor-attribution" element={<ESGFactorAttributionPage />} />} />
+            <Route path="/transition-scenario-modeller" element={<ProtectedRoute path="/transition-scenario-modeller" element={<TransitionScenarioModellerPage />} />} />
+            <Route path="/cross-asset-contagion"        element={<ProtectedRoute path="/cross-asset-contagion" element={<CrossAssetContagionPage />} />} />
             {/* Sprint AA — Climate Finance Architecture */}
-            <Route path="/climate-finance-hub"       element={<ClimateFinanceHubPage />} />
-            <Route path="/article6-markets"          element={<Article6MarketsPage />} />
-            <Route path="/cbam-compliance"           element={<CbamCompliancePage />} />
-            <Route path="/climate-finance-tracker"   element={<ClimateFinanceTrackerPage />} />
-            <Route path="/green-taxonomy-navigator"  element={<GreenTaxonomyNavigatorPage />} />
-            <Route path="/climate-sovereign-bonds"   element={<ClimateSovereignBondsPage />} />
+            <Route path="/climate-finance-hub"       element={<ProtectedRoute path="/climate-finance-hub" element={<ClimateFinanceHubPage />} />} />
+            <Route path="/article6-markets"          element={<ProtectedRoute path="/article6-markets" element={<Article6MarketsPage />} />} />
+            <Route path="/cbam-compliance"           element={<ProtectedRoute path="/cbam-compliance" element={<CbamCompliancePage />} />} />
+            <Route path="/climate-finance-tracker"   element={<ProtectedRoute path="/climate-finance-tracker" element={<ClimateFinanceTrackerPage />} />} />
+            <Route path="/green-taxonomy-navigator"  element={<ProtectedRoute path="/green-taxonomy-navigator" element={<GreenTaxonomyNavigatorPage />} />} />
+            <Route path="/climate-sovereign-bonds"   element={<ProtectedRoute path="/climate-sovereign-bonds" element={<ClimateSovereignBondsPage />} />} />
             {/* Sprint V — Governance & Audit Trail */}
-            <Route path="/audit-trail"              element={<AuditTrailPage />} />
-            <Route path="/model-governance"         element={<ModelGovernancePage />} />
-            <Route path="/approval-workflows"       element={<ApprovalWorkflowsPage />} />
-            <Route path="/compliance-evidence"      element={<ComplianceEvidencePage />} />
-            <Route path="/change-management"        element={<ChangeManagementPage />} />
-            <Route path="/governance-hub"           element={<GovernanceHubPage />} />
-            <Route path="/corporate-governance"     element={<CorporateGovernancePage />} />
-            <Route path="/geopolitical-ai-gov"      element={<GeopoliticalAiGovPage />} />
+            <Route path="/audit-trail"              element={<ProtectedRoute path="/audit-trail" element={<AuditTrailPage />} />} />
+            <Route path="/model-governance"         element={<ProtectedRoute path="/model-governance" element={<ModelGovernancePage />} />} />
+            <Route path="/approval-workflows"       element={<ProtectedRoute path="/approval-workflows" element={<ApprovalWorkflowsPage />} />} />
+            <Route path="/compliance-evidence"      element={<ProtectedRoute path="/compliance-evidence" element={<ComplianceEvidencePage />} />} />
+            <Route path="/change-management"        element={<ProtectedRoute path="/change-management" element={<ChangeManagementPage />} />} />
+            <Route path="/governance-hub"           element={<ProtectedRoute path="/governance-hub" element={<GovernanceHubPage />} />} />
+            <Route path="/corporate-governance"     element={<ProtectedRoute path="/corporate-governance" element={<CorporateGovernancePage />} />} />
+            <Route path="/geopolitical-ai-gov"      element={<ProtectedRoute path="/geopolitical-ai-gov" element={<GeopoliticalAiGovPage />} />} />
             {/* Sprint D — Platform Intelligence */}
-            <Route path="/stranded-assets"        element={<StrandedAssetsPage />} />
-            <Route path="/ngfs-scenarios"        element={<NGFSScenariosPage />} />
-            <Route path="/portfolio-climate-var" element={<PortfolioClimateVaRPage />} />
-            <Route path="/pipeline-dashboard"    element={<PipelineDashboardPage />} />
-            <Route path="/csrd-ixbrl"            element={<CSRDiXBRLPage />} />
-            <Route path="/company-profiles"      element={<CompanyProfilesPage />} />
-            <Route path="/pitch"                  element={<ClientPitchPage />} />
+            <Route path="/stranded-assets"        element={<ProtectedRoute path="/stranded-assets" element={<StrandedAssetsPage />} />} />
+            <Route path="/ngfs-scenarios"        element={<ProtectedRoute path="/ngfs-scenarios" element={<NGFSScenariosPage />} />} />
+            <Route path="/portfolio-climate-var" element={<ProtectedRoute path="/portfolio-climate-var" element={<PortfolioClimateVaRPage />} />} />
+            <Route path="/pipeline-dashboard"    element={<ProtectedRoute path="/pipeline-dashboard" element={<PipelineDashboardPage />} />} />
+            <Route path="/csrd-ixbrl"            element={<ProtectedRoute path="/csrd-ixbrl" element={<CSRDiXBRLPage />} />} />
+            <Route path="/company-profiles"      element={<ProtectedRoute path="/company-profiles" element={<CompanyProfilesPage />} />} />
+            <Route path="/pitch"                  element={<ProtectedRoute path="/pitch" element={<ClientPitchPage />} />} />
             {/* India Regulatory Intelligence */}
-            <Route path="/rbi-climate-risk"       element={<RbiClimateRiskPage />} />
-            <Route path="/india-ccts"             element={<IndiaCctsPage />} />
+            <Route path="/rbi-climate-risk"       element={<ProtectedRoute path="/rbi-climate-risk" element={<RbiClimateRiskPage />} />} />
+            <Route path="/india-ccts"             element={<ProtectedRoute path="/india-ccts" element={<IndiaCctsPage />} />} />
             {/* Sustainability Reporting Intelligence */}
-            <Route path="/sustainability-report-builder" element={<SustainabilityReportBuilderPage />} />
-            <Route path="/esrs-datapoint-navigator" element={<EsrsDatapointNavigatorPage />} />
-            <Route path="/sector-sustainability-benchmark" element={<SectorSustainabilityBenchmarkPage />} />
-            <Route path="/report-quality-engine" element={<ReportQualityEnginePage />} />
-            <Route path="/metrics-data-architecture" element={<MetricsDataArchitecturePage />} />
-            <Route path="/narrative-intelligence" element={<NarrativeIntelligencePage />} />
+            <Route path="/sustainability-report-builder" element={<ProtectedRoute path="/sustainability-report-builder" element={<SustainabilityReportBuilderPage />} />} />
+            <Route path="/esrs-datapoint-navigator" element={<ProtectedRoute path="/esrs-datapoint-navigator" element={<EsrsDatapointNavigatorPage />} />} />
+            <Route path="/sector-sustainability-benchmark" element={<ProtectedRoute path="/sector-sustainability-benchmark" element={<SectorSustainabilityBenchmarkPage />} />} />
+            <Route path="/report-quality-engine" element={<ProtectedRoute path="/report-quality-engine" element={<ReportQualityEnginePage />} />} />
+            <Route path="/metrics-data-architecture" element={<ProtectedRoute path="/metrics-data-architecture" element={<MetricsDataArchitecturePage />} />} />
+            <Route path="/narrative-intelligence" element={<ProtectedRoute path="/narrative-intelligence" element={<NarrativeIntelligencePage />} />} />
+            {/* Next-Gen Use Cases (docs/NEXT_USE_CASES.md) */}
+            <Route path="/climate-underwriting-workbench" element={<ProtectedRoute path="/climate-underwriting-workbench" element={<ClimateUnderwritingWorkbenchPage />} />} />
+            <Route path="/sovereign-corporate-bridge" element={<ProtectedRoute path="/sovereign-corporate-bridge" element={<SovereignCorporateBridgePage />} />} />
+            <Route path="/eu-compliance-cockpit" element={<ProtectedRoute path="/eu-compliance-cockpit" element={<EuComplianceCockpitPage />} />} />
+            <Route path="/asset-exposure-explorer" element={<ProtectedRoute path="/asset-exposure-explorer" element={<AssetExposureExplorerPage />} />} />
+            <Route path="/flood-loss-calibrator" element={<ProtectedRoute path="/flood-loss-calibrator" element={<FloodLossCalibratorPage />} />} />
+            <Route path="/site-biodiversity-screener" element={<ProtectedRoute path="/site-biodiversity-screener" element={<SiteBiodiversityScreenerPage />} />} />
+            <Route path="/facility-emissions-attribution" element={<ProtectedRoute path="/facility-emissions-attribution" element={<FacilityEmissionsAttributionPage />} />} />
+            <Route path="/vcm-cross-registry-tracker" element={<ProtectedRoute path="/vcm-cross-registry-tracker" element={<VcmCrossRegistryTrackerPage />} />} />
+            <Route path="/grid-carbon-intelligence" element={<ProtectedRoute path="/grid-carbon-intelligence" element={<GridCarbonIntelligencePage />} />} />
+            <Route path="/supervisory-scenario-runner" element={<ProtectedRoute path="/supervisory-scenario-runner" element={<SupervisoryScenarioRunnerPage />} />} />
+            <Route path="/counterparty-ownership-graph" element={<ProtectedRoute path="/counterparty-ownership-graph" element={<CounterpartyOwnershipGraphPage />} />} />
+            <Route path="/sanctions-screening-desk" element={<ProtectedRoute path="/sanctions-screening-desk" element={<SanctionsScreeningDeskPage />} />} />
+            <Route path="/credit-spread-climate-monitor" element={<ProtectedRoute path="/credit-spread-climate-monitor" element={<CreditSpreadClimateMonitorPage />} />} />
+            <Route path="/climate-litigation-tracker" element={<ProtectedRoute path="/climate-litigation-tracker" element={<ClimateLitigationTrackerPage />} />} />
+            <Route path="/cbam-trade-exposure-mapper" element={<ProtectedRoute path="/cbam-trade-exposure-mapper" element={<CbamTradeExposureMapperPage />} />} />
+            {/* Batch 2 — Energy & Capital Markets Desk (docs/NEXT_USE_CASES_2.md) */}
+            <Route path="/ppa-structuring-desk" element={<ProtectedRoute path="/ppa-structuring-desk" element={<PpaStructuringDeskPage />} />} />
+            <Route path="/project-finance-debt-sizer" element={<ProtectedRoute path="/project-finance-debt-sizer" element={<ProjectFinanceDebtSizerPage />} />} />
+            <Route path="/infra-debt-portfolio-manager" element={<ProtectedRoute path="/infra-debt-portfolio-manager" element={<InfraDebtPortfolioManagerPage />} />} />
+            <Route path="/green-bond-pricing-desk" element={<ProtectedRoute path="/green-bond-pricing-desk" element={<GreenBondPricingDeskPage />} />} />
+            <Route path="/slb-structurer" element={<ProtectedRoute path="/slb-structurer" element={<SlbStructurerPage />} />} />
+            <Route path="/carbon-offtake-structurer" element={<ProtectedRoute path="/carbon-offtake-structurer" element={<CarbonOfftakeStructurerPage />} />} />
+            <Route path="/battery-revenue-stacker" element={<ProtectedRoute path="/battery-revenue-stacker" element={<BatteryRevenueStackerPage />} />} />
+            <Route path="/hybrid-project-workbench" element={<ProtectedRoute path="/hybrid-project-workbench" element={<HybridProjectWorkbenchPage />} />} />
+            <Route path="/pf-credit-rating-engine" element={<ProtectedRoute path="/pf-credit-rating-engine" element={<PfCreditRatingEnginePage />} />} />
+            <Route path="/maturity-wall-monitor" element={<ProtectedRoute path="/maturity-wall-monitor" element={<MaturityWallMonitorPage />} />} />
+            <Route path="/carbon-derivatives-desk" element={<ProtectedRoute path="/carbon-derivatives-desk" element={<CarbonDerivativesDeskPage />} />} />
+            <Route path="/ppa-xva-engine" element={<ProtectedRoute path="/ppa-xva-engine" element={<PpaXvaEnginePage />} />} />
+            <Route path="/tax-equity-transferability" element={<ProtectedRoute path="/tax-equity-transferability" element={<TaxEquityTransferabilityPage />} />} />
+            <Route path="/yieldco-dropdown-analyzer" element={<ProtectedRoute path="/yieldco-dropdown-analyzer" element={<YieldcoDropdownAnalyzerPage />} />} />
+            <Route path="/energy-transition-credit-portal" element={<ProtectedRoute path="/energy-transition-credit-portal" element={<EnergyTransitionCreditPortalPage />} />} />
+            <Route path="/financial-modeling-studio" element={<ProtectedRoute path="/financial-modeling-studio" element={<FinancialModelingStudioPage />} />} />
+            <Route path="/compliance-carbon-desk" element={<ProtectedRoute path="/compliance-carbon-desk" element={<ComplianceCarbonDeskPage />} />} />
+            <Route path="/global-physical-risk-atlas" element={<ProtectedRoute path="/global-physical-risk-atlas" element={<GlobalPhysicalRiskAtlasPage />} />} />
             {/* Auto-discovered modules (module.config.js manifests). Rendered after
                 the manual routes so a manual <Route> wins on any duplicate path —
                 this is the safe incremental-migration fallback. */}
             {AUTO_ROUTES.map((r) => (
-              <Route key={r.path} path={r.path} element={<r.element />} />
+              <Route key={r.path} path={r.path} element={<ProtectedRoute path={r.path} element={<r.element />} />} />
             ))}
             <Route path="*" element={<Dashboard />} />
           </Routes>
@@ -3662,6 +2636,8 @@ function AppContent() {
         </main>
         <GuidedModeOverlay />
         <DataDepthOverlay />
+        <CommandPalette />
+        <ConnectedModulesPanel />
       </div>
       <StatusBar />
     </div>

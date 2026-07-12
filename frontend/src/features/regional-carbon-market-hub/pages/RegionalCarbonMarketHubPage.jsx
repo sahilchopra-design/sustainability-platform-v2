@@ -71,12 +71,19 @@ const INDIA_PAT_SECTORS = [
   { sector: 'Textiles', units: 90, targetMtoe: 0.22, achieved2024: 0.25, overachieve: 0.03, escertEarned: 30, ccertEarned: 22 },
 ];
 
+// CBAM liability = embedded_emissions_tCO2 x EU_ETS_price_per_tCO2.
+// exportToEU_Mt is in million tonnes of product; co2IntensityT is tCO2 per tonne of product;
+// so embedded_emissions_tCO2 = exportToEU_Mt * 1e6 * co2IntensityT, and dividing by 1e6 to express
+// the liability in $M cancels the *1e6, leaving exportToEU_Mt * co2IntensityT * price directly.
+// (Previous version multiplied by a stray *1000 instead of *1e6 before dividing by 1e6/1e9,
+// which understated every row's cost by ~1000x, and used the year "2024" instead of the
+// €68/tCO2 EUA price for Steel, understating that row by ~33,500x.)
 const CBAM_EXPOSURE = [
-  { sector: 'Steel', exportToEU_Mt: 2.4, co2IntensityT: 1.85, cbamCostUsdM: 2024 * 2.4 * 1000 * 1.85 / 1e9 },
-  { sector: 'Aluminium', exportToEU_Mt: 0.8, co2IntensityT: 8.20, cbamCostUsdM: 68 * 0.8 * 1000 * 8.20 / 1e6 },
-  { sector: 'Cement (clinker)', exportToEU_Mt: 0.3, co2IntensityT: 0.82, cbamCostUsdM: 68 * 0.3 * 1000 * 0.82 / 1e6 },
-  { sector: 'Fertilisers (urea)', exportToEU_Mt: 1.2, co2IntensityT: 2.30, cbamCostUsdM: 68 * 1.2 * 1000 * 2.30 / 1e6 },
-  { sector: 'Solar Panels (glass/al)', exportToEU_Mt: 0.5, co2IntensityT: 0.65, cbamCostUsdM: 68 * 0.5 * 1000 * 0.65 / 1e6 },
+  { sector: 'Steel', exportToEU_Mt: 2.4, co2IntensityT: 1.85, cbamCostUsdM: 68 * 2.4 * 1.85 },
+  { sector: 'Aluminium', exportToEU_Mt: 0.8, co2IntensityT: 8.20, cbamCostUsdM: 68 * 0.8 * 8.20 },
+  { sector: 'Cement (clinker)', exportToEU_Mt: 0.3, co2IntensityT: 0.82, cbamCostUsdM: 68 * 0.3 * 0.82 },
+  { sector: 'Fertilisers (urea)', exportToEU_Mt: 1.2, co2IntensityT: 2.30, cbamCostUsdM: 68 * 1.2 * 2.30 },
+  { sector: 'Solar Panels (glass/al)', exportToEU_Mt: 0.5, co2IntensityT: 0.65, cbamCostUsdM: 68 * 0.5 * 0.65 },
 ];
 
 const TABS = ['Market Overview', 'EU ETS Deep Dive', 'India CCTS Deep Dive', 'Japan GX-ETS', 'Cross-Market Compare', 'India PAT / CCTS Sectors', 'CBAM Exposure (India)', 'JCM Corridors', 'Price Convergence', 'Arbitrage Snapshot', 'Advanced Analytics', 'Hybrid Finance'];
@@ -326,7 +333,7 @@ export default function RegionalCarbonMarketHubPage() {
                   <td style={{ padding: '8px 10px', color: T.gold, fontFamily: T.mono }}>{c.sector}</td>
                   <td style={{ padding: '8px 10px', color: T.text, fontFamily: T.mono }}>{c.exportToEU_Mt}</td>
                   <td style={{ padding: '8px 10px', color: T.amber, fontFamily: T.mono }}>{c.co2IntensityT} tCO₂/t</td>
-                  <td style={{ padding: '8px 10px', color: T.red, fontFamily: T.mono }}>${(68 * c.exportToEU_Mt * 1000 * c.co2IntensityT / 1e6).toFixed(0)}M/yr</td>
+                  <td style={{ padding: '8px 10px', color: T.red, fontFamily: T.mono }}>${c.cbamCostUsdM.toFixed(0)}M/yr</td>
                   <td style={{ padding: '8px 10px', color: T.sage }}>Partial (if CCTS carbon price recognised by EU)</td>
                 </tr>
               ))}</tbody>

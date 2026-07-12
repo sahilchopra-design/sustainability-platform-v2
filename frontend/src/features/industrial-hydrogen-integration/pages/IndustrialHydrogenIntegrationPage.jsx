@@ -51,7 +51,7 @@ export default function IndustrialHydrogenIntegrationPage() {
 
   const economicsTable = useMemo(() => SECTORS.map(s => {
     const carbonSaving = s.abatement / 100 * 1.85 * carbonPrice;
-    const netCost = s.capex * 0.12 + s.h2Price * s.h2Demand2030 / s.h2Demand2030 * h2Price / s.h2Price - carbonSaving;
+    const netCost = s.capex * 0.12 + h2Price * s.h2Demand2030 - carbonSaving;
     return { ...s, carbonSaving: parseFloat(carbonSaving.toFixed(1)), netCost: parseFloat(netCost.toFixed(1)) };
   }), [h2Price, carbonPrice]);
 

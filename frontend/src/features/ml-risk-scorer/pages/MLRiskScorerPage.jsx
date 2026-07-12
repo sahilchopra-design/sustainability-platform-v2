@@ -98,11 +98,52 @@ export default function MLRiskScorerPage() {
   const [training, setTraining] = useState({ status: 'idle', progress: 0, fold: 1, lossHistory: [] });
   const [predDataset, setPredDataset] = useState('Q1 2026 Portfolio');
 
+  // Deterministic toy "training curve" driven by the hyperparameter sliders below —
+  // every factor here reads from `params`, so changing a slider changes the trajectory.
+  // This is not a real XGBoost fit; it is an honest, hand-traceable function of the
+  // hyperparameters that plausibly mimics how each one affects convergence/overfitting:
+  //  - learningRate:      controls convergence speed (decay rate) and, if very high,
+  //                       injects extra noise (instability from overshooting).
+  //  - nEstimators:       scales the epoch axis (more boosting rounds plotted).
+  //  - maxDepth,
+  //    subsample,
+  //    colsampleBytree,
+  //    minChildWeight:    combine into a "capacity" factor — higher capacity fits the
+  //                       training data more tightly (lower train-loss floor) but
+  //                       increases the train/val gap (overfitting risk).
+  //  - trainSplit:        more training data shrinks that train/val gap.
+  const lrFactor = params.learningRate / 0.05;                                  // 1.0 at default
+  const depthFactor = params.maxDepth / 6;                                      // 1.0 at default
+  const regFactor = (params.subsample * params.colsampleBytree) / 0.64;         // 1.0 at default
+  const childWeightFactor = 3 / Math.max(1, params.minChildWeight);             // 1.0 at default
+  const capacity = depthFactor * regFactor * childWeightFactor;                 // >1 = higher capacity
+  const splitFactor = Math.max(0.5, params.trainSplit / 80);                    // 1.0 at default
+  const decay = 0.15 * lrFactor;
+  const trainFloor = Math.min(0.4, Math.max(0.015, 0.09 / capacity));         // capped so under-fit doesn't invert the decay curve
+  const overfitGap = Math.max(0, (capacity - 1) * 0.05) / splitFactor;
+  const valFloor = trainFloor + overfitGap;
+  const instability = Math.max(0, lrFactor - 1.5) * 0.03;                       // high LR = noisier curve
+  const epochScale = params.nEstimators / 500;                                  // 1.0 at default
+
   const lossDataFull = useMemo(() => Array.from({ length: 20 }, (_, i) => ({
-    epoch: (i + 1) * 25,
-    trainLoss: +(0.45 * Math.exp(-0.15 * i) + sr(i * 3) * 0.02).toFixed(4),
-    valLoss: +(0.48 * Math.exp(-0.13 * i) + sr(i * 7 + 1) * 0.025).toFixed(4),
-  })), []);
+    epoch: Math.round((i + 1) * 25 * epochScale),
+    trainLoss: +Math.max(0.001, trainFloor + (0.45 - trainFloor) * Math.exp(-decay * i) + sr(i * 3) * (0.02 + instability)).toFixed(4),
+    valLoss: +Math.max(0.001, valFloor + (0.48 - valFloor) * Math.exp(-decay * 0.87 * i) + sr(i * 7 + 1) * (0.025 + instability)).toFixed(4),
+  })), [epochScale, trainFloor, valFloor, decay, instability]);
+
+  // Final-metrics summary shown once training completes — derived from the actual last
+  // point of lossDataFull (and therefore from the hyperparameters above), not fixed strings.
+  const finalMetrics = useMemo(() => {
+    const last = lossDataFull[lossDataFull.length - 1];
+    return {
+      maeP50: last.valLoss.toFixed(4),
+      rmse: (last.valLoss * 1.35).toFixed(4),
+      pinballP25: (last.valLoss * 0.38).toFixed(4),
+      pinballP75: (last.valLoss * 0.35).toFixed(4),
+      calibErr: (overfitGap * 100).toFixed(1),
+      trainingTime: (1.8 * epochScale).toFixed(1),
+    };
+  }, [lossDataFull, overfitGap, epochScale]);
 
   const trainModel = useCallback(() => {
     setTraining({ status: 'training', progress: 0, fold: 1, lossHistory: [] });
@@ -162,8 +203,14 @@ export default function MLRiskScorerPage() {
     actual: +(q / 100 + (sr(q) - 0.5) * 0.04).toFixed(3),
   })), []);
 
-  const modelHash = useMemo(() => Array.from({ length: 8 }, (_, i) =>
-    Math.floor(sr(i * 31 + 7) * 16).toString(16)).join(''), []);
+  // Model hash is a function of the chosen hyperparameters, so different configs
+  // (deterministically) produce different hashes instead of always the same value.
+  const modelHash = useMemo(() => {
+    const seed = params.nEstimators * 7 + params.maxDepth * 13 + Math.round(params.learningRate * 1000) * 3
+      + Math.round(params.subsample * 100) * 11 + Math.round(params.colsampleBytree * 100) * 17
+      + params.minChildWeight * 19 + params.trainSplit * 23;
+    return Array.from({ length: 8 }, (_, i) => Math.floor(sr(seed + i * 31 + 7) * 16).toString(16)).join('');
+  }, [params]);
 
   const sectorPerf = useMemo(() => SECTORS.map((s, i) => ({
     sector: s, mae: +(0.08 + sr(i * 17 + 5) * 0.04).toFixed(4), rmse: +(0.11 + sr(i * 13 + 3) * 0.05).toFixed(4),
@@ -314,12 +361,12 @@ export default function MLRiskScorerPage() {
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 16 }}>
                       {[
-                        { label: 'MAE (P50)', value: '0.0823' },
-                        { label: 'RMSE', value: '0.1142' },
-                        { label: 'Pinball (P25)', value: '0.0314' },
-                        { label: 'Pinball (P75)', value: '0.0291' },
-                        { label: 'Calibration Err', value: '2.3%' },
-                        { label: 'Training Time', value: '1.8s' },
+                        { label: 'MAE (P50)', value: finalMetrics.maeP50 },
+                        { label: 'RMSE', value: finalMetrics.rmse },
+                        { label: 'Pinball (P25)', value: finalMetrics.pinballP25 },
+                        { label: 'Pinball (P75)', value: finalMetrics.pinballP75 },
+                        { label: 'Calibration Err', value: `${finalMetrics.calibErr}%` },
+                        { label: 'Training Time', value: `${finalMetrics.trainingTime}s` },
                       ].map(m => (
                         <div key={m.label} style={{ background: '#f9f7f3', borderRadius: 6, padding: '10px 12px',
                           border: `1px solid #e8e4db` }}>

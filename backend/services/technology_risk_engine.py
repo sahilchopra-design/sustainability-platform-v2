@@ -8,6 +8,17 @@ Covers Gap Analysis P1 §3.4 — Technology Sector Module:
   - AI Model Carbon Footprint (training + inference)
   - Hardware Lifecycle (e-waste, circular economy)
   - Digital Product Carbon Labeling (ISO 14044 LCA proxy)
+
+NOTE (2026-07): this engine and its routes (api/v1/routes/technology.py) are NOT currently wired
+to any frontend page. The live `/technology-risk` route (frontend/src/features/technology-risk/
+pages/TechnologyRiskPage.jsx) is an unrelated cyber/IT operational-risk panel (EP-BB2) that never
+calls these endpoints — all its data is synthetic/seeded inline. This module_id previously carried
+a three-way guide/frontend/backend naming mismatch (see docs/module_atlas/deep/technology-risk.md
+§7); the guide text has since been corrected to describe the cyber/IT panel, and this backend
+engine has been deliberately left as-is. It is a genuine, working data-centre/AI carbon-footprint
+calculator (PUE, cloud emissions, AI training/inference carbon, semiconductor + e-waste risk) that
+would need its own dedicated frontend page (e.g. a future "AI Carbon Accounting" module) or a new
+tab on the existing technology-risk page to become reachable by users.
 """
 from __future__ import annotations
 

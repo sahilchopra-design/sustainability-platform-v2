@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -6,7 +6,28 @@ import {
   AreaChart, Area, Cell,
 } from 'recharts';
 
+// Backend E93 Critical Minerals & Transition Metals Risk engine (IEA CRM 2024 /
+// EU CRM Act 2024/1252 / IRMA Standard v1.0 / OECD DDG 5-step / conflict minerals).
+// See backend/services/critical_minerals_engine.py + backend/api/v1/routes/critical_minerals.py
 const API = 'http://localhost:8001';
+const CRM_API = `${API}/api/v1/critical-minerals`;
+
+// Frontend option values -> exact backend IEA_CRITICAL_MINERALS_2024 keys
+// (backend uses "silicon_metal"/"platinum_group_metals"; frontend keeps shorter
+// option values for the EU CRMA Annex sets below, so map on request only).
+const MINERAL_TO_BACKEND = {
+  silicon: 'silicon_metal',
+  platinum_group: 'platinum_group_metals',
+};
+const toBackendMineral = (m) => MINERAL_TO_BACKEND[m] || m;
+
+const SECTOR_OPTIONS = [
+  { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'automotive', label: 'Automotive / EV' },
+  { value: 'renewable_energy', label: 'Renewable Energy' },
+  { value: 'technology', label: 'Technology / Electronics' },
+  { value: 'mining', label: 'Mining & Metals' },
+];
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const seed = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
@@ -36,12 +57,25 @@ const Sel = ({ label, value, onChange, options }) => (
     </select>
   </div>
 );
-const Section = ({ title, children }) => (
+const Section = ({ title, children, status }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <span>{title}</span>
+      {status === 'live' && <LiveBadge label="● Live — /api/v1/critical-minerals" tone="live" />}
+      {status === 'demo' && <LiveBadge label="○ Demo Data — API unavailable" tone="demo" />}
+      {status === 'loading' && <LiveBadge label="Connecting…" tone="loading" />}
+    </div>
     {children}
   </div>
 );
+const LiveBadge = ({ label, tone }) => {
+  const styles = {
+    live: { bg: '#dcfce7', text: '#166534' },
+    demo: { bg: '#fef3c7', text: '#92400e' },
+    loading: { bg: '#f3f4f6', text: '#6b7280' },
+  }[tone];
+  return <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: styles.bg, color: styles.text }}>{label}</span>;
+};
 const Row = ({ children, gap = 12 }) => (
   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${React.Children.count(children)},1fr)`, gap }}>{children}</div>
 );
@@ -174,22 +208,138 @@ export default function CriticalMineralsPage() {
   const [error, setError] = useState('');
   const [mineral, setMineral] = useState('lithium');
   const [techFocus, setTechFocus] = useState('ev_battery');
+  const [entityName, setEntityName] = useState('Demo EV Manufacturer');
+  const [sector, setSector] = useState('manufacturing');
+  const [evExposure, setEvExposure] = useState('500');
+  const [solarExposure, setSolarExposure] = useState('120');
+  const [windExposure, setWindExposure] = useState('80');
+  const [gridExposure, setGridExposure] = useState('60');
+  const [annualVolume, setAnnualVolume] = useState('5000');
 
-  const iea = getIeaData(mineral);
-  const euCrm = getEuCrmData(mineral);
-  const irma = getIrmaData(mineral);
-  const supply = getSupplyChainData(mineral);
-  const overall = getOverallData(mineral);
+  // Demo (seeded) data — used only as fallback when the live engine is unreachable
+  const ieaDemo = getIeaData(mineral);
+  const euCrmDemo = getEuCrmData(mineral);
+  const irmaDemo = getIrmaData(mineral);
+  const supplyDemo = getSupplyChainData(mineral);
+  const overallDemo = getOverallData(mineral);
+
+  // --- Live backend wiring (E93 Critical Minerals Engine) -------------------
+  // POST /api/v1/critical-minerals/assess — full IEA/EU CRM Act/IRMA/OECD DDG assessment
+  const [assessLive, setAssessLive] = useState(null);
+  const [assessStatus, setAssessStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setAssessStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${CRM_API}/assess`, {
+          entity_id: 'demo-001',
+          entity_name: entityName || 'Demo Entity',
+          sector,
+          minerals_exposed: [toBackendMineral(mineral)],
+          ev_battery_exposure_m: parseFloat(evExposure) || 0,
+          solar_pv_exposure_m: parseFloat(solarExposure) || 0,
+          wind_turbine_exposure_m: parseFloat(windExposure) || 0,
+          grid_storage_exposure_m: parseFloat(gridExposure) || 0,
+          eu_crm_act_applicable: true,
+          eu_strategic_minerals_sourced: [toBackendMineral(mineral)],
+          eu_crm_audit_completed: false,
+        }, { timeout: 10000 });
+        if (!cancelled) { setAssessLive(data); setAssessStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setAssessLive(null); setAssessStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [mineral, sector, entityName, evExposure, solarExposure, windExposure, gridExposure]);
+
+  // POST /api/v1/critical-minerals/supply-chain-map — per-mineral country/conflict risk
+  const [supplyMapLive, setSupplyMapLive] = useState(null);
+  const [supplyMapStatus, setSupplyMapStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setSupplyMapStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${CRM_API}/supply-chain-map`, {
+          entity_id: 'demo-001',
+          entity_name: entityName || 'Demo Entity',
+          mineral: toBackendMineral(mineral),
+          technology_application: techFocus,
+          annual_volume_tonnes: parseFloat(annualVolume) || 1000,
+          smelter_audit_completed: false,
+        }, { timeout: 10000 });
+        if (!cancelled) { setSupplyMapLive(data); setSupplyMapStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setSupplyMapLive(null); setSupplyMapStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [mineral, techFocus, annualVolume, entityName]);
+
+  // --- Derive display data: live values when available, seeded demo otherwise
+  const iea = assessStatus === 'live' && assessLive ? {
+    subScores: [
+      { name: 'Demand Growth', key: 'demand_growth', value: Math.round(assessLive.iea_crm_2024.demand_growth_score) },
+      { name: 'Supply Concentration', key: 'supply_concentration', value: Math.round(assessLive.iea_crm_2024.supply_concentration) },
+      { name: 'Geopolitical Risk', key: 'geopolitical_risk', value: Math.round(assessLive.iea_crm_2024.geopolitical_risk) },
+      { name: 'Substitutability', key: 'substitutability', value: Math.round(assessLive.iea_crm_2024.substitutability) },
+    ],
+    composite: Math.round(assessLive.iea_crm_2024.criticality_composite),
+    tier: assessLive.iea_crm_2024.criticality_composite >= 80 ? 'Critical' : assessLive.iea_crm_2024.criticality_composite >= 65 ? 'High' : assessLive.iea_crm_2024.criticality_composite >= 50 ? 'Medium' : 'Low',
+    tierColor: assessLive.iea_crm_2024.criticality_composite >= 80 ? 'red' : assessLive.iea_crm_2024.criticality_composite >= 65 ? 'orange' : assessLive.iea_crm_2024.criticality_composite >= 50 ? 'yellow' : 'green',
+  } : ieaDemo;
+
+  const euCrm = assessStatus === 'live' && assessLive ? {
+    strategic: EU_CRMA_ANNEX_I_STRATEGIC.has(mineral),
+    critical: EU_CRMA_ANNEX_II_CRITICAL.has(mineral),
+    compliance: Math.round(assessLive.eu_crm_act.compliance_score * 100),
+    gaps: assessLive.eu_crm_act.gaps,
+    auditRequired: assessLive.eu_crm_act.audit_required,
+  } : { ...euCrmDemo, gaps: euCrmDemo.gaps, auditRequired: null };
+
+  const irma = assessStatus === 'live' && assessLive ? {
+    areas: irmaDemo.areas, // engine returns a composite + gaps only, not a per-chapter breakdown — radar stays illustrative
+    composite: Math.round(assessLive.irma.score * 100),
+    tier: (assessLive.irma.tier || 'not_rated').replace('_', ' ').toUpperCase(),
+    tierColor: assessLive.irma.tier === 'tier_3' ? 'green' : assessLive.irma.tier === 'tier_2' ? 'blue' : assessLive.irma.tier === 'tier_1' ? 'yellow' : 'red',
+    gaps: assessLive.irma.gaps,
+  } : irmaDemo;
+
+  const supply = assessStatus === 'live' && assessLive ? {
+    exposures: supplyDemo.exposures, // illustrative technology split; live totals/HHI below are real
+    total: Math.round(assessLive.transition_exposure.total_transition_exposure_m),
+    hhi: Math.round(assessLive.supply_chain_metrics.concentration_hhi),
+    hhiTier: assessLive.supply_chain_metrics.concentration_hhi >= 2500 ? 'High Concentration' : assessLive.supply_chain_metrics.concentration_hhi >= 1500 ? 'Moderate' : 'Diversified',
+    hhiColor: assessLive.supply_chain_metrics.concentration_hhi >= 2500 ? 'red' : assessLive.supply_chain_metrics.concentration_hhi >= 1500 ? 'yellow' : 'green',
+  } : supplyDemo;
+
+  const overall = assessStatus === 'live' && assessLive ? {
+    priceVolatility: overallDemo.priceVolatility, // no live time-series equivalent — illustrative forecast
+    supplyDisruptionProb: Math.round(assessLive.supply_chain_metrics.supply_disruption_prob_pct),
+    top3CountryShare: Math.round(assessLive.supply_chain_metrics.top3_country_share_pct),
+    riskTier: assessLive.overall.crm_risk_tier.charAt(0).toUpperCase() + assessLive.overall.crm_risk_tier.slice(1),
+    riskColor: assessLive.overall.crm_risk_tier === 'critical' ? 'red' : assessLive.overall.crm_risk_tier === 'high' ? 'orange' : assessLive.overall.crm_risk_tier === 'medium' ? 'yellow' : 'green',
+  } : overallDemo;
 
   const runAssess = async () => {
     setLoading(true); setError('');
     try {
-      await axios.post(`${API}/api/v1/critical-minerals/assess`, {
-        mineral, tech_focus: techFocus,
-        company_id: 'demo-001',
+      const { data } = await axios.post(`${CRM_API}/assess`, {
+        entity_id: 'demo-001', entity_name: entityName || 'Demo Entity', sector,
+        minerals_exposed: [toBackendMineral(mineral)],
+        ev_battery_exposure_m: parseFloat(evExposure) || 0,
+        solar_pv_exposure_m: parseFloat(solarExposure) || 0,
+        wind_turbine_exposure_m: parseFloat(windExposure) || 0,
+        grid_storage_exposure_m: parseFloat(gridExposure) || 0,
+        eu_crm_act_applicable: true,
+        eu_strategic_minerals_sourced: [toBackendMineral(mineral)],
+        eu_crm_audit_completed: false,
       });
+      setAssessLive(data); setAssessStatus('live');
     } catch {
-      void 0 /* API fallback to seed data */;
+      setAssessLive(null); setAssessStatus('demo');
+      setError('Live CRM engine unavailable — showing demo data below.');
     } finally { setLoading(false); }
   };
 
@@ -206,22 +356,34 @@ export default function CriticalMineralsPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
+      {error && <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#92400e', fontSize: 14 }}>{error}</div>}
 
-      <Section title="Assessment Parameters">
+      <Section title="Assessment Parameters" status={assessStatus}>
         <Row>
           <Sel label="Critical Mineral" value={mineral} onChange={setMineral} options={MINERAL_OPTIONS} />
           <Sel label="Technology Focus" value={techFocus} onChange={setTechFocus} options={TECH_OPTIONS} />
-          <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 12 }}>
-            <Btn onClick={runAssess}>{loading ? 'Running…' : 'Run CRM Assessment'}</Btn>
-          </div>
+          <Sel label="Sector" value={sector} onChange={setSector} options={SECTOR_OPTIONS} />
         </Row>
+        <Row>
+          <Inp label="Entity Name" value={entityName} onChange={setEntityName} />
+          <Inp label="EV Battery Exposure ($M)" value={evExposure} onChange={setEvExposure} type="number" />
+          <Inp label="Solar PV Exposure ($M)" value={solarExposure} onChange={setSolarExposure} type="number" />
+        </Row>
+        <Row>
+          <Inp label="Wind Turbine Exposure ($M)" value={windExposure} onChange={setWindExposure} type="number" />
+          <Inp label="Grid Storage Exposure ($M)" value={gridExposure} onChange={setGridExposure} type="number" />
+          <Inp label="Annual Sourcing Volume (tonnes)" value={annualVolume} onChange={setAnnualVolume} type="number" />
+        </Row>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <Btn onClick={runAssess}>{loading ? 'Running…' : 'Run CRM Assessment'}</Btn>
+          <span style={{ fontSize: 12, color: '#6b7280' }}>Assessment auto-refreshes from the live E93 engine as inputs change.</span>
+        </div>
       </Section>
 
       {/* TAB 1 — IEA Criticality */}
       {tab === 0 && (
         <div>
-          <Section title="IEA Critical Minerals Outlook 2024 — Criticality Assessment">
+          <Section title="IEA Critical Minerals Outlook 2024 — Criticality Assessment" status={assessStatus}>
             <Row gap={12}>
               <KpiCard label="IEA Criticality Composite" value={`${iea.composite}/100`} sub="4-indicator weighted composite" accent />
               <KpiCard label="Criticality Tier" value={<Badge label={iea.tier} color={iea.tierColor} />} sub="IEA 2024 classification" />
@@ -230,7 +392,7 @@ export default function CriticalMineralsPage() {
             </Row>
           </Section>
 
-          <Section title="IEA Criticality Sub-Indicators">
+          <Section title="IEA Criticality Sub-Indicators" status={assessStatus}>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={iea.subScores}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -268,29 +430,42 @@ export default function CriticalMineralsPage() {
       {/* TAB 2 — EU CRM Act */}
       {tab === 1 && (
         <div>
-          <Section title="EU Critical Raw Materials Act (Regulation (EU) 2024/1252)">
+          <Section title="EU Critical Raw Materials Act (Regulation (EU) 2024/1252)" status={assessStatus}>
             <Row gap={12}>
               <KpiCard label="EU Strategic Mineral" value={<Badge label={euCrm.strategic ? 'Yes — Strategic' : 'No'} color={euCrm.strategic ? 'green' : 'gray'} />} sub="Annex I — Strategic Raw Materials (EU CRMA 2024/1252)" accent />
               <KpiCard label="EU Critical Mineral" value={<Badge label={euCrm.critical ? 'Yes — Critical' : 'No'} color={euCrm.critical ? 'blue' : 'gray'} />} sub="Annex II — Critical Raw Materials (EU CRMA 2024/1252)" />
-              <KpiCard label="CRM Compliance Score" value={`${euCrm.compliance}/100`} sub="Across 5 compliance dimensions" />
+              <KpiCard label="CRM Compliance Score" value={`${euCrm.compliance}/100`} sub={assessStatus === 'live' ? 'Live Art 5/14 compliance score' : 'Across 5 compliance dimensions (demo)'} />
               <KpiCard label="Compliance Status" value={<Badge label={euCrm.compliance >= 70 ? 'Compliant' : euCrm.compliance >= 50 ? 'Partial' : 'Non-Compliant'} color={euCrm.compliance >= 70 ? 'green' : euCrm.compliance >= 50 ? 'yellow' : 'red'} />} sub="EU CRM Act Art 5 & 6 assessment" />
             </Row>
           </Section>
 
-          <Section title="EU CRM Act Compliance Gap Analysis">
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={euCrm.gaps}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-10} textAnchor="end" height={45} />
-                <YAxis domain={[0, 100]} />
-                <Tooltip formatter={(val) => `${val}/100`} />
-                <Bar dataKey="value" name="Compliance Score" radius={[4, 4, 0, 0]}>
-                  {euCrm.gaps.map((g, i) => (
-                    <Cell key={i} fill={g.value >= 65 ? '#059669' : g.value >= 45 ? '#f59e0b' : '#ef4444'} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <Section title="EU CRM Act Compliance Gap Analysis" status={assessStatus}>
+            {assessStatus === 'live' && assessLive ? (
+              <div style={{ background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 8, padding: 16 }}>
+                {euCrm.gaps.length === 0 ? (
+                  <div style={{ fontSize: 13, color: '#166534', fontWeight: 600 }}>No compliance gaps identified for the current inputs.</div>
+                ) : euCrm.gaps.map((g, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < euCrm.gaps.length - 1 ? '1px solid #fed7aa' : 'none' }}>
+                    <span style={{ color: '#c2410c', fontWeight: 700 }}>{i + 1}.</span>
+                    <span style={{ fontSize: 13, color: '#7c2d12' }}>{g}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={euCrm.gaps}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} angle={-10} textAnchor="end" height={45} />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip formatter={(val) => `${val}/100`} />
+                  <Bar dataKey="value" name="Compliance Score" radius={[4, 4, 0, 0]}>
+                    {euCrm.gaps.map((g, i) => (
+                      <Cell key={i} fill={g.value >= 65 ? '#059669' : g.value >= 45 ? '#f59e0b' : '#ef4444'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </Section>
 
           <Section title="EU CRM Act Benchmarks (Art 5 Targets by 2030)">
@@ -314,17 +489,18 @@ export default function CriticalMineralsPage() {
       {/* TAB 3 — IRMA Responsible Mining */}
       {tab === 2 && (
         <div>
-          <Section title="Initiative for Responsible Mining Assurance (IRMA) Standard for Responsible Mining">
+          <Section title="Initiative for Responsible Mining Assurance (IRMA) Standard for Responsible Mining" status={assessStatus}>
             <Row gap={12}>
               <KpiCard label="IRMA Score" value={`${irma.composite}/100`} sub="6-area weighted composite" accent />
               <KpiCard label="IRMA Tier" value={<Badge label={irma.tier} color={irma.tierColor} />} sub="IRMA 25 / 50 / 75 / 100" />
-              <KpiCard label="Weakest Area" value={[...irma.areas].sort((a, b) => a.score - b.score)[0].dimension} sub={`Score: ${[...irma.areas].sort((a, b) => a.score - b.score)[0].score}/100`} />
+              <KpiCard label="Weakest Area" value={[...irma.areas].sort((a, b) => a.score - b.score)[0].dimension} sub={`Score: ${[...irma.areas].sort((a, b) => a.score - b.score)[0].score}/100 (illustrative breakdown)`} />
               <KpiCard label="OECD DDG Aligned" value={<Badge label={irma.composite >= 65 ? 'Aligned' : 'Gaps Identified'} color={irma.composite >= 65 ? 'green' : 'yellow'} />} sub="OECD Due Diligence Guidance alignment" />
             </Row>
           </Section>
 
           <Row>
-            <Section title="IRMA Assessment Areas — Radar">
+            <Section title="IRMA Assessment Areas — Radar" status={assessStatus === 'live' ? undefined : assessStatus}>
+              {assessStatus === 'live' && <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Composite/tier above are live; the engine does not expose a per-chapter breakdown, so this radar is an illustrative 6-area split.</div>}
               <ResponsiveContainer width="100%" height={320}>
                 <RadarChart data={irma.areas} cx="50%" cy="50%" outerRadius={110}>
                   <PolarGrid />
@@ -351,13 +527,26 @@ export default function CriticalMineralsPage() {
               </ResponsiveContainer>
             </Section>
           </Row>
+
+          {assessStatus === 'live' && assessLive && irma.gaps?.length > 0 && (
+            <Section title="IRMA Gaps Identified" status="live">
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
+                {irma.gaps.map((g, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < irma.gaps.length - 1 ? '1px solid #d1fae5' : 'none' }}>
+                    <span style={{ color: '#059669', fontWeight: 700 }}>{i + 1}.</span>
+                    <span style={{ fontSize: 13, color: '#065f46' }}>{g}</span>
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
         </div>
       )}
 
       {/* TAB 4 — Supply Chain Risk */}
       {tab === 3 && (
         <div>
-          <Section title="Transition Technology Exposure Analysis ($M)">
+          <Section title="Transition Technology Exposure Analysis ($M)" status={assessStatus}>
             <Row gap={12}>
               <KpiCard label="Total Transition Exposure" value={`$${supply.total}M`} sub="Aggregate across 5 tech categories" accent />
               <KpiCard label="Concentration HHI" value={supply.hhi.toLocaleString()} sub="Herfindahl-Hirschman Index" />
@@ -367,6 +556,7 @@ export default function CriticalMineralsPage() {
           </Section>
 
           <Section title="Transition Technology Exposure by Application ($M)">
+            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 8 }}>Illustrative per-technology split — totals and HHI above reflect live inputs when the engine is reachable.</div>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={supply.exposures}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -382,34 +572,45 @@ export default function CriticalMineralsPage() {
             </ResponsiveContainer>
           </Section>
 
-          <Section title="Key Producer Countries & Risk Exposure">
+          <Section title="Key Producer Countries & Risk Exposure" status={supplyMapStatus}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: '#f9fafb' }}>
-                  {['Country', 'Production Share', 'Geopolitical Risk', 'Import Dependency Risk'].map(h => (
+                  {['Country', 'Production Share', 'Conflict / Geopolitical Risk', 'OECD CAHRA'].map(h => (
                     <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { country: 'China', share: `${Math.round(seed(supply.total * 3) * 30 + 40)}%`, geo: 'High', dep: 'Very High' },
-                  { country: 'DRC', share: `${Math.round(seed(supply.total * 5) * 20 + 15)}%`, geo: 'Very High', dep: 'High' },
-                  { country: 'Australia', share: `${Math.round(seed(supply.total * 7) * 15 + 8)}%`, geo: 'Low', dep: 'Low' },
-                  { country: 'Chile', share: `${Math.round(seed(supply.total * 11) * 12 + 6)}%`, geo: 'Medium', dep: 'Medium' },
-                  { country: 'Russia', share: `${Math.round(seed(supply.total * 13) * 10 + 5)}%`, geo: 'Very High', dep: 'High' },
-                ].map((row, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <td style={{ padding: '8px 12px', fontWeight: 600, color: '#374151' }}>{row.country}</td>
-                    <td style={{ padding: '8px 12px', color: '#1b3a5c' }}>{row.share}</td>
-                    <td style={{ padding: '8px 12px' }}>
-                      <Badge label={row.geo} color={row.geo === 'Very High' ? 'red' : row.geo === 'High' ? 'orange' : row.geo === 'Medium' ? 'yellow' : 'green'} />
-                    </td>
-                    <td style={{ padding: '8px 12px' }}>
-                      <Badge label={row.dep} color={row.dep === 'Very High' ? 'red' : row.dep === 'High' ? 'orange' : row.dep === 'Medium' ? 'yellow' : 'green'} />
-                    </td>
-                  </tr>
-                ))}
+                {(supplyMapStatus === 'live' && supplyMapLive
+                  ? Object.entries(supplyMapLive.mineral_profile.top3_country_share_pct || {}).map(([country, share]) => {
+                      const risk = (supplyMapLive.supply_chain_assessment.tier1_country_risks || []).find(r => r.country === country);
+                      const geo = risk ? risk.conflict_risk.replace('_', ' ') : 'n/a';
+                      return { country, share: `${share}%`, geo, cahra: risk?.oecd_cahra ?? false };
+                    })
+                  : [
+                      { country: 'China', share: `${Math.round(seed(supplyDemo.total * 3) * 30 + 40)}%`, geo: 'high', cahra: false },
+                      { country: 'DRC', share: `${Math.round(seed(supplyDemo.total * 5) * 20 + 15)}%`, geo: 'very high', cahra: true },
+                      { country: 'Australia', share: `${Math.round(seed(supplyDemo.total * 7) * 15 + 8)}%`, geo: 'low', cahra: false },
+                      { country: 'Chile', share: `${Math.round(seed(supplyDemo.total * 11) * 12 + 6)}%`, geo: 'medium', cahra: false },
+                      { country: 'Russia', share: `${Math.round(seed(supplyDemo.total * 13) * 10 + 5)}%`, geo: 'very high', cahra: false },
+                    ]
+                ).map((row, i) => {
+                  const geoLabel = row.geo.replace(/^\w/, c => c.toUpperCase());
+                  const geoColor = /very high/i.test(row.geo) ? 'red' : /high/i.test(row.geo) ? 'orange' : /medium/i.test(row.geo) ? 'yellow' : 'green';
+                  return (
+                    <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                      <td style={{ padding: '8px 12px', fontWeight: 600, color: '#374151' }}>{row.country}</td>
+                      <td style={{ padding: '8px 12px', color: '#1b3a5c' }}>{row.share}</td>
+                      <td style={{ padding: '8px 12px' }}>
+                        <Badge label={geoLabel} color={geoColor} />
+                      </td>
+                      <td style={{ padding: '8px 12px' }}>
+                        <Badge label={row.cahra ? 'Flagged' : 'Clear'} color={row.cahra ? 'red' : 'green'} />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </Section>
@@ -419,16 +620,16 @@ export default function CriticalMineralsPage() {
       {/* TAB 5 — Overall CRM Risk */}
       {tab === 4 && (
         <div>
-          <Section title="Overall CRM Risk Profile — Summary">
+          <Section title="Overall CRM Risk Profile — Summary" status={assessStatus}>
             <Row gap={12}>
               <KpiCard label="Supply Disruption Probability" value={`${overall.supplyDisruptionProb}%`} sub="12-month horizon (IEA methodology)" accent />
               <KpiCard label="Top-3 Country Share" value={`${overall.top3CountryShare}%`} sub="Production concentration metric" />
               <KpiCard label="CRM Risk Tier" value={<Badge label={overall.riskTier} color={overall.riskColor} />} sub="Composite IEA / EU CRM risk tier" />
-              <KpiCard label="Price Volatility Trend" value={overall.priceVolatility[overall.priceVolatility.length - 1].score > overall.priceVolatility[0].score ? 'Increasing' : 'Decreasing'} sub="2020–2030 trajectory (IEA forecast)" />
+              <KpiCard label="Price Volatility Trend" value={overall.priceVolatility[overall.priceVolatility.length - 1].score > overall.priceVolatility[0].score ? 'Increasing' : 'Decreasing'} sub="2020–2030 trajectory (illustrative forecast)" />
             </Row>
           </Section>
 
-          <Section title="Price Volatility Score — 2020 to 2030 (IEA Forecast)">
+          <Section title="Price Volatility Score — 2020 to 2030 (Illustrative Forecast — Demo)">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={overall.priceVolatility}>
                 <defs>
@@ -446,24 +647,44 @@ export default function CriticalMineralsPage() {
             </ResponsiveContainer>
           </Section>
 
-          <Section title="CRM Risk Mitigation Strategy">
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
-              {[
-                { action: 'Geographic Diversification', desc: 'Expand sourcing to Australia, Canada, Chile to reduce China/DRC dependency', urgency: 'Immediate' },
-                { action: 'Circular Economy Integration', desc: 'Urban mining + battery recycling pathways to reduce primary demand', urgency: 'Short-term' },
-                { action: 'Strategic Stockpiling', desc: 'Minimum 3-month supply buffer aligned to EU CRM Act requirements', urgency: 'Short-term' },
-                { action: 'Long-term Offtake Agreements', desc: 'IRMA-certified mine supply contracts with price floor/ceiling mechanisms', urgency: 'Medium-term' },
-                { action: 'Substitution R&D Investment', desc: 'Fund alternatives research (e.g. sodium-ion, LFP, REE-free magnets)', urgency: 'Long-term' },
-              ].map((item, i) => (
-                <div key={i} style={{ padding: '10px 0', borderBottom: i < 4 ? '1px solid #d1fae5' : 'none' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 700, color: '#065f46', fontSize: 13 }}>{item.action}</span>
-                    <Badge label={item.urgency} color={item.urgency === 'Immediate' ? 'red' : item.urgency === 'Short-term' ? 'yellow' : item.urgency === 'Medium-term' ? 'blue' : 'gray'} />
+          <Section title="CRM Risk Mitigation Strategy" status={assessStatus}>
+            {assessStatus === 'live' && assessLive ? (
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#065f46', textTransform: 'uppercase', marginBottom: 8 }}>Live Recommendations — E93 Engine</div>
+                {(assessLive.recommendations || []).map((rec, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < assessLive.recommendations.length - 1 ? '1px solid #d1fae5' : 'none' }}>
+                    <span style={{ color: '#059669', fontWeight: 700 }}>{i + 1}.</span>
+                    <span style={{ fontSize: 13, color: '#065f46' }}>{rec}</span>
                   </div>
-                  <span style={{ fontSize: 12, color: '#6b7280' }}>{item.desc}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+                {assessLive.key_findings?.length > 0 && (
+                  <>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#065f46', textTransform: 'uppercase', margin: '14px 0 8px' }}>Key Findings</div>
+                    {assessLive.key_findings.map((f, i) => (
+                      <div key={i} style={{ fontSize: 12, color: '#374151', padding: '4px 0' }}>• {f}</div>
+                    ))}
+                  </>
+                )}
+              </div>
+            ) : (
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
+                {[
+                  { action: 'Geographic Diversification', desc: 'Expand sourcing to Australia, Canada, Chile to reduce China/DRC dependency', urgency: 'Immediate' },
+                  { action: 'Circular Economy Integration', desc: 'Urban mining + battery recycling pathways to reduce primary demand', urgency: 'Short-term' },
+                  { action: 'Strategic Stockpiling', desc: 'Minimum 3-month supply buffer aligned to EU CRM Act requirements', urgency: 'Short-term' },
+                  { action: 'Long-term Offtake Agreements', desc: 'IRMA-certified mine supply contracts with price floor/ceiling mechanisms', urgency: 'Medium-term' },
+                  { action: 'Substitution R&D Investment', desc: 'Fund alternatives research (e.g. sodium-ion, LFP, REE-free magnets)', urgency: 'Long-term' },
+                ].map((item, i) => (
+                  <div key={i} style={{ padding: '10px 0', borderBottom: i < 4 ? '1px solid #d1fae5' : 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontWeight: 700, color: '#065f46', fontSize: 13 }}>{item.action}</span>
+                      <Badge label={item.urgency} color={item.urgency === 'Immediate' ? 'red' : item.urgency === 'Short-term' ? 'yellow' : item.urgency === 'Medium-term' ? 'blue' : 'gray'} />
+                    </div>
+                    <span style={{ fontSize: 12, color: '#6b7280' }}>{item.desc}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </Section>
         </div>
       )}

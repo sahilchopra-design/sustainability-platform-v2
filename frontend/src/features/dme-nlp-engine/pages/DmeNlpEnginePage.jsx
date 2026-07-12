@@ -1,10 +1,18 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis,
   PolarRadiusAxis, ScatterChart, Scatter, ComposedChart, Area, AreaChart,
 } from 'recharts';
+
+// Backend DME NLP Pulse engine — real sentiment-signal processing model
+// (Pulse score P(t) = S(t) × ln(1+I(t)), greenwashing discount factor (GDF),
+// event-type decay half-lives, source-credibility tiering). See
+// backend/services/dme_nlp_pulse_engine.py + backend/api/v1/routes/dme_nlp_pulse.py
+const API = 'http://localhost:8001';
+const DME_NLP_PULSE_API = `${API}/api/v1/dme-nlp-pulse`;
 
 // ── Theme ───────────────────────────────────────────────────────────────────
 const T = {
@@ -203,6 +211,50 @@ const CONTROVERSY_EVENTS = Array.from({ length: 20 }, (_, i) => {
   };
 });
 
+// ── DME NLP Pulse — live engine wiring helpers ───────────────────────────────
+// Maps a corpus document to the SentimentSignal shape expected by
+// POST /api/v1/dme-nlp-pulse/process-signal. All 5 DOC_TYPES here are
+// company-published disclosure documents, so event_type is uniformly
+// 'corporate_disclosure' (180-day decay half-life per the engine) and
+// is_self_reported=true, which activates the engine's real greenwashing-
+// discount-factor (GDF) branch. source_tier is derived from the document's
+// quality/assurance score as a credibility proxy.
+const tierFromQuality = (q) => (q >= 0.75 ? 1 : q >= 0.55 ? 2 : q >= 0.35 ? 3 : 4);
+
+const docToSignal = (d) => ({
+  entity_id: d.issuer,
+  timestamp: `${d.year}-06-15T00:00:00`,
+  sentiment_score: parseFloat((d.sentiment * 100).toFixed(2)),
+  information_density: parseFloat((d.word_count / 1000).toFixed(2)),
+  source_tier: tierFromQuality(d.quality),
+  event_type: 'corporate_disclosure',
+  is_self_reported: true,
+});
+
+// Hours-ahead checkpoints used to draw a live decay projection via repeated
+// POST /apply-decay calls (or the client-side reproduction of the same
+// formula when the engine is unreachable — see demoDecayCurve below).
+const DECAY_CURVE_HOURS = [0, 24, 168, 720, 1440, 2160, 4320, 8760];
+const decayCurveLabel = (hrs) => (hrs < 24 ? `${hrs}h` : hrs < 720 ? `${Math.round(hrs / 24)}d` : `${Math.round(hrs / 720)}mo`);
+
+// Reference constants mirrored 1:1 from NLPPulseEngine.get_reference_data()
+// (backend/services/dme_nlp_pulse_engine.py) — used ONLY as the explicit
+// "Demo Data" fallback for the live /ref/event-types + /ref/source-tiers
+// GET calls in renderGovernance, never as a substitute for a live figure.
+const DEMO_REF_EVENT_TYPES = [
+  { type: 'breaking_news', half_life_hours: 12.0 },
+  { type: 'regulatory_enforcement', half_life_hours: 168.0 },
+  { type: 'investigative_journalism', half_life_hours: 336.0 },
+  { type: 'industry_policy_shift', half_life_hours: 2160.0 },
+  { type: 'corporate_disclosure', half_life_hours: 4320.0 },
+];
+const DEMO_REF_SOURCE_TIERS = [
+  { tier: 1, name: 'TIER1_INSTITUTIONAL', credibility: 0.95 },
+  { tier: 2, name: 'TIER2_SPECIALIST', credibility: 0.70 },
+  { tier: 3, name: 'TIER3_BROAD_MEDIA', credibility: 0.40 },
+  { tier: 4, name: 'TIER4_SOCIAL', credibility: 0.15 },
+];
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const fmtPct  = (v, d = 1) => (v * 100).toFixed(d) + '%';
 const fmtNum  = (v) => v >= 1000 ? (v / 1000).toFixed(1) + 'K' : v.toString();
@@ -280,6 +332,17 @@ const CHART_TOOLTIP_STYLE = {
   background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 11,
 };
 
+// Live/Demo status badge — established convention, see DmeContagionPage
+// (frontend/src/features/dme-contagion/pages/DmeContagionPage.jsx): 'loading'
+// while the request is in flight, 'live' once the real backend engine has
+// responded, 'demo' if the API is unreachable/unauthenticated and the
+// seeded fallback figures are shown instead.
+const LiveBadge = ({ status, label }) => {
+  if (status === 'loading') return <span style={{ background: '#1e293b', color: '#94a3b8', padding: '2px 9px', borderRadius: 12, fontSize: 11, fontWeight: 700 }}>Connecting to {label}…</span>;
+  if (status === 'live') return <span style={{ background: '#dcfce7', color: '#166534', padding: '2px 9px', borderRadius: 12, fontSize: 11, fontWeight: 700 }}>● Live — computed by {label}</span>;
+  return <span style={{ background: '#fef3c7', color: '#92400e', padding: '2px 9px', borderRadius: 12, fontSize: 11, fontWeight: 700 }}>○ Demo Data — {label} unavailable, showing seeded illustrative figures</span>;
+};
+
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function DmeNlpEnginePage() {
   const navigate = useNavigate();
@@ -288,6 +351,14 @@ export default function DmeNlpEnginePage() {
   const [sectorFilter, setSectorFilter] = useState('All');
   const [gwThresh, setGwThresh] = useState(0.5);
   const [simThresh, setSimThresh] = useState(0.7);
+
+  // ── Live DME NLP Pulse engine wiring ─────────────────────────────────────
+  const [pulseLive, setPulseLive] = useState(null);
+  const [pulseStatus, setPulseStatus] = useState('loading');
+  const [decayCurve, setDecayCurve] = useState([]);
+  const [decayStatus, setDecayStatus] = useState('loading');
+  const [refData, setRefData] = useState(null);
+  const [refStatus, setRefStatus] = useState('loading');
 
   const TABS = [
     'Overview', 'Materiality Topics', 'Sentiment Analysis', 'Greenwashing',
@@ -406,6 +477,105 @@ export default function DmeNlpEnginePage() {
   const doc = DOCUMENTS[selDoc];
   const CLUST_COLORS = [T.navy, T.gold, T.sage, T.red, T.amber];
   const TOPIC_COLORS6 = [T.navy, T.navyL, T.gold, T.sage, T.amber, T.red];
+
+  // ── Live DME NLP Pulse engine calls ──────────────────────────────────────
+  // Selected-document pulse score: POST /process-signal, then a decay
+  // projection built from repeated POST /apply-decay calls seeded with the
+  // live pulse_raw. Re-fires whenever the Document selector changes.
+  useEffect(() => {
+    let cancelled = false;
+    setPulseStatus('loading');
+    setDecayStatus('loading');
+    (async () => {
+      try {
+        const { data } = await axios.post(`${DME_NLP_PULSE_API}/process-signal`, {
+          signal: docToSignal(doc),
+          s_marketing: parseFloat((Math.max(0, doc.sentiment) * 100).toFixed(2)),
+          s_operational: parseFloat((doc.quality * 100).toFixed(2)),
+        }, { timeout: 12000 });
+        if (cancelled) return;
+        setPulseLive(data);
+        setPulseStatus('live');
+
+        const curve = await Promise.all(DECAY_CURVE_HOURS.map(async (hrs) => {
+          const { data: dd } = await axios.post(`${DME_NLP_PULSE_API}/apply-decay`, {
+            initial_value: data.pulse_raw,
+            event_type: data.event_type,
+            elapsed_hours: hrs,
+          }, { timeout: 12000 });
+          return { hours: hrs, label: decayCurveLabel(hrs), decayed: dd.decayed_value };
+        }));
+        if (cancelled) return;
+        setDecayCurve(curve);
+        setDecayStatus('live');
+      } catch (e) {
+        if (cancelled) return;
+        setPulseLive(null); setPulseStatus('demo');
+        setDecayCurve([]); setDecayStatus('demo');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [selDoc]);
+
+  // Reference data (decay half-lives + source-credibility tiers) — GET
+  // requests, so these succeed even without an authenticated session
+  // (see backend/middleware/auth_middleware.py: GET /api/v1/*/ref/* is public).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [{ data: eventTypes }, { data: sourceTiers }] = await Promise.all([
+          axios.get(`${DME_NLP_PULSE_API}/ref/event-types`, { timeout: 10000 }),
+          axios.get(`${DME_NLP_PULSE_API}/ref/source-tiers`, { timeout: 10000 }),
+        ]);
+        if (cancelled) return;
+        setRefData({ eventTypes, sourceTiers });
+        setRefStatus('live');
+      } catch (e) {
+        if (cancelled) return;
+        setRefData(null);
+        setRefStatus('demo');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Client-side reproduction of the exact same formulas as a fallback ONLY
+  // — shown solely when the live calls above fail, always tagged via
+  // LiveBadge as "Demo Data — API unavailable" per platform convention.
+  const demoPulse = useMemo(() => {
+    const s = doc.sentiment * 100;
+    const info = doc.word_count / 1000;
+    const raw = s * Math.log(1 + info);
+    const marketing = Math.max(0, doc.sentiment) * 100;
+    const operational = doc.quality * 100;
+    const gap = Math.max(0, marketing - operational);
+    const gdf = Math.max(0, 1 - 0.5 * gap / 100);
+    const disc = raw * gdf;
+    const cred = [0.95, 0.70, 0.40, 0.15][tierFromQuality(doc.quality) - 1];
+    return {
+      pulse_raw: raw,
+      pulse_discounted: disc,
+      greenwash_discount_factor: gdf,
+      source_credibility: cred,
+      credibility_adjusted_pulse: disc * cred,
+      decay_half_life_hours: 4320,
+      event_type: 'corporate_disclosure',
+    };
+  }, [doc]);
+
+  const demoDecayCurve = useMemo(() => {
+    const lam = Math.log(2) / (4320 / 24);
+    return DECAY_CURVE_HOURS.map((hrs) => ({
+      hours: hrs,
+      label: decayCurveLabel(hrs),
+      decayed: demoPulse.pulse_raw * Math.exp(-lam * hrs / 24),
+    }));
+  }, [demoPulse]);
+
+  const pulseDisplay = pulseLive || demoPulse;
+  const decayDisplay = decayCurve.length ? decayCurve : demoDecayCurve;
+  const refDisplay = refData || { eventTypes: DEMO_REF_EVENT_TYPES, sourceTiers: DEMO_REF_SOURCE_TIERS };
 
   // ── KPI strip ───────────────────────────────────────────────────────────────
   const docsParsed   = filteredDocs.length;
@@ -681,6 +851,43 @@ export default function DmeNlpEnginePage() {
 
     return (
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <Card style={{ gridColumn: '1/-1' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+            <SectionTitle style={{ margin: 0 }}>Live Pulse Score — {doc.issuer} ({doc.type})</SectionTitle>
+            <LiveBadge status={pulseStatus} label="DME NLP Pulse Engine — /process-signal" />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12, marginBottom: 18 }}>
+            <KpiCard label="Pulse Raw" value={pulseDisplay.pulse_raw.toFixed(2)} sub="P(t) = S×ln(1+I)" />
+            <KpiCard
+              label="GW Discount Factor"
+              value={pulseDisplay.greenwash_discount_factor.toFixed(3)}
+              color={pulseDisplay.greenwash_discount_factor < 0.7 ? T.red : T.green}
+              sub="1.0 = no discount"
+            />
+            <KpiCard label="Pulse Discounted" value={pulseDisplay.pulse_discounted.toFixed(2)} sub="post-GDF" />
+            <KpiCard label="Source Credibility" value={pulseDisplay.source_credibility.toFixed(2)} sub="tier-weighted" />
+            <KpiCard
+              label="Credibility-Adj. Pulse"
+              value={pulseDisplay.credibility_adjusted_pulse.toFixed(2)}
+              color={pulseDisplay.credibility_adjusted_pulse >= 0 ? T.green : T.red}
+            />
+            <KpiCard label="Decay Half-Life" value={(pulseDisplay.decay_half_life_hours / 24).toFixed(0) + 'd'} sub={pulseDisplay.event_type} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+            <SectionTitle style={{ margin: 0, fontSize: 12 }}>Signal Decay Projection ({pulseDisplay.event_type})</SectionTitle>
+            <LiveBadge status={decayStatus} label="DME NLP Pulse Engine — /apply-decay" />
+          </div>
+          <ResponsiveContainer width="100%" height={160}>
+            <AreaChart data={decayDisplay}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+              <XAxis dataKey="label" tick={{ fontSize: 10, fill: T.textMut }} />
+              <YAxis tick={{ fontSize: 10, fill: T.textMut }} />
+              <Tooltip contentStyle={CHART_TOOLTIP_STYLE} formatter={v => Number(v).toFixed(2)} />
+              <Area type="monotone" dataKey="decayed" name="Decayed Pulse" stroke={T.navyL} fill={T.navyL} fillOpacity={0.15} strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </Card>
+
         <Card style={{ gridColumn: '1/-1' }}>
           <SectionTitle>Per-Document Sentiment Score</SectionTitle>
           <ResponsiveContainer width="100%" height={200}>
@@ -1533,6 +1740,46 @@ export default function DmeNlpEnginePage() {
               ))}
             </tbody>
           </table>
+        </Card>
+
+        <Card style={{ gridColumn: '1/-1' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+            <SectionTitle style={{ margin: 0 }}>Live Engine Reference Data — Decay &amp; Credibility</SectionTitle>
+            <LiveBadge status={refStatus} label="DME NLP Pulse Engine — /ref/event-types, /ref/source-tiers" />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Event-Type Decay Half-Lives</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr><TH>Event Type</TH><TH>Half-Life</TH></tr></thead>
+                <tbody>
+                  {refDisplay.eventTypes.map((e, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
+                      <TD style={{ fontFamily: T.mono, fontSize: 11 }}>{e.type}</TD>
+                      <TD style={{ fontFamily: T.mono }}>
+                        {e.half_life_hours < 24 ? `${e.half_life_hours.toFixed(0)}h` : `${(e.half_life_hours / 24).toFixed(0)}d`}
+                      </TD>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Source-Credibility Tiers</div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead><tr><TH>Tier</TH><TH>Name</TH><TH>Credibility</TH></tr></thead>
+                <tbody>
+                  {refDisplay.sourceTiers.map((s, i) => (
+                    <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
+                      <TD style={{ fontFamily: T.mono }}>{s.tier}</TD>
+                      <TD style={{ fontSize: 11 }}>{s.name}</TD>
+                      <TD style={{ fontFamily: T.mono, fontWeight: 700 }}>{s.credibility.toFixed(2)}</TD>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </Card>
 
         <Card>

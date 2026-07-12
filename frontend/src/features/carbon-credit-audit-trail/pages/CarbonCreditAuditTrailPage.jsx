@@ -4,7 +4,92 @@ const T = { bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Deterministic hash simulation (hex chars from sr())
+// Real SHA-256 (FIPS 180-4), pure JS, synchronous — no dependency on the async
+// Web Crypto API so it can run inline during module-level data construction.
+// Used for the audit hash-chain: eventId / inputHash / outputHash / parentHash
+// are all genuine SHA-256 digests, chained classic-blockchain-style:
+//   hash_n = SHA256(inputHash_n || outputHash_n || hash_{n-1})
+// Tampering with any field of record n changes inputHash_n/outputHash_n, which
+// changes hash_n, which breaks every record n+1..N whose stored parentHash no
+// longer matches the recomputed chain (see verifyChain() below).
+// ─────────────────────────────────────────────────────────────────────────────
+const SHA256_K = [
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+];
+
+function utf8Bytes(str) {
+  const bytes = [];
+  for (let i = 0; i < str.length; i++) {
+    let c = str.charCodeAt(i);
+    if (c < 0x80) {
+      bytes.push(c);
+    } else if (c < 0x800) {
+      bytes.push(0xc0 | (c >> 6), 0x80 | (c & 0x3f));
+    } else if (c >= 0xd800 && c <= 0xdbff && i + 1 < str.length) {
+      const c2 = str.charCodeAt(i + 1);
+      i++;
+      const cp = 0x10000 + ((c & 0x3ff) << 10) + (c2 & 0x3ff);
+      bytes.push(0xf0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3f), 0x80 | ((cp >> 6) & 0x3f), 0x80 | (cp & 0x3f));
+    } else {
+      bytes.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 0x3f), 0x80 | (c & 0x3f));
+    }
+  }
+  return bytes;
+}
+
+function sha256Hex(message) {
+  const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+  const bytes = utf8Bytes(String(message));
+  const bitLen = bytes.length * 8;
+  bytes.push(0x80);
+  while (bytes.length % 64 !== 56) bytes.push(0);
+  const hi = Math.floor(bitLen / 0x100000000);
+  const lo = bitLen >>> 0;
+  for (let i = 3; i >= 0; i--) bytes.push((hi >>> (i * 8)) & 0xff);
+  for (let i = 3; i >= 0; i--) bytes.push((lo >>> (i * 8)) & 0xff);
+
+  let H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+
+  for (let chunkStart = 0; chunkStart < bytes.length; chunkStart += 64) {
+    const w = new Array(64).fill(0);
+    for (let i = 0; i < 16; i++) {
+      w[i] = ((bytes[chunkStart + i * 4] << 24) | (bytes[chunkStart + i * 4 + 1] << 16) |
+        (bytes[chunkStart + i * 4 + 2] << 8) | (bytes[chunkStart + i * 4 + 3])) >>> 0;
+    }
+    for (let i = 16; i < 64; i++) {
+      const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+      const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+
+    let [a, b, c, d, e, f, g, h] = H;
+    for (let i = 0; i < 64; i++) {
+      const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+      const ch = (e & f) ^ (~e & g);
+      const temp1 = (h + S1 + ch + SHA256_K[i] + w[i]) >>> 0;
+      const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+      const maj = (a & b) ^ (a & c) ^ (b & c);
+      const temp2 = (S0 + maj) >>> 0;
+      h = g; g = f; f = e; e = (d + temp1) >>> 0;
+      d = c; c = b; b = a; a = (temp1 + temp2) >>> 0;
+    }
+    H = [ (H[0]+a)>>>0, (H[1]+b)>>>0, (H[2]+c)>>>0, (H[3]+d)>>>0, (H[4]+e)>>>0, (H[5]+f)>>>0, (H[6]+g)>>>0, (H[7]+h)>>>0 ];
+  }
+
+  return H.map(x => x.toString(16).padStart(8, '0')).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Non-cryptographic mock reference-code generator — used ONLY for cosmetic
+// display codes that carry no tamper-evidence claim (equipment cal cert refs,
+// registry submission refs). The audit hash-chain itself uses sha256Hex above.
 // ─────────────────────────────────────────────────────────────────────────────
 const HEX = '0123456789abcdef';
 const simHash = (seed, len = 16) => Array.from({ length: len }, (_, i) => HEX[Math.floor(sr(seed * 31 + i * 7) * 16)]).join('');
@@ -61,15 +146,14 @@ let eventCounter = 0;
 for (let pi = 0; pi < 30; pi++) {
   const projName = PROJECT_NAMES[pi];
   const projId   = `PRJ-${String(pi + 1).padStart(3, '0')}`;
-  let prevHash   = simHash(pi * 1000, 8);
+  // Genesis hash for this project's chain — deterministic seed, real SHA-256.
+  let prevHash   = sha256Hex(`GENESIS|${projId}|${projName}`);
 
   for (let ei = 0; ei < 20; ei++) {
     const globalIdx  = pi * 20 + ei;
     const eventType  = EVENT_TYPES[ei % EVENT_TYPES.length];
     const severity   = EVENT_SEVERITIES[Math.floor(sr(globalIdx * 7 + 2) * 4)];
     const vvbSigned  = eventType === 'VERIFICATION_COMPLETED' || eventType === 'ISSUANCE_APPROVED' || sr(globalIdx * 11) > 0.6;
-    const inputHash  = simHash(globalIdx * 53 + 1, 8);
-    const outputHash = simHash(globalIdx * 67 + 3, 8);
     const daysAgo    = Math.floor(sr(globalIdx * 13 + 4) * 180);
     const erResult   = Math.round(500 + sr(globalIdx * 19 + 5) * 45000);
     const calcVer    = CALC_VERSIONS[Math.floor(sr(globalIdx * 23 + 6) * CALC_VERSIONS.length)];
@@ -94,13 +178,27 @@ for (let pi = 0; pi < 30; pi++) {
       REPORT_GENERATED:      `Monitoring report generated — ${ts.getFullYear()} annual compliance submission`,
     };
 
+    const description = descMap[eventType] || 'Audit event recorded';
+
+    // Real SHA-256 over the record's actual field content — this is what makes
+    // tampering detectable: changing ANY field below changes inputHash/outputHash,
+    // which changes this record's chain hash, which breaks every downstream
+    // record's parentHash linkage.
+    const inputPayload  = JSON.stringify({ projectId: projId, seq: ei, eventType, severity, user, calcVer, methodology, daysAgo, timestamp: tsStr });
+    const outputPayload = JSON.stringify({ projectId: projId, seq: ei, eventType, description, erResult, vvbSigned, regRef, isoRef });
+    const inputHash  = sha256Hex(inputPayload);
+    const outputHash = sha256Hex(outputPayload);
+    // Classic blockchain-style chaining: hash_n = SHA256(record_n || hash_{n-1})
+    const recordHash = sha256Hex(inputHash + outputHash + prevHash);
+
     AUDIT_EVENTS.push({
-      eventId:          `#${simHash(globalIdx * 41 + 10, 7)}`,
+      eventId:          `#${recordHash.slice(0, 7)}`,
       projectId:        projId,
       projectName:      projName,
+      seq:              ei,
       eventType,
       severity,
-      description:      descMap[eventType] || 'Audit event recorded',
+      description,
       user,
       timestamp:        tsStr,
       daysAgo,
@@ -108,6 +206,7 @@ for (let pi = 0; pi < 30; pi++) {
       inputHash,
       outputHash,
       parentHash:       prevHash,
+      recordHash,
       vvbSigned,
       regRef,
       isoRef,
@@ -116,9 +215,55 @@ for (let pi = 0; pi < 30; pi++) {
       vvb:              VVB_NAMES[pi % VVB_NAMES.length],
     });
 
-    prevHash = simHash(globalIdx * 43 + 11, 8);
+    prevHash = recordHash;
     eventCounter++;
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Chain verification — recomputes every hash from each record's own field
+// content and checks it against the stored inputHash/outputHash/recordHash and
+// against the following record's stored parentHash. Any tampering with a
+// record's content (or a hash field itself) is detected here, and the break
+// cascades forward: once one record's canonical hash no longer matches the
+// next record's parentHash, every subsequent record in that project chain
+// also fails, exactly as in a real blockchain-style tamper-evident log.
+// ─────────────────────────────────────────────────────────────────────────────
+function verifyChain(events) {
+  const byProject = {};
+  events.forEach(e => { (byProject[e.projectId] = byProject[e.projectId] || []).push(e); });
+
+  const breaks = [];
+  Object.keys(byProject).forEach(projId => {
+    const evs = [...byProject[projId]].sort((a, b) => a.seq - b.seq);
+    if (evs.length === 0) return;
+    let expectedPrevHash = sha256Hex(`GENESIS|${projId}|${evs[0].projectName}`);
+
+    evs.forEach(ev => {
+      const inputPayload  = JSON.stringify({ projectId: ev.projectId, seq: ev.seq, eventType: ev.eventType, severity: ev.severity, user: ev.user, calcVer: ev.calculationVersion, methodology: ev.methodology, daysAgo: ev.daysAgo, timestamp: ev.timestamp });
+      const outputPayload = JSON.stringify({ projectId: ev.projectId, seq: ev.seq, eventType: ev.eventType, description: ev.description, erResult: ev.erResult, vvbSigned: ev.vvbSigned, regRef: ev.regRef, isoRef: ev.isoRef });
+      const expInputHash  = sha256Hex(inputPayload);
+      const expOutputHash = sha256Hex(outputPayload);
+      const expRecordHash = sha256Hex(expInputHash + expOutputHash + expectedPrevHash);
+
+      const ok = expInputHash === ev.inputHash &&
+                 expOutputHash === ev.outputHash &&
+                 ev.parentHash === expectedPrevHash &&
+                 expRecordHash === ev.recordHash;
+
+      if (!ok) {
+        breaks.push({
+          eventId: ev.eventId, projectId: ev.projectId, seq: ev.seq,
+          reason: ev.parentHash !== expectedPrevHash ? 'parentHash mismatch (upstream tamper)' : 'record content hash mismatch',
+        });
+      }
+      // Continue verification against the canonical (recomputed) chain so that
+      // every downstream record's break is also surfaced, not just the first.
+      expectedPrevHash = expRecordHash;
+    });
+  });
+
+  return { valid: breaks.length === 0, breaks, checked: events.length };
 }
 
 // Pre-sorted by recency
@@ -261,6 +406,31 @@ export default function CarbonCreditAuditTrailPage() {
     return { total: 600, openCARs: Math.max(0, openCARs), p0Findings, verifCoverage, today, avgRes };
   }, []);
 
+  // Real-time SHA-256 chain verification over the full 600-event ledger.
+  const chainIntegrity = useMemo(() => verifyChain(AUDIT_EVENTS), []);
+
+  // ── Tamper-evidence self-test (interactive) ─────────────────────────────
+  // Clones project PRJ-001's chain into local state so a reviewer can tamper
+  // one record directly in the UI and watch SHA-256 verification detect the
+  // break and cascade it forward — the core value proposition of a hash-chain
+  // audit trail (untampered records verify clean; a tampered record's stored
+  // hashes no longer match its recomputed content, and every record chained
+  // after it fails too because its parentHash no longer resolves).
+  const [demoEvents, setDemoEvents]   = useState(() => AUDIT_EVENTS.filter(e => e.projectId === 'PRJ-001').map(e => ({ ...e })));
+  const [tamperedSeq, setTamperedSeq] = useState(null);
+  const demoIntegrity = useMemo(() => verifyChain(demoEvents), [demoEvents]);
+
+  const tamperRecord = (seq) => {
+    setDemoEvents(prev => prev.map(e => (
+      e.seq === seq ? { ...e, erResult: e.erResult + 999, description: e.description + ' [TAMPERED POST-HOC]' } : e
+    )));
+    setTamperedSeq(seq);
+  };
+  const resetDemo = () => {
+    setDemoEvents(AUDIT_EVENTS.filter(e => e.projectId === 'PRJ-001').map(e => ({ ...e })));
+    setTamperedSeq(null);
+  };
+
   const sel = { fontSize: 12, padding: '4px 8px', border: `1px solid ${T.border}`, borderRadius: 4, background: T.card, color: T.textPri, fontFamily: T.fontMono };
   const lbl = { fontSize: 10, color: T.textSec, fontFamily: T.fontMono, marginBottom: 3, textTransform: 'uppercase', letterSpacing: 0.6 };
 
@@ -304,13 +474,15 @@ export default function CarbonCreditAuditTrailPage() {
               sub="ISO 14064-3:2019 — Verification of GHG Assertions | CDM Validation & Verification Standard v1"
             />
 
-            {/* Integrity Banner */}
-            <div style={{ background: '#f0fdf4', border: `1px solid #86efac`, borderRadius: 6, padding: '10px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 16, color: T.green }}>🔗</span>
+            {/* Integrity Banner — real SHA-256 recomputation, not a hardcoded label */}
+            <div style={{ background: chainIntegrity.valid ? '#f0fdf4' : '#fef2f2', border: `1px solid ${chainIntegrity.valid ? '#86efac' : '#fca5a5'}`, borderRadius: 6, padding: '10px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 16, color: chainIntegrity.valid ? T.green : T.red }}>{chainIntegrity.valid ? '🔗' : '⚠'}</span>
               <div>
-                <span style={{ fontFamily: T.fontMono, fontSize: 12, fontWeight: 700, color: T.green }}>AUDIT CHAIN INTEGRITY: VERIFIED ✓</span>
+                <span style={{ fontFamily: T.fontMono, fontSize: 12, fontWeight: 700, color: chainIntegrity.valid ? T.green : T.red }}>
+                  AUDIT CHAIN INTEGRITY: {chainIntegrity.valid ? 'VERIFIED ✓' : `BROKEN ✗ (${chainIntegrity.breaks.length} record(s))`}
+                </span>
                 <span style={{ fontSize: 11, color: T.textSec, marginLeft: 12 }}>
-                  Compliant with ISO 14064-3:2019 §6.7 — Documentation and records | 600 events | Chain: intact
+                  Compliant with ISO 14064-3:2019 §6.7 — Documentation and records | {chainIntegrity.checked} events, SHA-256 recomputed live | Chain: {chainIntegrity.valid ? 'intact' : 'tampered'}
                 </span>
               </div>
             </div>
@@ -323,6 +495,43 @@ export default function CarbonCreditAuditTrailPage() {
               <KpiCard label="Verification Cover." value={`${cmdKpis.verifCoverage}%`} sub="Projects verified" color={T.green}  />
               <KpiCard label="Events Today"        value={cmdKpis.today}      sub="UTC 00:00–23:59"     color={T.teal}   />
               <KpiCard label="Avg Resolution"      value={`${cmdKpis.avgRes}d`} sub="CAR close time"    color={T.amber}  />
+            </div>
+
+            {/* Tamper-Evidence Self-Test — interactive proof the SHA-256 chain is real */}
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 6, padding: '14px 18px', marginBottom: 24 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: T.navy, fontFamily: T.fontMono }}>TAMPER-EVIDENCE SELF-TEST — PRJ-001 chain (live SHA-256 recomputation)</span>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => tamperRecord(2)} disabled={tamperedSeq !== null} style={{ padding: '5px 12px', fontSize: 11, fontFamily: T.fontMono, borderRadius: 4, border: `1px solid ${T.red}`, background: tamperedSeq !== null ? T.sub : '#fef2f2', color: T.red, cursor: tamperedSeq !== null ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
+                    Tamper Record #3
+                  </button>
+                  <button onClick={resetDemo} disabled={tamperedSeq === null} style={{ padding: '5px 12px', fontSize: 11, fontFamily: T.fontMono, borderRadius: 4, border: `1px solid ${T.border}`, background: T.card, color: tamperedSeq === null ? T.textSec : T.navy, cursor: tamperedSeq === null ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
+                    Reset
+                  </button>
+                </div>
+              </div>
+              <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>
+                Clicking "Tamper Record #3" mutates that record's <code>erResult</code> and <code>description</code> after its hash was already computed — exactly what an attacker altering an audit log after the fact would do. Because <code>inputHash</code>/<code>outputHash</code> are SHA-256 digests of the record's own content, and each record's chain hash feeds the next record's <code>parentHash</code>, the tampered record's stored hash no longer matches its recomputed content — and every record after it fails too, since the chain it points to has changed.
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 4, background: demoIntegrity.valid ? '#f0fdf4' : '#fef2f2', border: `1px solid ${demoIntegrity.valid ? '#86efac' : '#fca5a5'}`, marginBottom: 10 }}>
+                <span style={{ fontSize: 14, color: demoIntegrity.valid ? T.green : T.red }}>{demoIntegrity.valid ? '✓' : '✗'}</span>
+                <span style={{ fontFamily: T.fontMono, fontSize: 11, fontWeight: 700, color: demoIntegrity.valid ? T.green : T.red }}>
+                  {demoIntegrity.valid ? 'Chain verified — all 20 records match recomputed SHA-256 hashes' : `Chain BROKEN — ${demoIntegrity.breaks.length} record(s) failed verification`}
+                </span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 6 }}>
+                {demoEvents.map(ev => {
+                  const broken = demoIntegrity.breaks.some(b => b.seq === ev.seq);
+                  return (
+                    <div key={ev.seq} style={{ padding: '6px 8px', borderRadius: 4, background: broken ? '#fef2f2' : T.sub, border: `1px solid ${broken ? T.red : T.borderL}`, fontSize: 9, fontFamily: T.fontMono }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: broken ? T.red : T.textSec, fontWeight: 700 }}>
+                        <span>#{ev.seq + 1}</span><span>{broken ? '✗' : '✓'}</span>
+                      </div>
+                      <div style={{ color: T.textSec, marginTop: 2 }} title={ev.recordHash}>{ev.recordHash.slice(0, 8)}…</div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Recent Activity Feed */}
@@ -419,9 +628,9 @@ export default function CarbonCreditAuditTrailPage() {
                       <td style={{ padding: '4px 8px', fontSize: 10, fontWeight: 600, color: T.navy, whiteSpace: 'nowrap' }}>{ev.projectId}</td>
                       <td style={{ padding: '4px 8px', fontFamily: T.fontMono, color: T.purple }}>{ev.calculationVersion}</td>
                       <td style={{ padding: '4px 8px', fontSize: 9, color: T.textSec }}>{ev.methodology}</td>
-                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.teal }}>{ev.inputHash}…</td>
-                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.sage }}>{ev.outputHash}…</td>
-                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.textSec }}>{ev.parentHash}…</td>
+                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.teal }} title={ev.inputHash}>{ev.inputHash.slice(0, 10)}…</td>
+                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.sage }} title={ev.outputHash}>{ev.outputHash.slice(0, 10)}…</td>
+                      <td style={{ padding: '4px 8px', fontFamily: T.fontMono, fontSize: 9, color: T.textSec }} title={ev.parentHash}>{ev.parentHash.slice(0, 10)}…</td>
                       <td style={{ padding: '4px 8px', fontFamily: T.fontMono, textAlign: 'right' }}>{ev.erResult.toLocaleString()}</td>
                       <td style={{ padding: '4px 8px', fontSize: 9, color: T.textSec }}>{ev.user.split('@')[0]}</td>
                       <td style={{ padding: '4px 8px', textAlign: 'center' }}>

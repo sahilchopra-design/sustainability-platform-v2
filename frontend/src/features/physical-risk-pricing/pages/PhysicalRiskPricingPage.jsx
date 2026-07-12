@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -8,8 +8,11 @@ import {
 } from 'recharts';
 
 const API = 'http://localhost:8001';
+const PRP_API = `${API}/api/v1/physical-risk-pricing`;
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-// Platform-standard PRNG (deterministic, no Math.random)
+// Platform-standard PRNG (deterministic, no Math.random) — used ONLY for the
+// demo-data fallback path when the live E104 Physical Risk Pricing API
+// (backend/services/physical_risk_pricing_engine.py) is unreachable.
 const sr = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
 const seededRandom = sr; // alias for backward compat
@@ -40,9 +43,12 @@ const Sel = ({ label, value, onChange, options }) => (
     </select>
   </div>
 );
-const Section = ({ title, children }) => (
+const Section = ({ title, children, status }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span>{title}</span>
+      {status && <LiveBadge status={status} />}
+    </div>
     {children}
   </div>
 );
@@ -55,14 +61,41 @@ const Badge = ({ label, color }) => {
   return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
 };
 
+// Live/Demo status badge — same convention as
+// frontend/src/features/ai-governance/pages/AIGovernancePage.jsx
+const LiveBadge = ({ status }) => {
+  if (status === 'live') return <Badge label="● Live — E104 Physical Risk Pricing Engine" color="green" />;
+  if (status === 'demo') return <Badge label="○ Demo Data — API unavailable" color="yellow" />;
+  return <Badge label="…" color="gray" />;
+};
+
 const TABS = ['Peril Scores', 'NatCat Loss Table', 'Financial Impact', 'Stranding Analysis', 'NGFS Amplifiers'];
 const PIE_COLORS = ['#059669', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
-const COUNTRIES = [
-  'Australia', 'Bangladesh', 'Brazil', 'Canada', 'China', 'Egypt', 'France', 'Germany', 'Ghana', 'India',
-  'Indonesia', 'Italy', 'Japan', 'Kenya', 'Mexico', 'Netherlands', 'Nigeria', 'Pakistan', 'Peru', 'Philippines',
-  'Poland', 'Saudi Arabia', 'South Africa', 'Spain', 'Thailand', 'Turkey', 'United Kingdom', 'United States', 'Vietnam', 'Zimbabwe',
-];
+// 30-country reference set — mirrors COUNTRY_PHYSICAL_RISK_PROFILES in
+// backend/services/physical_risk_pricing_engine.py exactly (name -> ISO3).
+const COUNTRY_ISO = {
+  'United States': 'USA', 'United Kingdom': 'GBR', 'Germany': 'DEU', 'France': 'FRA', 'Japan': 'JPN',
+  'China': 'CHN', 'India': 'IND', 'Brazil': 'BRA', 'Australia': 'AUS', 'South Africa': 'ZAF',
+  'Netherlands': 'NLD', 'Bangladesh': 'BGD', 'Philippines': 'PHL', 'Indonesia': 'IDN', 'Vietnam': 'VNM',
+  'Mexico': 'MEX', 'Egypt': 'EGY', 'Nigeria': 'NGA', 'Pakistan': 'PAK', 'Turkey': 'TUR',
+  'United Arab Emirates': 'ARE', 'Saudi Arabia': 'SAU', 'Singapore': 'SGP', 'Canada': 'CAN', 'Argentina': 'ARG',
+  'South Korea': 'KOR', 'Spain': 'ESP', 'Italy': 'ITA', 'Thailand': 'THA', 'Poland': 'POL',
+};
+const COUNTRIES = Object.keys(COUNTRY_ISO).sort();
+
+const ACUTE_PERILS = ['flood', 'cyclone', 'wildfire', 'earthquake', 'heatwave'];
+const PERIL_LABELS = { flood: 'Flood', cyclone: 'Cyclone', wildfire: 'Wildfire', earthquake: 'Earthquake', heatwave: 'Heatwave' };
+const CHRONIC_LABELS = { sea_level: 'Sea Level', drought: 'Drought', temperature_increase: 'Temperature' };
+const NGFS_SCENARIOS = ['orderly', 'disorderly', 'hot_house'];
+const NGFS_SCENARIO_LABELS = { orderly: 'Orderly', disorderly: 'Disorderly', hot_house: 'Hot House' };
+const HORIZONS = ['2030', '2040', '2050'];
+const TIER_COLOR = { low: 'green', moderate: 'yellow', elevated: 'orange', high: 'red', very_high: 'purple', extreme: 'red' };
+
+// ---------------------------------------------------------------------------
+// Demo-data fallback generators (seeded, deterministic) — used only when the
+// live API call fails. Clearly labeled "Demo Data — API unavailable" in the UI.
+// ---------------------------------------------------------------------------
 
 const getPerilData = (country, assetClass, ngfs) => {
   const base = hashStr(country + assetClass + ngfs) % 997;
@@ -75,7 +108,6 @@ const getPerilData = (country, assetClass, ngfs) => {
     { dimension: 'Heatwave', score: Math.round(s(5) * 60 + 25) },
     { dimension: 'Sea Level', score: Math.round(s(6) * 40 + 20) },
     { dimension: 'Drought', score: Math.round(s(7) * 55 + 25) },
-    { dimension: 'Precipitation', score: Math.round(s(8) * 50 + 20) },
     { dimension: 'Temperature', score: Math.round(s(9) * 65 + 25) },
   ];
   const composite = Math.round(acutePerils.reduce((sum, p) => sum + p.score, 0) / acutePerils.length);
@@ -85,21 +117,21 @@ const getPerilData = (country, assetClass, ngfs) => {
   return { acutePerils, composite, ealPct, tier, tierColor };
 };
 
-const getNatCatData = (country, assetClass) => {
+const getNatCatData = (country, assetClass, assetValue) => {
   const base = hashStr(country + assetClass + 'natcat') % 997;
   const s = (n) => seededRandom(base + n);
   const returnPeriods = [10, 25, 50, 100, 200, 500];
-  const perils = ['Flood', 'Cyclone', 'Wildfire', 'Earthquake', 'Drought'];
+  const perils = ['Flood', 'Cyclone', 'Wildfire', 'Earthquake', 'Heatwave'];
   const perilColors = ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#f97316'];
+  const val = parseFloat(assetValue) || 5000000;
   const data = returnPeriods.map((rp, ri) => {
     const row = { rp: `${rp}yr` };
     perils.forEach((p, pi) => { row[p] = parseFloat((s(ri * 7 + pi * 3 + 1) * 4 + 0.2 * Math.log(rp)).toFixed(2)); });
     return row;
   });
-  const assetVal = 100; // $M reference
   const tableRows = returnPeriods.map((rp, ri) => {
     const row = { rp: `${rp}yr` };
-    perils.forEach((p, pi) => { row[p] = `$${(s(ri * 7 + pi * 3 + 1) * 40 + 2 * Math.log(rp)).toFixed(1)}M`; });
+    perils.forEach((p, pi) => { row[p] = `$${((s(ri * 7 + pi * 3 + 1) * 4 + 0.2 * Math.log(rp)) / 100 * val / 1e6).toFixed(3)}M`; });
     return row;
   });
   return { data, perils, perilColors, returnPeriods, tableRows };
@@ -160,10 +192,9 @@ const getStrandingData = (country, assetClass) => {
 const getNGFSData = (country, assetClass) => {
   const base = hashStr(country + assetClass + 'ngfs') % 997;
   const s = (n) => seededRandom(base + n);
-  const years = [2024, 2026, 2028, 2030, 2035, 2040, 2045, 2050];
   const scenarios = ['Orderly', 'Disorderly', 'Hot House'];
   const scColors = ['#059669', '#f59e0b', '#ef4444'];
-  const lineData = years.map((yr, yi) => {
+  const lineData = HORIZONS.map((yr, yi) => {
     const row = { year: yr };
     scenarios.forEach((sc, si) => {
       const trend = si === 0 ? -0.3 : si === 1 ? 0.1 : 0.5;
@@ -194,21 +225,194 @@ export default function PhysicalRiskPricingPage() {
   const [ngfsScenario, setNgfsScenario] = useState('orderly');
   const [timeHorizon, setTimeHorizon] = useState('2050');
 
+  const countryIso = COUNTRY_ISO[country];
+
+  // --- Live backend wiring (E104 Physical Risk Pricing Engine) -------------
+  // POST /api/v1/physical-risk-pricing/price — full EAL/PML/Climate VaR/tier
+  const [priceLive, setPriceLive] = useState(null);
+  const [priceStatus, setPriceStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+  useEffect(() => {
+    let cancelled = false;
+    setPriceStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${PRP_API}/price`, {
+          entity_id: `ASSET-${countryIso}-${assetClass}`,
+          asset_class: assetClass,
+          country_iso: countryIso,
+          asset_value_usd: parseFloat(assetValue) || 5000000,
+          ngfs_scenario: ngfsScenario,
+          time_horizon: timeHorizon,
+        }, { timeout: 10000 });
+        if (!cancelled && data && !data.error) { setPriceLive(data); setPriceStatus('live'); }
+        else if (!cancelled) { setPriceLive(null); setPriceStatus('demo'); }
+      } catch (e) {
+        if (!cancelled) { setPriceLive(null); setPriceStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [countryIso, assetClass, assetValue, ngfsScenario, timeHorizon]);
+
+  // POST /api/v1/physical-risk-pricing/return-period-losses — NatCat loss table
+  const [rpLive, setRpLive] = useState(null);
+  const [rpStatus, setRpStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setRpStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${PRP_API}/return-period-losses`, {
+          country_iso: countryIso,
+          asset_class: assetClass,
+          asset_value_usd: parseFloat(assetValue) || 5000000,
+        }, { timeout: 10000 });
+        if (!cancelled && data && !data.error) { setRpLive(data); setRpStatus('live'); }
+        else if (!cancelled) { setRpLive(null); setRpStatus('demo'); }
+      } catch (e) {
+        if (!cancelled) { setRpLive(null); setRpStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [countryIso, assetClass, assetValue]);
+
+  // POST /api/v1/physical-risk-pricing/stranding — all 3 scenarios x 3 horizons
+  const [strandingLive, setStrandingLive] = useState(null); // { "orderly_2030": {...}, ... }
+  const [strandingStatus, setStrandingStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setStrandingStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const combos = [];
+        NGFS_SCENARIOS.forEach(sc => HORIZONS.forEach(hz => combos.push([sc, hz])));
+        const results = await Promise.all(combos.map(([sc, hz]) =>
+          axios.post(`${PRP_API}/stranding`, {
+            country_iso: countryIso, asset_class: assetClass, ngfs_scenario: sc, time_horizon: hz,
+          }, { timeout: 10000 }).then(r => r.data)
+        ));
+        if (cancelled) return;
+        const map = {};
+        let allOk = true;
+        combos.forEach(([sc, hz], i) => {
+          if (results[i] && !results[i].error) map[`${sc}_${hz}`] = results[i];
+          else allOk = false;
+        });
+        if (allOk) { setStrandingLive(map); setStrandingStatus('live'); }
+        else { setStrandingLive(null); setStrandingStatus('demo'); }
+      } catch (e) {
+        if (!cancelled) { setStrandingLive(null); setStrandingStatus('demo'); }
+      }
+    }, 300);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [countryIso, assetClass]);
+
+  // GET /api/v1/physical-risk-pricing/ref/ngfs-amplifiers — scenario x horizon x peril multipliers
+  const [ngfsRefLive, setNgfsRefLive] = useState(null);
+  const [ngfsRefStatus, setNgfsRefStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    axios.get(`${PRP_API}/ref/ngfs-amplifiers`, { timeout: 10000 })
+      .then(({ data }) => { if (!cancelled && data && data.amplifiers) { setNgfsRefLive(data); setNgfsRefStatus('live'); } else if (!cancelled) setNgfsRefStatus('demo'); })
+      .catch(() => { if (!cancelled) setNgfsRefStatus('demo'); });
+    return () => { cancelled = true; };
+  }, []);
+
   const peril = getPerilData(country, assetClass, ngfsScenario);
-  const natcat = getNatCatData(country, assetClass);
+  const natcat = getNatCatData(country, assetClass, assetValue);
   const fin = getFinancialData(country, assetClass, assetValue, ngfsScenario);
   const strand = getStrandingData(country, assetClass);
   const ngfs = getNGFSData(country, assetClass);
 
+  // --- Derive render-ready view models from live data when available -------
+
+  const liveRadarData = priceLive ? [
+    ...ACUTE_PERILS.map(p => ({ dimension: PERIL_LABELS[p], score: Math.round((priceLive.acute_peril_breakdown[p]?.amplified_score || 0) * 100) })),
+    ...Object.keys(CHRONIC_LABELS).map(k => ({ dimension: CHRONIC_LABELS[k], score: Math.round((priceLive.chronic_stressor_breakdown[k]?.amplified_score || 0) * 100) })),
+  ] : null;
+
+  const liveDominantPeril = priceLive
+    ? Object.entries(priceLive.acute_peril_breakdown).reduce((best, [k, v]) => !best || v.amplified_score > best.score ? { name: PERIL_LABELS[k], score: v.amplified_score } : best, null)
+    : null;
+
+  const assetValNum = parseFloat(assetValue) || 5000000;
+
+  const liveNatcatBar = rpLive ? [10, 25, 50, 100, 200, 500].map(rp => {
+    const row = { rp: `${rp}yr` };
+    ACUTE_PERILS.forEach(p => { row[PERIL_LABELS[p]] = rpLive.peril_loss_table[p]?.return_period_losses?.[`${rp}yr`]?.scaled_loss_pct ?? 0; });
+    return row;
+  }) : null;
+
+  const liveNatcatTable = rpLive ? [10, 25, 50, 100, 200, 500].map(rp => {
+    const row = { rp: `${rp}yr` };
+    ACUTE_PERILS.forEach(p => {
+      const cell = rpLive.peril_loss_table[p]?.return_period_losses?.[`${rp}yr`];
+      row[PERIL_LABELS[p]] = cell ? `$${(cell.gross_loss_usd / 1e6).toFixed(3)}M` : '—';
+    });
+    return row;
+  }) : null;
+
+  const liveLossDist = rpLive ? [10, 25, 50, 100, 200, 500].map(rp => {
+    const total = ACUTE_PERILS.reduce((sum, p) => sum + (rpLive.peril_loss_table[p]?.return_period_losses?.[`${rp}yr`]?.gross_loss_usd || 0), 0);
+    return { rp: `${rp}yr`, loss: parseFloat((total / 1e6).toFixed(3)) };
+  }) : null;
+
+  const liveInsurancePie = priceLive ? (() => {
+    const insuredPct = Math.round(priceLive.avg_insured_ratio * 100);
+    return { insuredPct, pie: [{ name: 'Insured Loss', value: insuredPct }, { name: 'Uninsured Gap', value: 100 - insuredPct }] };
+  })() : null;
+
+  const liveStrandBar = strandingLive ? NGFS_SCENARIOS.map(sc => {
+    const row = { scenario: NGFS_SCENARIO_LABELS[sc] };
+    HORIZONS.forEach(hz => { row[hz] = Math.round((strandingLive[`${sc}_${hz}`]?.stranding_probability || 0) * 100); });
+    return row;
+  }) : null;
+
+  const liveStrandRows = strandingLive ? NGFS_SCENARIOS.flatMap(sc => HORIZONS.map(hz => {
+    const d = strandingLive[`${sc}_${hz}`];
+    const topStressor = d ? Object.entries(d.stressor_detail).reduce((best, [k, v]) => !best || v.contribution > best.c ? { k, c: v.contribution } : best, null) : null;
+    return {
+      scenario: NGFS_SCENARIO_LABELS[sc], horizon: hz,
+      prob: d ? `${Math.round(d.stranding_probability * 100)}%` : '—',
+      key_driver: topStressor ? (CHRONIC_LABELS[topStressor.k] || topStressor.k) : '—',
+    };
+  })) : null;
+
+  const liveNgfsTrajectory = (ngfsRefLive && priceLive) ? HORIZONS.map(hz => {
+    const row = { year: hz };
+    NGFS_SCENARIOS.forEach(sc => {
+      const amps = ngfsRefLive.amplifiers[sc][hz];
+      const avgAmp = ACUTE_PERILS.reduce((sum, p) => sum + (amps[p] || 1), 0) / ACUTE_PERILS.length;
+      row[NGFS_SCENARIO_LABELS[sc]] = Math.round(Math.min(1, priceLive.baseline_composite_score * avgAmp) * 100);
+    });
+    return row;
+  }) : null;
+
+  const liveChecklist = [
+    { item: 'Physical risk quantification', status: priceStatus === 'live' },
+    { item: 'NGFS scenario coverage', status: ngfsRefStatus === 'live' },
+    { item: 'NatCat event modeling', status: rpStatus === 'live' },
+    { item: 'Insurance gap analysis', status: priceStatus === 'live' && priceLive?.avg_insured_ratio != null },
+    { item: 'TCFD-aligned disclosure', status: strandingStatus === 'live' },
+    { item: 'Stranding probability model', status: strandingStatus === 'live' },
+    { item: 'Climate VaR calculation', status: priceStatus === 'live' && priceLive?.climate_var_95pct_usd != null },
+    { item: 'Regulatory submission ready', status: priceStatus === 'live' && rpStatus === 'live' && strandingStatus === 'live' && ngfsRefStatus === 'live' },
+  ];
+
   const runPrice = async () => {
     setLoading(true); setError('');
     try {
-      await axios.post(`${API}/api/v1/physical-risk-pricing/price`, {
-        country, asset_class: assetClass, asset_value_usd: parseFloat(assetValue),
-        ngfs_scenario: ngfsScenario, time_horizon: timeHorizon,
+      const { data } = await axios.post(`${PRP_API}/price`, {
+        entity_id: `ASSET-${countryIso}-${assetClass}`,
+        asset_class: assetClass,
+        country_iso: countryIso,
+        asset_value_usd: parseFloat(assetValue) || 5000000,
+        ngfs_scenario: ngfsScenario,
+        time_horizon: timeHorizon,
       });
-    } catch {
-      void 0 /* API fallback to seed data */;
+      if (data && !data.error) { setPriceLive(data); setPriceStatus('live'); setError(''); }
+      else { setError(data?.error || 'Engine returned an error.'); }
+    } catch (e) {
+      setError('API unavailable — showing demo data fallback.');
     } finally { setLoading(false); }
   };
 
@@ -230,6 +434,33 @@ export default function PhysicalRiskPricingPage() {
     </Section>
   );
 
+  // Fallback-safe view values (live where available, seeded demo otherwise)
+  const compositeScore = priceLive ? Math.round(priceLive.composite_physical_risk_score * 100) : peril.composite;
+  const riskTierLabel = priceLive ? priceLive.risk_tier.replace('_', ' ') : peril.tier;
+  const riskTierColor = priceLive ? (TIER_COLOR[priceLive.risk_tier] || 'gray') : peril.tierColor;
+  const ealPctDisplay = priceLive ? ((priceLive.expected_annual_loss_usd / assetValNum) * 100).toFixed(2) : peril.ealPct;
+  const ealUsdDisplay = priceLive ? (priceLive.expected_annual_loss_usd / 1e6).toFixed(3) : (parseFloat(peril.ealPct) * assetValNum / 1e6 / 100).toFixed(2);
+  const dominantPerilName = liveDominantPeril ? liveDominantPeril.name : [...peril.acutePerils].sort((a, b) => b.score - a.score)[0].dimension;
+  const dominantPerilScore = liveDominantPeril ? Math.round(liveDominantPeril.score * 100) : [...peril.acutePerils].sort((a, b) => b.score - a.score)[0].score;
+  const radarData = liveRadarData || peril.acutePerils;
+
+  const natcatBarData = liveNatcatBar || natcat.data;
+  const natcatTableRows = liveNatcatTable || natcat.tableRows;
+  const natcatPerils = ACUTE_PERILS.map(p => PERIL_LABELS[p]);
+
+  const finEal = priceLive ? `$${ealUsdDisplay}M` : fin.eal;
+  const finPml = priceLive ? `$${(priceLive.pml_100yr_usd / 1e6).toFixed(3)}M` : fin.pml100;
+  const finVar = priceLive ? `${((priceLive.climate_var_95pct_usd / assetValNum) * 100).toFixed(2)}%` : fin.climateVaR;
+  const finPremium = priceLive ? `${priceLive.risk_premium_bps} bps` : fin.riskPremium;
+  const lossDistData = liveLossDist || fin.lossDistData;
+  const insurancePie = liveInsurancePie ? liveInsurancePie.pie : fin.insurancePie;
+
+  const strandBarData = liveStrandBar || strand.barData;
+  const strandRows = liveStrandRows || strand.rows;
+
+  const ngfsLineData = liveNgfsTrajectory || ngfs.lineData;
+  const checklist = (priceStatus !== 'loading' && rpStatus !== 'loading' && strandingStatus !== 'loading' && ngfsRefStatus !== 'loading') ? liveChecklist : ngfs.checklist;
+
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
       <div style={{ marginBottom: 24 }}>
@@ -243,23 +474,23 @@ export default function PhysicalRiskPricingPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
+      {error && <div style={{ background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#92400e', fontSize: 13 }}>{error}</div>}
 
       {/* TAB 1 — Peril Scores */}
       {tab === 0 && (
         <div>
           {inputPanel}
-          <Section title="Composite Risk Summary">
+          <Section title="Composite Risk Summary" status={priceStatus}>
             <Row gap={12}>
-              <KpiCard label="Composite Risk Score" value={`${peril.composite}/100`} sub="9-peril weighted average" accent />
-              <KpiCard label="Expected Annual Loss (EAL)" value={`${peril.ealPct}% of AV`} sub={`~$${(parseFloat(peril.ealPct) * parseFloat(assetValue) / 1e6 / 100).toFixed(2)}M`} />
-              <KpiCard label="Risk Tier" value={<Badge label={peril.tier} color={peril.tierColor} />} sub="NGFS-aligned physical risk classification" />
-              <KpiCard label="Dominant Peril" value={[...peril.acutePerils].sort((a, b) => b.score - a.score)[0].dimension} sub={`Score: ${[...peril.acutePerils].sort((a, b) => b.score - a.score)[0].score}/100`} />
+              <KpiCard label="Composite Risk Score" value={`${compositeScore}/100`} sub={priceLive ? '5 acute + 3 chronic weighted composite (E104 engine)' : '9-peril weighted average'} accent />
+              <KpiCard label="Expected Annual Loss (EAL)" value={`${ealPctDisplay}% of AV`} sub={`~$${ealUsdDisplay}M`} />
+              <KpiCard label="Risk Tier" value={<Badge label={riskTierLabel} color={riskTierColor} />} sub="NGFS-aligned physical risk classification" />
+              <KpiCard label="Dominant Peril" value={dominantPerilName} sub={`Score: ${dominantPerilScore}/100`} />
             </Row>
           </Section>
-          <Section title="9-Peril Radar (Acute + Chronic Stressors)">
+          <Section title="Peril Radar (Acute + Chronic Stressors)">
             <ResponsiveContainer width="100%" height={360}>
-              <RadarChart data={peril.acutePerils}>
+              <RadarChart data={radarData}>
                 <PolarGrid />
                 <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12 }} />
                 <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 9 }} />
@@ -276,34 +507,34 @@ export default function PhysicalRiskPricingPage() {
       {tab === 1 && (
         <div>
           {inputPanel}
-          <Section title="Loss % by Return Period (Grouped by Peril)">
+          <Section title="Loss % by Return Period (Grouped by Peril)" status={rpStatus}>
             <ResponsiveContainer width="100%" height={320}>
-              <BarChart data={natcat.data}>
+              <BarChart data={natcatBarData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="rp" />
                 <YAxis unit="%" />
                 <Tooltip formatter={(val) => `${val}%`} />
                 <Legend />
-                {natcat.perils.map((p, i) => (
+                {natcatPerils.map((p, i) => (
                   <Bar key={p} dataKey={p} fill={natcat.perilColors[i]} radius={[3, 3, 0, 0]} />
                 ))}
               </BarChart>
             </ResponsiveContainer>
           </Section>
-          <Section title="Loss Table ($M values — $100M reference asset)">
+          <Section title={`Loss Table ($ — based on $${(assetValNum / 1e6).toFixed(1)}M asset value entered)`}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: '#f9fafb' }}>
-                  {['Return Period', ...natcat.perils].map(h => (
+                  {['Return Period', ...natcatPerils].map(h => (
                     <th key={h} style={{ padding: '8px 12px', textAlign: 'left', borderBottom: '1px solid #e5e7eb', fontWeight: 600, color: '#374151' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {natcat.tableRows.map((row, i) => (
+                {natcatTableRows.map((row, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: i % 2 === 0 ? 'white' : '#f9fafb' }}>
                     <td style={{ padding: '8px 12px', fontWeight: 700, color: '#059669' }}>{row.rp}</td>
-                    {natcat.perils.map(p => <td key={p} style={{ padding: '8px 12px', color: '#374151' }}>{row[p]}</td>)}
+                    {natcatPerils.map(p => <td key={p} style={{ padding: '8px 12px', color: '#374151' }}>{row[p]}</td>)}
                   </tr>
                 ))}
               </tbody>
@@ -316,18 +547,18 @@ export default function PhysicalRiskPricingPage() {
       {tab === 2 && (
         <div>
           {inputPanel}
-          <Section title="Key Financial Metrics">
+          <Section title="Key Financial Metrics" status={priceStatus}>
             <Row gap={12}>
-              <KpiCard label="Expected Annual Loss (EAL)" value={fin.eal} sub="Probability-weighted annual loss" accent />
-              <KpiCard label="PML 100-Year" value={fin.pml100} sub="Probable maximum loss at 1% AEP" />
-              <KpiCard label="Climate VaR (95%)" value={fin.climateVaR} sub="NGFS scenario-adjusted VaR" />
-              <KpiCard label="Risk Premium" value={fin.riskPremium} sub="Additional spread for physical risk" />
+              <KpiCard label="Expected Annual Loss (EAL)" value={finEal} sub="Probability-weighted annual loss" accent />
+              <KpiCard label="PML 100-Year" value={finPml} sub="Probable maximum loss at 1% AEP" />
+              <KpiCard label="Climate VaR (95%)" value={finVar} sub="NGFS scenario-adjusted VaR" />
+              <KpiCard label="Risk Premium" value={finPremium} sub="Additional spread for physical risk" />
             </Row>
           </Section>
           <Row>
-            <Section title="Loss Distribution by Return Period ($M)">
+            <Section title="Loss Distribution by Return Period ($M)" status={rpStatus}>
               <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={fin.lossDistData}>
+                <AreaChart data={lossDistData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="rp" />
                   <YAxis unit="M" />
@@ -339,9 +570,9 @@ export default function PhysicalRiskPricingPage() {
             <Section title="Insurance Coverage Gap">
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
-                  <Pie data={fin.insurancePie} cx="50%" cy="50%" outerRadius={100} dataKey="value" nameKey="name"
+                  <Pie data={insurancePie} cx="50%" cy="50%" outerRadius={100} dataKey="value" nameKey="name"
                     label={({ name, percent }) => `${name.split(' ')[0]}: ${(percent * 100).toFixed(0)}%`}>
-                    {fin.insurancePie.map((_, i) => <Cell key={i} fill={i === 0 ? '#059669' : '#ef4444'} />)}
+                    {insurancePie.map((_, i) => <Cell key={i} fill={i === 0 ? '#059669' : '#ef4444'} />)}
                   </Pie>
                   <Tooltip formatter={(val) => `${val}%`} />
                   <Legend />
@@ -356,15 +587,15 @@ export default function PhysicalRiskPricingPage() {
       {tab === 3 && (
         <div>
           {inputPanel}
-          <Section title="Stranding Probability: Scenario × Time Horizon (%)">
+          <Section title="Stranding Probability: Scenario × Time Horizon (%)" status={strandingStatus}>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={strand.barData}>
+              <BarChart data={strandBarData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="scenario" />
                 <YAxis unit="%" />
                 <Tooltip formatter={(val) => `${val}%`} />
                 <Legend />
-                {strand.horizons.map((hz, i) => (
+                {HORIZONS.map((hz, i) => (
                   <Bar key={hz} dataKey={hz} fill={['#059669', '#3b82f6', '#f59e0b'][i]} radius={[3, 3, 0, 0]} />
                 ))}
               </BarChart>
@@ -380,7 +611,7 @@ export default function PhysicalRiskPricingPage() {
                 </tr>
               </thead>
               <tbody>
-                {strand.rows.map((r, i) => (
+                {strandRows.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: i % 2 === 0 ? 'white' : '#f9fafb' }}>
                     <td style={{ padding: '8px 12px', fontWeight: 600, color: '#059669' }}>{r.scenario}</td>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>{r.horizon}</td>
@@ -398,12 +629,12 @@ export default function PhysicalRiskPricingPage() {
       {tab === 4 && (
         <div>
           {inputPanel}
-          <Section title="Risk Score Trajectory 2024–2050 (All NGFS Scenarios)">
+          <Section title="Composite Risk Score Trajectory — NGFS Scenarios (2030–2050)" status={ngfsRefStatus}>
             <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={ngfs.lineData}>
+              <LineChart data={ngfsLineData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
-                <YAxis domain={[20, 100]} unit="" />
+                <YAxis domain={[0, 100]} unit="" />
                 <Tooltip />
                 <Legend />
                 {ngfs.scenarios.map((sc, i) => (
@@ -422,7 +653,7 @@ export default function PhysicalRiskPricingPage() {
                 </tr>
               </thead>
               <tbody>
-                {ngfs.checklist.map((c, i) => (
+                {checklist.map((c, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '8px 12px', color: '#374151' }}>{c.item}</td>
                     <td style={{ padding: '8px 12px' }}>
@@ -434,7 +665,7 @@ export default function PhysicalRiskPricingPage() {
             </table>
             <div style={{ marginTop: 12, padding: 12, background: '#f0fdf4', borderRadius: 8, border: '1px solid #bbf7d0' }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#065f46' }}>
-                {ngfs.checklist.filter(c => c.status).length}/{ngfs.checklist.length} requirements met
+                {checklist.filter(c => c.status).length}/{checklist.length} requirements met
               </span>
               <span style={{ fontSize: 13, color: '#6b7280', marginLeft: 12 }}>TCFD / NGFS / ECB CST 2022 aligned</span>
             </div>

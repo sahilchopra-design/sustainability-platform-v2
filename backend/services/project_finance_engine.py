@@ -321,7 +321,7 @@ class ProjectFinanceEngine:
         outstanding_debt = debt_amount
 
         annual_generation_base = (
-            inp.capacity_mw * 1000 * capacity_factor * 8760
+            inp.capacity_mw * capacity_factor * 8760
             * (1 - inp.curtailment_pct)
         ).quantize(Decimal("0.01"))
 

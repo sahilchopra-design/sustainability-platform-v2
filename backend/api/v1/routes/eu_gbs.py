@@ -57,7 +57,19 @@ class IssuanceInputModel(BaseModel):
     currency: str = Field("EUR", description="ISO currency code")
     taxonomy_alignment_pct: float = Field(
         0.0, ge=0.0, le=100.0,
-        description="% of proceeds allocated to taxonomy-aligned activities",
+        description="% of proceeds allocated to fully taxonomy-aligned (TSC-compliant) activities",
+    )
+    flexibility_pocket_pct: float = Field(
+        0.0, ge=0.0, le=100.0,
+        description=(
+            "Art 5 Regulation 2023/2631 flexibility pocket: % of proceeds allocated to "
+            "activities meeting Taxonomy DNSH/minimum-safeguards requirements but lacking "
+            "finalized technical screening criteria. Capped at 15% when scored."
+        ),
+    )
+    flexibility_pocket_conditions_met: bool = Field(
+        False,
+        description="Confirms Art 5(1) pocket conditions are met for the pocket allocation above",
     )
     dnsh_confirmed: bool = Field(False, description="DNSH assessment completed and confirmed")
     min_safeguards_confirmed: bool = Field(
@@ -87,6 +99,13 @@ class AllocationReportModel(BaseModel):
     reporting_period: str = Field(..., description="e.g. '2025-12-31' or 'FY2025'")
     total_allocated_pct: float = Field(..., ge=0.0, le=100.0)
     taxonomy_aligned_pct: float = Field(..., ge=0.0, le=100.0)
+    flexibility_pocket_pct: float = Field(
+        0.0, ge=0.0, le=100.0,
+        description="Art 5 Regulation 2023/2631 flexibility pocket — actual allocation to TSC-gap activities",
+    )
+    flexibility_pocket_conditions_met: bool = Field(
+        False, description="Confirms Art 5(1) pocket conditions are met"
+    )
     allocation_by_objective: Dict[str, float] = Field(
         default_factory=dict,
         description="Allocation % by environmental objective code",
@@ -134,6 +153,8 @@ def assess_issuance(request: IssuanceInputModel) -> Dict[str, Any]:
         principal_amount=request.principal_amount,
         currency=request.currency,
         taxonomy_alignment_pct=request.taxonomy_alignment_pct,
+        flexibility_pocket_pct=request.flexibility_pocket_pct,
+        flexibility_pocket_conditions_met=request.flexibility_pocket_conditions_met,
         dnsh_confirmed=request.dnsh_confirmed,
         min_safeguards_confirmed=request.min_safeguards_confirmed,
         environmental_objectives=request.environmental_objectives,
@@ -163,6 +184,8 @@ def generate_factsheet(request: IssuanceInputModel) -> Dict[str, Any]:
         principal_amount=request.principal_amount,
         currency=request.currency,
         taxonomy_alignment_pct=request.taxonomy_alignment_pct,
+        flexibility_pocket_pct=request.flexibility_pocket_pct,
+        flexibility_pocket_conditions_met=request.flexibility_pocket_conditions_met,
         dnsh_confirmed=request.dnsh_confirmed,
         min_safeguards_confirmed=request.min_safeguards_confirmed,
         environmental_objectives=request.environmental_objectives,
@@ -191,6 +214,8 @@ def allocation_report(request: AllocationReportModel) -> Dict[str, Any]:
         reporting_period=request.reporting_period,
         total_allocated_pct=request.total_allocated_pct,
         taxonomy_aligned_pct=request.taxonomy_aligned_pct,
+        flexibility_pocket_pct=request.flexibility_pocket_pct,
+        flexibility_pocket_conditions_met=request.flexibility_pocket_conditions_met,
         allocation_by_objective=request.allocation_by_objective,
         unallocated_pct=request.unallocated_pct,
         geographic_breakdown=request.geographic_breakdown,
@@ -236,6 +261,8 @@ def assess_batch(requests: List[IssuanceInputModel]) -> List[Dict[str, Any]]:
             principal_amount=request.principal_amount,
             currency=request.currency,
             taxonomy_alignment_pct=request.taxonomy_alignment_pct,
+            flexibility_pocket_pct=request.flexibility_pocket_pct,
+            flexibility_pocket_conditions_met=request.flexibility_pocket_conditions_met,
             dnsh_confirmed=request.dnsh_confirmed,
             min_safeguards_confirmed=request.min_safeguards_confirmed,
             environmental_objectives=request.environmental_objectives,

@@ -17,6 +17,17 @@ from dataclasses import dataclass, field
 from typing import Optional
 import math
 
+from services.nasa_power_client import NasaPowerError, fetch_yield_inputs as _fetch_nasa_yield_inputs
+
+# Standard Rayleigh-distribution shape factor (k=2.0) used when only a mean
+# wind speed is known (e.g. from NASA POWER's WS50M) rather than a full
+# fitted Weibull distribution. This is the conventional simplifying
+# assumption in wind resource literature (Justus et al. 1978; widely used
+# where site-specific k is unavailable) -- documented here since it differs
+# from the hand-authored per-region (k, lambda) pairs in
+# WIND_RESOURCE_REGIONS, which encode locally-fitted shape factors.
+NASA_POWER_DEFAULT_WEIBULL_K = 2.0
+
 
 # ---------------------------------------------------------------------------
 # Reference Data — Wind Turbine Classes
@@ -165,6 +176,7 @@ class WindYieldResult:
     equivalent_full_load_hours: float
     wake_loss_pct: float
     availability_pct: float
+    resource_source: str = "region_table"  # "region_table" | "nasa_power:<lat>,<lon>:<year>"
 
 
 @dataclass
@@ -182,6 +194,7 @@ class SolarYieldResult:
     p50_lifetime_avg_mwh: float
     capacity_factor_pct: float
     specific_yield_kwh_kwp: float
+    resource_source: str = "country_table"  # "country_table" | "nasa_power:<lat>,<lon>:<year>"
 
 
 @dataclass
@@ -236,18 +249,48 @@ class RenewableProjectEngine:
         num_turbines: int = 10,
         wake_loss_pct: float = 8.0,
         availability_pct: float = 97.0,
+        lat: Optional[float] = None,
+        lon: Optional[float] = None,
     ) -> WindYieldResult:
-        """Calculate wind energy yield with P50/P75/P90 confidence levels."""
+        """Calculate wind energy yield with P50/P75/P90 confidence levels.
+
+        Resource input is the hand-authored per-region Weibull (k, lambda)
+        table by default. OPTIONAL: if `lat`/`lon` are supplied, real NASA
+        POWER measured/reanalysis mean wind speed (WS50M, averaged over the
+        last full calendar year) is used instead -- location-specific rather
+        than a regional bucket. NASA POWER only gives a mean speed, not a
+        fitted Weibull shape, so `k` is held at the standard Rayleigh default
+        (NASA_POWER_DEFAULT_WEIBULL_K = 2.0) and `lambda` is solved from the
+        real mean: lambda = mean_ws / Gamma(1 + 1/k). This is additive --
+        the region-table path below is unchanged and used whenever lat/lon
+        aren't given, or if the NASA POWER call fails (network/no data),
+        as a fallback.
+        """
         turb = TURBINE_CLASSES.get(turbine_class)
         if not turb:
             turb = TURBINE_CLASSES["onshore_2mw"]
 
-        wind_res = WIND_RESOURCE_REGIONS.get(region)
-        if not wind_res:
-            wind_res = WIND_RESOURCE_REGIONS["northern_europe_onshore"]
+        resource_source = "region_table"
+        k: Optional[float] = None
+        lam: Optional[float] = None
 
-        k = wind_res["k"]
-        lam = wind_res["lambda"]
+        if lat is not None and lon is not None:
+            try:
+                power = _fetch_nasa_yield_inputs(lat, lon)
+                k = NASA_POWER_DEFAULT_WEIBULL_K
+                lam = power["avg_wind_speed_50m_ms"] / math.gamma(1 + 1 / k)
+                resource_source = f"nasa_power:{lat},{lon}:{power.get('year')}"
+            except Exception:
+                # NasaPowerError (unreachable/no data) or any other transient
+                # failure -- fall through to the existing region-table path.
+                k = None
+
+        if k is None or lam is None:
+            wind_res = WIND_RESOURCE_REGIONS.get(region)
+            if not wind_res:
+                wind_res = WIND_RESOURCE_REGIONS["northern_europe_onshore"]
+            k = wind_res["k"]
+            lam = wind_res["lambda"]
 
         # Mean wind speed from Weibull: lambda * Gamma(1 + 1/k)
         mean_ws = lam * math.gamma(1 + 1 / k)
@@ -288,6 +331,7 @@ class RenewableProjectEngine:
             equivalent_full_load_hours=round(eflh, 0),
             wake_loss_pct=wake_loss_pct,
             availability_pct=availability_pct,
+            resource_source=resource_source,
         )
 
     def _wind_capacity_factor(self, k: float, lam: float, turb: dict) -> float:
@@ -325,11 +369,40 @@ class RenewableProjectEngine:
         capacity_kwp: float = 1000,
         performance_ratio: float = 0.0,  # 0 = use default
         degradation_pct_yr: float = 0.0,  # 0 = use default
+        lat: Optional[float] = None,
+        lon: Optional[float] = None,
     ) -> SolarYieldResult:
-        """Calculate solar energy yield with P50/P75/P90."""
-        solar = SOLAR_GHI_DATA.get(country)
-        if not solar:
-            solar = {"ghi": 1400, "label": country}
+        """Calculate solar energy yield with P50/P75/P90.
+
+        Resource input is the hand-authored per-country GHI table by
+        default. OPTIONAL: if `lat`/`lon` are supplied, real NASA POWER
+        measured/reanalysis GHI (ALLSKY_SFC_SW_DWN, averaged over the last
+        full calendar year and scaled to an annual total) is used instead --
+        location-specific rather than a single country-wide figure. Additive:
+        the country-table path is unchanged and used whenever lat/lon aren't
+        given, or if the NASA POWER call fails, as a fallback.
+        """
+        resource_source = "country_table"
+        ghi: Optional[float] = None
+        label = country
+
+        if lat is not None and lon is not None:
+            try:
+                power = _fetch_nasa_yield_inputs(lat, lon)
+                ghi = power["avg_ghi_kwh_m2_yr"]
+                label = f"NASA POWER @ ({lat}, {lon})"
+                resource_source = f"nasa_power:{lat},{lon}:{power.get('year')}"
+            except Exception:
+                # NasaPowerError (unreachable/no data) or any other transient
+                # failure -- fall through to the existing country-table path.
+                ghi = None
+
+        if ghi is None:
+            solar = SOLAR_GHI_DATA.get(country)
+            if not solar:
+                solar = {"ghi": 1400, "label": country}
+            ghi = solar["ghi"]
+            label = solar["label"]
 
         pr = performance_ratio if performance_ratio > 0 else SOLAR_DEFAULTS["performance_ratio"]
         deg = degradation_pct_yr if degradation_pct_yr > 0 else SOLAR_DEFAULTS["degradation_pct_yr"]
@@ -337,8 +410,6 @@ class RenewableProjectEngine:
         # Temperature correction
         temp_loss = abs(SOLAR_DEFAULTS["temp_coeff_pct_per_c"]) * SOLAR_DEFAULTS["avg_module_temp_above_stc_c"] / 100
         effective_pr = pr * (1 - temp_loss)
-
-        ghi = solar["ghi"]
 
         # Specific yield (kWh/kWp)
         specific_yield = ghi * effective_pr
@@ -359,7 +430,7 @@ class RenewableProjectEngine:
 
         return SolarYieldResult(
             country=country,
-            country_label=solar["label"],
+            country_label=label,
             capacity_kwp=capacity_kwp,
             ghi_kwh_m2_yr=ghi,
             performance_ratio=round(effective_pr, 4),
@@ -370,6 +441,7 @@ class RenewableProjectEngine:
             p50_lifetime_avg_mwh=round(p50_lifetime, 1),
             capacity_factor_pct=round(cf, 1),
             specific_yield_kwh_kwp=round(specific_yield, 0),
+            resource_source=resource_source,
         )
 
     # -------------------------------------------------------------------

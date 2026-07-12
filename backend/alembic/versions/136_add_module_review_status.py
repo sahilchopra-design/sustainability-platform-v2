@@ -6,7 +6,7 @@ Create Date: 2026-04-10
 """
 
 revision = '136'
-down_revision = '135'
+down_revision = '135_add_rbac_system'
 branch_labels = None
 depends_on = None
 

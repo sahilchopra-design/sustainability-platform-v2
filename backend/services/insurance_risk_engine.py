@@ -45,6 +45,7 @@ from services.reference_data_tables import (
     IPCC_AR6_DAMAGE_FUNCTIONS,
     SOLVENCY2_NAT_CAT_FACTORS,
     SOLVENCY2_PERIL_CORRELATIONS,
+    SOLVENCY2_TO_IPCC_PERIL_MAP,
     get_mortality_rate,
     get_damage_function,
     get_nat_cat_factor,
@@ -463,8 +464,13 @@ class InsuranceRiskEngine:
 
             f_200yr = factor["factor_200yr"]
 
-            # Climate multiplier from IPCC damage functions
-            damage_fn = self._damage_functions.get(peril, {})
+            # Climate multiplier from IPCC damage functions. Solvency II peril names
+            # (e.g. "windstorm"/"flood"/"hail") don't match the IPCC AR6 hazard-type
+            # vocabulary (e.g. "tropical_cyclone"/"river_flood"/"convective_storm"), so
+            # normalize via SOLVENCY2_TO_IPCC_PERIL_MAP before the lookup — otherwise
+            # this silently misses and climate scaling becomes a 1.0 no-op.
+            climate_key = SOLVENCY2_TO_IPCC_PERIL_MAP.get(peril, peril)
+            damage_fn = self._damage_functions.get(climate_key, {})
             freq_mult = damage_fn.get("frequency_multiplier_per_c", 1.0) ** warming_c
             sev_mult = damage_fn.get("severity_multiplier_per_c", 1.0) ** warming_c
 

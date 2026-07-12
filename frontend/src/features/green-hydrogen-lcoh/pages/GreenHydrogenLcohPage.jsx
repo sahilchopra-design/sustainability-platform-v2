@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import EnergyAdvancedAnalytics from '../../_shared/EnergyAdvancedAnalytics';
 import {
   BarChart, Bar, LineChart, Line, AreaChart, Area,
@@ -8,7 +9,20 @@ import {
   PolarAngleAxis, Radar
 } from 'recharts';
 
+const API = 'http://localhost:8001';
+// Real backend engine: EU RFNBO Delegated Regs 2023/1184-85 + IEA Global
+// Hydrogen Review LCOH methodology (backend/services/green_hydrogen_engine.py).
+const GH_API = `${API}/api/v1/green-hydrogen`;
+// Frontend electrolyzer ids -> backend ELECTROLYSER_BENCHMARKS keys (engine
+// uses "ALK" not "AEL" for alkaline electrolysis).
+const ENGINE_ELECTROLYSER_ID = { PEM: 'PEM', AEL: 'ALK', SOEC: 'SOEC', AEM: 'AEM' };
+
 const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
+const LiveBadge = ({ status }) => {
+  if (status === 'loading') return <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#1e293b', color: '#94a3b8' }}>Connecting…</span>;
+  if (status === 'live') return <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#dcfce7', color: '#166534' }}>● Live — green_hydrogen_engine (IEA LCOH · EU RFNBO 2023/1184-85)</span>;
+  return <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fef3c7', color: '#92400e' }}>○ Demo Data — API unavailable, local estimate shown</span>;
+};
 const T = {
   bg: '#FAFAF7', card: '#FFFFFF', border: '#E5E2D9',
   text: '#1A1A2E', sub: '#6B7280', accent: '#B8860B',
@@ -21,12 +35,26 @@ const T = {
 const HHV_H2 = 39.4;  // kWh/kg (higher heating value)
 const LHV_H2 = 33.3;  // kWh/kg (lower heating value)
 
-function calcLcoh({ elecCost, capex, opex, efficiency, capacityFactor, lifetime, stackReplace, wacc }) {
-  const annualKgPerMW = (capacityFactor / 100) * 8760 * 1000 / (efficiency / 100 * HHV_H2);
+function calcLcoh({ elecCost, capex, opexPct, efficiency, capacityFactor, lifetime, stackReplace, wacc }) {
+  // NOTE: H2 production/consumption physics must use LHV (lower heating value,
+  // 33.3 kWh/kg) per IEA Global Hydrogen Review + backend green_hydrogen_engine
+  // methodology. Using HHV (39.4 kWh/kg) here previously overstated electricity
+  // consumption per kg H2 by ~18% (39.4/33.3), inflating both the electricity
+  // cost component and understating annual H2 output.
+  //
+  // Two additional pre-existing bugs fixed alongside the HHV/LHV swap:
+  // 1. This function used to destructure `opex`, but every call site passes
+  //    `opexPct` — `opex` was always `undefined`, so `opex * capex * 1000/100`
+  //    was NaN and the entire LCOH figure was NaN on every render.
+  // 2. `elecCost` is €/MWh (see the "Electricity cost" slider, range 10-150,
+  //    which is a wholesale €/MWh range) but was multiplied directly by
+  //    kWh/kg without converting MWh->kWh (÷1000), overstating the
+  //    electricity cost component of LCOH by 1000x.
+  const annualKgPerMW = (capacityFactor / 100) * 8760 * 1000 / (efficiency / 100 * LHV_H2);
   const capexAnnual = capex * 1000 * (wacc / 100) / (1 - Math.pow(1 + wacc / 100, -lifetime));
-  const electricityCost = elecCost * (efficiency / 100 * HHV_H2);
+  const electricityCost = elecCost * (efficiency / 100 * LHV_H2) / 1000;
   const stackCostAnnual = (capex * 1000 * stackReplace / 100) / (lifetime / 2);
-  const totalAnnualPerKg = (capexAnnual + opex * capex * 1000 / 100 + stackCostAnnual) / Math.max(1, annualKgPerMW) + electricityCost;
+  const totalAnnualPerKg = (capexAnnual + opexPct * capex * 1000 / 100 + stackCostAnnual) / Math.max(1, annualKgPerMW) + electricityCost;
   return totalAnnualPerKg;
 }
 
@@ -138,10 +166,59 @@ export default function GreenHydrogenLcohPage() {
 
   const selected = ELECTROLYZER_TYPES.find(e => e.id === eType) || ELECTROLYZER_TYPES[0];
 
-  const lcoh = useMemo(() => calcLcoh({ elecCost, capex, opexPct, efficiency, capacityFactor, lifetime, stackReplace, wacc }), [elecCost, capex, opexPct, efficiency, capacityFactor, lifetime, stackReplace, wacc]);
+  // Local demo LCOH (LHV-correct client-side model) — always computed as the
+  // instant, drag-a-slider fallback and as the basis for all the secondary
+  // comparison/sensitivity/regional panels below (recomputing those on every
+  // slider tick via network round-trip is impractical).
+  const lcohDemo = useMemo(() => calcLcoh({ elecCost, capex, opexPct, efficiency, capacityFactor, lifetime, stackReplace, wacc }), [elecCost, capex, opexPct, efficiency, capacityFactor, lifetime, stackReplace, wacc]);
+
+  // --- Live backend wiring: headline LCOH KPI ------------------------------
+  // POST /api/v1/green-hydrogen/lcoh (backend/services/green_hydrogen_engine.py,
+  // IEA Global Hydrogen Review methodology). Debounced so it fires once the
+  // user settles on values, not on every keystroke/slider tick. Falls back to
+  // the local LHV-correct estimate above (lcohDemo), clearly badged, if the
+  // API is unreachable. NOTE: the backend derives electrolyser efficiency
+  // internally from its own IEA benchmark table (fixed per technology), so
+  // the live figure will not track the "Efficiency (LHV)" slider — only the
+  // demo figure does. All monetary inputs/outputs are treated as EUR
+  // end-to-end (we skip the engine's built-in USD->EUR conversion field to
+  // avoid double-converting).
+  const [lcohLive, setLcohLive] = useState(null);
+  const [lcohLiveStatus, setLcohLiveStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setLcohLiveStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await axios.post(`${GH_API}/lcoh`, {
+          electrolyser_type: ENGINE_ELECTROLYSER_ID[eType] || 'PEM',
+          country: 'Germany',
+          capacity_mw: scale,
+          capex_usd_kw: capex,
+          capacity_factor: capacityFactor / 100,
+          discount_rate: wacc / 100,
+          lifetime_yr: lifetime,
+          electricity_price_usd_mwh: elecCost,
+          opex_pct_capex: opexPct / 100,
+          projection_year: year,
+        }, { timeout: 10000 });
+        if (!cancelled && data?.lcoh_usd_kgh2?.total_lcoh != null) {
+          setLcohLive(data);
+          setLcohLiveStatus('live');
+        } else if (!cancelled) {
+          setLcohLiveStatus('demo');
+        }
+      } catch (e) {
+        if (!cancelled) { setLcohLive(null); setLcohLiveStatus('demo'); }
+      }
+    }, 400);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [eType, elecCost, capex, opexPct, capacityFactor, lifetime, wacc, scale, year]);
+
+  const lcoh = lcohLiveStatus === 'live' && lcohLive ? lcohLive.lcoh_usd_kgh2.total_lcoh : lcohDemo;
 
   const annualOutput = useMemo(() => {
-    const kgPerMWh = 1000 / (efficiency / 100 * HHV_H2);
+    const kgPerMWh = 1000 / (efficiency / 100 * LHV_H2);
     return (capacityFactor / 100) * 8760 * scale * kgPerMWh / 1000; // tonnes/year
   }, [efficiency, capacityFactor, scale]);
 
@@ -183,12 +260,14 @@ export default function GreenHydrogenLcohPage() {
 
   // Cost waterfall
   const waterfallData = useMemo(() => {
-    const kgPerMWh = 1000 / (efficiency / 100 * HHV_H2);
+    const kgPerMWh = 1000 / (efficiency / 100 * LHV_H2);
     const annualKg = (capacityFactor / 100) * 8760 * 1000 * kgPerMWh;
     const capexAnn = capex * 1000 * (wacc / 100) / (1 - Math.pow(1 + wacc / 100, -lifetime));
     const opexAnn  = capex * 1000 * opexPct / 100;
     const stackAnn = capex * 1000 * stackReplace / 100 / (lifetime / 2);
-    const elecAnn  = elecCost * (efficiency / 100 * HHV_H2);
+    // elecCost is €/MWh; convert to €/kWh (÷1000) before multiplying by kWh/kg
+    // — see the unit-bug note in calcLcoh() above for the same fix.
+    const elecAnn  = elecCost * (efficiency / 100 * LHV_H2) / 1000;
     return [
       { name: 'Electricity', value: +elecAnn.toFixed(2), fill: T.blue },
       { name: 'Capex (annualised)', value: +(capexAnn / Math.max(1, annualKg)).toFixed(2), fill: T.amber },
@@ -286,6 +365,10 @@ export default function GreenHydrogenLcohPage() {
               <Slider label="Plant scale" value={scale} min={10} max={500} step={10} onChange={setScale} unit=" MW" />
             </div>
             <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <LiveBadge status={lcohLiveStatus} />
+                {lcohLiveStatus === 'live' && <span style={{ fontSize: 10, color: T.sub }}>Efficiency slider applies to demo estimate only — live figure uses the engine's fixed IEA benchmark efficiency per technology.</span>}
+              </div>
               <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
                 <KpiCard label="LCOH (LHV)" value={lcoh.toFixed(2)} unit="€/kg H₂" color={lcoh < 3 ? T.green : lcoh < 5 ? T.amber : T.red} />
                 <KpiCard label="Annual Output" value={(annualOutput / 1000).toFixed(1)} unit="kt H₂/yr" sub={`${scale} MW plant`} />

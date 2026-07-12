@@ -69,12 +69,12 @@ const CONTEXT_DIMS = ['Magnitude', 'Trend', 'Target', 'Benchmark', 'Impact'];
    INTEROPERABILITY MATRIX
    ═══════════════════════════════════════════════════════════════════ */
 const INTEROP_METRICS = [
-  { metric: 'GHG Scope 1 (tCO2e)', esrs: 'E1-6', gri: '305-1', issb: 'S2.29a', brsr: 'P-VII-Q14', sasb: 'Varies', tcfd: 'Metrics a)' },
-  { metric: 'GHG Scope 2 (tCO2e)', esrs: 'E1-6', gri: '305-2', issb: 'S2.29b', brsr: 'P-VII-Q14', sasb: 'Varies', tcfd: 'Metrics a)' },
-  { metric: 'GHG Scope 3 (tCO2e)', esrs: 'E1-6', gri: '305-3', issb: 'S2.29c', brsr: 'P-VII-Q15', sasb: 'Varies', tcfd: 'Metrics a)' },
-  { metric: 'Energy Consumption (MWh)', esrs: 'E1-5', gri: '302-1', issb: 'S2.29e', brsr: 'P-VII-Q11', sasb: 'Varies', tcfd: 'Metrics b)' },
-  { metric: 'Water Withdrawal (ML)', esrs: 'E3-4', gri: '303-3', issb: '-', brsr: 'P-VII-Q18', sasb: 'Varies', tcfd: '-' },
-  { metric: 'Waste Generated (t)', esrs: 'E5-5', gri: '306-3', issb: '-', brsr: 'P-VII-Q20', sasb: 'Varies', tcfd: '-' },
+  { metric: 'GHG Scope 1 (tCO2e)', esrs: 'E1-6', gri: '305-1', issb: 'S2.29a', brsr: 'P-VI-Q14', sasb: 'Varies', tcfd: 'Metrics a)' },
+  { metric: 'GHG Scope 2 (tCO2e)', esrs: 'E1-6', gri: '305-2', issb: 'S2.29b', brsr: 'P-VI-Q14', sasb: 'Varies', tcfd: 'Metrics a)' },
+  { metric: 'GHG Scope 3 (tCO2e)', esrs: 'E1-6', gri: '305-3', issb: 'S2.29c', brsr: 'P-VI-Q15', sasb: 'Varies', tcfd: 'Metrics a)' },
+  { metric: 'Energy Consumption (MWh)', esrs: 'E1-5', gri: '302-1', issb: 'S2.29e', brsr: 'P-VI-Q11', sasb: 'Varies', tcfd: 'Metrics b)' },
+  { metric: 'Water Withdrawal (ML)', esrs: 'E3-4', gri: '303-3', issb: '-', brsr: 'P-VI-Q18', sasb: 'Varies', tcfd: '-' },
+  { metric: 'Waste Generated (t)', esrs: 'E5-5', gri: '306-3', issb: '-', brsr: 'P-VI-Q20', sasb: 'Varies', tcfd: '-' },
   { metric: 'Gender Diversity (%)', esrs: 'S1-9', gri: '405-1', issb: '-', brsr: 'P-V-Q1', sasb: 'Varies', tcfd: '-' },
   { metric: 'Board Independence (%)', esrs: 'GOV-1', gri: '2-9', issb: 'S1.27', brsr: 'P-I-Q2', sasb: '-', tcfd: 'Governance a)' },
 ];
@@ -101,21 +101,67 @@ const KPI_TEMPLATE_FIELDS = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════════
-   FRAMEWORK CROSSWALK
+   FRAMEWORK CROSSWALK — hand-curated, not PRNG-generated.
+
+   Every row below is grounded in a published standard:
+   ESRS (EU CSRD delegated act, 2023), GRI Standards (2016-2021 series),
+   IFRS S1/S2 (ISSB, 2023), SEBI BRSR (2021, principle-level only),
+   SASB (industry-specific, referenced only as "Varies by industry"),
+   and SFDR RTS Annex I (PAI indicators).
+
+   status: 'Verified'     — the codes shown map to a real, identifiable
+                             disclosure requirement/datapoint in the
+                             cited standard.
+           'Illustrative' — the metric is a composite/proprietary
+                             construct (e.g. a rating-agency score) or
+                             a topic with no single codified datapoint
+                             across these frameworks. Codes are left
+                             as '-' rather than invented; do not cite
+                             these rows as authoritative regulatory
+                             references.
    ═══════════════════════════════════════════════════════════════════ */
-const CROSSWALK = Array.from({ length: 40 }, (_, i) => {
-  const seed = i * 37 + 600;
-  const metrics = ['GHG Scope 1','GHG Scope 2','GHG Scope 3','Energy Use','Water Withdrawal','Waste Generated','LTIR','Gender Pay Gap','Board Independence','Anti-Corruption Training','Green Revenue %','Climate VaR','Financed Emissions','Biodiversity Net Gain','Circular Material Rate','Employee Turnover','Training Hours','Community Investment','Tax Paid','Lobbying Spend','Scope 3 Cat 1','Scope 3 Cat 11','Renewable Energy %','Science-Based Target','Net Zero Commitment','Carbon Intensity','Water Recycled %','Hazardous Waste','Living Wage Coverage','Supplier ESG Score','EU Taxonomy Alignment','SFDR PAI #1','SFDR PAI #2','TCFD Coverage','CDP Score','MSCI Rating Input','S&P Global CSA','ISS Metric','Sustainalytics Input','BRSR Core'];
-  return {
-    metric: metrics[i],
-    esrs: `E${Math.floor(sr(seed) * 5) + 1}-${Math.floor(sr(seed + 1) * 9) + 1}`,
-    gri: `${300 + Math.floor(sr(seed + 2) * 100)}-${Math.floor(sr(seed + 3) * 5) + 1}`,
-    issb: sr(seed + 4) > 0.3 ? `S${Math.floor(sr(seed + 5) * 2) + 1}.${Math.floor(sr(seed + 6) * 40) + 1}` : '-',
-    brsr: sr(seed + 7) > 0.4 ? `P-${['I','II','III','IV','V','VI','VII','VIII','IX'][Math.floor(sr(seed + 8) * 9)]}-Q${Math.floor(sr(seed + 9) * 25) + 1}` : '-',
-    sasb: sr(seed + 10) > 0.3 ? 'Sector-specific' : '-',
-    coverage: Math.round(40 + sr(seed + 11) * 60),
-  };
-});
+const CROSSWALK = [
+  { metric: 'GHG Scope 1',                          esrs: 'E1-6',   gri: '305-1',      issb: 'IFRS S2 ¶29(a)',     brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'GHG Scope 2',                          esrs: 'E1-6',   gri: '305-2',      issb: 'IFRS S2 ¶29(a)',     brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'GHG Scope 3',                          esrs: 'E1-6',   gri: '305-3',      issb: 'IFRS S2 ¶29(a)',     brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Energy Use',                           esrs: 'E1-5',   gri: '302-1',      issb: 'IFRS S2 ¶29(e)',     brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Water Withdrawal',                     esrs: 'E3-4',   gri: '303-3',      issb: '-',                  brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Waste Generated',                      esrs: 'E5-5',   gri: '306-3',      issb: '-',                  brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'LTIR',                                 esrs: 'S1-14',  gri: '403-9',      issb: '-',                  brsr: 'P3', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Gender Pay Gap',                       esrs: 'S1-16',  gri: '405-2',      issb: '-',                  brsr: 'P5', sasb: '-',                       status: 'Verified' },
+  { metric: 'Board Independence',                   esrs: 'GOV-1',  gri: '2-9',        issb: 'IFRS S1 ¶27',        brsr: 'P1', sasb: '-',                       status: 'Verified' },
+  { metric: 'Anti-Corruption Training',             esrs: 'G1-3',   gri: '205-2',      issb: '-',                  brsr: 'P1', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Green Revenue %',                      esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'EU Taxonomy Reg. Art.8 turnover KPI, not an ESRS/GRI/ISSB datapoint code' },
+  { metric: 'Climate VaR',                          esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary financial risk metric, not a codified disclosure datapoint' },
+  { metric: 'Financed Emissions',                   esrs: 'E1-6 (Scope 3 Cat.15)', gri: '305-3', issb: 'IFRS S2 ¶29(a)(iv)', brsr: '-', sasb: 'Varies (financial sector)', status: 'Verified' },
+  { metric: 'Biodiversity Net Gain',                esrs: 'E4',     gri: '304',        issb: '-',                  brsr: 'P6', sasb: '-',                       status: 'Illustrative', note: 'Topic-level only; "net gain" is not a single codified datapoint' },
+  { metric: 'Circular Material Rate',               esrs: 'E5-4',   gri: '301-2',      issb: '-',                  brsr: 'P2', sasb: '-',                       status: 'Illustrative', note: 'Topic-level only; no single codified circularity-rate datapoint' },
+  { metric: 'Employee Turnover',                    esrs: 'S1-6',   gri: '401-1',      issb: '-',                  brsr: 'P3', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Training Hours',                       esrs: 'S1-13',  gri: '404-1',      issb: '-',                  brsr: 'P3', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Community Investment',                 esrs: 'S3',     gri: '203-1',      issb: '-',                  brsr: 'P8', sasb: '-',                       status: 'Illustrative', note: 'Topic-level only; no single codified $-investment datapoint' },
+  { metric: 'Tax Paid',                             esrs: '-',      gri: '207-4',      issb: '-',                  brsr: 'P1', sasb: '-',                       status: 'Verified' },
+  { metric: 'Lobbying Spend',                       esrs: 'G1-5',   gri: '415-1',      issb: '-',                  brsr: 'P7', sasb: '-',                       status: 'Verified' },
+  { metric: 'Scope 3 Cat 1',                        esrs: 'E1-6 (Scope 3 Cat.1)',  gri: '305-3', issb: 'IFRS S2 ¶29(a)(iv)', brsr: '-', sasb: '-',              status: 'Verified' },
+  { metric: 'Scope 3 Cat 11',                       esrs: 'E1-6 (Scope 3 Cat.11)', gri: '305-3', issb: 'IFRS S2 ¶29(a)(iv)', brsr: '-', sasb: '-',              status: 'Verified' },
+  { metric: 'Renewable Energy %',                   esrs: 'E1-5',   gri: '302-1',      issb: 'IFRS S2 ¶29(e)',     brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Science-Based Target',                 esrs: 'E1-4',   gri: '305-5',      issb: 'IFRS S2 ¶33',        brsr: '-',  sasb: '-',                       status: 'Verified' },
+  { metric: 'Net Zero Commitment',                  esrs: 'E1-4',   gri: '-',          issb: 'IFRS S2 ¶33',        brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'No single codified GRI datapoint for a net-zero commitment statement' },
+  { metric: 'Carbon Intensity',                     esrs: 'E1-6',   gri: '305-4',      issb: 'IFRS S2 ¶29(a)(ii)', brsr: '-',  sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Water Recycled %',                     esrs: 'E3-4',   gri: '303',        issb: '-',                  brsr: 'P6', sasb: '-',                       status: 'Illustrative', note: 'Topic-level only; GRI 303:2018 has no distinct recycled-% code' },
+  { metric: 'Hazardous Waste',                      esrs: 'E5-5',   gri: '306-3',      issb: '-',                  brsr: 'P6', sasb: 'Varies by industry',      status: 'Verified' },
+  { metric: 'Living Wage Coverage',                 esrs: 'S1-10',  gri: '-',          issb: '-',                  brsr: 'P5', sasb: '-',                       status: 'Illustrative', note: 'ESRS S1-10 covers "adequate wages" concept; no standardized GRI living-wage code' },
+  { metric: 'Supplier ESG Score',                   esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary composite score, not a framework datapoint' },
+  { metric: 'EU Taxonomy Alignment',                esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Governed by EU Taxonomy Regulation Art.8, not an ESRS/GRI/ISSB code' },
+  { metric: 'SFDR PAI #1',                          esrs: 'E1-6',   gri: '305-1/2/3',  issb: 'IFRS S2 ¶29(a)',     brsr: '-',  sasb: '-',                       status: 'Verified', note: 'SFDR RTS Annex I Table 1, Indicator 1 (GHG emissions)' },
+  { metric: 'SFDR PAI #2',                          esrs: 'E1-6',   gri: '305-4',      issb: 'IFRS S2 ¶29(a)(ii)', brsr: '-',  sasb: '-',                       status: 'Verified', note: 'SFDR RTS Annex I Table 1, Indicator 2 (Carbon footprint)' },
+  { metric: 'TCFD Coverage',                        esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'TCFD is a 4-pillar framework, not a single datapoint code; superseded by IFRS S2' },
+  { metric: 'CDP Score',                             esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'CDP disclosure score is a proprietary rating, not a regulatory code' },
+  { metric: 'MSCI Rating Input',                    esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary rating-agency input' },
+  { metric: 'S&P Global CSA',                       esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary rating-agency questionnaire (Corporate Sustainability Assessment)' },
+  { metric: 'ISS Metric',                           esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary rating-agency metric' },
+  { metric: 'Sustainalytics Input',                 esrs: '-',      gri: '-',          issb: '-',                  brsr: '-',  sasb: '-',                       status: 'Illustrative', note: 'Proprietary rating-agency input' },
+  { metric: 'BRSR Core',                            esrs: '-',      gri: '-',          issb: '-',                  brsr: 'All 9 Principles', sasb: '-',          status: 'Verified', note: 'SEBI-mandated KPI subset spanning all 9 BRSR principles' },
+];
 
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT
@@ -384,20 +430,29 @@ export default function MetricsDataArchitecturePage() {
         <div style={{ marginBottom: 12 }}>
           <input style={{ ...sty.input, maxWidth: 300 }} placeholder="Filter by metric name..." value={crossFilter === 'All' ? '' : crossFilter} onChange={e => setCrossFilter(e.target.value || 'All')} />
         </div>
+        <div style={{ fontSize: 12, color: T.sub, background: '#fffbeb', border: `1px solid #fde68a`, borderRadius: 8, padding: '10px 14px', marginBottom: 12 }}>
+          Hand-curated from published ESRS (EU CSRD), GRI, IFRS S1/S2 (ISSB), SFDR RTS Annex I and SEBI BRSR sources.
+          Rows marked <strong style={{ color: T.green }}>Verified</strong> map to an identifiable disclosure requirement/datapoint.
+          Rows marked <strong style={{ color: T.amber }}>Illustrative</strong> are composite/proprietary metrics (e.g. rating-agency scores) or topics with no single codified datapoint across these frameworks --
+          codes are shown as "-" rather than invented, and should not be cited as authoritative regulatory references.
+        </div>
         <div style={sty.card}>
           <div style={sty.cardTitle}>Framework Crosswalk ({filteredCrosswalk.length} metrics)</div>
           <table style={sty.table}>
-            <thead><tr><th style={sty.th}>Metric</th><th style={sty.th}>ESRS</th><th style={sty.th}>GRI</th><th style={sty.th}>ISSB</th><th style={sty.th}>BRSR</th><th style={sty.th}>SASB</th><th style={sty.th}>Coverage</th></tr></thead>
+            <thead><tr><th style={sty.th}>Metric</th><th style={sty.th}>ESRS</th><th style={sty.th}>GRI</th><th style={sty.th}>ISSB</th><th style={sty.th}>BRSR</th><th style={sty.th}>SASB</th><th style={sty.th}>Status</th></tr></thead>
             <tbody>
               {filteredCrosswalk.map((c, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? '#fafaf7' : T.card }}>
-                  <td style={sty.td}><strong>{c.metric}</strong></td>
+                  <td style={sty.td}>
+                    <strong>{c.metric}</strong>
+                    {c.note && <div style={{ fontSize: 10, color: T.sub, marginTop: 2 }}>{c.note}</div>}
+                  </td>
                   <td style={{ ...sty.td, fontFamily: T.mono, fontSize: 11 }}>{c.esrs}</td>
                   <td style={{ ...sty.td, fontFamily: T.mono, fontSize: 11 }}>{c.gri}</td>
                   <td style={{ ...sty.td, fontFamily: T.mono, fontSize: 11 }}>{c.issb}</td>
                   <td style={{ ...sty.td, fontFamily: T.mono, fontSize: 11 }}>{c.brsr}</td>
                   <td style={{ ...sty.td, fontFamily: T.mono, fontSize: 11 }}>{c.sasb}</td>
-                  <td style={sty.td}><span style={sty.badge(c.coverage > 80 ? T.green : c.coverage > 60 ? '#d97706' : T.red)}>{c.coverage}%</span></td>
+                  <td style={sty.td}><span style={sty.badge(c.status === 'Verified' ? T.green : T.amber)}>{c.status}</span></td>
                 </tr>
               ))}
             </tbody>

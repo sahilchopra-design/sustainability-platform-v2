@@ -72,33 +72,62 @@ const SIGNALS = Array.from({ length: 60 }, (_, i) => ({
   headline: HEADLINES[Math.floor(sr(i * 23) * HEADLINES.length)]
 }));
 
-const MODELS = [
+/**
+ * Derives accuracy / macro-precision / macro-recall / macro-F1 directly from a
+ * confusion matrix so the KPI cards can never drift out of sync with the
+ * matrix rendered on screen. Rows = true label, columns = predicted label.
+ *   accuracy  = sum(diagonal) / sum(all cells)
+ *   precision_c = TP_c / (TP_c + FP_c)   [FP_c = column sum - TP_c]
+ *   recall_c    = TP_c / (TP_c + FN_c)   [FN_c = row sum - TP_c]
+ *   macro precision/recall = average across classes; F1 = harmonic mean of the two
+ */
+const computeMetricsFromCM = (cm) => {
+  const n = cm.length;
+  const total = cm.reduce((sum, row) => sum + row.reduce((a, b) => a + b, 0), 0);
+  let correct = 0;
+  const precisions = [];
+  const recalls = [];
+  for (let i = 0; i < n; i++) {
+    const tp = cm[i][i];
+    correct += tp;
+    const rowSum = cm[i].reduce((a, b) => a + b, 0);
+    const colSum = cm.reduce((a, row) => a + row[i], 0);
+    recalls.push(rowSum > 0 ? tp / rowSum : 0);
+    precisions.push(colSum > 0 ? tp / colSum : 0);
+  }
+  const accuracy = total > 0 ? correct / total : 0;
+  const precision = precisions.reduce((a, b) => a + b, 0) / n;
+  const recall = recalls.reduce((a, b) => a + b, 0) / n;
+  const f1 = (precision + recall) > 0 ? (2 * precision * recall) / (precision + recall) : 0;
+  return { accuracy, precision, recall, f1 };
+};
+
+const MODELS_RAW = [
   {
-    name: 'FinBERT', accuracy: 0.936, precision: 0.928, recall: 0.921, f1: 0.924,
-    latency: 42, training_date: '2025-11-15',
+    name: 'FinBERT', latency: 42, training_date: '2025-11-15',
     confusionMatrix: [[412, 18, 5], [22, 387, 14], [8, 11, 423]]
   },
   {
-    name: 'RoBERTa-ESG', accuracy: 0.918, precision: 0.911, recall: 0.903, f1: 0.907,
-    latency: 67, training_date: '2025-10-22',
+    name: 'RoBERTa-ESG', latency: 67, training_date: '2025-10-22',
     confusionMatrix: [[398, 25, 12], [28, 371, 24], [15, 19, 408]]
   },
   {
-    name: 'VADER+Rules', accuracy: 0.814, precision: 0.798, recall: 0.823, f1: 0.810,
-    latency: 4, training_date: '2025-08-01',
+    name: 'VADER+Rules', latency: 4, training_date: '2025-08-01',
     confusionMatrix: [[345, 52, 38], [41, 318, 64], [29, 47, 366]]
   },
   {
-    name: 'TextBlob', accuracy: 0.762, precision: 0.741, recall: 0.755, f1: 0.748,
-    latency: 2, training_date: '2025-07-10',
+    name: 'TextBlob', latency: 2, training_date: '2025-07-10',
     confusionMatrix: [[319, 67, 49], [58, 301, 74], [44, 62, 326]]
   },
   {
-    name: 'Custom LSTM', accuracy: 0.891, precision: 0.884, recall: 0.876, f1: 0.880,
-    latency: 178, training_date: '2025-09-30',
+    name: 'Custom LSTM', latency: 178, training_date: '2025-09-30',
     confusionMatrix: [[378, 34, 23], [31, 362, 30], [18, 27, 397]]
   }
 ];
+
+// accuracy/precision/recall/f1 are DERIVED from confusionMatrix (not hand-entered)
+// so the KPI cards always agree with the matrix shown on the page.
+const MODELS = MODELS_RAW.map(m => ({ ...m, ...computeMetricsFromCM(m.confusionMatrix) }));
 
 const TIER_WEIGHTS = { 1: 1.00, 2: 0.85, 3: 0.65, 4: 0.45, 5: 0.25 };
 

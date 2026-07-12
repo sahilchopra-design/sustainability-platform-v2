@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -7,7 +7,13 @@ import {
   RadialBarChart, RadialBar,
 } from 'recharts';
 
+// Backend E105 ESG Data Quality & Assurance engine (BCBS 239 / PCAF DQS /
+// ESG provider coverage / ISAE 3000-3410 / ISSA 5000 / AA1000AS v3).
+// See backend/services/esg_data_quality_assurance_engine.py +
+// backend/api/v1/routes/esg_data_quality_assurance.py
 const API = 'http://localhost:8001';
+const DQ_API = `${API}/api/v1/esg-data-quality`;
+
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const hashStr = (s) => { let h = 0; for (let i = 0; i < s.length; i++) { h = Math.imul(31, h) + s.charCodeAt(i) | 0; } return Math.abs(h); };
 const seededRandom = (seed) => { let x = Math.sin(seed + 1) * 10000; return x - Math.floor(x); };
@@ -38,9 +44,18 @@ const Sel = ({ label, value, onChange, options }) => (
     </select>
   </div>
 );
-const Section = ({ title, children }) => (
+const Chk = ({ label, checked, onChange }) => (
+  <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, paddingTop: 22 }}>
+    <input type="checkbox" checked={checked} onChange={e => onChange(e.target.checked)} id={label} />
+    <label htmlFor={label} style={{ fontSize: 13, color: '#374151', cursor: 'pointer' }}>{label}</label>
+  </div>
+);
+const Section = ({ title, children, right }) => (
   <div style={{ marginBottom: 24 }}>
-    <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>{title}</div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12, paddingBottom: 8, borderBottom: '2px solid #059669' }}>
+      <div style={{ fontSize: 16, fontWeight: 600, color: '#1b3a5c' }}>{title}</div>
+      {right}
+    </div>
     {children}
   </div>
 );
@@ -52,13 +67,40 @@ const Badge = ({ label, color }) => {
   const c = colors[color] || colors.gray;
   return <span style={{ padding: '3px 10px', borderRadius: 12, fontSize: 12, fontWeight: 700, background: c.bg, color: c.text }}>{label}</span>;
 };
+// Live/Demo status badge — same convention as AIGovernancePage (E77):
+// gray "Connecting…" while loading, green "● Live — computed by <engine>" on
+// success, amber "○ Demo Data — API unavailable" fallback on failure.
+const StatusBadge = ({ status, liveLabel, demoLabel }) => {
+  if (status === 'loading') return <Badge label="Connecting…" color="gray" />;
+  if (status === 'live') return <Badge label={`● Live — ${liveLabel}`} color="green" />;
+  return <Badge label={`○ Demo Data — ${demoLabel}`} color="yellow" />;
+};
 
 const TABS = ['BCBS 239 Scores', 'Provider Coverage', 'DQS Scoring', 'Assurance Readiness', 'Gap Remediation'];
 const PIE_COLORS = ['#059669', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#f97316'];
 
 const SECTORS = ['Banking', 'Insurance', 'Asset Management', 'Energy', 'Industrials', 'Real Estate', 'Technology', 'Agriculture'];
 
-const getBCBSData = (entity, sector, framework) => {
+// Frontend sector labels -> backend ESG_PROVIDER_COVERAGE sector keys (E105).
+const FRONTEND_TO_BACKEND_SECTOR = {
+  Banking: 'Financials', Insurance: 'Financials', 'Asset Management': 'Financials',
+  Energy: 'Energy', Industrials: 'Industrials', 'Real Estate': 'Real_Estate',
+  Technology: 'Information_Technology', Agriculture: 'Materials',
+};
+
+const STANDARD_KEYS = ['ISAE_3000', 'ISAE_3410', 'ISSA_5000', 'AA1000AS_v3'];
+const STANDARD_LABELS = { ISAE_3000: 'ISAE 3000', ISAE_3410: 'ISAE 3410', ISSA_5000: 'ISSA 5000', AA1000AS_v3: 'AA1000AS v3' };
+const parseCostMid = (str) => {
+  if (!str) return 0;
+  const nums = String(str).replace(/,/g, '').match(/\d+/g);
+  if (!nums || !nums.length) return 0;
+  const vals = nums.map(Number);
+  return vals.length > 1 ? Math.round((vals[0] + vals[1]) / 2) : vals[0];
+};
+
+// ── Demo (seeded) generators — only rendered as an explicit fallback when the
+// live E105 engine is unreachable. Clearly badged "Demo Data" in the UI. ──
+const getBCBSDataDemo = (entity, sector, framework) => {
   const base = hashStr(entity + sector + framework);
   const s = (n) => seededRandom(base + n);
   const categories = [
@@ -79,7 +121,7 @@ const getBCBSData = (entity, sector, framework) => {
   return { categories, overall, tier, tierColor, principles };
 };
 
-const getProviderData = (entity, sector) => {
+const getProviderDataDemo = (entity, sector) => {
   const base = hashStr(entity + sector + 'provider');
   const s = (n) => seededRandom(base + n);
   const providers = ['CDP', 'MSCI', 'Bloomberg', 'Refinitiv', 'ISS'];
@@ -98,15 +140,16 @@ const getProviderData = (entity, sector) => {
   return { chartData, gapRows, dataTypes, providers };
 };
 
-const getDQSData = (entity, sector, assurance) => {
+const getDQSDataDemo = (entity, sector, assurance) => {
   const base = hashStr(entity + sector + assurance + 'dqs');
   const s = (n) => seededRandom(base + n);
   const sc1 = parseFloat((s(1) * 1.5 + 1.5).toFixed(1));
   const sc2 = parseFloat((s(2) * 1.5 + 1.5).toFixed(1));
   const sc3 = parseFloat((s(3) * 2 + 2).toFixed(1));
   const weighted = parseFloat(((sc1 * 0.3 + sc2 * 0.3 + sc3 * 0.4)).toFixed(1));
-  const assetClasses = ['Listed Equity', 'Corp Bonds', 'RE', 'Infra', 'Sovereigns', 'Private Equity'];
-  const dqsBar = assetClasses.map((ac, i) => ({ ac, dqs: parseFloat((s(i + 10) * 2 + 1.5).toFixed(1)) }));
+  const dqsBar = [
+    { ac: 'Scope 1', dqs: sc1 }, { ac: 'Scope 2', dqs: sc2 }, { ac: 'Scope 3', dqs: sc3 },
+  ];
   const radialData = [
     { name: 'Scope 1', value: Math.round((5 - sc1) / 4 * 100), fill: '#059669' },
     { name: 'Scope 2', value: Math.round((5 - sc2) / 4 * 100), fill: '#3b82f6' },
@@ -116,7 +159,7 @@ const getDQSData = (entity, sector, assurance) => {
   return { sc1, sc2, sc3, weighted, dqsBar, radialData };
 };
 
-const getAssuranceData = (entity, framework) => {
+const getAssuranceDataDemo = (entity, framework) => {
   const base = hashStr(entity + framework + 'assurance');
   const s = (n) => seededRandom(base + n);
   const standards = ['ISAE3000', 'ISSA5000', 'AA1000AS'];
@@ -127,17 +170,15 @@ const getAssuranceData = (entity, framework) => {
     { req: 'Timeline', vals: ['3–6 months', '4–8 months', '3–5 months'] },
     { req: 'Best for', vals: ['CSRD / SFDR', 'ISSB S1/S2', 'CDP / GRI'] },
   ];
-  const radarData = [
-    { dimension: 'Independence', ISAE3000: Math.round(s(1) * 20 + 65), ISSA5000: Math.round(s(2) * 20 + 70), AA1000AS: Math.round(s(3) * 20 + 60) },
-    { dimension: 'Rigor', ISAE3000: Math.round(s(4) * 20 + 70), ISSA5000: Math.round(s(5) * 20 + 75), AA1000AS: Math.round(s(6) * 20 + 62) },
-    { dimension: 'Coverage', ISAE3000: Math.round(s(7) * 20 + 60), ISSA5000: Math.round(s(8) * 20 + 68), AA1000AS: Math.round(s(9) * 20 + 65) },
-    { dimension: 'Materiality', ISAE3000: Math.round(s(10) * 20 + 65), ISSA5000: Math.round(s(11) * 20 + 72), AA1000AS: Math.round(s(12) * 20 + 60) },
-    { dimension: 'Cost-eff.', ISAE3000: Math.round(s(13) * 20 + 68), ISSA5000: Math.round(s(14) * 20 + 55), AA1000AS: Math.round(s(15) * 20 + 70) },
+  const costChartData = [
+    { standard: 'ISAE3000', limited: Math.round(s(1) * 30000 + 30000), reasonable: Math.round(s(2) * 80000 + 100000) },
+    { standard: 'ISSA5000', limited: Math.round(s(3) * 40000 + 60000), reasonable: Math.round(s(4) * 150000 + 200000) },
+    { standard: 'AA1000AS', limited: Math.round(s(5) * 20000 + 20000), reasonable: Math.round(s(6) * 60000 + 80000) },
   ];
-  return { rows, standards, radarData };
+  return { rows, standards, costChartData };
 };
 
-const getGapData = (entity, sector, reportingYear) => {
+const getGapDataDemo = (entity, sector, reportingYear) => {
   const base = hashStr(entity + sector + reportingYear + 'gap');
   const s = (n) => seededRandom(base + n);
   const pieData = [
@@ -161,43 +202,192 @@ const getGapData = (entity, sector, reportingYear) => {
 
 export default function ESGDataQualityPage() {
   const [tab, setTab] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [entityName, setEntityName] = useState('Acme Corp PLC');
   const [sector, setSector] = useState('Banking');
   const [framework, setFramework] = useState('CSRD');
   const [reportingYear, setReportingYear] = useState('2024');
   const [assuranceLevel, setAssuranceLevel] = useState('limited');
+  const [scope1, setScope1] = useState(true);
+  const [scope2, setScope2] = useState(true);
+  const [scope3, setScope3] = useState(false);
+  const [disclosedCount, setDisclosedCount] = useState(10);
 
-  const bcbs = getBCBSData(entityName, sector, framework);
-  const provider = getProviderData(entityName, sector);
-  const dqs = getDQSData(entityName, sector, assuranceLevel);
-  const assurance = getAssuranceData(entityName, framework);
-  const gap = getGapData(entityName, sector, reportingYear);
+  // --- Live backend wiring (E105 ESG Data Quality & Assurance Engine) ------
+  const [liveResult, setLiveResult] = useState(null);
+  const [liveStatus, setLiveStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
 
-  const runAssess = async () => {
-    setLoading(true); setError('');
+  const buildDisclosedFields = useCallback(() => {
+    const arr = [];
+    if (scope1) arr.push('ghg_scope1');
+    if (scope2) arr.push('ghg_scope2');
+    if (scope3) arr.push('ghg_scope3');
+    for (let i = 0; i < disclosedCount; i++) arr.push(`esg_indicator_${i}`);
+    return arr;
+  }, [scope1, scope2, scope3, disclosedCount]);
+
+  const runAssess = useCallback(async (signal) => {
+    setLiveStatus('loading');
     try {
-      await axios.post(`${API}/api/v1/esg-data-quality/assess`, {
-        entity_name: entityName, sector, framework, reporting_year: parseInt(reportingYear), assurance_level: assuranceLevel,
-      });
-    } catch {
-      void 0 /* API fallback to seed data */;
-    } finally { setLoading(false); }
-  };
+      const { data } = await axios.post(`${DQ_API}/assess`, {
+        entity_id: entityName || 'ENTITY-001',
+        framework,
+        reporting_year: parseInt(reportingYear, 10),
+        disclosed_fields: buildDisclosedFields(),
+        assurance_level: assuranceLevel,
+      }, { timeout: 10000, signal });
+      setLiveResult(data);
+      setLiveStatus('live');
+    } catch (e) {
+      if (axios.isCancel && axios.isCancel(e)) return;
+      setLiveStatus('demo');
+    }
+  }, [entityName, framework, reportingYear, assuranceLevel, buildDisclosedFields]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const t = setTimeout(() => runAssess(controller.signal), 350);
+    return () => { clearTimeout(t); controller.abort(); };
+  }, [runAssess]);
+
+  // --- Live: ESG provider coverage reference (GET /ref/provider-coverage) --
+  const [providerLive, setProviderLive] = useState(null);
+  const [providerStatus, setProviderStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setProviderStatus('loading');
+    axios.get(`${DQ_API}/ref/provider-coverage`, { timeout: 10000 })
+      .then(({ data }) => {
+        if (cancelled) return;
+        if (data && data.coverage_data) { setProviderLive(data); setProviderStatus('live'); }
+        else setProviderStatus('demo');
+      })
+      .catch(() => { if (!cancelled) setProviderStatus('demo'); });
+    return () => { cancelled = true; };
+  }, []);
+
+  // --- Live: assurance standards comparison (GET /ref/assurance-standards) -
+  const [assuranceLive, setAssuranceLive] = useState(null);
+  const [assuranceStatus, setAssuranceStatus] = useState('loading');
+  useEffect(() => {
+    let cancelled = false;
+    setAssuranceStatus('loading');
+    axios.get(`${DQ_API}/ref/assurance-standards`, { timeout: 10000 })
+      .then(({ data }) => { if (!cancelled && data && data.standards) { setAssuranceLive(data); setAssuranceStatus('live'); } else if (!cancelled) setAssuranceStatus('demo'); })
+      .catch(() => { if (!cancelled) setAssuranceStatus('demo'); });
+    return () => { cancelled = true; };
+  }, []);
+
+  // ── Section 1: BCBS 239 (live from /assess, demo fallback) ──────────────
+  const bcbsDemo = getBCBSDataDemo(entityName, sector, framework);
+  const bcbs = (liveStatus === 'live' && liveResult) ? (() => {
+    const categories = Object.entries(liveResult.bcbs239_category_scores).map(([dimension, score]) => ({ dimension, score: Math.round(score / 5 * 100), raw: score }));
+    const overall = Math.round(liveResult.bcbs239_overall_score / 5 * 100);
+    const rawOverall = liveResult.bcbs239_overall_score;
+    const tier = rawOverall >= 4.5 ? 'Optimising' : rawOverall >= 3.5 ? 'Quantitatively Managed' : rawOverall >= 2.5 ? 'Defined' : rawOverall >= 1.5 ? 'Managed' : 'Initial';
+    const tierColor = rawOverall >= 4.5 ? 'purple' : rawOverall >= 3.5 ? 'green' : rawOverall >= 2.5 ? 'yellow' : rawOverall >= 1.5 ? 'orange' : 'red';
+    const principles = liveResult.bcbs239_principle_detail.map(p => ({ principle: p.principle_id, name: p.name, score: Math.round(p.maturity_score / 5 * 100), maturityLevel: p.maturity_level }));
+    return { categories, overall, tier, tierColor, principles, rawOverall, gapVsExpectation: liveResult.bcbs239_gap_vs_expectation, expectedMaturity: liveResult.framework_expected_maturity };
+  })() : bcbsDemo;
+
+  // ── Section 2: Provider Coverage (live ref data, demo fallback) ─────────
+  const providerDemo = getProviderDataDemo(entityName, sector);
+  const backendSector = FRONTEND_TO_BACKEND_SECTOR[sector] || 'Industrials';
+  const provider = (providerStatus === 'live' && providerLive && providerLive.coverage_data[backendSector]) ? (() => {
+    const cov = providerLive.coverage_data[backendSector];
+    const providers = providerLive.providers; // ['CDP','MSCI','Bloomberg','Refinitiv','ISS']
+    const dataTypes = providerLive.data_types;  // ['GHG','water','waste','diversity','board','remuneration','controversy']
+    const chartData = providers.map(prov => {
+      const row = { provider: prov };
+      dataTypes.forEach(dt => { row[dt] = Math.round((cov[dt]?.[prov] || 0) * 100); });
+      return row;
+    });
+    const gapRows = providers.map(prov => {
+      const scores = dataTypes.map(dt => Math.round((cov[dt]?.[prov] || 0) * 100));
+      const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      const gaps = scores.filter(sc => sc < 60).length;
+      return { provider: prov, avgScore, gaps, topGap: dataTypes[scores.indexOf(Math.min(...scores))] };
+    });
+    return { chartData, gapRows, dataTypes, providers };
+  })() : providerDemo;
+
+  // ── Section 3: DQS Scoring (live from /assess, demo fallback) ───────────
+  const dqsDemo = getDQSDataDemo(entityName, sector, assuranceLevel);
+  const dqs = (liveStatus === 'live' && liveResult) ? (() => {
+    const { scope1: sc1, scope2: sc2, scope3: sc3 } = liveResult.pcaf_dqs_by_scope;
+    const weighted = liveResult.pcaf_weighted_dqs;
+    const dqsBar = [{ ac: 'Scope 1', dqs: sc1 }, { ac: 'Scope 2', dqs: sc2 }, { ac: 'Scope 3', dqs: sc3 }];
+    const radialData = [
+      { name: 'Scope 1', value: Math.round((5 - sc1) / 4 * 100), fill: '#059669' },
+      { name: 'Scope 2', value: Math.round((5 - sc2) / 4 * 100), fill: '#3b82f6' },
+      { name: 'Scope 3', value: Math.round((5 - sc3) / 4 * 100), fill: '#f59e0b' },
+      { name: 'Overall', value: Math.round((5 - weighted) / 4 * 100), fill: '#8b5cf6' },
+    ];
+    return { sc1, sc2, sc3, weighted, dqsBar, radialData, tier: liveResult.overall_quality_tier };
+  })() : dqsDemo;
+
+  // ── Section 4: Assurance Readiness (live ref data, demo fallback) ───────
+  const assuranceDemo = getAssuranceDataDemo(entityName, framework);
+  const assurance = (assuranceStatus === 'live' && assuranceLive) ? (() => {
+    const cm = assuranceLive.comparison_matrix;
+    const costs = assuranceLive.cost_comparison_usd;
+    const labels = STANDARD_KEYS.map(k => STANDARD_LABELS[k]);
+    const rows = [
+      { req: 'Issuer', vals: STANDARD_KEYS.map(k => cm[k]?.issuer || '—') },
+      { req: 'Scope', vals: STANDARD_KEYS.map(k => cm[k]?.scope || '—') },
+      { req: 'Mandatory for', vals: STANDARD_KEYS.map(k => cm[k]?.mandatory_for || '—') },
+      { req: 'Cost — Limited (USD)', vals: STANDARD_KEYS.map(k => costs[`${k}_limited`] || costs[`${k}_type1`] || 'n/a') },
+      { req: 'Cost — Reasonable (USD)', vals: STANDARD_KEYS.map(k => costs[`${k}_reasonable`] || costs[`${k}_type2`] || 'n/a') },
+    ];
+    const costChartData = STANDARD_KEYS.map(k => ({
+      standard: STANDARD_LABELS[k],
+      limited: parseCostMid(costs[`${k}_limited`] || costs[`${k}_type1`]),
+      reasonable: parseCostMid(costs[`${k}_reasonable`] || costs[`${k}_type2`]),
+    }));
+    return { rows, standards: labels, costChartData, csrdPhasing: assuranceLive.csrd_phasing };
+  })() : assuranceDemo;
+
+  // ── Section 5: Gap Remediation (live from /assess, demo fallback) ───────
+  const gapDemo = getGapDataDemo(entityName, sector, reportingYear);
+  const gap = (liveStatus === 'live' && liveResult) ? (() => {
+    const riskCounts = {};
+    liveResult.gap_analysis.forEach(g => { riskCounts[g.gap_risk] = (riskCounts[g.gap_risk] || 0) + 1; });
+    const pieData = Object.entries(riskCounts).map(([name, value]) => ({ name: name.replace(/_/g, ' '), value }));
+    const priorityLabel = (p) => (p === 'P0' || p === 'P1') ? 'High' : p === 'P2' ? 'Medium' : 'Low';
+    const gaps = liveResult.gap_analysis.map(g => {
+      const rem = liveResult.remediation_plan.find(r => r.field === g.field);
+      return {
+        gap: g.field.replace(/_/g, ' '),
+        impact: Math.round(g.materiality_weight * 100),
+        effort: rem ? Math.min(100, Math.round(rem.timeline_weeks * 3)) : (g.remediation_priority === 'P0' ? 90 : g.remediation_priority === 'P1' ? 70 : 50),
+        priority: priorityLabel(g.remediation_priority),
+        notes: g.notes,
+      };
+    }).sort((a, b) => b.impact - a.impact);
+    const barData = gaps.map(g => ({ gap: g.gap.split(' ').slice(0, 3).join(' '), impact: g.impact }));
+    return { pieData, gaps, barData };
+  })() : gapDemo;
 
   const inputPanel = (
-    <Section title="ESG Data Quality Inputs">
+    <Section title="ESG Data Quality Inputs" right={<StatusBadge status={liveStatus} liveLabel="scored by /api/v1/esg-data-quality/assess (BCBS 239 + PCAF DQS)" demoLabel="ESG Data Quality API unavailable, showing seeded illustrative figures" />}>
       <Row>
-        <Inp label="Entity Name" value={entityName} onChange={setEntityName} />
+        <Inp label="Entity ID / Name" value={entityName} onChange={setEntityName} />
         <Sel label="Sector" value={sector} onChange={setSector} options={SECTORS.map(s => ({ value: s, label: s }))} />
-        <Sel label="Framework" value={framework} onChange={setFramework} options={['CSRD', 'IFRS_S1', 'SEC', 'TCFD', 'CDP', 'GRI'].map(f => ({ value: f, label: f }))} />
+        <Sel label="Framework" value={framework} onChange={setFramework} options={['CSRD', 'ISSB', 'TCFD', 'SFDR', 'GRI', 'CDP', 'EU_TAX', 'PCAF'].map(f => ({ value: f, label: f }))} />
         <Sel label="Reporting Year" value={reportingYear} onChange={setReportingYear} options={['2023', '2024', '2025'].map(y => ({ value: y, label: y }))} />
         <Sel label="Assurance Level" value={assuranceLevel} onChange={setAssuranceLevel} options={[
           { value: 'none', label: 'None' }, { value: 'limited', label: 'Limited' }, { value: 'reasonable', label: 'Reasonable' },
         ]} />
       </Row>
-      <Btn onClick={runAssess}>{loading ? 'Assessing…' : 'Run ESG Data Quality Assessment'}</Btn>
+      <Row gap={12}>
+        <Chk label="Scope 1 disclosed" checked={scope1} onChange={setScope1} />
+        <Chk label="Scope 2 disclosed" checked={scope2} onChange={setScope2} />
+        <Chk label="Scope 3 disclosed" checked={scope3} onChange={setScope3} />
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 4 }}>Other Disclosed Indicators: {disclosedCount}</div>
+          <input type="range" min={0} max={30} value={disclosedCount} onChange={e => setDisclosedCount(parseInt(e.target.value, 10))} style={{ width: '100%' }} />
+        </div>
+      </Row>
+      <Btn onClick={() => runAssess()}>{liveStatus === 'loading' ? 'Assessing…' : 'Re-run Assessment'}</Btn>
     </Section>
   );
 
@@ -214,16 +404,14 @@ export default function ESGDataQualityPage() {
         ))}
       </div>
 
-      {error && <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 6, padding: '8px 12px', marginBottom: 12, color: '#166534', fontSize: 12, fontSize: 14 }}>{error}</div>}
-
       {/* TAB 1 — BCBS 239 Scores */}
       {tab === 0 && (
         <div>
           {inputPanel}
           <Section title="BCBS 239 Summary">
             <Row gap={12}>
-              <KpiCard label="Overall BCBS 239 Score" value={`${bcbs.overall}/100`} sub="14-principle weighted composite" accent />
-              <KpiCard label="Overall Tier" value={<Badge label={bcbs.tier} color={bcbs.tierColor} />} sub="Platinum / Gold / Silver / Bronze" />
+              <KpiCard label="Overall BCBS 239 Score" value={`${bcbs.overall}/100`} sub={liveStatus === 'live' ? `Maturity ${bcbs.rawOverall.toFixed(1)}/5 · 14-principle weighted composite` : '14-principle weighted composite'} accent />
+              <KpiCard label="Overall Tier" value={<Badge label={bcbs.tier} color={bcbs.tierColor} />} sub={liveStatus === 'live' ? 'CMMI-style maturity level' : 'Platinum / Gold / Silver / Bronze'} />
               <KpiCard label="Principles Above 70" value={`${bcbs.principles.filter(p => p.score >= 70).length} / 14`} sub="Compliant threshold" />
               <KpiCard label="Lowest Category" value={[...bcbs.categories].sort((a, b) => a.score - b.score)[0].dimension} sub={`Score: ${[...bcbs.categories].sort((a, b) => a.score - b.score)[0].score}/100`} />
             </Row>
@@ -261,7 +449,7 @@ export default function ESGDataQualityPage() {
       {tab === 1 && (
         <div>
           {inputPanel}
-          <Section title="Provider × Data Type Coverage Scores (%)">
+          <Section title="Provider × Data Type Coverage Scores (%)" right={<StatusBadge status={providerStatus} liveLabel={`GET /ref/provider-coverage (${backendSector})`} demoLabel="Provider Coverage API unavailable" />}>
             <ResponsiveContainer width="100%" height={320}>
               <BarChart data={provider.chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -308,11 +496,11 @@ export default function ESGDataQualityPage() {
               <KpiCard label="Scope 1 DQS" value={dqs.sc1} sub="Direct emissions data quality" accent />
               <KpiCard label="Scope 2 DQS" value={dqs.sc2} sub="Location & market-based" />
               <KpiCard label="Scope 3 DQS" value={dqs.sc3} sub="Value chain — 15 categories" />
-              <KpiCard label="Weighted DQS" value={dqs.weighted} sub="Blended portfolio-level score" />
+              <KpiCard label="Weighted DQS" value={dqs.weighted} sub={liveStatus === 'live' ? `Quality tier: ${dqs.tier}` : 'Blended portfolio-level score'} />
             </Row>
           </Section>
           <Row>
-            <Section title="DQS by Asset Class">
+            <Section title={liveStatus === 'live' ? 'DQS by GHG Scope' : 'DQS by Asset Class'}>
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={dqs.dqsBar}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -342,7 +530,7 @@ export default function ESGDataQualityPage() {
       {tab === 3 && (
         <div>
           {inputPanel}
-          <Section title="Assurance Standard Comparison">
+          <Section title="Assurance Standard Comparison" right={<StatusBadge status={assuranceStatus} liveLabel="GET /ref/assurance-standards (ISAE 3000/3410, ISSA 5000, AA1000AS v3)" demoLabel="Assurance Standards API unavailable" />}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: '#f9fafb' }}>
@@ -356,24 +544,23 @@ export default function ESGDataQualityPage() {
                 {assurance.rows.map((r, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid #f3f4f6', background: i % 2 === 0 ? 'white' : '#f9fafb' }}>
                     <td style={{ padding: '8px 12px', fontWeight: 600, color: '#374151' }}>{r.req}</td>
-                    {r.vals.map((v, vi) => <td key={vi} style={{ padding: '8px 12px', color: '#6b7280' }}>{v}</td>)}
+                    {r.vals.map((v, vi) => <td key={vi} style={{ padding: '8px 12px', color: '#6b7280' }}>{typeof v === 'number' ? `$${v.toLocaleString()}` : v}</td>)}
                   </tr>
                 ))}
               </tbody>
             </table>
           </Section>
-          <Section title="Assurance Criteria Radar (5 dimensions × 3 standards)">
+          <Section title="Assurance Cost Comparison (USD, midpoint of typical range)">
             <ResponsiveContainer width="100%" height={300}>
-              <RadarChart data={assurance.radarData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 12 }} />
-                <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 9 }} />
-                <Radar name="ISAE3000" dataKey="ISAE3000" stroke="#059669" fill="#059669" fillOpacity={0.2} />
-                <Radar name="ISSA5000" dataKey="ISSA5000" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} />
-                <Radar name="AA1000AS" dataKey="AA1000AS" stroke="#f59e0b" fill="#f59e0b" fillOpacity={0.2} />
-                <Tooltip formatter={(val) => `${val}/100`} />
+              <BarChart data={assurance.costChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="standard" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 10 }} />
+                <Tooltip formatter={(val) => `$${Number(val).toLocaleString()}`} />
                 <Legend />
-              </RadarChart>
+                <Bar dataKey="limited" name="Limited Assurance" fill="#059669" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="reasonable" name="Reasonable Assurance" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </Section>
         </div>
@@ -384,19 +571,19 @@ export default function ESGDataQualityPage() {
         <div>
           {inputPanel}
           <Row>
-            <Section title="Gap Type Distribution">
+            <Section title={liveStatus === 'live' ? 'Gap Risk Distribution' : 'Gap Type Distribution'}>
               <ResponsiveContainer width="100%" height={280}>
                 <PieChart>
                   <Pie data={gap.pieData} cx="50%" cy="50%" outerRadius={100} dataKey="value" nameKey="name"
                     label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}>
                     {gap.pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                   </Pie>
-                  <Tooltip formatter={(val) => `${val} data points`} />
+                  <Tooltip formatter={(val) => `${val} ${liveStatus === 'live' ? 'fields' : 'data points'}`} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </Section>
-            <Section title="Top 10 Gaps by Impact Score">
+            <Section title="Top Gaps by Impact Score">
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={gap.barData} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />

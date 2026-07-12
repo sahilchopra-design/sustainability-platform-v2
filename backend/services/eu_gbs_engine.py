@@ -194,6 +194,21 @@ _W_REPORTING = 0.10
 _TAXONOMY_THRESHOLD_STANDARD = 100.0
 _TAXONOMY_THRESHOLD_SOVEREIGN = 80.0  # Art 21 sovereign flexibility
 
+# Art 5 Regulation (EU) 2023/2631 — "Flexibility pocket". Up to 15% of the
+# proceeds of a European Green Bond may be allocated to economic activities
+# that comply with the EU Taxonomy's substantive requirements (DNSH, Art
+# 3(b); minimum safeguards, Art 3(c)-(d)) but for which technical screening
+# criteria have not yet been adopted under Regulation (EU) 2020/852 (or to
+# certain other pocket-eligible categories, e.g. international climate
+# finance under the UNFCCC). The remaining proceeds (>= threshold - 15%)
+# must be allocated to fully taxonomy-aligned (TSC-compliant) activities.
+# The pocket does NOT lower the overall alignment threshold to 85% flat --
+# it only relaxes the TSC requirement for at most 15 percentage points of
+# proceeds; the bond must still reach the applicable threshold (100% for
+# standard issuers, 80% for sovereigns under the separate Art 21
+# derogation) once core + pocket allocations are combined.
+_FLEXIBILITY_POCKET_MAX_PCT = 15.0
+
 
 # ---------------------------------------------------------------------------
 # Dataclasses
@@ -207,6 +222,15 @@ class IssuanceInput:
     principal_amount: float
     currency: str = "EUR"
     taxonomy_alignment_pct: float = 0.0
+    # Art 5 flexibility pocket: % of proceeds allocated to activities that
+    # meet the Taxonomy's DNSH/minimum-safeguards requirements but lack
+    # finalized technical screening criteria. Capped at
+    # _FLEXIBILITY_POCKET_MAX_PCT (15%) when scored.
+    flexibility_pocket_pct: float = 0.0
+    # Confirms the Art 5(1) pocket conditions are met for the activities
+    # counted above (no finalized TSC, DNSH + minimum safeguards still
+    # satisfied). If False, the pocket allocation is not credited.
+    flexibility_pocket_conditions_met: bool = False
     dnsh_confirmed: bool = False
     min_safeguards_confirmed: bool = False
     environmental_objectives: List[str] = field(default_factory=list)
@@ -226,6 +250,10 @@ class AllocationReportInput:
     allocation_by_objective: Dict[str, float]
     unallocated_pct: float
     geographic_breakdown: Dict[str, float]
+    # Art 5 flexibility pocket (see IssuanceInput) — actual post-issuance
+    # allocation to TSC-gap activities, capped at 15% when scored.
+    flexibility_pocket_pct: float = 0.0
+    flexibility_pocket_conditions_met: bool = False
 
 
 @dataclass
@@ -249,6 +277,9 @@ class EUGBSResult:
     warnings: List[str]
     gbfs_completeness_pct: float
     taxonomy_alignment_pct: float
+    flexibility_pocket_pct_credited: float
+    effective_taxonomy_alignment_pct: float
+    taxonomy_threshold_pct: float
     dnsh_status: str
     er_status: str
     standards_comparison: Dict[str, Any]
@@ -269,6 +300,9 @@ class EUGBSResult:
             "warnings": self.warnings,
             "gbfs_completeness_pct": round(self.gbfs_completeness_pct, 2),
             "taxonomy_alignment_pct": self.taxonomy_alignment_pct,
+            "flexibility_pocket_pct_credited": round(self.flexibility_pocket_pct_credited, 2),
+            "effective_taxonomy_alignment_pct": round(self.effective_taxonomy_alignment_pct, 2),
+            "taxonomy_threshold_pct": self.taxonomy_threshold_pct,
             "dnsh_status": self.dnsh_status,
             "er_status": self.er_status,
             "standards_comparison": self.standards_comparison,
@@ -305,15 +339,19 @@ class EUGBSEngine:
             else _TAXONOMY_THRESHOLD_STANDARD
         )
 
-        # --- Taxonomy alignment check ---
-        if inp.taxonomy_alignment_pct < tax_threshold:
-            blocking_gaps.append(
-                f"Taxonomy alignment ({inp.taxonomy_alignment_pct:.1f}%) is below "
-                f"required {tax_threshold:.0f}% per "
-                f"{'Art 21 (sovereign)' if inp.is_sovereign else 'Art 3'} "
-                f"Regulation 2023/2631."
-            )
-        tax_score = min(inp.taxonomy_alignment_pct / tax_threshold, 1.0) * 100.0
+        # --- Taxonomy alignment check (Art 3/4, with Art 5 flexibility pocket) ---
+        alignment = self._assess_taxonomy_alignment(
+            core_pct=inp.taxonomy_alignment_pct,
+            pocket_pct=inp.flexibility_pocket_pct,
+            pocket_conditions_met=inp.flexibility_pocket_conditions_met,
+            threshold_pct=tax_threshold,
+            is_sovereign=inp.is_sovereign,
+        )
+        blocking_gaps.extend(alignment["gaps"])
+        warnings.extend(alignment["warnings"])
+        pocket_pct_credited = alignment["pocket_pct_credited"]
+        effective_alignment_pct = alignment["effective_pct"]
+        tax_score = min(effective_alignment_pct / tax_threshold, 1.0) * 100.0
 
         # --- DNSH check ---
         if not inp.dnsh_confirmed:
@@ -393,6 +431,9 @@ class EUGBSEngine:
             warnings=warnings,
             gbfs_completeness_pct=gbfs_completeness_pct,
             taxonomy_alignment_pct=inp.taxonomy_alignment_pct,
+            flexibility_pocket_pct_credited=pocket_pct_credited,
+            effective_taxonomy_alignment_pct=effective_alignment_pct,
+            taxonomy_threshold_pct=tax_threshold,
             dnsh_status=dnsh_status,
             er_status=er_status,
             standards_comparison=STANDARDS_COMPARISON,
@@ -422,6 +463,9 @@ class EUGBSEngine:
             "section_2_use_of_proceeds": {
                 "taxonomy_activity_categories": inp.environmental_objectives,
                 "taxonomy_alignment_pct_committed": inp.taxonomy_alignment_pct,
+                # Art 5 Regulation 2023/2631 flexibility pocket disclosure
+                "flexibility_pocket_pct_committed": inp.flexibility_pocket_pct,
+                "flexibility_pocket_conditions_met": inp.flexibility_pocket_conditions_met,
                 "dnsh_confirmation": inp.dnsh_confirmed,
                 "minimum_safeguards_confirmation": inp.min_safeguards_confirmed,
                 "estimated_environmental_objectives": inp.environmental_objectives,
@@ -474,12 +518,22 @@ class EUGBSEngine:
                 f"Regulation 2023/2631."
             )
 
-        if inp.taxonomy_aligned_pct < 100.0:
-            gaps.append(
-                f"Taxonomy-aligned allocation ({inp.taxonomy_aligned_pct:.1f}%) "
-                f"is below 100% — all allocated proceeds must be taxonomy-aligned "
-                f"per Art 3 Regulation 2023/2631."
-            )
+        # Taxonomy-aligned allocation check, honouring the Art 5 flexibility
+        # pocket (see IssuanceInput / _assess_taxonomy_alignment for the
+        # full rationale): up to 15% of allocated proceeds may lack
+        # finalized technical screening criteria and still count toward
+        # the 100% allocation threshold, provided Art 5(1) conditions hold.
+        alignment = self._assess_taxonomy_alignment(
+            core_pct=inp.taxonomy_aligned_pct,
+            pocket_pct=inp.flexibility_pocket_pct,
+            pocket_conditions_met=inp.flexibility_pocket_conditions_met,
+            threshold_pct=_TAXONOMY_THRESHOLD_STANDARD,
+            is_sovereign=False,
+        )
+        gaps.extend(alignment["gaps"])
+        warnings.extend(alignment["warnings"])
+        pocket_pct_credited = alignment["pocket_pct_credited"]
+        effective_taxonomy_aligned_pct = alignment["effective_pct"]
 
         if inp.unallocated_pct > 5.0:
             warnings.append(
@@ -503,6 +557,8 @@ class EUGBSEngine:
             "compliant": compliant,
             "total_allocated_pct": inp.total_allocated_pct,
             "taxonomy_aligned_pct": inp.taxonomy_aligned_pct,
+            "flexibility_pocket_pct_credited": round(pocket_pct_credited, 2),
+            "effective_taxonomy_aligned_pct": round(effective_taxonomy_aligned_pct, 2),
             "unallocated_pct": inp.unallocated_pct,
             "allocation_by_objective": inp.allocation_by_objective,
             "geographic_breakdown": inp.geographic_breakdown,
@@ -607,6 +663,91 @@ class EUGBSEngine:
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _assess_taxonomy_alignment(
+        core_pct: float,
+        pocket_pct: float,
+        pocket_conditions_met: bool,
+        threshold_pct: float,
+        is_sovereign: bool,
+    ) -> Dict[str, Any]:
+        """
+        Evaluate proceeds allocation against the applicable EU GBS taxonomy
+        alignment threshold, honouring the Art 5 Regulation (EU) 2023/2631
+        "flexibility pocket".
+
+        Art 5 allows up to 15 percentage points (_FLEXIBILITY_POCKET_MAX_PCT)
+        of proceeds to be allocated to activities that meet the Taxonomy's
+        DNSH and minimum-safeguards requirements but lack finalized
+        technical screening criteria (TSC). This does NOT drop the overall
+        threshold to a flat 85% -- the bond must still reach
+        `threshold_pct` (100% standard / 80% sovereign under Art 21) once
+        the TSC-compliant core allocation and the (capped, condition-gated)
+        pocket allocation are combined. Consequently the core allocation
+        alone must be at least `threshold_pct - 15`.
+
+        Returns a dict with:
+          effective_pct         -- core + credited pocket (used for scoring)
+          pocket_pct_credited   -- pocket amount actually counted (0 if
+                                    conditions unmet, capped at 15%)
+          core_min_pct          -- minimum required core (TSC-compliant) pct
+          gaps                  -- blocking compliance gaps
+          warnings              -- non-blocking warnings
+        """
+        gaps: List[str] = []
+        warnings: List[str] = []
+
+        pocket_requested = max(0.0, pocket_pct)
+        pocket_capped = min(pocket_requested, _FLEXIBILITY_POCKET_MAX_PCT)
+
+        if pocket_requested > _FLEXIBILITY_POCKET_MAX_PCT:
+            warnings.append(
+                f"Flexibility pocket allocation ({pocket_requested:.1f}%) exceeds the "
+                f"{_FLEXIBILITY_POCKET_MAX_PCT:.0f}% cap under Art 5 Regulation "
+                f"2023/2631 — only {_FLEXIBILITY_POCKET_MAX_PCT:.0f}% is credited "
+                f"toward the taxonomy alignment threshold."
+            )
+
+        if pocket_requested > 0 and not pocket_conditions_met:
+            warnings.append(
+                f"Flexibility pocket allocation of {pocket_requested:.1f}% claimed but "
+                f"Art 5(1) conditions (activities lack finalized technical screening "
+                f"criteria; DNSH and minimum safeguards still confirmed) are not "
+                f"marked as met — pocket contribution excluded from alignment scoring."
+            )
+            pocket_credited = 0.0
+        else:
+            pocket_credited = pocket_capped
+
+        core_min_pct = max(threshold_pct - _FLEXIBILITY_POCKET_MAX_PCT, 0.0)
+        effective_pct = core_pct + pocket_credited
+
+        if core_pct < core_min_pct:
+            gaps.append(
+                f"Core taxonomy-aligned, technical-screening-criteria-compliant proceeds "
+                f"({core_pct:.1f}%) is below the required {core_min_pct:.0f}% minimum — "
+                f"the Art 5 flexibility pocket may cover at most "
+                f"{_FLEXIBILITY_POCKET_MAX_PCT:.0f}% of proceeds, so the TSC-compliant "
+                f"core alone must reach {threshold_pct:.0f}% - "
+                f"{_FLEXIBILITY_POCKET_MAX_PCT:.0f}% = {core_min_pct:.0f}%."
+            )
+        elif effective_pct < threshold_pct:
+            gaps.append(
+                f"Total taxonomy-consistent allocation ({effective_pct:.1f}% = "
+                f"{core_pct:.1f}% TSC-compliant core + {pocket_credited:.1f}% Art 5 "
+                f"flexibility pocket) is below the required {threshold_pct:.0f}% per "
+                f"{'Art 21 (sovereign)' if is_sovereign else 'Art 3/4'} + Art 5 "
+                f"(flexibility pocket) Regulation 2023/2631."
+            )
+
+        return {
+            "effective_pct": effective_pct,
+            "pocket_pct_credited": pocket_credited,
+            "core_min_pct": core_min_pct,
+            "gaps": gaps,
+            "warnings": warnings,
+        }
+
+    @staticmethod
     def _estimate_gbfs_completeness(inp: IssuanceInput) -> float:
         """
         Proxy GBFS completeness based on available issuance input fields.
@@ -667,13 +808,19 @@ class EUGBSEngine:
                 "Confirm minimum safeguards compliance per EU Taxonomy Art 18 "
                 "(OECD Guidelines, UNGP) and document in GBFS."
             )
-        if inp.taxonomy_alignment_pct < (
-            _TAXONOMY_THRESHOLD_SOVEREIGN if inp.is_sovereign else _TAXONOMY_THRESHOLD_STANDARD
-        ):
+        threshold = _TAXONOMY_THRESHOLD_SOVEREIGN if inp.is_sovereign else _TAXONOMY_THRESHOLD_STANDARD
+        pocket_credited = (
+            min(max(0.0, inp.flexibility_pocket_pct), _FLEXIBILITY_POCKET_MAX_PCT)
+            if inp.flexibility_pocket_conditions_met else 0.0
+        )
+        if (inp.taxonomy_alignment_pct + pocket_credited) < threshold:
+            core_min = max(threshold - _FLEXIBILITY_POCKET_MAX_PCT, 0.0)
             actions.append(
-                f"Increase taxonomy-aligned use of proceeds to meet the "
-                f"{'80%' if inp.is_sovereign else '100%'} threshold required "
-                f"under Regulation 2023/2631."
+                f"Increase taxonomy-aligned use of proceeds to meet the {threshold:.0f}% "
+                f"threshold required under Regulation 2023/2631 — at least {core_min:.0f}% "
+                f"must be fully TSC-compliant (Art 3/4); the remaining up to "
+                f"{_FLEXIBILITY_POCKET_MAX_PCT:.0f}% may use the Art 5 flexibility pocket "
+                f"for activities lacking finalized technical screening criteria."
             )
         if not inp.environmental_objectives:
             actions.append(

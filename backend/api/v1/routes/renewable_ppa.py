@@ -43,6 +43,11 @@ class WindYieldRequest(BaseModel):
     num_turbines: int = Field(10, ge=1, le=500)
     wake_loss_pct: float = Field(8.0, ge=0, le=30)
     availability_pct: float = Field(97.0, ge=50, le=100)
+    # OPTIONAL: if both are supplied, real NASA POWER wind-speed data for this
+    # exact location is used instead of the region's Weibull table (falls
+    # back to the region table if NASA POWER is unreachable/has no data).
+    lat: Optional[float] = Field(None, ge=-90, le=90)
+    lon: Optional[float] = Field(None, ge=-180, le=180)
 
 
 class SolarYieldRequest(BaseModel):
@@ -50,6 +55,11 @@ class SolarYieldRequest(BaseModel):
     capacity_kwp: float = Field(1000, ge=1)
     performance_ratio: float = Field(0.0, ge=0, le=1)
     degradation_pct_yr: float = Field(0.0, ge=0, le=5)
+    # OPTIONAL: if both are supplied, real NASA POWER GHI data for this exact
+    # location is used instead of the country-level GHI table (falls back to
+    # the country table if NASA POWER is unreachable/has no data).
+    lat: Optional[float] = Field(None, ge=-90, le=90)
+    lon: Optional[float] = Field(None, ge=-180, le=180)
 
 
 class LCOERequest(BaseModel):
@@ -118,6 +128,7 @@ def _serialise_wind(r) -> dict:
         "equivalent_full_load_hours": r.equivalent_full_load_hours,
         "wake_loss_pct": r.wake_loss_pct,
         "availability_pct": r.availability_pct,
+        "resource_source": r.resource_source,
     }
 
 
@@ -135,6 +146,7 @@ def _serialise_solar(r) -> dict:
         "p50_lifetime_avg_mwh": r.p50_lifetime_avg_mwh,
         "capacity_factor_pct": r.capacity_factor_pct,
         "specific_yield_kwh_kwp": r.specific_yield_kwh_kwp,
+        "resource_source": r.resource_source,
     }
 
 
@@ -208,6 +220,8 @@ def wind_yield(req: WindYieldRequest):
         num_turbines=req.num_turbines,
         wake_loss_pct=req.wake_loss_pct,
         availability_pct=req.availability_pct,
+        lat=req.lat,
+        lon=req.lon,
     )
     return _serialise_wind(res)
 
@@ -219,6 +233,8 @@ def solar_yield(req: SolarYieldRequest):
         capacity_kwp=req.capacity_kwp,
         performance_ratio=req.performance_ratio,
         degradation_pct_yr=req.degradation_pct_yr,
+        lat=req.lat,
+        lon=req.lon,
     )
     return _serialise_solar(res)
 

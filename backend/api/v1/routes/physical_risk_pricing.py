@@ -2,6 +2,7 @@
 API Routes: Physical Climate Risk Pricing Engine — E104
 ========================================================
 POST /api/v1/physical-risk-pricing/price              — Full physical risk assessment
+POST /api/v1/physical-risk-pricing/price-with-geo     — Country-level pricing + point-level PostGIS hazard-grid overlay
 POST /api/v1/physical-risk-pricing/return-period-losses — NatCat loss table by peril × RP
 POST /api/v1/physical-risk-pricing/stranding          — Stranding probability (NGFS scenario)
 GET  /api/v1/physical-risk-pricing/ref/country-profiles  — 30 country baseline risk profiles
@@ -14,9 +15,11 @@ from __future__ import annotations
 
 from typing import Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from db.base import get_db
 from services.physical_risk_pricing_engine import (
     price_physical_risk,
     calculate_return_period_losses,
@@ -30,6 +33,10 @@ from services.physical_risk_pricing_engine import (
     VALID_ASSET_CLASSES,
     VALID_SCENARIOS,
     VALID_HORIZONS,
+)
+from services.global_physical_risk_engine import (
+    get_point_hazard_profile,
+    build_risk_narrative,
 )
 
 router = APIRouter(prefix="/api/v1/physical-risk-pricing", tags=["Physical Risk Pricing (E104)"])
@@ -50,6 +57,20 @@ class PhysicalRiskPriceRequest(BaseModel):
     time_horizon: str = Field("2050", description=f"Assessment horizon: {VALID_HORIZONS}")
     lat: Optional[float] = Field(None, ge=-90, le=90, description="Asset latitude (optional enrichment)")
     lng: Optional[float] = Field(None, ge=-180, le=180, description="Asset longitude (optional enrichment)")
+
+
+class GeoEnhancedPriceRequest(BaseModel):
+    model_config = {"protected_namespaces": ()}
+
+    entity_id: str = Field(..., description="Entity or asset identifier")
+    asset_class: str = Field(..., description=f"One of: {VALID_ASSET_CLASSES}")
+    country_iso: str = Field(..., description="ISO 3166-1 alpha-3 country code (e.g. GBR)")
+    asset_value_usd: float = Field(..., gt=0, description="Asset value in USD")
+    ngfs_scenario: str = Field("orderly", description=f"NGFS physical scenario: {VALID_SCENARIOS}")
+    time_horizon: str = Field("2050", description=f"Assessment horizon: {VALID_HORIZONS}")
+    lat: float = Field(..., ge=-90, le=90, description="Asset latitude (required for this endpoint)")
+    lng: float = Field(..., ge=-180, le=180, description="Asset longitude (required for this endpoint)")
+    radius_km: float = Field(25.0, ge=0.1, le=200.0, description="Search radius for the point-level PostGIS hazard grids")
 
 
 class ReturnPeriodLossRequest(BaseModel):
@@ -158,6 +179,58 @@ def price_asset_physical_risk(request: PhysicalRiskPriceRequest) -> dict:
         lat=request.lat,
         lng=request.lng,
     )
+
+
+# ---------------------------------------------------------------------------
+# POST /price-with-geo — additive: country-level pricing + point-level PostGIS overlay
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/price-with-geo",
+    summary="Physical Risk Pricing enriched with point-level global hazard-grid data",
+    description=(
+        "Runs the existing country-level physical risk pricing assessment (identical to "
+        "POST /price) AND, additively, calls the new Global Physical Risk Engine "
+        "(services/global_physical_risk_engine.py) to fetch a point-level composite hazard "
+        "score from the real PostGIS hazard grids (earthquake, cyclone, wildfire, flood, "
+        "sea-level-rise) at the given lat/lng. Returns both: `country_level_pricing` "
+        "(unchanged EAL/PML/VaR/premium methodology) and `point_level_hazard_profile` "
+        "(the composite digital-twin score + per-hazard breakdown + data_availability + "
+        "narrative for the exact coordinates). Does not alter or replace the existing "
+        "/price endpoint or its country-level methodology in any way — purely additive."
+    ),
+)
+def price_asset_physical_risk_with_geo(
+    request: GeoEnhancedPriceRequest,
+    db: Session = Depends(get_db),
+) -> dict:
+    country_level = price_physical_risk(
+        entity_id=request.entity_id,
+        asset_class=request.asset_class,
+        country_iso=request.country_iso,
+        asset_value_usd=request.asset_value_usd,
+        ngfs_scenario=request.ngfs_scenario,
+        time_horizon=request.time_horizon,
+        lat=request.lat,
+        lng=request.lng,
+    )
+
+    point_level = get_point_hazard_profile(db, lat=request.lat, lon=request.lng, radius_km=request.radius_km)
+    point_level["risk_narrative"] = build_risk_narrative(point_level)
+
+    return {
+        "entity_id": request.entity_id,
+        "lat": request.lat,
+        "lng": request.lng,
+        "country_level_pricing": country_level,
+        "point_level_hazard_profile": point_level,
+        "note": (
+            "country_level_pricing uses the 30-country baseline reference dataset "
+            "(INFORM/ND-GAIN/Swiss Re CatNet); point_level_hazard_profile uses the live "
+            "PostGIS global hazard grids at the exact coordinates. The two are independent "
+            "methodologies shown side by side, not blended into a single number."
+        ),
+    }
 
 
 # ---------------------------------------------------------------------------

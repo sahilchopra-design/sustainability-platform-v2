@@ -651,7 +651,7 @@ function Tab6() {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
-export default function PrivateMarketsHubPage() {
+export default function PrivateMarketsEsgHubPage() {
   const [activeTab, setActiveTab] = useState(0);
   const BADGE_ITEMS = ['Hub', 'PE + Credit + Infra + RE + VC', '$8.4T AUM', 'ESG DD Engine', 'LP Reporting'];
 

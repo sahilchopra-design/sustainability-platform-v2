@@ -25,7 +25,6 @@ References:
 """
 from __future__ import annotations
 
-import math
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -35,52 +34,75 @@ from typing import Optional
 # Reference Data
 # ---------------------------------------------------------------------------
 
+# CII reference line parameters (a, c) for CIIref = a * Capacity^(-c).
+# Source: IMO Resolution MEPC.353(78), "2022 Guidelines on the Reference Lines for
+# use with Operational Carbon Intensity Indicators (CII Reference Lines Guidelines,
+# G2)", Annex, Table 1 (adopted 10 June 2022). Values below use the single
+# representative DWT/GT bracket closest to the fleet segment this engine models
+# (e.g. the <65,000 DWT bracket for gas carriers, the <20,000 DWT bracket for
+# general cargo); ships far outside that bracket would need the bracket-specific
+# a/c pair per the official table. "cii_reference_c" is the exponent c; previously
+# this engine assumed c=0.5 for every ship type (i.e. coeff / sqrt(DWT)), which is
+# not the MEPC.353(78) formula and materially over/understates the reference line
+# since the true c ranges 0.383-0.639 by ship type. Cross-checked against
+# services/shipping_calculator.py CII_REFERENCE_PARAMS, whose container (1984.60,
+# 0.489) and cruise (930.44, 0.383) entries match Table 1 exactly.
 VESSEL_TYPES: dict[str, dict] = {
     "bulk_carrier": {
         "imo_category": "Bulk carrier",
-        "cii_reference_line_coeff": 4745.0,
+        "cii_reference_line_coeff": 4745.0,      # a  (MEPC.353(78) Table 1: <279,000 DWT)
+        "cii_reference_c": 0.622,                # c
         "eexi_required_gco2_dwt": 3.00,
         "fueleu_ghg_base": 91.16,
     },
     "tanker": {
         "imo_category": "Tanker",
-        "cii_reference_line_coeff": 5247.0,
+        "cii_reference_line_coeff": 5247.0,      # a  (MEPC.353(78) Table 1)
+        "cii_reference_c": 0.610,                # c
         "eexi_required_gco2_dwt": 2.50,
         "fueleu_ghg_base": 91.16,
     },
     "container": {
         "imo_category": "Container ship",
-        "cii_reference_line_coeff": 1984.0,
+        "cii_reference_line_coeff": 1984.0,      # a  (MEPC.353(78) Table 1)
+        "cii_reference_c": 0.489,                # c
         "eexi_required_gco2_dwt": 2.20,
         "fueleu_ghg_base": 91.16,
     },
     "gas_carrier": {
         "imo_category": "Gas carrier",
-        "cii_reference_line_coeff": 14405.0,
+        # a  (MEPC.353(78) Table 1: <65,000 DWT bracket; the >=65,000 DWT bracket
+        # uses a different regression, a=14405E7, c=2.071 — not modelled here)
+        "cii_reference_line_coeff": 8104.0,
+        "cii_reference_c": 0.639,                # c
         "eexi_required_gco2_dwt": 4.00,
         "fueleu_ghg_base": 91.16,
     },
     "ro_ro": {
         "imo_category": "Ro-ro cargo ship",
-        "cii_reference_line_coeff": 5739.0,
+        "cii_reference_line_coeff": 1967.0,      # a  (MEPC.353(78) Table 1: Ro-ro cargo ship, GT)
+        "cii_reference_c": 0.485,                # c
         "eexi_required_gco2_dwt": 3.50,
         "fueleu_ghg_base": 91.16,
     },
     "cruise": {
         "imo_category": "Cruise passenger ship",
-        "cii_reference_line_coeff": 930.0,
+        "cii_reference_line_coeff": 930.0,       # a  (MEPC.353(78) Table 1, GT)
+        "cii_reference_c": 0.383,                # c
         "eexi_required_gco2_dwt": 5.00,
         "fueleu_ghg_base": 91.16,
     },
     "general_cargo": {
         "imo_category": "General cargo ship",
-        "cii_reference_line_coeff": 588.0,
+        "cii_reference_line_coeff": 588.0,       # a  (MEPC.353(78) Table 1: <20,000 DWT bracket)
+        "cii_reference_c": 0.3885,               # c
         "eexi_required_gco2_dwt": 3.80,
         "fueleu_ghg_base": 91.16,
     },
     "ferry": {
         "imo_category": "Ferry/ro-pax",
-        "cii_reference_line_coeff": 2246.0,
+        "cii_reference_line_coeff": 2023.0,      # a  (MEPC.353(78) Table 1: Ro-ro passenger ship, GT)
+        "cii_reference_c": 0.460,                # c
         "eexi_required_gco2_dwt": 4.20,
         "fueleu_ghg_base": 91.16,
     },
@@ -332,9 +354,14 @@ class ShippingMaritimeEngine:
         # CII attained = CO2 (g) / (DWT * distance)
         cii_attained = (co2_emitted * 1_000_000) / (dwt * distance_nm)
 
-        # CII reference value at given DWT: a × DWT^(-c) simplified as coeff / dwt^0.5
+        # CII reference line: CIIref = a x Capacity^(-c)  (IMO MEPC.353(78) Annex,
+        # Table 1). Previously approximated as coeff / sqrt(DWT) — i.e. assumed
+        # c=0.5 for every ship type — which deviates from the real per-ship-type
+        # exponent (0.383-0.639) and mis-states the reference line. See VESSEL_TYPES
+        # comment above for parameter sourcing.
         ref_coeff = vt["cii_reference_line_coeff"]
-        cii_reference = ref_coeff / math.sqrt(max(dwt, 1.0))
+        ref_exponent = vt["cii_reference_c"]
+        cii_reference = ref_coeff * (max(dwt, 1.0) ** -ref_exponent)
 
         # Annual reduction applied
         reduction_pct = CII_REQUIRED_REDUCTION.get(year, CII_REQUIRED_REDUCTION[2030])

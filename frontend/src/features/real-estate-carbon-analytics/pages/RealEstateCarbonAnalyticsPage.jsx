@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
+import axios from 'axios';
 import BuiltEnvironmentAdvancedAnalytics from '../../_shared/BuiltEnvironmentAdvancedAnalytics';
 import { useModuleData } from '../../../lib/useModuleData';
 import {
@@ -161,7 +162,7 @@ const Card = ({ title, children, style }) => (
 );
 
 const TABS = ['Overview', 'Embodied Carbon', 'Operational Carbon', 'CRREM Pathways',
-              'Financed Emissions', 'Net Zero Plan', 'Regulatory', 'Advanced Analytics'];
+              'Financed Emissions', 'Net Zero Plan', 'Regulatory', 'Green Premium (Live UK Data)', 'Advanced Analytics'];
 
 export default function RealEstateCarbonAnalyticsPage() {
   const [tab, setTab] = useState('Overview');
@@ -170,6 +171,29 @@ export default function RealEstateCarbonAnalyticsPage() {
   const [filterEpc, setFilterEpc] = useState('All');
   const [carbonPx, setCarbonPx] = useState(100);  // £/tCO₂
   const [lifeYears, setLifeYears] = useState(60);  // assessment period
+
+  // ── Green Premium (Live UK Data): HM Land Registry x EPC hedonic regression ──
+  const [gpTown, setGpTown] = useState('NORWICH');
+  const [gpMinDate, setGpMinDate] = useState('2022-01-01');
+  const [gpMaxDate, setGpMaxDate] = useState('2023-12-31');
+  const [gpLimit, setGpLimit] = useState(100);
+  const [gpStatus, setGpStatus] = useState('idle'); // idle | loading | done | error
+  const [gpData, setGpData] = useState(null);
+  const [gpErr, setGpErr] = useState(null);
+
+  const runGreenPremium = useCallback(async () => {
+    setGpStatus('loading'); setGpErr(null);
+    try {
+      const { data: d } = await axios.get('/api/v1/green-premium-hedonic/analyze', {
+        params: { town: gpTown, min_date: gpMinDate, max_date: gpMaxDate, limit: gpLimit },
+      });
+      setGpData(d);
+      setGpStatus('done');
+    } catch (e) {
+      setGpErr(e?.response?.data?.detail || e.message || 'Request failed');
+      setGpStatus('error');
+    }
+  }, [gpTown, gpMinDate, gpMaxDate, gpLimit]);
 
   // DB-backed: properties now flow database -> API -> hook -> UI, with the seed
   // as offline fallback so the rendered view is identical pre/post conversion.
@@ -978,6 +1002,160 @@ export default function RealEstateCarbonAnalyticsPage() {
                   </div>
                 ))}
               </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ── TAB: Green Premium (Live UK Data) ── */}
+        {tab === 'Green Premium (Live UK Data)' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <Card title="Green-Premium Hedonic Regression — HM Land Registry × UK EPC Register (live UK sources)">
+              <div style={{ fontSize: 12, color: T.textSec, marginBottom: 16, lineHeight: 1.6 }}>
+                New method: joins REAL sale-price transactions from HM Land Registry's free, keyless
+                Price Paid Data API with EPC energy-rating certificates for the same postcodes, then
+                fits a real OLS hedonic regression (<code style={{ fontFamily: T.mono }}>price ~ efficiency_score + property_type + construction_age_band</code>)
+                to estimate the "green premium" — the price differential attributable to a one-EPC-band
+                improvement. Land Registry data is always live. EPC data is live only if a GOV.UK One
+                Login bearer token is configured server-side (<code style={{ fontFamily: T.mono }}>EPC_API_BEARER_TOKEN</code>);
+                otherwise a small, clearly labeled demo-seed sample is used and the match rate/sample
+                size below will be limited — this is reported honestly, not hidden.
+              </div>
+
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end', marginBottom: 16 }}>
+                <div>
+                  <span style={labelStyle}>Town (Land Registry)</span>
+                  <input value={gpTown} onChange={e => setGpTown(e.target.value)} style={{ ...selectStyle, width: 160 }} />
+                </div>
+                <div>
+                  <span style={labelStyle}>From date</span>
+                  <input type="date" value={gpMinDate} onChange={e => setGpMinDate(e.target.value)} style={selectStyle} />
+                </div>
+                <div>
+                  <span style={labelStyle}>To date</span>
+                  <input type="date" value={gpMaxDate} onChange={e => setGpMaxDate(e.target.value)} style={selectStyle} />
+                </div>
+                <div>
+                  <span style={labelStyle}>Max transactions</span>
+                  <input type="number" min={20} max={1000} step={20} value={gpLimit}
+                    onChange={e => setGpLimit(+e.target.value)} style={{ ...selectStyle, width: 90 }} />
+                </div>
+                <button onClick={runGreenPremium} disabled={gpStatus === 'loading'} style={{
+                  padding: '8px 18px', borderRadius: 6, border: 'none', background: T.navy, color: '#fff',
+                  fontFamily: T.font, fontSize: 12, fontWeight: 600, cursor: gpStatus === 'loading' ? 'wait' : 'pointer',
+                }}>
+                  {gpStatus === 'loading' ? 'Running regression…' : 'Run live analysis'}
+                </button>
+              </div>
+
+              {gpStatus === 'error' && (
+                <div style={{ padding: 12, borderRadius: 6, background: '#fee2e2', color: T.red, fontSize: 12, marginBottom: 16 }}>
+                  {String(gpErr)}
+                </div>
+              )}
+
+              {gpStatus === 'idle' && (
+                <div style={{ fontSize: 12, color: T.textMut }}>Set a town/date range and click "Run live analysis" to fetch real data.</div>
+              )}
+
+              {gpData && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    <KpiCard label="Land Registry Transactions" value={fmt0(gpData.n_transactions_fetched)} sub="Live HM Land Registry" />
+                    <KpiCard label="Matched to EPC" value={fmt0(gpData.n_matched_to_epc)} sub={`${gpData.match_rate_pct}% match rate`}
+                      color={gpData.match_rate_pct < 50 ? T.amber : T.green} />
+                    <KpiCard label="EPC Data Mode" value={gpData.epc_mode === 'live' ? 'LIVE' : 'DEMO-SEED'}
+                      sub={gpData.epc_mode === 'live' ? 'Verified EPC register' : 'Labeled illustrative fallback'}
+                      color={gpData.epc_mode === 'live' ? T.green : T.amber} />
+                    {gpData.regression && (
+                      <>
+                        <KpiCard label="R²" value={fmt2(gpData.regression.r_squared)} sub={`Adj. R² ${fmt2(gpData.regression.adj_r_squared ?? 0)}`} />
+                        <KpiCard label="Sample Size (n)" value={fmt0(gpData.regression.n_observations)}
+                          sub={`${gpData.regression.n_parameters} parameters, dof ${gpData.regression.degrees_of_freedom}`}
+                          color={gpData.regression.n_observations < 40 ? T.amber : T.green} />
+                        <KpiCard label="Green Premium (D→C)" value={`£${fmt0(gpData.regression.green_premium.green_premium_d_to_c_gbp)}`}
+                          sub="Estimated, wide uncertainty" color={T.gold} />
+                      </>
+                    )}
+                  </div>
+
+                  {gpData.match_rate_caveat && (
+                    <div style={{ padding: 12, borderRadius: 6, background: '#fef3c7', color: T.amber, fontSize: 12 }}>
+                      {gpData.match_rate_caveat}
+                    </div>
+                  )}
+
+                  {!gpData.regression && gpData.regression_error && (
+                    <div style={{ padding: 12, borderRadius: 6, background: '#fee2e2', color: T.red, fontSize: 12 }}>
+                      {gpData.regression_error}
+                    </div>
+                  )}
+
+                  {gpData.regression && (
+                    <>
+                      <div style={{ padding: 12, borderRadius: 6, background: '#fef3c7', color: T.amber, fontSize: 12 }}>
+                        {gpData.regression.confidence_caveat}
+                      </div>
+
+                      <Card title="Regression Coefficients">
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                            <thead>
+                              <tr style={{ background: T.surfaceH }}>
+                                {['Term', 'Estimate (£)', 'Std. Error (£)'].map(h => (
+                                  <th key={h} style={{ padding: '7px 10px', textAlign: 'left', fontFamily: T.mono,
+                                    fontSize: 10, color: T.navy, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(gpData.regression.coefficients).map(([name, c], i) => (
+                                <tr key={name} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
+                                  <td style={{ padding: '7px 10px', fontFamily: T.mono, fontSize: 11 }}>{name}</td>
+                                  <td style={{ padding: '7px 10px', fontFamily: T.mono }}>{fmt0(c.estimate)}</td>
+                                  <td style={{ padding: '7px 10px', fontFamily: T.mono, color: T.textMut }}>±{fmt0(c.std_error)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div style={{ fontSize: 11, color: T.textMut, marginTop: 10 }}>
+                          Baseline: property_type = {gpData.regression.property_type_baseline}, construction_age_band = {gpData.regression.construction_age_band_baseline}.
+                          Spec: {gpData.regression.specification}
+                        </div>
+                      </Card>
+                    </>
+                  )}
+
+                  <Card title={`Joined Sample (${gpData.joined_sample?.length || 0} rows) — postcode-level match, see caveat`}>
+                    <div style={{ fontSize: 11, color: T.textMut, marginBottom: 8 }}>{gpData.matching_method}</div>
+                    <div style={{ overflowX: 'auto', maxHeight: 320, overflowY: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                        <thead>
+                          <tr style={{ background: T.surfaceH }}>
+                            {['Postcode', 'Price Paid (£)', 'Sale Date', 'Property Type', 'Age Band', 'EPC Score', 'EPC Band'].map(h => (
+                              <th key={h} style={{ padding: '6px 10px', textAlign: 'left', fontFamily: T.mono,
+                                fontSize: 10, color: T.navy, borderBottom: `1px solid ${T.border}` }}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(gpData.joined_sample || []).map((r, i) => (
+                            <tr key={i} style={{ background: i % 2 === 0 ? T.surface : T.surfaceH }}>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono }}>{r.postcode}</td>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono }}>{fmt0(r.price_paid_gbp)}</td>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono, fontSize: 11 }}>{r.transaction_date}</td>
+                              <td style={{ padding: '6px 10px' }}>{r.property_type}</td>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono, fontSize: 11 }}>{r.construction_age_band}</td>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono }}>{r.current_energy_efficiency_score}</td>
+                              <td style={{ padding: '6px 10px', fontFamily: T.mono, fontWeight: 700 }}>{r.current_energy_rating}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Card>
+                </div>
+              )}
             </Card>
           </div>
         )}

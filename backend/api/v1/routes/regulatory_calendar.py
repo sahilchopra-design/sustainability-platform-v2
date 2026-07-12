@@ -82,15 +82,12 @@ def list_obligations(
         [j.strip() for j in jurisdictions.split(",")] if jurisdictions else None
     )
 
-    calendar = _CALENDAR.filter(
+    obligations = _CALENDAR.filter(
         frameworks=framework_list,
         jurisdictions=jurisdiction_list,
         entity_types=[entity_type] if entity_type else None,
+        include_rescinded=include_rescinded,
     )
-
-    obligations = calendar._obligations
-    if not include_rescinded:
-        obligations = [o for o in obligations if not o.is_rescinded]
 
     return {
         "count": len(obligations),
@@ -184,7 +181,7 @@ def get_module_coverage():
     description="Returns distinct framework names and the count of obligations per framework.",
 )
 def list_frameworks():
-    all_obs = _CALENDAR._obligations
+    all_obs = _CALENDAR.get_all(include_rescinded=True)
     framework_counts: dict = {}
     for ob in all_obs:
         framework_counts.setdefault(ob.framework, {"count": 0, "rescinded_count": 0})
@@ -206,7 +203,7 @@ def list_frameworks():
     summary="Get a single obligation by ID",
 )
 def get_obligation(obligation_id: str):
-    for ob in _CALENDAR._obligations:
+    for ob in _CALENDAR.get_all(include_rescinded=True):
         if ob.obligation_id == obligation_id:
             return _obligation_to_dict(ob)
     from fastapi import HTTPException

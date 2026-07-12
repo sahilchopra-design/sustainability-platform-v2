@@ -1,9 +1,29 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import {
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ScatterChart, Scatter, Cell, ReferenceLine
 } from 'recharts';
+
+// Backend Greenwashing Risk & Substantiation engine (EU Green Claims Directive
+// COM/2023/166 + FCA SDR Anti-Greenwashing Rule PS23/16). See
+// backend/services/greenwashing_engine.py + backend/api/v1/routes/greenwashing.py
+const API = 'http://localhost:8001';
+const GW_API = `${API}/api/v1/greenwashing`;
+
+// Maps the 7 local signal categories -> the engine's claim_type taxonomy
+// (CLAIM_TYPES in greenwashing_engine.py), used when screening the evidence
+// snippet associated with each signal via POST /screen-claim.
+const SIGNAL_CLAIM_TYPE = {
+  vagueness: 'qualitative',
+  selective: 'quantitative',
+  unverifiable: 'forward_looking',
+  mismatch: 'quantitative',
+  framing: 'qualitative',
+  regulatory: 'label',
+  weakening: 'forward_looking',
+};
 
 const T = {
   bg: '#f4f6f9', surface: '#ffffff', surfaceH: '#eef1f6', border: '#e3e8ef',
@@ -198,16 +218,68 @@ const scoreColor = (score) => {
   return T.green;
 };
 
+// Colour for the engine's risk_level enum ('low' | 'medium' | 'high' | 'very_high'),
+// distinct from tierColor (which expects the locally-seeded Title-Case tiers).
+const riskLevelColor = (level) => {
+  if (level === 'very_high') return T.red;
+  if (level === 'high') return T.orange;
+  if (level === 'medium') return T.amber;
+  return T.green;
+};
+
 export default function GreenwashingDetectionPage() {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedCompany, setSelectedCompany] = useState(0);
   const [expandedSignal, setExpandedSignal] = useState(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const [reportModal, setReportModal] = useState(false);
+  const [liveSignalScreen, setLiveSignalScreen] = useState(null);
+  const [liveSignalStatus, setLiveSignalStatus] = useState('loading');
 
   const TABS = ['GW Radar Dashboard', 'Signal Deep Dive', 'Regulatory Risk Mapper', 'Sector Benchmark', 'Remediation Playbook'];
 
   const company = useMemo(() => COMPANIES[selectedCompany], [selectedCompany]);
+
+  // --- Live backend wiring (Greenwashing Risk & Substantiation engine) -------
+  // Full entity assessment: POST /api/v1/greenwashing/assess, screening one
+  // representative evidence snippet per signal as a "claim" through the real
+  // EU Green Claims Directive / FCA SDR screening logic. Falls back to the
+  // locally-seeded composite score, clearly labelled "Demo Data", if the API
+  // is unreachable — same convention as ai-governance/pages/AIGovernancePage.jsx.
+  const [liveAssessment, setLiveAssessment] = useState(null);
+  const [liveAssessmentStatus, setLiveAssessmentStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    setLiveAssessmentStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const claims = SIGNALS.map(s => ({
+          text: EVIDENCE_MAP[s.key][0].snippet.replace(/^"|"$/g, ''),
+          type: SIGNAL_CLAIM_TYPE[s.key] || 'qualitative',
+        }));
+        // Taxonomy alignment / SFDR classification are not tracked locally for
+        // these seeded companies, so derive an illustrative proxy from the
+        // composite greenwashing score and ESG rating (higher GW risk / lower
+        // ESG rating -> lower assumed taxonomy alignment).
+        const taxonomyAlignmentPct = Math.max(0, Math.min(100, Math.round(company.esgRating - company.composite * 0.3)));
+        const sfdrClassification = company.esgRating >= 70 ? '9' : '8';
+        const productLabels = [sfdrClassification === '9' ? 'sfdr_article_9' : 'sfdr_article_8', 'eu_taxonomy_aligned'];
+        const { data } = await axios.post(`${GW_API}/assess`, {
+          entity_id: `GW-${company.ticker}`,
+          entity_name: company.name,
+          claims,
+          product_labels: productLabels,
+          sfdr_classification: sfdrClassification,
+          taxonomy_alignment_pct: taxonomyAlignmentPct,
+        }, { timeout: 10000 });
+        if (!cancelled) { setLiveAssessment(data); setLiveAssessmentStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setLiveAssessment(null); setLiveAssessmentStatus('demo'); }
+      }
+    }, 250);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [company]);
 
   const sectorAvg = useMemo(() => {
     const peers = COMPANIES.filter(c => c.sector === company.sector);
@@ -257,6 +329,29 @@ export default function GreenwashingDetectionPage() {
 
   const passCount = checklistStatus.filter(c => c.status === 'pass').length;
   const failCount = checklistStatus.filter(c => c.status === 'fail').length;
+
+  // Live single-claim screening for the expanded Signal Deep Dive panel —
+  // POST /api/v1/greenwashing/screen-claim on the first evidence snippet for
+  // the expanded signal, replacing the static "Severity" column with the
+  // engine's real risk_level / matched terms / regulatory refs when available.
+  useEffect(() => {
+    if (!expandedSignal) { setLiveSignalScreen(null); setLiveSignalStatus('loading'); return; }
+    let cancelled = false;
+    setLiveSignalStatus('loading');
+    const t = setTimeout(async () => {
+      try {
+        const claimText = EVIDENCE_MAP[expandedSignal][0].snippet.replace(/^"|"$/g, '');
+        const { data } = await axios.post(`${GW_API}/screen-claim`, {
+          claim_text: claimText,
+          claim_type: SIGNAL_CLAIM_TYPE[expandedSignal] || 'qualitative',
+        }, { timeout: 10000 });
+        if (!cancelled) { setLiveSignalScreen(data); setLiveSignalStatus('live'); }
+      } catch (e) {
+        if (!cancelled) { setLiveSignalScreen(null); setLiveSignalStatus('demo'); }
+      }
+    }, 200);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [expandedSignal, company]);
 
   const s = { fontFamily: T.font };
 
@@ -310,6 +405,9 @@ export default function GreenwashingDetectionPage() {
               <div style={{ padding: '6px 14px', borderRadius: 20, background: tierColor(company.tier), color: '#fff', fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>
                 {company.tier.toUpperCase()}
               </div>
+              {liveAssessmentStatus === 'live' && <span style={{ fontSize: 11, fontWeight: 700, color: '#166534', background: '#dcfce7', padding: '4px 10px', borderRadius: 12 }}>● Live — /api/v1/greenwashing engine</span>}
+              {liveAssessmentStatus === 'demo' && <span style={{ fontSize: 11, fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '4px 10px', borderRadius: 12 }}>○ Demo Data — API unavailable</span>}
+              {liveAssessmentStatus === 'loading' && <span style={{ fontSize: 11, fontWeight: 700, color: T.textSec, background: T.surfaceH, padding: '4px 10px', borderRadius: 12 }}>… loading</span>}
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -364,6 +462,52 @@ export default function GreenwashingDetectionPage() {
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* Live Greenwashing Assessment — POST /api/v1/greenwashing/assess */}
+            <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 20, marginBottom: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <div style={{ fontSize: 14, fontWeight: 700 }}>Live Greenwashing Risk Assessment</div>
+                <div style={{ fontSize: 11, color: T.textMut }}>
+                  {liveAssessmentStatus === 'live' ? 'EU Green Claims Dir. + FCA SDR screening engine' : liveAssessmentStatus === 'demo' ? 'API unavailable — figures below are illustrative only' : 'Assessing…'}
+                </div>
+              </div>
+              {liveAssessment ? (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 14 }}>
+                    <div style={{ background: T.surfaceH, borderRadius: 8, padding: 12 }}>
+                      <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4 }}>Overall Risk Level</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.mono, color: riskLevelColor(liveAssessment.overall_risk_level) }}>{liveAssessment.overall_risk_level.replace('_', ' ').toUpperCase()}</div>
+                    </div>
+                    <div style={{ background: T.surfaceH, borderRadius: 8, padding: 12 }}>
+                      <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4 }}>Overall Risk Score</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.mono, color: T.navy }}>{liveAssessment.overall_risk_score}</div>
+                    </div>
+                    <div style={{ background: T.surfaceH, borderRadius: 8, padding: 12 }}>
+                      <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4 }}>EU GCD Compliance</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.mono, color: T.navy }}>{liveAssessment.eu_compliance_score}/100</div>
+                    </div>
+                    <div style={{ background: T.surfaceH, borderRadius: 8, padding: 12 }}>
+                      <div style={{ fontSize: 11, color: T.textMut, marginBottom: 4 }}>FCA SDR Compliance</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, fontFamily: T.mono, color: T.navy }}>{liveAssessment.fca_compliance_score}/100</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 12, color: T.textSec, marginBottom: 8 }}>
+                    Labels assessed: {liveAssessment.label_assessment.labels_assessed.join(', ')} — overall label compliance:{' '}
+                    <strong style={{ color: liveAssessment.label_assessment.overall_label_compliance === 'PASS' ? T.green : T.red }}>{liveAssessment.label_assessment.overall_label_compliance}</strong>
+                  </div>
+                  {liveAssessment.remediation_actions.length > 0 && (
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: T.navy, marginBottom: 6 }}>Live Remediation Actions</div>
+                      {liveAssessment.remediation_actions.map((a, i) => (
+                        <div key={i} style={{ fontSize: 12, color: T.textSec, padding: '5px 10px', background: T.surfaceH, borderRadius: 6, marginBottom: 4 }}>• {a}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: T.textMut }}>{liveAssessmentStatus === 'loading' ? 'Calculating…' : 'Live engine unavailable — see seeded 7-signal radar above.'}</div>
+              )}
             </div>
 
             {/* Quick-scan table */}
@@ -486,6 +630,30 @@ export default function GreenwashingDetectionPage() {
                           ))}
                         </tbody>
                       </table>
+
+                      {/* Live screening of the first evidence snippet — POST /screen-claim */}
+                      <div style={{ marginTop: 14, padding: 12, background: T.surfaceH, borderRadius: 8 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: T.navy }}>Live Claim Screening</span>
+                          {liveSignalStatus === 'live' && expandedSignal === sig.key && <span style={{ fontSize: 10, fontWeight: 700, color: '#166534', background: '#dcfce7', padding: '2px 8px', borderRadius: 10 }}>● Live</span>}
+                          {liveSignalStatus === 'demo' && expandedSignal === sig.key && <span style={{ fontSize: 10, fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '2px 8px', borderRadius: 10 }}>○ Demo</span>}
+                          {liveSignalStatus === 'loading' && expandedSignal === sig.key && <span style={{ fontSize: 10, color: T.textMut }}>…</span>}
+                        </div>
+                        {liveSignalScreen && expandedSignal === sig.key ? (
+                          <div style={{ fontSize: 12, color: T.textSec }}>
+                            <div>Engine risk level: <strong style={{ color: riskLevelColor(liveSignalScreen.risk_level) }}>{liveSignalScreen.risk_level.replace('_', ' ').toUpperCase()}</strong> ·
+                              {' '}Substantiation: <strong>{liveSignalScreen.current_substantiation_score}</strong> / {liveSignalScreen.min_substantiation_score_required} required ·
+                              {' '}Passes threshold: <strong style={{ color: liveSignalScreen.passes_threshold ? T.green : T.red }}>{liveSignalScreen.passes_threshold ? 'Yes' : 'No'}</strong>
+                            </div>
+                            {liveSignalScreen.matched_problematic_terms.length > 0 && (
+                              <div style={{ marginTop: 4 }}>Matched terms: {liveSignalScreen.matched_problematic_terms.join(', ')}</div>
+                            )}
+                            <div style={{ marginTop: 4 }}>Regulatory refs: {liveSignalScreen.regulatory_refs.join(', ')}</div>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: 12, color: T.textMut }}>{expandedSignal === sig.key ? 'Screening…' : 'Expand to screen live'}</div>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

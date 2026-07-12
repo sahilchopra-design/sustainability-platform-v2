@@ -321,6 +321,13 @@ def _simple_similarity(query: str, target: str) -> float:
 
 
 def _lei_to_dict(r: EntityLei) -> dict:
+    # legal_form_code / registration_authority_id are opaque GLEIF codes (e.g.
+    # "XTIQ", "RA000598"); legal_form_name is only populated by GLEIF for
+    # non-standard ("other") forms, so it's usually null. Decode both against
+    # the cached GLEIF reference registries (see services/gleif_reference_registries.py)
+    # for human-readable names -- added as new fields, existing fields unchanged.
+    from services.gleif_reference_registries import decode_legal_form, decode_registration_authority
+
     return {
         "lei": r.lei,
         "legal_name": r.legal_name,
@@ -329,8 +336,11 @@ def _lei_to_dict(r: EntityLei) -> dict:
         "entity_category": r.entity_category,
         "legal_form_code": r.legal_form_code,
         "legal_form_name": r.legal_form_name,
+        "legal_form_decoded": decode_legal_form(r.legal_form_code),
         "registered_address": r.registered_address,
         "headquarters_address": r.headquarters_address,
+        "registration_authority_id": r.registration_authority_id,
+        "registration_authority_decoded": decode_registration_authority(r.registration_authority_id),
         "registration_status": r.registration_status,
         "direct_parent_lei": r.direct_parent_lei,
         "ultimate_parent_lei": r.ultimate_parent_lei,
@@ -423,6 +433,7 @@ def cross_module_resolve(
         "canonical_name": match.canonical_name,
         "match_method": match.match_method,
         "confidence": match.confidence,
+        "resolution_tier": match.resolution_tier,
         "linked_records": [
             {"table": r.table, "id": r.id, "lei": r.lei, "name": r.name, "isin": r.isin}
             for r in match.linked_records
@@ -446,6 +457,7 @@ def cross_module_resolve_batch(
                 "canonical_name": m.canonical_name,
                 "match_method": m.match_method,
                 "confidence": m.confidence,
+                "resolution_tier": m.resolution_tier,
                 "linked_count": len(m.linked_records),
             }
             for m in matches

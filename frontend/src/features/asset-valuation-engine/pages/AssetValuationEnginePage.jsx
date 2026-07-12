@@ -118,9 +118,21 @@ export default function AssetValuationEnginePage() {
     setTimeout(() => {
       const baseNPV = dcfResult.npv;
       const nSims = mcInputs.nSims;
+      const revVolFrac = mcInputs.revVol / 100;
+      const cpVolFrac = mcInputs.cpVol / 100;
+      const rho = Math.max(-1, Math.min(1, mcInputs.revCpCorr));
       const results = Array.from({ length: nSims }, (_, i) => {
-        const revShock = 0.85 + sr(i * 7 + 1) * 0.3;
-        const cpShock = 0.6 + sr(i * 13 + 2) * 0.8;
+        // Box-Muller: two independent U(0,1) draws -> one standard normal
+        const u1 = Math.max(1e-9, sr(i * 7 + 1));
+        const u2 = sr(i * 13 + 2);
+        const z1 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        const u3 = Math.max(1e-9, sr(i * 17 + 3));
+        const u4 = sr(i * 23 + 4);
+        const zIndep = Math.sqrt(-2 * Math.log(u3)) * Math.cos(2 * Math.PI * u4);
+        // Cholesky-correlate the carbon-price shock with the revenue shock using user-set correlation
+        const z2 = rho * z1 + Math.sqrt(Math.max(0, 1 - rho * rho)) * zIndep;
+        const revShock = 1 + z1 * revVolFrac;
+        const cpShock = 1 + z2 * cpVolFrac;
         return baseNPV * revShock * (1 - (cpShock - 1) * 0.15);
       }).sort((a, b) => a - b);
       const pct = (p) => results[Math.max(0, Math.min(results.length - 1, Math.floor(p * nSims)))];

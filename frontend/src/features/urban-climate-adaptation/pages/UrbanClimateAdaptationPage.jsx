@@ -56,8 +56,11 @@ const CITIES = [
   const resScore = parseFloat((100 - composite + gdpPcap/2000).toFixed(1));
   const rating   = resScore >= 70 ? 'AAA/AA' : resScore >= 50 ? 'A/BBB' : resScore >= 35 ? 'BB/B' : 'CCC/D';
 
-  // Adaptation ROI: damage avoided / adapt cost (simplified)
-  const damageAvoided = parseFloat((adaptTotal * (0.3 + sr(i*41)*0.4)).toFixed(0));
+  // Adaptation ROI: (damage avoided - adapt cost) / adapt cost, i.e. benefit-cost ratio minus 1.
+  // Literature (Global Commission on Adaptation, "triple dividend" studies) puts BCR for
+  // adaptation measures like early-warning systems at ~2x-10x cost, so damage avoided should
+  // exceed cost -- not be a fraction of it.
+  const damageAvoided = parseFloat((adaptTotal * (2 + sr(i*41)*8)).toFixed(0));
   const adaptRoi      = adaptTotal > 0 ? parseFloat(((damageAvoided - adaptTotal) / adaptTotal * 100).toFixed(0)) : 0;
 
   return {

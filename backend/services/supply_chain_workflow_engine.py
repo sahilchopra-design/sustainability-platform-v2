@@ -140,16 +140,42 @@ class WorkflowAssessment:
 
 
 # ---------------------------------------------------------------------------
-# Country Risk Reference (EUDR Article 29 — abbreviated)
+# Country Risk Reference (EUDR Article 29 — country benchmarking)
 # ---------------------------------------------------------------------------
-
+# Source: Commission Implementing Regulation (EU) 2025/1093 of 22 May 2025
+# establishing the list of countries, or parts thereof, that present a low,
+# standard or high risk of producing relevant commodities/products that are
+# non-compliant with Regulation (EU) 2023/1115 (EUDR), OJ L, 2025/1093,
+# 23.5.2025 — the European Commission's first (and, as of this writing, only)
+# adopted country benchmarking list. It designates just FOUR countries as
+# high-risk (all also under EU/UN sanctions) and 140 countries as low-risk;
+# every other country defaults to "standard" risk (see _eudr_country_tier
+# below), including major commodity producers such as Brazil, Indonesia,
+# Malaysia, and DRC that a pre-2025 (unofficial/interim) risk list had
+# mislabelled as "high risk". Full list:
+# https://green-forum.ec.europa.eu/nature-and-biodiversity/deforestation-regulation-implementation/eudr-cooperation-and-partnerships/country-classification-list_en
 _EUDR_HIGH_RISK_COUNTRIES = {
-    "BRA", "IDN", "MMR", "COD", "PNG", "COG", "CMR", "BOL",
-    "ARG", "PRY", "GUY", "SUR", "GIN", "GHA", "NGA",
+    "BLR",  # Belarus
+    "MMR",  # Myanmar
+    "PRK",  # Democratic People's Republic of Korea (North Korea)
+    "RUS",  # Russian Federation
 }
+
+# Representative subset of the Commission's 140-country low-risk list (not
+# exhaustive — any country omitted here that is not high-risk simply falls
+# through to the "standard" default, which is the conservative/safe outcome).
 _EUDR_LOW_RISK_COUNTRIES = {
-    "FIN", "SWE", "NOR", "AUT", "CHE", "NZL", "AUS", "CAN",
-    "GBR", "DEU", "FRA", "NLD", "BEL",
+    # EU-27 Member States
+    "AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA",
+    "DEU", "GRC", "HUN", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD",
+    "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE",
+    # Other EEA / associated
+    "NOR", "CHE", "ISL", "LIE",
+    # Other explicitly named low-risk countries (Commission press materials
+    # + full classification list)
+    "GBR", "USA", "CAN", "AUS", "NZL", "JPN", "CHN", "ZAF", "KOR",
+    "IND", "VNM", "THA", "PHL", "LKA", "KEN", "RWA", "MDG", "GHA",
+    "GUY", "SUR", "PNG", "MLI", "ISR", "SGP", "TUR", "UKR", "MDA",
 }
 
 # EUDR Annex I commodities

@@ -120,8 +120,16 @@ function buildBacktest(sigId, sigIdx) {
   const std   = Math.sqrt(lsReturns.map(r => (r - mean) ** 2).reduce((a, b) => a + b, 0) / lsReturns.length);
   const ann   = mean * 12;
   const annS  = std * Math.sqrt(12);
-  const neg   = lsReturns.filter(r => r < 0);
-  const sortS = neg.length ? std / (Math.sqrt(neg.map(r => r ** 2).reduce((a, b) => a + b, 0) / neg.length) * Math.sqrt(12)) : 0;
+  // Sortino ratio = (Return - Target) / Downside Deviation, where Downside Deviation
+  // is computed ONLY from periods with return below the target (MAR = 0 here, matching
+  // the risk-free-free convention used by the Sharpe ratio above — see `ann / annS`).
+  // Positive-return periods do NOT contribute to the denominator.
+  const targetReturn = 0;
+  const neg   = lsReturns.filter(r => r < targetReturn);
+  const downsideDevAnn = neg.length
+    ? Math.sqrt(neg.reduce((a, r) => a + (r - targetReturn) ** 2, 0) / neg.length) * Math.sqrt(12)
+    : 0;
+  const sortS = downsideDevAnn > 0 ? (ann - targetReturn) / downsideDevAnn : 0;
   const wins  = lsReturns.filter(r => r > 0).length;
   const maxDD = -Math.abs((sr(sigIdx * 3 + 1) * 0.12 + 0.05));
 

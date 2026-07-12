@@ -278,19 +278,19 @@ export default function ClientPitchPage() {
   const engineCards = useMemo(() => {
     if (!engines) return [];
     return [
-      { key: 'WACI', val: engines.nifty50_waci?.value, unit: engines.nifty50_waci?.unit || 'tCO2e/$M', accent: T.navy },
-      { key: 'Financed Emissions', val: engines.nifty50_financedEmissions?.value, unit: engines.nifty50_financedEmissions?.unit || 'MtCO2e', accent: T.red },
-      { key: 'Portfolio Temp', val: engines.nifty50_temperature?.value, unit: engines.nifty50_temperature?.unit || 'deg C', accent: T.amber },
-      { key: 'Climate VaR', val: engines.nifty50_climateVaR?.value, unit: engines.nifty50_climateVaR?.unit || '%', accent: T.red },
-      { key: 'SFDR PAI-1', val: engines.nifty50_sfdrPai?.pai1_ghg, unit: 'tCO2e', accent: T.indigo },
-      { key: 'SFDR PAI-2', val: engines.nifty50_sfdrPai?.pai2_footprint, unit: 'tCO2e/$M', accent: T.indigo },
-      { key: 'EU Taxonomy', val: engines.nifty50_taxonomy?.value, unit: engines.nifty50_taxonomy?.unit || '%', accent: T.green },
-      { key: 'Transition Score', val: engines.nifty50_transition?.value, unit: engines.nifty50_transition?.unit || '/100', accent: T.gold },
-      { key: 'Physical Risk', val: engines.nifty50_physicalRisk?.value, unit: engines.nifty50_physicalRisk?.unit || '/100', accent: T.red },
-      { key: 'Water Risk', val: engines.nifty50_water?.value, unit: engines.nifty50_water?.unit || '/100', accent: T.navy },
-      { key: 'Biodiversity', val: engines.nifty50_biodiversity?.value, unit: engines.nifty50_biodiversity?.unit || '/100', accent: T.green },
-      { key: 'SBTi Coverage', val: engines.nifty50_sbtiCoverage?.value, unit: engines.nifty50_sbtiCoverage?.unit || '%', accent: T.indigo },
-      { key: 'CBAM Exposure', val: engines.nifty50_cbamExposure?.value, unit: engines.nifty50_cbamExposure?.unit || '%', accent: T.amber }
+      { key: 'WACI', val: engines.nifty50?.waci?.value, unit: engines.nifty50?.waci?.unit || 'tCO2e/$M', accent: T.navy },
+      { key: 'Financed Emissions', val: engines.nifty50?.financedEmissions?.value, unit: engines.nifty50?.financedEmissions?.unit || 'MtCO2e', accent: T.red },
+      { key: 'Portfolio Temp', val: engines.nifty50?.temperature?.value, unit: engines.nifty50?.temperature?.unit || 'deg C', accent: T.amber },
+      { key: 'Climate VaR', val: engines.nifty50?.climateVaR?.value, unit: engines.nifty50?.climateVaR?.unit || 'INR Cr', accent: T.red },
+      { key: 'SFDR PAI-1', val: engines.nifty50?.sfdrPai?.pai1_ghg, unit: 'tCO2e', accent: T.indigo },
+      { key: 'SFDR PAI-2', val: engines.nifty50?.sfdrPai?.pai2_carbonFootprint, unit: 'tCO2e/$M', accent: T.indigo },
+      { key: 'EU Taxonomy', val: engines.nifty50?.taxonomy?.value, unit: engines.nifty50?.taxonomy?.unit || '%', accent: T.green },
+      { key: 'Transition Score', val: engines.nifty50?.transition?.value, unit: engines.nifty50?.transition?.unit || '/100', accent: T.gold },
+      { key: 'Physical Risk', val: engines.nifty50?.physicalRisk?.value, unit: engines.nifty50?.physicalRisk?.unit || '/100', accent: T.red },
+      { key: 'Water Risk', val: engines.nifty50?.water?.highStress_pct, unit: '%', accent: T.navy },
+      { key: 'Biodiversity', val: engines.nifty50?.biodiversity?.value, unit: engines.nifty50?.biodiversity?.unit || '/100', accent: T.green },
+      { key: 'SBTi Coverage', val: engines.nifty50?.sbtiCoverage?.companies_pct, unit: '%', accent: T.indigo },
+      { key: 'CBAM Exposure', val: engines.nifty50?.cbamExposure?.exposed_pct, unit: '%', accent: T.amber }
     ];
   }, [engines]);
 

@@ -2407,8 +2407,8 @@ class DataLineageEngine:
 
             nodes.append(LineageNode(
                 module_id=mod_id,
-                module_label=sig["label"],
-                category=sig["category"],
+                module_label=sig.get("label", mod_id.replace("_", " ").title()),
+                category=sig.get("category", "uncategorized"),
                 operation=operation,
                 input_fields=sig.get("inputs", []),
                 output_fields=sig.get("outputs", []),
@@ -2584,8 +2584,8 @@ class DataLineageEngine:
         for mod_id, sig in self._signatures.items():
             modules.append({
                 "id": mod_id,
-                "label": sig["label"],
-                "category": sig["category"],
+                "label": sig.get("label", mod_id.replace("_", " ").title()),
+                "category": sig.get("category", "uncategorized"),
                 "input_count": len(sig.get("inputs", [])),
                 "output_count": len(sig.get("outputs", [])),
                 "reference_data_count": len(sig.get("reference_data", [])),
@@ -2713,7 +2713,7 @@ class DataLineageEngine:
         for mod_id, sig in self._signatures.items():
             for rd in sig.get("reference_data", []):
                 if rd not in ref_data:
-                    ref_data[rd] = {"dataset": rd, "used_by": [], "category": sig["category"]}
+                    ref_data[rd] = {"dataset": rd, "used_by": [], "category": sig.get("category", "uncategorized")}
                 ref_data[rd]["used_by"].append(mod_id)
         return sorted(ref_data.values(), key=lambda x: len(x["used_by"]), reverse=True)
 

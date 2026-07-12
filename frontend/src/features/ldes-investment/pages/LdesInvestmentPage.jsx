@@ -145,8 +145,15 @@ export default function LdesInvestmentPage() {
   const selectedLcos = techLcos[techIdx];
 
   const irrCalc = useMemo(() => {
+    // Reference project: 100,000 kWh (=100 MWh) of capacity.
+    // capexKwh is $/kWh, so capexTotal = $/kWh * kWh = $ — correctly scaled.
     const capexTotal = capexKwh * 100000;
-    const annRevenue = cyclesYr * (rte / 100) * rePrice * 100000;
+    // rePrice is $/MWh (see Slider label), so the discharged-energy term must
+    // be in MWh, not kWh: 100,000 kWh capacity = 100 MWh. Previously this
+    // multiplied by the raw kWh count (100000) instead of the MWh-converted
+    // figure (100000 / 1000 = 100), inflating annual revenue — and therefore
+    // IRR — by exactly 1000x (e.g. a $15M project showing $490M/yr revenue).
+    const annRevenue = cyclesYr * (rte / 100) * rePrice * (100000 / 1000);
     const annOpex    = capexTotal * opexPct / 100;
     const net        = annRevenue - annOpex;
     const cfs        = [-capexTotal, ...Array(lifetime).fill(net)];
@@ -429,7 +436,8 @@ export default function LdesInvestmentPage() {
                     <Line key={price}
                       data={[10, 50, 100, 150, 200, 300, 400, 500].map(cap => {
                         const capexT = cap * 100000;
-                        const annRev = cyclesYr * (rte / 100) * price * 100000;
+                        // Same kWh->MWh conversion fix as irrCalc above (100,000 kWh = 100 MWh).
+                        const annRev = cyclesYr * (rte / 100) * price * (100000 / 1000);
                         const annOp  = capexT * (opexPct / 100);
                         const net    = annRev - annOp;
                         const cfs    = [-capexT, ...Array(lifetime).fill(net)];

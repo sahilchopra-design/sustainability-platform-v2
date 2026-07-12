@@ -47,6 +47,9 @@ class SBTiFLAGRequest(BaseModel):
     base_year: int = Field(2020, ge=2000, le=2030)
     target_year: int = Field(2030, ge=2025, le=2050)
     current_emissions_tco2e: float = Field(..., ge=0)
+    achieved_reduction_pct: Optional[float] = Field(
+        None, description="Entity-reported progress vs base year (%). Omit for insufficient_data on progress fields."
+    )
 
 
 class FAOCropYieldRequest(BaseModel):
@@ -56,6 +59,9 @@ class FAOCropYieldRequest(BaseModel):
     crop: str = Field(..., description="wheat | maize | rice | soy | coffee | cocoa | sugarcane")
     region: str = Field(..., description="south_asia | sub_saharan_africa | latin_america | southeast_asia | europe")
     baseline_yield_t_ha: float = Field(..., ge=0)
+    adaptation_gain_pct: Optional[float] = Field(
+        None, description="Caller-supplied adaptation gain (%). Omit to use FAO adaptation-band midpoint."
+    )
 
 
 class TNFDFoodLEAPRequest(BaseModel):
@@ -64,6 +70,15 @@ class TNFDFoodLEAPRequest(BaseModel):
     entity_id: str
     entity_name: str
     commodities: list[str] = Field(default_factory=list)
+    leap_scores: Optional[dict] = Field(
+        None, description="{'locate','evaluate','assess','prepare'} (0-100). Omit for insufficient_data leap_composite."
+    )
+    nature_scores: Optional[dict] = Field(
+        None, description="{'nature_dependency','nature_impact','water_dependency'} (0-100)."
+    )
+    relied_nature_services: Optional[list[str]] = Field(
+        None, description="List of relied-upon nature services (TNFD_FOOD_NATURE_SERVICES)."
+    )
 
 
 class EUDRFoodRequest(BaseModel):
@@ -72,6 +87,12 @@ class EUDRFoodRequest(BaseModel):
     entity_id: str
     commodities: list[str] = Field(default_factory=list)
     country_codes: list[str] = Field(default_factory=list)
+    cutoff_compliant: Optional[bool] = Field(
+        None, description="Post-2020-12-31 deforestation-free attestation. Omit for insufficient_data compliance gap."
+    )
+    geolocation_coverage_pct: Optional[float] = Field(
+        None, description="Share of plots with verified geolocation (0-100)."
+    )
 
 
 class AgriculturalEmissionsRequest(BaseModel):
@@ -81,6 +102,14 @@ class AgriculturalEmissionsRequest(BaseModel):
     farm_area_ha: float = Field(..., ge=0)
     livestock_count: int = Field(0, ge=0)
     crop_type: str = "mixed"
+    pcaf_dqs: Optional[int] = Field(
+        None, ge=1, le=5, description="Caller-assigned PCAF data-quality score (1=verified, 5=estimated)."
+    )
+
+
+class InterventionPlanItem(BaseModel):
+    action: str
+    scale: float = Field(0.0, ge=0)
 
 
 class FLAGTargetsRequest(BaseModel):
@@ -91,6 +120,9 @@ class FLAGTargetsRequest(BaseModel):
     sector: str
     base_emissions: float = Field(..., ge=0)
     target_year: int = Field(2030, ge=2025, le=2050)
+    intervention_plan: Optional[list[InterventionPlanItem]] = Field(
+        None, description="Deployment plan of {action, scale}. Omit to return catalogue without deployment scale."
+    )
 
 
 class LandDegradationRequest(BaseModel):
@@ -100,6 +132,9 @@ class LandDegradationRequest(BaseModel):
     land_area_ha: float = Field(..., ge=0)
     land_use: str = Field(..., description="forest | cropland | pasture | wetland | grassland | shrubland")
     country_code: str = Field(..., min_length=2, max_length=3)
+    ldn_status: Optional[str] = Field(None, description="Improving | Stable | Degrading")
+    degraded_area_ha: Optional[float] = Field(None, ge=0, description="Observed degraded hectares.")
+    biodiversity_index: Optional[float] = Field(None, ge=0, le=1, description="0-1 intactness index.")
 
 
 # ---------------------------------------------------------------------------
@@ -115,6 +150,7 @@ def sbti_flag(req: SBTiFLAGRequest) -> dict:
         base_year=req.base_year,
         target_year=req.target_year,
         current_emissions_tco2e=req.current_emissions_tco2e,
+        achieved_reduction_pct=req.achieved_reduction_pct,
     )
 
 
@@ -126,6 +162,7 @@ def fao_crop_yield(req: FAOCropYieldRequest) -> dict:
         crop=req.crop,
         region=req.region,
         baseline_yield_t_ha=req.baseline_yield_t_ha,
+        adaptation_gain_pct=req.adaptation_gain_pct,
     )
 
 
@@ -136,6 +173,9 @@ def tnfd_food_leap(req: TNFDFoodLEAPRequest) -> dict:
         entity_id=req.entity_id,
         entity_name=req.entity_name,
         commodities=req.commodities,
+        leap_scores=req.leap_scores,
+        nature_scores=req.nature_scores,
+        relied_nature_services=req.relied_nature_services,
     )
 
 
@@ -146,6 +186,8 @@ def eudr_food(req: EUDRFoodRequest) -> dict:
         entity_id=req.entity_id,
         commodities=req.commodities,
         country_codes=req.country_codes,
+        cutoff_compliant=req.cutoff_compliant,
+        geolocation_coverage_pct=req.geolocation_coverage_pct,
     )
 
 
@@ -157,6 +199,7 @@ def agricultural_emissions(req: AgriculturalEmissionsRequest) -> dict:
         farm_area_ha=req.farm_area_ha,
         livestock_count=req.livestock_count,
         crop_type=req.crop_type,
+        pcaf_dqs=req.pcaf_dqs,
     )
 
 
@@ -169,6 +212,7 @@ def flag_targets(req: FLAGTargetsRequest) -> dict:
         sector=req.sector,
         base_emissions=req.base_emissions,
         target_year=req.target_year,
+        intervention_plan=[p.dict() for p in req.intervention_plan] if req.intervention_plan is not None else None,
     )
 
 
@@ -180,6 +224,9 @@ def land_degradation(req: LandDegradationRequest) -> dict:
         land_area_ha=req.land_area_ha,
         land_use=req.land_use,
         country_code=req.country_code,
+        ldn_status=req.ldn_status,
+        degraded_area_ha=req.degraded_area_ha,
+        biodiversity_index=req.biodiversity_index,
     )
 
 

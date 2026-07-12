@@ -16,9 +16,12 @@ const sr = s => { const x = Math.sin(s + 1) * 10000; return x - Math.floor(x); }
 function calcTransitionLoan({ principalM, baseRate, greeniumBps, carbonPriceFwd,
   ghgIntensityNow, ghgIntensityTarget, revenue, maturityYr, wacc }) {
   const w = wacc / 100;
-  const allIn = baseRate / 100 + (baseRate / 100 - greeniumBps / 10000);
+  const allIn = baseRate / 100 - greeniumBps / 10000;
   const annInt = principalM * allIn;
-  const carbonSaving = (ghgIntensityNow - ghgIntensityTarget) * revenue / 1000 * carbonPriceFwd;
+  // ghgIntensity is tCO2/$M-revenue, revenue is $M -> product is tCO2 (absolute tons).
+  // carbonPriceFwd is $/t, so the raw product is absolute $. Divide by 1e6 to express
+  // in $M, matching the units of principalM/annInt.
+  const carbonSaving = (ghgIntensityNow - ghgIntensityTarget) * revenue * carbonPriceFwd / 1e6;
   const pvSaving = carbonSaving * (1 - Math.pow(1 + w, -maturityYr)) / w;
   const effectiveCost = annInt - carbonSaving;
   return { allIn: allIn * 100, annInt, carbonSaving, pvSaving, effectiveCost };

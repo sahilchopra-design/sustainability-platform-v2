@@ -19,14 +19,74 @@ const ENTITIES = [
   { id:'E8', name:'MiningDeep Ltd', sector:'Mining', exposure:3600, pd:0.16, lgd:0.60, interconnections:['E4','E6','E7'], deltaCoVaR:0.055, capitalHit:346 },
 ];
 
-const CHAIN_STEPS = [
-  { step:1, event:'Stranded Asset Write-Down', trigger:'Carbon price >$120/tCO2', lossAccum:0 },
-  { step:2, event:'Covenant Breach', trigger:'Leverage ratio exceeds 4.5x', lossAccum:420 },
-  { step:3, event:'Loan Default', trigger:'Missed 2+ interest payments', lossAccum:1240 },
-  { step:4, event:'Bank Capital Hit', trigger:'CET1 ratio falls below buffer', lossAccum:2100 },
-  { step:5, event:'Credit Tightening', trigger:'Bank reduces lending 15-20%', lossAccum:3800 },
-  { step:6, event:'Sector Contagion', trigger:'Counterparty defaults cascade', lossAccum:6200 },
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// Eisenberg & Noe (2001) network clearing-vector model — real fixed-point
+// contagion, replacing the previous pre-scripted 6-step loss table.
+//
+// Liability matrix L: L[i][j] = $M entity i owes entity j within this modeled
+// corporate network (intercompany loans / cross-guarantees / trade credit
+// along the supply-chain linkages already captured in `interconnections`).
+// Assumption (explicit — the source data has no bilateral liability figures):
+// each entity's total intra-network liability = INTERCO_RATIO x its total
+// credit exposure, split evenly across its listed counterparties.
+// ─────────────────────────────────────────────────────────────────────────────
+const INTERCO_RATIO = 0.15;
+const ENTITY_INDEX = Object.fromEntries(ENTITIES.map((e, i) => [e.id, i]));
+
+function buildLiabilityMatrix() {
+  const n = ENTITIES.length;
+  const L = Array.from({ length: n }, () => Array(n).fill(0));
+  ENTITIES.forEach((e, i) => {
+    const totalLiability = e.exposure * INTERCO_RATIO;
+    const cps = e.interconnections;
+    const share = cps.length ? totalLiability / cps.length : 0;
+    cps.forEach(cpId => { L[i][ENTITY_INDEX[cpId]] = share; });
+  });
+  return L;
+}
+const LIABILITY_MATRIX = buildLiabilityMatrix();
+const L_TOTALS = LIABILITY_MATRIX.map(row => row.reduce((s, x) => s + x, 0));
+
+// Climate-stressed external assets: baseline solvency buffer of 1.15x total
+// network liabilities, eroded by carbon-price/severity stress weighted by
+// each entity's climate loss sensitivity (pd x lgd) — oil & gas / mining /
+// power (highest pd*lgd) breach solvency first as the slider stress rises.
+function externalAssets(carbonPrice, severity) {
+  const stress = severity * (carbonPrice / 120); // = 1.0 at slider defaults ($120, 1.0x)
+  return ENTITIES.map((e, i) => {
+    const buffer = 1.15 - (e.pd * e.lgd) * stress * 3.5;
+    return Math.max(0, L_TOTALS[i] * buffer);
+  });
+}
+
+// Eisenberg-Noe fictitious-default clearing-vector algorithm: starts at
+// p = L ("everyone pays their obligations in full") and iterates the clearing
+// map p_i = min(L_i, e_i + sum_j (L_ji/L_j)*p_j) downward to the greatest
+// fixed point (Eisenberg & Noe, 2001). Monotone decreasing sequence => converges.
+function clearingVector(L, e, { tol = 1e-6, maxIter = 200 } = {}) {
+  const n = e.length;
+  const Ltot = L.map(row => row.reduce((s, x) => s + x, 0));
+  const Pi = L.map((row, i) => row.map(x => (Ltot[i] > 0 ? x / Ltot[i] : 0)));
+  let p = Ltot.slice();
+  const history = [p.slice()];
+  let converged = false, iterations = 0;
+  for (let iter = 0; iter < maxIter; iter++) {
+    const next = new Array(n);
+    for (let i = 0; i < n; i++) {
+      let received = 0;
+      for (let j = 0; j < n; j++) received += Pi[j][i] * p[j];
+      next[i] = Math.max(0, Math.min(Ltot[i], e[i] + received));
+    }
+    const delta = Math.max(...next.map((v, i) => Math.abs(v - p[i])));
+    p = next;
+    history.push(p.slice());
+    iterations = iter + 1;
+    if (delta < tol) { converged = true; break; }
+  }
+  const defaulted = p.map((v, i) => v < Ltot[i] - tol);
+  const shortfall = p.map((v, i) => Math.max(0, Ltot[i] - v));
+  return { p, Ltot, Pi, defaulted, shortfall, history, converged, iterations };
+}
 
 const SECTORS_AGG = ['Coal Mining','Oil & Gas','Cement','Steel','Power Generation','Chemicals','Transport','Mining'];
 const CONC_LIMITS = SECTORS_AGG.map((s,i)=>({ sector:s, currentExposure:ENTITIES.filter(e=>e.sector===s).reduce((a,e)=>a+e.exposure,0), limit:5000+i*500, utilization:0 }));
@@ -46,14 +106,38 @@ export default function CascadingDefaultModelerPage(){
   const totalCapHit = ENTITIES.reduce((s,e)=>s+e.capitalHit,0);
   const avgCoVaR = ENTITIES.reduce((s,e)=>s+e.deltaCoVaR,0)/Math.max(1,ENTITIES.length);
 
-  const cascadeData = useMemo(()=>CHAIN_STEPS.map(s=>({...s,lossAccum:Math.round(s.lossAccum*severity*(carbonPrice/120))})),[severity,carbonPrice]);
+  // Real Eisenberg-Noe clearing-vector solve, re-run whenever the climate
+  // stress sliders move (carbon price erodes external assets -> some entities
+  // can no longer meet their intra-network liabilities -> shortfall propagates
+  // to creditors via the liability matrix, exactly as Eisenberg-Noe (2001)
+  // describes financial contagion).
+  const network = useMemo(() => {
+    const e = externalAssets(carbonPrice, severity);
+    return clearingVector(LIABILITY_MATRIX, e);
+  }, [carbonPrice, severity]);
+
+  // Per-iteration systemic shortfall, for the cascade chart — one bucket per
+  // round of the fixed-point solve (not a pre-scripted narrative chain).
+  const cascadeData = useMemo(() => network.history.map((p, iter) => {
+    const lossAccum = Math.round(p.reduce((s, v, i) => s + Math.max(0, network.Ltot[i] - v), 0));
+    const newlyDefaulted = iter === 0 ? [] : ENTITIES.filter((e, i) =>
+      p[i] < network.Ltot[i] - 1e-6 && network.history[iter - 1][i] >= network.Ltot[i] - 1e-6
+    ).map(e => e.name);
+    return {
+      step: iter,
+      event: iter === 0 ? 'p₀ = L — fictitious full-payment start' : (newlyDefaulted.length ? `Default: ${newlyDefaulted.join(', ')}` : 'No new defaults this round'),
+      trigger: iter === 0 ? 'Eisenberg-Noe clearing vector initialised' : `Clearing iteration ${iter} of ${network.iterations}`,
+      lossAccum,
+    };
+  }), [network]);
+
   const loanLoss = useMemo(()=>ENTITIES.map(e=>({...e,el:Math.round(e.exposure*e.pd*e.lgd*severity),uel:Math.round(e.exposure*e.pd*e.lgd*severity*2.5)})),[severity]);
 
   return (
     <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24}}>
       <Badge code="EP-CK2" label="Cascading Default Chain Modelling" />
       <h2 style={{color:T.navy,margin:'0 0 4px'}}>Cascading Default Modeler</h2>
-      <p style={{color:T.textSec,fontSize:13,margin:'0 0 16px'}}>Chain: Stranded Asset &rarr; Covenant Breach &rarr; Loan Default &rarr; Bank Capital Hit &rarr; Credit Tightening &rarr; Sector Contagion</p>
+      <p style={{color:T.textSec,fontSize:13,margin:'0 0 16px'}}>Climate shock (carbon price &times; severity) erodes external assets &rarr; Eisenberg-Noe clearing-vector fixed-point solve determines who defaults &rarr; shortfall propagates through the liability network to creditors</p>
 
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
         {TABS.map((t,i)=><button key={i} onClick={()=>setTab(i)} style={{padding:'6px 16px',borderRadius:6,border:`1px solid ${tab===i?T.navy:T.border}`,background:tab===i?T.navy:'#fff',color:tab===i?'#fff':T.navy,fontFamily:T.font,fontSize:12,fontWeight:600,cursor:'pointer'}}>{t}</button>)}
@@ -68,24 +152,35 @@ export default function CascadingDefaultModelerPage(){
         <Card><KPI label="Total Exposure" value={`$${(totalExposure/1000).toFixed(1)}B`} sub="8 entities"/></Card>
         <Card><KPI label="Capital Impact" value={`$${totalCapHit}M`} sub={`${severity.toFixed(1)}x severity`} color={T.red}/></Card>
         <Card><KPI label="Avg Delta CoVaR" value={`${(avgCoVaR*100).toFixed(1)}%`} sub="systemic contribution"/></Card>
-        <Card><KPI label="Cascade Final Loss" value={`$${cascadeData[5]?.lossAccum||0}M`} sub="6-step chain" color={T.orange}/></Card>
+        <Card><KPI label="Systemic Shortfall" value={`$${cascadeData[cascadeData.length-1]?.lossAccum||0}M`} sub={`${network.iterations} iter · ${network.converged?'converged':'NOT converged'}`} color={T.orange}/></Card>
       </div>
 
       {tab===0 && (
         <Card>
-          <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Default Chain Visualizer</h3>
+          <h3 style={{color:T.navy,fontSize:15,margin:'0 0 12px'}}>Default Chain Visualizer — Eisenberg-Noe Clearing Vector</h3>
+          <div style={{fontSize:11,color:T.textSec,marginBottom:10}}>
+            Solves p<sub>i</sub> = min(L<sub>i</sub>, e<sub>i</sub> + &sum;<sub>j</sub> (L<sub>ji</sub>/L<sub>j</sub>)&middot;p<sub>j</sub>) by fixed-point iteration, starting from p = L (full payment) and iterating downward to the greatest clearing vector (Eisenberg &amp; Noe, 2001).
+          </div>
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={cascadeData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="step" tick={{fontSize:11}}/><YAxis tick={{fontSize:11}}/>
-              <Tooltip content={({active,payload})=>active&&payload?.[0]?<div style={{background:'#fff',border:`1px solid ${T.border}`,padding:8,borderRadius:6,fontSize:11,fontFamily:T.mono}}><div style={{fontWeight:700}}>{payload[0].payload.event}</div><div>Trigger: {payload[0].payload.trigger}</div><div>Cumulative Loss: ${payload[0].value}M</div></div>:null}/>
+              <XAxis dataKey="step" tick={{fontSize:11}} label={{value:'Clearing iteration',position:'insideBottom',offset:-4,fontSize:10}}/><YAxis tick={{fontSize:11}}/>
+              <Tooltip content={({active,payload})=>active&&payload?.[0]?<div style={{background:'#fff',border:`1px solid ${T.border}`,padding:8,borderRadius:6,fontSize:11,fontFamily:T.mono}}><div style={{fontWeight:700}}>{payload[0].payload.event}</div><div>{payload[0].payload.trigger}</div><div>Systemic shortfall: ${payload[0].value}M</div></div>:null}/>
               <Area type="stepAfter" dataKey="lossAccum" fill={T.red+'33'} stroke={T.red} strokeWidth={2}/>
             </AreaChart>
           </ResponsiveContainer>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8,marginTop:12}}>
-            {CHAIN_STEPS.map((s,i)=><div key={i} style={{padding:10,borderRadius:6,background:i<2?T.amber+'11':i<4?T.orange+'11':T.red+'11',border:`1px solid ${i<2?T.amber:i<4?T.orange:T.red}33`,fontSize:11}}>
-              <div style={{fontWeight:700,color:T.navy}}>Step {s.step}: {s.event}</div>
-              <div style={{color:T.textSec}}>{s.trigger}</div>
-            </div>)}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8,marginTop:12}}>
+            {ENTITIES.map((e,i)=>{
+              const defaulted = network.defaulted[i];
+              const paid = Math.round(network.p[i]);
+              const owed = Math.round(network.Ltot[i]);
+              return (
+                <div key={e.id} style={{padding:10,borderRadius:6,background:defaulted?T.red+'11':T.green+'11',border:`1px solid ${defaulted?T.red:T.green}33`,fontSize:11}}>
+                  <div style={{fontWeight:700,color:T.navy}}>{e.name}</div>
+                  <div style={{color:T.textSec}}>Paid ${paid}M of ${owed}M owed</div>
+                  <div style={{color:defaulted?T.red:T.green,fontWeight:700}}>{defaulted?`Defaults — shortfall $${Math.round(network.shortfall[i])}M`:'Solvent — pays in full'}</div>
+                </div>
+              );
+            })}
           </div>
         </Card>
       )}
@@ -101,9 +196,39 @@ export default function CascadingDefaultModelerPage(){
               <div style={{fontSize:10,color:T.textMut}}>Connects: {e.interconnections.join(', ')}</div>
             </div>)}
           </div>
-          {selectedEntity && (()=>{const e=ENTITIES.find(x=>x.id===selectedEntity); return e?<div style={{marginTop:12,padding:12,background:T.navy+'08',borderRadius:6,fontSize:12}}>
-            <strong>{e.name}</strong> &mdash; Default cascades to: {e.interconnections.map(c=>ENTITIES.find(x=>x.id===c)?.name).join(' &rarr; ')}. Total downstream exposure: ${e.interconnections.reduce((s,c)=>s+(ENTITIES.find(x=>x.id===c)?.exposure||0),0)}M
-          </div>:null})()}
+          {selectedEntity && (()=>{
+            const idx = ENTITY_INDEX[selectedEntity];
+            const e = ENTITIES[idx];
+            if (!e) return null;
+            const defaulted = network.defaulted[idx];
+            const paid = network.p[idx];
+            const owed = network.Ltot[idx];
+            return (
+              <div style={{marginTop:12,padding:12,background:T.navy+'08',borderRadius:6,fontSize:12}}>
+                <div style={{marginBottom:8}}>
+                  <strong>{e.name}</strong> &mdash; Eisenberg-Noe clearing outcome: {defaulted
+                    ? <span style={{color:T.red,fontWeight:700}}>defaults, pays ${Math.round(paid)}M of ${Math.round(owed)}M owed (shortfall ${Math.round(owed-paid)}M)</span>
+                    : <span style={{color:T.green,fontWeight:700}}>solvent, pays ${Math.round(paid)}M in full</span>}
+                </div>
+                <div style={{fontSize:11,color:T.textSec,marginBottom:4}}>Propagation to counterparties (amount actually received vs. contractually owed, per the clearing vector):</div>
+                {e.interconnections.map(cpId => {
+                  const cpIdx = ENTITY_INDEX[cpId];
+                  const cp = ENTITIES[cpIdx];
+                  const owedToCp = LIABILITY_MATRIX[idx][cpIdx];
+                  const receivedByCp = owed > 0 ? (owedToCp / owed) * paid : 0;
+                  const cpShortfall = owedToCp - receivedByCp;
+                  return (
+                    <div key={cpId} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',borderBottom:`1px solid ${T.border}`,fontSize:11}}>
+                      <span>{cp?.name}</span>
+                      <span style={{fontFamily:T.mono, color: cpShortfall>0.5?T.red:T.textSec}}>
+                        receives ${receivedByCp.toFixed(1)}M of ${owedToCp.toFixed(1)}M{cpShortfall>0.5?` (short $${cpShortfall.toFixed(1)}M)`:''}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })()}
         </Card>
       )}
 
@@ -173,7 +298,7 @@ export default function CascadingDefaultModelerPage(){
       )}
 
       <div style={{marginTop:16,padding:12,background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,color:T.textMut}}>
-        <strong>Reference:</strong> Cascading default model based on Eisenberg-Noe network clearing framework. Delta CoVaR per Adrian & Brunnermeier (2016). Severity multiplier scales all PDs and LGDs linearly. Carbon price transmission assumed via covenant stress on leverage and interest coverage ratios.
+        <strong>Reference:</strong> Cascading default model implements the Eisenberg & Noe (2001) clearing-vector fixed-point algorithm (p = min(L, e + &Pi;<sup>T</sup>p), solved via the fictitious-default iteration from p&#8320;=L). Liability matrix L is constructed from each entity's exposure &times; a 15% intercompany/trade-credit ratio, split across its modeled counterparties (assumption, since bilateral liabilities are not independently observable); external assets e scale down with carbon-price/severity stress weighted by pd&times;lgd. Delta CoVaR per Adrian &amp; Brunnermeier (2016), computed independently of the clearing-vector solve. Loan Loss Cascade (EL/UEL) is a standard expected-loss calc, also independent of the network solve.
       </div>
     </div>
   );

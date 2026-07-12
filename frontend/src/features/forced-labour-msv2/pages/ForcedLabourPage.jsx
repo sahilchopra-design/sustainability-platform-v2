@@ -1,5 +1,40 @@
 import React, { useState, useMemo } from 'react';
+import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell, Legend, PieChart, Pie, LineChart, Line } from 'recharts';
+
+// Backend E38 Forced Labour Risk Assessment engine (ILO 11 indicators / EU FLR
+// 2024/3015 / UK MSA Section 54 / LkSG / compliance programme maturity).
+// See backend/services/forced_labour_engine.py + backend/api/v1/routes/forced_labour.py
+// The engine returns honest nulls ("insufficient_data") when required inputs
+// are not supplied — it never fabricates a risk score. The Live Entity
+// Assessment tab below calls the real endpoint and surfaces those nulls as
+// "Insufficient data" rather than blank/NaN.
+const API = 'http://localhost:8001';
+const FORCED_LABOUR_API = `${API}/api/v1/forced-labour`;
+
+// Local INDUSTRIES -> engine EU_FLR_HIGH_RISK_SECTORS keys (sectors outside
+// this list are still accepted by the engine; they simply don't add sector risk points).
+const INDUSTRY_TO_SECTOR = {
+  'Apparel & Textiles': 'apparel_textiles',
+  'Electronics': 'electronics',
+  'Agriculture & Food': 'agriculture_food',
+  'Mining & Metals': 'mining_minerals',
+  'Construction': 'construction',
+  'Healthcare Products': 'other',
+  'Automotive': 'other',
+  'Retail': 'other',
+  'Chemicals': 'other',
+  'Logistics': 'fishing',
+};
+
+// Local SOURCE_COUNTRIES (full names) -> ISO 3166-1 alpha-2 codes the engine expects.
+const COUNTRY_TO_ISO = {
+  'China': 'CN', 'Vietnam': 'VN', 'Bangladesh': 'BD', 'India': 'IN', 'Malaysia': 'MY',
+  'Thailand': 'TH', 'Indonesia': 'ID', 'Myanmar': 'MM', 'Philippines': 'PH', 'Cambodia': 'KH',
+  'Pakistan': 'PK', 'Turkey': 'TR', 'Mexico': 'MX', 'Brazil': 'BR', 'Ethiopia': 'ET',
+  'Colombia': 'CO', 'Sri Lanka': 'LK', 'Nepal': 'NP', 'Jordan': 'JO', 'Nigeria': 'NG',
+  'Morocco': 'MA', 'Ghana': 'GH', 'Peru': 'PE', 'Ukraine': 'UA',
+};
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', borderL: '#ede9e0', sub: '#f4f6f9',
@@ -107,7 +142,14 @@ const AUDIT_RECORDS = Array.from({ length: 150 }, (_, i) => ({
   corrective_actions: Math.round(sr(i * 29) * 18)
 }));
 
-const TABS = ['Risk Heatmap','Supply Chain Screening','ILO Due Diligence','Regulatory Compliance','Grievance Management','Audit Intelligence','Worker Wellbeing','Remediation Tracker'];
+const TABS = ['Risk Heatmap','Supply Chain Screening','ILO Due Diligence','Regulatory Compliance','Grievance Management','Audit Intelligence','Worker Wellbeing','Remediation Tracker','Live Entity Assessment'];
+
+const StatusBadge = ({ status }) => {
+  if (status === 'loading') return <Badge bg="#1e293b" fg="#94a3b8">Connecting to Forced Labour Engine…</Badge>;
+  if (status === 'live') return <Badge bg="#dcfce7" fg="#166534">● Live — computed by /api/v1/forced-labour engine (ILO 11 indicators · EU FLR 2024/3015 · UK MSA)</Badge>;
+  if (status === 'error') return <Badge bg="#fee2e2" fg="#991b1b">⚠ Live call failed — see error below</Badge>;
+  return <Badge bg="#fef3c7" fg="#92400e">○ Demo Data — Forced Labour API unavailable, showing seeded illustrative figures</Badge>;
+};
 
 export const exportCSV = (rows, fn) => {
   if (!rows.length) return;
@@ -154,6 +196,68 @@ export default function ForcedLabourPage() {
   const [grievType, setGrievType] = useState('All');
   const [grievSev, setGrievSev] = useState('All');
   const [grievStatus, setGrievStatus] = useState('All');
+
+  // --- Live Entity Assessment tab: calls the real forced-labour-engine ------
+  const [liveChainIdx, setLiveChainIdx] = useState(0);
+  const [includeIlo, setIncludeIlo] = useState(true);
+  const [includeAudit, setIncludeAudit] = useState(true);
+  const [includeMsa, setIncludeMsa] = useState(true);
+  const [includeProgramme, setIncludeProgramme] = useState(true);
+  const [auditScore, setAuditScore] = useState(55);
+  const [iloDebtBondage, setIloDebtBondage] = useState(6.5);
+  const [iloWages, setIloWages] = useState(5.0);
+  const [iloViolence, setIloViolence] = useState(2.0);
+  const [progPolicy, setProgPolicy] = useState(55);
+  const [progDueDiligence, setProgDueDiligence] = useState(50);
+  const [progGrievance, setProgGrievance] = useState(45);
+
+  const [liveResult, setLiveResult] = useState(null);
+  const [liveStatus, setLiveStatus] = useState('idle'); // 'idle' | 'loading' | 'live' | 'demo' | 'error'
+  const [liveError, setLiveError] = useState(null);
+
+  const runLiveAssessment = async () => {
+    const chain = SUPPLY_CHAINS[liveChainIdx];
+    const sector = INDUSTRY_TO_SECTOR[chain.industry] || 'other';
+    const countryCode = COUNTRY_TO_ISO[chain.primarySource] || '';
+
+    const payload = {
+      entity_id: `SUP-${chain.id}`,
+      entity_name: chain.company,
+      sector,
+      country_code: countryCode,
+      audit_evidence: includeAudit ? { audit_score: auditScore } : {},
+      supplier_data: includeIlo ? {
+        debt_bondage: iloDebtBondage,
+        retention_of_wages: iloWages,
+        physical_violence: iloViolence,
+      } : {},
+      disclosure_data: includeMsa ? {
+        org_chart_published: true,
+        supply_chain_tiers_mapped: true,
+        modern_slavery_policy_exists: true,
+        policy_board_approved: true,
+        supplier_questionnaires: true,
+        risk_register_maintained: true,
+      } : {},
+      programme_data: includeProgramme ? {
+        policy_commitment_score: progPolicy,
+        due_diligence_process_score: progDueDiligence,
+        grievance_mechanism_score: progGrievance,
+      } : {},
+    };
+
+    setLiveStatus('loading');
+    setLiveError(null);
+    try {
+      const { data } = await axios.post(`${FORCED_LABOUR_API}/full-assessment`, payload, { timeout: 10000 });
+      setLiveResult(data);
+      setLiveStatus('live');
+    } catch (e) {
+      setLiveResult(null);
+      setLiveStatus(e?.response ? 'error' : 'demo');
+      setLiveError(e?.response?.data?.detail || e.message);
+    }
+  };
 
   const filteredChains = useMemo(() => {
     let c = [...SUPPLY_CHAINS];
@@ -834,6 +938,111 @@ export default function ForcedLabourPage() {
     );
   };
 
+  // --- Tab 8: Live Entity Assessment (real backend, honest nulls) ---
+  const renderLiveAssessment = () => {
+    const chain = SUPPLY_CHAINS[liveChainIdx];
+    const numOrNull = (v) => (v === '' || v === null || v === undefined ? null : v);
+    const fieldLabel = { fontSize: 11, color: T.textSec, marginBottom: 3, display: 'block' };
+    const fieldInput = { border: `1px solid ${T.border}`, borderRadius: 6, padding: '6px 8px', fontSize: 12, width: '100%', boxSizing: 'border-box' };
+    const panel = { background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16 };
+
+    const r = liveResult;
+    const iloScore = r?.ilo_screening?.aggregate_risk_score;
+    const iloLevel = r?.ilo_screening?.risk_level;
+    const progScore = r?.compliance_programme?.overall_score;
+    const progMaturity = r?.compliance_programme?.maturity;
+
+    return (
+      <div>
+        <div style={{ marginBottom: 14, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <StatusBadge status={liveStatus === 'idle' ? 'demo' : liveStatus} />
+          {liveStatus === 'idle' && <span style={{ fontSize: 11, color: T.textSec }}>Configure inputs below and click "Run Assessment" to call the real ILO / EU FLR / UK MSA engine.</span>}
+        </div>
+        <Row cols="1fr 1fr">
+          <div style={panel}>
+            <div style={{ fontWeight: 600, fontSize: 13, color: T.textPri, marginBottom: 10 }}>Entity Assessment Inputs</div>
+            <label style={fieldLabel}>Entity (prefill from supply chain)</label>
+            <select value={liveChainIdx} onChange={e => setLiveChainIdx(+e.target.value)} style={{ ...fieldInput, marginBottom: 10 }}>
+              {SUPPLY_CHAINS.slice(0, 60).map((s, i) => <option key={i} value={i}>{s.company} — {s.industry} — {s.primarySource}</option>)}
+            </select>
+            <div style={{ fontSize: 11, color: T.textSec, marginBottom: 10 }}>
+              Sector → <b>{INDUSTRY_TO_SECTOR[chain.industry] || 'other'}</b> · Country → <b>{COUNTRY_TO_ISO[chain.primarySource] || 'unmapped'}</b>
+            </div>
+
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10, marginBottom: 10 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                <input type="checkbox" checked={includeAudit} onChange={e => setIncludeAudit(e.target.checked)} /> Supply EU FLR audit evidence
+              </label>
+              {includeAudit && <div>
+                <label style={fieldLabel}>Audit score (0-100)</label>
+                <input type="number" min={0} max={100} value={auditScore} onChange={e => setAuditScore(+e.target.value)} style={fieldInput} />
+              </div>}
+              {!includeAudit && <div style={{ fontSize: 11, color: T.amber }}>No audit evidence — EU FLR treats this as elevated risk (honest, not fabricated)</div>}
+            </div>
+
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10, marginBottom: 10 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                <input type="checkbox" checked={includeIlo} onChange={e => setIncludeIlo(e.target.checked)} /> Supply ILO indicator scores (0-10)
+              </label>
+              {includeIlo && <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <div><label style={fieldLabel}>Debt bondage</label><input type="number" min={0} max={10} step={0.5} value={iloDebtBondage} onChange={e => setIloDebtBondage(+e.target.value)} style={fieldInput} /></div>
+                <div><label style={fieldLabel}>Wage retention</label><input type="number" min={0} max={10} step={0.5} value={iloWages} onChange={e => setIloWages(+e.target.value)} style={fieldInput} /></div>
+                <div><label style={fieldLabel}>Physical violence</label><input type="number" min={0} max={10} step={0.5} value={iloViolence} onChange={e => setIloViolence(+e.target.value)} style={fieldInput} /></div>
+              </div>}
+              {!includeIlo && <div style={{ fontSize: 11, color: T.amber }}>No ILO indicators supplied — aggregate score will return "insufficient_data" (honest null, not a fabricated score)</div>}
+            </div>
+
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10, marginBottom: 10 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600 }}>
+                <input type="checkbox" checked={includeMsa} onChange={e => setIncludeMsa(e.target.checked)} /> Supply UK MSA disclosure evidence (org structure, policy, DD, risk register)
+              </label>
+            </div>
+
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10, marginBottom: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                <input type="checkbox" checked={includeProgramme} onChange={e => setIncludeProgramme(e.target.checked)} /> Supply compliance programme pillar scores (0-100)
+              </label>
+              {includeProgramme && <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                <div><label style={fieldLabel}>Policy commitment</label><input type="number" min={0} max={100} value={progPolicy} onChange={e => setProgPolicy(+e.target.value)} style={fieldInput} /></div>
+                <div><label style={fieldLabel}>Due diligence</label><input type="number" min={0} max={100} value={progDueDiligence} onChange={e => setProgDueDiligence(+e.target.value)} style={fieldInput} /></div>
+                <div><label style={fieldLabel}>Grievance mechanism</label><input type="number" min={0} max={100} value={progGrievance} onChange={e => setProgGrievance(+e.target.value)} style={fieldInput} /></div>
+              </div>}
+            </div>
+
+            <button onClick={runLiveAssessment} disabled={liveStatus === 'loading'} style={{ background: T.navy, color: '#fff', border: 'none', borderRadius: 6, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: liveStatus === 'loading' ? 'wait' : 'pointer', width: '100%' }}>
+              {liveStatus === 'loading' ? 'Running assessment…' : 'Run Assessment'}
+            </button>
+          </div>
+
+          <div style={panel}>
+            <div style={{ fontWeight: 600, fontSize: 13, color: T.textPri, marginBottom: 10 }}>Assessment Result</div>
+            {liveStatus === 'idle' && <div style={{ fontSize: 12, color: T.textSec }}>No assessment run yet.</div>}
+            {liveStatus === 'error' && <div style={{ fontSize: 12, color: T.red }}>Request failed: {String(liveError)}</div>}
+            {liveStatus === 'demo' && <div style={{ fontSize: 12, color: T.amber }}>Forced Labour API unreachable — showing no result. Check that the backend is running on :8001.</div>}
+            {r && (
+              <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+                  <KpiCard label="ILO Aggregate Risk" value={iloScore != null ? `${iloScore}/10` : 'Insufficient data'} sub={iloLevel} accent={iloScore != null && iloScore >= 5 ? T.red : T.green} />
+                  <KpiCard label="EU FLR Risk Level" value={r.eu_flr?.risk_level ?? 'Insufficient data'} sub={r.eu_flr?.art7_investigation_trigger ? 'Art 7 trigger' : ''} accent={T.amber} />
+                  <KpiCard label="UK MSA Score" value={`${r.uk_msa?.score ?? 0}/30`} sub={r.uk_msa?.grade} accent={T.indigo} />
+                  <KpiCard label="Compliance Programme" value={progScore != null ? `${progScore}/100` : 'Insufficient data'} sub={progMaturity} accent={T.sage} />
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: T.textPri, marginBottom: 6 }}>EU FLR Risk Justification</div>
+                <ul style={{ margin: '0 0 12px', paddingLeft: 18, fontSize: 11, color: T.textSec }}>
+                  {(r.eu_flr?.risk_justification || []).map((j, i) => <li key={i}>{j}</li>)}
+                </ul>
+                <div style={{ fontSize: 12, fontWeight: 600, color: T.textPri, marginBottom: 6 }}>Priority Actions</div>
+                <ul style={{ margin: 0, paddingLeft: 18, fontSize: 11, color: T.textSec }}>
+                  {(r.priority_actions || []).map((a, i) => <li key={i}>{a}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </Row>
+      </div>
+    );
+  };
+
   return (
     <div style={{ fontFamily: 'DM Sans, system-ui, sans-serif', background: T.bg, minHeight: '100vh' }}>
       <div style={{ background: T.navy, padding: '20px 32px', borderBottom: `3px solid ${T.gold}` }}>
@@ -854,6 +1063,7 @@ export default function ForcedLabourPage() {
         {tab === 5 && renderAudits()}
         {tab === 6 && renderWellbeing()}
         {tab === 7 && renderRemediation()}
+        {tab === 8 && renderLiveAssessment()}
       </div>
     </div>
   );

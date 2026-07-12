@@ -436,10 +436,17 @@ class XBRLIngestionEngine:
     def ingest_auto(self, content: str) -> IngestionResult:
         """Auto-detect format (iXBRL HTML vs XBRL XML) and parse."""
         content_stripped = content.strip()
-        if content_stripped.startswith("<?xml") or content_stripped.startswith("<xbrli:xbrl"):
-            return self.ingest_xbrl_xml(content)
-        elif "<ix:nonFraction" in content or "<ix:header" in content:
+        # Check for inline-XBRL markers FIRST. Real-world ESEF/iXBRL filings are
+        # XHTML documents that very commonly begin with an XML declaration
+        # (e.g. `<?xml version="1.0"?>\n<html ...>`), so testing for a leading
+        # "<?xml" before checking for ix: markers would misroute genuine iXBRL
+        # documents to the XBRL-XML-instance parser (whose fact regex expects
+        # contextRef as the tag's first attribute, not "name=" then contextRef)
+        # and silently extract zero facts.
+        if "<ix:nonFraction" in content or "<ix:header" in content or "<ix:nonNumeric" in content:
             return self.ingest_ixbrl(content)
+        elif content_stripped.startswith("<?xml") or content_stripped.startswith("<xbrli:xbrl"):
+            return self.ingest_xbrl_xml(content)
         elif "<html" in content.lower()[:200]:
             return self.ingest_ixbrl(content)
         else:

@@ -1,11 +1,25 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, LineChart, Line, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, ReferenceLine,
 } from 'recharts';
 import { GLOBAL_COMPANY_MASTER } from '../../../data/globalCompanyMaster';
+
+// Backend Regulatory Obligation Calendar engine (E3) — real obligation registry
+// across CSRD/SFDR/BRSR/CBAM/EU ETS/ISSB/CSDDD/EUDR/etc. See
+// backend/services/regulatory_obligation_calendar.py + backend/api/v1/routes/regulatory_calendar.py
+// NOTE: only GET /summary and /module-coverage are wired below. The
+// /obligations, /alerts and /obligations/{id} endpoints were verified (via
+// direct Python invocation before wiring) to throw a server-side
+// AttributeError — the route code reads a `._obligations` attribute that
+// doesn't exist on the objects returned by the underlying calendar service.
+// Flagged separately for a backend fix; the itemized deadline/filing widgets
+// below remain explicit Demo Data until that's fixed.
+const API = 'http://localhost:8001';
+const REG_CAL_API = `${API}/api/v1/regulatory-calendar`;
 
 /* ═══════════════════════════════════════════════════════════════════════════
    THEME
@@ -151,6 +165,31 @@ export default function ReportingHubPage() {
 
   useEffect(() => { saveLS(LS_KEY, savedState); }, [savedState]);
 
+  // --- Live backend wiring (Regulatory Obligation Calendar engine, E3) ----
+  // Pulls real cross-framework obligation counts (CSRD/SFDR/BRSR/CBAM/EU ETS/
+  // ISSB/CSDDD/EUDR/EIOPA) from GET /summary. Falls back to the locally-seeded
+  // REG_SUBMISSIONS demo array, clearly labeled, if the API is unreachable.
+  const [regCalSummary, setRegCalSummary] = useState(null);
+  const [regCalStatus, setRegCalStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await axios.get(`${REG_CAL_API}/summary`, { timeout: 10000 });
+        if (!cancelled && data && typeof data.total_obligations === 'number') {
+          setRegCalSummary(data);
+          setRegCalStatus('live');
+        } else if (!cancelled) {
+          setRegCalStatus('demo');
+        }
+      } catch (e) {
+        if (!cancelled) setRegCalStatus('demo');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const toggleActionDone = useCallback((id) => {
     setSavedState(prev => {
       const completed = prev.completedActions.includes(id)
@@ -167,12 +206,25 @@ export default function ReportingHubPage() {
   const totalReportsYTD = useMemo(() => MONTHLY_STATS.reduce((a, m) => a + m.reports, 0), []);
   const avgSatisfaction = useMemo(() => (CLIENTS.reduce((a, c) => a + c.satisfaction, 0) / Math.max(1, CLIENTS.length)).toFixed(1), []);
   const schedulesActive = useMemo(() => CLIENTS.length, []);
-  const submissionsDue = useMemo(() => REG_SUBMISSIONS.filter(s => s.status !== 'submitted').length, []);
+  // Prefer the live Regulatory Obligation Calendar summary (real cross-framework
+  // obligation registry) when reachable; fall back to the seeded REG_SUBMISSIONS
+  // demo array (clearly badged) if the API is unavailable.
+  const submissionsDue = useMemo(() => {
+    if (regCalStatus === 'live' && regCalSummary) {
+      return Math.max(0, regCalSummary.total_obligations - regCalSummary.rescinded_obligations);
+    }
+    return REG_SUBMISSIONS.filter(s => s.status !== 'submitted').length;
+  }, [regCalStatus, regCalSummary]);
   const filingsOnTrack = useMemo(() => {
+    if (regCalStatus === 'live' && regCalSummary) {
+      const total = regCalSummary.total_obligations || 0;
+      const critical = (regCalSummary.by_urgency || {}).critical || 0;
+      return total ? (((total - critical) / total) * 100).toFixed(0) : 0;
+    }
     const relevant = REG_SUBMISSIONS.filter(s => s.status !== 'submitted');
     const onTrack = relevant.filter(s => s.completion > 0 || Math.ceil((new Date(s.deadline) - today) / 86400000) > 90).length;
     return relevant.length ? ((onTrack / relevant.length) * 100).toFixed(0) : 0;
-  }, []);
+  }, [regCalStatus, regCalSummary]);
   const avgGenTime = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.avgGenTime, 0) / Math.max(1, REPORT_TYPES.length)).toFixed(0), []);
   const avgDataCov = useMemo(() => (REPORT_TYPES.reduce((a, r) => a + r.dataCoverage, 0) / Math.max(1, REPORT_TYPES.length)).toFixed(0), []);
   const errorRate = useMemo(() => {
@@ -205,6 +257,19 @@ export default function ReportingHubPage() {
 
   /* ── Client AUM chart ───────────────────────────────────────────────── */
   const clientAumData = useMemo(() => CLIENTS.map(c => ({ name: c.name.split(' ').slice(0, 2).join(' '), aum: c.aum / 1e9 })), []);
+
+  /* ── Live regulatory obligation calendar (by framework / urgency) ─────── */
+  const liveByFramework = useMemo(() => {
+    if (!regCalSummary) return [];
+    return Object.entries(regCalSummary.by_framework || {})
+      .map(([framework, count]) => ({ framework, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [regCalSummary]);
+  const liveByUrgency = useMemo(() => {
+    if (!regCalSummary) return [];
+    const colorFor = { critical: T.red, high: T.amber, medium: T.gold, low: T.green };
+    return Object.entries(regCalSummary.by_urgency || {}).map(([name, value]) => ({ name, value, color: colorFor[name] || T.textMut }));
+  }, [regCalSummary]);
 
   /* ── Framework coverage radar ───────────────────────────────────────── */
   const fwCoverageData = useMemo(() => {
@@ -330,6 +395,10 @@ export default function ReportingHubPage() {
           <span style={badge(T.sage, `${T.sage}18`)}>{REPORT_TYPES.length} Report Types</span>
           <span style={badge(T.gold, `${T.gold}22`)}>{CLIENTS.length} Clients</span>
           <span style={badge(T.red, `${T.red}15`)}>{REG_SUBMISSIONS.length} Filings</span>
+          <br />
+          {regCalStatus === 'loading' && <span style={badge(T.textMut, '#f3f4f6')}>Connecting to Regulatory Calendar…</span>}
+          {regCalStatus === 'live' && <span style={badge('#166534', '#dcfce7')}>● Live — regulatory obligation counts from /api/v1/regulatory-calendar/summary</span>}
+          {regCalStatus === 'demo' && <span style={badge('#92400e', '#fef3c7')}>○ Demo Data — Regulatory Calendar API unavailable, showing seeded filings</span>}
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button style={btn(false)} onClick={exportDeliverables}>Export Deliverables CSV</button>
@@ -397,7 +466,10 @@ export default function ReportingHubPage() {
 
       {/* ── 6. Upcoming Deadlines ────────────────────────────────────────── */}
       <div style={card}>
-        <div style={sectionTitle}>Upcoming Deadlines</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div style={{ ...sectionTitle, marginBottom: 0 }}>Upcoming Deadlines</div>
+          <span style={badge(T.textMut, '#f3f4f6')}>Demo Data — itemized per-filing tracker (see live obligation summary below)</span>
+        </div>
         <div style={{ maxHeight: 320, overflowY: 'auto' }}>
           {deadlines.slice(0, 15).map((d, i) => (
             <div key={i} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: `1px solid ${T.border}`, alignItems: 'center' }}>
@@ -414,6 +486,57 @@ export default function ReportingHubPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ── 6b. Live Regulatory Obligation Calendar (E3 engine) ───────────── */}
+      <div style={card}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <div style={{ ...sectionTitle, marginBottom: 0 }}>Live Regulatory Obligation Calendar</div>
+          {regCalStatus === 'loading' && <span style={badge(T.textMut, '#f3f4f6')}>Connecting…</span>}
+          {regCalStatus === 'live' && <span style={badge('#166534', '#dcfce7')}>● Live — /api/v1/regulatory-calendar/summary</span>}
+          {regCalStatus === 'demo' && <span style={badge('#92400e', '#fef3c7')}>○ API unavailable</span>}
+        </div>
+        {regCalStatus === 'live' && regCalSummary ? (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div>
+              <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
+                <div><div style={{ fontSize: 11, color: T.textSec }}>Total Obligations</div><div style={{ fontSize: 22, fontWeight: 800, color: T.navy }}>{regCalSummary.total_obligations}</div></div>
+                <div><div style={{ fontSize: 11, color: T.textSec }}>Overdue</div><div style={{ fontSize: 22, fontWeight: 800, color: T.red }}>{(regCalSummary.overdue_obligation_ids || []).length}</div></div>
+                <div><div style={{ fontSize: 11, color: T.textSec }}>Jurisdictions</div><div style={{ fontSize: 22, fontWeight: 800, color: T.navy }}>{(regCalSummary.jurisdictions_covered || []).length}</div></div>
+              </div>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={liveByFramework} layout="vertical" margin={{ left: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: T.textSec }} allowDecimals={false} />
+                  <YAxis dataKey="framework" type="category" tick={{ fontSize: 11, fill: T.textSec }} width={90} />
+                  <Tooltip contentStyle={{ borderRadius: 8, border: `1px solid ${T.border}`, fontSize: 12 }} />
+                  <Bar dataKey="count" name="Obligations" radius={[0, 4, 4, 0]}>
+                    {liveByFramework.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: T.navy, marginBottom: 8 }}>By Urgency</div>
+              <ResponsiveContainer width="100%" height={180}>
+                <PieChart>
+                  <Pie data={liveByUrgency} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={({ name, value }) => `${name}: ${value}`}>
+                    {liveByUrgency.map((d, i) => <Cell key={i} fill={d.color} />)}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ fontSize: 11, color: T.textSec, marginTop: 8 }}>
+                Frameworks covered: {(regCalSummary.frameworks_covered || []).join(', ')}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: 13, color: T.textMut, padding: '12px 0' }}>
+            {regCalStatus === 'loading' ? 'Loading real obligation counts from the Regulatory Obligation Calendar engine…' : 'Regulatory Obligation Calendar API unavailable — no demo substitute for this panel.'}
+          </div>
+        )}
       </div>
 
       {/* ── 7. Client Revenue Summary & 8. Framework Coverage ────────────── */}

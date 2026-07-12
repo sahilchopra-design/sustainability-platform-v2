@@ -5,12 +5,26 @@
  * Coverage: portfolio valuation, climate/physical risk overlay, EPC/energy transition,
  * stranded-asset modelling, mortgage affordability stress, green premium analysis.
  */
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import {
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter,
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, Cell
 } from "recharts";
+
+// Backend Residential Real Estate engine (hedonic valuation + EPC/CRREM stranding +
+// MEES compliance + climate-adjusted LTV). See backend/services/residential_re_engine.py
+// + backend/api/v1/routes/residential_re.py
+const API = "http://localhost:8001";
+const RESIDENTIAL_API = `${API}/api/v1/residential-re`;
+// Engine is EUR-denominated (market_value_eur); local seed values are GBP (£k).
+// Approximate GBP->EUR conversion used only to exercise the real engine — not a
+// production FX rate.
+const GBP_EUR = 1.17;
+
+const mapPropertyType = (p) =>
+  p.tenure === "Social Housing" ? "social_housing" : p.propType === "Flat/Apartment" ? "multi_family" : "single_family";
 
 /* ── Theme ─────────────────────────────────────────────────────────────────── */
 const T = {
@@ -97,11 +111,8 @@ const STRESS_SCENARIOS = [
   { scenario: "Combined stress", hpi: -32, mortgageRate: 6.5, affordPct: 58 },
 ];
 
-const RETROFIT_COSTS = EPC_GRADES.map((g, i) => ({
-  grade: g,
-  avgCost: [0, 2, 8, 18, 28, 42, 62][i],
-  count: PROPERTIES.filter(p => p.epc === g).length,
-}));
+// (RETROFIT_COSTS is computed per-render inside EpcEnergyTransition from the
+// live/demo `properties` prop — see that component below.)
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
 const pill = (label, bg, fg = "#fff") => (
@@ -125,7 +136,8 @@ const epcColor = (g) => ({ A: "#059669", B: "#16a34a", C: "#65a30d", D: "#d97706
 const physColor = (s) => s > 65 ? T.red : s > 40 ? T.amber : T.green;
 
 /* ── Tab 1: Portfolio Overview ───────────────────────────────────────────── */
-const PortfolioOverview = () => {
+const PortfolioOverview = ({ properties }) => {
+  const PROPERTIES = properties;
   const totalValue  = PROPERTIES.reduce((s,p) => s + p.value, 0);
   const floodCount  = PROPERTIES.filter(p => p.floodZone).length;
   const strandedCnt = PROPERTIES.filter(p => p.stranded).length;
@@ -218,7 +230,8 @@ const PortfolioOverview = () => {
 };
 
 /* ── Tab 2: Climate & Physical Risk ─────────────────────────────────────── */
-const ClimatePhysicalRisk = () => {
+const ClimatePhysicalRisk = ({ properties }) => {
+  const PROPERTIES = properties;
   const [filter, setFilter] = useState("All");
 
   const filtered = useMemo(() => {
@@ -336,7 +349,8 @@ const ClimatePhysicalRisk = () => {
 };
 
 /* ── Tab 3: EPC & Energy Transition ─────────────────────────────────────── */
-const EpcEnergyTransition = () => {
+const EpcEnergyTransition = ({ properties }) => {
+  const PROPERTIES = properties;
   const totalRetrofitCost = PROPERTIES.filter(p => p.epcIdx > 2).reduce((s, p) => s + p.costToC, 0);
   const belowC = PROPERTIES.filter(p => p.epcIdx > 2).length;
 
@@ -353,6 +367,12 @@ const EpcEnergyTransition = () => {
     uprn: p.uprn.slice(-5),
     premium: p.greenPrem,
     value: p.value,
+  }));
+
+  const RETROFIT_COSTS = EPC_GRADES.map((g, i) => ({
+    grade: g,
+    avgCost: [0, 2, 8, 18, 28, 42, 62][i],
+    count: PROPERTIES.filter(p => p.epc === g).length,
   }));
 
   return (
@@ -425,7 +445,8 @@ const EpcEnergyTransition = () => {
 };
 
 /* ── Tab 4: Mortgage Stress & Affordability ──────────────────────────────── */
-const MortgageStress = () => {
+const MortgageStress = ({ properties }) => {
+  const PROPERTIES = properties;
   const [rate, setRate] = useState(4.5);
 
   const stressedLtv = useMemo(() => {
@@ -531,6 +552,80 @@ const TABS = [
 export default function ResidentialReAssessmentPage() {
   const [tab, setTab] = useState("portfolio");
 
+  // --- Live backend wiring (Residential RE Engine) ------------------------
+  // Sends the seeded 60-property portfolio to POST /mortgage-portfolio and
+  // merges the real hedonic valuation / CRREM stranding / MEES compliance /
+  // climate-adjusted LTV results back onto the display rows. Falls back to
+  // the locally-seeded (sr() PRNG) figures, clearly labeled, if unreachable.
+  const [liveResult, setLiveResult] = useState(null);
+  const [apiStatus, setApiStatus] = useState("loading"); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const payload = {
+          portfolio_id: "RESIDENTIAL-RE-PORTFOLIO-001",
+          properties: PROPERTIES.map(p => ({
+            property_id: p.uprn,
+            property_type: mapPropertyType(p),
+            address: "",
+            country: "GB",
+            floor_area_m2: p.sqm,
+            bedrooms: p.propType === "Flat/Apartment" ? 2 : 3,
+            bathrooms: 1,
+            age_years: Math.max(0, 2025 - p.buildYear),
+            garden_m2: 0,
+            parking_spaces: 0,
+            epc_rating: p.epc,
+            energy_kwh_m2_yr: p.sqm > 0 ? +(p.energyKwh / p.sqm).toFixed(1) : 0,
+            in_flood_zone: p.floodZone,
+            proximity_transport_km: 1.0,
+            market_value_eur: Math.round(p.value * 1000 * GBP_EUR),
+            mortgage_ltv: p.ltv,
+            mortgage_balance_eur: Math.round(p.value * 1000 * GBP_EUR * p.ltv),
+          })),
+          carbon_price_eur_tco2: 80,
+          stress_scenario: "moderate",
+        };
+        const { data } = await axios.post(`${RESIDENTIAL_API}/mortgage-portfolio`, payload, { timeout: 15000 });
+        if (!cancelled && data && data.property_results) {
+          setLiveResult(data);
+          setApiStatus("live");
+        } else if (!cancelled) {
+          setApiStatus("demo");
+        }
+      } catch (e) {
+        if (!cancelled) setApiStatus("demo");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Merge live per-property results (real hedonic value, EPC/CRREM stranding
+  // year, MEES compliance, climate-adjusted LTV) onto the seeded portfolio,
+  // matched by UPRN. Properties the API hasn't returned keep seeded values.
+  const enrichedProperties = useMemo(() => {
+    if (!liveResult || !liveResult.property_results) return PROPERTIES;
+    const byId = new Map(liveResult.property_results.map(r => [r.property_id, r]));
+    return PROPERTIES.map(p => {
+      const live = byId.get(p.uprn);
+      if (!live) return p;
+      const stranded = live.crrem_stranding_year != null && live.crrem_stranding_year <= 2030;
+      return {
+        ...p,
+        value: +(live.hedonic_value_eur / GBP_EUR / 1000).toFixed(1),
+        epc: live.current_epc || p.epc,
+        costToC: Math.round((live.retrofit_cost_to_c_eur || 0) / GBP_EUR / 1000),
+        stranded,
+        meesCompliant: live.mees_compliant,
+        climateLtv: live.climate_ltv,
+        ltvStressBps: live.ltv_stress_bps,
+        _live: true,
+      };
+    });
+  }, [liveResult]);
+
   return (
     <div style={{ fontFamily: T.font, background: T.cream, minHeight: "100vh", padding: 24 }}>
       <div style={{ marginBottom: 20 }}>
@@ -538,6 +633,9 @@ export default function ResidentialReAssessmentPage() {
           <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: T.navy }}>Residential RE Assessment</h1>
           {pill("EP-BC1", T.navy)}
           {pill("Real Estate", T.teal)}
+          {apiStatus === "loading" && pill("Connecting…", T.slate)}
+          {apiStatus === "live" && pill("● Live — Residential RE Engine (hedonic valuation, CRREM, MEES, climate LTV)", T.green)}
+          {apiStatus === "demo" && pill("○ Demo Data — Residential RE API unavailable, showing seeded figures", T.amber)}
         </div>
         <div style={{ fontSize: 13, color: T.slate }}>
           60 properties · EPC A–G · physical risk overlay · flood zone · stranded-asset modelling · mortgage affordability stress
@@ -556,10 +654,10 @@ export default function ResidentialReAssessmentPage() {
         ))}
       </div>
 
-      {tab === "portfolio" && <PortfolioOverview />}
-      {tab === "climate"   && <ClimatePhysicalRisk />}
-      {tab === "epc"       && <EpcEnergyTransition />}
-      {tab === "mortgage"  && <MortgageStress />}
+      {tab === "portfolio" && <PortfolioOverview properties={enrichedProperties} />}
+      {tab === "climate"   && <ClimatePhysicalRisk properties={enrichedProperties} />}
+      {tab === "epc"       && <EpcEnergyTransition properties={enrichedProperties} />}
+      {tab === "mortgage"  && <MortgageStress properties={enrichedProperties} />}
     </div>
   );
 }

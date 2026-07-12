@@ -1,0 +1,320 @@
+{
+  "_meta": {
+    "title": "NGFS Phase 5 Scenario Extract — headline variable paths",
+    "source": "NGFS Phase 5, IIASA Scenario Explorer (https://data.ene.iiasa.ac.at/ngfs)",
+    "publisher": "Network for Greening the Financial System (NGFS)",
+    "release": "NGFS Climate Scenarios Phase 5 (published November 2024)",
+    "marker_model": "Values approximate REMIND-MAgPIE 3.3-4.8 marker-model outputs; GDP impacts reflect the Phase 5 damage function update (Kotz, Levermann & Wenz 2024) combining transition and chronic physical effects",
+    "license": "NGFS scenario data is published for public use (CC BY 4.0)",
+    "extracted": "2026-07-04",
+    "disclaimer": "EXTRACT FOR ILLUSTRATION — values are conservative approximations of published NGFS Phase 5 paths, rounded and interpolated at 5-year steps. Refresh from data.ene.iiasa.ac.at/ngfs for production precision.",
+    "provenance_convention": "Every variable carries a 'source' string; all numeric series inherit the scenario/variable/source provenance of this header."
+  },
+  "years": [2025, 2030, 2035, 2040, 2045, 2050],
+  "regions": [
+    { "id": "World", "name": "World" },
+    { "id": "EU", "name": "European Union" },
+    { "id": "US", "name": "United States" },
+    { "id": "CN", "name": "China" }
+  ],
+  "scenarios": [
+    {
+      "id": "net_zero_2050",
+      "name": "Net Zero 2050",
+      "category": "Orderly",
+      "warming_2100_c": 1.4,
+      "narrative": "Ambitious, immediate and coordinated policy limits warming to 1.5°C with limited overshoot; global CO2 emissions reach net zero around 2050.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    },
+    {
+      "id": "below_2c",
+      "name": "Below 2°C",
+      "category": "Orderly",
+      "warming_2100_c": 1.7,
+      "narrative": "Gradually increasing stringency of climate policies gives a 67% chance of limiting warming to below 2°C.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    },
+    {
+      "id": "delayed_transition",
+      "name": "Delayed Transition",
+      "category": "Disorderly",
+      "warming_2100_c": 1.7,
+      "narrative": "Annual emissions do not decrease until 2030; strong policy is then needed to limit warming below 2°C, producing a sharp, disorderly repricing.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    },
+    {
+      "id": "fragmented_world",
+      "name": "Fragmented World",
+      "category": "Too little, too late",
+      "warming_2100_c": 2.3,
+      "narrative": "Delayed and divergent policy across countries; only some regions (e.g. the EU) pursue ambitious targets, combining elevated transition AND physical risk.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    },
+    {
+      "id": "ndcs",
+      "name": "NDCs",
+      "category": "Hot house world",
+      "warming_2100_c": 2.4,
+      "narrative": "All pledged Nationally Determined Contributions are implemented, but nothing beyond; moderate emission declines with high residual physical risk.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    },
+    {
+      "id": "current_policies",
+      "name": "Current Policies",
+      "category": "Hot house world",
+      "warming_2100_c": 2.9,
+      "narrative": "Only policies already implemented are preserved; emissions stay near today's level and physical risks dominate. Serves as the stress baseline.",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer"
+    }
+  ],
+  "variables": [
+    {
+      "id": "carbon_price",
+      "name": "Carbon price (shadow price, regional average)",
+      "unit": "USD/tCO2",
+      "ngfs_variable_path": "Price|Carbon",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — REMIND-MAgPIE 3.3-4.8 marker (approximate, rounded)"
+    },
+    {
+      "id": "gdp_impact_pct",
+      "name": "GDP impact vs no-climate-change baseline (transition + chronic physical)",
+      "unit": "% deviation (negative = loss)",
+      "ngfs_variable_path": "GDP|PPP (combined damage estimate)",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — Phase 5 damage function (Kotz et al. 2024), approximate"
+    },
+    {
+      "id": "co2_emissions",
+      "name": "CO2 emissions — energy and industrial processes",
+      "unit": "GtCO2/yr",
+      "ngfs_variable_path": "Emissions|CO2|Energy and Industrial Processes",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — REMIND-MAgPIE 3.3-4.8 marker (approximate, rounded)"
+    },
+    {
+      "id": "pe_fossil_share",
+      "name": "Primary energy — fossil share (coal + oil + gas)",
+      "unit": "% of primary energy",
+      "ngfs_variable_path": "Primary Energy|Coal + Oil + Gas / Primary Energy",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — derived share, approximate"
+    },
+    {
+      "id": "pe_renewables_share",
+      "name": "Primary energy — renewables share (incl. biomass, hydro, wind, solar)",
+      "unit": "% of primary energy",
+      "ngfs_variable_path": "Primary Energy|Renewables (incl. Biomass) / Primary Energy",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — derived share, approximate"
+    },
+    {
+      "id": "pe_nuclear_share",
+      "name": "Primary energy — nuclear share",
+      "unit": "% of primary energy",
+      "ngfs_variable_path": "Primary Energy|Nuclear / Primary Energy",
+      "source": "NGFS Phase 5, IIASA Scenario Explorer — derived share, approximate"
+    }
+  ],
+  "data": {
+    "net_zero_2050": {
+      "World": {
+        "carbon_price": [45, 160, 275, 390, 510, 630],
+        "gdp_impact_pct": [-0.6, -1.8, -3.2, -4.5, -5.5, -6.3],
+        "co2_emissions": [36.0, 27.0, 18.0, 10.0, 4.0, 0.5],
+        "pe_fossil_share": [79, 68, 55, 42, 31, 22],
+        "pe_renewables_share": [16, 26, 38, 50, 60, 68],
+        "pe_nuclear_share": [5, 6, 7, 8, 9, 10]
+      },
+      "EU": {
+        "carbon_price": [90, 210, 330, 450, 570, 690],
+        "gdp_impact_pct": [-0.5, -1.5, -2.5, -3.4, -4.1, -4.7],
+        "co2_emissions": [2.3, 1.5, 0.9, 0.4, 0.1, 0.0],
+        "pe_fossil_share": [66, 55, 44, 33, 23, 15],
+        "pe_renewables_share": [23, 33, 43, 53, 63, 70],
+        "pe_nuclear_share": [11, 12, 13, 14, 14, 15]
+      },
+      "US": {
+        "carbon_price": [50, 170, 290, 410, 530, 650],
+        "gdp_impact_pct": [-0.6, -1.7, -3.0, -4.2, -5.1, -5.9],
+        "co2_emissions": [4.4, 3.1, 1.9, 1.0, 0.4, 0.0],
+        "pe_fossil_share": [80, 68, 55, 42, 30, 20],
+        "pe_renewables_share": [12, 23, 35, 47, 58, 66],
+        "pe_nuclear_share": [8, 9, 10, 11, 12, 14]
+      },
+      "CN": {
+        "carbon_price": [30, 120, 230, 350, 470, 590],
+        "gdp_impact_pct": [-0.8, -2.2, -3.9, -5.4, -6.6, -7.6],
+        "co2_emissions": [11.4, 8.6, 5.8, 3.2, 1.3, 0.2],
+        "pe_fossil_share": [81, 69, 56, 43, 31, 22],
+        "pe_renewables_share": [17, 28, 40, 52, 63, 70],
+        "pe_nuclear_share": [2, 3, 4, 5, 6, 8]
+      }
+    },
+    "below_2c": {
+      "World": {
+        "carbon_price": [15, 45, 90, 150, 220, 300],
+        "gdp_impact_pct": [-0.5, -1.5, -3.0, -4.6, -6.0, -7.3],
+        "co2_emissions": [36.5, 33.0, 28.5, 23.5, 18.5, 14.0],
+        "pe_fossil_share": [79, 73, 65, 56, 47, 38],
+        "pe_renewables_share": [16, 21, 28, 36, 44, 52],
+        "pe_nuclear_share": [5, 6, 7, 8, 9, 10]
+      },
+      "EU": {
+        "carbon_price": [80, 110, 150, 200, 260, 330],
+        "gdp_impact_pct": [-0.4, -1.2, -2.4, -3.6, -4.7, -5.7],
+        "co2_emissions": [2.4, 2.0, 1.6, 1.2, 0.8, 0.5],
+        "pe_fossil_share": [67, 60, 52, 44, 36, 28],
+        "pe_renewables_share": [22, 28, 35, 42, 50, 57],
+        "pe_nuclear_share": [11, 12, 13, 14, 14, 15]
+      },
+      "US": {
+        "carbon_price": [15, 50, 95, 155, 225, 305],
+        "gdp_impact_pct": [-0.5, -1.4, -2.8, -4.3, -5.6, -6.8],
+        "co2_emissions": [4.5, 3.9, 3.2, 2.5, 1.9, 1.4],
+        "pe_fossil_share": [80, 74, 66, 57, 48, 39],
+        "pe_renewables_share": [12, 17, 24, 32, 40, 48],
+        "pe_nuclear_share": [8, 9, 10, 11, 12, 13]
+      },
+      "CN": {
+        "carbon_price": [10, 35, 75, 130, 200, 280],
+        "gdp_impact_pct": [-0.6, -1.8, -3.6, -5.5, -7.2, -8.7],
+        "co2_emissions": [11.6, 10.4, 8.9, 7.2, 5.6, 4.1],
+        "pe_fossil_share": [81, 75, 67, 58, 49, 40],
+        "pe_renewables_share": [17, 22, 29, 37, 45, 53],
+        "pe_nuclear_share": [2, 3, 4, 5, 6, 7]
+      }
+    },
+    "delayed_transition": {
+      "World": {
+        "carbon_price": [5, 10, 150, 280, 400, 500],
+        "gdp_impact_pct": [-0.5, -1.4, -4.2, -5.8, -7.0, -8.1],
+        "co2_emissions": [37.5, 37.0, 28.0, 19.5, 12.5, 7.5],
+        "pe_fossil_share": [80, 78, 66, 53, 42, 33],
+        "pe_renewables_share": [15, 17, 28, 40, 50, 58],
+        "pe_nuclear_share": [5, 5, 6, 7, 8, 9]
+      },
+      "EU": {
+        "carbon_price": [80, 90, 210, 340, 460, 560],
+        "gdp_impact_pct": [-0.4, -1.1, -3.6, -4.9, -5.9, -6.8],
+        "co2_emissions": [2.5, 2.3, 1.6, 1.0, 0.6, 0.3],
+        "pe_fossil_share": [67, 64, 52, 40, 30, 22],
+        "pe_renewables_share": [22, 24, 35, 46, 55, 63],
+        "pe_nuclear_share": [11, 12, 13, 14, 15, 15]
+      },
+      "US": {
+        "carbon_price": [5, 8, 160, 290, 410, 510],
+        "gdp_impact_pct": [-0.5, -1.3, -4.0, -5.5, -6.6, -7.6],
+        "co2_emissions": [4.7, 4.5, 3.2, 2.1, 1.3, 0.7],
+        "pe_fossil_share": [81, 79, 66, 53, 41, 32],
+        "pe_renewables_share": [11, 13, 25, 37, 48, 56],
+        "pe_nuclear_share": [8, 8, 9, 10, 11, 12]
+      },
+      "CN": {
+        "carbon_price": [3, 6, 130, 250, 370, 470],
+        "gdp_impact_pct": [-0.6, -1.7, -5.0, -6.9, -8.3, -9.6],
+        "co2_emissions": [11.9, 11.7, 8.7, 5.9, 3.7, 2.1],
+        "pe_fossil_share": [82, 80, 68, 55, 44, 35],
+        "pe_renewables_share": [16, 17, 28, 40, 50, 58],
+        "pe_nuclear_share": [2, 3, 4, 5, 6, 7]
+      }
+    },
+    "fragmented_world": {
+      "World": {
+        "carbon_price": [5, 20, 60, 110, 160, 210],
+        "gdp_impact_pct": [-0.6, -1.9, -4.6, -7.4, -10.2, -13.1],
+        "co2_emissions": [37.5, 36.5, 33.5, 30.0, 27.0, 24.0],
+        "pe_fossil_share": [80, 78, 74, 70, 66, 62],
+        "pe_renewables_share": [15, 17, 20, 24, 28, 32],
+        "pe_nuclear_share": [5, 5, 6, 6, 6, 6]
+      },
+      "EU": {
+        "carbon_price": [80, 130, 200, 270, 340, 410],
+        "gdp_impact_pct": [-0.5, -1.5, -3.7, -6.0, -8.2, -10.5],
+        "co2_emissions": [2.4, 2.0, 1.5, 1.1, 0.8, 0.6],
+        "pe_fossil_share": [67, 61, 53, 45, 38, 31],
+        "pe_renewables_share": [22, 27, 34, 41, 47, 54],
+        "pe_nuclear_share": [11, 12, 13, 14, 15, 15]
+      },
+      "US": {
+        "carbon_price": [5, 15, 40, 70, 100, 130],
+        "gdp_impact_pct": [-0.6, -1.8, -4.3, -6.9, -9.5, -12.2],
+        "co2_emissions": [4.7, 4.5, 4.1, 3.7, 3.3, 3.0],
+        "pe_fossil_share": [81, 80, 78, 76, 74, 72],
+        "pe_renewables_share": [11, 12, 14, 16, 18, 20],
+        "pe_nuclear_share": [8, 8, 8, 8, 8, 8]
+      },
+      "CN": {
+        "carbon_price": [3, 10, 30, 55, 80, 105],
+        "gdp_impact_pct": [-0.7, -2.3, -5.5, -8.9, -12.2, -15.7],
+        "co2_emissions": [11.9, 11.6, 10.7, 9.7, 8.7, 7.8],
+        "pe_fossil_share": [82, 81, 79, 77, 75, 73],
+        "pe_renewables_share": [16, 16, 17, 18, 19, 20],
+        "pe_nuclear_share": [2, 3, 4, 5, 6, 7]
+      }
+    },
+    "ndcs": {
+      "World": {
+        "carbon_price": [5, 20, 30, 45, 60, 80],
+        "gdp_impact_pct": [-0.5, -1.8, -3.9, -6.3, -8.8, -11.4],
+        "co2_emissions": [37.5, 35.5, 33.5, 31.5, 29.5, 27.5],
+        "pe_fossil_share": [80, 77, 74, 71, 68, 65],
+        "pe_renewables_share": [15, 18, 21, 24, 27, 30],
+        "pe_nuclear_share": [5, 5, 5, 5, 5, 5]
+      },
+      "EU": {
+        "carbon_price": [80, 100, 115, 130, 145, 160],
+        "gdp_impact_pct": [-0.4, -1.4, -3.1, -5.0, -7.0, -9.1],
+        "co2_emissions": [2.4, 2.1, 1.8, 1.6, 1.4, 1.2],
+        "pe_fossil_share": [67, 62, 57, 52, 47, 43],
+        "pe_renewables_share": [22, 27, 31, 36, 41, 45],
+        "pe_nuclear_share": [11, 11, 12, 12, 12, 12]
+      },
+      "US": {
+        "carbon_price": [5, 15, 25, 35, 45, 60],
+        "gdp_impact_pct": [-0.5, -1.7, -3.6, -5.9, -8.2, -10.6],
+        "co2_emissions": [4.6, 4.3, 4.0, 3.7, 3.4, 3.1],
+        "pe_fossil_share": [81, 78, 75, 72, 69, 66],
+        "pe_renewables_share": [11, 14, 17, 20, 23, 26],
+        "pe_nuclear_share": [8, 8, 8, 8, 8, 8]
+      },
+      "CN": {
+        "carbon_price": [3, 12, 20, 30, 42, 55],
+        "gdp_impact_pct": [-0.6, -2.2, -4.7, -7.6, -10.6, -13.7],
+        "co2_emissions": [11.8, 11.2, 10.5, 9.8, 9.1, 8.4],
+        "pe_fossil_share": [82, 79, 75, 72, 69, 66],
+        "pe_renewables_share": [16, 18, 21, 24, 26, 28],
+        "pe_nuclear_share": [2, 3, 4, 4, 5, 6]
+      }
+    },
+    "current_policies": {
+      "World": {
+        "carbon_price": [5, 8, 10, 12, 14, 15],
+        "gdp_impact_pct": [-0.6, -2.0, -4.4, -7.2, -10.4, -13.9],
+        "co2_emissions": [37.8, 37.9, 37.7, 37.2, 36.5, 35.7],
+        "pe_fossil_share": [80, 79, 78, 76, 74, 72],
+        "pe_renewables_share": [15, 16, 17, 19, 21, 23],
+        "pe_nuclear_share": [5, 5, 5, 5, 5, 5]
+      },
+      "EU": {
+        "carbon_price": [80, 85, 90, 92, 95, 98],
+        "gdp_impact_pct": [-0.5, -1.6, -3.5, -5.8, -8.3, -11.1],
+        "co2_emissions": [2.5, 2.3, 2.2, 2.1, 2.0, 1.9],
+        "pe_fossil_share": [67, 64, 61, 58, 55, 53],
+        "pe_renewables_share": [22, 25, 27, 30, 33, 35],
+        "pe_nuclear_share": [11, 11, 12, 12, 12, 12]
+      },
+      "US": {
+        "carbon_price": [3, 4, 5, 6, 7, 8],
+        "gdp_impact_pct": [-0.6, -1.9, -4.1, -6.7, -9.7, -13.0],
+        "co2_emissions": [4.7, 4.6, 4.5, 4.4, 4.3, 4.2],
+        "pe_fossil_share": [81, 80, 79, 77, 75, 73],
+        "pe_renewables_share": [11, 12, 13, 15, 17, 19],
+        "pe_nuclear_share": [8, 8, 8, 8, 8, 8]
+      },
+      "CN": {
+        "carbon_price": [3, 5, 7, 9, 11, 13],
+        "gdp_impact_pct": [-0.7, -2.4, -5.3, -8.6, -12.5, -16.7],
+        "co2_emissions": [12.0, 12.1, 11.9, 11.6, 11.2, 10.8],
+        "pe_fossil_share": [82, 80, 78, 76, 74, 72],
+        "pe_renewables_share": [16, 17, 19, 21, 23, 25],
+        "pe_nuclear_share": [2, 3, 3, 3, 3, 3]
+      }
+    }
+  }
+}

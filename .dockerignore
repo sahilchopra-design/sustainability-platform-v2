@@ -1,0 +1,16 @@
+.git
+.claude
+**/__pycache__
+**/*.pyc
+**/node_modules
+frontend/build
+backend/lineage_output
+backend/server_output.log
+backend/.env
+*.log
+.env
+.env.local
+docs
+CCTS
+lineage_dashboard
+big_climate_database_full.json

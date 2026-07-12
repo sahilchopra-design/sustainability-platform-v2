@@ -32,6 +32,11 @@ logger = logging.getLogger(__name__)
 # Minimum similarity for fuzzy name matching (0.0 to 1.0)
 _FUZZY_THRESHOLD = 0.85
 
+# Below this confidence, resolve_entity() attempts a LIVE GLEIF fallback
+# (see EntityResolutionService._live_gleif_fallback) instead of returning the
+# low-confidence local match as-is.
+_LIVE_FALLBACK_THRESHOLD = 0.5
+
 # ── Normalisation helpers ──────────────────────────────────────────────────
 
 _LEGAL_SUFFIXES = re.compile(
@@ -77,9 +82,14 @@ class EntityMatch:
     company_profile_id: Optional[str] = None
     lei: Optional[str] = None
     canonical_name: Optional[str] = None
-    match_method: str = "none"  # "lei" | "isin" | "fuzzy_name" | "none"
+    match_method: str = "none"  # "lei" | "isin" | "fuzzy_name" | "live_gleif" | "none"
     confidence: float = 0.0
     linked_records: list[LinkedRecord] = field(default_factory=list)
+    # "local_cache" (found in entity_lei-linked tables at/above confidence
+    # threshold) | "live_gleif_fallback" (local lookup missed or was
+    # low-confidence, so a live GLEIF call + upsert + local re-match was
+    # performed) | "no_match" (neither found anything). See resolve_entity().
+    resolution_tier: str = "no_match"
 
 
 @dataclass
@@ -185,6 +195,48 @@ class EntityResolutionService:
         """
         Find all records across modules that match the given identifiers.
         Priority: LEI > ISIN > fuzzy name.
+
+        Self-healing live fallback: entity_lei (the "golden record" cache
+        this resolver ultimately depends on for LEI/ISIN linkage) is only
+        ever populated by the weekly bulk ingester (ingestion/gleif_ingester.py),
+        which is capped at 10,000 records/run and does a blind, untargeted,
+        country-filtered crawl -- it has no reason to have pulled in any
+        specific entity this platform's portfolios happen to reference. So if
+        the LOCAL lookup finds nothing, or only a low-confidence match
+        (confidence < _LIVE_FALLBACK_THRESHOLD), this method makes a LIVE call
+        to the real GLEIF API (services/gleif_upsert.py: by ISIN, by LEI, or
+        by fuzzy name completion), upserts whatever it finds into entity_lei,
+        and re-runs the local match against the now freshly-populated cache.
+        A local cache miss therefore doesn't just report "no match" -- it
+        fixes the gap for every subsequent lookup of the same entity.
+
+        See EntityMatch.resolution_tier for which path produced the result:
+        "local_cache" | "live_gleif_fallback" | "no_match".
+        """
+        match = self._resolve_local(lei=lei, name=name, isin=isin)
+        if match.match_method != "none" and match.confidence >= _LIVE_FALLBACK_THRESHOLD:
+            match.resolution_tier = "local_cache"
+            return match
+
+        fallback_match = self._live_gleif_fallback(lei=lei, name=name, isin=isin)
+        if fallback_match is not None:
+            fallback_match.resolution_tier = "live_gleif_fallback"
+            return fallback_match
+
+        match.resolution_tier = "no_match"
+        return match
+
+    def _resolve_local(
+        self,
+        lei: Optional[str] = None,
+        name: Optional[str] = None,
+        isin: Optional[str] = None,
+    ) -> EntityMatch:
+        """
+        Original resolve_entity() body: search ONLY the local entity_lei-linked
+        tables (company_profiles, fi_entities, energy_entities, sc_entities,
+        regulatory_entities, csrd_entity_registry, plus asset tables for LEI
+        lookup). No live GLEIF call is made here -- that's resolve_entity()'s job.
         """
         match = EntityMatch()
 
@@ -232,6 +284,65 @@ class EntityResolutionService:
                 return match
 
         return match
+
+    def _live_gleif_fallback(
+        self,
+        lei: Optional[str] = None,
+        name: Optional[str] = None,
+        isin: Optional[str] = None,
+    ) -> Optional[EntityMatch]:
+        """
+        Live GLEIF lookup (by LEI, then ISIN, then fuzzy name completion) +
+        immediate upsert into entity_lei + re-run of the local match. Reuses
+        services/gleif_upsert.py's fetch+upsert helpers (the same ones behind
+        gleif_graph.py's resolve-by-isin/resolve-by-bic endpoints) so this
+        write path can never drift from the bulk ingester's schema mapping.
+
+        Returns None if GLEIF has no match for any given identifier, or if
+        the live call itself fails (network/upstream error -- logged, not
+        raised, so a GLEIF outage degrades to "no_match" rather than a 500).
+        """
+        from services.gleif_upsert import (
+            GleifLiveFetchError,
+            fetch_lei_record_by_lei,
+            resolve_and_upsert_by_isin,
+            resolve_and_upsert_by_name,
+            upsert_lei_record,
+        )
+
+        upserted: Optional[dict] = None
+        try:
+            with self._engine.connect() as conn:
+                if lei and len(lei) == 20:
+                    raw = fetch_lei_record_by_lei(lei)
+                    if raw:
+                        upserted = upsert_lei_record(conn, raw)
+                if not upserted and isin and len(isin) == 12:
+                    upserted = resolve_and_upsert_by_isin(conn, isin)
+                if not upserted and name:
+                    upserted = resolve_and_upsert_by_name(conn, name)
+        except GleifLiveFetchError as exc:
+            logger.warning("Live GLEIF fallback lookup failed: %s", exc)
+            return None
+        except Exception as exc:
+            logger.warning("Live GLEIF fallback DB write failed: %s", exc)
+            return None
+
+        if not upserted:
+            return None
+
+        resolved_lei = upserted.get("lei")
+        rematch = self._resolve_local(lei=resolved_lei, name=name, isin=isin)
+        if rematch.match_method == "none":
+            # entity_lei now has a fresh row, but no cross-module table has
+            # linked to this LEI yet -- still a real, useful result: surface
+            # the just-fetched GLEIF identity directly rather than reporting
+            # "no match" after a successful live lookup.
+            rematch.lei = resolved_lei
+            rematch.canonical_name = upserted.get("legal_name")
+            rematch.match_method = "live_gleif"
+            rematch.confidence = 0.9
+        return rematch
 
     def build_entity_graph(self, lei: str) -> Entity360Data:
         """
@@ -438,6 +549,25 @@ class EntityResolutionService:
     def _find_by_lei(self, lei: str) -> list[LinkedRecord]:
         records: list[LinkedRecord] = []
         with self._engine.connect() as conn:
+            # entity_lei is the GLEIF golden-record cache table itself -- it
+            # was not previously part of the local search surface (only
+            # cross-module tables that reference an LEI were). Checking it
+            # directly here is what closes the self-healing loop: once
+            # resolve_entity()'s live-GLEIF fallback upserts a row into
+            # entity_lei, the VERY NEXT identical lookup finds it here
+            # (resolution_tier="local_cache") instead of calling GLEIF again.
+            try:
+                row = conn.execute(
+                    text("SELECT lei, legal_name FROM entity_lei WHERE lei = :lei"),
+                    {"lei": lei},
+                ).mappings().first()
+                if row:
+                    records.append(
+                        LinkedRecord(table="entity_lei", id=row["lei"], lei=row["lei"], name=row["legal_name"])
+                    )
+            except Exception as exc:
+                logger.debug("LEI lookup in entity_lei failed: %s", exc)
+
             for src in _ENTITY_SOURCES + _ASSET_SOURCES:
                 if not src.get("lei_col"):
                     continue
@@ -525,6 +655,22 @@ class EntityResolutionService:
             return records
 
         with self._engine.connect() as conn:
+            # entity_lei itself (the GLEIF golden-record cache), same
+            # self-healing reasoning as _find_by_lei above: a name resolved
+            # via the live-GLEIF fallback needs to be findable here by name
+            # on the next lookup too, not just by LEI.
+            try:
+                rows = conn.execute(
+                    text("SELECT lei, legal_name AS name FROM entity_lei WHERE legal_name IS NOT NULL")
+                ).mappings().all()
+                for r in rows:
+                    if fuzzy_score(name, r["name"]) >= _FUZZY_THRESHOLD:
+                        records.append(
+                            LinkedRecord(table="entity_lei", id=r["lei"], lei=r["lei"], name=r["name"])
+                        )
+            except Exception as exc:
+                logger.debug("Fuzzy name scan in entity_lei failed: %s", exc)
+
             for src in _ENTITY_SOURCES:
                 if not src.get("name_col"):
                     continue

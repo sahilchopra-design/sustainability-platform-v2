@@ -446,12 +446,12 @@ class EUETSEngine:
         - Returns compliance calendar deadlines from ETS2_COMPLIANCE_CALENDAR
         """
         # ── 1. Emission factor resolution ──────────────────────────────────
-        ef_data = self.ETS2_EMISSION_FACTORS.get(fuel_type, {})
+        ef_data = ETS2_EMISSION_FACTORS.get(fuel_type, {})
         ets2_covered = bool(ef_data) and ef_data.get("ets2_covered", False)
 
         if emission_factor_kgco2_per_litre and emission_factor_kgco2_per_litre > 0:
             ef_per_litre = emission_factor_kgco2_per_litre
-        elif ef_data.get("ef_kgco2_per_litre", 0) > 0:
+        elif (ef_data.get("ef_kgco2_per_litre") or 0) > 0:
             ef_per_litre = ef_data["ef_kgco2_per_litre"]
         else:
             ef_per_litre = 2.31  # fallback diesel default
@@ -466,13 +466,13 @@ class EUETSEngine:
 
         # ── 2. Price corridor cost range (Art. 30d) ─────────────────────
         current_year = 2026
-        corridor = self.ETS2_PRICE_CORRIDOR.get(
-            max(k for k in self.ETS2_PRICE_CORRIDOR if k <= max(current_year, 2027)),
-            {"floor": 45.0, "ceiling": 60.0}
+        corridor = ETS2_PRICE_CORRIDOR.get(
+            max(k for k in ETS2_PRICE_CORRIDOR if k <= max(current_year, 2027)),
+            {"floor_eur": 45.0, "ceiling_eur": 60.0}
         )
-        allowance_cost_floor   = annual_emissions * corridor["floor"]
-        allowance_cost_ceiling = annual_emissions * corridor["ceiling"]
-        allowance_cost         = annual_emissions * max(carbon_price_eur, corridor["floor"])
+        allowance_cost_floor   = annual_emissions * corridor["floor_eur"]
+        allowance_cost_ceiling = annual_emissions * corridor["ceiling_eur"]
+        allowance_cost         = annual_emissions * max(carbon_price_eur, corridor["floor_eur"])
 
         # ── 3. Pass-through potential by fuel category ────────────────────
         road_fuels    = {"diesel", "petrol", "lpg", "cng", "biofuel_blend", "e_fuel"}
@@ -519,16 +519,23 @@ class EUETSEngine:
 
         # ── 5. Recommendations ───────────────────────────────────────────
         recs = []
-        cal = self.ETS2_COMPLIANCE_CALENDAR
+        cal = ETS2_COMPLIANCE_CALENDAR  # list[dict] — look up deadlines by obligation keyword
+        monitoring_plan_deadline = next(
+            (c["deadline"] for c in cal if "monitoring plan" in c["obligation"].lower()), "2025-01-01")
+        first_surrender_deadline = next(
+            (c["deadline"] for c in cal if "surrender deadline" in c["obligation"].lower()), "2028-05-31")
+        ets2_start_deadline = next(
+            (c["deadline"] for c in cal if "compliance period begins" in c["obligation"].lower()), "2027-01-01")
+
         if not has_mrv_system:
             recs.append(
                 f"Implement MRV system immediately — monitoring plan deadline: "
-                f"{cal.get('monitoring_plan_deadline', '2025-01-01')} (Art. 30c)"
+                f"{monitoring_plan_deadline} (Art. 30c)"
             )
         if not has_registry_account:
             recs.append(
                 f"Open ETS2 registry account before first surrender: "
-                f"{cal.get('first_surrender_deadline', '2028-05-31')} (Art. 30d)"
+                f"{first_surrender_deadline} (Art. 30d)"
             )
         if not has_verified_emissions_report:
             recs.append("Engage accredited verifier for annual emissions report (Art. 30e §3)")
@@ -542,8 +549,8 @@ class EUETSEngine:
         else:
             recs.append("Heating fuel pass-through ~70% — longer contract renegotiation cycles; plan ahead")
         recs.append(
-            f"ETS2 goes live {cal.get('ets2_start', '2027-01-01')} — "
-            f"price corridor €{corridor['floor']}–€{corridor['ceiling']}/tCO₂ (Art. 30d)"
+            f"ETS2 goes live {ets2_start_deadline} — "
+            f"price corridor €{corridor['floor_eur']}–€{corridor['ceiling_eur']}/tCO₂ (Art. 30d)"
         )
 
         return ETS2ReadinessResult(

@@ -58,6 +58,84 @@ const COMPANY_SUGGESTIONS = [
 
 const CHART_COLORS = ['#1b3a5c','#c5a96a','#5a8a6a','#2563eb','#9333ea','#ea580c','#0d9488','#dc2626'];
 
+// ── API payload reconciliation helpers ──────────────────────────────────────
+// The backend engine (backend/services/issb_s2_engine.py) is keyed against a
+// fixed taxonomy of entity ids, snake_case sector keys, scenario keys and
+// disclosure-item strings (see IFRS_S2_PILLARS / CLIMATE_SCENARIOS /
+// PHYSICAL_RISK_TYPES / TRANSITION_RISK_TYPES). This UI collects data using
+// its own display-friendly field names — these helpers translate the form
+// state into the engine's request schema (backend/api/v1/routes/issb_s2.py)
+// so requests validate and the answers the user actually gave reach the
+// engine, without fabricating any values the user didn't provide.
+const slugify = (s) => (String(s || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '')) || 'entity';
+
+const SECTOR_KEY_MAP = {
+  'Energy':'energy', 'Materials':'materials', 'Financials':'financials',
+  'Information Technology':'tech', 'Utilities':'utilities', 'Real Estate':'real_estate',
+  'Agriculture':'agriculture',
+};
+const normalizeSector = (s) => SECTOR_KEY_MAP[s] || slugify(s);
+
+// UI scenario dropdown -> ISSBS2Engine.CLIMATE_SCENARIOS key
+const SCENARIO_KEY_MAP = { '1.5c':'net_zero_1_5c', '2c':'below_2c', '3c':'current_policies' };
+
+// UI risk display name -> engine PHYSICAL_RISK_TYPES / TRANSITION_RISK_TYPES risk_key.
+// Rows with no confident match are intentionally omitted rather than mapped
+// to an approximate key.
+const RISK_KEY_MAP = {
+  'Flooding':'flooding', 'Cyclone':'extreme_weather', 'Wildfire':'wildfire', 'Heatwave':'heatwave',
+  'Sea Level Rise':'sea_level_rise', 'Precipitation Change':'precipitation_change', 'Temperature Shift':'temp_shift',
+  'Carbon Tax':'carbon_price', 'Emissions Regulation':'regulations', 'Clean Tech Disruption':'clean_energy',
+  'Demand Shifts':'consumer_preferences', 'Commodity Price Volatility':'commodity_prices', 'Stranded Assets':'stranded_assets',
+  'Stakeholder Pressure':'stakeholder_sentiment', 'Greenwashing Litigation':'greenwashing',
+};
+
+// Governance/Strategy/Risk-Management pillar answers -> IFRS_S2_PILLARS disclosure-item
+// keys (see backend/services/issb_s2_engine.py IFRS_S2_PILLARS). Each list mirrors the
+// exact strings the engine's _score_pillar_completeness() matches against.
+const buildGovernanceDisclosures = (gov) => {
+  const items = [];
+  if (gov.boardOversight) items.push('board_processes_and_controls','how_board_informed_about_climate','board_accountability_for_climate_targets','board_expertise_or_access_to_expertise');
+  if (gov.mgmtRole?.trim()) items.push('management_role_description','reporting_line_to_board','management_processes_and_controls');
+  if (gov.competency && gov.competency !== 'none') items.push('management_expertise');
+  if (gov.targetMonitoring && gov.targetMonitoring !== 'adhoc') items.push('performance_targets_climate');
+  return items.length ? items : null;
+};
+
+const buildStrategyDisclosures = (strat) => {
+  const items = [];
+  if (strat.physicalRisks?.length) items.push('risks_identified','time_horizons_defined');
+  if (strat.transitionRisks?.length) items.push('industry_specific_considerations');
+  if (strat.physicalRisks?.length || strat.transitionRisks?.length) items.push('opportunities_identified');
+  if (strat.financialImpact && parseFloat(strat.financialImpact) > 0) items.push('current_period_effects','anticipated_effects');
+  if (strat.scenariosConducted?.length) items.push('resilience_narrative','scenario_analysis_used','scenarios_used','time_horizons_applied');
+  if (strat.transitionPlan) items.push('adaptations_identified','adaptation_plans');
+  return items.length ? items : null;
+};
+
+const buildRiskMgmtDisclosures = (rm) => {
+  const items = [];
+  if (rm.identificationProcess && rm.identificationProcess !== 'none') items.push('identification_process','how_prioritised');
+  if (rm.assessmentMethodology && rm.assessmentMethodology !== 'none') items.push('parameters_and_assumptions','data_sources_used','decision_making_processes');
+  if (rm.ermIntegration && rm.ermIntegration !== 'none') {
+    items.push('integration_with_enterprise_risk');
+    if (rm.ermIntegration === 'full') items.push('climate_risk_appetite','escalation_thresholds');
+  }
+  return items.length ? items : null;
+};
+
+const buildMetricsTargetsDisclosures = (mt) => {
+  const items = [];
+  const s1 = parseFloat(mt.scope1) || 0, s2 = parseFloat(mt.scope2) || 0, s3 = parseFloat(mt.scope3) || 0;
+  if (s1 > 0) items.push('scope1_absolute_tco2e','gross_scope1');
+  if (s2 > 0) items.push('scope2_location_based','scope2_market_based','location_based','market_based');
+  if (s3 > 0) items.push('scope3_categories','category_breakdown');
+  if (s1 > 0 || s2 > 0 || s3 > 0) items.push('total_ghg_tco2e');
+  if (mt.carbonPrice && parseFloat(mt.carbonPrice) > 0) items.push('price_per_tco2e');
+  if (mt.reductionTarget && mt.targetYear) items.push('net_zero_target_year','interim_targets');
+  return items.length ? items : null;
+};
+
 // ── Mini components ────────────────────────────────────────────────────────
 const Btn = ({ children, onClick, disabled, color='navy', sm }) => (
   <button onClick={onClick} disabled={disabled} style={{
@@ -279,10 +357,21 @@ export default function IssbTcfdPage() {
     setLoading(true); setError(''); setAssessResult(null);
     try {
       const { data } = await axios.post(`${API}/api/v1/issb-s2/assess`, {
-        company_name: company, cin, sector,
-        governance: gov, strategy: strat, risk_management: rm, metrics_targets: mt,
+        entity_id: cin || slugify(company),
+        entity_name: company,
+        industry_sector: normalizeSector(sector),
+        reporting_period: '2024',
+        scope1_tco2e: parseFloat(mt.scope1) || 0,
+        scope2_tco2e: parseFloat(mt.scope2) || 0,
+        scope3_tco2e: parseFloat(mt.scope3) || 0,
+        internal_carbon_price: mt.carbonPrice ? parseFloat(mt.carbonPrice) : null,
+        climate_capex_pct: 0,
+        governance_disclosures: buildGovernanceDisclosures(gov),
+        strategy_disclosures: buildStrategyDisclosures(strat),
+        risk_mgmt_disclosures: buildRiskMgmtDisclosures(rm),
+        metrics_targets_disclosures: buildMetricsTargetsDisclosures(mt),
       });
-      setAssessResult(data);
+      setAssessResult(data.result);
     } catch (e) { setError(e.response?.data?.detail || e.message); }
     setLoading(false);
   }, [company, cin, sector, gov, strat, rm, mt]);
@@ -290,23 +379,37 @@ export default function IssbTcfdPage() {
   const runScenario = useCallback(async () => {
     setLoading(true); setError(''); setScenarioResult(null);
     try {
-      const { data } = await axios.post(`${API}/api/v1/issb-s2/scenario-analysis`, scenarioIn);
-      setScenarioResult(data);
+      const mappedScenario = SCENARIO_KEY_MAP[scenarioIn.scenario] || 'net_zero_1_5c';
+      const { data } = await axios.post(`${API}/api/v1/issb-s2/scenario-analysis`, {
+        entity_id: cin || slugify(company),
+        entity_type: sector === 'Financials' ? 'bank' : 'corporate',
+        scenarios: [mappedScenario],
+      });
+      setScenarioResult({ ...data.result, _selectedScenario: mappedScenario });
     } catch (e) { setError(e.response?.data?.detail || e.message); }
     setLoading(false);
-  }, [scenarioIn]);
+  }, [scenarioIn, cin, company, sector]);
 
   const runRiskId = useCallback(async () => {
     setLoading(true); setError(''); setRiskResult(null);
     try {
-      const { data } = await axios.post(`${API}/api/v1/issb-s2/risk-identification`, {
-        company_name: company, sector,
-        physical_risks: physicalRisks, transition_risks: transitionRisks,
+      const risk_scores = {};
+      [physicalRisks, transitionRisks].forEach(group => {
+        Object.entries(group).forEach(([name, d]) => {
+          const key = RISK_KEY_MAP[name];
+          if (key) risk_scores[key] = { likelihood: parseFloat(d.likelihood) || 3, impact: parseFloat(d.impact) || 3 };
+        });
       });
-      setRiskResult(data);
+      const { data } = await axios.post(`${API}/api/v1/issb-s2/risk-identification`, {
+        entity_id: cin || slugify(company),
+        sector: normalizeSector(sector),
+        include_opportunities: true,
+        risk_scores,
+      });
+      setRiskResult(data.result);
     } catch (e) { setError(e.response?.data?.detail || e.message); }
     setLoading(false);
-  }, [company, sector, physicalRisks, transitionRisks]);
+  }, [company, cin, sector, physicalRisks, transitionRisks]);
 
   const computePathway = useCallback(() => {
     const s1 = parseFloat(ghg.scope1)||0, s2 = parseFloat(ghg.scope2)||0, s3 = parseFloat(ghg.scope3)||0;
@@ -450,20 +553,25 @@ export default function IssbTcfdPage() {
                 </ResponsiveContainer>
               </Card>
 
-              {/* Gap analysis */}
-              {assessResult.gaps && (
+              {/* Gap analysis — engine returns flat string lists: material_gaps / priority_actions */}
+              {assessResult.material_gaps?.length > 0 && (
                 <Card>
                   <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 12px' }}>Gap Analysis</h3>
-                  {(Array.isArray(assessResult.gaps) ? assessResult.gaps : Object.entries(assessResult.gaps).map(([k,v]) => ({pillar:k, items: Array.isArray(v) ? v : [v]}))).map((g,i) => (
-                    <div key={i} style={{ marginBottom:12 }}>
-                      <div style={{ fontSize:13, fontWeight:700, color:T.indigo, marginBottom:4 }}>{g.pillar || g.category}</div>
+                  <ul style={{ margin:0, paddingLeft:18 }}>
+                    {assessResult.material_gaps.map((g,i) => (
+                      <li key={i} style={{ fontSize:13, color:T.text, marginBottom:4 }}>{g}</li>
+                    ))}
+                  </ul>
+                  {assessResult.priority_actions?.length > 0 && (
+                    <>
+                      <div style={{ fontSize:13, fontWeight:700, color:T.indigo, margin:'16px 0 8px' }}>Priority Actions</div>
                       <ul style={{ margin:0, paddingLeft:18 }}>
-                        {(g.items || g.recommendations || [g.detail || g.gap]).map((item,j) => (
-                          <li key={j} style={{ fontSize:13, color:T.text, marginBottom:2 }}>{typeof item === 'string' ? item : item.description || JSON.stringify(item)}</li>
+                        {assessResult.priority_actions.map((a,i) => (
+                          <li key={i} style={{ fontSize:13, color:T.text, marginBottom:4 }}>{a}</li>
                         ))}
                       </ul>
-                    </div>
-                  ))}
+                    </>
+                  )}
                 </Card>
               )}
 
@@ -528,81 +636,64 @@ export default function IssbTcfdPage() {
           </Card>
           {loading && <Spinner />}
 
-          {scenarioResult && (
+          {scenarioResult && (() => {
+            // Engine response is keyed by scenario: { scenarios: { <key>: {...} }, summary }
+            const sc = scenarioResult.scenarios?.[scenarioResult._selectedScenario] || {};
+            const imp = sc.entity_impacts || {};
+            return (
             <>
               {/* KPIs */}
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Strategy Resilience" value={scenarioResult.resilience_score ?? '--'} color={T.indigo} wide />
-                <KpiCard label="Physical Risk Score" value={scenarioResult.physical_risk_score ?? '--'} color={T.amber} />
-                <KpiCard label="Transition Risk Score" value={scenarioResult.transition_risk_score ?? '--'} color={T.teal} />
-                <KpiCard label="Financial Impact" value={scenarioResult.financial_impact ? `\u20B9${scenarioResult.financial_impact} Cr` : '--'} color={T.red} />
+                <KpiCard label="Strategic Resilience" value={sc.strategic_resilience ?? '--'} color={T.indigo} wide />
+                <KpiCard label="Physical Risk Level" value={sc.physical_risk_level ?? '--'} color={T.amber} />
+                <KpiCard label="Transition Risk Level" value={sc.transition_risk_level ?? '--'} color={T.teal} />
+                <KpiCard label="Revenue Impact (2030)" value={imp.revenue_impact_2030_pct != null ? `${imp.revenue_impact_2030_pct}%` : '--'} sub="Requires entity_financials input to compute" color={T.red} />
               </div>
 
-              {/* Physical risk heatmap */}
-              {scenarioResult.physical_risks && (
+              {/* Scenario pathway detail \u2014 real fields returned by run_scenario_analysis() */}
+              {sc.scenario_name && (
                 <Card>
-                  <h3 style={{ fontSize:14, fontWeight:700, color:T.amber, margin:'0 0 12px' }}>Physical Risk Heatmap</h3>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(140px,1fr))', gap:8 }}>
-                    {(Array.isArray(scenarioResult.physical_risks) ? scenarioResult.physical_risks : Object.entries(scenarioResult.physical_risks).map(([k,v]) => ({name:k, score:typeof v==='number'?v:v.score||0}))).map((r,i) => {
-                      const score = r.score ?? r.value ?? 0;
-                      const bg = score >= 8 ? T.red : score >= 5 ? T.amber : score >= 3 ? T.gold : T.green;
-                      return (
-                        <div key={i} style={{ background:bg+'1a', border:`1px solid ${bg}`, borderRadius:8, padding:'10px 12px', textAlign:'center' }}>
-                          <div style={{ fontSize:11, fontWeight:600, color:T.text }}>{r.name || r.risk}</div>
-                          <div style={{ fontSize:22, fontWeight:700, color:bg, marginTop:4 }}>{score}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
-              )}
-
-              {/* Transition risk waterfall */}
-              {scenarioResult.transition_risks && (
-                <Card>
-                  <h3 style={{ fontSize:14, fontWeight:700, color:T.teal, margin:'0 0 12px' }}>Transition Risk Impact</h3>
-                  <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={(Array.isArray(scenarioResult.transition_risks) ? scenarioResult.transition_risks : Object.entries(scenarioResult.transition_risks).map(([k,v]) => ({name:k, impact:typeof v==='number'?v:v.impact||0}))).slice(0,8)}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
-                      <XAxis dataKey="name" tick={{ fontSize:11 }} angle={-20} textAnchor="end" height={60} />
-                      <YAxis tick={{ fontSize:11 }} />
-                      <Tooltip />
-                      <Bar dataKey="impact" radius={[4,4,0,0]}>
-                        {(Array.isArray(scenarioResult.transition_risks) ? scenarioResult.transition_risks : []).map((_,i) => <Cell key={i} fill={CHART_COLORS[i%CHART_COLORS.length]} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </Card>
-              )}
-
-              {/* Financial impact ranges */}
-              {scenarioResult.financial_ranges && (
-                <Card>
-                  <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 12px' }}>Financial Impact Ranges by Horizon</h3>
+                  <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 4px' }}>{sc.scenario_name}</h3>
+                  <p style={{ fontSize:12, color:T.sub, margin:'0 0 14px' }}>{sc.description}</p>
                   <div style={{ overflowX:'auto' }}>
                     <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
                       <thead><tr style={{ background:'#f8f7f4' }}>
-                        <th style={{ padding:'8px 10px', textAlign:'left', borderBottom:`2px solid ${T.border}` }}>Horizon</th>
-                        <th style={{ padding:'8px 10px', textAlign:'right', borderBottom:`2px solid ${T.border}` }}>Low (\u20B9 Cr)</th>
-                        <th style={{ padding:'8px 10px', textAlign:'right', borderBottom:`2px solid ${T.border}` }}>Mid (\u20B9 Cr)</th>
-                        <th style={{ padding:'8px 10px', textAlign:'right', borderBottom:`2px solid ${T.border}` }}>High (\u20B9 Cr)</th>
+                        <th style={{ padding:'8px 10px', textAlign:'left', borderBottom:`2px solid ${T.border}` }}>Metric</th>
+                        <th style={{ padding:'8px 10px', textAlign:'right', borderBottom:`2px solid ${T.border}` }}>2030</th>
+                        <th style={{ padding:'8px 10px', textAlign:'right', borderBottom:`2px solid ${T.border}` }}>2050</th>
                       </tr></thead>
                       <tbody>
-                        {(Array.isArray(scenarioResult.financial_ranges) ? scenarioResult.financial_ranges : []).map((r,i) => (
-                          <tr key={i} style={{ borderBottom:`1px solid ${T.border}` }}>
-                            <td style={{ padding:'6px 10px', fontWeight:600 }}>{r.horizon || r.year}</td>
-                            <td style={{ padding:'6px 10px', textAlign:'right', color:T.green }}>{r.low ?? '--'}</td>
-                            <td style={{ padding:'6px 10px', textAlign:'right', color:T.amber }}>{r.mid ?? '--'}</td>
-                            <td style={{ padding:'6px 10px', textAlign:'right', color:T.red }}>{r.high ?? '--'}</td>
-                          </tr>
-                        ))}
+                        <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                          <td style={{ padding:'6px 10px' }}>Temperature (\u00B0C)</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{sc.temperature_2030_c ?? '--'}</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{sc.temperature_2050_c ?? '--'}</td>
+                        </tr>
+                        <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                          <td style={{ padding:'6px 10px' }}>Carbon Price (USD/tCO\u2082e)</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{sc.carbon_price_2030_usd ?? '--'}</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{sc.carbon_price_2050_usd ?? '--'}</td>
+                        </tr>
+                        <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                          <td style={{ padding:'6px 10px' }}>Revenue Impact (%)</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{imp.revenue_impact_2030_pct ?? '--'}</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{imp.revenue_impact_2050_pct ?? '--'}</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding:'6px 10px' }}>Physical Loss (USD mn)</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{imp.physical_loss_2030_usd_mn ?? '--'}</td>
+                          <td style={{ padding:'6px 10px', textAlign:'right' }}>{imp.physical_loss_2050_usd_mn ?? '--'}</td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
+                  {imp.revenue_impact_2030_pct == null && (
+                    <Alert type="info">Entity-level impacts require balance-sheet inputs (revenue, carbon intensity, CapEx plan, asset base) not yet captured by this form \u2014 the engine returns them as null rather than a fabricated estimate.</Alert>
+                  )}
                 </Card>
               )}
             </>
-          )}
+            );
+          })()}
         </div>
       )}
 
@@ -656,18 +747,21 @@ export default function IssbTcfdPage() {
           </div>
           {loading && <Spinner />}
 
-          {/* Risk results */}
-          {riskResult && (
+          {/* Risk results \u2014 engine returns { physical_risks:[], transition_risks:[], opportunities:[], summary:{} } */}
+          {riskResult && (() => {
+            const scoredRisks = [...(riskResult.physical_risks||[]), ...(riskResult.transition_risks||[])]
+              .filter(r => r.likelihood_score != null && r.impact_score != null);
+            return (
             <>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Overall Risk Score" value={riskResult.overall_score ?? '--'} color={T.red} wide />
-                <KpiCard label="Physical Risk" value={riskResult.physical_score ?? '--'} color={T.amber} />
-                <KpiCard label="Transition Risk" value={riskResult.transition_score ?? '--'} color={T.indigo} />
-                <KpiCard label="Total Exposure" value={riskResult.total_exposure ? `\u20B9${riskResult.total_exposure} Cr` : '--'} color={T.navy} />
+                <KpiCard label="Physical Risks Identified" value={riskResult.summary?.physical_risk_count ?? '--'} color={T.amber} wide />
+                <KpiCard label="Transition Risks Identified" value={riskResult.summary?.transition_risk_count ?? '--'} color={T.indigo} />
+                <KpiCard label="Material Risks" value={riskResult.summary?.material_risks ?? '--'} color={T.red} />
+                <KpiCard label="Opportunities" value={riskResult.summary?.opportunity_count ?? '--'} color={T.navy} />
               </div>
 
-              {/* Risk matrix */}
-              {riskResult.risk_matrix && (
+              {/* Risk matrix \u2014 built from likelihood_score/impact_score on scored risk_keys */}
+              {scoredRisks.length > 0 && (
                 <Card>
                   <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 12px' }}>Risk Matrix (Likelihood x Impact)</h3>
                   <div style={{ display:'grid', gridTemplateColumns:'60px repeat(5,1fr)', gap:2 }}>
@@ -677,12 +771,12 @@ export default function IssbTcfdPage() {
                       <React.Fragment key={l}>
                         <div style={{ fontSize:11, fontWeight:600, color:T.sub, display:'flex', alignItems:'center', justifyContent:'center' }}>L{l}</div>
                         {[1,2,3,4,5].map(imp => {
-                          const risks = (riskResult.risk_matrix || []).filter(r => r.likelihood==l && r.impact==imp);
+                          const risks = scoredRisks.filter(r => Math.round(r.likelihood_score)===l && Math.round(r.impact_score)===imp);
                           const severity = l*imp;
                           const bg = severity >= 15 ? '#fecaca' : severity >= 8 ? '#fef3c7' : '#dcfce7';
                           return (
                             <div key={imp} style={{ background:bg, borderRadius:4, padding:4, minHeight:32, fontSize:10 }}>
-                              {risks.map((r,i) => <div key={i} style={{ fontWeight:500 }}>{r.name || r.risk}</div>)}
+                              {risks.map((r,i) => <div key={i} style={{ fontWeight:500 }}>{r.name}</div>)}
                             </div>
                           );
                         })}
@@ -692,18 +786,22 @@ export default function IssbTcfdPage() {
                 </Card>
               )}
 
-              {riskResult.recommendations && (
+              {riskResult.opportunities?.length > 0 && (
                 <Card>
-                  <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 12px' }}>Risk Mitigation Recommendations</h3>
+                  <h3 style={{ fontSize:14, fontWeight:700, color:T.navy, margin:'0 0 12px' }}>Climate Opportunities</h3>
                   <ul style={{ margin:0, paddingLeft:18 }}>
-                    {(Array.isArray(riskResult.recommendations) ? riskResult.recommendations : []).map((r,i) => (
-                      <li key={i} style={{ fontSize:13, color:T.text, marginBottom:4 }}>{typeof r === 'string' ? r : r.description || r.text}</li>
+                    {riskResult.opportunities.map((o,i) => (
+                      <li key={i} style={{ fontSize:13, color:T.text, marginBottom:4 }}>
+                        {o.name} <span style={{ color:T.sub }}>({o.category})</span>
+                        {o.potential_usd_mn != null ? ` \u2014 USD ${o.potential_usd_mn} mn potential` : ' \u2014 potential not yet quantified'}
+                      </li>
                     ))}
                   </ul>
                 </Card>
               )}
             </>
-          )}
+            );
+          })()}
         </div>
       )}
 

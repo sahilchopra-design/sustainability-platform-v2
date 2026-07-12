@@ -1,9 +1,26 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
 import {
   BarChart, Bar, LineChart, Line, ScatterChart, Scatter, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell, ReferenceLine, ComposedChart, Area
 } from 'recharts';
 import { SOVEREIGN_MACRO_2024 } from '../../../data/sovereignMacroSeed';
+
+// Backend Sovereign Climate Risk Engine (climate-adjusted ratings, spread
+// delta, portfolio VaR). See backend/services/sovereign_climate_risk_engine.py
+// + backend/api/v1/routes/sovereign_climate_risk.py. Falls back to the
+// locally-seeded demo figures (clearly labeled) whenever the API is
+// unreachable or a country isn't in the engine's 51-country coverage.
+const API = 'http://localhost:8001';
+const SOV_API = `${API}/api/v1/sovereign-climate-risk`;
+
+// Frontend NGFS scenario labels -> backend scenario slugs
+const SCENARIO_TO_BACKEND = {
+  'Current Policies': 'current_policies',
+  'Delayed Transition': 'delayed_transition',
+  'Below 2C': 'below_2c',
+  'Net Zero 2050': 'net_zero_2050',
+};
 
 const T = {
   bg: '#f4f6f9', surface: '#ffffff', border: '#e3e8ef', navy: '#1b3a5c',
@@ -100,6 +117,10 @@ const kpi = (label, value, sub, color = T.navy) => (
   </div>
 );
 
+const Badge = ({ val, color, bg }) => (
+  <span style={{ background: bg || '#e0e7ff', color: color || T.indigo, padding: '2px 9px', borderRadius: 12, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{val}</span>
+);
+
 export default function SovereignClimateRiskPage() {
   const [tab, setTab] = useState(0);
   const [region, setRegion] = useState('All');
@@ -108,6 +129,85 @@ export default function SovereignClimateRiskPage() {
   const [basket, setBasket] = useState(['US', 'CN', 'SA', 'NO', 'NG']);
   const [watchlist, setWatchlist] = useState(['SA', 'RU', 'NG', 'IQ']);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // --- Live backend wiring (Sovereign Climate Risk Engine) -----------------
+  // The engine covers a 51-country reference set (GET /ref/countries) with
+  // real physical/transition/fiscal/adaptation component scoring, notch
+  // adjustments, and spread deltas. Countries outside that set (e.g. GH, IQ,
+  // KW, QA, AZ, DZ, KZ, LY, AO, EC, TT) keep the locally-seeded demo figures,
+  // clearly labeled below.
+  const [engineIsoSet, setEngineIsoSet] = useState(null);
+  const [engineStatus, setEngineStatus] = useState('loading'); // 'loading' | 'live' | 'demo'
+
+  useEffect(() => {
+    let cancelled = false;
+    axios.get(`${SOV_API}/ref/countries`, { timeout: 10000 })
+      .then(({ data }) => {
+        if (cancelled) return;
+        setEngineIsoSet(new Set((data.countries || []).map(c => c.iso2)));
+      })
+      .catch(() => { if (!cancelled) setEngineIsoSet(new Set()); });
+    return () => { cancelled = true; };
+  }, []);
+
+  // Batch portfolio assessment — one POST per NGFS scenario, covering every
+  // engine-supported country in one call each. Cached by scenario label so
+  // switching the scenario selector doesn't re-hit the API.
+  const [portfolioByScenario, setPortfolioByScenario] = useState({});
+
+  useEffect(() => {
+    if (!engineIsoSet) return;
+    const holdings = COUNTRIES.filter(c => engineIsoSet.has(c.iso))
+      .map(c => ({ country_iso2: c.iso, exposure_usd: Math.max(1, c.gdp || 1) * 1e9 }));
+    if (holdings.length === 0) { setEngineStatus('demo'); return; }
+    let cancelled = false;
+    Object.entries(SCENARIO_TO_BACKEND).forEach(([label, backendScenario]) => {
+      axios.post(`${SOV_API}/portfolio`, {
+        portfolio_name: 'Sovereign Climate Risk Dashboard',
+        holdings, scenario: backendScenario, horizon: '2030',
+      }, { timeout: 15000 })
+        .then(({ data }) => {
+          if (cancelled) return;
+          setPortfolioByScenario(prev => ({ ...prev, [label]: { status: 'live', data } }));
+          setEngineStatus('live');
+        })
+        .catch(() => {
+          if (cancelled) return;
+          setPortfolioByScenario(prev => ({ ...prev, [label]: { status: 'demo', data: null } }));
+          setEngineStatus(prev => (prev === 'live' ? prev : 'demo'));
+        });
+    });
+    return () => { cancelled = true; };
+  }, [engineIsoSet]);
+
+  const livePortfolio = portfolioByScenario[scenario];
+  const liveByIso = useMemo(() => {
+    const m = {};
+    (livePortfolio?.data?.country_results || []).forEach(r => { m[r.country_iso2] = r; });
+    return m;
+  }, [livePortfolio]);
+
+  // Per-country component decomposition (physical / transition / fiscal /
+  // adaptation) is only returned by the single-country /assess endpoint, so
+  // fetch it for the small basket (max 6) used in the vulnerability radar.
+  const [basketLive, setBasketLive] = useState({});
+  useEffect(() => {
+    if (!engineIsoSet) return;
+    const backendScenario = SCENARIO_TO_BACKEND[scenario] || 'current_policies';
+    let cancelled = false;
+    basket.forEach(iso => {
+      if (!engineIsoSet.has(iso)) {
+        setBasketLive(prev => ({ ...prev, [iso]: { status: 'demo', data: null } }));
+        return;
+      }
+      axios.post(`${SOV_API}/assess`, {
+        country_iso2: iso, scenario: backendScenario, horizon: '2030',
+      }, { timeout: 10000 })
+        .then(({ data }) => { if (!cancelled) setBasketLive(prev => ({ ...prev, [iso]: { status: 'live', data } })); })
+        .catch(() => { if (!cancelled) setBasketLive(prev => ({ ...prev, [iso]: { status: 'demo', data: null } })); });
+    });
+    return () => { cancelled = true; };
+  }, [basket, scenario, engineIsoSet]);
 
   const regions = ['All', ...new Set(COUNTRIES.map(c => c.region))];
 
@@ -126,20 +226,45 @@ export default function SovereignClimateRiskPage() {
       ...Object.fromEntries(NGFS_SCENARIOS.map(s => [s, +(computeStrandedRevenue(c.fossilPct, c.gdp, s)).toFixed(1)]))
     })), []);
 
+  // Engine-derived spread delta (base spread + climate_spread_delta_bps) where
+  // the country is covered; falls back to the local demo formula otherwise.
+  const engineAdjSpread = c => {
+    const live = liveByIso[c.iso];
+    return live ? Math.round(c.spread + live.spread_delta_bps) : computeClimateSpread(c.spread, c.ndGain, c.fossilPct, scenario);
+  };
+
   const spreadData = useMemo(() =>
     filtered.slice(0, 20).map(c => ({
       name: c.iso,
       base: c.spread,
-      climateAdj: computeClimateSpread(c.spread, c.ndGain, c.fossilPct, scenario),
-    })), [filtered, scenario]);
+      climateAdj: engineAdjSpread(c),
+      isLive: !!liveByIso[c.iso],
+    })), [filtered, scenario, liveByIso]);
 
   const itrData = useMemo(() =>
     filtered.map(c => ({ name: c.iso, itr: c.itr, target: 1.5, gap: +(c.itr - 1.5).toFixed(1), ndGain: c.ndGain })),
     [filtered]);
 
   const basketCountries = COUNTRIES.filter(c => basket.includes(c.iso));
+  const basketAllLive = basketCountries.length > 0 && basketCountries.every(c => basketLive[c.iso]?.status === 'live');
 
   const vulnRadar = useMemo(() => {
+    if (basketAllLive) {
+      // Real engine component decomposition — all dims 0-100, higher = worse.
+      const dims = ['Physical Risk', 'Transition Risk', 'Fiscal Vulnerability', 'Adaptation Gap', 'Composite Risk'];
+      return dims.map(d => {
+        const row = { dimension: d };
+        basketCountries.forEach(c => {
+          const live = basketLive[c.iso].data;
+          row[c.iso] = d === 'Physical Risk' ? live.physical_risk_score
+            : d === 'Transition Risk' ? live.transition_risk_score
+            : d === 'Fiscal Vulnerability' ? live.fiscal_vulnerability_score
+            : d === 'Adaptation Gap' ? live.adaptation_readiness_score
+            : live.composite_climate_risk_score;
+        });
+        return row;
+      });
+    }
     const dims = ['Readiness', 'Exposure', 'Sensitivity', 'Adaptive Cap.', 'Fiscal Space'];
     return dims.map(d => {
       const row = { dimension: d };
@@ -150,7 +275,7 @@ export default function SovereignClimateRiskPage() {
       });
       return row;
     });
-  }, [basketCountries]);
+  }, [basketCountries, basketAllLive, basketLive]);
 
   const ratingColor = r => r?.startsWith('AAA') ? T.green : r?.startsWith('AA') ? T.teal : r?.startsWith('A') ? T.blue :
     r?.startsWith('BBB') ? T.amber : r?.startsWith('BB') ? T.orange : T.red;
@@ -174,6 +299,9 @@ export default function SovereignClimateRiskPage() {
             <select value={scenario} onChange={e => setScenario(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12, fontFamily: T.font }}>
               {NGFS_SCENARIOS.map(s => <option key={s}>{s}</option>)}
             </select>
+            {engineStatus === 'loading' && <Badge val="… Connecting to engine" color={T.textSec} bg="#e2e8f0" />}
+            {engineStatus === 'live' && <Badge val="● Live — /api/v1/sovereign-climate-risk engine" color="#166534" bg="#dcfce7" />}
+            {engineStatus === 'demo' && <Badge val="○ Demo Data — Sovereign Climate Risk API unavailable" color="#92400e" bg="#fef3c7" />}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 0 }}>
@@ -195,6 +323,9 @@ export default function SovereignClimateRiskPage() {
           {kpi('Fossil Exporters', COUNTRIES.filter(c => c.fossilPct > 5).length, '>5% GDP from fossil', T.red)}
           {kpi('Avg Sovereign ITR', (COUNTRIES.reduce((s, c) => s + c.itr, 0) / COUNTRIES.length).toFixed(1) + 'C', 'implied temp rise', T.amber)}
           {kpi('Watchlist', watchlist.length, 'countries flagged', T.orange)}
+          {livePortfolio?.status === 'live'
+            ? kpi('Engine Climate VaR', `$${(livePortfolio.data.total_climate_var_usd / 1e9).toFixed(2)}B`, `${scenario} · 5y duration · engine-computed`, T.teal)
+            : kpi('Engine Climate VaR', 'n/a', 'Demo mode — engine unavailable', T.textMut)}
         </div>
 
         {/* Tab 0: Sovereign Risk Map */}
@@ -228,21 +359,27 @@ export default function SovereignClimateRiskPage() {
               </ResponsiveContainer>
             </div>
             <div style={card}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Country Risk Table</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Country Risk Table</h3>
+              <p style={{ fontSize: 11, color: T.textSec, marginBottom: 12 }}>
+                "Engine Assessment" is computed live by the Sovereign Climate Risk Engine (composite score, notch adjustment, climate-adjusted rating) for the {scenario} scenario, for the 51 countries it covers.
+                Rows without engine coverage show a Demo badge and keep the locally-seeded figures.
+              </p>
               <input placeholder="Search countries..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
                 style={{ padding: '8px 12px', border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 12, width: 240, marginBottom: 12 }} />
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                   <thead>
                     <tr style={{ borderBottom: `2px solid ${T.border}` }}>
-                      {['Country', 'Region', 'ND-GAIN', 'Fossil %', 'Rating', 'Spread', 'ITR', 'Watchlist'].map(h => (
+                      {['Country', 'Region', 'ND-GAIN', 'Fossil %', 'Rating', 'Spread', 'ITR', 'Engine Assessment', 'Watchlist'].map(h => (
                         <th key={h} style={{ textAlign: 'left', padding: '8px 6px', fontWeight: 600, color: T.textSec, cursor: 'pointer' }}
                           onClick={() => h === 'ND-GAIN' ? setSortBy('ndGain') : h === 'Fossil %' ? setSortBy('fossilPct') : h === 'Spread' ? setSortBy('spread') : h === 'ITR' ? setSortBy('itr') : null}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.slice(0, 30).map(c => (
+                    {filtered.slice(0, 30).map(c => {
+                      const live = liveByIso[c.iso];
+                      return (
                       <tr key={c.iso} style={{ borderBottom: `1px solid ${T.border}`, background: watchlist.includes(c.iso) ? '#fef3c7' : 'transparent' }}>
                         <td style={{ padding: '8px 6px', fontWeight: 600 }}>{c.name}</td>
                         <td style={{ padding: '8px 6px', color: T.textSec }}>{c.region}</td>
@@ -252,13 +389,27 @@ export default function SovereignClimateRiskPage() {
                         <td style={{ padding: '8px 6px', fontFamily: T.mono }}>{c.spread} bps</td>
                         <td style={{ padding: '8px 6px' }}><span style={{ color: c.itr > 3 ? T.red : c.itr > 2.5 ? T.amber : T.green, fontWeight: 600 }}>{c.itr}C</span></td>
                         <td style={{ padding: '8px 6px' }}>
+                          {live ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <Badge val="Live" color="#166534" bg="#dcfce7" />
+                                <span style={{ fontFamily: T.mono, fontWeight: 700, color: live.composite_risk >= 55 ? T.red : live.composite_risk >= 35 ? T.amber : T.green }}>{live.composite_risk}</span>
+                              </div>
+                              <div style={{ color: T.textSec, fontSize: 10 }}>{live.baseline_rating} → {live.adjusted_rating} ({live.notch_adjustment >= 0 ? '+' : ''}{live.notch_adjustment} notch)</div>
+                            </div>
+                          ) : (
+                            <Badge val="Demo — no engine coverage" color="#92400e" bg="#fef3c7" />
+                          )}
+                        </td>
+                        <td style={{ padding: '8px 6px' }}>
                           <button onClick={() => setWatchlist(w => w.includes(c.iso) ? w.filter(x => x !== c.iso) : [...w, c.iso])}
                             style={{ padding: '3px 8px', borderRadius: 4, border: `1px solid ${watchlist.includes(c.iso) ? T.orange : T.border}`, background: watchlist.includes(c.iso) ? '#fef3c7' : T.surface, cursor: 'pointer', fontSize: 10 }}>
                             {watchlist.includes(c.iso) ? 'Remove' : 'Add'}
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -286,7 +437,12 @@ export default function SovereignClimateRiskPage() {
               </ResponsiveContainer>
             </div>
             <div style={card}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Country Basket Comparison (Radar)</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, margin: 0 }}>Country Basket Comparison (Radar)</h3>
+                {basketAllLive
+                  ? <Badge val="● Live — engine physical/transition/fiscal/adaptation scores" color="#166534" bg="#dcfce7" />
+                  : <Badge val="○ Demo Data — one or more basket countries lack engine coverage" color="#92400e" bg="#fef3c7" />}
+              </div>
               <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
                 {COUNTRIES.slice(0, 20).map(c => (
                   <button key={c.iso} onClick={() => setBasket(b => b.includes(c.iso) ? b.filter(x => x !== c.iso) : b.length < 6 ? [...b, c.iso] : b)}
@@ -402,7 +558,12 @@ export default function SovereignClimateRiskPage() {
         {tab === 4 && (
           <div>
             <div style={card}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Climate-Adjusted Sovereign Spreads (bps) - {scenario}</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, margin: 0 }}>Climate-Adjusted Sovereign Spreads (bps) - {scenario}</h3>
+                {livePortfolio?.status === 'live'
+                  ? <Badge val="● Live — engine spread_delta_bps" color="#166534" bg="#dcfce7" />
+                  : <Badge val="○ Demo Data — engine unavailable, showing local estimate" color="#92400e" bg="#fef3c7" />}
+              </div>
               <ResponsiveContainer width="100%" height={420}>
                 <ComposedChart data={spreadData} margin={{ bottom: 30 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -415,7 +576,8 @@ export default function SovereignClimateRiskPage() {
               </ResponsiveContainer>
             </div>
             <div style={card}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 12 }}>Spread Sensitivity Across Scenarios</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: T.navy, marginBottom: 4 }}>Spread Sensitivity Across Scenarios</h3>
+              <p style={{ fontSize: 11, color: T.textSec, marginBottom: 12 }}>Values use the engine's climate_spread_delta_bps for each NGFS scenario where the country is covered (marked *); otherwise a local demo estimate is shown.</p>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                   <thead><tr style={{ borderBottom: `2px solid ${T.border}` }}>
@@ -429,8 +591,13 @@ export default function SovereignClimateRiskPage() {
                         <td style={{ padding: '8px 6px', fontWeight: 600 }}>{c.name}</td>
                         <td style={{ padding: '8px 6px', fontFamily: T.mono }}>{c.spread}</td>
                         {NGFS_SCENARIOS.map(s => {
-                          const adj = computeClimateSpread(c.spread, c.ndGain, c.fossilPct, s);
-                          return <td key={s} style={{ padding: '8px 6px', fontFamily: T.mono, color: adj > c.spread * 2 ? T.red : T.navy }}>{adj}</td>;
+                          const scenLive = portfolioByScenario[s]?.data?.country_results?.find(r => r.country_iso2 === c.iso);
+                          const adj = scenLive ? Math.round(c.spread + scenLive.spread_delta_bps) : computeClimateSpread(c.spread, c.ndGain, c.fossilPct, s);
+                          return (
+                            <td key={s} style={{ padding: '8px 6px', fontFamily: T.mono, color: adj > c.spread * 2 ? T.red : T.navy }}>
+                              {adj}{scenLive ? '*' : ''}
+                            </td>
+                          );
                         })}
                       </tr>
                     ))}
