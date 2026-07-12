@@ -523,6 +523,12 @@ export default function FinancialModelingStudioPage() {
             <div style={{ fontSize: 12, color: T.sub, marginTop: 4 }}>GET /api/v1/financial-model/ref/templates failed: {String(templates.error)}</div>
           </div>
         )}
+        {templates.status === 'live' && templates.list.length === 0 && (
+          <div style={{ ...card, background: '#fdf4f4', border: `1px solid ${T.red}33` }}>
+            <div style={{ fontSize: 13, color: T.red, fontWeight: 700 }}>Model engine returned no starting templates — no figures shown (this page never fabricates results).</div>
+            <div style={{ fontSize: 12, color: T.sub, marginTop: 4 }}>GET /api/v1/financial-model/ref/templates responded 200 with an empty templates list.</div>
+          </div>
+        )}
       </div>
     );
   }
