@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
+if (typeof window !== 'undefined') { window.__DEPLOY_MARKER__ = "ZULU_7734_CHECK_ME"; }
 import { BrowserRouter, Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { TestDataProvider } from './context/TestDataContext';
 import { CompanyEnrichmentProvider } from './context/CompanyEnrichmentContext';
