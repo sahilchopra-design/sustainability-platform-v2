@@ -81,7 +81,7 @@ const CriticalMineralsPage = React.lazy(() => import("./features/critical-minera
 const NbsFinancePage = React.lazy(() => import("./features/nbs-finance/pages/NbsFinancePage"));
 const SFDRArt9Page = React.lazy(() => import("./features/sfdr-art9/pages/SFDRArt9Page"));
 // Sprint 34 — E96–E99
-const VCMIntegrityPage = React.lazy(() => import("./features/vcm-integrity/pages/VcmIntegrityPage"));
+const VCMIntegrityPage = React.lazy(() => import("./features/vcm-integrity/pages/VCMIntegrityPage"));
 const SocialTaxonomyPage = React.lazy(() => import("./features/social-taxonomy/pages/SocialTaxonomyPage"));
 const GreenHydrogenPage = React.lazy(() => import("./features/green-hydrogen/pages/GreenHydrogenPage"));
 const TransitionFinancePage = React.lazy(() => import("./features/transition-finance/pages/TransitionFinancePage"));
@@ -113,7 +113,7 @@ const EuTaxonomyPage = React.lazy(() => import("./features/eu-taxonomy/pages/EuT
 // Sprint D — Platform Intelligence (EP-D1, EP-D3, EP-D4, EP-D6, EP-D7)
 const StrandedAssetsPage = React.lazy(() => import("./features/stranded-assets/pages/StrandedAssetsPage"));
 const NGFSScenariosPage = React.lazy(() => import("./features/ngfs-scenarios/pages/NGFSScenariosPage"));
-const PortfolioClimateVaRPage = React.lazy(() => import("./features/portfolio-climate-var/pages/PortfolioClimateVarPage"));
+const PortfolioClimateVaRPage = React.lazy(() => import("./features/portfolio-climate-var/pages/PortfolioClimateVaRPage"));
 const PipelineDashboardPage = React.lazy(() => import("./features/pipeline-dashboard/pages/PipelineDashboardPage"));
 const CSRDiXBRLPage = React.lazy(() => import("./features/csrd-ixbrl/pages/CSRDiXBRLPage"));
 // Master Reference
@@ -697,7 +697,7 @@ const CcArrReforestationPage     = React.lazy(() => import("./features/cc-arr-re
 const CcIfmCreditsPage           = React.lazy(() => import("./features/cc-ifm-credits/pages/CcIfmCreditsPage"));
 const CcReddWetlandsHubPage      = React.lazy(() => import("./features/cc-redd-wetlands-hub/pages/CcReddWetlandsHubPage"));
 // Sprint BO — Critical Minerals · Battery & EV Analytics · ET Commodity Risk
-const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEvAnalyticsPage"));
+const BatteryEVAnalyticsPage      = React.lazy(() => import("./features/battery-ev-analytics/pages/BatteryEVAnalyticsPage"));
 const ETCommodityRiskPage         = React.lazy(() => import("./features/et-commodity-risk/pages/ETCommodityRiskPage"));
 // Sprint BP — Equitable Earth Methodologies (standalone with calculation engine)
 const EquitableEarthMethodologiesPage = React.lazy(() => import("./features/equitable-earth-methodologies/pages/EquitableEarthMethodologiesPage"));
@@ -707,7 +707,7 @@ const CarbonForwardCurvePage     = React.lazy(() => import("./features/carbon-fo
 const CreditIntegrityDDPage      = React.lazy(() => import("./features/credit-integrity-dd/pages/CreditIntegrityDDPage"));
 // Sprint BM — NatCat Loss Engine · Cat Bond & ILS · Insurance Protection Gap
 const NatCatLossEnginePage        = React.lazy(() => import("./features/natcat-loss-engine/pages/NatCatLossEnginePage"));
-const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondIlsPage"));
+const CatBondILSPage              = React.lazy(() => import("./features/cat-bond-ils/pages/CatBondILSPage"));
 const InsuranceProtectionGapPage  = React.lazy(() => import("./features/insurance-protection-gap/pages/InsuranceProtectionGapPage"));
 // Sprint BL — ML Risk Scorer · NLP Disclosure Parser · Predictive Analytics Hub
 const MLRiskScorerPage            = React.lazy(() => import("./features/ml-risk-scorer/pages/MLRiskScorerPage"));
@@ -978,10 +978,10 @@ const OceanMarineRiskPage = React.lazy(() => import("./features/ocean-marine-ris
 const CircularEconomyTrackerPage = React.lazy(() => import("./features/circular-economy-tracker/pages/CircularEconomyTrackerPage"));
 const AirQualityHealthRiskPage = React.lazy(() => import("./features/air-quality-health-risk/pages/AirQualityHealthRiskPage"));
 // Sprint AB — Macro & Systemic Risk Intelligence
-const SystemicESGRiskPage = React.lazy(() => import("./features/systemic-esg-risk/pages/SystemicEsgRiskPage"));
+const SystemicESGRiskPage = React.lazy(() => import("./features/systemic-esg-risk/pages/SystemicESGRiskPage"));
 const ClimatePolicyIntelligencePage = React.lazy(() => import("./features/climate-policy-intelligence/pages/ClimatePolicyIntelligencePage"));
 const GreenCentralBankingPage = React.lazy(() => import("./features/green-central-banking/pages/GreenCentralBankingPage"));
-const ESGFactorAttributionPage = React.lazy(() => import("./features/esg-factor-attribution/pages/EsgFactorAttributionPage"));
+const ESGFactorAttributionPage = React.lazy(() => import("./features/esg-factor-attribution/pages/ESGFactorAttributionPage"));
 const TransitionScenarioModellerPage = React.lazy(() => import("./features/transition-scenario-modeller/pages/TransitionScenarioModellerPage"));
 const CrossAssetContagionPage = React.lazy(() => import("./features/cross-asset-contagion/pages/CrossAssetContagionPage"));
 // Sprint AA — Climate Finance Architecture
@@ -1636,7 +1636,7 @@ function AppContent() {
         <main key={location.pathname} className="a2-scroll a2-view" style={{ flex: 1, overflowY: 'auto', background: T.bg, color: T.text }}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
-            <Route path="/admin" element={<AdminPanelPage />} />
+            <Route path="/admin" element={<ProtectedRoute path="/admin" element={<AdminPanelPage />} />} />
             <Route path="/module-navigator" element={<ModuleNavigatorPage navGroups={NAV_GROUPS} />} />
             <Route path="/invite/:token" element={<InviteAcceptPage />} />
             <Route path="/access-expired" element={<AccessExpiredPage />} />
