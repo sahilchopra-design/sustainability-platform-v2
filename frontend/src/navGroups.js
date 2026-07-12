@@ -59,6 +59,8 @@ export const NAV_GROUPS = [
     { path: '/esms', label: 'ESMS Assessment', badge: 'IFC PS1', code: 'E148' },
     { path: '/issb-tcfd', label: 'ISSB S2 / TCFD', badge: 'IFRS S2', code: 'E149' },
     { path: '/eu-taxonomy', label: 'EU Taxonomy', badge: '6 Obj', code: 'E150' },
+    { path: '/csrd-dma', label: 'CSRD Double Materiality Assessment', badge: 'ESRS 1 · IRO Register', code: 'E151' },
+    { path: '/sfdr-pai', label: 'SFDR PAI Indicators', badge: '14 Mandatory PAI · Entity-Level', code: 'E152' },
   ]},
   { label: 'Reporting & Data Quality', icon: '\uD83D\uDCCA', color: PASTEL[5], items: [
     { path: '/climate-financial-statements', label: 'Climate Fin. Statements', badge: 'IFRS S2', code: 'E86' },
@@ -119,6 +121,11 @@ export const NAV_GROUPS = [
     { path: '/blended-finance',           label: 'Blended Finance',          badge: '6 Instruments · Capital Stack · Leverage', code: 'EP-X4' },
     { path: '/undp-blended-finance',      label: 'UNDP Blended Finance Framework', badge: '6 Pillars · Leverage Calc · IRIS+ · Market Intel · Pipeline', code: 'EP-X4B' },
     { path: '/impact-verification',       label: 'Impact Verification',      badge: 'IMP · Evidence Tiers · Impact Washing',  code: 'EP-X5' },
+    { path: '/additionality-assessment',  label: 'Additionality Assessment', badge: 'Carbon Credit · Baseline · Common Practice', code: 'EP-X7' },
+    { path: '/impact-attribution',        label: 'Impact Attribution',       badge: 'Counterfactual · Contribution vs Attribution', code: 'EP-X8' },
+    { path: '/impact-measurement-hub',    label: 'Impact Measurement Hub',   badge: 'Hub · IRIS+ · SDG · Theory of Change',   code: 'EP-X9' },
+    { path: '/sdg-alignment-engine',      label: 'SDG Alignment Engine',     badge: '17 Goals · 169 Targets · Scoring',       code: 'EP-X10' },
+    { path: '/theory-of-change',          label: 'Theory of Change',         badge: 'Inputs→Outputs→Outcomes→Impact', code: 'EP-X11' },
   ]},
   { label: 'Advanced Predictive Analytics', icon: '📈', color: '#6d28d9', items: [
     { path: '/esg-time-series-forecaster',  label: 'ESG Time Series Forecaster',   badge: 'ARIMA · Holt-Winters · Ensemble · SBTi Divergence · CI Bands',   code: 'EP-BZ1' },
@@ -291,6 +298,7 @@ export const NAV_GROUPS = [
     { path: '/ccus-project-finance',        label: 'CCUS Project Finance',                badge: '8 Candidate Deals · DSCR Debt Sizing · Equity IRR · Annuity Waterfall',                   code: 'EP-CCUS-PF' },
     { path: '/carbon-storage-geology',      label: 'Carbon Storage Geology',              badge: '8 Storage Archetypes · DOE Volumetric Capacity · Darcy Injectivity · Containment Risk',   code: 'EP-CCUS-GEO' },
     { path: '/direct-air-capture',          label: 'Direct Air Capture (redirect)',       badge: 'Re-exports Direct Air Capture Finance (EP-EH1) — see that module for full DAC analytics', code: 'EP-DAC-R' },
+    { path: '/industrial-ccs',              label: 'Industrial CCS',                      badge: 'Cement/Steel Point-Source · Capture Cost Curve',                                         code: 'EP-CCUS-IND' },
   ]},
   { label: '🏢 Climate Real Estate & Green Buildings Finance', icon: '🏢', color: '#16A34A', items: [
     { path: '/green-building-certification-finance', label: 'Green Building Certification Finance', badge: 'LEED/BREEAM/NABERS/DGNB · 22 Buildings · NPV Calculator · ROI Waterfall · 6 Tabs', code: 'EP-EI1' },
@@ -1078,6 +1086,7 @@ export const NAV_GROUPS = [
     { path: '/holdings-deep-dive',     label: 'Holdings Deep-Dive',       badge: 'PCAF AF · ESG Intel',        code: 'EP-G4' },
     { path: '/benchmark-analytics',    label: 'Benchmark Analytics',      badge: 'MSCI ACWI · Active Share',   code: 'EP-G5' },
     { path: '/advanced-report-studio', label: 'Advanced Report Studio',   badge: 'TCFD·SFDR·CSRD·PDF Export',  code: 'EP-G6' },
+    { path: '/portfolio-dashboard',    label: 'Portfolio Dashboard',      badge: 'Overview · Holdings · KPIs', code: 'EP-G7' },
   ]},
   { label: 'Sprint F — Portfolio Intelligence', icon: '💼', color: '#0d9488', items: [
     { path: '/portfolio-manager',   label: 'Portfolio Manager',       badge: 'PCAF v3.0 · WACI · Temp', code: 'EP-F1' },

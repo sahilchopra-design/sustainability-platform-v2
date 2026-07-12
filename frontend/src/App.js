@@ -910,6 +910,15 @@ const SecClimateDisclosurePage         = React.lazy(() => import("./features/sec
 // Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard
 const DoubleMaterialityWorkshopPage = React.lazy(() => import("./features/double-materiality-workshop/pages/DoubleMaterialityWorkshopPage"));
 const SfdrPaiDashboardPage          = React.lazy(() => import("./features/sfdr-pai-dashboard/pages/SfdrPaiDashboardPage"));
+const AdditionalityAssessmentPage   = React.lazy(() => import("./features/additionality-assessment/pages/AdditionalityAssessmentPage"));
+const CsrdDmaPage                   = React.lazy(() => import("./features/csrd-dma/pages/CsrdDmaPage"));
+const ImpactAttributionPage         = React.lazy(() => import("./features/impact-attribution/pages/ImpactAttributionPage"));
+const ImpactMeasurementHubPage      = React.lazy(() => import("./features/impact-measurement-hub/pages/ImpactMeasurementHubPage"));
+const IndustrialCcsPage             = React.lazy(() => import("./features/industrial-ccs/pages/IndustrialCcsPage"));
+const PortfolioDashboardPage        = React.lazy(() => import("./features/portfolio-dashboard/pages/PortfolioDashboardPage"));
+const SdgAlignmentEnginePage        = React.lazy(() => import("./features/sdg-alignment-engine/pages/SdgAlignmentEnginePage"));
+const SfdrPaiPage                   = React.lazy(() => import("./features/sfdr-pai/pages/SfdrPaiPage"));
+const TheoryOfChangePage            = React.lazy(() => import("./features/theory-of-change/pages/TheoryOfChangePage"));
 const XbrlExportWizardPage          = React.lazy(() => import("./features/xbrl-export-wizard/pages/XbrlExportWizardPage"));
 // Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence
 const EudrEnginePage   = React.lazy(() => import("./features/eudr-engine/pages/EudrEnginePage"));
@@ -2484,6 +2493,15 @@ function AppContent() {
             {/* Sprint AZ — Double Materiality Workshop · SFDR PAI Dashboard · XBRL Export Wizard */}
             <Route path="/double-materiality-workshop" element={<ProtectedRoute path="/double-materiality-workshop" element={<DoubleMaterialityWorkshopPage />} />} />
             <Route path="/sfdr-pai-dashboard"          element={<ProtectedRoute path="/sfdr-pai-dashboard" element={<SfdrPaiDashboardPage />} />} />
+            <Route path="/additionality-assessment"    element={<ProtectedRoute path="/additionality-assessment" element={<AdditionalityAssessmentPage />} />} />
+            <Route path="/csrd-dma"                    element={<ProtectedRoute path="/csrd-dma" element={<CsrdDmaPage />} />} />
+            <Route path="/impact-attribution"          element={<ProtectedRoute path="/impact-attribution" element={<ImpactAttributionPage />} />} />
+            <Route path="/impact-measurement-hub"      element={<ProtectedRoute path="/impact-measurement-hub" element={<ImpactMeasurementHubPage />} />} />
+            <Route path="/industrial-ccs"              element={<ProtectedRoute path="/industrial-ccs" element={<IndustrialCcsPage />} />} />
+            <Route path="/portfolio-dashboard"          element={<ProtectedRoute path="/portfolio-dashboard" element={<PortfolioDashboardPage />} />} />
+            <Route path="/sdg-alignment-engine"        element={<ProtectedRoute path="/sdg-alignment-engine" element={<SdgAlignmentEnginePage />} />} />
+            <Route path="/sfdr-pai"                    element={<ProtectedRoute path="/sfdr-pai" element={<SfdrPaiPage />} />} />
+            <Route path="/theory-of-change"            element={<ProtectedRoute path="/theory-of-change" element={<TheoryOfChangePage />} />} />
             <Route path="/xbrl-export-wizard"          element={<ProtectedRoute path="/xbrl-export-wizard" element={<XbrlExportWizardPage />} />} />
             {/* Sprint AY — EUDR Engine · CSDDD Engine · Entity 360 Intelligence */}
             <Route path="/eudr-engine"  element={<ProtectedRoute path="/eudr-engine" element={<EudrEnginePage />} />} />
