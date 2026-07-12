@@ -15,7 +15,7 @@ export const MODULE_REGISTRY = NAV_GROUPS.map((g, i) => ({
   group: g.label,
   icon: g.icon,
   color: g.color || PASTEL[i % PASTEL.length],
-  modules: g.items.map((item) => ({ path: item.path, label: item.label })),
+  modules: g.items.map((item) => ({ path: item.path, label: item.label, code: item.code || null, badge: item.badge || null })),
 }));
 
 // Flattened list of all paths for quick lookups

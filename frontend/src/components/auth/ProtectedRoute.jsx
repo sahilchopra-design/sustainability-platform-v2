@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
 const T = {
@@ -17,7 +18,17 @@ const T = {
 };
 
 export default function ProtectedRoute({ element, path }) {
-  const { user, loading, canAccess, daysRemaining } = useAuth();
+  const { user, loading, canAccess, isDisabled, daysRemaining } = useAuth();
+  const granted = !path || canAccess(path);
+
+  // Log a real usage event for every successful module open — replaces the
+  // old disconnected-Supabase-project usage pings with actual RBAC-side data.
+  useEffect(() => {
+    if (user && path && granted) {
+      axios.post('/api/admin/usage/log', { module_path: path }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, path, granted]);
 
   if (loading) return null;
 
@@ -29,6 +40,7 @@ export default function ProtectedRoute({ element, path }) {
   }
 
   if (path && !canAccess(path)) {
+    const disabled = isDisabled(path);
     return (
       <div style={{
         display: 'flex',
@@ -52,7 +64,7 @@ export default function ProtectedRoute({ element, path }) {
           justifyContent: 'center',
           fontSize: 32,
         }}>
-          🔒
+          {disabled ? '⏸️' : '🔒'}
         </div>
         <div style={{
           fontSize: 20,
@@ -60,7 +72,7 @@ export default function ProtectedRoute({ element, path }) {
           color: T.text,
           letterSpacing: '-0.01em',
         }}>
-          Access Restricted
+          {disabled ? 'Module Disabled' : 'Access Restricted'}
         </div>
         <div style={{
           color: T.textSec,
@@ -69,7 +81,9 @@ export default function ProtectedRoute({ element, path }) {
           textAlign: 'center',
           lineHeight: 1.6,
         }}>
-          You don't have permission to access this module. Contact your administrator to request access.
+          {disabled
+            ? 'This module has been temporarily disabled by an administrator for the whole team.'
+            : "You don't have permission to access this module. Contact your administrator to request access."}
         </div>
         <div style={{
           marginTop: 8,

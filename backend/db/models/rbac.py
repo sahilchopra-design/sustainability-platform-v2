@@ -2,15 +2,17 @@
 SQLAlchemy ORM models for the RBAC system.
 
 Tables:
-  rbac_role_presets     — reusable named access templates
-  rbac_user_profiles    — per-user RBAC metadata + expiry
-  rbac_module_access    — per-user grant/deny module overrides
-  rbac_access_invites   — token-based invite links
+  rbac_role_presets       — reusable named access templates
+  rbac_user_profiles      — per-user RBAC metadata + expiry
+  rbac_module_access      — per-user grant/deny module overrides
+  rbac_access_invites     — token-based invite links
+  rbac_module_kill_switch — whole-team module enable/disable (super_admin bypasses)
+  rbac_module_usage_log   — per-open usage log (Team Access Hub analytics)
 """
 
 from sqlalchemy import (
     Column, String, Boolean, Text, Integer, ForeignKey, JSON,
-    UniqueConstraint,
+    UniqueConstraint, Index,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.sql import func
@@ -147,4 +149,45 @@ class RbacAccessInvitePG(Base):
         nullable=False,
         default=lambda: datetime.now(timezone.utc),
         server_default=func.now(),
+    )
+
+
+class RbacModuleKillSwitchPG(Base):
+    """Whole-team module enable/disable. Row presence = disabled.
+
+    Bypassed by super_admin everywhere it's enforced (auth_middleware,
+    ProtectedRoute, canAccess) so an admin can always reach a module they
+    just turned off in order to turn it back on.
+    """
+    __tablename__ = "rbac_module_kill_switch"
+
+    module_path = Column(String(255), primary_key=True)
+    disabled_by = Column(String(100), ForeignKey("users_pg.user_id", ondelete="SET NULL"), nullable=True)
+    reason = Column(Text)
+    disabled_at = Column(
+        __import__("sqlalchemy").DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+    )
+
+
+class RbacModuleUsageLogPG(Base):
+    """Append-only per-open usage log — powers Team Access Hub's real analytics tab."""
+    __tablename__ = "rbac_module_usage_log"
+
+    id = Column(UUID(as_uuid=False), primary_key=True, server_default=__import__("sqlalchemy").text("gen_random_uuid()"))
+    user_id = Column(
+        String(100),
+        ForeignKey("users_pg.user_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    module_path = Column(String(255), nullable=False, index=True)
+    opened_at = Column(
+        __import__("sqlalchemy").DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+        server_default=func.now(),
+        index=True,
     )

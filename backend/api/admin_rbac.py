@@ -103,6 +103,19 @@ class SetModulesReq(BaseModel):
     grants: List[str] = []
     denies: List[str] = []
 
+class BulkSetModulesReq(BaseModel):
+    user_ids: List[str]
+    grants: List[str] = []
+    denies: List[str] = []
+
+class ToggleModuleReq(BaseModel):
+    module_path: str
+    enabled: bool
+    reason: Optional[str] = None
+
+class LogUsageReq(BaseModel):
+    module_path: str
+
 class ReviewActionReq(BaseModel):
     module_path: str
     action: str  # submit | approve | promote | reject
@@ -473,6 +486,127 @@ def set_user_modules(user_id: str, body: SetModulesReq, admin=Depends(require_su
         """), {"id": str(uuid.uuid4()), "uid": user_id, "mp": mp, "admin": admin["user_id"], "now": now})
     db.commit()
     return {"status": "updated", "user_id": user_id, "grants": len(body.grants), "denies": len(body.denies)}
+
+
+@router.put("/users/bulk-modules")
+def bulk_set_user_modules(body: BulkSetModulesReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Apply the same grant/deny module set to many users in one call.
+
+    Reuses the same replace-all semantics as PUT /users/{id}/modules, looped
+    per user_id — for rolling a module set out to a whole team at once from
+    Team Access Hub instead of editing each user individually.
+    """
+    now = datetime.now(timezone.utc)
+    for user_id in body.user_ids:
+        db.execute(text("DELETE FROM rbac_module_access WHERE user_id = :uid"), {"uid": user_id})
+        for mp in body.grants:
+            db.execute(text("""
+                INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
+                VALUES (:id, :uid, :mp, 'grant', :admin, :now)
+            """), {"id": str(uuid.uuid4()), "uid": user_id, "mp": mp, "admin": admin["user_id"], "now": now})
+        for mp in body.denies:
+            db.execute(text("""
+                INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
+                VALUES (:id, :uid, :mp, 'deny', :admin, :now)
+            """), {"id": str(uuid.uuid4()), "uid": user_id, "mp": mp, "admin": admin["user_id"], "now": now})
+    db.commit()
+    return {
+        "status": "bulk_updated", "user_count": len(body.user_ids),
+        "grants": len(body.grants), "denies": len(body.denies),
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE KILL-SWITCH (whole-team enable/disable — super_admin always bypasses)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@router.get("/modules/kill-switch")
+def list_disabled_modules(db: Session = Depends(get_db)):
+    """List every currently-disabled module path. No admin required — the
+    sidebar/nav and ProtectedRoute need this to hide/block disabled modules
+    for everyone, not just super_admin, mirroring GET /modules/maturity-map.
+    """
+    rows = db.execute(text("""
+        SELECT module_path, disabled_by, reason, disabled_at FROM rbac_module_kill_switch
+        ORDER BY disabled_at DESC
+    """)).fetchall()
+    return [
+        {
+            "module_path": r[0], "disabled_by": r[1], "reason": r[2],
+            "disabled_at": r[3].isoformat() if r[3] else None,
+        }
+        for r in rows
+    ]
+
+
+@router.put("/modules/kill-switch")
+def toggle_module(body: ToggleModuleReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Enable or disable a module for the whole team. Disabling inserts a row
+    (blocking non-super_admin users both client- and server-side); enabling
+    deletes it."""
+    if body.enabled:
+        db.execute(text("DELETE FROM rbac_module_kill_switch WHERE module_path = :mp"), {"mp": body.module_path})
+    else:
+        db.execute(text("""
+            INSERT INTO rbac_module_kill_switch (module_path, disabled_by, reason, disabled_at)
+            VALUES (:mp, :admin, :reason, :now)
+            ON CONFLICT (module_path) DO UPDATE SET disabled_by = :admin, reason = :reason, disabled_at = :now
+        """), {"mp": body.module_path, "admin": admin["user_id"], "reason": body.reason, "now": datetime.now(timezone.utc)})
+    db.commit()
+    return {"status": "enabled" if body.enabled else "disabled", "module_path": body.module_path}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MODULE USAGE ANALYTICS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@router.post("/usage/log")
+def log_module_usage(body: LogUsageReq, current=Depends(_get_current_user), db: Session = Depends(get_db)):
+    """Record one module-open event for the signed-in user. Available to any
+    authenticated user (not just super_admin) — called by ProtectedRoute on
+    every successful module render."""
+    db.execute(text("""
+        INSERT INTO rbac_module_usage_log (id, user_id, module_path, opened_at)
+        VALUES (:id, :uid, :mp, :now)
+    """), {"id": str(uuid.uuid4()), "uid": current["user_id"], "mp": body.module_path, "now": datetime.now(timezone.utc)})
+    db.commit()
+    return {"status": "logged"}
+
+
+@router.get("/usage/summary")
+def usage_summary(admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Aggregate real usage data for Team Access Hub's analytics tab: total
+    opens, top modules, and the most recent activity."""
+    total = db.execute(text("SELECT COUNT(*) FROM rbac_module_usage_log")).scalar() or 0
+
+    top_rows = db.execute(text("""
+        SELECT module_path, COUNT(*) AS opens
+        FROM rbac_module_usage_log
+        GROUP BY module_path
+        ORDER BY opens DESC
+        LIMIT 15
+    """)).fetchall()
+
+    recent_rows = db.execute(text("""
+        SELECT l.module_path, l.opened_at, u.email, u.name
+        FROM rbac_module_usage_log l
+        LEFT JOIN users_pg u ON u.user_id = l.user_id
+        ORDER BY l.opened_at DESC
+        LIMIT 50
+    """)).fetchall()
+
+    return {
+        "total": total,
+        "top": [{"module_path": r[0], "opens": r[1]} for r in top_rows],
+        "recent": [
+            {
+                "module_path": r[0],
+                "opened_at": r[1].isoformat() if r[1] else None,
+                "email": r[2], "name": r[3],
+            }
+            for r in recent_rows
+        ],
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

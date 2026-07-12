@@ -29,6 +29,19 @@ export function AuthProvider({ children }) {
   const [allowedPaths, setAllowedPaths] = useState(null);
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(null);
+  // Team-wide kill-switch (Team Access Hub) — super_admin bypasses this everywhere.
+  const [disabledPaths, setDisabledPaths] = useState(new Set());
+
+  const refreshDisabledPaths = useCallback(async () => {
+    try {
+      const res = await axios.get('/api/admin/modules/kill-switch');
+      setDisabledPaths(new Set((res.data || []).map((r) => r.module_path)));
+    } catch {
+      // Public endpoint unreachable — fail open (nothing reported disabled)
+    }
+  }, []);
+
+  useEffect(() => { refreshDisabledPaths(); }, [refreshDisabledPaths]);
 
   const processUser = useCallback((data) => {
     setUser(data);
@@ -91,9 +104,12 @@ export function AuthProvider({ children }) {
 
   const canAccess = useCallback((path) => {
     if (!user) return false;
-    if (allowedPaths === null) return true; // super_admin
+    if (allowedPaths === null) return true; // super_admin — bypasses the kill-switch too
+    if (disabledPaths.has(path)) return false;
     return allowedPaths.has(path);
-  }, [user, allowedPaths]);
+  }, [user, allowedPaths, disabledPaths]);
+
+  const isDisabled = useCallback((path) => disabledPaths.has(path), [disabledPaths]);
 
   return (
     <AuthContext.Provider value={{
@@ -105,6 +121,8 @@ export function AuthProvider({ children }) {
       login,
       logout,
       canAccess,
+      isDisabled,
+      refreshDisabledPaths,
       processUser,
       refreshUser: fetchMe,
     }}>

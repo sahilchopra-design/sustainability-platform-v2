@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { fetchModuleRegistry, fetchDeployments, fetchUsageSummary, logModuleOpen } from '../../../services/moduleRegistryService';
-import { supabaseConfig, sbPing } from '../../../services/supabaseClient';
+import axios from 'axios';
+import useAdminApi from '../../admin-panel/hooks/useAdminApi';
+import { MODULE_REGISTRY, ALL_MODULE_PATHS, TOTAL_MODULES } from '../../admin-panel/data/moduleRegistry';
+import { useAuth } from '../../../context/AuthContext';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 //  TEAM ACCESS HUB (EP-OPS1)
 //  One place for the whole team: every module and workflow on the platform,
-//  its shared access state from the Supabase team DB, live connectivity status,
-//  and where the app is deployed for remote access.
+//  its REAL access state from the RBAC backend (same source of truth as
+//  /admin), a live per-module enable/disable kill-switch, per-user and
+//  bulk access assignment, and real usage analytics.
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const T = {
@@ -53,35 +56,50 @@ const Pill = ({ text, color }) => (
     fontWeight:700, color:'#fff', background:color }}>{text}</span>
 );
 
+const Btn = ({ children, onClick, variant='primary', size='md', disabled, style }) => (
+  <button onClick={onClick} disabled={disabled} style={{
+    padding: size === 'sm' ? '5px 11px' : '8px 16px',
+    background: disabled ? T.surfaceH : variant === 'primary' ? T.navy : variant === 'danger' ? T.red : 'transparent',
+    color: disabled ? T.textMut : variant === 'secondary' ? T.navy : '#fff',
+    border: variant === 'secondary' ? `1px solid ${T.border}` : 'none',
+    borderRadius: 6, fontSize: size === 'sm' ? 11.5 : 12.5, fontWeight: 600,
+    cursor: disabled ? 'not-allowed' : 'pointer', fontFamily: T.font, whiteSpace: 'nowrap',
+    ...style,
+  }}>{children}</button>
+);
+
 const th = { textAlign:'left', padding:'7px 10px', fontSize:10.5, color:T.textMut, fontWeight:700,
   textTransform:'uppercase', letterSpacing:'0.05em', borderBottom:`2px solid ${T.border}`, whiteSpace:'nowrap' };
 const td = { padding:'7px 10px', fontSize:12, color:T.text, borderBottom:`1px solid ${T.border}` };
 
-const accessColor = lvl => (lvl === 'open' ? T.green : lvl === 'team' ? T.navyL : T.amber);
-
 // ── TAB 1: MODULE DIRECTORY ───────────────────────────────────────────────────
-const DirectoryTab = ({ registry }) => {
+const DirectoryTab = ({ disabledSet, isSuperAdmin, onToggle }) => {
   const [search, setSearch] = useState('');
   const [group, setGroup] = useState('All');
   const [onlyEnabled, setOnlyEnabled] = useState(false);
 
-  const groups = useMemo(() => ['All', ...new Set(registry.modules.map(m => m.nav_group))], [registry]);
+  const groups = useMemo(() => ['All', ...MODULE_REGISTRY.map(g => g.group)], []);
 
-  const rows = useMemo(() => registry.modules.filter(m => {
+  const flatModules = useMemo(() => MODULE_REGISTRY.flatMap(g =>
+    g.modules.map(m => ({ ...m, nav_group: g.group, group_icon: g.icon, group_color: g.color }))
+  ), []);
+
+  const rows = useMemo(() => flatModules.filter(m => {
+    const enabled = !disabledSet.has(m.path);
     if (group !== 'All' && m.nav_group !== group) return false;
-    if (onlyEnabled && !m.enabled) return false;
+    if (onlyEnabled && !enabled) return false;
     if (search) {
       const q = search.toLowerCase();
-      if (!m.label.toLowerCase().includes(q) && !m.route.includes(q) &&
+      if (!m.label.toLowerCase().includes(q) && !m.path.includes(q) &&
           !(m.code || '').toLowerCase().includes(q) && !(m.badge || '').toLowerCase().includes(q)) return false;
     }
     return true;
-  }), [registry, search, group, onlyEnabled]);
+  }), [flatModules, search, group, onlyEnabled, disabledSet]);
 
   const exportCsv = () => {
-    const header = 'route,label,code,nav_group,access_level,enabled';
-    const lines = registry.modules.map(m =>
-      [m.route, `"${m.label}"`, m.code || '', `"${m.nav_group}"`, m.access_level, m.enabled].join(','));
+    const header = 'route,label,code,nav_group,enabled';
+    const lines = flatModules.map(m =>
+      [m.path, `"${m.label}"`, m.code || '', `"${m.nav_group}"`, !disabledSet.has(m.path)].join(','));
     const blob = new Blob([[header, ...lines].join('\n')], { type:'text/csv' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -123,37 +141,44 @@ const DirectoryTab = ({ registry }) => {
           <table style={{ borderCollapse:'collapse', width:'100%' }}>
             <thead><tr>
               <th style={th}>Module</th><th style={th}>Code</th><th style={th}>Domain Group</th>
-              <th style={th}>Capabilities</th><th style={th}>Access</th><th style={th}>Status</th><th style={th}></th>
+              <th style={th}>Capabilities</th><th style={th}>Status</th><th style={th}></th><th style={th}></th>
             </tr></thead>
             <tbody>
-              {rows.map(m => (
-                <tr key={m.route} style={{ opacity: m.enabled ? 1 : 0.45 }}>
-                  <td style={{ ...td, fontWeight:600, whiteSpace:'nowrap' }}>{m.label}</td>
-                  <td style={{ ...td, color:T.textMut, fontSize:11 }}>{m.code || '—'}</td>
-                  <td style={{ ...td, whiteSpace:'nowrap' }}>{m.group_icon} {m.nav_group}</td>
-                  <td style={{ ...td, fontSize:11, color:T.textSec, maxWidth:340 }}>{m.badge || ''}</td>
-                  <td style={td}><Pill text={m.access_level} color={accessColor(m.access_level)} /></td>
-                  <td style={td}>
-                    <Pill text={m.enabled ? 'enabled' : 'disabled'} color={m.enabled ? T.green : T.red} />
-                  </td>
-                  <td style={td}>
-                    {m.enabled ? (
-                      <Link to={m.route} onClick={() => logModuleOpen(m.route)}
-                        style={{ fontSize:11.5, fontWeight:700, color:T.navyL, textDecoration:'none' }}>
-                        Open →
-                      </Link>
-                    ) : <span style={{ fontSize:11, color:T.textMut }}>off</span>}
-                  </td>
-                </tr>
-              ))}
+              {rows.map(m => {
+                const enabled = !disabledSet.has(m.path);
+                return (
+                  <tr key={m.path} style={{ opacity: enabled ? 1 : 0.55 }}>
+                    <td style={{ ...td, fontWeight:600, whiteSpace:'nowrap' }}>{m.label}</td>
+                    <td style={{ ...td, color:T.textMut, fontSize:11 }}>{m.code || '—'}</td>
+                    <td style={{ ...td, whiteSpace:'nowrap' }}>{m.group_icon} {m.nav_group}</td>
+                    <td style={{ ...td, fontSize:11, color:T.textSec, maxWidth:340 }}>{m.badge || ''}</td>
+                    <td style={td}>
+                      <Pill text={enabled ? 'enabled' : 'disabled'} color={enabled ? T.green : T.red} />
+                    </td>
+                    <td style={td}>
+                      {isSuperAdmin && (
+                        <Btn size="sm" variant={enabled ? 'danger' : 'secondary'}
+                          onClick={() => onToggle(m.path, !enabled)}>
+                          {enabled ? 'Disable' : 'Enable'}
+                        </Btn>
+                      )}
+                    </td>
+                    <td style={td}>
+                      {enabled ? (
+                        <Link to={m.path} style={{ fontSize:11.5, fontWeight:700, color:T.navyL, textDecoration:'none' }}>
+                          Open →
+                        </Link>
+                      ) : <span style={{ fontSize:11, color:T.textMut }}>off</span>}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
         <div style={{ fontSize:10.5, color:T.textMut, marginTop:8 }}>
-          {rows.length} of {registry.modules.length} modules · registry source:{' '}
-          <b style={{ color: registry.source === 'supabase' ? T.green : T.amber }}>{registry.source}</b>
-          {registry.source === 'static' && ' (offline fallback — DB unreachable, showing build-time catalog)'}
-          {' · '}access flags are edited in the Supabase dashboard (platform_module_access) and apply to everyone instantly.
+          {rows.length} of {flatModules.length} modules · registry source: <b style={{ color:T.green }}>live (navGroups.js)</b>
+          {' · '}enable/disable is enforced server-side for every user except super_admin.
         </div>
       </Card>
     </div>
@@ -161,17 +186,12 @@ const DirectoryTab = ({ registry }) => {
 };
 
 // ── TAB 2: ACCESS MATRIX ──────────────────────────────────────────────────────
-const MatrixTab = ({ registry }) => {
-  const byGroup = useMemo(() => {
-    const map = {};
-    registry.modules.forEach(m => {
-      const g = map[m.nav_group] || (map[m.nav_group] = { group: m.nav_group, icon: m.group_icon, total:0, enabled:0, open:0, team:0, admin:0 });
-      g.total++;
-      if (m.enabled) g.enabled++;
-      g[m.access_level] = (g[m.access_level] || 0) + 1;
-    });
-    return Object.values(map);
-  }, [registry]);
+const MatrixTab = ({ disabledSet }) => {
+  const byGroup = useMemo(() => MODULE_REGISTRY.map(g => {
+    const total = g.modules.length;
+    const disabled = g.modules.filter(m => disabledSet.has(m.path)).length;
+    return { group: g.group, icon: g.icon, total, enabled: total - disabled, disabled };
+  }), [disabledSet]);
 
   const chart = byGroup.map(g => ({ name: g.group.length > 22 ? g.group.slice(0, 20) + '…' : g.group, modules: g.total }));
 
@@ -190,12 +210,12 @@ const MatrixTab = ({ registry }) => {
         </ResponsiveContainer>
       </Card>
 
-      <Card title='Access Matrix by Group' sub='open = no restriction · team = all team members (default) · admin = restricted; disabled modules are hidden from use'>
+      <Card title='Enable / Disable Matrix by Group' sub='Live kill-switch state — disabled modules are blocked for everyone except super_admin'>
         <div style={{ overflowX:'auto' }}>
           <table style={{ borderCollapse:'collapse', width:'100%' }}>
             <thead><tr>
-              <th style={th}>Domain Group</th><th style={th}>Modules</th><th style={th}>Enabled</th>
-              <th style={th}>Open</th><th style={th}>Team</th><th style={th}>Admin</th><th style={th}>Coverage</th>
+              <th style={th}>Domain Group</th><th style={th}>Modules</th>
+              <th style={th}>Enabled</th><th style={th}>Disabled</th><th style={th}>Coverage</th>
             </tr></thead>
             <tbody>
               {byGroup.map(g => (
@@ -203,9 +223,7 @@ const MatrixTab = ({ registry }) => {
                   <td style={{ ...td, fontWeight:600 }}>{g.icon} {g.group}</td>
                   <td style={td}>{g.total}</td>
                   <td style={{ ...td, color: g.enabled === g.total ? T.green : T.amber, fontWeight:700 }}>{g.enabled}</td>
-                  <td style={td}>{g.open || 0}</td>
-                  <td style={td}>{g.team || 0}</td>
-                  <td style={td}>{g.admin || 0}</td>
+                  <td style={{ ...td, color: g.disabled > 0 ? T.red : T.textMut }}>{g.disabled}</td>
                   <td style={{ ...td, minWidth:120 }}>
                     <div style={{ height:7, background:T.surfaceH, borderRadius:4 }}>
                       <div style={{ width:`${(g.enabled / g.total) * 100}%`, height:7, borderRadius:4,
@@ -222,110 +240,253 @@ const MatrixTab = ({ registry }) => {
   );
 };
 
-// ── TAB 3: DEPLOYMENT & CONNECTIVITY ──────────────────────────────────────────
-const DeploymentTab = ({ registry, deployments, usage }) => {
-  const [ping, setPing] = useState(null);
-  const cfg = supabaseConfig();
+// ── Compact module picker (shared by single-user & bulk assign) ──────────────
+const MiniModulePicker = ({ selected, onChange }) => {
+  const [search, setSearch] = useState('');
+  const selectedSet = useMemo(() => new Set(selected), [selected]);
 
-  useEffect(() => { sbPing().then(setPing); }, []);
+  const filtered = useMemo(() => {
+    if (!search) return MODULE_REGISTRY;
+    const q = search.toLowerCase();
+    return MODULE_REGISTRY.map(g => ({ ...g, modules: g.modules.filter(m => m.label.toLowerCase().includes(q)) }))
+      .filter(g => g.modules.length > 0);
+  }, [search]);
 
-  const steps = [
-    ['Import the GitHub repo in Vercel', 'vercel.com/new → select sustainability-platform-v2 → root vercel.json is picked up automatically (CRA build + SPA rewrites)'],
-    ['Every module route works remotely', 'The catch-all rewrite serves index.html for all ' + registry.modules.length + ' routes — deep links like /climate-collateral-framework resolve directly'],
-    ['(Optional) set Supabase env vars', 'REACT_APP_SUPABASE_URL + REACT_APP_SUPABASE_ANON_KEY — defaults for the team "New App" project are baked in, so this is only needed to point elsewhere'],
-    ['Record the deployment', 'Insert a row into platform_deployments (Supabase dashboard) so this panel shows the canonical team URL'],
-    ['Share the URL', 'Team members open any module remotely; module opens are logged to platform_module_usage'],
-  ];
+  const toggle = (path) => {
+    const next = new Set(selectedSet);
+    next.has(path) ? next.delete(path) : next.add(path);
+    onChange([...next]);
+  };
+
+  return (
+    <div>
+      <div style={{ display:'flex', gap:8, marginBottom:8 }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder='Search modules…'
+          style={{ flex:1, padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, fontFamily:T.font }} />
+        <Btn size="sm" variant="secondary" onClick={() => onChange([...ALL_MODULE_PATHS])}>All</Btn>
+        <Btn size="sm" variant="secondary" onClick={() => onChange([])}>None</Btn>
+      </div>
+      <div style={{ fontSize:11, color:T.textMut, marginBottom:8 }}>{selectedSet.size} / {TOTAL_MODULES} selected</div>
+      <div style={{ maxHeight:340, overflowY:'auto', display:'flex', flexDirection:'column', gap:8 }}>
+        {filtered.map(g => (
+          <div key={g.group}>
+            <div style={{ fontSize:11, fontWeight:700, color:T.navy, marginBottom:4 }}>{g.icon} {g.group}</div>
+            <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
+              {g.modules.map(m => (
+                <label key={m.path} style={{
+                  display:'flex', alignItems:'center', gap:4, cursor:'pointer', fontSize:11,
+                  background: selectedSet.has(m.path) ? T.navy + '15' : T.surfaceH,
+                  border:`1px solid ${selectedSet.has(m.path) ? T.navyL : T.border}`,
+                  borderRadius:4, padding:'3px 7px', color: selectedSet.has(m.path) ? T.navyL : T.textSec,
+                }}>
+                  <input type='checkbox' checked={selectedSet.has(m.path)} onChange={() => toggle(m.path)} />
+                  {m.label}
+                </label>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ── TAB 3: USER ACCESS (single-user + bulk assign) ────────────────────────────
+const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules }) => {
+  const [mode, setMode] = useState('single'); // single | bulk
+  const [selectedUser, setSelectedUser] = useState('');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [paths, setPaths] = useState([]);
+  const [dirty, setDirty] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [userSearch, setUserSearch] = useState('');
+
+  const user = users.find(u => u.user_id === selectedUser);
+  const baselinePaths = useMemo(() => {
+    if (!user || !user.preset_id) return [];
+    const preset = presets.find(p => p.id === user.preset_id);
+    return preset ? preset.module_paths || [] : [];
+  }, [user, presets]);
+
+  const selectUser = (uid) => {
+    setSelectedUser(uid);
+    const u = users.find(x => x.user_id === uid);
+    const preset = u && u.preset_id ? presets.find(p => p.id === u.preset_id) : null;
+    setPaths(preset ? preset.module_paths || [] : []);
+    setDirty(false);
+  };
+
+  const saveSingle = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const baseSet = new Set(baselinePaths);
+      const newSet = new Set(paths);
+      const grants = paths.filter(p => !baseSet.has(p));
+      const denies = baselinePaths.filter(p => !newSet.has(p));
+      await setUserModules(selectedUser, grants, denies);
+      setDirty(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const applyBulk = async () => {
+    if (selectedUsers.length === 0) return;
+    setSaving(true);
+    try {
+      await bulkSetUserModules(selectedUsers, paths, []);
+      setDirty(false);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredUsers = useMemo(() => {
+    if (!userSearch) return users;
+    const q = userSearch.toLowerCase();
+    return users.filter(u => (u.name || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q));
+  }, [users, userSearch]);
+
+  const toggleUserSel = (uid) => {
+    setSelectedUsers(prev => prev.includes(uid) ? prev.filter(x => x !== uid) : [...prev, uid]);
+    setDirty(true);
+  };
+
+  return (
+    <div>
+      <div style={{ display:'flex', gap:12, marginBottom:16 }}>
+        <Tab label='Single User' active={mode === 'single'} onClick={() => { setMode('single'); setDirty(false); }} />
+        <Tab label='Bulk Assign' active={mode === 'bulk'} onClick={() => { setMode('bulk'); setPaths([]); setDirty(false); }} />
+      </div>
+
+      {mode === 'single' ? (
+        <div style={{ display:'grid', gridTemplateColumns:'260px 1fr', gap:16 }}>
+          <Card title='Team Members' sub={`${users.length} total`}>
+            <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder='Search…'
+              style={{ width:'100%', padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, marginBottom:8, fontFamily:T.font, boxSizing:'border-box' }} />
+            <div style={{ maxHeight:420, overflowY:'auto' }}>
+              {filteredUsers.map(u => (
+                <div key={u.user_id} onClick={() => selectUser(u.user_id)} style={{
+                  padding:'8px 10px', borderRadius:6, cursor:'pointer', marginBottom:3,
+                  background: selectedUser === u.user_id ? T.navy : 'transparent',
+                  color: selectedUser === u.user_id ? '#fff' : T.text,
+                }}>
+                  <div style={{ fontSize:12.5, fontWeight:600 }}>{u.name || u.email}</div>
+                  <div style={{ fontSize:10.5, opacity:0.75 }}>{u.rbac_role || 'no profile'}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card title={user ? `Modules for ${user.name || user.email}` : 'Select a team member'}
+            sub={user && user.rbac_role === 'super_admin' ? 'Master Access — all modules always accessible, nothing to configure' : 'Checked = granted on top of / instead of their preset'}>
+            {!user && <div style={{ padding:40, textAlign:'center', color:T.textMut, fontSize:13 }}>Pick a team member on the left</div>}
+            {user && user.rbac_role === 'super_admin' && (
+              <div style={{ padding:40, textAlign:'center' }}>
+                <div style={{ fontSize:32, marginBottom:8 }}>🔓</div>
+                <div style={{ color:T.green, fontWeight:700 }}>Master Access</div>
+              </div>
+            )}
+            {user && user.rbac_role !== 'super_admin' && (
+              <>
+                <MiniModulePicker selected={paths} onChange={(p) => { setPaths(p); setDirty(true); }} />
+                {dirty && (
+                  <div style={{ marginTop:12, display:'flex', gap:8 }}>
+                    <Btn onClick={saveSingle} disabled={saving}>{saving ? 'Saving…' : 'Save Access'}</Btn>
+                    <Btn variant='secondary' onClick={() => { setPaths(baselinePaths); setDirty(false); }}>Reset</Btn>
+                  </div>
+                )}
+              </>
+            )}
+          </Card>
+        </div>
+      ) : (
+        <div style={{ display:'grid', gridTemplateColumns:'260px 1fr', gap:16 }}>
+          <Card title='Select Team Members' sub={`${selectedUsers.length} selected`}>
+            <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder='Search…'
+              style={{ width:'100%', padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, marginBottom:8, fontFamily:T.font, boxSizing:'border-box' }} />
+            <div style={{ maxHeight:420, overflowY:'auto' }}>
+              {filteredUsers.filter(u => u.rbac_role !== 'super_admin').map(u => (
+                <label key={u.user_id} style={{ display:'flex', alignItems:'center', gap:8, padding:'6px 8px', cursor:'pointer' }}>
+                  <input type='checkbox' checked={selectedUsers.includes(u.user_id)} onChange={() => toggleUserSel(u.user_id)} />
+                  <div>
+                    <div style={{ fontSize:12.5, fontWeight:600, color:T.text }}>{u.name || u.email}</div>
+                    <div style={{ fontSize:10.5, color:T.textMut }}>{u.rbac_role || 'no profile'}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </Card>
+
+          <Card title='Module Set to Apply' sub='Replaces each selected user’s individual overrides with exactly this set, on top of their preset'>
+            <MiniModulePicker selected={paths} onChange={(p) => { setPaths(p); setDirty(true); }} />
+            <div style={{ marginTop:12 }}>
+              <Btn onClick={applyBulk} disabled={saving || selectedUsers.length === 0}>
+                {saving ? 'Applying…' : `Apply to ${selectedUsers.length} user${selectedUsers.length === 1 ? '' : 's'}`}
+              </Btn>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── TAB 4: USAGE ANALYTICS ────────────────────────────────────────────────────
+const AnalyticsTab = ({ usageSummary, users }) => {
+  const [apiStatus, setApiStatus] = useState('checking');
+  React.useEffect(() => {
+    axios.get('/api/health').then(() => setApiStatus('ok')).catch(() => setApiStatus('down'));
+  }, []);
+
+  const chart = (usageSummary.top || []).map(t => ({
+    name: t.module_path.length > 26 ? t.module_path.slice(0, 24) + '…' : t.module_path,
+    opens: t.opens,
+  }));
 
   return (
     <div>
       <div style={{ display:'flex', gap:12, marginBottom:16, flexWrap:'wrap' }}>
-        <Stat label='Team DB' value={ping ? (ping.ok ? 'Connected' : 'Unreachable') : 'Checking…'}
-          color={ping ? (ping.ok ? T.green : T.red) : T.textMut}
-          sub={ping ? (ping.ok ? `${ping.ms}ms · ${cfg.url.replace('https://','')}` : ping.error) : ''} />
-        <Stat label='Registry Source' value={registry.source === 'supabase' ? 'Live DB' : 'Static'}
-          color={registry.source === 'supabase' ? T.green : T.amber}
-          sub={registry.source === 'supabase' ? 'platform_modules table' : 'Build-time fallback catalog'} />
-        <Stat label='Key Source' value={cfg.keySource === 'environment' ? 'Env Var' : 'Default'}
-          sub='Publishable key · RLS read-only' />
-        <Stat label='Usage Events' value={usage.total} sub='Module opens logged (last 500)' />
+        <Stat label='Backend API' value={apiStatus === 'checking' ? 'Checking…' : apiStatus === 'ok' ? 'Connected' : 'Unreachable'}
+          color={apiStatus === 'ok' ? T.green : apiStatus === 'down' ? T.red : T.textMut} sub='/api/health' />
+        <Stat label='Team Members' value={users.length} sub='rbac_user_profiles' />
+        <Stat label='Total Opens Logged' value={usageSummary.total} sub='rbac_module_usage_log (real, RBAC-backed)' />
+        <Stat label='Modules Opened' value={(usageSummary.top || []).length} sub='distinct routes in top-15' />
       </div>
 
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
-        <Card title='Remote Access — Deployment Runbook' sub='From repo to a URL every team member can open'>
-          {steps.map(([t, d], i) => (
-            <div key={t} style={{ display:'flex', gap:12, padding:'9px 0', borderBottom:`1px solid ${T.border}` }}>
-              <div style={{ width:24, height:24, borderRadius:12, background:T.navy, color:'#fff', fontSize:12,
-                fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{i + 1}</div>
-              <div>
-                <div style={{ fontSize:12.5, fontWeight:700, color:T.navy }}>{t}</div>
-                <div style={{ fontSize:11.5, color:T.textSec, lineHeight:1.5 }}>{d}</div>
-              </div>
-            </div>
-          ))}
-          <div style={{ fontSize:11, color:T.textSec, marginTop:10, fontStyle:'italic' }}>
-            Full guide: TEAM_DEPLOYMENT_GUIDE.md in the repo root.
-          </div>
-        </Card>
+      <Card title='Most-Opened Modules' sub='Real usage — logged on every successful module render' style={{ marginBottom:16 }}>
+        {chart.length === 0 ? (
+          <div style={{ padding:24, textAlign:'center', color:T.textMut, fontSize:12.5 }}>No module opens logged yet.</div>
+        ) : (
+          <ResponsiveContainer width='100%' height={Math.max(220, chart.length * 24)}>
+            <BarChart data={chart} layout='vertical' margin={{ top:5, right:20, left:170, bottom:5 }}>
+              <XAxis type='number' tick={{ fontSize:10, fill:T.textSec }} allowDecimals={false} />
+              <YAxis type='category' dataKey='name' tick={{ fontSize:9.5, fill:T.textSec }} width={170} />
+              <Tooltip contentStyle={{ fontSize:12 }} />
+              <Bar dataKey='opens' radius={[0,4,4,0]} fill={T.navyL} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
 
-        <Card title='Registered Deployments' sub='platform_deployments — canonical URLs for remote access'>
-          {deployments.length === 0 && (
-            <div style={{ fontSize:12, color:T.textMut, padding:'20px 0', textAlign:'center' }}>
-              No deployments recorded yet — add a row after the first Vercel deploy.
-            </div>
-          )}
-          {deployments.map(d => (
-            <div key={d.id} style={{ padding:'10px 0', borderBottom:`1px solid ${T.border}` }}>
-              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                <Pill text={d.environment} color={d.environment === 'production' ? T.green : T.amber} />
-                <a href={d.url} target='_blank' rel='noreferrer'
-                  style={{ fontSize:13, fontWeight:700, color:T.navyL }}>{d.url}</a>
-              </div>
-              <div style={{ fontSize:11, color:T.textSec, marginTop:3 }}>
-                {d.git_branch && <>branch <b>{d.git_branch}</b> · </>}
-                {d.git_commit && <>commit <b>{String(d.git_commit).slice(0, 7)}</b> · </>}
-                {new Date(d.deployed_at).toLocaleString()} {d.notes && <>· {d.notes}</>}
-              </div>
-            </div>
-          ))}
-          {usage.top.length > 0 && (
-            <div style={{ marginTop:14 }}>
-              <div style={{ fontSize:11, color:T.textMut, fontWeight:700, textTransform:'uppercase', marginBottom:6 }}>
-                Most-Opened Modules
-              </div>
-              {usage.top.map(u => (
-                <div key={u.route} style={{ display:'flex', justifyContent:'space-between', fontSize:11.5,
-                  padding:'3px 0', color:T.textSec }}>
-                  <span>{u.route}</span><b style={{ color:T.navy }}>{u.opens}</b>
-                </div>
+      <Card title='Recent Activity' sub='Last 50 module opens across the team'>
+        <div style={{ maxHeight:360, overflowY:'auto' }}>
+          <table style={{ borderCollapse:'collapse', width:'100%' }}>
+            <thead><tr><th style={th}>Module</th><th style={th}>User</th><th style={th}>Opened At</th></tr></thead>
+            <tbody>
+              {(usageSummary.recent || []).map((r, i) => (
+                <tr key={i}>
+                  <td style={{ ...td, fontFamily:'monospace', fontSize:11 }}>{r.module_path}</td>
+                  <td style={td}>{r.name || r.email || 'unknown'}</td>
+                  <td style={{ ...td, color:T.textSec }}>{r.opened_at ? new Date(r.opened_at).toLocaleString() : '—'}</td>
+                </tr>
               ))}
-            </div>
-          )}
-        </Card>
-      </div>
-
-      <Card title='Data Architecture' sub='How every module reaches the shared team database'>
-        <table style={{ borderCollapse:'collapse', width:'100%' }}>
-          <thead><tr><th style={th}>Table</th><th style={th}>Purpose</th><th style={th}>App Permissions (RLS)</th></tr></thead>
-          <tbody>
-            {[
-              ['platform_modules', 'Canonical catalog of all modules/workflows (synced from App.js NAV_GROUPS)', 'read'],
-              ['platform_module_access', 'Team-shared access level + enable/disable kill-switch per module', 'read'],
-              ['platform_module_usage', 'Append-only usage pings from the deployed app', 'read + insert'],
-              ['platform_deployments', 'Registry of deployed URLs for remote team access', 'read'],
-              ['dme_* / esrs_* / pcaf_* / repo_*', 'Existing domain datasets already used by backend engines', 'per existing setup'],
-            ].map(([t2, p, perm]) => (
-              <tr key={t2}>
-                <td style={{ ...td, fontFamily:'monospace', fontSize:11.5, fontWeight:700 }}>{t2}</td>
-                <td style={{ ...td, color:T.textSec }}>{p}</td>
-                <td style={td}><Pill text={perm} color={perm === 'read' ? T.navyL : perm === 'read + insert' ? T.sage : T.textMut} /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div style={{ fontSize:11, color:T.textSec, marginTop:10, lineHeight:1.5 }}>
-          Writes (access changes, deployment records, module status) are made through the Supabase dashboard,
-          which every team member already has access to — changes propagate to all deployed clients on next load.
+              {(usageSummary.recent || []).length === 0 && (
+                <tr><td colSpan={3} style={{ ...td, textAlign:'center', color:T.textMut }}>No activity yet.</td></tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </Card>
     </div>
@@ -335,19 +496,15 @@ const DeploymentTab = ({ registry, deployments, usage }) => {
 // ── MAIN PAGE ─────────────────────────────────────────────────────────────────
 const TeamAccessHubPage = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [registry, setRegistry] = useState({ source:'static', modules: [] });
-  const [deployments, setDeployments] = useState([]);
-  const [usage, setUsage] = useState({ total:0, top:[], recent:[] });
-  const [loaded, setLoaded] = useState(false);
+  const { allowedPaths } = useAuth();
+  const isSuperAdmin = allowedPaths === null;
+  const {
+    users, presets, disabledModules, usageSummary, loading,
+    setUserModules, bulkSetUserModules, toggleModule,
+  } = useAdminApi();
 
-  useEffect(() => {
-    Promise.all([fetchModuleRegistry(), fetchDeployments(), fetchUsageSummary()]).then(([r, d, u]) => {
-      setRegistry(r); setDeployments(d); setUsage(u); setLoaded(true);
-    });
-  }, []);
-
-  const groups = new Set(registry.modules.map(m => m.nav_group)).size;
-  const enabled = registry.modules.filter(m => m.enabled).length;
+  const disabledSet = useMemo(() => new Set((disabledModules || []).map(d => d.module_path)), [disabledModules]);
+  const enabledCount = TOTAL_MODULES - disabledSet.size;
 
   return (
     <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, padding:'24px' }}>
@@ -356,31 +513,43 @@ const TeamAccessHubPage = () => {
           Team Access Hub
         </div>
         <div style={{ fontSize:13, color:T.textSec }}>
-          Every module & workflow on the platform · shared access control from the team Supabase DB ·
-          remote deployment status & runbook
+          Every module & workflow on the platform · live enable/disable · per-user &amp; bulk access assignment ·
+          real usage analytics — all backed by the same RBAC system as /admin
+          {isSuperAdmin && <> · <b style={{ color:T.green }}>Master Access — full control</b></>}
         </div>
       </div>
 
       <div style={{ display:'flex', gap:12, marginBottom:20, flexWrap:'wrap' }}>
-        <Stat label='Modules & Workflows' value={loaded ? registry.modules.length : '…'} sub={`${groups} domain groups`} />
-        <Stat label='Enabled for Team' value={loaded ? enabled : '…'} color={T.green}
-          sub={loaded && enabled < registry.modules.length ? `${registry.modules.length - enabled} disabled` : 'Full platform'} />
-        <Stat label='Registry' value={registry.source === 'supabase' ? 'Live' : loaded ? 'Fallback' : '…'}
-          color={registry.source === 'supabase' ? T.green : T.amber} sub='platform_modules (Supabase)' />
-        <Stat label='Deployments' value={loaded ? deployments.length : '…'} sub='Registered remote URLs' />
+        <Stat label='Modules & Workflows' value={TOTAL_MODULES} sub={`${MODULE_REGISTRY.length} domain groups`} />
+        <Stat label='Enabled for Team' value={enabledCount} color={T.green}
+          sub={disabledSet.size > 0 ? `${disabledSet.size} disabled` : 'Full platform'} />
+        <Stat label='Team Members' value={loading ? '…' : users.length} sub='rbac_user_profiles' />
+        <Stat label='Modules Opened (logged)' value={loading ? '…' : usageSummary.total} sub='rbac_module_usage_log' />
       </div>
 
       <div style={{ display:'flex', gap:4, background:T.surface, border:`1px solid ${T.border}`,
-        borderRadius:8, padding:4, marginBottom:20, width:'fit-content' }}>
-        {['Module Directory', 'Access Matrix', 'Deployment & Connectivity'].map((t, i) => (
+        borderRadius:8, padding:4, marginBottom:20, width:'fit-content', flexWrap:'wrap' }}>
+        {['Module Directory', 'Access Matrix', 'User Access', 'Usage Analytics'].map((t, i) => (
           <Tab key={t} label={t} active={activeTab === i} onClick={() => setActiveTab(i)} />
         ))}
       </div>
 
+      {!isSuperAdmin && activeTab === 2 && (
+        <div style={{ marginBottom:14, padding:'10px 14px', background:T.gold + '22', border:`1px solid ${T.gold}`,
+          borderRadius:8, fontSize:12, color:T.text }}>
+          User Access management requires Master Access (super_admin). You can still browse the directory and matrix.
+        </div>
+      )}
+
       <div>
-        {activeTab === 0 && <DirectoryTab registry={registry} />}
-        {activeTab === 1 && <MatrixTab registry={registry} />}
-        {activeTab === 2 && <DeploymentTab registry={registry} deployments={deployments} usage={usage} />}
+        {activeTab === 0 && <DirectoryTab disabledSet={disabledSet} isSuperAdmin={isSuperAdmin} onToggle={toggleModule} />}
+        {activeTab === 1 && <MatrixTab disabledSet={disabledSet} />}
+        {activeTab === 2 && (
+          isSuperAdmin
+            ? <UserAccessTab users={users} presets={presets} setUserModules={setUserModules} bulkSetUserModules={bulkSetUserModules} />
+            : <Card><div style={{ padding:24, textAlign:'center', color:T.textMut }}>Master Access required.</div></Card>
+        )}
+        {activeTab === 3 && <AnalyticsTab usageSummary={usageSummary} users={users} />}
       </div>
     </div>
   );

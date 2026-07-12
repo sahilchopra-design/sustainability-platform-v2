@@ -13,6 +13,9 @@ import axios from 'axios';
  *            PUT /api/admin/users/{id}/modules — replace-all pick-and-choose {grants:[], denies:[]}
  *   Modules: GET /api/admin/modules/status, PUT /api/admin/modules/review, POST /api/admin/modules/feedback
  *            PUT /api/admin/modules/bulk-review, GET /api/admin/modules/maturity-map
+ *   Kill-switch: GET /api/admin/modules/kill-switch (public), PUT /api/admin/modules/kill-switch
+ *   Usage:   GET /api/admin/usage/summary, POST /api/admin/usage/log (any authenticated user)
+ *   Bulk:    PUT /api/admin/users/bulk-modules — grants/denies applied to many users at once
  */
 export default function useAdminApi() {
   const [users, setUsers]             = useState([]);
@@ -20,6 +23,8 @@ export default function useAdminApi() {
   const [invites, setInvites]         = useState([]);
   const [moduleStatus, setModuleStatus] = useState([]);
   const [assignments, setAssignments] = useState([]);
+  const [disabledModules, setDisabledModules] = useState([]);
+  const [usageSummary, setUsageSummary] = useState({ total: 0, top: [], recent: [] });
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState(null);
 
@@ -28,18 +33,22 @@ export default function useAdminApi() {
     setLoading(true);
     setError(null);
     try {
-      const [usersRes, presetsRes, invitesRes, modulesRes, assignRes] = await Promise.allSettled([
+      const [usersRes, presetsRes, invitesRes, modulesRes, assignRes, killRes, usageRes] = await Promise.allSettled([
         axios.get('/api/admin/users'),
         axios.get('/api/admin/presets'),
         axios.get('/api/admin/invites'),
         axios.get('/api/admin/modules/status'),
         axios.get('/api/admin/refinement/assignments'),
+        axios.get('/api/admin/modules/kill-switch'),
+        axios.get('/api/admin/usage/summary'),
       ]);
       if (usersRes.status === 'fulfilled')   setUsers(usersRes.value.data || []);
       if (presetsRes.status === 'fulfilled') setPresets(presetsRes.value.data || []);
       if (invitesRes.status === 'fulfilled') setInvites(invitesRes.value.data || []);
       if (modulesRes.status === 'fulfilled') setModuleStatus(modulesRes.value.data || []);
       if (assignRes.status === 'fulfilled')  setAssignments(assignRes.value.data || []);
+      if (killRes.status === 'fulfilled')    setDisabledModules(killRes.value.data || []);
+      if (usageRes.status === 'fulfilled')   setUsageSummary(usageRes.value.data || { total: 0, top: [], recent: [] });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -79,6 +88,21 @@ export default function useAdminApi() {
   // ── Bulk module pick-and-choose (replaces all overrides in one call) ──
   const setUserModules = useCallback(async (userId, grants, denies = []) => {
     const res = await axios.put(`/api/admin/users/${userId}/modules`, { grants, denies });
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  // Same replace-all semantics as setUserModules, applied to many users at once
+  // — used by Team Access Hub for rolling a module set out to the whole team.
+  const bulkSetUserModules = useCallback(async (userIds, grants, denies = []) => {
+    const res = await axios.put('/api/admin/users/bulk-modules', { user_ids: userIds, grants, denies });
+    await loadAll();
+    return res.data;
+  }, [loadAll]);
+
+  // ── Module kill-switch (whole-team enable/disable) ────────────
+  const toggleModule = useCallback(async (modulePath, enabled, reason) => {
+    const res = await axios.put('/api/admin/modules/kill-switch', { module_path: modulePath, enabled, reason });
     await loadAll();
     return res.data;
   }, [loadAll]);
@@ -189,15 +213,16 @@ export default function useAdminApi() {
 
   return {
     // State
-    users, presets, invites, moduleStatus, assignments,
+    users, presets, invites, moduleStatus, assignments, disabledModules, usageSummary,
     loading, error,
     // Actions
     loadAll,
-    createUser, updateUserRole, deactivateUser, activateUser, setUserModules,
+    createUser, updateUserRole, deactivateUser, activateUser, setUserModules, bulkSetUserModules,
     createPreset, updatePreset, deactivatePreset,
     createInvite, revokeInvite,
     grantModule, denyModule, removeAccess,
     reviewModule, bulkReviewModules, addModuleFeedback,
     assignModule, unassignModule, validateModule,
+    toggleModule,
   };
 }
