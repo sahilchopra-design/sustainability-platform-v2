@@ -1,0 +1,20 @@
+# Disables Nixpacks' persisted build-cache mounts for the install/build phases.
+#
+# Railway/Nixpacks normally caches node_modules/.cache (and the npm cache)
+# across builds as a Docker BuildKit cache mount for faster rebuilds. On this
+# service that mount became stuck, and npm ci's internal cleanup (which
+# always wipes node_modules before a fresh install) failed with:
+#   EBUSY / "Device or resource busy": cannot remove 'node_modules/.cache'
+# A mount point can never be rmdir'd from inside the build step — only its
+# contents can be touched — so no amount of `rm -rf` in the build command can
+# fix this. Disabling the cache mount for these phases removes the mount
+# point entirely; node_modules/.cache becomes an ordinary, freely-removable
+# directory again. Cost: every build re-downloads/re-installs npm packages
+# from scratch (slower builds), which is an acceptable trade-off to keep
+# deploys reliable.
+
+[phases.install]
+cacheDirectories = []
+
+[phases.build]
+cacheDirectories = []
