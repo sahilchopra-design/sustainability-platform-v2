@@ -24,11 +24,23 @@ DB-backed **module-level access sharing** for the team.
    `process.env.REACT_APP_BACKEND_URL` with a localhost fallback for local dev.
 2. **`requirements.txt` contained `emergentintegrations==0.1.0`**, which does not exist on PyPI —
    `pip install` failed, which is why full dependency installs silently broke. Removed (verified unused).
-3. **No process configs** — added `backend/Procfile`, `backend/railway.json` (with `alembic upgrade head`
-   as pre-deploy + `/docs` healthcheck), `backend/.python-version`, and `frontend/railway.json`
-   (static build served by `serve` with SPA fallback).
-4. The migration-chain and schema-drift fixes from the E2E pass (see `E2E_TEST_REPORT.md` §7) are
-   prerequisites for step 2 below — deploying from any earlier commit will fail at migration time.
+3. **No process configs** — added `backend/Procfile`, `backend/railway.json`, `backend/.python-version`,
+   and `frontend/railway.json` (static build served by `serve` with SPA fallback).
+4. A Nixpacks build-cache mount at `node_modules/.cache` occasionally wedges the frontend build with
+   `EBUSY`/`Device or resource busy` — `frontend/nixpacks.toml` disables that cache mount.
+
+> **Update (post `remediation-v1` merge, 2026-07-12):** a parallel branch merged into `main` after this
+> guide was first written and changed the backend's Railway config again. The authoritative, actively
+> maintained deployment doc is now **`docs/DEPLOYMENT.md`** — read it alongside this guide if anything
+> below looks stale. The two changes that matter most for the steps below:
+> - **No migration runs at deploy anymore.** `backend/railway.json`'s `preDeployCommand: alembic upgrade head`
+>   has been **removed**. Alembic now has **4 divergent heads** (`058c`, `088_reconcile_orm_schema_drift`,
+>   `136`, `155`) after merging in new engine work — `alembic upgrade head` is ambiguous and will fail if you
+>   try to run it against this project's database. The database is already fully provisioned (schema applied
+>   out-of-band); resolving the 4 heads into one clean chain is a deferred cleanup task, not something you
+>   need to do to deploy.
+> - **Healthcheck path is now `/api/health`**, not `/docs` (both routes exist; `/api/health` is what Railway
+>   actually polls).
 
 ---
 
@@ -59,13 +71,23 @@ Two Supabase projects are already in use by the team — keep that separation:
 
 1. Supabase Dashboard → your backend project → **Connect** → copy the **Session pooler** URI
    (port 5432): `postgresql://postgres.<ref>:<password>@aws-x-<region>.pooler.supabase.com:5432/postgres`
-2. Because the production schema was historically patched by hand, just align the version stamp and
-   let the new reconciliation migration run (it's idempotent — a no-op where columns already exist):
+2. **If you're setting this up for the first time** (this project's database wasn't already migrated):
+   align the version stamp and let the reconciliation migration run (it's idempotent — a no-op where
+   columns already exist):
    ```bash
    cd backend
-   DATABASE_URL='<pooler uri>' alembic stamp 087        # if alembic_version is absent/behind
-   DATABASE_URL='<pooler uri>' alembic upgrade head     # applies 088 reconciliation
+   DATABASE_URL='<pooler uri>' alembic stamp --purge 087   # bypass unrelated/unknown version history
+   DATABASE_URL='<pooler uri>' alembic upgrade head        # applies 088 reconciliation
    ```
+   > **Stop at 088.** Don't try to go further with `alembic upgrade head` after new engine work landed
+   > via `remediation-v1` — Alembic now has 4 divergent heads (`058c`, `088`, `136`, `155`), so `head` is
+   > ambiguous and the command errors out. Getting past 088 requires manually resolving/merging those
+   > branches first (deferred; not required to deploy).
+   >
+   > **If this project's database is already live and populated** (e.g. you followed this guide before
+   > today), it's already at the schema level the app needs — do **not** re-run `alembic upgrade head`
+   > against it for the reason above. Schema changes from here are applied as direct SQL/DDL, not through
+   > the Alembic chain, until the 4 heads are reconciled.
 
 ### Path B — fresh Supabase project
 
@@ -86,8 +108,13 @@ Two Supabase projects are already in use by the team — keep that separation:
      records_count bigint default 0, config jsonb default '{}'::jsonb,
      created_at timestamptz default now(), updated_at timestamptz default now());
    ```
-3. Run the chain from your machine (one shot — verified): `DATABASE_URL='<uri>' alembic upgrade head`
-   *(or skip — the Railway pre-deploy command in §3 does it on first deploy).*
+3. Run the chain from your machine — `alembic upgrade head` here will stop cleanly at 088 for a
+   genuinely empty database (no divergent history to conflict with yet):
+   ```bash
+   DATABASE_URL='<uri>' alembic upgrade head
+   ```
+   Railway no longer runs this automatically (§0/§3) — it must be done manually, once, before first
+   deploy against a fresh project.
 
 ### Registry project (module access) — already done
 
@@ -100,8 +127,11 @@ are live in the **New App** project with RLS enabled and all 251 modules seeded.
    `sahilchopra-design/sustainability-platform-v2` (install the Railway GitHub app if prompted).
 2. On the new service → **Settings → Root Directory: `backend`**. Railway/Nixpacks picks up
    `.python-version` (3.11), `requirements.txt`, and `railway.json` automatically:
-   pre-deploy `alembic upgrade head` → start `uvicorn server:app --host 0.0.0.0 --port $PORT`
-   → healthcheck `/docs`.
+   start `uvicorn server:app --host 0.0.0.0 --port $PORT` → healthcheck `/api/health`.
+   **There is no pre-deploy migration step** — see the callout in §0 and §2 for why (Alembic has 4
+   divergent heads post-`remediation-v1`; the database is already fully provisioned). If you ever see
+   `preDeployCommand: alembic upgrade head` reappear in `backend/railway.json`, remove it — it will
+   fail every deploy.
 3. **Variables** tab — set:
 
    | Variable | Value | Notes |
@@ -116,7 +146,8 @@ are live in the **New App** project with RLS enabled and all 251 modules seeded.
 
 4. **Deploy**, then verify:
    ```bash
-   curl https://<backend>.up.railway.app/docs                          # 200
+   curl https://<backend>.up.railway.app/api/health                    # {"status":"healthy",...} — the real healthcheck
+   curl https://<backend>.up.railway.app/docs                          # 200 — Swagger UI, still there for manual poking
    curl -X POST https://<backend>.up.railway.app/api/v1/cbam/seed      # {"products":15,...}
    curl https://<backend>.up.railway.app/api/v1/stranded-assets/dashboard
    ```
@@ -147,9 +178,11 @@ are live in the **New App** project with RLS enabled and all 251 modules seeded.
    ```sql
    insert into platform_deployments (url, environment, git_branch, git_commit, notes)
    values ('https://<frontend>.up.railway.app', 'production',
-           'claude/climate-risk-collateral-framework-fo8asf', '<commit sha>',
+           'main', '<commit sha shown in Railway''s deployment details>',
            'Railway production — backend https://<backend>.up.railway.app');
    ```
+   (Both services deploy from `main` as of the `remediation-v1` merge — grab the exact commit sha from
+   the Railway deployment you just verified, under Deployments → the active deployment's details.)
 
 ## 6. Module-level access sharing
 
@@ -215,13 +248,15 @@ layer (`moduleRegistryService.js`) already isolates every read, so nothing else 
 
 | Symptom | Cause / fix |
 |---|---|
-| Backend build fails on pip | You're deploying a commit older than this branch (`emergentintegrations` still in requirements) — deploy this branch |
-| Pre-deploy migration fails on fresh DB | §2 Path B prerequisites (PostGIS + 4 tables) not created |
+| Backend build fails on pip | You're deploying a commit older than this branch (`emergentintegrations` still in requirements) — deploy from current `main` |
+| `alembic upgrade head` fails with "Multiple head revisions" | Expected post-`remediation-v1` (4 divergent heads) — don't run it against this project's DB; see §0/§2. If you need a genuinely fresh DB, stop at `alembic upgrade 088` |
+| Frontend build fails with `EBUSY` / `Device or resource busy` on `node_modules/.cache` | Stale Nixpacks cache mount — `frontend/nixpacks.toml` already disables this; make sure you're deploying a commit that includes it |
 | Frontend calls fail with CORS errors | `ALLOWED_ORIGINS` on the backend doesn't include the frontend domain — set + redeploy |
 | API-backed modules call `localhost:8001` in prod | `REACT_APP_BACKEND_URL` wasn't set at **build** time — set the variable and redeploy the frontend (rebuild required, it's compile-time) |
 | Sporadic 429s under heavy team use | Expected — production limiter is on; raise tier limits in `middleware/rate_limiter.py` or scale replicas |
 | Module flags don't change anything | You edited the wrong Supabase project — access lives in **New App**, engine data in the backend project |
-| `/docs` healthcheck times out on first deploy | Cold pip install + 82 migrations can exceed 5 min — raise `healthcheckTimeout`, redeploy |
+| `/api/health` healthcheck times out on first deploy | Cold pip install of ~290 service engines can be slow — raise `healthcheckTimeout`, redeploy |
+| Frontend domain shows "Application failed to respond" | Public domain's **target port** doesn't match what the app actually listens on — check Settings → Networking on the frontend service; the target port must equal whatever `serve -l $PORT` bound to (visible in the deploy logs as `Accepting connections at http://localhost:<port>`) |
 
 ## 9. Security notes
 
@@ -232,3 +267,14 @@ layer (`moduleRegistryService.js`) already isolates every read, so nothing else 
   `TEAM_DEPLOYMENT_GUIDE.md` §6; recommended before widening access beyond the team.
 - `REQUIRE_AUTH=false` means API endpoints are open at the network level — acceptable behind team-only
   URL sharing, but flip to `true` + configure auth before any external exposure.
+- **New since `remediation-v1`: the RBAC hard-block is real, not just UI.** `ProtectedRoute` is wired
+  into `App.js` and the backend enforces `allowed_module_paths` server-side — so `REQUIRE_AUTH=true`
+  now actually gates something (it didn't in earlier builds of this app). The intended production path
+  is: set `REQUIRE_AUTH=true`, then use the admin invite flow (`/admin` → Invites tab, or `POST
+  /api/admin/invites`) to onboard each teammate with a role + module preset before flipping it on —
+  otherwise nobody can log in.
+- **`REACT_APP_DEV_AUTH` must never be `true` in a deployed frontend build.** It's a React build-time
+  flag baked into the JS bundle by `npm run build` — when `true`, it auto-logs-in any visitor and
+  bypasses the RBAC hard-block above entirely on the client, regardless of the backend's `REQUIRE_AUTH`
+  setting. It can't be toggled off later from Railway's dashboard the way backend env vars can; a
+  leftover `true` here means a rebuild. Check `frontend/.env` is clean of this before every deploy.
