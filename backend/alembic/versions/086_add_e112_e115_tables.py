@@ -81,6 +81,21 @@ def upgrade():
     )
 
     # E114 — Forced Labour & Modern Slavery Engine
+    # Migration 067 already creates forced_labour_assessments with an incompatible schema
+    # (no child_labour_risk_score). Preserve it under a legacy suffix so this create succeeds
+    # on fresh replays of the chain.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.forced_labour_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'forced_labour_assessments' AND column_name = 'child_labour_risk_score'
+            ) THEN
+                ALTER TABLE forced_labour_assessments RENAME TO forced_labour_assessments_legacy_067;
+            END IF;
+        END
+        $$;
+    """)
     op.create_table('forced_labour_assessments',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('entity_id', sa.String(100)),

@@ -155,8 +155,8 @@ def upgrade():
 
     # ── Default "platform" organisation so existing data remains accessible ───
     op.execute("""
-        INSERT INTO organisations (id, name, org_type, subscription_tier)
-        VALUES ('00000000-0000-0000-0000-000000000001', 'Platform Default', 'other', 'institutional')
+        INSERT INTO organisations (id, name, org_type, subscription_tier, is_active, created_at, updated_at)
+        VALUES ('00000000-0000-0000-0000-000000000001', 'Platform Default', 'other', 'institutional', true, NOW(), NOW())
         ON CONFLICT (id) DO NOTHING;
     """)
 

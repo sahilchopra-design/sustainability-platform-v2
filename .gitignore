@@ -13,3 +13,5 @@ scripts/.cache/
 AA_Impact_Normalized_Datapoint_Repository_v2380.xlsx
 docs/SECURITY_ROTATION.md
 backend/server_output.log
+frontend/scripts/module_seed.sql
+backend/reports_output/analysis_export_*

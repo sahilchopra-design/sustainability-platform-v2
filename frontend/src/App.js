@@ -1042,6 +1042,9 @@ const EnergyTransitionCreditPortalPage   = React.lazy(() => import("./features/e
 const FinancialModelingStudioPage        = React.lazy(() => import("./features/financial-modeling-studio/pages/FinancialModelingStudioPage"));
 const ComplianceCarbonDeskPage           = React.lazy(() => import("./features/compliance-carbon-desk/pages/ComplianceCarbonDeskPage"));
 const GlobalPhysicalRiskAtlasPage        = React.lazy(() => import("./features/global-physical-risk-atlas/pages/GlobalPhysicalRiskAtlasPage"));
+// merged from main (2026-07): deployment/collaboration modules
+const ClimateCollateralFrameworkPage     = React.lazy(() => import("./features/climate-collateral-framework/pages/ClimateCollateralFrameworkPage"));
+const TeamAccessHubPage                  = React.lazy(() => import("./features/team-access-hub/pages/TeamAccessHubPage"));
 
 /* ═══════════════════════════════════════════════════════════════════
    THEME — Institutional Light · Navy / Gold / Sage (AA Impact brand)
@@ -2624,6 +2627,8 @@ function AppContent() {
             <Route path="/financial-modeling-studio" element={<ProtectedRoute path="/financial-modeling-studio" element={<FinancialModelingStudioPage />} />} />
             <Route path="/compliance-carbon-desk" element={<ProtectedRoute path="/compliance-carbon-desk" element={<ComplianceCarbonDeskPage />} />} />
             <Route path="/global-physical-risk-atlas" element={<ProtectedRoute path="/global-physical-risk-atlas" element={<GlobalPhysicalRiskAtlasPage />} />} />
+            <Route path="/climate-collateral-framework" element={<ProtectedRoute path="/climate-collateral-framework" element={<ClimateCollateralFrameworkPage />} />} />
+            <Route path="/team-access-hub" element={<ProtectedRoute path="/team-access-hub" element={<TeamAccessHubPage />} />} />
             {/* Auto-discovered modules (module.config.js manifests). Rendered after
                 the manual routes so a manual <Route> wins on any duplicate path —
                 this is the safe incremental-migration fallback. */}

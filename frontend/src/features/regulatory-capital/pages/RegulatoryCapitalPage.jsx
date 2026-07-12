@@ -5,9 +5,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
 } from 'recharts';
 
-const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
-const Section = ({title,children})=>(<div style={{marginBottom:24}}><h2 style={{fontSize:17,fontWeight:600,color:'#1b3a5c',marginBottom:12,borderBottom:'2px solid #059669',paddingBottom:4}}>{title}</h2>{children}</div>);
-const KpiCard = ({label,value,sub})=>(<div style={{background:'#fff',border:'1px solid #e5e7eb',borderRadius:10,padding:16,borderLeft:'3px solid #059669'}}><div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>{label}</div><div style={{fontSize:24,fontWeight:700,color:'#1b3a5c'}}>{value}</div>{sub&&<div style={{fontSize:11,color:'#059669',marginTop:4}}>{sub}</div>}</div>);
+const Section = ({title,children})=>(<div style={{marginBottom:24}}><h2 style={{fontSize:17,fontWeight:600,color:'#111827',marginBottom:12,borderBottom:'2px solid #059669',paddingBottom:4}}>{title}</h2>{children}</div>);
+const KpiCard = ({label,value,sub})=>(<div style={{background:'#fff',border:'1px solid #e5e7eb',borderRadius:10,padding:16,borderLeft:'3px solid #059669'}}><div style={{fontSize:11,color:'#6b7280',marginBottom:4}}>{label}</div><div style={{fontSize:24,fontWeight:700,color:'#111827'}}>{value}</div>{sub&&<div style={{fontSize:11,color:'#059669',marginTop:4}}>{sub}</div>}</div>);
 const Row = ({children})=>(<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:12,marginBottom:16}}>{children}</div>);
 const Inp = ({label,...p})=>(<div style={{display:'flex',flexDirection:'column',gap:4}}><label style={{fontSize:11,color:'#6b7280'}}>{label}</label><input style={{border:'1px solid #d1d5db',borderRadius:6,padding:'7px 12px',fontSize:13,outline:'none',width:'100%',boxSizing:'border-box'}} {...p}/></div>);
 const Sel = ({label,children,...p})=>(<div style={{display:'flex',flexDirection:'column',gap:4}}><label style={{fontSize:11,color:'#6b7280'}}>{label}</label><select style={{border:'1px solid #d1d5db',borderRadius:6,padding:'7px 12px',fontSize:13,outline:'none',width:'100%',boxSizing:'border-box'}} {...p}>{children}</select></div>);
@@ -15,7 +14,7 @@ const Btn = ({children,...p})=>(<button style={{background:'#059669',color:'#fff
 const Badge = ({children,color='green'})=>{ const c={green:{background:'#d1fae5',color:'#065f46'},red:{background:'#fee2e2',color:'#991b1b'},yellow:{background:'#fef3c7',color:'#92400e'},blue:{background:'#dbeafe',color:'#1e40af'},gray:{background:'#f3f4f6',color:'#374151'}}; const s=c[color]||c.green; return(<span style={{padding:'2px 8px',borderRadius:4,fontSize:11,fontWeight:600,...s}}>{children}</span>); };
 
 const seed = 108;
-const rng = (i, s=seed) => { let x = Math.sin(i + s + 1) * 10000; return x - Math.floor(x); };
+const rng = (i, s=seed) => Math.abs(Math.sin(i*9301+s*49297)*233280)%233280/233280;
 
 const TABS = ['Capital Ratios','RWA Breakdown','FRTB SA/IMA','Climate P2R Overlay','Optimization Actions'];
 
@@ -53,8 +52,8 @@ function Tab1({institutionType, totalAssets, approach}) {
 
   const run = useCallback(async()=>{
     setLoading(true); setError(null);
-    try { const r=await axios.post('http://localhost:8001/api/v1/regulatory-capital/calculate-ratios',{institution_type:institutionType,total_assets_eur_bn:totalAssets,approach}); setResult(r.data); }
-    catch(e){ void 0 /* API fallback to seed data */; setResult({}); }
+    try { const r=await axios.post((process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001') + '/api/v1/regulatory-capital/calculate-ratios',{institution_type:institutionType,total_assets_eur_bn:totalAssets,approach}); setResult(r.data); }
+    catch(e){ setError('API unavailable — showing deterministic demo data.'); setResult({}); }
     setLoading(false);
   },[institutionType,totalAssets,approach]);
 
@@ -112,8 +111,8 @@ function Tab2({approach}) {
 
   const run = useCallback(async()=>{
     setLoading(true); setError(null);
-    try { await axios.post('http://localhost:8001/api/v1/regulatory-capital/calculate-ratios',{approach}); }
-    catch { void 0 /* API fallback to seed data */; }
+    try { await axios.post((process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001') + '/api/v1/regulatory-capital/calculate-ratios',{approach}); }
+    catch { setError('API unavailable — demo mode.'); }
     setLoading(false);
   },[approach]);
 
@@ -298,7 +297,7 @@ export default function RegulatoryCapitalPage() {
     <div style={{minHeight:'100vh',background:'#f9fafb',padding:24}}>
       <div style={{maxWidth:1200,margin:'0 auto'}}>
         <div style={{marginBottom:24}}>
-          <h1 style={{fontSize:24,fontWeight:700,color:'#1b3a5c',margin:0}}>Regulatory Capital Engine</h1>
+          <h1 style={{fontSize:24,fontWeight:700,color:'#111827',margin:0}}>Regulatory Capital Engine</h1>
           <p style={{fontSize:13,color:'#6b7280',marginTop:4}}>CRR2/CRD5 · Basel IV · FRTB SA/IMA · Climate P2R · CET1/T1/TC/Leverage · E108</p>
         </div>
         <div style={{background:'white',border:'1px solid #e5e7eb',borderRadius:10,padding:16,marginBottom:24}}>

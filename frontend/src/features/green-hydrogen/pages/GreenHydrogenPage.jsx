@@ -6,7 +6,7 @@ import {
   LineChart, Line, Cell, ReferenceLine,
 } from 'recharts';
 
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 // Real backend engine: EU RFNBO Delegated Regs 2023/1184-85 + ISO 14040/14044
 // GHG intensity + IEA Global Hydrogen Review LCOH methodology.
 // backend/services/green_hydrogen_engine.py via backend/api/v1/routes/green_hydrogen.py

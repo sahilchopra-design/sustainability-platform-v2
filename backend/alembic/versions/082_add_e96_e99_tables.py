@@ -85,6 +85,21 @@ def upgrade():
     )
 
     # ── E97: EU Social Taxonomy & Human Rights DD ─────────────────────────
+    # Migration 067 already creates social_taxonomy_assessments with an incompatible schema
+    # (no action_plan). Preserve it under a legacy suffix so this create succeeds
+    # on fresh replays of the chain.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.social_taxonomy_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'social_taxonomy_assessments' AND column_name = 'action_plan'
+            ) THEN
+                ALTER TABLE social_taxonomy_assessments RENAME TO social_taxonomy_assessments_legacy_067;
+            END IF;
+        END
+        $$;
+    """)
     op.create_table(
         'social_taxonomy_assessments',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
@@ -147,6 +162,21 @@ def upgrade():
     )
 
     # ── E98: Green Hydrogen & RFNBO Compliance ─────────────────────────────
+    # Migration 068 already creates green_hydrogen_assessments with an incompatible schema
+    # (no assessment_ref). Preserve it under a legacy suffix so this create succeeds
+    # on fresh replays of the chain.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.green_hydrogen_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'green_hydrogen_assessments' AND column_name = 'assessment_ref'
+            ) THEN
+                ALTER TABLE green_hydrogen_assessments RENAME TO green_hydrogen_assessments_legacy_068;
+            END IF;
+        END
+        $$;
+    """)
     op.create_table(
         'green_hydrogen_assessments',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),

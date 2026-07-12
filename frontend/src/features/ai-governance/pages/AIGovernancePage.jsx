@@ -9,7 +9,7 @@ import {
 // Backend E77 AI Governance engine (EU AI Act 2024/1689 / NIST AI RMF 1.0 / OECD AI
 // Principles / disparate-impact bias metrics / energy-emissions accounting).
 // See backend/services/ai_governance_engine.py + backend/api/v1/routes/ai_governance.py
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const AI_GOV_API = `${API}/api/v1/ai-governance`;
 
 const T = {

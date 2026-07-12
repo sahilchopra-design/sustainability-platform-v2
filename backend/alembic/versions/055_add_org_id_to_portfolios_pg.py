@@ -24,39 +24,31 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Add org_id FK to portfolios_pg (nullable — legacy rows keep NULL)
-    op.add_column(
-        "portfolios_pg",
-        sa.Column(
-            "org_id",
-            UUID(as_uuid=True),
-            sa.ForeignKey("organisations.id", ondelete="SET NULL"),
-            nullable=True,
-            index=True,
-        ),
-    )
+    # Idempotent: migration 025 already adds portfolios_pg.org_id behind an
+    # IF NOT EXISTS guard, so a fresh replay of the chain reaches this point
+    # with the column present. Guard every add the same way.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'portfolios_pg' AND column_name = 'org_id'
+            ) THEN
+                ALTER TABLE portfolios_pg ADD COLUMN org_id UUID
+                    REFERENCES organisations(id) ON DELETE SET NULL;
+            END IF;
+        END
+        $$;
+    """)
+    op.execute("CREATE INDEX IF NOT EXISTS ix_portfolios_pg_org_id ON portfolios_pg (org_id);")
 
     # Add org_id to assets_pg for asset-level isolation (optional, follows portfolio)
-    op.add_column(
-        "assets_pg",
-        sa.Column(
-            "org_id",
-            UUID(as_uuid=True),
-            nullable=True,
-            index=True,
-        ),
-    )
+    op.execute("ALTER TABLE assets_pg ADD COLUMN IF NOT EXISTS org_id UUID;")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_assets_pg_org_id ON assets_pg (org_id);")
 
     # Add org_id to analysis_runs_pg for report isolation
-    op.add_column(
-        "analysis_runs_pg",
-        sa.Column(
-            "org_id",
-            UUID(as_uuid=True),
-            nullable=True,
-            index=True,
-        ),
-    )
+    op.execute("ALTER TABLE analysis_runs_pg ADD COLUMN IF NOT EXISTS org_id UUID;")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_analysis_runs_pg_org_id ON analysis_runs_pg (org_id);")
 
 
 def downgrade() -> None:

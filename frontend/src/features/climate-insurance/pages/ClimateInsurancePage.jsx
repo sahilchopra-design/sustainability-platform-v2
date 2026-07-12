@@ -6,6 +6,7 @@ import {
   ComposedChart, ReferenceLine,
 } from 'recharts';
 
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 /* ── Theme ── */
 const T = { surface:'#fafaf7', border:'#e2e0d8', navy:'#1b2a4a', gold:'#b8962e', text:'#1a1a2e', sub:'#64748b', card:'#ffffff', indigo:'#4f46e5', green:'#065f46', red:'#991b1b', amber:'#92400e' };
 const COLORS = ['#4f46e5','#065f46','#b8962e','#991b1b','#0ea5e9','#7c3aed','#d97706','#0891b2','#be185d','#059669','#6366f1','#dc2626'];

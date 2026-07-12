@@ -17,6 +17,21 @@ depends_on = None
 def upgrade():
     # ── E92: Water Risk & Stewardship Finance ────────────────────────────────
     # CDP Water Security A-list · WRI AQUEDUCT 4.0 · TNFD E3 · AWS Standard v2 · CEO Water Mandate
+    # Migration 071 already creates water_risk_assessments with an incompatible schema
+    # (no aws_balance_score). Preserve it under a legacy suffix so this create succeeds
+    # on fresh replays of the chain.
+    op.execute("""
+        DO $$
+        BEGIN
+            IF to_regclass('public.water_risk_assessments') IS NOT NULL AND NOT EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_name = 'water_risk_assessments' AND column_name = 'aws_balance_score'
+            ) THEN
+                ALTER TABLE water_risk_assessments RENAME TO water_risk_assessments_legacy_071;
+            END IF;
+        END
+        $$;
+    """)
     op.execute("""
         CREATE TABLE IF NOT EXISTS water_risk_assessments (
             id                          TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,

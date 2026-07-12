@@ -5,7 +5,7 @@ import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis
 // Backend E92 Water Risk & Stewardship engine (WRI AQUEDUCT 4.0 / CDP Water
 // A-List / TNFD E3 / AWS Standard v2 / CEO Water Mandate).
 // See backend/services/water_stewardship_engine.py + backend/api/v1/routes/water_stewardship.py
-const API = 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 const WATER_API = `${API}/api/v1/water-risk`;
 
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};

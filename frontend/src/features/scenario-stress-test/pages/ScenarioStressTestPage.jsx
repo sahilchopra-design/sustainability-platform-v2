@@ -1,797 +1,776 @@
-import React,{useState,useMemo,useCallback} from 'react';
-import {BarChart,Bar,XAxis,YAxis,Tooltip,ResponsiveContainer,CartesianGrid,Legend,Cell,LineChart,Line,PieChart,Pie,AreaChart,Area,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis,ComposedChart,ReferenceLine} from 'recharts';
+import React, { useState } from 'react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  CartesianGrid, Cell, LineChart, Line, AreaChart, Area, Legend,
+} from 'recharts';
+import { NGFS_PHASE4, SECTOR_PD_UPLIFT, SECTOR_LGD_UPLIFT } from '../../../services/climateRiskDataService';
 
-/* ── Theme ── */
-const T={surface:'#fafaf7',border:'#e2e0d8',navy:'#1b2a4a',gold:'#b8962e',text:'#1a1a2e',sub:'#64748b',card:'#ffffff',indigo:'#4f46e5',green:'#065f46',red:'#991b1b',amber:'#92400e'};
-const sr=s=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+// ─── Theme ───────────────────────────────────────────────────────────────────
+const T = {
+  bg:'#f6f4f0', surface:'#ffffff', surfaceH:'#f0ede7',
+  border:'#e5e0d8', borderL:'#d5cfc5',
+  navy:'#1b3a5c', navyL:'#2c5a8c',
+  gold:'#c5a96a', goldL:'#d4be8a',
+  sage:'#5a8a6a', sageL:'#7ba67d', teal:'#5a8a6a',
+  text:'#1b3a5c', textSec:'#5c6b7e', textMut:'#9aa3ae',
+  red:'#dc2626', green:'#16a34a', amber:'#d97706',
+  card:'0 1px 4px rgba(27,58,92,0.06)',
+  cardH:'0 4px 16px rgba(27,58,92,0.1)',
+  font:"'Inter','SF Pro Display',system-ui,-apple-system,sans-serif",
+};
+const ACCENT = '#dc2626';
 
-/* ── Helpers ── */
-const fmt=(n,d=1)=>Number(n).toFixed(d);
-const fmtPct=n=>`${fmt(n)}%`;
-const fmtB=n=>n>=1e3?`$${fmt(n/1e3)}B`:`$${fmt(n,0)}M`;
-const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
-const safeDivide=(a,b,fallback=0)=>b!==0?a/b:fallback;
+// ─── Seeded random ────────────────────────────────────────────────────────────
+const sr = s => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 
-const COLORS=['#1b2a4a','#b8962e','#4f46e5','#065f46','#991b1b','#92400e','#7c3aed','#0891b2'];
-
-/* ── SCENARIOS: 8 NGFS + Custom ── */
-const SCENARIOS=[
-  {id:'nz2050',name:'Net Zero 2050',warming_c:1.5,carbonPrice2030:130,carbonPrice2040:250,carbonPrice2050:420,gdpImpact_pct:-2.1,policyIntensity:95,physicalDamage_pct:3.2,transitionCost_pct:4.8,color:'#065f46',framework:'NGFS'},
-  {id:'below2c',name:'Below 2\u00B0C',warming_c:1.7,carbonPrice2030:80,carbonPrice2040:160,carbonPrice2050:300,gdpImpact_pct:-3.0,policyIntensity:80,physicalDamage_pct:4.5,transitionCost_pct:3.5,color:'#0891b2',framework:'NGFS'},
-  {id:'divnz',name:'Divergent Net Zero',warming_c:1.5,carbonPrice2030:60,carbonPrice2040:350,carbonPrice2050:500,gdpImpact_pct:-4.5,policyIntensity:70,physicalDamage_pct:3.8,transitionCost_pct:6.2,color:'#4f46e5',framework:'NGFS'},
-  {id:'delayed',name:'Delayed Transition',warming_c:1.8,carbonPrice2030:25,carbonPrice2040:200,carbonPrice2050:450,gdpImpact_pct:-5.8,policyIntensity:45,physicalDamage_pct:5.5,transitionCost_pct:7.1,color:'#b8962e',framework:'NGFS'},
-  {id:'ndcs',name:'NDCs',warming_c:2.5,carbonPrice2030:20,carbonPrice2040:45,carbonPrice2050:80,gdpImpact_pct:-7.2,policyIntensity:35,physicalDamage_pct:9.8,transitionCost_pct:2.1,color:'#92400e',framework:'NGFS'},
-  {id:'curpol',name:'Current Policies',warming_c:3.0,carbonPrice2030:10,carbonPrice2040:15,carbonPrice2050:25,gdpImpact_pct:-10.5,policyIntensity:15,physicalDamage_pct:14.2,transitionCost_pct:1.0,color:'#991b1b',framework:'NGFS'},
-  {id:'polshock',name:'Policy Shock',warming_c:1.6,carbonPrice2030:200,carbonPrice2040:350,carbonPrice2050:500,gdpImpact_pct:-6.0,policyIntensity:100,physicalDamage_pct:3.0,transitionCost_pct:9.5,color:'#7c3aed',framework:'Custom'},
-  {id:'techdisr',name:'Tech Disruption',warming_c:1.4,carbonPrice2030:50,carbonPrice2040:80,carbonPrice2050:120,gdpImpact_pct:-1.5,policyIntensity:60,physicalDamage_pct:2.8,transitionCost_pct:3.0,color:'#0d9488',framework:'Custom'},
+// ─── NGFS Phase IV scenarios (aligned to data service) ───────────────────────
+const SCENARIOS = [
+  { id:'nz2050', name:'Net Zero 2050',        category:'Orderly',    color:'#5a8a6a',
+    temp:1.5,  carbon2030:130, carbon2050:450, gdp:-1.1, physRisk:2.8, transRisk:8.2,
+    compoundFactor:0.04, urgency:1.0 },
+  { id:'b2c',   name:'Below 2°C',             category:'Orderly',    color:'#3b82f6',
+    temp:1.8,  carbon2030:95,  carbon2050:340, gdp:-1.5, physRisk:3.9, transRisk:6.8,
+    compoundFactor:0.035, urgency:0.85 },
+  { id:'dnz',   name:'Divergent Net Zero',    category:'Disorderly', color:'#ec4899',
+    temp:1.5,  carbon2030:120, carbon2050:380, gdp:-3.2, physRisk:5.2, transRisk:9.1,
+    compoundFactor:0.06, urgency:1.3 },
+  { id:'dt',    name:'Delayed Transition',    category:'Disorderly', color:'#f97316',
+    temp:1.8,  carbon2030:60,  carbon2050:430, gdp:-2.8, physRisk:4.6, transRisk:9.8,
+    compoundFactor:0.08, urgency:1.6 },
+  { id:'ndc',   name:'Nationally Determined', category:'Hot House',  color:'#a78bfa',
+    temp:2.5,  carbon2030:45,  carbon2050:190, gdp:-5.5, physRisk:7.4, transRisk:5.2,
+    compoundFactor:0.07, urgency:1.2 },
+  { id:'cp',    name:'Current Policies',      category:'Hot House',  color:'#dc2626',
+    temp:3.0,  carbon2030:30,  carbon2050:120, gdp:-8.1, physRisk:9.5, transRisk:3.1,
+    compoundFactor:0.09, urgency:0.7 },
 ];
 
-/* ── SECTORS: 15 GICS ── */
-const SECTOR_NAMES=['Energy','Materials','Industrials','Consumer Disc.','Consumer Staples','Health Care','Financials','IT','Comm. Services','Utilities','Real Estate','Oil & Gas Expl.','Metals & Mining','Chemicals','Transport'];
-const genSectorImpacts=()=>{
-  const out=[];
-  for(let si=0;si<SECTOR_NAMES.length;si++){
-    const row={sector:SECTOR_NAMES[si],scenarios:{}};
-    for(let sci=0;sci<SCENARIOS.length;sci++){
-      const s=SCENARIOS[sci];
-      const base=sr(si*100+sci*13+7);
-      const transExp=si<3?0.7:si<6?0.3:0.15;
-      const physExp=si>=9?0.6:si>=6?0.25:0.4;
-      row.scenarios[s.id]={
-        revenue_impact_pct:Number((-base*15*transExp - s.physicalDamage_pct*physExp*0.5 + sr(si*31+sci*19)*3).toFixed(1)),
-        cost_impact_pct:Number((base*8*transExp + s.transitionCost_pct*0.3 + sr(si*37+sci*23)*2).toFixed(1)),
-        stranded_pct:Number((clamp(s.carbonPrice2050/500*30*transExp + sr(si*41+sci*29)*5,0,60)).toFixed(1)),
-        capex_required_pct:Number((s.transitionCost_pct*transExp*1.2 + sr(si*43+sci*31)*3).toFixed(1)),
-      };
-    }
-    out.push(row);
-  }
-  return out;
+// ─── Sector equity shocks (NGFS Phase IV calibrated) ─────────────────────────
+const SECTOR_EQUITY_SHOCKS = {
+  'Mining & Coal Extraction':   { nz2050:-62, b2c:-48, dnz:-68, dt:-78, ndc:-28, cp:-12 },
+  'Oil & Gas Extraction':       { nz2050:-48, b2c:-36, dnz:-55, dt:-72, ndc:-22, cp:-8  },
+  'Electricity Generation':     { nz2050:-18, b2c:-12, dnz:-22, dt:-45, ndc:-14, cp:-8  },
+  'Steel & Primary Metals':     { nz2050:-28, b2c:-20, dnz:-32, dt:-52, ndc:-18, cp:-10 },
+  'Cement & Construction Mats': { nz2050:-24, b2c:-18, dnz:-28, dt:-48, ndc:-16, cp:-9  },
+  'Chemicals & Petrochemicals': { nz2050:-20, b2c:-14, dnz:-24, dt:-40, ndc:-14, cp:-7  },
+  'Automotive Manufacturing':   { nz2050:-12, b2c:-8,  dnz:-16, dt:-28, ndc:-10, cp:-5  },
+  'Renewables & Clean Energy':  { nz2050:+45, b2c:+32, dnz:+38, dt:+18, ndc:+8,  cp:+4  },
+  'Real Estate (Commercial)':   { nz2050:-16, b2c:-12, dnz:-18, dt:-38, ndc:-28, cp:-40 },
+  'Banking & Insurance':        { nz2050:-8,  b2c:-6,  dnz:-10, dt:-22, ndc:-14, cp:-18 },
+  'ICT & Technology':           { nz2050:+8,  b2c:+6,  dnz:+5,  dt:-4,  ndc:-3,  cp:-5  },
+  'Agriculture & Food':         { nz2050:-10, b2c:-8,  dnz:-12, dt:-20, ndc:-22, cp:-32 },
 };
-const SECTOR_IMPACTS=genSectorImpacts();
 
-/* ── PORTFOLIO: 50 holdings ── */
-const HOLD_NAMES=['Global Equity Fund','EM Bond Portfolio','IG Credit Sleeve','HY Allocation','Sovereign Debt Mix','Real Assets Fund','Tech Growth','Green Bond Sleeve','Infra Debt','Convertible Strategy','Multi-Asset Fund','Macro Hedge','PE Sleeve','Commodities Basket','FX Carry Trade','Volatility Strategy','Credit L/S','Equity Mkt Neutral','Merger Arb','Distressed Debt','CLO Tranche AA','RMBS Portfolio','CMBS Sleeve','ABS Consumer','Leveraged Loans','Direct Lending','Mezzanine Capital','Venture Debt','Bridge Loans','Trade Finance','Supply Chain Fin','Factoring Book','Leasing Assets','Project Finance','Export Credit','Microfinance Pool','Impact Bond Fund','Social Housing','Climate Transition','Blue Bond Sleeve','Sustainability Link','Cat Bond','Longevity Swap','Inflation Linked','Covered Bond Pool','Pfandbriefe','Cedulas','Samurai Bond','Dim Sum Bond','Sukuk Portfolio'];
-const genPortfolio=()=>{
-  const out=[];
-  for(let i=0;i<50;i++){
-    const sIdx=Math.floor(sr(i*17)*SECTOR_NAMES.length);
-    const mv=Number((10+sr(i*19)*490).toFixed(1));
-    const scenImpacts={};
-    for(let sci=0;sci<SCENARIOS.length;sci++){
-      const sImp=SECTOR_IMPACTS[sIdx].scenarios[SCENARIOS[sci].id];
-      const idio=sr(i*100+sci*7)*4-2;
-      scenImpacts[SCENARIOS[sci].id]={
-        loss_pct:Number((Math.abs(sImp.revenue_impact_pct)*0.6 + sImp.stranded_pct*0.15 + idio).toFixed(2)),
-        transition_loss:Number((sImp.cost_impact_pct*0.4+sr(i*53+sci*11)*2).toFixed(2)),
-        physical_loss:Number((SCENARIOS[sci].physicalDamage_pct*0.3+sr(i*59+sci*13)*1.5).toFixed(2)),
-      };
-    }
-    out.push({id:i+1,name:HOLD_NAMES[i],sector:SECTOR_NAMES[sIdx],market_value:mv,scenImpacts});
-  }
-  return out;
+// ─── Portfolio holdings ───────────────────────────────────────────────────────
+const HOLDINGS = [
+  { name:'Reliance',         sector:'Chemicals & Petrochemicals', weight:0.12, marketCap:220 },
+  { name:'Coal India',       sector:'Mining & Coal Extraction',   weight:0.08, marketCap:95  },
+  { name:'NTPC',             sector:'Electricity Generation',     weight:0.10, marketCap:130 },
+  { name:'Adani Green',      sector:'Renewables & Clean Energy',  weight:0.07, marketCap:80  },
+  { name:'JSW Steel',        sector:'Steel & Primary Metals',     weight:0.09, marketCap:110 },
+  { name:'L&T',              sector:'Cement & Construction Mats', weight:0.08, marketCap:105 },
+  { name:'Rio Tinto',        sector:'Mining & Coal Extraction',   weight:0.10, marketCap:180 },
+  { name:'Shell',            sector:'Oil & Gas Extraction',       weight:0.12, marketCap:250 },
+  { name:'Siemens Energy',   sector:'Renewables & Clean Energy',  weight:0.06, marketCap:70  },
+  { name:'ArcelorMittal',    sector:'Steel & Primary Metals',     weight:0.08, marketCap:100 },
+  { name:'EDF',              sector:'Electricity Generation',     weight:0.06, marketCap:90  },
+  { name:'Tata Motors',      sector:'Automotive Manufacturing',   weight:0.04, marketCap:55  },
+];
+
+const TOTAL_PORTFOLIO = HOLDINGS.reduce((s, h) => s + h.marketCap * h.weight, 0);
+
+// ─── Credit sector mapping ────────────────────────────────────────────────────
+// SECTOR_LGD_UPLIFT covers only 10 of the 20 PD sectors and is not index-aligned —
+// match by sector name; sectors without collateral-haircut data get zero LGD uplift.
+const LGD_ZERO = { nz2050:0, b2c:0, dnz:0, dt:0, ndc:0, cp:0 };
+const CREDIT_SECTORS = SECTOR_PD_UPLIFT.map((pd, i) => ({
+  ...pd,
+  lgd: SECTOR_LGD_UPLIFT.find(l => l.sector === pd.sector) || LGD_ZERO,
+  exposure: +(sr(i * 7) * 100 + 50).toFixed(1),
+}));
+
+// ─── Transmission channels ────────────────────────────────────────────────────
+const CHANNELS = [
+  { id:'carbon',   label:'Carbon Price',       color:'#c5a96a',
+    desc:'Rising carbon costs compress margins for high-emission corporates, reducing cash flow and creditworthiness.',
+    affected:'Oil & Gas, Coal, Cement, Steel', leadTime:'2025–2030', base:28 },
+  { id:'stranded', label:'Stranded Assets',    color:'#dc2626',
+    desc:'Fossil fuel reserves and infrastructure become uneconomical; balance sheet impairments accelerate.',
+    affected:'Coal, Oil & Gas, Utilities (Fossil)', leadTime:'2028–2035', base:22 },
+  { id:'physical', label:'Physical Damage',    color:'#5a8a6a',
+    desc:'Direct asset damage from extreme weather and chronic physical risks disrupt operations.',
+    affected:'Agriculture, Real Estate, Insurance', leadTime:'2030–2050', base:18 },
+  { id:'macro',    label:'Macro/GDP',          color:'#a78bfa',
+    desc:'Second-order demand destruction as climate shocks reduce household and government spending.',
+    affected:'Broad economy', leadTime:'2035–2050', base:20 },
+  { id:'contagion',label:'Financial Contagion',color:'#ec4899',
+    desc:'Credit tightening and equity correlation spikes amplify losses across the financial system.',
+    affected:'Banking, Insurance, Financials', leadTime:'2030–2045', base:12 },
+];
+
+const CHANNEL_SCENARIO_MULTIPLIERS = {
+  nz2050:{ carbon:1.4, stranded:0.6, physical:0.4, macro:0.5, contagion:0.6 },
+  b2c:   { carbon:1.1, stranded:0.7, physical:0.6, macro:0.7, contagion:0.7 },
+  dnz:   { carbon:1.3, stranded:1.0, physical:0.7, macro:0.9, contagion:1.1 },
+  dt:    { carbon:1.0, stranded:1.2, physical:0.8, macro:1.1, contagion:1.3 },
+  ndc:   { carbon:0.7, stranded:0.9, physical:1.3, macro:1.3, contagion:1.0 },
+  cp:    { carbon:0.4, stranded:0.8, physical:1.8, macro:1.6, contagion:1.2 },
 };
-const PORTFOLIO=genPortfolio();
-const TOTAL_MV=PORTFOLIO.reduce((a,h)=>a+h.market_value,0);
 
-/* ── MACRO VARIABLES: 30-year projections per scenario ── */
-const YEARS=Array.from({length:31},(_,i)=>2025+i);
-const genMacro=()=>{
-  const out={};
-  SCENARIOS.forEach((s,sci)=>{
-    out[s.id]=YEARS.map((y,yi)=>{
-      const t=yi/30;
-      return{
-        year:y,
-        gdp_growth:Number((2.5 - s.physicalDamage_pct*t*0.15 - s.transitionCost_pct*Math.max(0,0.3-t)*0.1 + sr(sci*100+yi*7)*0.4-0.2).toFixed(2)),
-        carbon_price:Number((s.carbonPrice2030 + (s.carbonPrice2050-s.carbonPrice2030)*t + sr(sci*200+yi*11)*10-5).toFixed(0)),
-        inflation:Number((2.0 + s.transitionCost_pct*t*0.05 + sr(sci*300+yi*13)*0.3-0.15).toFixed(2)),
-        unemployment:Number((5.0 + s.physicalDamage_pct*t*0.1 + sr(sci*400+yi*17)*0.5-0.25).toFixed(2)),
-        interest_rate:Number((3.0 + s.transitionCost_pct*t*0.03 + sr(sci*500+yi*19)*0.2-0.1).toFixed(2)),
-      };
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const fmt = (v, d = 1) => v == null ? '—' : v.toFixed(d);
+const fmtB = v => `$${Math.abs(v).toFixed(1)}B`;
+const fmtM = v => `$${Math.abs(v).toFixed(0)}M`;
+
+function Card({ children, style }) {
+  return (
+    <div style={{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:8,
+      padding:'16px 20px', ...style }}>
+      {children}
+    </div>
+  );
+}
+
+function StatCard({ label, value, sub, color }) {
+  return (
+    <Card style={{ flex:1, minWidth:160 }}>
+      <div style={{ color:T.textMut, fontSize:11, marginBottom:4 }}>{label}</div>
+      <div style={{ color: color || T.text, fontSize:22, fontWeight:700 }}>{value}</div>
+      {sub && <div style={{ color:T.textSec, fontSize:11, marginTop:3 }}>{sub}</div>}
+    </Card>
+  );
+}
+
+function SectionTitle({ children }) {
+  return <div style={{ color:T.text, fontWeight:700, fontSize:15, marginBottom:12,
+    borderLeft:`3px solid ${ACCENT}`, paddingLeft:10 }}>{children}</div>;
+}
+
+function Badge({ label, color }) {
+  return (
+    <span style={{ background: color + '22', color, border:`1px solid ${color}66`,
+      borderRadius:4, padding:'2px 8px', fontSize:11, fontWeight:600 }}>
+      {label}
+    </span>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+export default function ScenarioStressTestPage() {
+  const [activeTab, setActiveTab] = useState(0);
+  const [selected, setSelected] = useState(['nz2050', 'dt', 'cp']);
+
+  const tabs = [
+    'Scenario Selector', 'Equity Stress', 'Credit Channel',
+    'Scenario Timeline', 'Expected Shortfall', 'Transmission Channels',
+  ];
+
+  const toggleScenario = id => {
+    setSelected(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= 3) return prev;
+      return [...prev, id];
     });
-  });
-  return out;
-};
-const MACRO=genMacro();
+  };
 
-/* ── STRESS RESULTS: pre-computed ── */
-const genStressResults=()=>{
-  return SCENARIOS.map((s,sci)=>{
-    const losses=PORTFOLIO.map(h=>h.scenImpacts[s.id].loss_pct*h.market_value/100);
-    const totalLoss=losses.reduce((a,v)=>a+v,0);
-    const sortedLosses=[...losses].sort((a,b)=>a-b);
-    const var95idx=Math.floor(sortedLosses.length*0.95);
-    const var99idx=Math.floor(sortedLosses.length*0.99);
-    const var95=sortedLosses[Math.min(var95idx,sortedLosses.length-1)];
-    const var99=sortedLosses[Math.min(var99idx,sortedLosses.length-1)];
-    const tailLosses=sortedLosses.slice(var95idx);
-    const es95=tailLosses.length>0?tailLosses.reduce((a,v)=>a+v,0)/tailLosses.length:0;
-    return{
-      scenario:s.name,scenarioId:s.id,color:s.color,
-      portfolio_loss:Number(totalLoss.toFixed(1)),
-      portfolio_loss_pct:Number(safeDivide(totalLoss*100,TOTAL_MV).toFixed(2)),
-      var_95:Number(var95.toFixed(1)),var_99:Number(var99.toFixed(1)),
-      es_95:Number(es95.toFixed(1)),
-      capital_impact_pct:Number((totalLoss/TOTAL_MV*100*1.25+sr(sci*77)*1.5).toFixed(2)),
-      transition_share:Number(safeDivide(PORTFOLIO.reduce((a,h)=>a+h.scenImpacts[s.id].transition_loss*h.market_value/100,0),totalLoss,0).toFixed(2))*100,
-      physical_share:Number(safeDivide(PORTFOLIO.reduce((a,h)=>a+h.scenImpacts[s.id].physical_loss*h.market_value/100,0),totalLoss,0).toFixed(2))*100,
+  const selScenarios = SCENARIOS.filter(s => selected.includes(s.id));
+
+  // ─── Tab 1 helpers ────────────────────────────────────────────────────────
+  const gdpChartData = SCENARIOS.map(s => ({
+    name: s.name.replace('Nationally Determined','NDC').replace('Current Policies','Curr. Pol.'),
+    gdp: s.gdp, color: s.gdp < -3 ? T.red : s.gdp < -1 ? T.amber : T.green,
+  }));
+
+  // ─── Tab 2 helpers ────────────────────────────────────────────────────────
+  const equityData = HOLDINGS.map(h => {
+    const row = { name: h.name };
+    selScenarios.forEach(sc => {
+      const shock = SECTOR_EQUITY_SHOCKS[h.sector]?.[sc.id] ?? 0;
+      row[sc.id] = +(h.marketCap * h.weight * shock / 100).toFixed(1);
+    });
+    return row;
+  });
+
+  const portfolioEqLoss = selScenarios.map(sc => {
+    const total = HOLDINGS.reduce((sum, h) => {
+      const shock = SECTOR_EQUITY_SHOCKS[h.sector]?.[sc.id] ?? 0;
+      return sum + h.marketCap * h.weight * shock / 100;
+    }, 0);
+    return { name: sc.name, loss: +total.toFixed(1), color: sc.color };
+  });
+
+  // ─── Tab 3 helpers ────────────────────────────────────────────────────────
+  const firstSel = selScenarios[0] || SCENARIOS[0];
+  const creditRows = CREDIT_SECTORS.map((cs, i) => {
+    const scId = firstSel.id;
+    const pdBase = 50; const lgdBase = 40;
+    const baseEL = +(pdBase * lgdBase / 10000 * cs.exposure * 10).toFixed(1);
+    const stressEL = +((pdBase + cs[scId]) * (lgdBase + cs.lgd[scId]) / 10000 * cs.exposure * 10).toFixed(1);
+    const uplift = +(stressEL - baseEL).toFixed(1);
+    const pct = baseEL > 0 ? +((uplift / baseEL) * 100).toFixed(0) : 0;
+    return { sector: cs.sector, baseEL, stressEL, uplift, pct,
+      flag: uplift > 500 ? 'HIGH' : uplift > 200 ? 'MED' : uplift < 0 ? 'IMPR' : 'LOW',
+      color: uplift > 500 ? T.red : uplift > 200 ? T.amber : uplift < 0 ? T.green : T.textSec };
+  });
+
+  const totalCreditUplift = creditRows.reduce((s, r) => s + r.uplift, 0);
+  const maxCreditSector = creditRows.reduce((m, r) => r.uplift > m.uplift ? r : m, creditRows[0]);
+  const improvedSectors = creditRows.filter(r => r.uplift < 0).length;
+
+  const waterfall = selScenarios.map(sc => {
+    const eq = HOLDINGS.reduce((sum, h) => {
+      const shock = SECTOR_EQUITY_SHOCKS[h.sector]?.[sc.id] ?? 0;
+      return sum + h.marketCap * h.weight * shock / 100;
+    }, 0);
+    const cr = CREDIT_SECTORS.reduce((sum, cs, i) => {
+      const pdBase = 50; const lgdBase = 40;
+      return sum + ((pdBase + cs[sc.id]) * (lgdBase + cs.lgd[sc.id]) / 10000
+        - pdBase * lgdBase / 10000) * cs.exposure * 10;
+    }, 0);
+    return { name: sc.name, equity: +eq.toFixed(1), credit: +cr.toFixed(1),
+      total: +(eq + cr).toFixed(1), color: sc.color };
+  });
+
+  // ─── Tab 4 helpers ────────────────────────────────────────────────────────
+  const YEARS = [2025, 2030, 2035, 2040, 2045, 2050];
+  const baseLoss = HOLDINGS.reduce((sum, h) =>
+    sum + h.marketCap * h.weight * Math.abs(SECTOR_EQUITY_SHOCKS[h.sector]?.nz2050 ?? 0) / 100, 0);
+
+  const timelineData = YEARS.map(yr => {
+    const row = { year: String(yr) };
+    selScenarios.forEach(sc => {
+      const offset = (yr - 2025) / 25;
+      let shock = SECTOR_EQUITY_SHOCKS;
+      const scenarioBase = HOLDINGS.reduce((sum, h) => {
+        const s = SECTOR_EQUITY_SHOCKS[h.sector]?.[sc.id] ?? 0;
+        return sum + h.marketCap * h.weight * Math.abs(s) / 100;
+      }, 0);
+      row[sc.id] = +(scenarioBase * (1 + sc.compoundFactor * 25 * offset)).toFixed(1);
+    });
+    return row;
+  });
+
+  const carbonChartData = YEARS.map(yr => {
+    const row = { year: String(yr) };
+    selScenarios.forEach(sc => {
+      const paths = { nz2050:{2025:55,2030:130,2035:200,2040:280,2045:360,2050:450},
+        b2c:{2025:40,2030:95,2035:150,2040:210,2045:270,2050:340},
+        dt:{2025:25,2030:60,2035:140,2040:230,2045:330,2050:430},
+        dnz:{2025:50,2030:120,2035:180,2040:240,2045:300,2050:380},
+        ndc:{2025:20,2030:45,2035:75,2040:110,2045:150,2050:190},
+        cp:{2025:15,2030:30,2035:50,2040:70,2045:95,2050:120} };
+      row[sc.id] = paths[sc.id]?.[yr] ?? 0;
+    });
+    return row;
+  });
+
+  const worstSc = selScenarios.reduce((m, sc) => {
+    const last = timelineData[timelineData.length - 1][sc.id] || 0;
+    return last > (timelineData[timelineData.length - 1][m?.id] || 0) ? sc : m;
+  }, selScenarios[0]);
+  const cumulative = worstSc ? YEARS.reduce((s, yr, i) =>
+    s + (timelineData[i][worstSc.id] || 0), 0) : 0;
+
+  // ─── Tab 5 helpers ────────────────────────────────────────────────────────
+  const esData = SCENARIOS.map((sc, i) => {
+    const baseL = HOLDINGS.reduce((sum, h) => {
+      const s = SECTOR_EQUITY_SHOCKS[h.sector]?.[sc.id] ?? 0;
+      return sum + Math.abs(h.marketCap * h.weight * s / 100);
+    }, 0);
+    return {
+      name: sc.name.split(' ').slice(0,2).join(' '),
+      color: sc.color,
+      var95: +(baseL * 0.72).toFixed(1),
+      var99: +(baseL * 0.88).toFixed(1),
+      es975: +(baseL * 1.0).toFixed(1),
     };
   });
-};
-const STRESS_RESULTS=genStressResults();
 
-/* ── Styles ── */
-const cardS={background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:20,marginBottom:16};
-const inputS={fontFamily:"'JetBrains Mono',monospace",fontSize:13,padding:'8px 14px',border:`1px solid ${T.border}`,borderRadius:6,outline:'none',background:T.card,color:T.text,width:220};
-const btnS=a=>({fontFamily:"'DM Sans',sans-serif",fontSize:13,fontWeight:a?700:500,padding:'8px 18px',border:`1px solid ${a?T.gold:T.border}`,borderRadius:6,background:a?T.gold:T.card,color:a?'#fff':T.text,cursor:'pointer',transition:'all 0.15s'});
-const kpiBoxS={background:T.card,border:`1px solid ${T.border}`,borderRadius:10,padding:18,textAlign:'center',flex:1,minWidth:150};
-const kpiVal={fontFamily:"'JetBrains Mono',monospace",fontSize:26,fontWeight:700,color:T.navy};
-const kpiLab={fontFamily:"'DM Sans',sans-serif",fontSize:11,color:T.sub,marginTop:4,textTransform:'uppercase',letterSpacing:0.5};
-const thS={fontFamily:"'JetBrains Mono',monospace",fontSize:11,fontWeight:600,color:T.sub,padding:'10px 12px',textAlign:'left',borderBottom:`2px solid ${T.border}`,whiteSpace:'nowrap'};
-const tdS={fontFamily:"'DM Sans',sans-serif",fontSize:13,color:T.text,padding:'10px 12px',borderBottom:`1px solid ${T.border}`};
-const hdr={fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:T.sub,marginBottom:8,textTransform:'uppercase',letterSpacing:1};
-const secTitle={fontFamily:"'DM Sans',sans-serif",fontSize:15,fontWeight:700,color:T.navy,marginBottom:12};
+  const selES = esData.find(e => e.name === firstSel.name.split(' ').slice(0,2).join(' ')) || esData[0];
+  const maxES = esData.reduce((m, e) => e.es975 > m.es975 ? e : m, esData[0]);
+  const avgVar99 = esData.reduce((s, e) => s + e.var99, 0) / esData.length;
+  const esVarRatio = +(maxES.es975 / maxES.var99).toFixed(2);
 
-const exportCSV=(rows,fn)=>{if(!rows.length)return;const ks=Object.keys(rows[0]);const csv=[ks.join(','),...rows.map(r=>ks.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=fn;a.click();URL.revokeObjectURL(u);};
-const CT=({active,payload,label})=>{if(!active||!payload?.length)return null;return(<div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:'10px 14px',fontFamily:"'DM Sans',sans-serif",fontSize:12,boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}><div style={{fontWeight:700,color:T.navy,marginBottom:4}}>{label}</div>{payload.map((p,i)=><div key={i} style={{color:p.color||T.text}}>{p.name}: {typeof p.value==='number'?fmt(p.value):p.value}</div>)}</div>);};
+  const tailDecomp = [
+    { name:'Equity Repricing', value:42, color:'#dc2626' },
+    { name:'Credit Migration', value:28, color:'#c5a96a' },
+    { name:'Physical Damage',  value:18, color:'#5a8a6a' },
+    { name:'Macro Contagion',  value:12, color:'#a78bfa' },
+  ];
 
-const TABS=['Scenario Overview','Portfolio Stress','Sector Impact','Macro Projections','Capital & VaR','Sensitivity Analysis','Reverse Stress','Report Generator'];
+  const top3Holdings = HOLDINGS.slice(0, 3).map(h => ({
+    name: h.name,
+    share: +((h.marketCap * h.weight / TOTAL_PORTFOLIO) * 100).toFixed(0),
+  }));
+  const top3Concentration = top3Holdings.reduce((s, h) => s + h.share, 0);
 
-/* ══════════════════════ COMPONENT ══════════════════════ */
-export default function ScenarioStressTestPage(){
-  const[tab,setTab]=useState(0);
-  const[selScenario,setSelScenario]=useState(SCENARIOS[0].id);
-  const[selSector,setSelSector]=useState(SECTOR_NAMES[0]);
-  const[macroVar,setMacroVar]=useState('gdp_growth');
-  const[sensCarbon,setSensCarbon]=useState(100);
-  const[sensWarming,setSensWarming]=useState(2.0);
-  const[reverseThreshold,setReverseThreshold]=useState(20);
-  const[search,setSearch]=useState('');
+  // ─── Tab 6 helpers ────────────────────────────────────────────────────────
+  const channelContrib = (scId) => {
+    const mults = CHANNEL_SCENARIO_MULTIPLIERS[scId] || {};
+    const raw = CHANNELS.map(ch => ({ ...ch, mag: ch.base * (mults[ch.id] || 1) }));
+    const total = raw.reduce((s, c) => s + c.mag, 0);
+    return raw.map(c => ({ ...c, pct: +((c.mag / total) * 100).toFixed(1) }));
+  };
 
-  /* ── TAB 0: Scenario Overview ── */
-  const radarData=useMemo(()=>SCENARIOS.map(s=>({
-    name:s.name.length>14?s.name.slice(0,14)+'..':s.name,
-    warming:s.warming_c*33,
-    gdp:Math.abs(s.gdpImpact_pct)*10,
-    carbon:s.carbonPrice2050/5,
-    policy:s.policyIntensity,
-    physical:s.physicalDamage_pct*7,
-  })),[]);
+  const stackedData = selScenarios.map(sc => {
+    const contrib = channelContrib(sc.id);
+    const row = { name: sc.name.split(' ').slice(0,2).join(' ') };
+    contrib.forEach(c => { row[c.id] = c.pct; });
+    return row;
+  });
 
-  const renderTab0=()=>(
-    <>
-      <div style={hdr}>NGFS / EBA / FED / PRA SCENARIO PARAMETERS</div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:20}}>
-        {SCENARIOS.map(s=>(
-          <div key={s.id} style={{...cardS,borderLeft:`4px solid ${s.color}`,cursor:'pointer',background:selScenario===s.id?T.surface:T.card}} onClick={()=>setSelScenario(s.id)}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-              <div style={{fontWeight:700,fontSize:14,color:T.navy}}>{s.name}</div>
-              <span style={{fontSize:10,padding:'2px 8px',borderRadius:99,background:s.framework==='NGFS'?T.indigo+'18':'#7c3aed18',color:s.framework==='NGFS'?T.indigo:'#7c3aed',fontWeight:600}}>{s.framework}</span>
-            </div>
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,fontSize:12,color:T.sub}}>
-              <div>Warming: <strong style={{color:T.text}}>{s.warming_c}\u00B0C</strong></div>
-              <div>GDP: <strong style={{color:T.red}}>{s.gdpImpact_pct}%</strong></div>
-              <div>CO\u2082 2050: <strong style={{color:T.text}}>${s.carbonPrice2050}</strong></div>
-              <div>Policy: <strong style={{color:T.text}}>{s.policyIntensity}/100</strong></div>
-              <div>Physical: <strong style={{color:T.amber}}>{s.physicalDamage_pct}%</strong></div>
-              <div>Transition: <strong style={{color:T.indigo}}>{s.transitionCost_pct}%</strong></div>
+  const top2ChannelData = SCENARIOS.map(sc => {
+    const mults = CHANNEL_SCENARIO_MULTIPLIERS[sc.id] || {};
+    return {
+      name: sc.name.split(' ').slice(0,2).join(' '),
+      carbon: +(CHANNELS[0].base * (mults.carbon || 1)).toFixed(1),
+      stranded: +(CHANNELS[1].base * (mults.stranded || 1)).toFixed(1),
+      color: sc.color,
+    };
+  });
+
+  // ─── Shared tooltip style ─────────────────────────────────────────────────
+  const tooltipStyle = {
+    contentStyle:{ background:T.surface, border:`1px solid ${T.border}`, borderRadius:6,
+      color:T.text, fontSize:12 },
+    labelStyle:{ color:T.textSec },
+  };
+
+  return (
+    <div style={{ background:T.bg, minHeight:'100vh', fontFamily:T.font, color:T.text, padding:'24px 32px' }}>
+      {/* Header */}
+      <div style={{ marginBottom:24 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:6 }}>
+          <div style={{ width:4, height:32, background:ACCENT, borderRadius:2 }} />
+          <div>
+            <h1 style={{ margin:0, fontSize:24, fontWeight:800 }}>Scenario Stress Test</h1>
+            <div style={{ color:T.textSec, fontSize:13, marginTop:2 }}>
+              NGFS Phase IV · Credit Channel · Expected Shortfall · EBA Benchmark
             </div>
           </div>
+          <Badge label="NGFS Phase IV" color={T.teal} />
+          <Badge label="ES 97.5%" color={T.amber} />
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <div style={{ display:'flex', gap:4, marginBottom:24, borderBottom:`1px solid ${T.border}`,
+        paddingBottom:0, flexWrap:'wrap' }}>
+        {tabs.map((t, i) => (
+          <button key={i} onClick={() => setActiveTab(i)} style={{
+            background: activeTab === i ? ACCENT : 'transparent',
+            color: activeTab === i ? '#fff' : T.textSec,
+            border: 'none', padding:'8px 16px', borderRadius:'6px 6px 0 0',
+            cursor:'pointer', fontSize:13, fontWeight: activeTab === i ? 700 : 400,
+            transition:'all 0.15s',
+          }}>{t}</button>
         ))}
       </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={cardS}>
-          <div style={hdr}>SCENARIO COMPARISON RADAR</div>
-          <ResponsiveContainer width="100%" height={340}>
-            <RadarChart data={[{axis:'Warming',nz:SCENARIOS[0].warming_c*33,b2:SCENARIOS[1].warming_c*33,del:SCENARIOS[3].warming_c*33,cur:SCENARIOS[5].warming_c*33},
-              {axis:'GDP Impact',nz:Math.abs(SCENARIOS[0].gdpImpact_pct)*10,b2:Math.abs(SCENARIOS[1].gdpImpact_pct)*10,del:Math.abs(SCENARIOS[3].gdpImpact_pct)*10,cur:Math.abs(SCENARIOS[5].gdpImpact_pct)*10},
-              {axis:'Carbon Price',nz:SCENARIOS[0].carbonPrice2050/5,b2:SCENARIOS[1].carbonPrice2050/5,del:SCENARIOS[3].carbonPrice2050/5,cur:SCENARIOS[5].carbonPrice2050/5},
-              {axis:'Policy',nz:SCENARIOS[0].policyIntensity,b2:SCENARIOS[1].policyIntensity,del:SCENARIOS[3].policyIntensity,cur:SCENARIOS[5].policyIntensity},
-              {axis:'Physical Dmg',nz:SCENARIOS[0].physicalDamage_pct*7,b2:SCENARIOS[1].physicalDamage_pct*7,del:SCENARIOS[3].physicalDamage_pct*7,cur:SCENARIOS[5].physicalDamage_pct*7}]}>
-              <PolarGrid stroke={T.border}/>
-              <PolarAngleAxis dataKey="axis" tick={{fontSize:11,fill:T.sub}}/>
-              <PolarRadiusAxis tick={{fontSize:9}}/>
-              <Radar name="Net Zero 2050" dataKey="nz" stroke={SCENARIOS[0].color} fill={SCENARIOS[0].color} fillOpacity={0.15}/>
-              <Radar name="Below 2\u00B0C" dataKey="b2" stroke={SCENARIOS[1].color} fill={SCENARIOS[1].color} fillOpacity={0.1}/>
-              <Radar name="Delayed" dataKey="del" stroke={SCENARIOS[3].color} fill={SCENARIOS[3].color} fillOpacity={0.1}/>
-              <Radar name="Current Policies" dataKey="cur" stroke={SCENARIOS[5].color} fill={SCENARIOS[5].color} fillOpacity={0.1}/>
-              <Legend/>
-              <Tooltip/>
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>CARBON PRICE TRAJECTORY ($/tCO2)</div>
-          <ResponsiveContainer width="100%" height={340}>
-            <BarChart data={[{period:'2030',...Object.fromEntries(SCENARIOS.map(s=>[s.id,s.carbonPrice2030]))},{period:'2040',...Object.fromEntries(SCENARIOS.map(s=>[s.id,s.carbonPrice2040]))},{period:'2050',...Object.fromEntries(SCENARIOS.map(s=>[s.id,s.carbonPrice2050]))}]}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="period" tick={{fontSize:12}}/>
-              <YAxis tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/>
-              <Legend wrapperStyle={{fontSize:10}}/>
-              {SCENARIOS.map(s=><Bar key={s.id} dataKey={s.id} name={s.name.length>12?s.name.slice(0,12)+'..':s.name} fill={s.color} radius={[2,2,0,0]}/>)}
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── TAB 1: Portfolio Stress ── */
-  const portfolioLossData=useMemo(()=>STRESS_RESULTS.map(r=>({name:r.scenario.length>14?r.scenario.slice(0,14)+'..':r.scenario,loss:r.portfolio_loss_pct,color:r.color})),[]);
-  const waterfallData=useMemo(()=>{
-    const s=STRESS_RESULTS.find(r=>r.scenarioId===selScenario)||STRESS_RESULTS[0];
-    return[
-      {name:'Transition',value:Number((s.transition_share*s.portfolio_loss_pct/100).toFixed(2)),fill:T.indigo},
-      {name:'Physical',value:Number((s.physical_share*s.portfolio_loss_pct/100).toFixed(2)),fill:T.amber},
-      {name:'Policy',value:Number(((100-s.transition_share-s.physical_share)*s.portfolio_loss_pct/100).toFixed(2)),fill:'#7c3aed'},
-      {name:'Total Loss',value:s.portfolio_loss_pct,fill:T.red},
-    ];
-  },[selScenario]);
-  const heatmapData=useMemo(()=>{
-    return SECTOR_NAMES.map(sec=>{
-      const row={sector:sec.length>12?sec.slice(0,12)+'..':sec};
-      SCENARIOS.forEach(s=>{
-        const imp=SECTOR_IMPACTS.find(si=>si.sector===sec);
-        row[s.id]=imp?imp.scenarios[s.id].revenue_impact_pct:0;
-      });
-      return row;
-    });
-  },[]);
-
-  const renderTab1=()=>(
-    <>
-      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
-        {STRESS_RESULTS.map(r=>(
-          <div key={r.scenarioId} style={kpiBoxS}>
-            <div style={{...kpiVal,color:r.color,fontSize:22}}>{fmtPct(r.portfolio_loss_pct)}</div>
-            <div style={kpiLab}>{r.scenario.length>16?r.scenario.slice(0,16)+'..':r.scenario}</div>
+      {/* ── TAB 1: Scenario Selector ─────────────────────────────────────────── */}
+      {activeTab === 0 && (
+        <div>
+          <SectionTitle>Select Up to 3 NGFS Phase IV Scenarios</SectionTitle>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:24 }}>
+            {SCENARIOS.map(sc => {
+              const isSel = selected.includes(sc.id);
+              return (
+                <div key={sc.id} onClick={() => toggleScenario(sc.id)} style={{
+                  background: isSel ? sc.color + '22' : T.surface,
+                  border: `2px solid ${isSel ? sc.color : T.border}`,
+                  borderRadius:10, padding:16, cursor:'pointer', transition:'all 0.15s',
+                }}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
+                    <div style={{ fontWeight:700, fontSize:14, color: isSel ? sc.color : T.text }}>{sc.name}</div>
+                    <input type="checkbox" checked={isSel} readOnly style={{ accentColor: sc.color, width:16, height:16 }} />
+                  </div>
+                  <Badge label={sc.category} color={sc.color} />
+                  <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'1fr 1fr', gap:6 }}>
+                    {[
+                      ['Temp', `${sc.temp}°C`],
+                      ['GDP 2050', `${sc.gdp}%`],
+                      ['Carbon 2030', `$${sc.carbon2030}/t`],
+                      ['Carbon 2050', `$${sc.carbon2050}/t`],
+                      ['Physical Risk', `${sc.physRisk}/10`],
+                      ['Trans. Risk', `${sc.transRisk}/10`],
+                    ].map(([k, v]) => (
+                      <div key={k} style={{ background:T.bg, borderRadius:4, padding:'4px 8px' }}>
+                        <div style={{ color:T.textMut, fontSize:10 }}>{k}</div>
+                        <div style={{ color:T.text, fontSize:13, fontWeight:600 }}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
 
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={cardS}>
-          <div style={hdr}>PORTFOLIO LOSS BY SCENARIO (%)</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={portfolioLossData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={60}/>
-              <YAxis tick={{fontSize:11}} label={{value:'Loss %',angle:-90,position:'insideLeft',style:{fontSize:11}}}/>
-              <Tooltip content={<CT/>}/>
-              <Bar dataKey="loss" name="Portfolio Loss %" radius={[4,4,0,0]}>
-                {portfolioLossData.map((d,i)=><Cell key={i} fill={d.color}/>)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>LOSS ATTRIBUTION WATERFALL ({SCENARIOS.find(s=>s.id===selScenario)?.name})</div>
-          <select style={{...inputS,width:200,marginBottom:8}} value={selScenario} onChange={e=>setSelScenario(e.target.value)}>
-            {SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-          <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={waterfallData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="name" tick={{fontSize:11}}/>
-              <YAxis tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/>
-              <Bar dataKey="value" name="Loss %" radius={[4,4,0,0]}>
-                {waterfallData.map((d,i)=><Cell key={i} fill={d.fill}/>)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+          <SectionTitle>GDP Impact 2050 — All Scenarios</SectionTitle>
+          <Card style={{ marginBottom:24 }}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={gdpChartData} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="%" />
+                <Tooltip {...tooltipStyle} formatter={v => [`${v}%`, 'GDP Impact']} />
+                <Bar dataKey="gdp" radius={[4,4,0,0]}>
+                  {gdpChartData.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
 
-      <div style={cardS}>
-        <div style={hdr}>SECTOR x SCENARIO HEATMAP (Revenue Impact %)</div>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead><tr><th style={thS}>Sector</th>{SCENARIOS.map(s=><th key={s.id} style={{...thS,fontSize:10}}>{s.name.length>10?s.name.slice(0,10)+'..':s.name}</th>)}</tr></thead>
-            <tbody>{heatmapData.map((row,ri)=>(
-              <tr key={ri}><td style={{...tdS,fontWeight:600}}>{row.sector}</td>
-                {SCENARIOS.map(s=>{const v=row[s.id];const abs=Math.abs(v);const bg=v<-5?`rgba(153,27,27,${clamp(abs/20,0.1,0.7)})`:v<0?`rgba(146,64,14,${clamp(abs/15,0.05,0.4)})`:`rgba(6,95,70,${clamp(abs/15,0.05,0.4)})`;
-                  return <td key={s.id} style={{...tdS,fontFamily:"'JetBrains Mono',monospace",fontSize:12,background:bg,textAlign:'center'}}>{fmt(v)}</td>;
-                })}
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── TAB 2: Sector Impact ── */
-  const sectorDetail=useMemo(()=>{
-    const imp=SECTOR_IMPACTS.find(s=>s.sector===selSector);
-    if(!imp)return[];
-    return SCENARIOS.map(s=>({name:s.name.length>12?s.name.slice(0,12)+'..':s.name,revenue:imp.scenarios[s.id].revenue_impact_pct,cost:imp.scenarios[s.id].cost_impact_pct,stranded:imp.scenarios[s.id].stranded_pct,capex:imp.scenarios[s.id].capex_required_pct,color:s.color}));
-  },[selSector]);
-  const topImpacted=useMemo(()=>{
-    const scn=SCENARIOS.find(s=>s.id===selScenario)||SCENARIOS[0];
-    return SECTOR_IMPACTS.map(si=>({sector:si.sector,impact:si.scenarios[scn.id].revenue_impact_pct})).sort((a,b)=>a.impact-b.impact);
-  },[selScenario]);
-  const scatterTransRev=useMemo(()=>{
-    const scn=SCENARIOS.find(s=>s.id===selScenario)||SCENARIOS[0];
-    return SECTOR_IMPACTS.map(si=>({name:si.sector,x:si.scenarios[scn.id].cost_impact_pct,y:si.scenarios[scn.id].revenue_impact_pct,z:si.scenarios[scn.id].stranded_pct}));
-  },[selScenario]);
-
-  const renderTab2=()=>(
-    <>
-      <div style={{display:'flex',gap:10,marginBottom:16,flexWrap:'wrap',alignItems:'center'}}>
-        <select style={inputS} value={selSector} onChange={e=>setSelSector(e.target.value)}>{SECTOR_NAMES.map(s=><option key={s}>{s}</option>)}</select>
-        <select style={inputS} value={selScenario} onChange={e=>setSelScenario(e.target.value)}>{SCENARIOS.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={cardS}>
-          <div style={hdr}>{selSector.toUpperCase()} - SCENARIO COMPARISON</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={sectorDetail}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={55}/>
-              <YAxis tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:11}}/>
-              <Bar dataKey="revenue" name="Revenue Impact %" fill={T.red} radius={[2,2,0,0]}/>
-              <Bar dataKey="cost" name="Cost Impact %" fill={T.amber} radius={[2,2,0,0]}/>
-              <Bar dataKey="stranded" name="Stranded %" fill={T.indigo} radius={[2,2,0,0]}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>TRANSITION COST vs REVENUE IMPACT</div>
-          <ResponsiveContainer width="100%" height={300}>
-            <ScatterChart>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="x" name="Transition Cost %" tick={{fontSize:11}} label={{value:'Transition Cost %',position:'bottom',style:{fontSize:10}}}/>
-              <YAxis dataKey="y" name="Revenue Impact %" tick={{fontSize:11}} label={{value:'Revenue %',angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-              <ZAxis dataKey="z" range={[40,400]} name="Stranded %"/>
-              <Tooltip content={({active,payload})=>{if(!active||!payload?.length)return null;const d=payload[0].payload;return <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:10,fontSize:12}}><div style={{fontWeight:700}}>{d.name}</div><div>Cost: {fmt(d.x)}% | Rev: {fmt(d.y)}%</div><div>Stranded: {fmt(d.z)}%</div></div>;}}/>
-              <Scatter data={scatterTransRev} fill={T.indigo}/>
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div style={cardS}>
-          <div style={hdr}>TOP 5 MOST IMPACTED SECTORS</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={topImpacted.slice(0,5).map(d=>({name:d.sector.length>12?d.sector.slice(0,12)+'..':d.sector,impact:d.impact}))} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis type="number" tick={{fontSize:11}}/>
-              <YAxis dataKey="name" type="category" width={100} tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/>
-              <Bar dataKey="impact" name="Revenue Impact %" fill={T.red} radius={[0,4,4,0]}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>TOP 5 LEAST IMPACTED SECTORS</div>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={[...topImpacted].reverse().slice(0,5).map(d=>({name:d.sector.length>12?d.sector.slice(0,12)+'..':d.sector,impact:d.impact}))} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis type="number" tick={{fontSize:11}}/>
-              <YAxis dataKey="name" type="category" width={100} tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/>
-              <Bar dataKey="impact" name="Revenue Impact %" fill={T.green} radius={[0,4,4,0]}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── TAB 3: Macro Projections ── */
-  const MACRO_LABELS={gdp_growth:'GDP Growth (%)',carbon_price:'Carbon Price ($/tCO2)',inflation:'Inflation (%)',unemployment:'Unemployment (%)',interest_rate:'Interest Rate (%)'};
-  const macroChartData=useMemo(()=>{
-    return YEARS.filter((_,i)=>i%3===0||i===30).map(y=>{
-      const row={year:y};
-      SCENARIOS.forEach(s=>{
-        const d=MACRO[s.id].find(m=>m.year===y);
-        if(d)row[s.id]=d[macroVar];
-      });
-      return row;
-    });
-  },[macroVar]);
-
-  const renderTab3=()=>(
-    <>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
-        <span style={{fontSize:13,color:T.sub,fontWeight:600}}>Variable:</span>
-        {Object.entries(MACRO_LABELS).map(([k,v])=>(
-          <button key={k} style={btnS(macroVar===k)} onClick={()=>setMacroVar(k)}>{v.split('(')[0].trim()}</button>
-        ))}
-      </div>
-      <div style={cardS}>
-        <div style={hdr}>{MACRO_LABELS[macroVar]} - 30-YEAR PROJECTIONS</div>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={macroChartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="year" tick={{fontSize:11}}/>
-            <YAxis tick={{fontSize:11}} label={{value:MACRO_LABELS[macroVar],angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-            <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:10}}/>
-            {SCENARIOS.map(s=><Line key={s.id} type="monotone" dataKey={s.id} name={s.name.length>14?s.name.slice(0,14)+'..':s.name} stroke={s.color} strokeWidth={2} dot={false}/>)}
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
-        <div style={cardS}>
-          <div style={hdr}>GDP GROWTH vs CARBON PRICE (2050)</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <ScatterChart>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="x" name="Carbon Price 2050" tick={{fontSize:11}}/>
-              <YAxis dataKey="y" name="GDP Impact %" tick={{fontSize:11}}/>
-              <Tooltip content={({active,payload})=>{if(!active||!payload?.length)return null;const d=payload[0].payload;return <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,padding:10,fontSize:12}}><div style={{fontWeight:700}}>{d.name}</div><div>${d.x}/tCO2 | GDP: {d.y}%</div></div>;}}/>
-              <Scatter data={SCENARIOS.map(s=>({name:s.name,x:s.carbonPrice2050,y:s.gdpImpact_pct}))} fill={T.navy}>
-                {SCENARIOS.map((s,i)=><Cell key={i} fill={s.color}/>)}
-              </Scatter>
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>INFLATION TRAJECTORY COMPARISON</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={YEARS.filter((_,i)=>i%5===0||i===30).map(y=>{const row={year:y};SCENARIOS.slice(0,4).forEach(s=>{const d=MACRO[s.id].find(m=>m.year===y);if(d)row[s.id]=d.inflation;});return row;})}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="year" tick={{fontSize:11}}/>
-              <YAxis tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:10}}/>
-              {SCENARIOS.slice(0,4).map(s=><Area key={s.id} type="monotone" dataKey={s.id} name={s.name.length>14?s.name.slice(0,14)+'..':s.name} stroke={s.color} fill={s.color} fillOpacity={0.08}/>)}
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── TAB 4: Capital & VaR ── */
-  const varData=useMemo(()=>STRESS_RESULTS.map(r=>({name:r.scenario.length>12?r.scenario.slice(0,12)+'..':r.scenario,var95:Math.abs(r.var_95),var99:Math.abs(r.var_99),es95:Math.abs(r.es_95),color:r.color})),[]);
-  const capitalData=useMemo(()=>{
-    const baseCapital=12.5;
-    return STRESS_RESULTS.map(r=>({name:r.scenario.length>14?r.scenario.slice(0,14)+'..':r.scenario,remaining:Number((baseCapital-r.capital_impact_pct).toFixed(2)),impact:r.capital_impact_pct,color:r.color}));
-  },[]);
-
-  const renderTab4=()=>(
-    <>
-      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
-        <div style={kpiBoxS}><div style={kpiVal}>{fmtPct(12.5)}</div><div style={kpiLab}>Base Capital Ratio</div></div>
-        <div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{fmtPct(Math.max(...STRESS_RESULTS.map(r=>r.capital_impact_pct)))}</div><div style={kpiLab}>Max Capital Impact</div></div>
-        <div style={kpiBoxS}><div style={kpiVal}>{fmt(Math.max(...STRESS_RESULTS.map(r=>Math.abs(r.var_99))))}</div><div style={kpiLab}>Worst VaR 99</div></div>
-        <div style={kpiBoxS}><div style={{...kpiVal,color:T.amber}}>{fmt(Math.max(...STRESS_RESULTS.map(r=>Math.abs(r.es_95))))}</div><div style={kpiLab}>Worst ES 95</div></div>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={cardS}>
-          <div style={hdr}>VaR / ES BY SCENARIO</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={varData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="name" tick={{fontSize:9}} angle={-20} textAnchor="end" height={55}/>
-              <YAxis tick={{fontSize:11}}/>
-              <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:10}}/>
-              <Bar dataKey="var95" name="VaR 95%" fill={T.amber} radius={[2,2,0,0]}/>
-              <Bar dataKey="var99" name="VaR 99%" fill={T.red} radius={[2,2,0,0]}/>
-              <Bar dataKey="es95" name="ES 95%" fill={T.indigo} radius={[2,2,0,0]}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>CAPITAL ADEQUACY WATERFALL</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <ComposedChart data={capitalData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="name" tick={{fontSize:9}} angle={-20} textAnchor="end" height={55}/>
-              <YAxis tick={{fontSize:11}} domain={[0,15]}/>
-              <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:10}}/>
-              <Bar dataKey="remaining" name="Remaining Capital %" stackId="a" fill={T.green} radius={[0,0,0,0]}/>
-              <Bar dataKey="impact" name="Capital Impact %" stackId="a" fill={T.red} radius={[2,2,0,0]}/>
-              <ReferenceLine y={8} stroke={T.red} strokeDasharray="5 5" label={{value:'Min Regulatory (8%)',fill:T.red,fontSize:10}}/>
-              <ReferenceLine y={10.5} stroke={T.amber} strokeDasharray="3 3" label={{value:'CET1+Buffers (10.5%)',fill:T.amber,fontSize:10}}/>
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div style={cardS}>
-        <div style={hdr}>BUFFER ANALYSIS</div>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead><tr><th style={thS}>Scenario</th><th style={thS}>Base Capital</th><th style={thS}>Impact</th><th style={thS}>Post-Stress</th><th style={thS}>Buffer to 8%</th><th style={thS}>Buffer to 10.5%</th><th style={thS}>Status</th></tr></thead>
-            <tbody>{STRESS_RESULTS.map(r=>{
-              const post=12.5-r.capital_impact_pct;const buf8=post-8;const buf105=post-10.5;
-              return(<tr key={r.scenarioId}>
-                <td style={{...tdS,fontWeight:600}}>{r.scenario}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmtPct(12.5)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:T.red}}>{fmtPct(r.capital_impact_pct)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",fontWeight:700}}>{fmtPct(post)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:buf8>0?T.green:T.red}}>{fmt(buf8)}pp</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:buf105>0?T.green:T.red}}>{fmt(buf105)}pp</td>
-                <td style={tdS}><span style={{padding:'2px 10px',borderRadius:99,fontSize:11,fontWeight:600,background:post>10.5?T.green+'18':post>8?T.amber+'18':T.red+'18',color:post>10.5?T.green:post>8?T.amber:T.red}}>{post>10.5?'Adequate':post>8?'Warning':'Breach'}</span></td>
-              </tr>);
-            })}</tbody>
-          </table>
-        </div>
-      </div>
-    </>
-  );
-
-  /* ── TAB 5: Sensitivity Analysis ── */
-  const sensGrid=useMemo(()=>{
-    const carbonSteps=[25,50,100,150,200,300,400,500];
-    const warmingSteps=[1.2,1.5,1.8,2.0,2.5,3.0,3.5,4.0];
-    return warmingSteps.map(w=>{
-      const row={warming:w};
-      carbonSteps.forEach(c=>{
-        const transLoss=c/500*8;
-        const physLoss=(w-1.0)*3.5;
-        const policyAdj=c>200?1.5:1.0;
-        row[`c${c}`]=Number((transLoss+physLoss*policyAdj+sr(Math.floor(w*100)+c)*1.5).toFixed(2));
-      });
-      return row;
-    });
-  },[]);
-
-  const renderTab5=()=>(
-    <>
-      <div style={{display:'flex',gap:16,marginBottom:16,alignItems:'center'}}>
-        <div style={{fontSize:13,color:T.sub}}>Carbon Price: <strong>${sensCarbon}/tCO2</strong></div>
-        <input type="range" min={10} max={500} step={10} value={sensCarbon} onChange={e=>setSensCarbon(Number(e.target.value))} style={{width:200}}/>
-        <div style={{fontSize:13,color:T.sub}}>Warming: <strong>{sensWarming}\u00B0C</strong></div>
-        <input type="range" min={1.0} max={4.0} step={0.1} value={sensWarming} onChange={e=>setSensWarming(Number(e.target.value))} style={{width:200}}/>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{fmtPct(sensCarbon/500*8+(sensWarming-1)*3.5)}</div><div style={kpiLab}>Estimated Portfolio Loss</div></div>
-        <div style={kpiBoxS}><div style={kpiVal}>{fmtPct(clamp(12.5-(sensCarbon/500*8+(sensWarming-1)*3.5)*1.25,0,15))}</div><div style={kpiLab}>Post-Stress Capital</div></div>
-      </div>
-
-      <div style={cardS}>
-        <div style={hdr}>2D SENSITIVITY HEATMAP: CARBON PRICE (X) vs WARMING (Y) &rarr; PORTFOLIO LOSS (%)</div>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead><tr><th style={{...thS,background:T.surface}}>Warming \ CO2</th>{[25,50,100,150,200,300,400,500].map(c=><th key={c} style={{...thS,textAlign:'center'}}>${c}</th>)}</tr></thead>
-            <tbody>{sensGrid.map((row,ri)=>(
-              <tr key={ri}><td style={{...tdS,fontWeight:700,background:T.surface}}>{row.warming}\u00B0C</td>
-                {[25,50,100,150,200,300,400,500].map(c=>{const v=row[`c${c}`];const intensity=clamp(v/15,0,1);
-                  return <td key={c} style={{...tdS,textAlign:'center',fontFamily:"'JetBrains Mono',monospace",fontSize:12,background:`rgba(153,27,27,${intensity*0.6})`,color:intensity>0.5?'#fff':T.text}}>{fmt(v)}</td>;
-                })}
-              </tr>
-            ))}</tbody>
-          </table>
-        </div>
-      </div>
-
-      <div style={cardS}>
-        <div style={hdr}>SENSITIVITY CURVES AT SELECTED WARMING ({sensWarming}\u00B0C)</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={[25,50,100,150,200,300,400,500].map(c=>({carbon:c,loss:c/500*8+(sensWarming-1)*3.5+sr(c+Math.floor(sensWarming*100))*0.8}))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="carbon" tick={{fontSize:11}} label={{value:'Carbon Price ($/tCO2)',position:'bottom',style:{fontSize:10}}}/>
-            <YAxis tick={{fontSize:11}} label={{value:'Portfolio Loss %',angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-            <Tooltip content={<CT/>}/>
-            <Line type="monotone" dataKey="loss" stroke={T.red} strokeWidth={2} dot={{r:4}} name="Loss %"/>
-            <ReferenceLine y={5} stroke={T.amber} strokeDasharray="5 5" label={{value:'5% Threshold',fill:T.amber,fontSize:10}}/>
-            <ReferenceLine y={10} stroke={T.red} strokeDasharray="5 5" label={{value:'10% Threshold',fill:T.red,fontSize:10}}/>
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </>
-  );
-
-  /* ── TAB 6: Reverse Stress ── */
-  const mcPaths=useMemo(()=>{
-    const paths=[];
-    for(let p=0;p<1000;p++){
-      let cumLoss=0;
-      const pathData=[];
-      for(let step=0;step<50;step++){
-        const shock=sr(p*1000+step*7)*6-2;
-        const drift=-0.05*step;
-        cumLoss+=shock+drift;
-        pathData.push({step,loss:Number(clamp(cumLoss,-50,50).toFixed(2))});
-      }
-      paths.push(pathData);
-    }
-    return paths;
-  },[]);
-  const mcSummary=useMemo(()=>{
-    const finalLosses=mcPaths.map(p=>Math.abs(p[p.length-1].loss));
-    const exceed20=finalLosses.filter(l=>l>=20).length;
-    const exceed30=finalLosses.filter(l=>l>=30).length;
-    const exceed50=finalLosses.filter(l=>l>=50).length;
-    return{exceed20,exceed30,exceed50,total:1000};
-  },[mcPaths]);
-  const mcChart=useMemo(()=>{
-    const sampled=[0,99,249,499,749,999].filter(i=>i<mcPaths.length);
-    return Array.from({length:50},(_,step)=>{
-      const row={step};
-      sampled.forEach((pi,idx)=>{row[`p${idx}`]=mcPaths[pi][step].loss;});
-      return row;
-    });
-  },[mcPaths]);
-  const breachScenarios=useMemo(()=>{
-    return STRESS_RESULTS.filter(r=>r.portfolio_loss_pct>=reverseThreshold).sort((a,b)=>b.portfolio_loss_pct-a.portfolio_loss_pct);
-  },[reverseThreshold]);
-
-  const renderTab6=()=>(
-    <>
-      <div style={{display:'flex',gap:10,marginBottom:16,alignItems:'center'}}>
-        <span style={{fontSize:13,color:T.sub,fontWeight:600}}>Loss Threshold:</span>
-        {[10,15,20,30,50].map(t=><button key={t} style={btnS(reverseThreshold===t)} onClick={()=>setReverseThreshold(t)}>-{t}%</button>)}
-      </div>
-
-      <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
-        <div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{breachScenarios.length}/{SCENARIOS.length}</div><div style={kpiLab}>Scenarios Breach -{reverseThreshold}%</div></div>
-        <div style={kpiBoxS}><div style={kpiVal}>{fmtPct(safeDivide(mcSummary.exceed20*100,mcSummary.total))}</div><div style={kpiLab}>P(Loss > 20%)</div></div>
-        <div style={kpiBoxS}><div style={kpiVal}>{fmtPct(safeDivide(mcSummary.exceed30*100,mcSummary.total))}</div><div style={kpiLab}>P(Loss > 30%)</div></div>
-        <div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{fmtPct(safeDivide(mcSummary.exceed50*100,mcSummary.total))}</div><div style={kpiLab}>P(Loss > 50%)</div></div>
-      </div>
-
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:16}}>
-        <div style={cardS}>
-          <div style={hdr}>MONTE CARLO 1,000 PATHS (6 SAMPLED)</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <LineChart data={mcChart}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="step" tick={{fontSize:11}} label={{value:'Time Step',position:'bottom',style:{fontSize:10}}}/>
-              <YAxis tick={{fontSize:11}} label={{value:'Cumulative Loss %',angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-              <Tooltip content={<CT/>}/>
-              <ReferenceLine y={-reverseThreshold} stroke={T.red} strokeDasharray="5 5" label={{value:`-${reverseThreshold}% threshold`,fill:T.red,fontSize:10}}/>
-              {[0,1,2,3,4,5].map(i=><Line key={i} type="monotone" dataKey={`p${i}`} stroke={COLORS[i%COLORS.length]} strokeWidth={1.5} dot={false} name={`Path ${i+1}`} strokeOpacity={0.7}/>)}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div style={cardS}>
-          <div style={hdr}>EXCEEDANCE PROBABILITY</div>
-          <ResponsiveContainer width="100%" height={320}>
-            <BarChart data={[
-              {threshold:'-10%',prob:Number(safeDivide(mcPaths.filter(p=>Math.abs(p[p.length-1].loss)>=10).length*100,1000).toFixed(1))},
-              {threshold:'-20%',prob:Number(safeDivide(mcSummary.exceed20*100,1000).toFixed(1))},
-              {threshold:'-30%',prob:Number(safeDivide(mcSummary.exceed30*100,1000).toFixed(1))},
-              {threshold:'-40%',prob:Number(safeDivide(mcPaths.filter(p=>Math.abs(p[p.length-1].loss)>=40).length*100,1000).toFixed(1))},
-              {threshold:'-50%',prob:Number(safeDivide(mcSummary.exceed50*100,1000).toFixed(1))},
-            ]}>
-              <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-              <XAxis dataKey="threshold" tick={{fontSize:12}}/>
-              <YAxis tick={{fontSize:11}} label={{value:'Probability %',angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-              <Tooltip content={<CT/>}/>
-              <Bar dataKey="prob" name="Exceedance %" fill={T.red} radius={[4,4,0,0]}/>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {breachScenarios.length>0&&(
-        <div style={cardS}>
-          <div style={hdr}>SCENARIOS EXCEEDING -{reverseThreshold}% LOSS THRESHOLD</div>
-          <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead><tr><th style={thS}>Scenario</th><th style={thS}>Portfolio Loss %</th><th style={thS}>Transition Share</th><th style={thS}>Physical Share</th><th style={thS}>Capital Impact</th></tr></thead>
-            <tbody>{breachScenarios.map(r=>(
-              <tr key={r.scenarioId}>
-                <td style={{...tdS,fontWeight:700,color:r.color}}>{r.scenario}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:T.red}}>{fmtPct(r.portfolio_loss_pct)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmtPct(r.transition_share)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmtPct(r.physical_share)}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:T.red}}>{fmtPct(r.capital_impact_pct)}</td>
-              </tr>
-            ))}</tbody>
-          </table>
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="GDP Loss Range (all scenarios)"
+              value={`${Math.min(...SCENARIOS.map(s=>s.gdp))}% to ${Math.max(...SCENARIOS.map(s=>s.gdp))}%`}
+              sub="2050 GDP impact"  color={T.amber} />
+            <StatCard label="Worst Physical Risk"
+              value={SCENARIOS.reduce((m,s)=>s.physRisk>m.physRisk?s:m,SCENARIOS[0]).name.split(' ').slice(0,2).join(' ')}
+              sub={`Score: ${Math.max(...SCENARIOS.map(s=>s.physRisk))}/10`} color={T.red} />
+            <StatCard label="Worst Transition Risk"
+              value={SCENARIOS.reduce((m,s)=>s.transRisk>m.transRisk?s:m,SCENARIOS[0]).name.split(' ').slice(0,2).join(' ')}
+              sub={`Score: ${Math.max(...SCENARIOS.map(s=>s.transRisk))}/10`} color={T.amber} />
+          </div>
         </div>
       )}
-    </>
-  );
 
-  /* ── TAB 7: Report Generator ── */
-  const reportRows=useMemo(()=>STRESS_RESULTS.map(r=>{
-    const s=SCENARIOS.find(sc=>sc.id===r.scenarioId);
-    return{
-      scenario:r.scenario,framework:s?.framework||'',warming:s?.warming_c||0,carbon2050:s?.carbonPrice2050||0,
-      gdpImpact:s?.gdpImpact_pct||0,portfolioLoss:r.portfolio_loss_pct,var95:r.var_95,var99:r.var_99,
-      es95:r.es_95,capitalImpact:r.capital_impact_pct,postStressCapital:Number((12.5-r.capital_impact_pct).toFixed(2)),
-      transitionShare:r.transition_share,physicalShare:r.physical_share,
-    };
-  }),[]);
+      {/* ── TAB 2: Equity Stress Results ──────────────────────────────────────── */}
+      {activeTab === 1 && (
+        <div>
+          <SectionTitle>Equity Loss by Holding — Selected Scenarios</SectionTitle>
+          <Card style={{ marginBottom:20, overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                  <th style={{ textAlign:'left', color:T.textSec, padding:'6px 10px', fontWeight:600 }}>Holding</th>
+                  <th style={{ textAlign:'left', color:T.textSec, padding:'6px 10px', fontWeight:600 }}>Sector</th>
+                  <th style={{ textAlign:'right', color:T.textSec, padding:'6px 10px', fontWeight:600 }}>Wt</th>
+                  {selScenarios.map(sc => (
+                    <th key={sc.id} style={{ textAlign:'right', color:sc.color, padding:'6px 10px', fontWeight:700 }}>
+                      {sc.name.split(' ').slice(0,2).join(' ')}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {equityData.map((row, i) => (
+                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}33` }}>
+                    <td style={{ padding:'6px 10px', fontWeight:600 }}>{row.name}</td>
+                    <td style={{ padding:'6px 10px', color:T.textSec, fontSize:11 }}>{HOLDINGS[i].sector}</td>
+                    <td style={{ padding:'6px 10px', textAlign:'right', color:T.textSec }}>{(HOLDINGS[i].weight*100).toFixed(0)}%</td>
+                    {selScenarios.map(sc => {
+                      const v = row[sc.id] || 0;
+                      const c = v < -5 ? T.red : v < 0 ? T.amber : T.green;
+                      return <td key={sc.id} style={{ padding:'6px 10px', textAlign:'right', color:c, fontWeight:600 }}>
+                        {v > 0 ? '+' : ''}{fmtM(Math.abs(v))} {v < 0 ? '▼' : '▲'}
+                      </td>;
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
 
-  const renderTab7=()=>(
-    <>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-        <div style={secTitle}>Comprehensive Scenario Stress Test Report</div>
-        <button style={btnS(true)} onClick={()=>exportCSV(reportRows,'stress_test_report.csv')}>Export Full Report CSV</button>
-      </div>
+          <SectionTitle>Total Portfolio Equity Loss per Scenario</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={portfolioEqLoss} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$B" />
+                <Tooltip {...tooltipStyle} formatter={v => [`$${Math.abs(v).toFixed(1)}B`, 'Equity Loss']} />
+                <Bar dataKey="loss" radius={[4,4,0,0]}>
+                  {portfolioEqLoss.map((d, i) => <Cell key={i} fill={d.color} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
 
-      <div style={cardS}>
-        <div style={hdr}>EXECUTIVE SUMMARY</div>
-        <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:16}}>
-          <div style={kpiBoxS}><div style={kpiVal}>{SCENARIOS.length}</div><div style={kpiLab}>Scenarios Tested</div></div>
-          <div style={kpiBoxS}><div style={kpiVal}>{PORTFOLIO.length}</div><div style={kpiLab}>Portfolio Holdings</div></div>
-          <div style={kpiBoxS}><div style={kpiVal}>{fmtB(TOTAL_MV)}</div><div style={kpiLab}>Total Portfolio</div></div>
-          <div style={kpiBoxS}><div style={{...kpiVal,color:T.red}}>{fmtPct(Math.max(...STRESS_RESULTS.map(r=>r.portfolio_loss_pct)))}</div><div style={kpiLab}>Worst-Case Loss</div></div>
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="Worst Scenario Equity Loss"
+              value={fmtB(Math.min(...portfolioEqLoss.map(s=>s.loss)))}
+              sub={portfolioEqLoss.reduce((m,s)=>s.loss<m.loss?s:m,portfolioEqLoss[0])?.name}
+              color={T.red} />
+            <StatCard label="Best Selected Scenario"
+              value={fmtB(Math.max(...portfolioEqLoss.map(s=>s.loss)))}
+              sub={portfolioEqLoss.reduce((m,s)=>s.loss>m.loss?s:m,portfolioEqLoss[0])?.name}
+              color={T.green} />
+            <StatCard label="Holdings in Loss (worst sc.)"
+              value={equityData.filter(r => (r[selScenarios[0]?.id]||0) < 0).length}
+              sub="of 12 holdings" color={T.amber} />
+          </div>
         </div>
-      </div>
+      )}
 
-      <div style={cardS}>
-        <div style={hdr}>FULL SCENARIO COMPARISON</div>
-        <div style={{overflowX:'auto'}}>
-          <table style={{width:'100%',borderCollapse:'collapse'}}>
-            <thead><tr>
-              {['Scenario','Type','Warming','CO2 2050','GDP %','Loss %','VaR95','VaR99','ES95','Cap. Impact','Post-Stress','Trans %','Phys %'].map(h=><th key={h} style={thS}>{h}</th>)}
-            </tr></thead>
-            <tbody>{reportRows.map((r,ri)=>{
-              const post=r.postStressCapital;
-              return(<tr key={ri} style={{background:ri%2===0?'transparent':T.surface+'80'}}>
-                <td style={{...tdS,fontWeight:700,color:SCENARIOS[ri]?.color||T.navy}}>{r.scenario}</td>
-                <td style={tdS}><span style={{padding:'2px 8px',borderRadius:99,fontSize:10,fontWeight:600,background:r.framework==='NGFS'?T.indigo+'18':'#7c3aed18',color:r.framework==='NGFS'?T.indigo:'#7c3aed'}}>{r.framework}</span></td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{r.warming}\u00B0C</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>${r.carbon2050}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:T.red}}>{fmt(r.gdpImpact)}%</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:T.red}}>{fmt(r.portfolioLoss)}%</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmt(Math.abs(r.var95))}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmt(Math.abs(r.var99))}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmt(Math.abs(r.es95))}</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",color:T.red}}>{fmt(r.capitalImpact)}%</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace",fontWeight:700,color:post>10.5?T.green:post>8?T.amber:T.red}}>{fmt(post)}%</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmt(r.transitionShare)}%</td>
-                <td style={{...tdS,fontFamily:"'JetBrains Mono',monospace"}}>{fmt(r.physicalShare)}%</td>
-              </tr>);
-            })}</tbody>
-          </table>
-        </div>
-      </div>
+      {/* ── TAB 3: Credit Channel Stress ──────────────────────────────────────── */}
+      {activeTab === 2 && (
+        <div>
+          <SectionTitle>Credit EL Stress — Scenario: {firstSel.name}</SectionTitle>
+          <Card style={{ marginBottom:20, overflowX:'auto' }}>
+            <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+              <thead>
+                <tr style={{ borderBottom:`1px solid ${T.border}` }}>
+                  {['Sector','Exposure ($B)','Base EL ($M)','Stressed EL ($M)','Uplift ($M)','% Inc','Flag'].map(h => (
+                    <th key={h} style={{ textAlign:'left', color:T.textSec, padding:'6px 10px', fontWeight:600 }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {creditRows.map((r, i) => (
+                  <tr key={i} style={{ borderBottom:`1px solid ${T.border}33` }}>
+                    <td style={{ padding:'6px 10px', fontWeight:600 }}>{r.sector}</td>
+                    <td style={{ padding:'6px 10px', color:T.textSec }}>${CREDIT_SECTORS[i].exposure}B</td>
+                    <td style={{ padding:'6px 10px', color:T.textSec }}>${r.baseEL.toFixed(0)}M</td>
+                    <td style={{ padding:'6px 10px', color:r.color }}>${r.stressEL.toFixed(0)}M</td>
+                    <td style={{ padding:'6px 10px', color:r.color, fontWeight:700 }}>
+                      {r.uplift > 0 ? '+' : ''}{r.uplift.toFixed(0)}M
+                    </td>
+                    <td style={{ padding:'6px 10px', color:r.color }}>{r.pct > 0 ? '+' : ''}{r.pct}%</td>
+                    <td style={{ padding:'6px 10px' }}><Badge label={r.flag} color={r.color} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
 
-      <div style={cardS}>
-        <div style={hdr}>PORTFOLIO LOSS SUMMARY</div>
-        <ResponsiveContainer width="100%" height={300}>
-          <ComposedChart data={STRESS_RESULTS.map(r=>({name:r.scenario.length>12?r.scenario.slice(0,12)+'..':r.scenario,loss:r.portfolio_loss_pct,capital:12.5-r.capital_impact_pct,color:r.color}))}>
-            <CartesianGrid strokeDasharray="3 3" stroke={T.border}/>
-            <XAxis dataKey="name" tick={{fontSize:10}} angle={-20} textAnchor="end" height={55}/>
-            <YAxis yAxisId="left" tick={{fontSize:11}} label={{value:'Loss %',angle:-90,position:'insideLeft',style:{fontSize:10}}}/>
-            <YAxis yAxisId="right" orientation="right" tick={{fontSize:11}} label={{value:'Capital %',angle:90,position:'insideRight',style:{fontSize:10}}}/>
-            <Tooltip content={<CT/>}/><Legend wrapperStyle={{fontSize:10}}/>
-            <Bar yAxisId="left" dataKey="loss" name="Portfolio Loss %" fill={T.red} radius={[4,4,0,0]}/>
-            <Line yAxisId="right" type="monotone" dataKey="capital" name="Post-Stress Capital %" stroke={T.green} strokeWidth={2} dot={{r:4}}/>
-            <ReferenceLine yAxisId="right" y={8} stroke={T.red} strokeDasharray="5 5"/>
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
+          <SectionTitle>EL Uplift by Sector</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={creditRows.map(r=>({name:r.sector.split(' ')[0],uplift:r.uplift,color:r.color}))}
+                margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:10 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$M" />
+                <Tooltip {...tooltipStyle} formatter={v => [`$${v.toFixed(0)}M`, 'EL Uplift']} />
+                <Bar dataKey="uplift" radius={[4,4,0,0]}>
+                  {creditRows.map((r, i) => <Cell key={i} fill={r.color} />)}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
 
-      <div style={cardS}>
-        <div style={hdr}>METHODOLOGY NOTES</div>
-        <div style={{fontSize:13,lineHeight:1.8,color:T.sub}}>
-          <p><strong>Frameworks:</strong> NGFS Phase IV scenarios, EBA 2025 EU-wide stress test parameters, Federal Reserve DFAST/CCAR climate pilot, Bank of England/PRA CBES methodologies.</p>
-          <p><strong>Risk Metrics:</strong> VaR computed at 95th and 99th percentile using historical simulation. Expected Shortfall (ES) at 95th percentile. Capital impact computed as portfolio loss x 1.25 RWA multiplier per Basel III climate risk supplement.</p>
-          <p><strong>Macro Projections:</strong> 30-year trajectories for GDP growth, carbon price, inflation, unemployment, and interest rates calibrated to NGFS scenario outputs (REMIND-MAgPIE model).</p>
-          <p><strong>Reverse Stress:</strong> 1,000 Monte Carlo paths with stochastic shocks. Exceedance probabilities computed at -10%, -20%, -30%, -40%, and -50% loss thresholds.</p>
-        </div>
-      </div>
-    </>
-  );
+          <SectionTitle>Combined Equity + Credit Loss Waterfall</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={waterfall} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$B" />
+                <Tooltip {...tooltipStyle} />
+                <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                <Bar dataKey="equity" name="Equity Loss ($B)" fill={T.red} radius={[2,2,0,0]} />
+                <Bar dataKey="credit" name="Credit EL Uplift ($B)" fill={T.amber} radius={[2,2,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
 
-  /* ══════════════════════ RENDER ══════════════════════ */
-  return(
-    <div style={{fontFamily:"'DM Sans',sans-serif",background:T.surface,minHeight:'100vh',padding:24}}>
-      <div style={{maxWidth:1440,margin:'0 auto'}}>
-        <div style={{marginBottom:20}}>
-          <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>Multi-Scenario Climate Stress Testing</h1>
-          <p style={{fontSize:13,color:T.sub,marginTop:4}}>NGFS / EBA / Fed / PRA frameworks -- {SCENARIOS.length} scenarios, {PORTFOLIO.length} holdings, ${fmt(TOTAL_MV,0)}M AUM</p>
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="Total Credit EL Uplift" value={`$${Math.abs(totalCreditUplift).toFixed(0)}M`}
+              sub={`Scenario: ${firstSel.name}`} color={T.red} />
+            <StatCard label="Max Sector Credit Hit" value={maxCreditSector?.sector?.split(' ')[0]}
+              sub={`+$${maxCreditSector?.uplift?.toFixed(0)}M uplift`} color={T.amber} />
+            <StatCard label="Sectors with Improved EL" value={improvedSectors}
+              sub="Renewables / Technology" color={T.green} />
+          </div>
         </div>
-        <div style={{display:'flex',gap:4,marginBottom:20,borderBottom:`2px solid ${T.border}`,paddingBottom:8,flexWrap:'wrap'}}>
-          {TABS.map((t,i)=><button key={i} style={{...btnS(tab===i),fontSize:12,padding:'6px 14px'}} onClick={()=>setTab(i)}>{t}</button>)}
+      )}
+
+      {/* ── TAB 4: Scenario Timeline ──────────────────────────────────────────── */}
+      {activeTab === 3 && (
+        <div>
+          <SectionTitle>Portfolio Loss Trajectory 2025–2050</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={220}>
+              <LineChart data={timelineData} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" tick={{ fill:T.textSec, fontSize:12 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$B" />
+                <Tooltip {...tooltipStyle} formatter={v => [`$${v.toFixed(1)}B`, '']} />
+                <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                {selScenarios.map(sc => (
+                  <Line key={sc.id} type="monotone" dataKey={sc.id} name={sc.name}
+                    stroke={sc.color} strokeWidth={2.5} dot={{ r:4, fill:sc.color }} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </Card>
+
+          <SectionTitle>Carbon Price Path — Selected Scenarios</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <AreaChart data={carbonChartData} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="year" tick={{ fill:T.textSec, fontSize:12 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$/t" />
+                <Tooltip {...tooltipStyle} formatter={v => [`$${v}/t CO₂`, 'Carbon Price']} />
+                <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                {selScenarios.map(sc => (
+                  <Area key={sc.id} type="monotone" dataKey={sc.id} name={sc.name}
+                    stroke={sc.color} fill={sc.color + '22'} strokeWidth={2} />
+                ))}
+              </AreaChart>
+            </ResponsiveContainer>
+          </Card>
+
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="Cumulative Loss 2025–2050 (worst)"
+              value={`$${cumulative.toFixed(0)}B`}
+              sub={worstSc?.name} color={T.red} />
+            <StatCard label="Max Annual Loss Year"
+              value="2050" sub="Peak in all disorderly scenarios" color={T.amber} />
+            <StatCard label="Loss Acceleration Post-2035"
+              value="Delayed Trans." sub="1.6× post-2035 compounding" color={T.teal} />
+          </div>
         </div>
-        {tab===0&&renderTab0()}
-        {tab===1&&renderTab1()}
-        {tab===2&&renderTab2()}
-        {tab===3&&renderTab3()}
-        {tab===4&&renderTab4()}
-        {tab===5&&renderTab5()}
-        {tab===6&&renderTab6()}
-        {tab===7&&renderTab7()}
-      </div>
+      )}
+
+      {/* ── TAB 5: Expected Shortfall ─────────────────────────────────────────── */}
+      {activeTab === 4 && (
+        <div>
+          <div style={{ background:T.navy, border:`1px solid ${T.teal}66`, borderRadius:8,
+            padding:'10px 16px', marginBottom:20, fontSize:12, color:T.textSec }}>
+            <span style={{ color:T.teal, fontWeight:700 }}>ES Methodology: </span>
+            Average loss in worst 2.5% tail — EBA supervisory benchmark (ES 97.5%)
+          </div>
+
+          <SectionTitle>VaR 95% · VaR 99% · ES 97.5% — All Scenarios</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={esData} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit="$B" />
+                <Tooltip {...tooltipStyle} formatter={v => [`$${v.toFixed(1)}B`, '']} />
+                <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                <Bar dataKey="var95" name="VaR 95%" fill="#3b82f6" radius={[2,2,0,0]} />
+                <Bar dataKey="var99" name="VaR 99%" fill={T.amber} radius={[2,2,0,0]} />
+                <Bar dataKey="es975" name="ES 97.5%" fill={T.red} radius={[2,2,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:20 }}>
+            <div>
+              <SectionTitle>Tail Decomposition — {firstSel.name}</SectionTitle>
+              <Card>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={tailDecomp} layout="vertical" margin={{ top:5, right:20, bottom:5, left:20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                    <XAxis type="number" tick={{ fill:T.textSec, fontSize:11 }} unit="%" />
+                    <YAxis type="category" dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} width={120} />
+                    <Tooltip {...tooltipStyle} formatter={v => [`${v}%`, 'ES Share']} />
+                    <Bar dataKey="value" radius={[0,4,4,0]}>
+                      {tailDecomp.map((d, i) => <Cell key={i} fill={d.color} />)}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Card>
+            </div>
+            <div>
+              <SectionTitle>Top 3 Holdings — Tail Risk Concentration</SectionTitle>
+              <Card>
+                {top3Holdings.map((h, i) => (
+                  <div key={i} style={{ marginBottom:12 }}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:4 }}>
+                      <span style={{ color:T.text, fontWeight:600 }}>{h.name}</span>
+                      <span style={{ color:T.amber, fontWeight:700 }}>{h.share}%</span>
+                    </div>
+                    <div style={{ background:T.border, borderRadius:4, height:6 }}>
+                      <div style={{ background:T.amber, width:`${h.share}%`, height:'100%', borderRadius:4 }} />
+                    </div>
+                  </div>
+                ))}
+                <div style={{ color:T.textSec, fontSize:11, marginTop:8 }}>
+                  Top 3 combined tail concentration: <span style={{ color:T.red, fontWeight:700 }}>{top3Concentration}%</span>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="Max ES 97.5% (Delayed Trans.)"
+              value={`$${maxES.es975.toFixed(1)}B`} sub="Worst tail scenario" color={T.red} />
+            <StatCard label="ES / VaR 99% Ratio"
+              value={`${esVarRatio}×`} sub="Tail risk amplification" color={T.amber} />
+            <StatCard label="Top 3 Holdings Tail Concentration"
+              value={`${top3Concentration}%`} sub="of portfolio ES" color={T.teal} />
+          </div>
+        </div>
+      )}
+
+      {/* ── TAB 6: Transmission Channel Analysis ─────────────────────────────── */}
+      {activeTab === 5 && (
+        <div>
+          <SectionTitle>Transmission Channel Contribution — Selected Scenarios</SectionTitle>
+          {selScenarios.length > 0 && (
+            <Card style={{ marginBottom:20 }}>
+              <ResponsiveContainer width="100%" height={160}>
+                <BarChart data={stackedData} layout="vertical" margin={{ top:5, right:20, bottom:5, left:80 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                  <XAxis type="number" tick={{ fill:T.textSec, fontSize:11 }} unit="%" />
+                  <YAxis type="category" dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                  <Tooltip {...tooltipStyle} formatter={v => [`${v}%`, '']} />
+                  <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                  <Bar dataKey="carbon"    name="Carbon Price"    stackId="a" fill={CHANNELS[0].color} />
+                  <Bar dataKey="stranded"  name="Stranded Assets" stackId="a" fill={CHANNELS[1].color} />
+                  <Bar dataKey="physical"  name="Physical Damage" stackId="a" fill={CHANNELS[2].color} />
+                  <Bar dataKey="macro"     name="Macro/GDP"       stackId="a" fill={CHANNELS[3].color} />
+                  <Bar dataKey="contagion" name="Fin. Contagion"  stackId="a" fill={CHANNELS[4].color} />
+                </BarChart>
+              </ResponsiveContainer>
+            </Card>
+          )}
+
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:20 }}>
+            {CHANNELS.map(ch => {
+              const scId = firstSel.id;
+              const mult = CHANNEL_SCENARIO_MULTIPLIERS[scId]?.[ch.id] || 1;
+              const mag = (ch.base * mult).toFixed(1);
+              return (
+                <Card key={ch.id}>
+                  <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+                    <div style={{ width:10, height:10, borderRadius:'50%', background:ch.color }} />
+                    <span style={{ color:ch.color, fontWeight:700, fontSize:13 }}>{ch.label}</span>
+                  </div>
+                  <div style={{ color:T.textSec, fontSize:11, marginBottom:8, lineHeight:1.5 }}>{ch.desc}</div>
+                  <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:4, fontSize:11 }}>
+                    <div><span style={{ color:T.textMut }}>Magnitude:</span>
+                      <span style={{ color:T.amber, fontWeight:600, marginLeft:4 }}>{mag} index pts</span></div>
+                    <div><span style={{ color:T.textMut }}>Lead time:</span>
+                      <span style={{ color:T.text, marginLeft:4 }}>{ch.leadTime}</span></div>
+                    <div style={{ gridColumn:'1/-1' }}><span style={{ color:T.textMut }}>Affected: </span>
+                      <span style={{ color:T.textSec }}>{ch.affected}</span></div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          <SectionTitle>Top 2 Channels — Magnitude Across All Scenarios</SectionTitle>
+          <Card style={{ marginBottom:20 }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <BarChart data={top2ChannelData} margin={{ top:5, right:20, bottom:5, left:0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
+                <XAxis dataKey="name" tick={{ fill:T.textSec, fontSize:11 }} />
+                <YAxis tick={{ fill:T.textSec, fontSize:11 }} unit=" pts" />
+                <Tooltip {...tooltipStyle} />
+                <Legend wrapperStyle={{ color:T.textSec, fontSize:11 }} />
+                <Bar dataKey="carbon"   name="Carbon Price Channel"  fill={CHANNELS[0].color} radius={[2,2,0,0]} />
+                <Bar dataKey="stranded" name="Stranded Asset Channel" fill={CHANNELS[1].color} radius={[2,2,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+
+          <div style={{ display:'flex', gap:12 }}>
+            <StatCard label="Dominant Channel (Orderly)"
+              value="Carbon Price" sub="Highest in Net Zero, Below 2°C" color={T.gold} />
+            <StatCard label="Dominant Channel (Hot House)"
+              value="Physical Damage" sub="Peaks in Current Policies (1.8×)" color={T.red} />
+            <StatCard label="Fastest Onset Channel"
+              value="Stranded Assets" sub="Bites from 2028 in disorderly" color={T.amber} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
