@@ -204,18 +204,28 @@ def _check_module_access(user, path: str) -> JSONResponse | None:
     safe default rather than a guess).
     """
     from db.postgres import SessionLocal
-    from api.rbac_utils import get_effective_rbac_cached, known_module_path_universe
+    from api.rbac_utils import get_effective_rbac_cached, known_module_path_universe, get_disabled_module_paths_cached
     from middleware.module_access_map import resolve_module_paths
 
     db = SessionLocal()
     try:
         eff = get_effective_rbac_cached(db, user)
-        if eff.allowed_module_paths is None:
-            return None  # unrestricted (super_admin or no RBAC profile)
 
         candidates = resolve_module_paths(path, known_module_path_universe(db))
         if not candidates:
             return None  # not attributable to a specific gated module
+
+        # Kill-switch: blocks everyone except super_admin, regardless of
+        # whether they're otherwise unrestricted (legacy/no-profile users
+        # included) — a module an admin just turned off must actually stop
+        # working, not merely disappear from the nav.
+        if eff.rbac_role != "super_admin":
+            disabled = get_disabled_module_paths_cached(db)
+            if any(c in disabled for c in candidates):
+                return _forbidden(f"Module {candidates[0]!r} has been disabled by an administrator")
+
+        if eff.allowed_module_paths is None:
+            return None  # unrestricted (super_admin or no RBAC profile)
 
         allowed = set(eff.allowed_module_paths)
         if any(c in allowed for c in candidates):

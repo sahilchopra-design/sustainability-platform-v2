@@ -200,3 +200,32 @@ def known_module_path_universe(db: Session) -> set:
     _UNIVERSE_CACHE["paths"] = paths
     _UNIVERSE_CACHE["at"] = now
     return paths
+
+
+_KILL_SWITCH_CACHE: dict = {"paths": set(), "at": 0.0}
+_KILL_SWITCH_CACHE_TTL_SECONDS = 10  # matches get_effective_rbac_cached's staleness window
+
+
+def get_disabled_module_paths_cached(db: Session) -> set:
+    """
+    Module paths currently disabled team-wide via the Team Access Hub kill
+    switch (rbac_module_kill_switch — row presence = disabled). super_admin
+    always bypasses this (see auth_middleware._check_module_access and the
+    frontend's canAccess) so an admin can still reach a module they just
+    turned off in order to turn it back on. Cached for the same reason as
+    known_module_path_universe: queried on every gated request.
+    """
+    now = time.monotonic()
+    if now - _KILL_SWITCH_CACHE["at"] < _KILL_SWITCH_CACHE_TTL_SECONDS:
+        return _KILL_SWITCH_CACHE["paths"]
+
+    paths: set = set()
+    try:
+        rows = db.execute(sa_text("SELECT module_path FROM rbac_module_kill_switch")).fetchall()
+        paths.update(r[0] for r in rows if r[0])
+    except Exception:
+        pass  # table may not exist yet — degrade gracefully (nothing disabled)
+
+    _KILL_SWITCH_CACHE["paths"] = paths
+    _KILL_SWITCH_CACHE["at"] = now
+    return paths
