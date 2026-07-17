@@ -17,6 +17,17 @@ import axios from 'axios';
  *   Usage:   GET /api/admin/usage/summary, POST /api/admin/usage/log (any authenticated user)
  *   Bulk:    PUT /api/admin/users/bulk-modules — grants/denies applied to many users at once
  */
+// A misrouted/unreachable backend (e.g. a request falling through to the
+// frontend's own SPA catch-all) resolves as a successful axios response
+// whose body is an HTML string, not the expected JSON array/object. Treating
+// that as "no data" here — rather than crashing every .map/.filter call
+// downstream — turns an infra routing problem into an honest empty state
+// instead of an unmounted page.
+const asArray = (v) => (Array.isArray(v) ? v : []);
+const asUsageSummary = (v) => (v && typeof v === 'object' && !Array.isArray(v))
+  ? { total: v.total || 0, top: asArray(v.top), recent: asArray(v.recent) }
+  : { total: 0, top: [], recent: [] };
+
 export default function useAdminApi() {
   const [users, setUsers]             = useState([]);
   const [presets, setPresets]         = useState([]);
@@ -42,13 +53,13 @@ export default function useAdminApi() {
         axios.get('/api/admin/modules/kill-switch'),
         axios.get('/api/admin/usage/summary'),
       ]);
-      if (usersRes.status === 'fulfilled')   setUsers(usersRes.value.data || []);
-      if (presetsRes.status === 'fulfilled') setPresets(presetsRes.value.data || []);
-      if (invitesRes.status === 'fulfilled') setInvites(invitesRes.value.data || []);
-      if (modulesRes.status === 'fulfilled') setModuleStatus(modulesRes.value.data || []);
-      if (assignRes.status === 'fulfilled')  setAssignments(assignRes.value.data || []);
-      if (killRes.status === 'fulfilled')    setDisabledModules(killRes.value.data || []);
-      if (usageRes.status === 'fulfilled')   setUsageSummary(usageRes.value.data || { total: 0, top: [], recent: [] });
+      if (usersRes.status === 'fulfilled')   setUsers(asArray(usersRes.value.data));
+      if (presetsRes.status === 'fulfilled') setPresets(asArray(presetsRes.value.data));
+      if (invitesRes.status === 'fulfilled') setInvites(asArray(invitesRes.value.data));
+      if (modulesRes.status === 'fulfilled') setModuleStatus(asArray(modulesRes.value.data));
+      if (assignRes.status === 'fulfilled')  setAssignments(asArray(assignRes.value.data));
+      if (killRes.status === 'fulfilled')    setDisabledModules(asArray(killRes.value.data));
+      if (usageRes.status === 'fulfilled')   setUsageSummary(asUsageSummary(usageRes.value.data));
     } catch (e) {
       setError(e.message);
     } finally {
