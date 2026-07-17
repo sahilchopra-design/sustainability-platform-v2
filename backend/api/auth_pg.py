@@ -167,11 +167,28 @@ def login(body: LoginReq, response: Response, db: Session = Depends(get_db)):
     _update_last_login(db, user)
     token = _create_session(db, user.user_id)
     _set_cookie(response, token)
+
+    # Same RBAC computation GET /me uses — without this, the login response
+    # carries no allowed_module_paths, and AuthContext.processUser() treats a
+    # missing field as `null` (unrestricted/super_admin) for EVERY user until
+    # the next /me refresh recomputes it correctly. That's a real, misleading
+    # window (not just a display quirk for already-unrestricted accounts) —
+    # a restricted user would briefly see the full unfiltered nav right after
+    # signing in.
+    from api.rbac_utils import get_effective_rbac
+    eff = get_effective_rbac(db, user)
+
     return {
         "user_id": user.user_id, "email": user.email, "name": user.name,
         "role": getattr(user, "role", "viewer"),
         "org_id": str(getattr(user, "org_id", None) or ""),
         "session_token": token,
+        "rbac_role": eff.rbac_role,
+        "access_expires_at": eff.access_expires_at.isoformat() if eff.access_expires_at else None,
+        "is_read_only": eff.is_read_only,
+        "allowed_module_paths": eff.allowed_module_paths,
+        "display_org": eff.display_org,
+        "days_remaining": eff.days_remaining,
     }
 
 
