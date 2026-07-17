@@ -22,6 +22,24 @@ try {
   if (saved) axios.defaults.headers.common['Authorization'] = `Bearer ${saved}`;
 } catch {}
 
+// A misconfigured deployment can route /api/* requests to the frontend's own
+// SPA catch-all instead of the real backend, which resolves as a "successful"
+// 200 whose body is the app's index.html string, not JSON. Every page that
+// calls axios.get('/api/...') and then does .map/.filter/.find on the result
+// without checking its shape crashes React's render with no error boundary to
+// catch it (hit twice already: Financial Modeling Studio, Team Access Hub).
+// Turn that silent-success-with-wrong-shape into a real rejected request here,
+// once, so every existing .catch()/demo-fallback path in the app handles it
+// the way it already handles a genuine network failure.
+axios.interceptors.response.use((response) => {
+  const url = response.config && response.config.url;
+  if (typeof url === 'string' && url.startsWith('/api/') && typeof response.data === 'string' &&
+      /^\s*<(!doctype html|html)/i.test(response.data)) {
+    return Promise.reject(new Error(`API call to ${url} returned HTML instead of JSON — the backend is unreachable on this deployment`));
+  }
+  return response;
+});
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
