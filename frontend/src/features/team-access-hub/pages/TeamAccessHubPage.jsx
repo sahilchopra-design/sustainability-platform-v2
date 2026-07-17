@@ -291,8 +291,85 @@ const MiniModulePicker = ({ selected, onChange }) => {
   );
 };
 
+const ROLE_OPTIONS = ['viewer', 'demo', 'team_member', 'partner', 'super_admin'];
+
+// ── Add Team Member (create user directly from Team Access Hub) ──────────────
+const AddMemberForm = ({ createUser, onClose }) => {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [role, setRole] = useState('team_member');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
+  const [created, setCreated] = useState(null); // { email, generated_password }
+
+  const submit = async () => {
+    if (!email || !name) { setErr('Name and email are required.'); return; }
+    setSaving(true);
+    setErr('');
+    try {
+      const res = await createUser({ email, name, role });
+      setCreated(res);
+    } catch (e) {
+      setErr(e?.response?.data?.detail || e.message || 'Failed to create user');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (created) {
+    return (
+      <Card title='Team Member Created' style={{ marginBottom:16, background:'#f0f9f0' }}>
+        <div style={{ fontSize:12.5, color:T.text, marginBottom:8 }}>
+          <b>{created.email}</b> can now sign in.
+        </div>
+        {created.generated_password && (
+          <div style={{ fontSize:12, color:T.text, marginBottom:8 }}>
+            Temporary password (shown once — share it now):{' '}
+            <code style={{ background:T.surfaceH, padding:'2px 8px', borderRadius:4, fontWeight:700 }}>{created.generated_password}</code>
+          </div>
+        )}
+        <div style={{ fontSize:11.5, color:T.textSec, marginBottom:10 }}>
+          Pick them from the list below to assign specific modules.
+        </div>
+        <Btn size='sm' onClick={onClose}>Done</Btn>
+      </Card>
+    );
+  }
+
+  return (
+    <Card title='Add Team Member' style={{ marginBottom:16 }}>
+      <div style={{ display:'flex', gap:10, flexWrap:'wrap', alignItems:'flex-end' }}>
+        <div>
+          <div style={{ fontSize:11, color:T.textMut, marginBottom:3 }}>Name</div>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder='Jane Doe'
+            style={{ padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, fontFamily:T.font, width:180 }} />
+        </div>
+        <div>
+          <div style={{ fontSize:11, color:T.textMut, marginBottom:3 }}>Email</div>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder='jane@company.com' type='email'
+            style={{ padding:'6px 10px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, fontFamily:T.font, width:220 }} />
+        </div>
+        <div>
+          <div style={{ fontSize:11, color:T.textMut, marginBottom:3 }}>Role</div>
+          <select value={role} onChange={e => setRole(e.target.value)}
+            style={{ padding:'6px 8px', border:`1px solid ${T.border}`, borderRadius:5, fontSize:12, fontFamily:T.font }}>
+            {ROLE_OPTIONS.map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+        </div>
+        <Btn onClick={submit} disabled={saving}>{saving ? 'Creating…' : 'Create'}</Btn>
+        <Btn variant='secondary' onClick={onClose}>Cancel</Btn>
+      </div>
+      {err && <div style={{ fontSize:11.5, color:T.red, marginTop:8 }}>{err}</div>}
+      <div style={{ fontSize:11, color:T.textSec, marginTop:8 }}>
+        Creates the account with no modules beyond its role's default — pick them from the list below afterward,
+        or use Invites in <Link to='/admin' style={{ color:T.navyL }}>/admin</Link> to let them set their own password.
+      </div>
+    </Card>
+  );
+};
+
 // ── TAB 3: USER ACCESS (single-user + bulk assign) ────────────────────────────
-const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules }) => {
+const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, createUser, usersError }) => {
   const [mode, setMode] = useState('single'); // single | bulk
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -300,6 +377,7 @@ const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules }) =
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [userSearch, setUserSearch] = useState('');
+  const [showAddMember, setShowAddMember] = useState(false);
 
   const user = users.find(u => u.user_id === selectedUser);
   const baselinePaths = useMemo(() => {
@@ -355,10 +433,22 @@ const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules }) =
 
   return (
     <div>
-      <div style={{ display:'flex', gap:12, marginBottom:16 }}>
+      {usersError && (
+        <div style={{ marginBottom:14, padding:'10px 14px', background:'#fdf4f4', border:`1px solid ${T.red}55`,
+          borderRadius:8, fontSize:12, color:T.red }}>
+          Couldn't load team members: {usersError}
+        </div>
+      )}
+
+      <div style={{ display:'flex', gap:12, marginBottom:16, alignItems:'center' }}>
         <Tab label='Single User' active={mode === 'single'} onClick={() => { setMode('single'); setDirty(false); }} />
         <Tab label='Bulk Assign' active={mode === 'bulk'} onClick={() => { setMode('bulk'); setPaths([]); setDirty(false); }} />
+        <Btn size='sm' onClick={() => setShowAddMember(v => !v)} style={{ marginLeft:'auto' }}>
+          {showAddMember ? 'Close' : '+ Add Team Member'}
+        </Btn>
       </div>
+
+      {showAddMember && <AddMemberForm createUser={createUser} onClose={() => setShowAddMember(false)} />}
 
       {mode === 'single' ? (
         <div style={{ display:'grid', gridTemplateColumns:'260px 1fr', gap:16 }}>
@@ -499,8 +589,8 @@ const TeamAccessHubPage = () => {
   const { allowedPaths } = useAuth();
   const isSuperAdmin = allowedPaths === null;
   const {
-    users, presets, disabledModules, usageSummary, loading,
-    setUserModules, bulkSetUserModules, toggleModule,
+    users, presets, disabledModules, usageSummary, loading, fieldErrors,
+    setUserModules, bulkSetUserModules, toggleModule, createUser,
   } = useAdminApi();
 
   const disabledSet = useMemo(() => new Set((disabledModules || []).map(d => d.module_path)), [disabledModules]);
@@ -523,7 +613,8 @@ const TeamAccessHubPage = () => {
         <Stat label='Modules & Workflows' value={TOTAL_MODULES} sub={`${MODULE_REGISTRY.length} domain groups`} />
         <Stat label='Enabled for Team' value={enabledCount} color={T.green}
           sub={disabledSet.size > 0 ? `${disabledSet.size} disabled` : 'Full platform'} />
-        <Stat label='Team Members' value={loading ? '…' : users.length} sub='rbac_user_profiles' />
+        <Stat label='Team Members' value={loading ? '…' : users.length} color={fieldErrors.users ? T.red : undefined}
+          sub={fieldErrors.users ? 'Failed to load — see User Access tab' : 'rbac_user_profiles'} />
         <Stat label='Modules Opened (logged)' value={loading ? '…' : usageSummary.total} sub='rbac_module_usage_log' />
       </div>
 
@@ -546,7 +637,8 @@ const TeamAccessHubPage = () => {
         {activeTab === 1 && <MatrixTab disabledSet={disabledSet} />}
         {activeTab === 2 && (
           isSuperAdmin
-            ? <UserAccessTab users={users} presets={presets} setUserModules={setUserModules} bulkSetUserModules={bulkSetUserModules} />
+            ? <UserAccessTab users={users} presets={presets} setUserModules={setUserModules} bulkSetUserModules={bulkSetUserModules}
+                createUser={createUser} usersError={fieldErrors.users} />
             : <Card><div style={{ padding:24, textAlign:'center', color:T.textMut }}>Master Access required.</div></Card>
         )}
         {activeTab === 3 && <AnalyticsTab usageSummary={usageSummary} users={users} />}

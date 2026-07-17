@@ -28,6 +28,17 @@ const asUsageSummary = (v) => (v && typeof v === 'object' && !Array.isArray(v))
   ? { total: v.total || 0, top: asArray(v.top), recent: asArray(v.recent) }
   : { total: 0, top: [], recent: [] };
 
+// A rejected Promise.allSettled entry silently degrading to an empty array
+// (via asArray above) is safe for rendering but erases WHY the list is
+// empty — "no team members" and "the /users call 401'd" look identical to a
+// screen reader of the UI. Surface the real reason per endpoint instead of
+// only the generic empty state, so a real failure is diagnosable without
+// opening DevTools.
+const describeRejection = (reason) => {
+  if (reason?.response) return `HTTP ${reason.response.status}: ${reason.response.data?.detail || reason.message}`;
+  return reason?.message || 'Request failed';
+};
+
 export default function useAdminApi() {
   const [users, setUsers]             = useState([]);
   const [presets, setPresets]         = useState([]);
@@ -38,6 +49,7 @@ export default function useAdminApi() {
   const [usageSummary, setUsageSummary] = useState({ total: 0, top: [], recent: [] });
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({}); // { users: 'HTTP 403: ...', ... } — only failed calls appear here
 
   // ── Initial load ──────────────────────────────────────────────
   const loadAll = useCallback(async () => {
@@ -53,13 +65,22 @@ export default function useAdminApi() {
         axios.get('/api/admin/modules/kill-switch'),
         axios.get('/api/admin/usage/summary'),
       ]);
+      const nextFieldErrors = {};
       if (usersRes.status === 'fulfilled')   setUsers(asArray(usersRes.value.data));
+      else nextFieldErrors.users = describeRejection(usersRes.reason);
       if (presetsRes.status === 'fulfilled') setPresets(asArray(presetsRes.value.data));
+      else nextFieldErrors.presets = describeRejection(presetsRes.reason);
       if (invitesRes.status === 'fulfilled') setInvites(asArray(invitesRes.value.data));
+      else nextFieldErrors.invites = describeRejection(invitesRes.reason);
       if (modulesRes.status === 'fulfilled') setModuleStatus(asArray(modulesRes.value.data));
+      else nextFieldErrors.moduleStatus = describeRejection(modulesRes.reason);
       if (assignRes.status === 'fulfilled')  setAssignments(asArray(assignRes.value.data));
+      else nextFieldErrors.assignments = describeRejection(assignRes.reason);
       if (killRes.status === 'fulfilled')    setDisabledModules(asArray(killRes.value.data));
+      else nextFieldErrors.disabledModules = describeRejection(killRes.reason);
       if (usageRes.status === 'fulfilled')   setUsageSummary(asUsageSummary(usageRes.value.data));
+      else nextFieldErrors.usageSummary = describeRejection(usageRes.reason);
+      setFieldErrors(nextFieldErrors);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -225,7 +246,7 @@ export default function useAdminApi() {
   return {
     // State
     users, presets, invites, moduleStatus, assignments, disabledModules, usageSummary,
-    loading, error,
+    loading, error, fieldErrors,
     // Actions
     loadAll,
     createUser, updateUserRole, deactivateUser, activateUser, setUserModules, bulkSetUserModules,
