@@ -5,6 +5,22 @@ const AuthContext = createContext(null);
 
 const SESSION_KEY = 'a2_session_token';
 
+// Every axios.get/post call across the app uses a relative path (e.g.
+// '/api/admin/users'), which only ever reaches a real backend when frontend
+// and backend are served from the same origin. When they're deployed as two
+// separate Railway services (a real, current topology — see the "backend"
+// service alongside this frontend service), relative paths resolve against
+// the frontend's own origin instead, where there is no API — every call
+// either 404s or, worse, silently returns the frontend's own SPA HTML.
+// REACT_APP_API_URL (build-time, so it must be set BEFORE `npm run build`,
+// not just at runtime) points every relative /api/* call at the real
+// backend's public URL instead. Left unset, behavior is unchanged
+// (same-origin relative paths — correct for local dev and any future
+// unified single-service deployment).
+if (process.env.REACT_APP_API_URL) {
+  axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+}
+
 // Set or clear the default Bearer token for all axios requests
 function _setAxiosToken(token) {
   if (token) {
