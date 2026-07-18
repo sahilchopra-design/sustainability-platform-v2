@@ -108,7 +108,19 @@ def get_effective_rbac(db: Session, user) -> EffectiveRbac:
         allowed_module_paths = sorted((set(base_paths) | grants) - denies)
 
         # Maturity-tier filter — modules below the role's minimum tier are
-        # excluded even if nominally granted by the preset.
+        # excluded even if nominally granted by the preset. Only ~24 of the
+        # platform's 853+ modules have ever been registered in
+        # module_review_status (that table tracks a small, active
+        # draft/beta review pipeline — it was never meant to be an opt-in
+        # gate for the other 800+ shipped, production modules). Defaulting
+        # an untracked module to tier 0 ("draft") meant those 800+ were
+        # silently stripped from every non-super_admin user's effective
+        # access regardless of what was actually granted to them — caught
+        # live this session: a team_member granted 4 specific modules could
+        # only see the one that happened to have a review_tier row.
+        # Default untracked modules to tier 3 ("production" — visible to
+        # every role) so this filter only ever narrows visibility for
+        # modules EXPLICITLY registered as still in draft/beta review.
         min_tier = ROLE_MIN_TIER.get(profile.rbac_role, 3)
         if min_tier > 0 and allowed_module_paths:
             try:
@@ -118,7 +130,7 @@ def get_effective_rbac(db: Session, user) -> EffectiveRbac:
                 status_map = {r[0]: r[1] for r in rows}
                 allowed_module_paths = sorted(
                     p for p in allowed_module_paths
-                    if status_map.get(p, 0) >= min_tier
+                    if status_map.get(p, 3) >= min_tier
                 )
             except Exception:
                 pass  # table may not exist yet — degrade gracefully
