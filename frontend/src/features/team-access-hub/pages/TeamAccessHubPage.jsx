@@ -369,7 +369,7 @@ const AddMemberForm = ({ createUser, onClose }) => {
 };
 
 // ── TAB 3: USER ACCESS (single-user + bulk assign) ────────────────────────────
-const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, createUser, usersError }) => {
+const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, createUser, resetPassword, usersError }) => {
   const [mode, setMode] = useState('single'); // single | bulk
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -378,6 +378,20 @@ const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, cre
   const [saving, setSaving] = useState(false);
   const [userSearch, setUserSearch] = useState('');
   const [showAddMember, setShowAddMember] = useState(false);
+  const [resetInfo, setResetInfo] = useState(null); // { new_password } — shown once
+  const [resetting, setResetting] = useState(false);
+
+  const doResetPassword = async () => {
+    if (!selectedUser) return;
+    setResetting(true);
+    setResetInfo(null);
+    try {
+      const res = await resetPassword(selectedUser);
+      setResetInfo(res);
+    } finally {
+      setResetting(false);
+    }
+  };
 
   const user = users.find(u => u.user_id === selectedUser);
   const baselinePaths = useMemo(() => {
@@ -392,6 +406,7 @@ const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, cre
     const preset = u && u.preset_id ? presets.find(p => p.id === u.preset_id) : null;
     setPaths(preset ? preset.module_paths || [] : []);
     setDirty(false);
+    setResetInfo(null);
   };
 
   const saveSingle = async () => {
@@ -472,6 +487,21 @@ const UserAccessTab = ({ users, presets, setUserModules, bulkSetUserModules, cre
           <Card title={user ? `Modules for ${user.name || user.email}` : 'Select a team member'}
             sub={user && user.rbac_role === 'super_admin' ? 'Master Access — all modules always accessible, nothing to configure' : 'Checked = granted on top of / instead of their preset'}>
             {!user && <div style={{ padding:40, textAlign:'center', color:T.textMut, fontSize:13 }}>Pick a team member on the left</div>}
+            {user && (
+              <div style={{ marginBottom:14, paddingBottom:14, borderBottom:`1px solid ${T.border}` }}>
+                {!resetInfo ? (
+                  <Btn size='sm' variant='secondary' onClick={doResetPassword} disabled={resetting}>
+                    {resetting ? 'Resetting…' : 'Reset Password'}
+                  </Btn>
+                ) : (
+                  <div style={{ fontSize:12, color:T.text }}>
+                    New password for {user.email} (shown once — share it now):{' '}
+                    <code style={{ background:T.surfaceH, padding:'2px 8px', borderRadius:4, fontWeight:700 }}>{resetInfo.new_password}</code>
+                    {' '}<Btn size='sm' variant='secondary' onClick={() => setResetInfo(null)}>Dismiss</Btn>
+                  </div>
+                )}
+              </div>
+            )}
             {user && user.rbac_role === 'super_admin' && (
               <div style={{ padding:40, textAlign:'center' }}>
                 <div style={{ fontSize:32, marginBottom:8 }}>🔓</div>
@@ -590,7 +620,7 @@ const TeamAccessHubPage = () => {
   const isSuperAdmin = allowedPaths === null;
   const {
     users, presets, disabledModules, usageSummary, loading, fieldErrors,
-    setUserModules, bulkSetUserModules, toggleModule, createUser,
+    setUserModules, bulkSetUserModules, toggleModule, createUser, resetPassword,
   } = useAdminApi();
 
   const disabledSet = useMemo(() => new Set((disabledModules || []).map(d => d.module_path)), [disabledModules]);
@@ -638,7 +668,7 @@ const TeamAccessHubPage = () => {
         {activeTab === 2 && (
           isSuperAdmin
             ? <UserAccessTab users={users} presets={presets} setUserModules={setUserModules} bulkSetUserModules={bulkSetUserModules}
-                createUser={createUser} usersError={fieldErrors.users} />
+                createUser={createUser} resetPassword={resetPassword} usersError={fieldErrors.users} />
             : <Card><div style={{ padding:24, textAlign:'center', color:T.textMut }}>Master Access required.</div></Card>
         )}
         {activeTab === 3 && <AnalyticsTab usageSummary={usageSummary} users={users} />}

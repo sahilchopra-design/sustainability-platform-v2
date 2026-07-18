@@ -117,6 +117,13 @@ export default function useAdminApi() {
     return res.data;
   }, [loadAll]);
 
+  // Passwords are one-way hashed server-side — there's no way to recover an
+  // existing one, only overwrite it. Returns { new_password } once.
+  const resetPassword = useCallback(async (userId, password) => {
+    const res = await axios.post(`/api/admin/users/${userId}/reset-password`, { password: password || undefined });
+    return res.data;
+  }, []);
+
   // ── Bulk module pick-and-choose (replaces all overrides in one call) ──
   const setUserModules = useCallback(async (userId, grants, denies = []) => {
     const res = await axios.put(`/api/admin/users/${userId}/modules`, { grants, denies });
@@ -249,7 +256,7 @@ export default function useAdminApi() {
     loading, error, fieldErrors,
     // Actions
     loadAll,
-    createUser, updateUserRole, deactivateUser, activateUser, setUserModules, bulkSetUserModules,
+    createUser, updateUserRole, deactivateUser, activateUser, resetPassword, setUserModules, bulkSetUserModules,
     createPreset, updatePreset, deactivatePreset,
     createInvite, revokeInvite,
     grantModule, denyModule, removeAccess,
