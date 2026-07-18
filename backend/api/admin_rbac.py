@@ -453,6 +453,7 @@ def grant_module(body: GrantAccessReq, admin=Depends(require_super_admin), db: S
     """Grant a specific module to a user (override)."""
     access_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
+    _ensure_rbac_profile(db, body.user_id, admin["user_id"], now)
     # Upsert — replace deny with grant if exists
     db.execute(text("""
         INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
@@ -469,6 +470,7 @@ def deny_module(body: DenyAccessReq, admin=Depends(require_super_admin), db: Ses
     """Deny a specific module from a user (override)."""
     access_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc)
+    _ensure_rbac_profile(db, body.user_id, admin["user_id"], now)
     db.execute(text("""
         INSERT INTO rbac_module_access (id, user_id, module_path, access_type, granted_by, created_at)
         VALUES (:id, :uid, :mp, 'deny', :admin, :now)
@@ -489,6 +491,27 @@ def remove_access_override(access_id: str, admin=Depends(require_super_admin), d
     return {"status": "removed", "id": access_id}
 
 
+def _ensure_rbac_profile(db: Session, user_id: str, admin_id: str, now):
+    """Create a default (team_member) rbac_user_profiles row if this user has
+    none. get_effective_rbac() treats "no profile row at all" as unrestricted
+    — intentional so legacy/pre-RBAC users aren't locked out by default — but
+    that means grant/deny overrides on a profile-less user are silently
+    inert: the effective-access computation returns unrestricted before ever
+    consulting rbac_module_access. An admin explicitly picking modules for
+    someone is an explicit request to start restricting them, so provision
+    the profile row here rather than leaving the grants to silently do
+    nothing (this bit a real user this session — grants for a legacy account
+    with no profile row had zero effect).
+    """
+    existing = db.execute(text("SELECT id FROM rbac_user_profiles WHERE user_id = :uid"), {"uid": user_id}).fetchone()
+    if existing:
+        return
+    db.execute(text("""
+        INSERT INTO rbac_user_profiles (id, user_id, rbac_role, is_active, created_by, updated_by, created_at, updated_at)
+        VALUES (:id, :uid, 'team_member', true, :admin, :admin, :now, :now)
+    """), {"id": str(uuid.uuid4()), "uid": user_id, "admin": admin_id, "now": now})
+
+
 @router.put("/users/{user_id}/modules")
 def set_user_modules(user_id: str, body: SetModulesReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
     """Replace a user's entire set of module grant/deny overrides in one call.
@@ -498,6 +521,7 @@ def set_user_modules(user_id: str, body: SetModulesReq, admin=Depends(require_su
     user are dropped and replaced with exactly what's passed in.
     """
     now = datetime.now(timezone.utc)
+    _ensure_rbac_profile(db, user_id, admin["user_id"], now)
     db.execute(text("DELETE FROM rbac_module_access WHERE user_id = :uid"), {"uid": user_id})
     for mp in body.grants:
         db.execute(text("""
@@ -523,6 +547,7 @@ def bulk_set_user_modules(body: BulkSetModulesReq, admin=Depends(require_super_a
     """
     now = datetime.now(timezone.utc)
     for user_id in body.user_ids:
+        _ensure_rbac_profile(db, user_id, admin["user_id"], now)
         db.execute(text("DELETE FROM rbac_module_access WHERE user_id = :uid"), {"uid": user_id})
         for mp in body.grants:
             db.execute(text("""
