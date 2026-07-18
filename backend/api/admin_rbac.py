@@ -113,6 +113,9 @@ class ToggleModuleReq(BaseModel):
     enabled: bool
     reason: Optional[str] = None
 
+class ResetPasswordReq(BaseModel):
+    password: Optional[str] = None  # explicit password, or auto-generate if omitted
+
 class LogUsageReq(BaseModel):
     module_path: str
 
@@ -209,6 +212,28 @@ def create_user(body: CreateUserReq, admin=Depends(require_super_admin), db: Ses
         # can be shared with the teammate; never stored or returned again.
         "generated_password": generated_password,
     }
+
+
+@router.post("/users/{user_id}/reset-password")
+def reset_password(user_id: str, body: ResetPasswordReq, admin=Depends(require_super_admin), db: Session = Depends(get_db)):
+    """Reset a user's password without needing their old one.
+
+    Passwords are stored one-way hashed (bcrypt) — there is no way to
+    recover or view an existing password, only overwrite it. Returns the
+    new password once so the admin can share it with the teammate; it is
+    never stored or returned again after this response.
+    """
+    existing = db.execute(text("SELECT user_id FROM users_pg WHERE user_id = :uid"), {"uid": user_id}).fetchone()
+    if not existing:
+        raise HTTPException(404, "User not found")
+
+    new_password = body.password or secrets.token_urlsafe(12)
+    db.execute(
+        text("UPDATE users_pg SET password_hash = :pw WHERE user_id = :uid"),
+        {"pw": _hash_pw(new_password), "uid": user_id},
+    )
+    db.commit()
+    return {"status": "password_reset", "user_id": user_id, "new_password": new_password}
 
 
 @router.post("/users/{user_id}/activate")
