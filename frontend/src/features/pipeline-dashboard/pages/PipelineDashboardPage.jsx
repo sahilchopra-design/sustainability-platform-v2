@@ -7,7 +7,7 @@ import {
 import DataUploadPanel from '../../../components/DataUploadPanel';
 import { useTestData } from '../../../context/TestDataContext';
 
-const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 let _sc=1000;
 

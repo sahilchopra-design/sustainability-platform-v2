@@ -9,7 +9,7 @@ import {
 // Backend E93 Critical Minerals & Transition Metals Risk engine (IEA CRM 2024 /
 // EU CRM Act 2024/1252 / IRMA Standard v1.0 / OECD DDG 5-step / conflict minerals).
 // See backend/services/critical_minerals_engine.py + backend/api/v1/routes/critical_minerals.py
-const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 const CRM_API = `${API}/api/v1/critical-minerals`;
 
 // Frontend option values -> exact backend IEA_CRITICAL_MINERALS_2024 keys
