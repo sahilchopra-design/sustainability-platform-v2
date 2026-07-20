@@ -9,7 +9,7 @@ import {
 // Backend E150 EU Taxonomy Alignment engine (Regulation (EU) 2020/852 —
 // real Article 3 Substantial Contribution / DNSH / Minimum Safeguards test).
 // See backend/services/eu_taxonomy_engine.py + backend/api/v1/routes/eu_taxonomy.py
-const API = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 const EU_TAX_API = `${API}/api/v1/eu-taxonomy`;
 
 /* ── Deterministic seed helpers ─────────────────────────────────────────── */
