@@ -3,7 +3,9 @@
  * Step-by-step PCAF calculation audit trail engine
  *
  * Reference:
- *   PCAF Global GHG Accounting & Reporting Standard v2 (3rd Edition, 2022)
+ *   PCAF Standard, 2nd Edition (December 2022), Part A (financed emissions)
+ *   PCAF Insurance-Associated Emissions Standard (Nov 2022, separate publication)
+ *   PCAF Standard, Part B — Facilitated Emissions (Dec 2023, separate publication)
  *   GHG Protocol Corporate Value Chain (Scope 3) Standard
  *   TCFD Guidance on Metrics, Targets and Transition Plans (2021)
  */
@@ -14,24 +16,24 @@
 
 export const PCAF_CITATIONS = {
   attribution: {
-    ref: 'PCAF Standard Part A §4.3.1',
+    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
     formula: 'Attribution ratio = Outstanding amount ($M) / EVIC ($M)',
     notes: 'Outstanding = carrying value of loan/bond/equity at reporting date; EVIC = MarketCap + TotalDebt + Preferred + MinorityInterest',
     validRange: [0, 1],
   },
   financedEmissions: {
-    ref: 'PCAF Standard Part A §4.3.2',
+    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
     formula: 'Financed Emissions (tCO2e) = Attribution ratio × Total GHG emissions',
     scopes: 'Scope 1 + Scope 2 mandatory; Scope 3 encouraged for energy, materials, agriculture sectors',
   },
   waci: {
-    ref: 'TCFD Guidance §B.4 / PCAF Part A §4.4',
+    ref: 'TCFD Guidance on Metrics, Targets & Transition Plans (2021) / PCAF Standard, Chapter 5',
     formula: 'WACI = Σ(portfolio_weight × emissions / revenue) across all holdings',
     unit: 'tCO2e per $M revenue (revenue-denominated per TCFD 2021 standard)',
     note: 'Portfolio weight = outstanding_i / Σ outstanding',
   },
   evic: {
-    ref: 'PCAF Standard Part A §4.2',
+    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
     formula: 'EVIC = Market Cap + Total Debt + Preferred Stock + Minority Interest',
     currency: 'USD millions at reporting year-end exchange rates (ECB reference)',
     sources: { 1: 'EODHD live data', 2: 'Bloomberg/Refinitiv', 3: 'Company filing', 4: 'Sector-median estimate' },
@@ -48,14 +50,14 @@ export const PCAF_CITATIONS = {
     target: 'Target portfolio average DQS ≤ 3 for PCAF disclosure',
   },
   partB: {
-    ref: 'PCAF Standard Part B — Insurance-Associated Emissions §5',
+    ref: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) — a separate standard, not "Part B" of the core PCAF Standard',
     formula: 'Insured emissions = attribution_ratio × policyholder_GHG',
     note: 'Attribution for P&C: insured_value / asset_value; Life: exposure_value / EVIC',
   },
   partC: {
-    ref: 'PCAF Standard Part C — Facilitated Emissions §6',
-    formula: 'Facilitated emissions = underwriting_share × issuer_GHG',
-    note: 'Capital markets (bonds, equity, M&A) — one-year recognition in year of transaction',
+    ref: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) — called "Part C" in this app\'s UI for historical reasons; the official PCAF designation is Part B',
+    formula: 'Facilitated emissions = underwriting_share × issuer_GHG × 33% weighting factor',
+    note: 'Capital markets (bonds, equity) — one-year recognition in year of transaction; M&A/advisory mandates are out of scope',
   },
 };
 
@@ -68,10 +70,10 @@ export const STEP_DEFS = [
     id: 'S1',
     label: 'Input Validation',
     desc: 'Validate all required position inputs against PCAF taxonomy and reporting requirements',
-    citation: 'PCAF Standard §2.1 — Scope & Applicability',
+    citation: 'PCAF Standard, Chapter 2 — Scope & Applicability',
     checks: [
       'outstanding_amount > 0',
-      'asset_class ∈ PCAF taxonomy (12 classes)',
+      'asset_class ∈ PCAF taxonomy (7 core classes + platform extensions)',
       'currency is ISO 4217',
       'sector classified (GICS / NACE)',
       'country/geography provided',
@@ -81,7 +83,7 @@ export const STEP_DEFS = [
     id: 'S2',
     label: 'EVIC Determination',
     desc: 'Retrieve Enterprise Value Including Cash from live data or estimate via sector-median ratio',
-    citation: 'PCAF Standard Part A §4.2',
+    citation: 'PCAF Standard, Chapter 5',
     checks: [
       'Attempt EODHD live lookup (DQS=1)',
       'Fall back to sector-median ratio × market cap (DQS=4)',
@@ -94,7 +96,7 @@ export const STEP_DEFS = [
     id: 'S3',
     label: 'Attribution Ratio',
     desc: 'Compute the proportion of investee enterprise value attributable to this investment',
-    citation: 'PCAF Standard Part A §4.3.1',
+    citation: 'PCAF Standard, Chapter 5',
     formula: 'ratio = outstanding_$M / EVIC_$M',
     checks: [
       'ratio ∈ (0, 1) — flag if outside range',
@@ -108,7 +110,7 @@ export const STEP_DEFS = [
     id: 'S4',
     label: 'Emissions Data Selection',
     desc: 'Select GHG inventory data; record scope coverage, emission factors, and DQS per scope',
-    citation: 'PCAF Standard Part A §4.3.2 + GHG Protocol Corporate Standard',
+    citation: 'PCAF Standard, Chapter 5 + GHG Protocol Corporate Standard',
     checks: [
       'Scope 1 + Scope 2 required (location-based or market-based)',
       'Scope 3 encouraged: mandatory for energy, materials, agriculture',
@@ -121,7 +123,7 @@ export const STEP_DEFS = [
     id: 'S5',
     label: 'Financed Emissions Calculation',
     desc: 'Apply attribution ratio to total portfolio emissions to derive financed emissions',
-    citation: 'PCAF Standard Part A §4.3.2',
+    citation: 'PCAF Standard, Chapter 5',
     formula: 'financed_tCO2e = attribution_ratio × (Scope1 + Scope2 + Scope3)',
     checks: [
       'Result in tCO2e',
@@ -134,7 +136,7 @@ export const STEP_DEFS = [
     id: 'S6',
     label: 'WACI Component',
     desc: 'Calculate this holding\'s contribution to portfolio Weighted Average Carbon Intensity',
-    citation: 'TCFD Metrics §B.4 / PCAF §4.4',
+    citation: 'TCFD Guidance on Metrics, Targets & Transition Plans (2021) / PCAF Standard, Chapter 5',
     formula: 'waci_contribution = portfolio_weight × (total_emissions / revenue_$M)',
     checks: [
       'Revenue in $M (same currency as outstanding)',
@@ -148,7 +150,7 @@ export const STEP_DEFS = [
     id: 'S7',
     label: 'DQS Composite Score',
     desc: 'Derive final composite Data Quality Score from all input data sources',
-    citation: 'PCAF Standard — Data Quality Annex §A.2',
+    citation: 'PCAF Standard, Chapter 3 (Data Quality)',
     formula: 'composite_DQS = max(DQS_EVIC, DQS_scope1, DQS_scope2, DQS_scope3)',
     checks: [
       'EVIC DQS: 1 if EODHD live, 4 if sector estimate',
@@ -173,7 +175,12 @@ export const STEP_DEFS = [
  * @returns {object} Full audit trail with 7 steps, flags, and summary
  */
 export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
-  const evicMn = (parseFloat(pos.evicBn) || 0) * 1000;
+  // Position objects (see BASE_POSITIONS in PcafFinancedEmissionsPage.jsx)
+  // carry EVIC as `evic` in $Bn — there is no `evicBn` field. Reading the
+  // wrong key silently produced NaN -> 0 for every position, zeroing every
+  // audit-trail attribution ratio and financed-emissions figure regardless
+  // of whether real EVIC data existed (GAP-002).
+  const evicMn = (parseFloat(pos.evic) || 0) * 1000;
   const outstandingMn = parseFloat(pos.outstanding) || 0;
   const scope1 = parseFloat(pos.scope1) || 0;
   const scope2 = parseFloat(pos.scope2) || 0;
@@ -191,6 +198,7 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
   // Build flags
   const flags = [];
   if (!pos.ticker || pos.ticker === '—') flags.push({ severity: 'warn', code: 'F01', msg: 'No ticker provided — EVIC estimated from sector median only' });
+  if (evicMn <= 0 && outstandingMn > 0) flags.push({ severity: 'error', code: 'F00', msg: 'EVIC = $0 — attribution ratio and financed emissions cannot be computed; this is a blocking data error, not a proxy estimate' });
   if (evicMn < outstandingMn && evicMn > 0) flags.push({ severity: 'error', code: 'F02', msg: `EVIC ($${evicMn.toFixed(0)}M) < outstanding ($${outstandingMn.toFixed(0)}M) — data integrity issue` });
   if (attributionRatio > 0.25) flags.push({ severity: 'warn', code: 'F03', msg: `High attribution ratio ${(attributionRatio * 100).toFixed(1)}% — concentrated exposure; verify position size` });
   if (scope3 === 0 && ['Energy', 'Materials', 'Utilities', 'Consumer Staples'].some(s => (pos.sector || '').includes(s))) flags.push({ severity: 'warn', code: 'F04', msg: 'Scope 3 missing for material sector — PCAF recommends inclusion for energy/materials' });
@@ -233,7 +241,12 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
           : 'Sector-median estimate — DQS=4 (proxy)',
         note: evicDqs === 4 ? 'To improve: obtain Bloomberg EVIC or company annual report' : 'Live market data; verify against latest company filing',
       },
-      status: evicMn > 0 ? 'PASS' : 'WARN',
+      // EVIC = 0 zeroes out every downstream figure (attribution ratio,
+      // financed emissions, WACI) for this position — a blocking failure,
+      // not a mere data-quality warning (GAP-002/GAP-003: this previously
+      // showed WARN, alongside a hardcoded checkmark that always rendered
+      // "✓ Validate EVIC > 0" even when EVIC was 0).
+      status: evicMn > 0 ? 'PASS' : 'FAIL',
     },
     {
       ...STEP_DEFS[2],
@@ -399,7 +412,7 @@ export function generatePortfolioAuditTrail(positions) {
   return {
     trailId: `PCAF-AT-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`,
     generatedAt: new Date().toISOString(),
-    standard: 'PCAF Standard v2 (3rd Edition, 2022) + TCFD Guidance on Metrics (2021)',
+    standard: 'PCAF Standard, 2nd Edition (Dec 2022) + TCFD Guidance on Metrics (2021)',
     reportingYear: new Date().getFullYear() - 1,
     positions: trails,
     portfolio: {
@@ -427,7 +440,7 @@ export function generatePortfolioAuditTrail(positions) {
         : 'Poor — majority of positions using proxies; data improvement plan required',
     },
     methodologyNotes: [
-      'Attribution ratio: outstanding ($M) / EVIC ($M) per PCAF Standard Part A §4.3.1',
+      'Attribution ratio: outstanding ($M) / EVIC ($M) per PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
       'EVIC: EODHD live data where available (DQS=1); sector-median ratio × market cap otherwise (DQS=4)',
       'WACI denominator: revenue (not EVIC) per TCFD 2021 standard; revenue estimated at 15% × EVIC when not available',
       'Scope 3 Category 15 (investments) excluded at portfolio level to prevent double-counting',

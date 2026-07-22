@@ -371,7 +371,7 @@ export const NAV_GROUPS = [
   ]},
   { label: 'Financed Emissions & Climate Banking', icon: '🏦', color: '#0c4a6e', items: [
     { path: '/climate-banking-hub',          label: 'Climate Banking Hub',           badge: 'Hub · PCAF · GAR · Stress Test · Board Dashboard · NZBA',      code: 'EP-AJ6' },
-    { path: '/pcaf-financed-emissions',      label: 'PCAF Financed Emissions',       badge: 'PCAF v2 · 5 Asset Classes · DQS · 847 ktCO2e · WACI 312',     code: 'EP-AJ1' },
+    { path: '/pcaf-financed-emissions',      label: 'PCAF Financed Emissions',       badge: 'PCAF Standard 2nd Ed · 7 Core + 5 Ext. Classes · DQS · Part A/B/IAE',     code: 'EP-AJ1' },
     { path: '/climate-stress-test',          label: 'Climate Stress Test',           badge: 'NGFS IV · ECB/BoE · PD Migration · CET1 -2.8% · Delayed',      code: 'EP-AJ2' },
     { path: '/green-asset-ratio',            label: 'Green Asset Ratio',             badge: 'EU Taxonomy · GAR 7.3% · €85.4bn · CCM 4.8bn · DNSH',         code: 'EP-AJ3' },
     { path: '/portfolio-temperature-score',  label: 'Portfolio Temperature Score',   badge: 'PACTA · 2.7°C · 50 Holdings · SBTi Engagement · Sectors',      code: 'EP-AJ4' },
@@ -711,7 +711,7 @@ export const NAV_GROUPS = [
     { path: '/structured-credit-climate',       label: 'Structured Credit Climate',         badge: 'MBS/ABS/CLO · 500 Loans · Collateral Haircut · Tranche Loss · PCAF Class 5/7/8',      code: 'EP-CI3' },
     { path: '/commodity-derivatives-climate',   label: 'Commodity Derivatives Climate',     badge: 'Oil/Gas Forward Curves · Contango Shift · Black-76 · Crack/Dark/Spark Spreads',        code: 'EP-CI4' },
     { path: '/insurance-portfolio-climate',     label: 'Insurance Portfolio Climate',       badge: 'Investment + Underwriting · Reserve Adequacy · ORSA · Solvency II SCR · ESG Rating',   code: 'EP-CI5' },
-    { path: '/pcaf-universal-attributor',       label: 'PCAF 8/8 Universal Attributor',     badge: 'All 8 PCAF Classes · DQ Heatmap · Attribution Formulas · WACI · Target Tracking',      code: 'EP-CI6' },
+    { path: '/pcaf-universal-attributor',       label: 'PCAF 8/8 Universal Attributor',     badge: '7 PCAF Classes + 1 Extension · DQ Heatmap · Attribution Formulas · WACI · Target Tracking', code: 'EP-CI6' },
   ]},
   { label: 'Emerging Market Transition Intelligence', icon: '🌏', color: '#b45309', items: [
     { path: '/china-india-transition',          label: 'China & India Transition Engine',   badge: 'China ETS · India BRSR/H₂ · Coal Phase-Down · RE Curves · Carbon Price',               code: 'EP-CJ1' },

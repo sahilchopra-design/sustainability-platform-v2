@@ -744,7 +744,7 @@ export const MODULE_CATALOG = [
       {
         "path": "/pcaf-financed-emissions",
         "label": "PCAF Financed Emissions",
-        "badge": "PCAF v2 · 5 Asset Classes · DQS · 847 ktCO2e · WACI 312",
+        "badge": "PCAF Standard 2nd Ed · 7 Core + 5 Ext. Classes · DQS · Part A/B/IAE",
         "code": "EP-AJ1"
       },
       {

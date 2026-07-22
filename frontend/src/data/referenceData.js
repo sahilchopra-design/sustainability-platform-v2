@@ -333,6 +333,12 @@ export const REGULATORY_THRESHOLDS = {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 6. PCAF_DATA_QUALITY — DQS 1-5 definitions & scoring [6]
+// The `score`/`label`/`description`/`method`/`uncertainty` fields mirror the
+// PCAF Standard's Data Quality Score table (5 quality-score options per
+// asset class, no numeric weighting). `weight` is NOT a PCAF-defined value —
+// PCAF's DQS table has no such coefficient — it's this platform's internal
+// house methodology for weighting DQS improvement priority. Keep it labeled
+// as such wherever rendered (GAP-017).
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const PCAF_DATA_QUALITY = [
@@ -483,8 +489,10 @@ export const SECTOR_BENCHMARKS = [
   { gics: '2510', sector: 'Automobiles & Components',  medianIntensity: 55,  parisTarget2030: 30,  sbtiMethod: 'SDA', decarbRate: 7.0 },
   { gics: '2520', sector: 'Consumer Durables',         medianIntensity: 35,  parisTarget2030: 19,  sbtiMethod: 'ACA', decarbRate: 4.2 },
   { gics: '2530', sector: 'Consumer Services',         medianIntensity: 28,  parisTarget2030: 15,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '2550', sector: 'Retailing',                 medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '3010', sector: 'Food & Staples Retailing',  medianIntensity: 30,  parisTarget2030: 17,  sbtiMethod: 'ACA', decarbRate: 4.2 },
+  { gics: '2550', sector: 'Consumer Discretionary Distribution & Retail', medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 },
+  // "Food & Staples Retailing" was renamed "Consumer Staples Distribution &
+  // Retail" in the March 2023 GICS structure revision; code 3010 unchanged.
+  { gics: '3010', sector: 'Consumer Staples Distribution & Retail', medianIntensity: 30,  parisTarget2030: 17,  sbtiMethod: 'ACA', decarbRate: 4.2 },
   { gics: '3020', sector: 'Food Beverage & Tobacco',   medianIntensity: 65,  parisTarget2030: 36,  sbtiMethod: 'SDA', decarbRate: 4.2 },
   { gics: '3030', sector: 'Household & Personal',      medianIntensity: 25,  parisTarget2030: 14,  sbtiMethod: 'ACA', decarbRate: 4.2 },
   { gics: '3510', sector: 'Health Care Equipment',     medianIntensity: 12,  parisTarget2030: 7,   sbtiMethod: 'ACA', decarbRate: 4.2 },
@@ -499,12 +507,19 @@ export const SECTOR_BENCHMARKS = [
   { gics: '5020', sector: 'Media & Entertainment',     medianIntensity: 10,  parisTarget2030: 6,   sbtiMethod: 'ACA', decarbRate: 4.2 },
   { gics: '5510', sector: 'Utilities',                 medianIntensity: 980, parisTarget2030: 540, sbtiMethod: 'SDA', decarbRate: 7.0 },
   { gics: '6010', sector: 'Equity REITs',              medianIntensity: 32,  parisTarget2030: 18,  sbtiMethod: 'SDA', decarbRate: 4.2, note: 'kgCO2e/m2 basis often used' },
-  { gics: '2540', sector: 'Consumer Discretionary Dist',medianIntensity: 15, parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '1520', sector: 'Chemicals',                 medianIntensity: 480, parisTarget2030: 265, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '1530', sector: 'Construction Materials',    medianIntensity: 720, parisTarget2030: 396, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '1540', sector: 'Containers & Packaging',    medianIntensity: 180, parisTarget2030: 99,  sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '1550', sector: 'Metals & Mining',           medianIntensity: 550, parisTarget2030: 303, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '2560', sector: 'Hotels Restaurants Leisure', medianIntensity: 40,  parisTarget2030: 22,  sbtiMethod: 'ACA', decarbRate: 4.2 },
+  // NOTE (GAP-026): 2540/2560 below are not confirmed against the current
+  // GICS structure — flagged for verification, not fabricated as authoritative.
+  { gics: '2540', sector: 'Consumer Discretionary Dist — UNVERIFIED CODE',medianIntensity: 15, parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 },
+  // 1520/1530/1540/1550 previously presented as GICS Industry Groups, which
+  // is wrong: under GICS, Materials (sector 15) has exactly one Industry
+  // Group, 1510, and Chemicals/Construction Materials/Containers & Packaging/
+  // Metals & Mining are 6-digit Industries beneath it. Corrected to the real
+  // 6-digit Industry codes below.
+  { gics: '151010', sector: 'Chemicals',                 medianIntensity: 480, parisTarget2030: 265, sbtiMethod: 'SDA', decarbRate: 4.2 },
+  { gics: '151020', sector: 'Construction Materials',    medianIntensity: 720, parisTarget2030: 396, sbtiMethod: 'SDA', decarbRate: 4.2 },
+  { gics: '151030', sector: 'Containers & Packaging',    medianIntensity: 180, parisTarget2030: 99,  sbtiMethod: 'SDA', decarbRate: 4.2 },
+  { gics: '151040', sector: 'Metals & Mining',           medianIntensity: 550, parisTarget2030: 303, sbtiMethod: 'SDA', decarbRate: 4.2 },
+  { gics: '2560', sector: 'Hotels Restaurants Leisure — UNVERIFIED CODE', medianIntensity: 40,  parisTarget2030: 22,  sbtiMethod: 'ACA', decarbRate: 4.2 },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
