@@ -267,7 +267,7 @@ const DEFAULT_HOLDINGS = [
 const LOB_FIELDS = {
   'Motor': {
     color: '#1b3a5c', lobValues: ['motor_personal', 'motor_commercial'],
-    reference: 'PCAF Part B § 5.2.1 · Premium-weighted vehicle emissions',
+    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Premium-weighted vehicle emissions',
     fields: [
       { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['motor_personal', 'motor_commercial'] },
       { key: 'vehicle_count', label: 'Vehicle Count', type: 'number' },
@@ -278,7 +278,7 @@ const LOB_FIELDS = {
   },
   'Property': {
     color: '#d97706', lobValues: ['property_residential', 'property_commercial'],
-    reference: 'PCAF Part B § 5.2.2 · Building area × EPC emission factor',
+    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Building area × EPC emission factor',
     fields: [
       { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['property_residential', 'property_commercial'] },
       { key: 'insured_property_area_m2', label: 'Area (m²)', type: 'number' },
@@ -289,7 +289,7 @@ const LOB_FIELDS = {
   },
   'Commercial': {
     color: '#0d9488', lobValues: ['commercial_marine', 'commercial_energy', 'commercial_liability', 'commercial_other'],
-    reference: 'PCAF Part B § 5.2.3 · Revenue-based sector emission factor',
+    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Revenue-based sector emission factor',
     fields: [
       { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['commercial_marine','commercial_energy','commercial_liability','commercial_other'] },
       { key: 'insured_revenue_inr_cr', label: 'Insured Rev (₹Cr)', type: 'number' },
@@ -298,19 +298,19 @@ const LOB_FIELDS = {
   },
   'Life': {
     color: '#4f46e5', lobValues: ['life'],
-    reference: 'PCAF Part B § 5.2.4 · Premium-only disclosure',
+    reference: 'Out of scope of the PCAF IAE Standard (Nov 2022) — illustrative proxy only, excluded from the PCAF-labeled total',
     fields: [],
   },
   'Health': {
     color: '#5a8a6a', lobValues: ['health'],
-    reference: 'PCAF Part B § 5.2.5 · Healthcare sector EF',
+    reference: 'Out of scope of the PCAF IAE Standard (Nov 2022) — illustrative proxy only, excluded from the PCAF-labeled total',
     fields: [],
   },
   'Reinsurance': {
-    // NEW in Part C 2nd Edition Dec 2025
+    // Platform extension — not a core line of business in the PCAF IAE Standard (Nov 2022)
     color: '#be185d', // rose
     lobValues: ['treaty_reinsurance'],
-    reference: 'PCAF Part C 2nd Ed § 7.1 · Treaty reinsurance attribution',
+    reference: 'Platform extension (not a core PCAF IAE line of business) — verify against current PCAF guidance',
     fields: [
       { key: 'line_of_business', label: 'Type', type: 'select', options: ['treaty_reinsurance'] },
       { key: 'ceded_premium_inr_cr', label: 'Ceded Premium (₹Cr)', type: 'number' },
@@ -320,10 +320,10 @@ const LOB_FIELDS = {
     ],
   },
   'Project Insurance': {
-    // NEW in Part C 2nd Edition Dec 2025
+    // Platform extension — not a core line of business in the PCAF IAE Standard (Nov 2022)
     color: '#7c3aed', // violet
     lobValues: ['project_insurance'],
-    reference: 'PCAF Part C 2nd Ed § 7.2 · All-risk construction/erection',
+    reference: 'Platform extension (not a core PCAF IAE line of business) — verify against current PCAF guidance',
     fields: [
       { key: 'line_of_business', label: 'Type', type: 'select', options: ['project_insurance'] },
       { key: 'sum_insured_inr_cr', label: 'Sum Insured (₹Cr)', type: 'number' },
@@ -362,7 +362,7 @@ const DEFAULT_INSURANCE_POLICIES = [
 const DEAL_TYPE_FIELDS = {
   'Bond Underwriting': {
     color: '#1b3a5c', dealTypeValue: 'bond_underwriting',
-    reference: 'PCAF Part C § 6.1 · AF = Underwritten ÷ Deal Size',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Underwritten ÷ Deal Size',
     fields: [
       { key: 'underwritten_amount_inr_cr', label: 'Underwritten (₹Cr)', type: 'number' },
       { key: 'total_deal_size_inr_cr', label: 'Deal Size (₹Cr)', type: 'number' },
@@ -374,7 +374,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'IPO Underwriting': {
     color: '#4f46e5', dealTypeValue: 'ipo_underwriting',
-    reference: 'PCAF Part C § 6.2 · AF = Placed ÷ (MCap × 3)',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Placed ÷ (MCap × 3)',
     fields: [
       { key: 'shares_placed_value_inr_cr', label: 'Placed Value (₹Cr)', type: 'number' },
       { key: 'market_cap_inr_cr', label: 'Market Cap (₹Cr)', type: 'number' },
@@ -385,7 +385,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'Equity Placement': {
     color: '#2563eb', dealTypeValue: 'equity_placement',
-    reference: 'PCAF Part C § 6.3 · AF = Placed ÷ MCap',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Placed ÷ MCap',
     fields: [
       { key: 'shares_placed_value_inr_cr', label: 'Placed Value (₹Cr)', type: 'number' },
       { key: 'market_cap_inr_cr', label: 'Market Cap (₹Cr)', type: 'number' },
@@ -393,7 +393,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'Syndicated Loan': {
     color: '#5a8a6a', dealTypeValue: 'syndicated_loan',
-    reference: 'PCAF Part C § 6.4 · AF = Tranche ÷ Facility',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Tranche ÷ Facility',
     fields: [
       { key: 'tranche_held_inr_cr', label: 'Tranche (₹Cr)', type: 'number' },
       { key: 'total_facility_inr_cr', label: 'Facility (₹Cr)', type: 'number' },
@@ -402,7 +402,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'Securitisation': {
     color: '#0d9488', dealTypeValue: 'securitisation',
-    reference: 'PCAF Part C § 6.5 · AF = Tranche ÷ Pool',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Tranche ÷ Pool',
     fields: [
       { key: 'tranche_held_inr_cr', label: 'Tranche (₹Cr)', type: 'number' },
       { key: 'total_pool_inr_cr', label: 'Pool (₹Cr)', type: 'number' },
@@ -413,7 +413,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'Convertible Underwriting': {
     color: '#d97706', dealTypeValue: 'convertible_underwriting',
-    reference: 'PCAF Part C § 6.6 · AF = Underwritten ÷ Deal Size',
+    reference: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) · AF = Underwritten ÷ Deal Size',
     fields: [
       { key: 'underwritten_amount_inr_cr', label: 'Underwritten (₹Cr)', type: 'number' },
       { key: 'total_deal_size_inr_cr', label: 'Deal Size (₹Cr)', type: 'number' },
@@ -421,7 +421,7 @@ const DEAL_TYPE_FIELDS = {
   },
   'Advisory M&A': {
     color: '#c5a96a', dealTypeValue: 'advisory_mna',
-    reference: 'PCAF Part C § 6.7 · Fee-based advisory',
+    reference: 'Platform extension (not a core PCAF Part B attribution method) · Fee-based advisory, out of scope of capital-markets issuance',
     fields: [
       { key: 'arranged_amount_inr_cr', label: 'Arranged (₹Cr)', type: 'number', help: 'Advisory fee basis' },
     ],
@@ -516,7 +516,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'sovereign_ghg_mtco2e', label: 'Country GHG (MtCO₂e)', type: 'number', help: 'Auto from EDGAR if blank' },
     { key: 'gdp_usd_tn', label: 'GDP (USD Tn)', type: 'number' },
   ],
-  // NEW in 3rd Edition Dec 2025 — green bonds/loans with ring-fenced proceeds
+  // Platform extension (not a core PCAF asset class) — green bonds/loans with ring-fenced proceeds
   'Use of Proceeds': [
     { key: 'exposure_inr_cr', label: 'Invested Amount (₹Cr)', type: 'number' },
     { key: 'total_deal_size_inr_cr', label: 'Total Issue (₹Cr)', type: 'number' },
@@ -524,7 +524,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'project_scope1_tco2e', label: 'Project Scope 1', type: 'number', help: 'Ring-fenced project emissions' },
     { key: 'project_scope2_tco2e', label: 'Project Scope 2', type: 'number' },
   ],
-  // NEW in 3rd Edition — pooled asset structures
+  // Platform extension (not a core PCAF asset class) — pooled asset structures
   'Securitisation': [
     { key: 'exposure_inr_cr', label: 'Tranche Held (₹Cr)', type: 'number' },
     { key: 'total_pool_inr_cr', label: 'Total Pool (₹Cr)', type: 'number' },
@@ -532,7 +532,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'underlying_asset_count', label: 'Underlying Assets', type: 'number' },
     { key: 'weighted_avg_carbon_intensity', label: 'Avg tCO₂e/asset', type: 'number', help: 'WAC intensity of pool' },
   ],
-  // NEW in 3rd Edition — state/province/city bonds
+  // Platform extension (not a core PCAF asset class) — state/province/city bonds
   'Sub-sovereign Debt': [
     { key: 'exposure_inr_cr', label: 'Bond Value (₹Cr)', type: 'number' },
     { key: 'jurisdiction_name', label: 'Jurisdiction', type: 'text', help: 'State/province/city name' },
@@ -540,7 +540,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'jurisdiction_ghg_tco2e', label: 'Jurisdiction GHG', type: 'number', help: 'Annual tCO₂e of jurisdiction' },
     { key: 'country_iso', label: 'Country', type: 'text' },
   ],
-  // NEW in 3rd Edition (optional) — IFRS S1/S2 aligned
+  // Platform extension (not a core PCAF asset class, optional) — IFRS S1/S2 aligned
   'Undrawn Commitments': [
     { key: 'undrawn_amount_inr_cr', label: 'Undrawn Amount (₹Cr)', type: 'number' },
     { key: 'total_commitment_inr_cr', label: 'Total Commitment (₹Cr)', type: 'number' },
@@ -550,6 +550,17 @@ const INSTRUMENT_FIELDS = {
   ],
 };
 
+// Default reporting year = the most recently COMPLETED Indian financial year
+// (Apr–Mar), labeled by its start year (e.g. "2025" == FY2025-26). Computed
+// from the current date rather than hardcoded so this doesn't go stale again
+// (GAP-030 — the module previously defaulted to a fixed "2024"/FY24 no matter
+// when it was opened).
+function defaultPcafReportingYear() {
+  const now = new Date();
+  const y = now.getFullYear();
+  return String(now.getMonth() >= 3 ? y - 1 : y - 2); // Apr=index 3
+}
+
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function PCafIndiaBrsrPage() {
   const [tab, setTab] = useState('partA');
@@ -558,8 +569,8 @@ export default function PCafIndiaBrsrPage() {
 
   // Part A state
   const [holdings, setHoldings] = useState(DEFAULT_HOLDINGS);
-  const [portfolioName, setPortfolioName] = useState('AA Impact — India PCAF Portfolio 2024');
-  const [reportingYear, setReportingYear] = useState('2024');
+  const [portfolioName, setPortfolioName] = useState(() => `AA Impact — India PCAF Portfolio ${defaultPcafReportingYear()}`);
+  const [reportingYear, setReportingYear] = useState(defaultPcafReportingYear);
   const [portfolioResult, setPortfolioResult] = useState(null);
   const [portfolioLoading, setPortfolioLoading] = useState(false);
   const [portfolioError, setPortfolioError] = useState('');
@@ -630,18 +641,81 @@ export default function PCafIndiaBrsrPage() {
   };
 
   // ── Client-side PCAF Part A fallback calculation ──────────────────────
+  // Per-asset-class attribution: only 'Listed Equity'/'Corporate Bond'/
+  // 'Business Loan'/'Project Finance'/'Commercial Real Estate'/'Mortgage'
+  // share a common formula (AF = exposure ÷ evic_inr_cr, which INSTRUMENT_FIELDS
+  // relabels per type — "Total Assets", "Total Project Cost", "Property Value" —
+  // but is the same ratio). The other asset classes need a different
+  // denominator that this platform's own holding fields already capture
+  // (total_deal_size_inr_cr, total_pool_inr_cr, jurisdiction_budget_inr_cr,
+  // total_commitment_inr_cr) — applying the equity formula to them instead
+  // silently produced AF=0/FE=0 for every non-equity/bond holding (an
+  // asset-class attribution error, not a genuine zero result).
+  const EVIC_DENOMINATOR_TYPES = new Set([
+    'Listed Equity', 'Corporate Bond', 'Business Loan', 'Project Finance',
+    'Commercial Real Estate', 'Mortgage',
+  ]);
+
+  const calcHoldingAttribution = (h) => {
+    const type = h.instrument_type || 'Listed Equity';
+    const exp  = parseFloat(h.exposure_inr_cr) || 0;
+    const s1   = parseFloat(h.scope1_co2e) || 0;
+    const s2   = parseFloat(h.scope2_co2e) || 0;
+
+    if (EVIC_DENOMINATOR_TYPES.has(type)) {
+      const evic = parseFloat(h.evic_inr_cr) || 0;
+      if (evic <= 0) return { computable: false, reason: 'Missing EVIC/total-assets/property-value denominator', af: 0, financed: 0 };
+      return { computable: true, af: exp / evic, financed: (exp / evic) * (s1 + s2) };
+    }
+    if (type === 'Use of Proceeds') {
+      const total = parseFloat(h.total_deal_size_inr_cr) || 0;
+      const ps1 = parseFloat(h.project_scope1_tco2e) || 0;
+      const ps2 = parseFloat(h.project_scope2_tco2e) || 0;
+      if (total <= 0) return { computable: false, reason: 'Missing total issue size', af: 0, financed: 0 };
+      const af = exp / total;
+      return { computable: true, af, financed: af * (ps1 + ps2) };
+    }
+    if (type === 'Securitisation') {
+      const pool = parseFloat(h.total_pool_inr_cr) || 0;
+      const wac  = parseFloat(h.weighted_avg_carbon_intensity) || 0;
+      const assetCount = parseFloat(h.underlying_asset_count) || 0;
+      if (pool <= 0) return { computable: false, reason: 'Missing total pool size', af: 0, financed: 0 };
+      const af = exp / pool;
+      const poolEmissions = wac * assetCount; // tCO2e/asset x count = pool total
+      return { computable: true, af, financed: af * poolEmissions };
+    }
+    if (type === 'Sub-sovereign Debt') {
+      const budget = parseFloat(h.jurisdiction_budget_inr_cr) || 0;
+      const jurGhg = parseFloat(h.jurisdiction_ghg_tco2e) || 0;
+      if (budget <= 0) return { computable: false, reason: 'Missing jurisdiction budget', af: 0, financed: 0 };
+      const af = exp / budget;
+      return { computable: true, af, financed: af * jurGhg };
+    }
+    if (type === 'Undrawn Commitments') {
+      const undrawn = parseFloat(h.undrawn_amount_inr_cr) || 0;
+      const total   = parseFloat(h.total_commitment_inr_cr) || 0;
+      const bs1 = parseFloat(h.borrower_scope1_tco2e) || 0;
+      const bs2 = parseFloat(h.borrower_scope2_tco2e) || 0;
+      if (total <= 0) return { computable: false, reason: 'Missing total commitment size', af: 0, financed: 0, undrawn: true };
+      const af = undrawn / total;
+      return { computable: true, af, financed: af * (bs1 + bs2), undrawn: true };
+    }
+    // Sovereign Bond / Vehicle Loan: this client-side fallback does not
+    // implement the GDP-PPP or vehicle-value-at-origination formulas these
+    // classes need (avoids inventing an unverified FX/valuation assumption)
+    return { computable: false, reason: `${type} requires the backend engine (not implemented in client-side fallback)`, af: 0, financed: 0 };
+  };
+
   const calcDemoPortfolio = useCallback(() => {
     const resultHoldings = holdings.map(h => {
       const exp  = parseFloat(h.exposure_inr_cr)  || 0;
-      const evic = parseFloat(h.evic_inr_cr)       || 0;
       const rev  = parseFloat(h.revenue_inr_cr)    || 0;
       const s1   = parseFloat(h.scope1_co2e)       || 0;
       const s2   = parseFloat(h.scope2_co2e)       || 0;
       const s3   = parseFloat(h.scope3_co2e)       || 0;
-      const af   = evic > 0 ? exp / evic : 0;
-      const financed = af * (s1 + s2);
-      const dqs  = h.dqs_override ? parseInt(h.dqs_override) : (s1 + s2 > 0 ? 3 : 4);
-      const waci = rev > 0 ? (financed / rev) : 0;
+      const { computable, reason, af, financed, undrawn } = calcHoldingAttribution(h);
+      const dqs  = h.dqs_override ? parseInt(h.dqs_override) : (!computable ? 5 : (s1 + s2 > 0 ? 3 : 4));
+      const waci = computable && rev > 0 ? (financed / rev) : 0;
       const unc  = dqs === 1 ? 5 : dqs === 2 ? 10 : dqs === 3 ? 20 : dqs === 4 ? 40 : 60;
       return {
         entity_name: h.company_name, company_name: h.company_name,
@@ -651,27 +725,37 @@ export default function PCafIndiaBrsrPage() {
         financed_co2e_tonne: financed, waci_tco2e_per_inr_cr: waci,
         total_company_co2e_tonne: s1 + s2 + s3, dqs,
         uncertainty_band_pct: unc, scope1_co2e: s1, scope2_co2e: s2,
+        computable, data_gap_reason: computable ? null : reason,
+        undrawn_commitment: !!undrawn,
       };
     });
-    const totalFinanced = resultHoldings.reduce((s, h) => s + h.financed_co2e_tonne, 0);
-    const totalExp      = resultHoldings.reduce((s, h) => s + h.exposure_inr_cr, 0);
+    // Undrawn commitments are reported separately from financed emissions
+    // (PCAF: drawn amounts in FE; committed-undrawn is its own disclosure
+    // line) — and non-computable holdings must not contribute a phantom
+    // zero to a total that's presented as complete.
+    const computableFinanced = resultHoldings.filter(h => h.computable && !h.undrawn_commitment);
+    const undrawnFinanced    = resultHoldings.filter(h => h.computable && h.undrawn_commitment);
+    const dataGapHoldings    = resultHoldings.filter(h => !h.computable);
+
+    const totalFinanced = computableFinanced.reduce((s, h) => s + h.financed_co2e_tonne, 0);
+    const totalUndrawn   = undrawnFinanced.reduce((s, h) => s + h.financed_co2e_tonne, 0);
     const totalRev      = holdings.reduce((s, h) => s + (parseFloat(h.revenue_inr_cr) || 0), 0);
     const waciPortfolio = totalRev > 0 ? totalFinanced / totalRev : 0;
     const avgDqs = resultHoldings.length
       ? resultHoldings.reduce((s, h) => s + h.dqs, 0) / resultHoldings.length : 4;
-    const impliedTemp = totalFinanced > 1e6 ? 3.1 : totalFinanced > 5e5 ? 2.6 : totalFinanced > 1e5 ? 2.1 : 1.8;
     const dqsDist = {};
     resultHoldings.forEach(h => { dqsDist[h.dqs] = (dqsDist[h.dqs] || 0) + 1; });
     return {
       _demo: true,
       holdings: resultHoldings,
       holdings_count: resultHoldings.length,
+      data_gap_count: dataGapHoldings.length,
       portfolio_analytics: {
         total_financed_co2e_tonne: totalFinanced,
+        total_undrawn_co2e_tonne: totalUndrawn,
         waci_tco2e_per_inr_cr: waciPortfolio,
-        implied_temperature_c: impliedTemp,
         portfolio_dqs_weighted_avg: avgDqs,
-        data_completeness_pct: 100,
+        data_completeness_pct: resultHoldings.length ? Math.round(100 * computableFinanced.length / resultHoldings.length) : 0,
         dqs_distribution: Object.fromEntries(Object.entries(dqsDist).map(([k, v]) => [k, { count: v }])),
       },
       sebi_brsr_core: {
@@ -736,7 +820,7 @@ export default function PCafIndiaBrsrPage() {
           // Commercial fields
           insured_revenue_musd: p.insured_revenue_inr_cr ? parseFloat(p.insured_revenue_inr_cr) * 0.12 : undefined,
           nace_sector: p.nace_sector || undefined,
-          reporting_year: 2024,
+          reporting_year: parseInt(reportingYear),
           policyholder_country_iso2: 'IN',
         })),
       };
@@ -770,17 +854,31 @@ export default function PCafIndiaBrsrPage() {
           const pc = parseFloat(p.total_project_cost_inr_cr) || 1;
           const ps1 = parseFloat(p.project_scope1_tco2e) || 0;
           tco2e = (si / pc) * ps1;
-        } else {
-          tco2e = gwp * 0.001; // Life/Health rough proxy
         }
+        // Life & Health are explicitly out of scope of the PCAF
+        // Insurance-Associated Emissions standard (Nov 2022) — commercial
+        // lines and personal motor only. They previously fell through to a
+        // generic "gwp × 0.001" proxy and were silently summed into the
+        // PCAF-labeled total; ring-fence them as a separate, clearly-labeled
+        // extended metric instead.
+        const outOfPcafScope = cat === 'Life' || cat === 'Health';
+        if (outOfPcafScope) tco2e = gwp * 0.001; // rough, non-PCAF illustrative proxy only
         return { policy_id: p.policy_id, line_of_business: p.line_of_business,
-          policyholder_name: p.policyholder_name, insured_total_tco2e: tco2e, _demo: true };
+          policyholder_name: p.policyholder_name, insured_total_tco2e: tco2e, _demo: true,
+          out_of_pcaf_scope: outOfPcafScope,
+          data_gap_reason: outOfPcafScope ? `${cat} is out of scope of the PCAF IAE standard — excluded from the PCAF-labeled total` : null };
       });
-      setInsuranceResult({ _demo: true, results: demoResults, total_tco2e: demoResults.reduce((s, r) => s + r.insured_total_tco2e, 0) });
+      const inScope = demoResults.filter(r => !r.out_of_pcaf_scope);
+      const outOfScope = demoResults.filter(r => r.out_of_pcaf_scope);
+      setInsuranceResult({
+        _demo: true, results: demoResults,
+        total_tco2e: inScope.reduce((s, r) => s + r.insured_total_tco2e, 0),
+        extended_non_pcaf_total_tco2e: outOfScope.reduce((s, r) => s + r.insured_total_tco2e, 0),
+      });
       setInsuranceError('');
     }
     setInsuranceLoading(false);
-  }, [insurancePolicies, authH]);
+  }, [insurancePolicies, authH, reportingYear]);
 
   // ── Run facilitated ────────────────────────────────────────────────────
   const runFacilitated = useCallback(async () => {
@@ -823,7 +921,17 @@ export default function PCafIndiaBrsrPage() {
       const { data } = await axios.post(`${API}/api/v1/facilitated-emissions/deals/batch`, payload, { headers: authH });
       setFacilitatedResult(data);
     } catch(e) {
-      // Demo fallback — PCAF Part C AF-based attribution
+      // Demo fallback — PCAF Standard Part B (Facilitated Emissions, Dec 2023)
+      // attribution. Denominators below use the deal's own size (total issue /
+      // market cap / facility / pool), not the issuer's EVIC — a reasonable
+      // per-transaction share for capital-markets underwriting, but PCAF's
+      // published method prefers issuer EVIC where available; swap in an
+      // issuer EVIC field if this platform starts collecting one. The 33%
+      // weighting factor below is NOT a simplification — PCAF Part B requires
+      // it (facilitated emissions carry materially less "ownership" than
+      // financed/balance-sheet emissions), and it was previously missing
+      // entirely from this fallback.
+      const FACILITATED_WEIGHTING_FACTOR = 0.33;
       const demoDeals = facilitatedDeals.map(d => {
         const rev = parseFloat(d.issuer_revenue_inr_cr) || 1;
         const sectorEf = { Energy: 0.28, Utilities: 0.22, Materials: 0.18, Mining: 0.24,
@@ -831,29 +939,38 @@ export default function PCafIndiaBrsrPage() {
         const ef = sectorEf[d.issuer_sector_gics] || 0.08;
         const issuerTco2e = rev * ef;
         let af = 0;
+        let computable = true;
         if (d.deal_type === 'bond_underwriting' || d.deal_type === 'convertible_underwriting') {
           const und = parseFloat(d.underwritten_amount_inr_cr) || 0;
-          const total = parseFloat(d.total_deal_size_inr_cr) || 1;
-          af = und / total;
+          const total = parseFloat(d.total_deal_size_inr_cr) || 0;
+          if (total <= 0) computable = false; else af = und / total;
         } else if (d.deal_type === 'ipo_underwriting') {
           const placed = parseFloat(d.shares_placed_value_inr_cr) || 0;
-          const mcap = parseFloat(d.market_cap_inr_cr) || 1;
-          af = placed / (mcap * 3);
+          const mcap = parseFloat(d.market_cap_inr_cr) || 0;
+          if (mcap <= 0) computable = false; else af = placed / (mcap * 3);
         } else if (d.deal_type === 'equity_placement') {
           const placed = parseFloat(d.shares_placed_value_inr_cr) || 0;
-          const mcap = parseFloat(d.market_cap_inr_cr) || 1;
-          af = placed / mcap;
+          const mcap = parseFloat(d.market_cap_inr_cr) || 0;
+          if (mcap <= 0) computable = false; else af = placed / mcap;
         } else if (d.deal_type === 'syndicated_loan') {
           const tranche = parseFloat(d.tranche_held_inr_cr) || 0;
-          const facility = parseFloat(d.total_facility_inr_cr) || 1;
-          af = tranche / facility;
+          const facility = parseFloat(d.total_facility_inr_cr) || 0;
+          if (facility <= 0) computable = false; else af = tranche / facility;
         } else if (d.deal_type === 'securitisation') {
           const tranche = parseFloat(d.tranche_held_inr_cr) || 0;
-          const pool = parseFloat(d.total_pool_inr_cr) || 1;
-          af = tranche / pool;
+          const pool = parseFloat(d.total_pool_inr_cr) || 0;
+          if (pool <= 0) computable = false; else af = tranche / pool;
+        } else {
+          // M&A advisory and any other deal_type: PCAF Part B (Facilitated
+          // Emissions) is scoped to capital-markets issuance — advisory
+          // mandates with no underwritten/placed amount are out of scope,
+          // not a silent zero.
+          computable = false;
         }
+        af = af * FACILITATED_WEIGHTING_FACTOR;
         return { deal_id: d.deal_id, deal_type: d.deal_type, issuer_name: d.issuer_name,
-          attribution_factor: af, facilitated_total_tco2e: af * issuerTco2e,
+          attribution_factor: computable ? af : 0, facilitated_total_tco2e: computable ? af * issuerTco2e : 0,
+          computable, data_gap_reason: computable ? null : (d.deal_type === 'ma_advisory' || d.deal_type === 'advisory' ? 'M&A/advisory mandates are out of scope of PCAF Part B (capital-markets issuance only)' : 'Missing deal-size denominator'),
           green_bond: !!d.green_bond, _demo: true };
       });
       setFacilitatedResult({ _demo: true, results: demoDeals, total_tco2e: demoDeals.reduce((s, r) => s + r.facilitated_total_tco2e, 0) });
@@ -875,7 +992,7 @@ export default function PCafIndiaBrsrPage() {
         setCompanyResult({ _demo: true, cin: match.cin, company_name: match.name,
           sector_gics: match.sector, note: 'Demo mode — connect API for live BRSR P6 GHG data',
           brsr_p6: { scope1_co2e: null, scope2_co2e: null, scope3_co2e: null,
-            reporting_year: 2023, data_source: 'BRSR Portal (not yet fetched)' } });
+            reporting_year: parseInt(defaultPcafReportingYear()), data_source: 'BRSR Portal (not yet fetched)' } });
       } else {
         setCompanyError(`Seed data mode (demo mode). CIN "${cin}" not found in local suggestions.`);
       }
@@ -975,11 +1092,12 @@ export default function PCafIndiaBrsrPage() {
 
   const ps = {
     total_financed_co2e_tonne: _pa.total_financed_co2e_tonne,
+    total_undrawn_co2e_tonne: _pa.total_undrawn_co2e_tonne,
     waci_tco2e_per_inr_cr: _pa.waci_tco2e_per_inr_cr,
-    implied_temperature_c: _pa.implied_temperature_c,
     weighted_dqs: _pa.portfolio_dqs_weighted_avg,
     total_holdings: portfolioResult?.holdings_count,
-    data_completeness_pct: 100,
+    data_gap_count: portfolioResult?.data_gap_count || 0,
+    data_completeness_pct: _pa.data_completeness_pct,
     uncertainty_band_pct: null,
   };
 
@@ -989,8 +1107,7 @@ export default function PCafIndiaBrsrPage() {
   const brsr = {
     total_financed_co2e_tonne: _kpi.financed_scope1_2_tco2e,
     waci: _kpi.waci_tco2e_per_inr_cr,
-    implied_temperature_alignment: _pa.implied_temperature_c,
-    data_completeness_pct: 100,
+    data_completeness_pct: _pa.data_completeness_pct,
     weighted_dqs: _pa.portfolio_dqs_weighted_avg,
     holdings_count: portfolioResult?.holdings_count,
     sfdr_pai_1_tco2e: _sfdr.pai_1_total_ghg_tco2e_per_eur_m,
@@ -1000,8 +1117,13 @@ export default function PCafIndiaBrsrPage() {
   const _rbi = portfolioResult?.rbi_climate_pilot || {};
   const rbi = { reporting_year: _rbi.reporting_year, framework: _rbi.framework, ...(_rbi.metrics || {}) };
 
-  // Temperature color
-  const tempColor = (ps.implied_temperature_c||0) > 3 ? T.red : (ps.implied_temperature_c||0) > 2 ? T.amber : T.green;
+  // ── Real backend-connectivity state — the header badge must reflect this
+  // truthfully rather than unconditionally claiming live status. GAP-001:
+  // this module previously showed a green "LIVE API" badge even while every
+  // tab had silently fallen back to client-side calculation.
+  const _allResults = [portfolioResult, insuranceResult, facilitatedResult, companyResult].filter(Boolean);
+  const anyDemoActive = _allResults.some(r => r._demo);
+  const anyLiveConfirmed = _allResults.some(r => !r._demo);
 
   // ── Insurance chart data ───────────────────────────────────────────────
   const insuranceChart = insuranceResult?.results?.map(r => ({
@@ -1044,10 +1166,16 @@ export default function PCafIndiaBrsrPage() {
         <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:6 }}>
           <span style={{ background: T.navy, color: T.gold, borderRadius: 8, padding:'6px 14px', fontSize:13, fontWeight:700 }}>E138</span>
           <h1 style={{ fontSize:22, fontWeight:700, color:T.navy, margin:0 }}>PCAF India BRSR — Financed Emissions</h1>
-          <span style={{ background:'#ecfdf5', color:'#15803d', border:'1px solid #86efac', borderRadius:20, padding:'2px 12px', fontSize:11, fontWeight:700 }}>LIVE API · 3rd Ed</span>
+          <span style={{
+            background: anyDemoActive ? '#fef2f2' : anyLiveConfirmed ? '#ecfdf5' : '#f3f4f6',
+            color: anyDemoActive ? '#b91c1c' : anyLiveConfirmed ? '#15803d' : '#6b7280',
+            border: `1px solid ${anyDemoActive ? '#fca5a5' : anyLiveConfirmed ? '#86efac' : '#d1d5db'}`,
+            borderRadius:20, padding:'2px 12px', fontSize:11, fontWeight:700 }}>
+            {anyDemoActive ? '⚠ CLIENT-SIDE ESTIMATE — backend unavailable' : anyLiveConfirmed ? '✓ LIVE API — verified this session' : 'API status not yet checked'}
+          </span>
         </div>
         <p style={{ fontSize:13, color:T.sub, margin:0, maxWidth:700 }}>
-          PCAF v3.0 (3rd Edition, December 2025) financed emissions for India-listed companies. CIN→yfinance EVIC attribution, CPCB/MoEFCC sector emission factors, SEBI BRSR Core P6 &amp; RBI TCFD pilot disclosures. SFDR PAI#1/#3 in INR. New: Use of Proceeds, Securitisation, Sub-sovereign Debt, Undrawn Commitments asset classes &amp; Supplemental Guidance.
+          PCAF Standard, 2nd Edition (December 2022), financed emissions for India-listed companies. CIN→yfinance EVIC attribution, CPCB/MoEFCC sector emission factors, SEBI BRSR Core P6 &amp; RBI TCFD pilot disclosures. SFDR PAI#1/#3 in INR. Platform extensions beyond PCAF's 7 core asset classes: Use of Proceeds, Securitisation, Sub-sovereign Debt, Undrawn Commitments &amp; Supplemental Guidance (verify against current PCAF guidance before client use).
         </p>
       </div>
 
@@ -1057,9 +1185,9 @@ export default function PCafIndiaBrsrPage() {
         display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', flex: 1 }}>
           {[
-            ['SEBI BRSR Core P6 FY24', T.sage],
+            ['SEBI BRSR Core P6 FY26', T.sage],
             ['RBI Climate Risk Circular 2023', T.navy],
-            ['PCAF v3.0 · 3rd Ed Dec 2025', T.teal],
+            ['PCAF Standard 2nd Ed. Dec 2022', T.teal],
             ['GHG Protocol Scope 3 Cat.15', T.blue],
             ['SFDR PAI#1 / PAI#3', T.indigo],
           ].map(([label, color]) => (
@@ -1069,8 +1197,9 @@ export default function PCafIndiaBrsrPage() {
         </div>
         <div style={{ fontSize: 11, color: T.sub, borderLeft: `1px solid ${T.border}`, paddingLeft: 12 }}>
           <strong style={{ color: T.navy }}>Method:</strong> PCAF Attribution Factor (AF) · Parts A+B+C · DQS 1–5
-          <span style={{ marginLeft: 8, background: '#f0fdf4', color: T.green, border: `1px solid ${T.green}44`,
-            borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>Live</span>
+          <span style={{ marginLeft: 8, background: anyDemoActive ? '#fef2f2' : '#f0fdf4', color: anyDemoActive ? '#b91c1c' : T.green,
+            border: `1px solid ${anyDemoActive ? '#fca5a5' : T.green}44`,
+            borderRadius: 10, padding: '1px 7px', fontSize: 10, fontWeight: 700 }}>{anyDemoActive ? 'Estimate' : anyLiveConfirmed ? 'Live' : 'Unchecked'}</span>
         </div>
         <div style={{ fontSize: 11, color: T.sub, borderLeft: `1px solid ${T.border}`, paddingLeft: 12 }}>
           <strong style={{ color: T.navy }}>Persona:</strong> Financed Emissions Lead / Sustainability Controller
@@ -1084,7 +1213,7 @@ export default function PCafIndiaBrsrPage() {
         {[
           { n:1, title:'Select Asset Classes', desc:'Choose instrument types: Equity, Bonds, Loans, Project Finance, Insurance, Capital Markets deals' },
           { n:2, title:'Enter Holdings Data', desc:'Input CIN, EVIC, exposure, Scope 1/2 per holding. Use autocomplete for 60+ India companies.' },
-          { n:3, title:'Run PCAF Calculation', desc:'API computes AF, attributed tCO₂e, WACI, DQS score and implied temperature per PCAF v3.0' },
+          { n:3, title:'Run PCAF Calculation', desc:'API computes AF, attributed tCO₂e, WACI and DQS score per the PCAF Standard, 2nd Edition (Dec 2022)' },
           { n:4, title:'Review & Export', desc:'SEBI BRSR P6 disclosure figures, RBI TCFD pilot output, SFDR PAI#1/3. Export for filing.' },
         ].map((step, i) => (
           <div key={step.n} style={{ flex: 1, display: 'flex', alignItems: 'flex-start', gap: 10,
@@ -1123,8 +1252,8 @@ export default function PCafIndiaBrsrPage() {
       <div style={{ display:'flex', borderBottom:`2px solid ${T.border}`, marginBottom:24, gap:4, flexWrap:'wrap' }}>
         {[
           ['partA','📊 Part A: Financed'],
-          ['partB','🏥 Part B: Insurance'],
-          ['partC','📈 Part C: Facilitated'],
+          ['partB','🏥 Insurance (IAE Standard)'],
+          ['partC','📈 Facilitated (Part B)'],
           ['company','🏢 Company Lookup'],
           ['ref','📋 Reference Data'],
           ['formula','🔢 PCAF Formula'],
@@ -1199,19 +1328,26 @@ export default function PCafIndiaBrsrPage() {
             const typeHoldings = holdings.filter(h => (h.instrument_type || 'Listed Equity') === instType);
             if (typeHoldings.length === 0) return null;
             const fields = INSTRUMENT_FIELDS[instType] || INSTRUMENT_FIELDS['Listed Equity'];
+            // Chapter-level citations only — this platform cannot verify exact
+            // table/row/section numbers against the official PCAF PDF, and
+            // inventing specific-looking ones (e.g. "Table 5.1 Row 1") reads
+            // as more precise than it is. The 2nd Edition (Dec 2022) covers
+            // its 7 core asset-class methods in Chapter 5; the four classes
+            // below are platform extensions beyond that core set, not
+            // official PCAF Standard chapters — labeled as such.
             const PCAF_REF = {
-              'Listed Equity': 'Table 5.1 Row 1 · AF = Exposure ÷ EVIC',
-              'Corporate Bond': 'Table 5.1 Row 1 · AF = Bond Value ÷ EVIC',
-              'Business Loan': 'Table 5.4 · AF = Outstanding ÷ (Equity + Debt)',
-              'Project Finance': 'Table 5.5 · AF = Committed ÷ Total Project Cost',
-              'Commercial Real Estate': 'Table 5.6 · AF = Outstanding ÷ Property Value',
-              'Mortgage': 'Table 5.7 · AF = Mortgage ÷ Property Value',
-              'Vehicle Loan': 'Table 5.8 · Emissions = Vehicles × km × EF',
-              'Sovereign Bond': 'Table 5.9 · AF = Bond ÷ GDP × Country GHG',
-              'Use of Proceeds': '3rd Ed § 8.1 · Follow-the-money to ring-fenced projects',
-              'Securitisation': '3rd Ed § 8.2 · Look-through to underlying assets',
-              'Sub-sovereign Debt': '3rd Ed § 8.3 · AF = Bond ÷ Sub-sovereign budget × regional GHG',
-              'Undrawn Commitments': '3rd Ed § 8.4 (Optional) · IFRS S1/S2 aligned',
+              'Listed Equity': 'PCAF Standard, Chapter 5 · AF = Exposure ÷ EVIC',
+              'Corporate Bond': 'PCAF Standard, Chapter 5 · AF = Bond Value ÷ EVIC',
+              'Business Loan': 'PCAF Standard, Chapter 5 · AF = Outstanding ÷ (Equity + Debt)',
+              'Project Finance': 'PCAF Standard, Chapter 5 · AF = Committed ÷ Total Project Cost',
+              'Commercial Real Estate': 'PCAF Standard, Chapter 5 · AF = Outstanding ÷ Property Value',
+              'Mortgage': 'PCAF Standard, Chapter 5 · AF = Mortgage ÷ Property Value',
+              'Vehicle Loan': 'PCAF Standard, Chapter 5 · Emissions = Vehicles × km × EF',
+              'Sovereign Bond': 'PCAF Standard, Chapter 5 · AF = Bond ÷ GDP × Country GHG',
+              'Use of Proceeds': 'Platform extension (not a core PCAF asset class) · follow-the-money to ring-fenced projects — verify against current PCAF guidance',
+              'Securitisation': 'Platform extension (not a core PCAF asset class) · look-through to underlying pool — verify against current PCAF guidance',
+              'Sub-sovereign Debt': 'Platform extension (not a core PCAF asset class) · AF = Bond ÷ jurisdiction budget × regional GHG',
+              'Undrawn Commitments': 'Platform extension (not a core PCAF asset class, optional/IFRS-adjacent) · reported separately from financed emissions',
             };
             const INST_COLORS = {
               'Listed Equity': T.navy, 'Corporate Bond': T.indigo, 'Business Loan': T.sage,
@@ -1344,21 +1480,17 @@ export default function PCafIndiaBrsrPage() {
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
                 <KpiCard label="Total Financed Emissions" value={`${(ps.total_financed_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e" color={T.navy} />
                 <KpiCard label="WACI" value={(ps.waci_tco2e_per_inr_cr||0).toFixed(1)} sub="tCO₂e / ₹Cr revenue" color={T.indigo} />
-                <KpiCard label="Implied Temperature" value={`${(ps.implied_temperature_c||0).toFixed(2)}°C`} sub="PCAF warming alignment" color={tempColor} />
+                <KpiCard label="Undrawn Commitments" value={`${(ps.total_undrawn_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e — reported separately, not in FE total" color={T.textMut} />
                 <KpiCard label="Portfolio DQS" value={(ps.weighted_dqs||0).toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
                 <KpiCard label="Holdings" value={ps.total_holdings||0} sub="companies assessed" />
-                <KpiCard label="Coverage" value={`${(ps.data_completeness_pct||0).toFixed(0)}%`} sub="by exposure" color={T.teal} />
+                <KpiCard label="Coverage" value={`${(ps.data_completeness_pct||0).toFixed(0)}%`} sub={ps.data_gap_count ? `${ps.data_gap_count} data gap — excluded from total` : 'by holding count'} color={ps.data_gap_count ? T.red : T.teal} />
               </div>
 
               {/* Interpretation Banner */}
               {(() => {
                 const totalCO2e = ps.total_financed_co2e_tonne || 0;
                 const waci = ps.waci_tco2e_per_inr_cr || 0;
-                const impliedTemp = ps.implied_temperature_c || 0;
                 const dqs = ps.weighted_dqs || 0;
-                const tempFlag = impliedTemp > 3 ? { color: T.red, label: 'above 3°C — Hot House trajectory', icon: '🔴' }
-                               : impliedTemp > 2 ? { color: T.amber, label: 'above 2°C — requires urgent transition plan', icon: '⚠️' }
-                               : { color: T.green, label: 'below 2°C — aligned with Paris Agreement', icon: '✅' };
                 const dqsLabel = dqs <= 2 ? 'high-quality verified data' : dqs <= 3 ? 'reported company data' : 'sector proxies — improve with CIN/BRSR data';
                 return (
                   <div style={{ background: dqs > 3 ? '#fffbeb' : '#f0fdf4',
@@ -1369,8 +1501,9 @@ export default function PCafIndiaBrsrPage() {
                     <div style={{ color: T.text, lineHeight: 1.6 }}>
                       Portfolio financed emissions total <strong style={{ color: T.navy }}>{totalCO2e.toLocaleString()} tCO₂e</strong> (Scope 3 Cat.15 under GHG Protocol).
                       WACI is <strong style={{ color: T.indigo }}>{waci.toFixed(1)} tCO₂e/₹Cr</strong> — required disclosure under SEBI BRSR Core Principle 6.{' '}
-                      Portfolio implied temperature: <strong style={{ color: tempFlag.color }}>{impliedTemp.toFixed(2)}°C {tempFlag.icon}</strong> — {tempFlag.label}.{' '}
-                      Data quality (weighted DQS {dqs.toFixed(1)}) is based on {dqsLabel}. Under PCAF standard, disclose DQS distribution alongside financed emissions in BRSR/Annual Report.
+                      Data quality (weighted DQS {dqs.toFixed(1)}) is based on {dqsLabel}. Under the PCAF standard, disclose DQS distribution alongside financed emissions in BRSR/Annual Report.{' '}
+                      {ps.data_gap_count > 0 && <><strong style={{ color: T.red }}>{ps.data_gap_count} holding{ps.data_gap_count === 1 ? '' : 's'} excluded</strong> from this total — see Holdings table for the missing-data reason per position.</>}
+                      {' '}Implied temperature / warming alignment is not a PCAF Standard output (it's an SBTi/ITR-style methodology) — this platform does not currently compute a validated figure; treat any such number elsewhere in this app as illustrative only.
                     </div>
                   </div>
                 );
@@ -1560,7 +1693,7 @@ export default function PCafIndiaBrsrPage() {
                     {[
                       ['Total Financed Emissions', `${(brsr.total_financed_co2e_tonne||0).toLocaleString()} tCO₂e`],
                       ['WACI', `${(brsr.waci||0).toFixed(2)} tCO₂e/₹Cr`],
-                      ['Implied Temp.', `${(brsr.implied_temperature_alignment||0).toFixed(2)}°C`],
+                      ['Undrawn (separate line)', `${(ps.total_undrawn_co2e_tonne||0).toLocaleString()} tCO₂e`],
                       ['Data Completeness', `${(brsr.data_completeness_pct||0).toFixed(0)}%`],
                       ['Weighted DQS', (brsr.weighted_dqs||0).toFixed(2)],
                       ['Holdings', brsr.holdings_count],
@@ -1610,7 +1743,7 @@ export default function PCafIndiaBrsrPage() {
               </Btn>
             </div>
             <div style={{ fontSize:12, color:T.sub, marginTop:8 }}>
-              PCAF v3.0 Part B — Insurance-Associated Emissions. Premium converted: 1 ₹Cr ≈ 0.12 MUSD. New: Reinsurance &amp; Project Insurance LOBs.
+              Insurance-Associated Emissions Standard (Nov 2022) — a separate PCAF standard, not "Part B" of the core Financed Emissions Standard. Premium converted: 1 ₹Cr ≈ 0.12 MUSD. Life &amp; Health lines are out of scope of this standard and excluded from the PCAF-labeled total below.
             </div>
           </Card>
 
@@ -1708,13 +1841,30 @@ export default function PCafIndiaBrsrPage() {
               ⚡ <strong>Client-side calculation mode</strong> — Insurance emissions estimated using PCAF Part B LOB methods: Motor (vehicles × km × fuel EF), Property (area × EPC factor), Commercial (revenue × NACE sector EF), Reinsurance (ceded/GWP × cedent emissions).
             </Alert>
           )}
-          {insuranceResult && (
+          {insuranceResult && (() => {
+            // Real API returns { results, summary }; the client-side demo
+            // fallback returns { results, total_tco2e, extended_non_pcaf_total_tco2e }
+            // — no nested `summary` object. Read either shape rather than
+            // assuming the live-API one, or these cards silently show 0 in
+            // demo mode (GAP-012 follow-up).
+            const insTotal = insuranceResult.summary?.total_insured_tco2e ?? insuranceResult.total_tco2e ?? 0;
+            const insDqs = insuranceResult.summary?.avg_pcaf_dqs ?? 0;
+            const insExtended = insuranceResult.extended_non_pcaf_total_tco2e || 0;
+            return (
             <>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Total Insured Emissions" value={(insuranceResult.summary?.total_insured_tco2e||0).toLocaleString()} sub="tCO₂e" color={T.navy} />
-                <KpiCard label="Avg PCAF DQS" value={(insuranceResult.summary?.avg_pcaf_dqs||0).toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
+                <KpiCard label="Total Insured Emissions (PCAF-scoped)" value={insTotal.toLocaleString()} sub="tCO₂e" color={T.navy} />
+                <KpiCard label="Avg PCAF DQS" value={insDqs.toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
                 <KpiCard label="Policies" value={insurancePolicies.length} sub="assessed" />
+                {insExtended > 0 && (
+                  <KpiCard label="Life/Health (extended, non-PCAF)" value={insExtended.toLocaleString()} sub="tCO₂e — excluded from PCAF total" color={T.sub} />
+                )}
               </div>
+              {insExtended > 0 && (
+                <Alert type='info'>
+                  ℹ️ {insuranceResult.results.filter(r => r.out_of_pcaf_scope).length} Life/Health polic{insuranceResult.results.filter(r => r.out_of_pcaf_scope).length === 1 ? 'y' : 'ies'} ({insExtended.toLocaleString()} tCO₂e) are out of scope of the PCAF Insurance-Associated Emissions standard (Nov 2022) — commercial lines and personal motor only. Shown separately above, not included in the PCAF-labeled total.
+                </Alert>
+              )}
 
               {insuranceChart.length > 0 && (
                 <Card>
@@ -1760,9 +1910,16 @@ export default function PCafIndiaBrsrPage() {
                         <tr key={i} style={{ borderTop:`1px solid ${T.border}`, background: i%2===0?'#fff':'#fafafa' }}>
                           <td style={{ padding:'8px 10px', fontWeight:600 }}>{r.policy_id}</td>
                           <td style={{ padding:'8px 10px' }}>{r.policyholder_name}</td>
-                          <td style={{ padding:'8px 10px', color:T.sub }}>{r.line_of_business}</td>
+                          <td style={{ padding:'8px 10px', color:T.sub }}>
+                            {r.line_of_business}
+                            {r.out_of_pcaf_scope && (
+                              <span title={r.data_gap_reason || 'Out of PCAF IAE scope'} style={{
+                                marginLeft:6, background:'#fef2f2', color:'#b91c1c', border:'1px solid #fca5a5',
+                                borderRadius:10, padding:'1px 6px', fontSize:10, fontWeight:700 }}>extended, non-PCAF</span>
+                            )}
+                          </td>
                           <td style={{ padding:'8px 10px' }}>{((r.gross_premium_musd||0) / 0.12).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
-                          <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(r.insured_total_tco2e||0).toLocaleString()}</td>
+                          <td style={{ padding:'8px 10px', fontWeight:700, color: r.out_of_pcaf_scope ? T.sub : T.navy }}>{(r.insured_total_tco2e||0).toLocaleString()}</td>
                           <td style={{ padding:'8px 10px' }}><DqsBadge score={r.pcaf_dqs || r.dqs} /></td>
                         </tr>
                       ))}
@@ -1771,7 +1928,8 @@ export default function PCafIndiaBrsrPage() {
                 </div>
               </Card>
             </>
-          )}
+            );
+          })()}
         </div>
       )}
 
@@ -1786,7 +1944,7 @@ export default function PCafIndiaBrsrPage() {
               </Btn>
             </div>
             <div style={{ fontSize:12, color:T.sub, marginTop:8 }}>
-              PCAF v3.0 Part C — Facilitated Emissions (underwriting, placement, advisory). Amounts converted: 1 ₹Cr ≈ 0.12 MUSD.
+              PCAF Standard, Part B — Facilitated Emissions (Dec 2023): underwriting, placement, advisory. Amounts converted: 1 ₹Cr ≈ 0.12 MUSD.
             </div>
           </Card>
 
@@ -1892,7 +2050,7 @@ export default function PCafIndiaBrsrPage() {
 
           {facilitatedResult && facilitatedResult._demo && (
             <Alert type='info'>
-              ⚡ <strong>Client-side calculation mode</strong> — Facilitated emissions estimated using PCAF Part C attribution factors: Bond (underwritten÷deal size), IPO (placed÷(MCap×3)), Syndicated (tranche÷facility), Securitisation (tranche÷pool). Issuer GHG estimated from revenue × sector emission intensity.
+              ⚡ <strong>Client-side calculation mode</strong> — Facilitated emissions estimated using PCAF Standard Part B attribution factors (×0.33 weighting factor applied): Bond (underwritten÷deal size), IPO (placed÷(MCap×3)), Syndicated (tranche÷facility), Securitisation (tranche÷pool). Issuer GHG estimated from revenue × sector emission intensity. M&A/advisory mandates are out of scope.
             </Alert>
           )}
           {facilitatedResult && (
@@ -2139,21 +2297,21 @@ export default function PCafIndiaBrsrPage() {
           {/* Sub-tab navigation */}
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
             <button style={subTabStyle(formulaSection==='partA')} onClick={()=>setFormulaSection('partA')}>Part A: Financed Emissions</button>
-            <button style={subTabStyle(formulaSection==='partB')} onClick={()=>setFormulaSection('partB')}>Part B: Insurance</button>
-            <button style={subTabStyle(formulaSection==='partC')} onClick={()=>setFormulaSection('partC')}>Part C: Facilitated</button>
+            <button style={subTabStyle(formulaSection==='partB')} onClick={()=>setFormulaSection('partB')}>Insurance (IAE Standard)</button>
+            <button style={subTabStyle(formulaSection==='partC')} onClick={()=>setFormulaSection('partC')}>Facilitated (Part B)</button>
           </div>
 
           {/* Part A formulas */}
           {formulaSection === 'partA' && (
             <>
               <Card>
-                <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF v3.0 Part A — Attribution Formula</div>
+                <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF Standard, 2nd Edition (Dec 2022) — Part A Attribution Formula</div>
                 {[
-                  { title:'Listed Equity & Corporate Bonds', formula:'Attribution Factor = Exposure (₹Cr) ÷ EVIC (₹Cr)', evic:'EVIC = Market Cap + Total Debt + Minority Interest', note:'PCAF Standard Part A §2.3 · Source: BSE/NSE via yfinance' },
+                  { title:'Listed Equity & Corporate Bonds', formula:'Attribution Factor = Exposure (₹Cr) ÷ EVIC (₹Cr)', evic:'EVIC = Market Cap + Total Debt + Minority Interest', note:'PCAF Standard, Chapter 5 (Listed Equity & Corporate Bonds) · Source: BSE/NSE via yfinance' },
                   { title:'Financed Emissions Calculation', formula:'Financed CO₂e = Attribution Factor × (Scope 1 + Scope 2) tCO₂e', note:'Scope 3 optional — included when reported and material (>40% of total)' },
                   { title:'Sector-Level Proxy (DQS 4)', formula:'Estimated Emissions = Revenue (₹Cr) × Sector Intensity (tCO₂e/₹Cr)', note:'CPCB 2022-23 / MoEFCC BUR 2022 / India GHG Platform v3 sector factors' },
                   { title:'WACI — Weighted Average Carbon Intensity', formula:'WACI = Σ (Exposure_i / Total Portfolio) × (Scope1+2_i / Revenue_i)', note:'tCO₂e per ₹Crore revenue — SFDR PAI#3 compatible' },
-                  { title:'Implied Temperature Rise', formula:'Temp°C = 1.5 + (WACI / 100) × 0.5 (simplified alignment proxy)', note:'Full CTI/MSCI methodology requires sector-specific pathways' },
+                  { title:'Implied Temperature Rise — NOT a PCAF metric', formula:'Illustrative only — this platform does not implement a validated ITR methodology', note:'A real implied-temperature figure requires a named methodology (e.g. SBTi, CDP-WWF, MSCI) with sector-specific decarbonisation pathways; do not disclose a number from this card' },
                   { title:'Uncertainty Bands by DQS', formula:'DQS1: ±10% · DQS2: ±20% · DQS3: ±35% · DQS4: ±50% · DQS5: ±60%', note:'PCAF Standard Annex 2 — propagated through portfolio as weighted average' },
                 ].map(({title, formula, evic, note}) => (
                   <div key={title} style={{ marginBottom:16, padding:16, background:'#f8f7f3', borderRadius:8, borderLeft:`4px solid ${T.navy}` }}>
@@ -2186,7 +2344,7 @@ export default function PCafIndiaBrsrPage() {
           {/* Part B formulas */}
           {formulaSection === 'partB' && (
             <Card>
-              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF v3.0 Part B — Insurance-Associated Emissions</div>
+              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>Insurance-Associated Emissions Standard (Nov 2022) — separate from PCAF Part B</div>
               {[
                 {
                   title:'Attribution Factor (all LOBs)',
@@ -2209,9 +2367,9 @@ export default function PCafIndiaBrsrPage() {
                   note:'Attribution = GWP / total_market_premium. Sector intensity from CPCB/MoEFCC BUR 2022.',
                 },
                 {
-                  title:'Life & Health Insurance',
-                  formula:'CO₂e = PolicyholderCount × national_per_capita_emissions × coverage_fraction',
-                  note:'Coverage fraction = sum insured / GDP per capita proxy. PCAF Part B §4.4.',
+                  title:'Life & Health Insurance — NOT a PCAF metric',
+                  formula:'CO₂e = PolicyholderCount × national_per_capita_emissions × coverage_fraction (illustrative proxy only)',
+                  note:'Life and Health lines of business are explicitly out of scope of the PCAF IAE Standard (Nov 2022) — commercial lines and personal motor only. This is a non-PCAF illustrative estimate; it is excluded from the PCAF-labeled total and shown separately.',
                 },
               ].map(({title, formula, note}) => (
                 <div key={title} style={{ marginBottom:16, padding:16, background:'#f8f7f3', borderRadius:8, borderLeft:`4px solid ${T.teal}` }}>
@@ -2226,27 +2384,27 @@ export default function PCafIndiaBrsrPage() {
           {/* Part C formulas */}
           {formulaSection === 'partC' && (
             <Card>
-              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF v3.0 Part C — Facilitated Emissions</div>
+              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF Standard, Part B — Facilitated Emissions (Dec 2023)</div>
               {[
                 {
                   title:'Bond Underwriting',
-                  formula:'Facilitated = (Underwritten Amount / Total Deal Size) × issuer_(Scope1 + Scope2 + Scope3)',
-                  note:'Full issuer footprint allocated pro-rata to underwritten tranche. PCAF Part C §3.2.',
+                  formula:'Facilitated = 0.33 × (Underwritten Amount / Total Deal Size) × issuer_(Scope1 + Scope2 + Scope3)',
+                  note:'Full issuer footprint allocated pro-rata to underwritten tranche, scaled by PCAF’s 33% facilitated-emissions weighting factor. PCAF Standard, Part B (Facilitated Emissions, Dec 2023).',
                 },
                 {
                   title:'IPO / Equity Placement',
-                  formula:'Facilitated = (Placed Value / Market Cap post-IPO) × issuer_(Scope1 + Scope2 + Scope3)',
-                  note:'Market cap = shares outstanding × issue price. PCAF Part C §3.3.',
+                  formula:'Facilitated = 0.33 × (Placed Value / Market Cap post-IPO) × issuer_(Scope1 + Scope2 + Scope3)',
+                  note:'Market cap = shares outstanding × issue price, scaled by PCAF’s 33% facilitated-emissions weighting factor. PCAF Standard, Part B (Facilitated Emissions, Dec 2023).',
                 },
                 {
                   title:'Syndicated Loan',
-                  formula:'Facilitated = (Tranche / Total Facility) × issuer_(Scope1 + Scope2 + Scope3)',
-                  note:'Tranche = amount arranged/underwritten by this institution. PCAF Part C §3.4.',
+                  formula:'Facilitated = 0.33 × (Tranche / Total Facility) × issuer_(Scope1 + Scope2 + Scope3)',
+                  note:'Tranche = amount arranged/underwritten by this institution, scaled by PCAF’s 33% facilitated-emissions weighting factor. PCAF Standard, Part B (Facilitated Emissions, Dec 2023).',
                 },
                 {
                   title:'Scope 3 Inclusion Threshold',
                   formula:'Include Scope 3 if: Scope3 > 40% of (Scope1 + Scope2 + Scope3) OR if material per PCAF standard',
-                  note:'PCAF Standard Part C §2.5. For Energy & Materials sectors, Scope 3 typically mandatory.',
+                  note:'PCAF Standard, Part B (Facilitated Emissions, Dec 2023). For Energy & Materials sectors, Scope 3 typically mandatory.',
                 },
                 {
                   title:'Green Bond Adjustment',
@@ -2271,7 +2429,7 @@ export default function PCafIndiaBrsrPage() {
 
           {/* Intro */}
           <Card style={{ borderLeft:`4px solid #059669` }}>
-            <div style={{ fontSize:15, fontWeight:700, color:'#059669', marginBottom:8 }}>PCAF Supplemental Guidance — December 2025</div>
+            <div style={{ fontSize:15, fontWeight:700, color:'#059669', marginBottom:8 }}>PCAF Supplementary Guidance (illustrative — verify current edition against pcafglobal.org before client use)</div>
             <div style={{ fontSize:13, color:T.text }}>
               Optional guidance for financial institutions on financed avoided emissions and two forward-looking metrics.
               Reported separately — NOT part of Scope 1/2/3 accounting.
@@ -2394,7 +2552,7 @@ export default function PCafIndiaBrsrPage() {
               <div style={{ padding:16, background:'#fffbeb', borderRadius:8, borderLeft:'4px solid #d97706' }}>
                 <div style={{ fontSize:13, fontWeight:700, color:T.amber, marginBottom:6 }}>Inventory Fluctuation Analysis</div>
                 <div style={{ fontSize:12, color:T.text, lineHeight:1.8 }}>
-                  <strong>New reporting recommendation (3rd Edition).</strong> FIs must explain year-on-year changes in portfolio emissions by decomposing into:<br/><br/>
+                  <strong>Recommended practice (per PCAF supplementary guidance — verify current edition).</strong> FIs must explain year-on-year changes in portfolio emissions by decomposing into:<br/><br/>
                   <strong>1. Organic change</strong> — real-world emission changes from investees (decarbonisation, efficiency)<br/>
                   <strong>2. Portfolio change</strong> — new investments, divestments, matured assets<br/>
                   <strong>3. Methodology change</strong> — updated emission factors, data quality improvements, scope expansion<br/>
@@ -2408,7 +2566,7 @@ export default function PCafIndiaBrsrPage() {
               <div style={{ padding:16, background:'#fef2f2', borderRadius:8, borderLeft:'4px solid #dc2626' }}>
                 <div style={{ fontSize:13, fontWeight:700, color:T.red, marginBottom:6 }}>Inflation Adjustment</div>
                 <div style={{ fontSize:12, color:T.text, lineHeight:1.8 }}>
-                  <strong>New reporting recommendation (3rd Edition).</strong> Revenue-based emission intensities (WACI, carbon footprint) are affected by inflation:<br/><br/>
+                  <strong>Recommended practice (per PCAF supplementary guidance — verify current edition).</strong> Revenue-based emission intensities (WACI, carbon footprint) are affected by inflation:<br/><br/>
                   <strong>Problem:</strong> Nominal revenue grows with inflation → intensity ratios (tCO₂e/₹Cr revenue) mechanically decrease even without real decarbonisation.<br/>
                   <strong>Solution:</strong> FIs should report intensity metrics in both nominal and inflation-adjusted (real) terms.<br/><br/>
                   <div style={{ fontFamily:'monospace', fontSize:12, background:'#fff', padding:'8px 12px', borderRadius:6, marginTop:8 }}>
